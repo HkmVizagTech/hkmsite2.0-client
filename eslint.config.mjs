@@ -1,13 +1,14 @@
 import { defineConfig, globalIgnores } from "eslint/config";
-import nextVitals from "eslint-config-next/core-web-vitals.js";
-import nextTs from "eslint-config-next/typescript.js";
 
+// Temporary debug: isolate which shared config triggers 'Plugin "" not found.'
+// We'll try each config individually. If the error persists, revert to original.
 const eslintConfig = defineConfig([
-  ...nextVitals,
-  ...nextTs,
-  // Override default ignores of eslint-config-next.
+  {
+    // Use named extends provided by eslint-config-next and TypeScript plugin
+    extends: ["next/core-web-vitals", "plugin:@typescript-eslint/recommended"],
+  },
+  // Keep default ignores
   globalIgnores([
-    // Default ignores of eslint-config-next:
     ".next/**",
     "out/**",
     "build/**",
