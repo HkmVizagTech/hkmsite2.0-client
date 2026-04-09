@@ -3,8 +3,23 @@ import axios from "axios";
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
 export const getGalleryImages = async () => {
-  const res = await axios.get(`${API_BASE}/gallery`);
-  return res.data.items;
+  const url = `${API_BASE}/gallery`;
+  try {
+    const res = await axios.get(url);
+    return res?.data?.items ?? [];
+  } catch {
+    // one retry with small backoff
+    try {
+      await new Promise((r) => setTimeout(r, 300));
+      const res = await axios.get(url);
+      return res?.data?.items ?? [];
+    } catch (err2: unknown) {
+      const msg = err2 && typeof err2 === 'object' && 'message' in err2 ? String((err2 as any).message) : String(err2);
+      console.warn('getGalleryImages: failed to fetch gallery images', msg);
+      // Return empty list so pages can render and handle "no images" gracefully
+      return [];
+    }
+  }
 };
 
 export const createGalleryImage = async (
