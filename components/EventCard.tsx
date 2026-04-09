@@ -71,7 +71,7 @@ export default function EventCard({ event, href, smallCard }: EventCardProps) {
           }
         >
           {event.image && (
-            <Image src={event.image} alt={event.title} fill className="object-contain rounded-2xl" style={{objectPosition: 'center'}} />
+            <Image src={event.image} alt={event.title} fill sizes="(max-width: 640px) 100vw, 200px" className="object-contain rounded-2xl" style={{objectPosition: 'center'}} />
           )}
           {event.featured && (
             <div className="absolute top-2 left-2 bg-accent text-accent-foreground px-2.5 py-1 rounded-full text-xs font-semibold z-10">

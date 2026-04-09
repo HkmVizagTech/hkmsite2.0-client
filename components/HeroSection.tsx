@@ -18,6 +18,7 @@ const HeroSection = () => {
           src="/assets/hero-temple.jpg"
           alt="Hare Krishna Vaikuntham Temple"
           fill
+          sizes="100vw"
           className="object-cover"
           priority
         />

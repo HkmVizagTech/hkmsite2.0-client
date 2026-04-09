@@ -39,7 +39,6 @@ const mainItems = [
 
 const contentItems = [
   { title: "Events", url: "/admin/events", icon: CalendarDays },
-  { title: "Registrations", url: "/admin/events/registrations", icon: Users },
   { title: "Important Dates", url: "/admin/important-dates", icon: CalendarDays },
   { title: "Gallery", url: "/admin/gallery", icon: Image },
   { title: "Festivals", url: "/admin/festivals", icon: Image },

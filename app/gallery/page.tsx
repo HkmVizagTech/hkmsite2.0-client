@@ -105,7 +105,11 @@ export default function GalleryPage() {
     activeCategory === "All" ? galleryImages : galleryImages.filter((img) => img.category === activeCategory)
   );
 
-  if (loading) return <div className="py-20 text-center">Loading gallery...</div>;
+  // Don't block rendering of the full page while images load.
+  // Previously we returned early which made the whole page show a single
+  // "Loading gallery..." message until the client fetch completed. Keep the
+  // PageHero and surrounding UI visible and show skeleton cards in the grid
+  // while the gallery data is being fetched.
 
   return (
     <PageLayout>
@@ -145,42 +149,50 @@ export default function GalleryPage() {
 
           <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             <AnimatePresence mode="popLayout">
-              {grouped.map((group, i) => (
-                <motion.div
-                  key={group.title + group.date + group.category}
-                  layout
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.4, delay: i * 0.05 }}
-                  className="group relative overflow-hidden rounded-2xl cursor-pointer aspect-square"
-                  onClick={() => setGroupModal({ group })}
-                >
-                  <Image
-                    src={group.images[0]}
-                    alt={group.title}
-                    fill
-                    loading="lazy"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                    <p className="text-background font-heading font-semibold text-sm">{group.title}</p>
-                    <p className="text-background/60 text-xs mt-1">{group.date}</p>
-                  </div>
-                  <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <div className="w-9 h-9 rounded-full bg-background/20 backdrop-blur-sm flex items-center justify-center">
-                      <ZoomIn className="w-4 h-4 text-background" />
-                    </div>
-                  </div>
-                  {group.images.length > 1 && (
-                    <span className="absolute bottom-3 right-3 bg-background/80 text-xs px-2 py-0.5 rounded-full font-semibold">
-                      +{group.images.length}
-                    </span>
-                  )}
-                </motion.div>
-              ))}
+              {loading
+                ? // Render 8 skeleton cards while loading so layout doesn't jump
+                  Array.from({ length: 8 }).map((_, i) => (
+                    <div
+                      key={`skeleton-${i}`}
+                      className="animate-pulse bg-card rounded-2xl aspect-square"
+                    />
+                  ))
+                : grouped.map((group, i) => (
+                    <motion.div
+                      key={group.title + group.date + group.category}
+                      layout
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      transition={{ duration: 0.4, delay: i * 0.05 }}
+                      className="group relative overflow-hidden rounded-2xl cursor-pointer aspect-square"
+                      onClick={() => setGroupModal({ group })}
+                    >
+                      <Image
+                        src={group.images[0]}
+                        alt={group.title}
+                        fill
+                        loading="lazy"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover transition-transform duration-500 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                        <p className="text-background font-heading font-semibold text-sm">{group.title}</p>
+                        <p className="text-background/60 text-xs mt-1">{group.date}</p>
+                      </div>
+                      <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="w-9 h-9 rounded-full bg-background/20 backdrop-blur-sm flex items-center justify-center">
+                          <ZoomIn className="w-4 h-4 text-background" />
+                        </div>
+                      </div>
+                      {group.images.length > 1 && (
+                        <span className="absolute bottom-3 right-3 bg-background/80 text-xs px-2 py-0.5 rounded-full font-semibold">
+                          +{group.images.length}
+                        </span>
+                      )}
+                    </motion.div>
+                  ))}
             </AnimatePresence>
           </motion.div>
         </div>

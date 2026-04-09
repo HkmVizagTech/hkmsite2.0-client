@@ -99,6 +99,7 @@ const Navbar = () => {
               width={scrolled ? 32 : 40}
               height={scrolled ? 32 : 40}
               className="w-auto transition-all duration-300"
+              style={{ width: 'auto' }}
             />
           </Link>
 

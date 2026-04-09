@@ -69,6 +69,7 @@ const Footer = () => {
           src="/assets/vizag-temple-4.jpeg"
           alt="Hare Krishna Vaikuntham Temple Vizag"
           fill
+          sizes="100vw"
           className="object-cover object-center"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[hsl(220,90%,12%,0.3)] via-transparent to-foreground" />

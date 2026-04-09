@@ -14,10 +14,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Plus, Pencil, Trash2, X, CalendarDays, MapPin, Clock, Download } from "lucide-react";
 import { useRouter } from "next/navigation";
 import ImageUpload from "@/components/ui/image-upload";
+import { useAdminLoader } from "@/contexts/AdminLoaderContext";
 import FormBuilder, { FieldDef } from "@/components/admin/FormBuilder";
 import EventRegistrationForm from "@/components/EventRegistrationForm";
 import { Badge } from "@/components/ui/badge";
 import EventCard from "@/components/EventCard";
+import { toast } from "@/hooks/use-toast";
 
 
 export default function AdminEvents() {
@@ -55,6 +57,7 @@ export default function AdminEvents() {
 
   const [activeEventForForm, setActiveEventForForm] = useState<number | null>(null);
   const router = useRouter();
+  const { show, hide } = useAdminLoader();
 
   const saveRegistrationForm = async (eventId: string | number, formSchema: any) => {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
@@ -127,6 +130,7 @@ export default function AdminEvents() {
       }
   if (fileRef.current) fd.append("images", fileRef.current);
       if (editing) {
+        show && show('Updating event...');
         const res = await fetch(`${apiUrl}/events/${editing}`, { method: "PUT", body: fd, credentials: "include" });
         if (res.ok) {
           const json = await res.json().catch(() => null);
@@ -138,9 +142,10 @@ export default function AdminEvents() {
           success = true;
         } else {
           const txt = await res.text().catch(()=>null);
-          alert('Failed to update event: ' + (txt || res.statusText));
+          toast({ title: 'Failed to update event', description: txt || res.statusText });
         }
       } else {
+        show && show('Creating event...');
         const res = await fetch(`${apiUrl}/events`, { method: "POST", body: fd, credentials: "include" });
         if (res.ok) {
           const json = await res.json().catch(() => null);
@@ -152,13 +157,14 @@ export default function AdminEvents() {
           success = true;
         } else {
           const txt = await res.text().catch(()=>null);
-          alert('Failed to create event: ' + (txt || res.statusText));
+          toast({ title: 'Failed to create event', description: txt || res.statusText });
         }
       }
     } catch (err) {
-      alert('Network error while creating/updating event');
+      toast({ title: 'Network error', description: 'Network error while creating/updating event' });
     } finally {
       setSubmitting(false);
+      try { hide && hide(); } catch (_) {}
     }
     if (success) {
       setShowForm(false);

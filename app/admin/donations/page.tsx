@@ -206,10 +206,11 @@ export default function AdminDonations() {
                 </tr>
               </thead>
               <tbody>
-                    {filtered.map((d) => {
+                    {filtered.map((d, i) => {
                   const MethodIcon = methodIcons[d.method] || IndianRupee;
+                  const rowKey = d._id || d.id || d.transactionId || d.razorpayOrderId || `don-${i}`;
                   return (
-                    <tr key={d.id} className="border-b hover:bg-muted/30">
+                    <tr key={rowKey} className="border-b hover:bg-muted/30">
                       <td className="px-4 py-3 font-mono text-xs">{d.transactionId || d.razorpayOrderId || d._id}</td>
                       <td className="px-4 py-3">
                         <div className="font-medium">{d.donor}</div>

@@ -65,8 +65,28 @@ export default function RegistrationsList({ eventId, tableOnly }: { eventId: str
   if (filterPresent === 'absent') params.set('attended', 'false');
   const res = await fetch(`/api/events/${eventId}/registrations?${params.toString()}`);
       if (!res.ok) {
-        const text = await res.text().catch(() => res.statusText || "Failed to fetch");
-        throw new Error(text || `Status ${res.status}`);
+        let errMsg = `Status ${res.status}`;
+        try {
+          const ct = res.headers.get("content-type") || "";
+          if (ct.includes("application/json")) {
+            const errJson = await res.json().catch(() => null);
+            if (errJson) {
+              if (typeof errJson === "string") errMsg = errJson;
+              else if (errJson.message) errMsg = errJson.message;
+              else errMsg = JSON.stringify(errJson);
+            }
+          } else {
+            const text = await res.text().catch(() => null);
+            if (text) errMsg = text;
+          }
+        } catch (e) {
+          // fall back to status
+        }
+  // set visible error and exit early instead of throwing to avoid
+  // client-side uncaught error traces in the dev overlay
+  setError(errMsg);
+  setLoading(false);
+  return;
       }
       const json = await res.json();
       setRegistrations(json.items || []);

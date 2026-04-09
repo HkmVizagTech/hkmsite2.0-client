@@ -17,7 +17,7 @@ const PageHero = ({ title, subtitle, breadcrumb, backgroundImage }: PageHeroProp
     <section className="relative pt-20 min-h-[50vh] flex items-center overflow-hidden">
       {backgroundImage && (
         <div className="absolute inset-0">
-          <Image src={backgroundImage} alt="" fill className="object-cover" />
+          <Image src={backgroundImage} alt="" fill sizes="100vw" className="object-cover" />
           <div className="absolute inset-0 bg-foreground/70" />
         </div>
       )}

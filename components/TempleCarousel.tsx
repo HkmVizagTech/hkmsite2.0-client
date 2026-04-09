@@ -84,6 +84,7 @@ const TempleCarousel = () => {
             src={slides[current].src}
             alt={slides[current].title}
             fill
+            sizes="100vw"
             className="object-cover"
             priority
           />
