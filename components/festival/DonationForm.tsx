@@ -52,7 +52,7 @@ export default function DonationForm({ config, setToast }: any) {
     }
   const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
     try {
-      const orderRes = await fetch(`${apiBase}/payments/order`, {
+  const orderRes = await fetch(`${apiBase}/payments/order`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -121,11 +121,11 @@ export default function DonationForm({ config, setToast }: any) {
             status: 'paid'
           };
 
-          const donateRes = await fetch(`${apiBase}/donations`, {
+      const donateRes = await fetch(`${apiBase}/donations`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
-          });
+      ,      credentials: 'include' });
           if (!donateRes.ok) throw new Error('Failed to record donation after payment');
           setToast({ message: `Thank you — payment successful (₹${fmt(totalAmount)}).`, type: 'success' });
           setTimeout(() => setToast({}), 4000);
@@ -178,7 +178,8 @@ export default function DonationForm({ config, setToast }: any) {
       fetch(`${apiBase}/donations`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
+        credentials: 'include'
       }).then(async (r) => {
         if (!r.ok) throw new Error('Failed to create donation');
         const data = await r.json();

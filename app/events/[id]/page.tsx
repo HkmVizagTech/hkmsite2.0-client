@@ -1,25 +1,37 @@
 import PageLayout from "@/components/PageLayout";
+import { notFound } from "next/navigation";
 import PageHero from "@/components/PageHero";
-import EventRegistrationForm from "@/components/EventRegistrationForm";
+import EventRegistrationLoader from "@/components/EventRegistrationLoader";
+import EventDetailClient from "@/components/EventDetailClient";
 import Image from "next/image";
 
-export default async function EventDetail(props: any) {
-  const params = props?.params || {};
+export default async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
   let event: any = null;
+  let fetchStatus: number | null = null;
+  let fetchBody: any = null;
   try {
-    const res = await fetch(`${apiUrl}/events/${params.id}`);
+    // ensure we always fetch fresh data for event detail pages so newly created events
+    // by admins appear immediately instead of returning a cached "not found"
+    const res = await fetch(`${apiUrl}/events/${id}`, { cache: 'no-store' });
+    fetchStatus = res.status;
+    try {
+      fetchBody = await res.json();
+    } catch (e) {
+      fetchBody = await res.text().catch(() => null);
+    }
     if (res.ok) {
-      const json = await res.json();
-      event = json.event;
+      event = fetchBody?.event;
     }
   } catch (e) {
   }
 
   if (!event) {
+    // render a client boundary that will try to fetch the event and show registration form if it appears
     return (
       <PageLayout>
-        <div className="py-20 text-center">Event not found.</div>
+        <EventDetailClient id={id} />
       </PageLayout>
     );
   }
@@ -37,7 +49,7 @@ export default async function EventDetail(props: any) {
 
             {
 }
-            <EventRegistrationForm eventId={event._id || params.id} formSchema={event.registrationForm} event={event} />
+            <EventRegistrationLoader eventId={event._id || id} initialFormSchema={event.registrationForm} initialEvent={event} />
           </div>
         </div>
       </section>

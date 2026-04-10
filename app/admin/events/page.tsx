@@ -63,25 +63,70 @@ export default function AdminEvents() {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
     let success = false;
   try {
-    setSubmitting(true);
+  setSubmitting(true);
+  show && show('Saving registration form...');
+    console.log('saveRegistrationForm: sending', eventId, formSchema);
+    // fetch existing event to include required fields (validator expects them)
+    let title = '';
+    let description = '';
+    let date = '';
+    try {
+      const evRes = await fetch(`${apiUrl}/events/${eventId}`, { credentials: 'include' });
+      if (evRes.ok) {
+        const evJson = await evRes.json().catch(()=>null);
+        const ev = evJson?.event || evJson;
+        if (ev) {
+          title = ev.title || '';
+          description = ev.description || '';
+          date = ev.date ? new Date(ev.date).toISOString() : '';
+        }
+      }
+    } catch (_) {}
+
     const fd = new FormData();
-      fd.append("registrationForm", JSON.stringify(formSchema));
-      const res = await fetch(`${apiUrl}/events/${eventId}`, { method: "PUT", body: fd, credentials: "include" });
-      if (res.ok) {
+    fd.append("registrationForm", JSON.stringify(formSchema));
+    // include required fields so server validation passes
+    if (title) fd.append('title', title);
+    if (description) fd.append('description', description);
+    if (date) fd.append('date', date);
+
+    const res = await fetch(`${apiUrl}/events/${eventId}`, { method: "PUT", body: fd, credentials: "include" });
+    if (res.ok) {
+        console.log('saveRegistrationForm: response ok for', eventId);
         try {
           const json = await res.json();
           if (json) {
             const ev = json.event || json;
             const updated = { ...ev, id: ev._id || ev.id || `tmp-${eventId}` };
             dispatch(updateEvent(updated as any));
+            // ensure local registrationForm state matches saved value
+            try { setRegistrationForm((updated as any).registrationForm || null); } catch (_) {}
+            // fetch the event to confirm persistence
+            try {
+              const check = await fetch(`${apiUrl}/events/${eventId}`, { credentials: 'include' });
+              if (check.ok) {
+                const j = await check.json().catch(()=>null);
+                console.log('saveRegistrationForm: fetched after save', j?.event || j);
+              }
+            } catch (_) {}
+            toast({ title: 'Form saved', description: 'Registration form saved for this event' });
           }
         } catch (_) {}
-      }
+        // revalidate the public page for this event
+        try { fetch(`/api/revalidate`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ path: `/events/${eventId}` }) }).catch(()=>null); } catch (_) {}
+    } else {
+      const txt = await res.text().catch(()=>null);
+      toast({ title: 'Failed to save form', description: txt || res.statusText });
+    }
     } catch (err) {
+      console.error('saveRegistrationForm err', err);
+      toast({ title: 'Failed', description: 'Error saving registration form' });
     } finally {
       setSubmitting(false);
+      hide && hide();
     }
     setShowForm(false);
+  console.log('saveRegistrationForm: finished for', eventId);
   };
 
   const handleDelete = async (id: number) => {
@@ -108,7 +153,7 @@ export default function AdminEvents() {
     const fetchEvents = async () => {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3003";
       try {
-        const res = await fetch(`${apiUrl}/events`);
+  const res = await fetch(`${apiUrl}/events`, { credentials: 'include' });
         if (!res.ok) return;
         const data = await res.json();
         if (Array.isArray(data.events)) {
@@ -123,36 +168,52 @@ export default function AdminEvents() {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3003";
     let success = false;
   try {
-    setSubmitting(true);
+  setSubmitting(true);
+  show && show(editing ? 'Updating event...' : 'Creating event...');
     const fd = new FormData();
       for (const key in data) {
         if (data[key] !== undefined && data[key] !== null) fd.append(key, String(data[key]));
       }
   if (fileRef.current) fd.append("images", fileRef.current);
-      if (editing) {
-        show && show('Updating event...');
+  if (editing) {
+        // If admin has a registration form open/set, include it in the update payload
+        if (registrationForm) {
+          try {
+            fd.append("registrationForm", JSON.stringify(registrationForm));
+          } catch (_) {}
+        }
         const res = await fetch(`${apiUrl}/events/${editing}`, { method: "PUT", body: fd, credentials: "include" });
-        if (res.ok) {
+          if (res.ok) {
           const json = await res.json().catch(() => null);
           if (json) {
             const ev = (json && json.event) ? json.event : json;
             const normalized = { ...ev, id: ev._id || ev.id || `temp-${Date.now()}` } as any;
             dispatch(updateEvent(normalized));
+            // revalidate updated event page
+            try { fetch(`/api/revalidate`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ path: `/events/${normalized._id || normalized.id}` }) }).catch(()=>null); } catch (_) {}
           }
           success = true;
         } else {
           const txt = await res.text().catch(()=>null);
           toast({ title: 'Failed to update event', description: txt || res.statusText });
         }
-      } else {
-        show && show('Creating event...');
+  } else {
+  show && show('Creating event...');
+        // If admin built a registration form while creating the event, include it so the server stores it
+        if (registrationForm) {
+          try {
+            fd.append("registrationForm", JSON.stringify(registrationForm));
+          } catch (_) {}
+        }
         const res = await fetch(`${apiUrl}/events`, { method: "POST", body: fd, credentials: "include" });
-        if (res.ok) {
+  if (res.ok) {
           const json = await res.json().catch(() => null);
           if (json) {
             const ev = (json && json.event) ? json.event : json;
             const normalized = { ...ev, id: ev._id || ev.id || `temp-${Date.now()}` } as any;
             dispatch(addEvent(normalized));
+            // revalidate created event page
+            try { fetch(`/api/revalidate`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ path: `/events/${normalized._id || normalized.id}` }) }).catch(()=>null); } catch (_) {}
           }
           success = true;
         } else {
@@ -217,7 +278,7 @@ export default function AdminEvents() {
                   <div className="flex items-center justify-between">
                     <div />
                     <div>
-                      <Button variant="outline" size="sm" onClick={() => setShowFormBuilder(true)}>Edit registration form</Button>
+                      <Button variant="outline" size="sm" onClick={() => { setShowFormBuilder(true); setActiveEventForForm(editing); }}>Edit registration form</Button>
                     </div>
                   </div>
                 <Input placeholder="Event Title" {...register("title")}/>

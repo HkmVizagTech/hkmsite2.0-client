@@ -340,7 +340,8 @@ const DonationModal = ({ open, onClose, initialAmount, festivalSlug }: { open: b
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({
                               donorName, donorEmail, amount: finalAmount, type: donationType, message: '', transactionId: '', festivalSlug: festivalSlug || undefined
-                            })
+                            }),
+                            credentials: 'include'
                           });
                           if (res.ok) {
                             setCompleted(true);
@@ -403,7 +404,7 @@ export default function DonatePage() {
     if (!festivalQuery) return;
     (async () => {
       try {
-        const res = await fetch(`${apiUrl}/festival-donations/${encodeURIComponent(festivalQuery)}`);
+  const res = await fetch(`${apiUrl}/festival-donations/${encodeURIComponent(festivalQuery)}`, { credentials: 'include' });
         if (!res.ok) return;
         const data = await res.json();
         setFestivalSlug(data.slug);

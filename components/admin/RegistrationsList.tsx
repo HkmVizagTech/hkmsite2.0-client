@@ -38,7 +38,7 @@ export default function RegistrationsList({ eventId, tableOnly }: { eventId: str
       if (!eventId) return;
       try {
         const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3003";
-        const res = await fetch(`${apiUrl}/events/${eventId}`);
+  const res = await fetch(`${apiUrl}/events/${eventId}`, { credentials: 'include' });
         if (!res.ok) return;
         const json = await res.json();
         const rf = json.event?.registrationForm;

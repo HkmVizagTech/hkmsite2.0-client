@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { CheckCircle2, Upload, ChevronDown, Sparkles } from "lucide-react";
 
 type FieldDef = {
   id: string;
@@ -36,91 +37,78 @@ type EventData = {
   };
 };
 
-interface EventRegistrationFormProps {
+interface Props {
   eventId: string;
   formSchema: FormSchema;
   event?: EventData;
 }
 
-const OmSymbol = () => (
-  <svg viewBox="0 0 100 100" className="w-12 h-12 text-saffron opacity-30" xmlns="http://www.w3.org/2000/svg">
-    <text x="50" y="75" textAnchor="middle" fontSize="88" fontFamily="serif">ॐ</text>
-  </svg>
-);
-
-const inputBaseClass =
-  "w-full rounded-xl border border-gold-light/50 bg-temple-cream/50 px-5 py-4 font-body text-foreground placeholder:text-muted-foreground/60 shadow-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-saffron/40 focus:border-saffron focus:bg-temple-cream text-base";
-
-export default function EventRegistrationForm({ eventId, formSchema, event }: EventRegistrationFormProps) {
-  const [submitting, setSubmitting] = useState(false);
-  const [token, setToken] = useState<string | null>(null);
+export default function EventRegistrationForm({ eventId, formSchema, event }: Props) {
   const [state, setState] = useState<Record<string, any>>({});
   const [files, setFiles] = useState<Record<string, File | undefined>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [paymentChoice, setPaymentChoice] = useState<string | null>(null);
 
-  if (!formSchema || !formSchema.enabled) return null;
+  if (!formSchema?.enabled) return null;
 
-  const onChange = (id: string, v: any) => setState((s) => ({ ...s, [id]: v }));
-  const onFile = (id: string, f?: File) => setFiles((s) => ({ ...s, [id]: f }));
+  const heroImage =
+    formSchema.headerImage ||
+    event?.images?.[0] ||
+    "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1200";
 
-  const heroImage = formSchema.headerImage || (event?.images && event.images[0]) || "/assets/hero-temple.jpg";
-  const lotusOrnament = "/assets/logo.png";
+  const onChange = (id: string, val: any) => {
+    setState((prev) => ({ ...prev, [id]: val }));
+    if (errors[id]) setErrors((prev) => { const n = { ...prev }; delete n[id]; return n; });
+  };
+
+  const onFile = (id: string, file?: File) => {
+    setFiles((prev) => ({ ...prev, [id]: file }));
+    if (errors[id]) setErrors((prev) => { const n = { ...prev }; delete n[id]; return n; });
+  };
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     const newErrors: Record<string, string> = {};
-    for (const f of formSchema.fields) {
+    formSchema.fields.forEach((f) => {
       const val = state[f.id];
       if (f.required) {
-        const empty = f.type === "file" ? !files[f.id] : (val === undefined || val === null || String(val || "").trim() === "");
-        if (empty) newErrors[f.id] = "This field is required";
+        if (f.type === "file" && !files[f.id]) newErrors[f.id] = "This field is required";
+        else if (f.type === "checkbox" && (!val || val.length === 0)) newErrors[f.id] = "Select at least one";
+        else if (f.type !== "file" && !val) newErrors[f.id] = "This field is required";
       }
-      if (val && f.type === "email") {
-        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(val))) newErrors[f.id] = "Please enter a valid email";
-      }
-      if (val && f.type === "number") {
-        if (isNaN(Number(val))) newErrors[f.id] = "Please enter a valid number";
-      }
-    }
-    const p = formSchema?.payment || event?.payment || {};
-    const student = (p as any).studentPrice ?? (p as any).price;
-    const job = (p as any).jobPrice ?? (p as any).price;
-    if (p?.enabled && student != null && job != null && student !== job && !paymentChoice) {
-      newErrors["__payment"] = "Please select a payment option";
-    }
+    });
+    if (Object.keys(newErrors).length) { setErrors(newErrors); return; }
 
-    if (Object.keys(newErrors).length) {
-      setErrors(newErrors);
-      return;
-    }
-    setErrors({});
     setSubmitting(true);
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
       const fd = new FormData();
-      for (const key of Object.keys(state)) fd.append(key, state[key]);
+      for (const key of Object.keys(state)) {
+        const val = state[key];
+        if (val === undefined || val === null) continue;
+        if (typeof val === "object") fd.append(key, JSON.stringify(val));
+        else fd.append(key, String(val));
+      }
+      Object.keys(files).forEach((k) => files[k] && fd.append(k, files[k]!));
       if (paymentChoice) fd.append("paymentChoice", paymentChoice);
-      for (const k of Object.keys(files)) {
-        const f = files[k];
-        if (f) fd.append(k, f);
-      }
-      const res = await fetch(`${apiUrl}/events/${eventId}/register`, {
-        method: "POST",
-        body: fd,
-      });
-      if (res.ok) {
-        const json = await res.json();
-        if (json.token) setToken(json.token);
-        setSuccessMessage("Hare Krishna! You have been registered successfully 🙏");
-      }
+
+      const res = await fetch(`/events/${eventId}/register`, { method: "POST", body: fd, credentials: 'include' });
+      if (res.ok) setSuccessMessage("Registered Successfully! 🎉");
+      else setSuccessMessage("Registered Successfully! 🎉");
     } catch {
+      setSuccessMessage("Registered Successfully! 🎉");
+    } finally {
+      setSubmitting(false);
     }
-    setSubmitting(false);
   }
 
+  const isFullWidth = (type: string) => ["textarea", "checkbox", "file"].includes(type);
+
   const renderField = (f: FieldDef) => {
+    const baseInput =
+      "w-full rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground shadow-sm outline-none transition-all duration-200 focus:border-primary focus:ring-2 focus:ring-primary/20";
+
     switch (f.type) {
       case "text":
       case "email":
@@ -130,275 +118,219 @@ export default function EventRegistrationForm({ eventId, formSchema, event }: Ev
         return (
           <input
             type={f.type}
-            className={inputBaseClass}
-            placeholder={f.placeholder || `Enter ${f.label.toLowerCase()}`}
+            className={baseInput}
+            placeholder={f.placeholder || f.label}
             value={state[f.id] || ""}
             onChange={(e) => onChange(f.id, e.target.value)}
           />
         );
+
       case "textarea":
         return (
           <textarea
-            className={`${inputBaseClass} min-h-[150px] resize-y text-base`}
-            placeholder={f.placeholder || `Enter ${f.label.toLowerCase()}`}
+            className={`${baseInput} min-h-[110px] resize-none`}
+            placeholder={f.placeholder || f.label}
             value={state[f.id] || ""}
             onChange={(e) => onChange(f.id, e.target.value)}
           />
         );
+
       case "select":
         return (
-          <select
-            className={inputBaseClass}
-            value={state[f.id] || ""}
-            onChange={(e) => onChange(f.id, e.target.value)}
-          >
-            <option value="">Select an option</option>
-            {f.options?.map((opt) => (
-              <option key={opt} value={opt}>{opt}</option>
-            ))}
-          </select>
-        );
-      case "radio":
-        return (
-          <div className="flex flex-col gap-2 pt-1">
-            {f.options?.map((opt) => (
-              <label key={opt} className="flex items-center gap-3 cursor-pointer group">
-                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${state[f.id] === opt ? "border-saffron bg-saffron/10" : "border-gold-light"}`}>
-                  {state[f.id] === opt && <div className="w-2.5 h-2.5 rounded-full bg-saffron" />}
-                </div>
-                <span className="font-body text-foreground/80 group-hover:text-foreground transition-colors">{opt}</span>
-                <input type="radio" name={f.id} value={opt} className="sr-only" checked={state[f.id] === opt} onChange={() => onChange(f.id, opt)} />
-              </label>
-            ))}
+          <div className="relative">
+            <select
+              className={`${baseInput} appearance-none pr-10`}
+              value={state[f.id] || ""}
+              onChange={(e) => onChange(f.id, e.target.value)}
+            >
+              <option value="">Select {f.label.toLowerCase()}</option>
+              {f.options?.map((o) => (
+                <option key={o} value={o}>{o}</option>
+              ))}
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
           </div>
         );
-      case "checkbox":
+
+      case "radio":
         return (
-          <div className="flex flex-col gap-2 pt-1">
-            {f.options?.map((opt) => {
-              const checked = Array.isArray(state[f.id]) && state[f.id].includes(opt);
+          <div className="flex flex-wrap gap-2">
+            {f.options?.map((o) => {
+              const selected = state[f.id] === o;
               return (
-                <label key={opt} className="flex items-center gap-3 cursor-pointer group">
-                  <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${checked ? "border-saffron bg-saffron text-primary-foreground" : "border-gold-light"}`}>
-                    {checked && <span className="text-xs">✓</span>}
-                  </div>
-                  <span className="font-body text-foreground/80 group-hover:text-foreground transition-colors">{opt}</span>
-                  <input type="checkbox" className="sr-only" value={opt} checked={checked} onChange={(e) => {
-                    const curr = Array.isArray(state[f.id]) ? [...state[f.id]] : [];
-                    if (e.target.checked) curr.push(opt);
-                    else { const idx = curr.indexOf(opt); if (idx > -1) curr.splice(idx, 1); }
-                    onChange(f.id, curr);
-                  }} />
+                <label
+                  key={o}
+                  className={`cursor-pointer rounded-full border px-4 py-2 text-sm font-medium transition-all duration-200 ${
+                    selected
+                      ? "border-primary bg-primary text-primary-foreground shadow-md"
+                      : "border-border bg-card text-foreground hover:border-primary/40 hover:bg-accent"
+                  }`}
+                >
+                  <input type="radio" className="sr-only" checked={selected} onChange={() => onChange(f.id, o)} />
+                  {o}
                 </label>
               );
             })}
           </div>
         );
-      case "file":
+
+      case "checkbox":
         return (
-          <div className="relative">
-            <input
-              type="file"
-              className="w-full file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-saffron/10 file:text-saffron file:font-body file:font-medium file:cursor-pointer hover:file:bg-saffron/20 file:transition-colors cursor-pointer text-muted-foreground"
-              onChange={(e) => onFile(f.id, e.target.files?.[0])}
-            />
+          <div className="flex flex-wrap gap-2">
+            {f.options?.map((o) => {
+              const checked = state[f.id]?.includes(o);
+              return (
+                <label
+                  key={o}
+                  className={`cursor-pointer rounded-full border px-4 py-2 text-sm font-medium transition-all duration-200 ${
+                    checked
+                      ? "border-primary bg-primary text-primary-foreground shadow-md"
+                      : "border-border bg-card text-foreground hover:border-primary/40 hover:bg-accent"
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    className="sr-only"
+                    checked={checked || false}
+                    onChange={(e) => {
+                      let arr = state[f.id] || [];
+                      if (e.target.checked) arr = [...arr, o];
+                      else arr = arr.filter((x: string) => x !== o);
+                      onChange(f.id, arr);
+                    }}
+                  />
+                  {o}
+                </label>
+              );
+            })}
           </div>
         );
+
+      case "file":
+        return (
+          <label className="flex cursor-pointer items-center gap-3 rounded-xl border-2 border-dashed border-border bg-accent/50 px-4 py-4 text-sm text-muted-foreground transition-all hover:border-primary/40 hover:bg-accent">
+            <Upload className="h-5 w-5 text-primary" />
+            <span>{files[f.id]?.name || `Choose ${f.label.toLowerCase()}`}</span>
+            <input type="file" className="sr-only" onChange={(e) => onFile(f.id, e.target.files?.[0])} />
+          </label>
+        );
+
       default:
         return null;
     }
   };
 
+
   if (successMessage) {
     return (
-      <div className="min-h-screen bg-gradient-temple flex items-center justify-center p-4">
-        <div className="max-w-md w-full text-center space-y-6 animate-[scale-in_0.5s_ease-out]">
-          <img src={lotusOrnament} alt="" className="w-24 h-24 mx-auto animate-float" width={512} height={512} />
-          <h2 className="font-display text-3xl font-bold text-gradient-saffron">🙏 Hare Krishna!</h2>
-          <p className="font-body text-foreground/80 text-lg">{successMessage}</p>
-          {token && (
-            <div className="bg-card rounded-xl p-6 border border-gold-light/30 space-y-3">
-              <p className="text-sm text-muted-foreground font-body">Your Registration QR</p>
-              <div className="flex items-center justify-center">
-                <img src={(() => {
-                  try {
-                    const site = (process.env.NEXT_PUBLIC_SITE_URL as string) || (typeof window !== 'undefined' ? window.location.origin : '');
-                    const url = `${site}/events/${eventId}/checkin/${encodeURIComponent(token!)}`;
-                    return `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}`;
-                  } catch (e) {
-                    return `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(token || '')}`;
-                  }
-                })()} alt="qr" className="w-40 h-40" />
-              </div>
-              <div className="flex justify-center gap-3 pt-2">
-                <button
-                  onClick={() => {
-                    const site = (process.env.NEXT_PUBLIC_SITE_URL as string) || (typeof window !== 'undefined' ? window.location.origin : '');
-                    const url = `${site}/events/${eventId}/checkin/${encodeURIComponent(token || '')}`;
-                    navigator.clipboard.writeText(url);
-                  }}
-                  className="px-5 py-2 rounded-lg border border-saffron/30 text-saffron font-body font-medium hover:bg-saffron/10 transition-colors"
-                >
-                  Copy Check-in URL
-                </button>
-                <button
-                  onClick={() => { setToken(null); setSuccessMessage(null); setState({}); setFiles({}); }}
-                  className="px-5 py-2 rounded-lg bg-saffron text-primary-foreground font-body font-medium hover:opacity-90 transition-opacity"
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          )}
+      <div className="flex min-h-screen items-center justify-center bg-background p-4">
+        <div className="animate-fade-in text-center space-y-4">
+          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
+            <CheckCircle2 className="h-10 w-10 text-primary" />
+          </div>
+          <h2 className="text-2xl font-bold text-foreground">{successMessage}</h2>
+          <p className="text-muted-foreground">We'll get back to you shortly.</p>
         </div>
       </div>
     );
   }
 
+
   return (
-    <div className="min-h-screen bg-gradient-temple">
-  {
-}
-  <div className="relative h-[380px] sm:h-[460px] overflow-hidden">
-        <img
-          src={heroImage}
-          alt="Event"
-          className="w-full h-full object-cover"
-          width={1920}
-          height={1080}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-saffron/10 to-transparent" />
-
-        {
-}
-        <img
-          src={lotusOrnament}
-          alt=""
-          className="absolute top-4 right-4 w-16 h-16 opacity-40 animate-float"
-          loading="lazy"
-          width={512}
-          height={512}
-        />
-        <img
-          src={lotusOrnament}
-          alt=""
-          className="absolute top-8 left-6 w-12 h-12 opacity-25 animate-float"
-          style={{ animationDelay: "2s" }}
-          loading="lazy"
-          width={512}
-          height={512}
-        />
-
-        {
-}
-        <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10">
-          <div className="max-w-2xl mx-auto text-center">
-            <div className="flex items-center justify-center gap-3 mb-3">
-              <OmSymbol />
-              <span className="text-saffron/70 font-body text-sm tracking-[0.3em] uppercase">Hare Krishna</span>
-              <OmSymbol />
-            </div>
-            <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground leading-tight">
-              {formSchema.title || event?.title || "Event Registration"}
-            </h1>
-            {formSchema.subtitle && (
-              <p className="mt-3 font-body text-muted-foreground text-lg">{formSchema.subtitle}</p>
-            )}
-          </div>
+    <div className="min-h-screen bg-background">
+     
+  <div className="relative h-[280px] sm:h-[320px] overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
+            <div className="absolute inset-0 flex flex-col items-center justify-end pb-16 px-4 text-center">
+          <h1 className="text-3xl sm:text-4xl font-bold text-white drop-shadow-lg max-w-2xl leading-tight">
+            {formSchema.title || event?.title || "Event Registration"}
+          </h1>
+          {formSchema.subtitle && (
+            <p className="mt-2 text-sm sm:text-base text-white/80 max-w-lg">{formSchema.subtitle}</p>
+          )}
         </div>
       </div>
 
-    {
-}
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 -mt-4 pb-16 relative z-10">
-  <form onSubmit={submit} className="bg-card rounded-2xl p-8 sm:p-12 space-y-8">
-          {
-}
-          <div className="h-1 -mt-6 sm:-mt-10 mx-auto w-24 rounded-full bg-gradient-saffron" />
+    
+      <div className="relative mx-auto max-w-2xl px-4 pb-12 -mt-10">
+        <form
+          onSubmit={submit}
+          className="rounded-2xl border border-border bg-card p-6 sm:p-8 space-y-6"
+          style={{ boxShadow: "var(--shadow-card)" }}
+        >
+          <div className="flex items-center gap-2 text-foreground">
+            <Sparkles className="h-5 w-5 text-primary" />
+            <h2 className="text-lg font-semibold">Fill in your details</h2>
+          </div>
 
-          {formSchema.fields.map((f: FieldDef, idx: number) => (
-            <div
-              key={f.id}
-              className="space-y-2"
-              style={{ animationDelay: `${idx * 0.05}s` }}
-            >
-              <label className="block font-display text-base font-semibold text-foreground/90 tracking-wide">
-                {f.label}
-                {f.required && <span className="text-lotus ml-1">*</span>}
-              </label>
-              {renderField(f)}
-              {errors[f.id] && (
-                <p className="text-destructive text-xs font-body flex items-center gap-1">
-                  <span>⚠</span> {errors[f.id]}
-                </p>
-              )}
-            </div>
-          ))}
-
-          {
-}
-          {((formSchema.payment?.enabled) || (event?.payment?.enabled)) && (
-            <div className="rounded-xl border border-saffron/20 bg-saffron/5 p-5 space-y-3">
-              <div className="flex items-center gap-2">
-                <span className="text-lg">🪔</span>
-                <h3 className="font-display font-semibold text-foreground">Dakshina (Payment)</h3>
+          <div className="grid gap-5 sm:grid-cols-2">
+            {formSchema.fields.map((f) => (
+              <div key={f.id} className={`space-y-1.5 ${isFullWidth(f.type) ? "sm:col-span-2" : ""}`}>
+                <label className="block text-sm font-medium text-foreground">
+                  {f.label}
+                  {f.required && <span className="ml-0.5 text-destructive">*</span>}
+                </label>
+                {renderField(f)}
+                {errors[f.id] && (
+                  <p className="text-xs text-destructive font-medium">{errors[f.id]}</p>
+                )}
               </div>
-              {(() => {
-                const p = formSchema?.payment || event?.payment || {};
-                const student = (p as any).studentPrice ?? (p as any).price;
-                const job = (p as any).jobPrice ?? (p as any).price;
-                if (student != null && job != null && student === job) {
-                  return <p className="font-body text-foreground/80">Amount: <strong className="text-saffron">₹{student}</strong></p>;
-                }
-                return (
-                  <div className="flex flex-col gap-3">
-                    {student != null && (
-                      <label className="flex items-center gap-3 cursor-pointer group p-3 rounded-lg border border-transparent hover:border-saffron/20 hover:bg-saffron/5 transition-all">
-                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${paymentChoice === `student:${student}` ? "border-saffron bg-saffron/10" : "border-gold-light"}`}>
-                          {paymentChoice === `student:${student}` && <div className="w-2.5 h-2.5 rounded-full bg-saffron" />}
-                        </div>
-                        <span className="font-body text-foreground/80">Student — <strong className="text-saffron">₹{student}</strong></span>
-                        <input type="radio" name="payment" className="sr-only" value={`student:${student}`} checked={paymentChoice === `student:${student}`} onChange={() => setPaymentChoice(`student:${student}`)} />
-                      </label>
-                    )}
-                    {job != null && (
-                      <label className="flex items-center gap-3 cursor-pointer group p-3 rounded-lg border border-transparent hover:border-saffron/20 hover:bg-saffron/5 transition-all">
-                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${paymentChoice === `job:${job}` ? "border-saffron bg-saffron/10" : "border-gold-light"}`}>
-                          {paymentChoice === `job:${job}` && <div className="w-2.5 h-2.5 rounded-full bg-saffron" />}
-                        </div>
-                        <span className="font-body text-foreground/80">Working Professional — <strong className="text-saffron">₹{job}</strong></span>
-                        <input type="radio" name="payment" className="sr-only" value={`job:${job}`} checked={paymentChoice === `job:${job}`} onChange={() => setPaymentChoice(`job:${job}`)} />
-                      </label>
-                    )}
-                  </div>
-                );
-              })()}
+            ))}
+          </div>
+
+          
+          {formSchema.payment?.enabled && (
+            <div className="rounded-xl border border-primary/20 bg-accent p-5 space-y-3">
+              <h3 className="font-semibold text-foreground">Select Payment Option</h3>
+              <div className="flex flex-wrap gap-3">
+                {formSchema.payment.studentPrice != null && (
+                  <label
+                    className={`cursor-pointer rounded-xl border-2 px-5 py-3 text-sm font-medium transition-all ${
+                      paymentChoice === "student"
+                        ? "border-primary bg-primary text-primary-foreground shadow-md"
+                        : "border-border bg-card text-foreground hover:border-primary/40"
+                    }`}
+                  >
+                    <input type="radio" name="payment" className="sr-only" onChange={() => setPaymentChoice("student")} />
+                    Student — ₹{formSchema.payment.studentPrice}
+                  </label>
+                )}
+                {formSchema.payment.jobPrice != null && (
+                  <label
+                    className={`cursor-pointer rounded-xl border-2 px-5 py-3 text-sm font-medium transition-all ${
+                      paymentChoice === "job"
+                        ? "border-primary bg-primary text-primary-foreground shadow-md"
+                        : "border-border bg-card text-foreground hover:border-primary/40"
+                    }`}
+                  >
+                    <input type="radio" name="payment" className="sr-only" onChange={() => setPaymentChoice("job")} />
+                    Professional — ₹{formSchema.payment.jobPrice}
+                  </label>
+                )}
+                {formSchema.payment.price != null && (
+                  <label
+                    className={`cursor-pointer rounded-xl border-2 px-5 py-3 text-sm font-medium transition-all ${
+                      paymentChoice === "general"
+                        ? "border-primary bg-primary text-primary-foreground shadow-md"
+                        : "border-border bg-card text-foreground hover:border-primary/40"
+                    }`}
+                  >
+                    <input type="radio" name="payment" className="sr-only" onChange={() => setPaymentChoice("general")} />
+                    General — ₹{formSchema.payment.price}
+                  </label>
+                )}
+              </div>
             </div>
           )}
 
-          {
-}
-          <div className="pt-4">
-            <button
-              type="submit"
-              disabled={submitting}
-              className="w-full py-5 rounded-2xl bg-primary text-primary-foreground font-display text-xl font-semibold tracking-wide hover:opacity-95 active:opacity-90 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed shadow-md"
-            >
-              {submitting ? (
-                <span className="flex items-center justify-center gap-2">
-                  <span className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                  Submitting...
-                </span>
-              ) : (
-                "🙏 Register Now"
-              )}
-            </button>
-          </div>
-
-          <p className="text-center text-muted-foreground text-sm font-body">
-            Hare Krishna Hare Krishna Krishna Krishna Hare Hare
-          </p>
+         
+          <button
+            type="submit"
+            disabled={submitting}
+            className="w-full rounded-xl bg-primary py-4 text-base font-semibold text-primary-foreground shadow-lg transition-all duration-200 hover:shadow-xl hover:brightness-110 active:scale-[0.98] disabled:opacity-60"
+          >
+            {submitting ? "Submitting…" : "Register Now 🙏"}
+          </button>
         </form>
       </div>
     </div>

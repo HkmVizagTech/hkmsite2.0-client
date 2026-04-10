@@ -1,11 +1,12 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
+import Image from "next/image";
+import ISKLogo from "@/assets/ISKCONGambheeramLogo.jpeg";
 import { useRouter } from "next/navigation";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import { useAuth } from "@/contexts/AuthContext";
-import { useEffect } from "react";
 import { AdminLoaderProvider, useAdminLoader } from "@/contexts/AdminLoaderContext";
 
 const InnerAdmin = ({ children }: { children: ReactNode }) => {
@@ -52,8 +53,8 @@ const InnerAdmin = ({ children }: { children: ReactNode }) => {
       {isLoading && (
         <div className="fixed inset-0 z-[900] flex items-center justify-center bg-foreground/60">
           <div className="bg-background rounded-xl p-6 flex flex-col items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center animate-spin">
-              <span className="text-primary-foreground font-heading font-bold text-xl">ॐ</span>
+            <div className="w-16 h-16 rounded-full overflow-hidden flex items-center justify-center animate-spin">
+              <Image src={typeof ISKLogo === 'string' ? ISKLogo : ISKLogo.src} alt="loading" width={64} height={64} className="w-full h-full object-cover" />
             </div>
             <p className="text-foreground font-medium">{message || "Processing..."}</p>
           </div>

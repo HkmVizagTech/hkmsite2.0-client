@@ -47,7 +47,7 @@ const EventsPreview = () => {
   useEffect(() => {
     async function fetchEvents() {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3003"}/events?limit=4`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3003"}/events?limit=4`, { credentials: 'include' });
         if (!res.ok) return;
         const data = await res.json();
         if (Array.isArray(data.events) && data.events.length > 0) {

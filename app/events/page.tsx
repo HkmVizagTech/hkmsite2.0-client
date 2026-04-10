@@ -18,7 +18,7 @@ type ImportantDate = {
 
 const getEvents = async () => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3003"}/events`, { cache: "no-store" });
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3003"}/events`, { cache: "no-store", credentials: 'include' });
     if (!res.ok) return [];
     const data = await res.json();
     return (data.events || []).map((e: any) => ({
@@ -86,7 +86,7 @@ export default function EventsPage() {
       setEvents(ev);
       setLoading(false);
     });
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/important-dates`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/important-dates`, { credentials: 'include' })
       .then((res) => res.json())
       .then((data) => setImportantDates(Array.isArray(data) ? data : data.dates || []));
   }, []);

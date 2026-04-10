@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Phone, Mail, Sun, Moon, Clock, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import ISKLogo from "@/assets/ISKCONGambheeramLogo.jpeg";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
@@ -93,11 +94,13 @@ const Navbar = () => {
           scrolled ? "px-5 h-14" : "px-4 h-16"
         }`}>
           <Link href="/" className="flex items-center gap-3">
-            <Image 
-              src="/assets/logo.png" 
-              alt="Hare Krishna Movement Vizag" 
-              width={scrolled ? 32 : 40}
-              height={scrolled ? 32 : 40}
+            <Image
+              src={typeof ISKLogo === 'string' ? ISKLogo : ISKLogo.src}
+              alt="Hare Krishna Movement Vizag"
+              width={scrolled ? 32 : 80}
+              height={scrolled ? 32 : 80}
+              priority
+              loading="eager"
               className="w-auto transition-all duration-300"
               style={{ width: 'auto' }}
             />

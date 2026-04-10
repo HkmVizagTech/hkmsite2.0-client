@@ -20,6 +20,7 @@ const HeroSection = () => {
           fill
           sizes="100vw"
           className="object-cover"
+          loading="eager"
           priority
         />
         <div className="absolute inset-0 bg-linear-to-b from-[hsl(220,90%,12%,0.7)] via-[hsl(220,90%,15%,0.5)] to-background" />
