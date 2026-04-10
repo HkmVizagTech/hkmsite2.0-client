@@ -97,8 +97,8 @@ const Navbar = () => {
             <Image
               src={typeof ISKLogo === 'string' ? ISKLogo : ISKLogo.src}
               alt="Hare Krishna Movement Vizag"
-              width={scrolled ? 32 : 80}
-              height={scrolled ? 32 : 80}
+              width={scrolled ? 70 : 80}
+              height={scrolled ? 70 : 80}
               priority
               loading="eager"
               className="w-auto transition-all duration-300"
