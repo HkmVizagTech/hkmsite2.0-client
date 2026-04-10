@@ -13,6 +13,7 @@ import {
   IndianRupee,
   ChevronRight,
 } from "lucide-react";
+import NextImage from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
@@ -105,8 +106,8 @@ const AdminSidebar = () => {
 }
         <div className={`p-5 ${collapsed ? "px-2 py-4" : ""}`}>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shrink-0 shadow-warm">
-              <span className="text-primary-foreground font-heading font-bold text-base">ॐ</span>
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shrink-0 shadow-warm overflow-hidden">
+              <NextImage src="/assets/tilak.jpg" alt="Tilak" width={40} height={40} className="object-cover" />
             </div>
             {!collapsed && (
               <div>
