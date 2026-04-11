@@ -15,7 +15,7 @@ export default function EventRegistrationLoader({ eventId, initialFormSchema, in
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // If server didn't provide a formSchema, try fetching client-side once.
+   
     if (!formSchema) {
       let mounted = true;
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
@@ -46,7 +46,7 @@ export default function EventRegistrationLoader({ eventId, initialFormSchema, in
         for (let i = 0; i < maxAttempts && mounted && !formSchema; i++) {
           const ok = await tryFetch(i + 1);
           if (ok) break;
-          // exponential backoff
+         
           await new Promise((r) => setTimeout(r, 250 * Math.pow(2, i)));
         }
       })();
@@ -56,7 +56,7 @@ export default function EventRegistrationLoader({ eventId, initialFormSchema, in
   }, [eventId, formSchema]);
 
   if (!formSchema) {
-    // nothing to show (either loading or no form enabled)
+   
     return null;
   }
 
