@@ -12,6 +12,7 @@ import {
   Bell,
   IndianRupee,
   ChevronRight,
+  PenSquare, // <-- NEW
 } from "lucide-react";
 import NextImage from "next/image";
 import Link from "next/link";
@@ -43,6 +44,7 @@ const contentItems = [
   { title: "Important Dates", url: "/admin/important-dates", icon: CalendarDays },
   { title: "Gallery", url: "/admin/gallery", icon: Image },
   { title: "Festivals", url: "/admin/festivals", icon: Image },
+  { title: "Blogs", url: "/admin/blogs", icon: PenSquare }, // <-- NEW
   { title: "Content", url: "/admin/content", icon: FileText },
 ];
 
@@ -78,17 +80,12 @@ const AdminSidebar = () => {
                     className={`group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-200 hover:bg-primary/8 ${
                       active
                         ? "bg-primary/12 text-primary font-semibold shadow-sm"
-                        : "text-foreground/70 hover:text-foreground"
+                        : "text-foreground/80"
                     }`}
                   >
-                    {active && (
-                      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-primary" />
-                    )}
-                    <item.icon className={`h-[18px] w-[18px] shrink-0 transition-colors ${active ? "text-primary" : "text-muted-foreground"}`} />
+                    <item.icon className="h-4 w-4 shrink-0" />
                     {!collapsed && <span className="flex-1">{item.title}</span>}
-                    {!collapsed && active && (
-                      <ChevronRight className="w-3.5 h-3.5 text-primary/50" />
-                    )}
+                    {!collapsed && active && <ChevronRight className="h-3 w-3 opacity-70" />}
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -100,60 +97,49 @@ const AdminSidebar = () => {
   );
 
   return (
-    <Sidebar collapsible="icon">
-      <SidebarContent className="bg-card/50 backdrop-blur-sm">
-        {
-}
-        <div className={`p-5 ${collapsed ? "px-2 py-4" : ""}`}>
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shrink-0 shadow-warm overflow-hidden">
-              <NextImage src="/assets/tilak.jpg" alt="Tilak" width={40} height={40} className="object-cover" />
+    <Sidebar collapsible="icon" className="border-r bg-card">
+      <SidebarContent className="px-2 pt-4 pb-2">
+        {!collapsed && (
+          <div className="px-3 mb-4 flex items-center gap-2">
+            <div className="w-9 h-9 rounded-md bg-primary/10 flex items-center justify-center">
+              <NextImage
+                src="/assets/logo.png"
+                alt="HKM"
+                width={28}
+                height={28}
+                className="rounded"
+                onError={(e: any) => {
+                  e.target.style.display = "none";
+                }}
+              />
             </div>
-            {!collapsed && (
-              <div>
-                <span className="font-heading font-bold text-base leading-tight block text-foreground">
-                  HKM Vizag
-                </span>
-                <span className="text-[10px] text-muted-foreground uppercase tracking-[0.2em] font-medium">
-                  Admin Panel
-                </span>
-              </div>
-            )}
+            <div className="leading-tight">
+              <div className="text-sm font-bold">HKM Vizag</div>
+              <div className="text-[10px] text-muted-foreground">Admin Panel</div>
+            </div>
           </div>
-        </div>
-
-        <Separator className="mx-4 w-auto opacity-50" />
-
-        <div className="py-2 space-y-1">
-          {renderGroup("Overview", mainItems)}
-          {renderGroup("Manage", contentItems)}
-          {renderGroup("System", systemItems)}
-        </div>
+        )}
+        {renderGroup("Overview", mainItems)}
+        <Separator className="my-2" />
+        {renderGroup("Content", contentItems)}
+        <Separator className="my-2" />
+        {renderGroup("System", systemItems)}
       </SidebarContent>
 
-      <SidebarFooter className="border-t border-border/50 p-4 bg-card/30">
+      <SidebarFooter className="border-t p-2">
         {!collapsed && user && (
-          <div className="mb-3 px-1">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center">
-                <span className="text-primary font-bold text-xs">
-                  {user.name?.charAt(0) || "A"}
-                </span>
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold truncate">{user.name}</p>
-                <p className="text-[11px] text-muted-foreground truncate">{user.email}</p>
-              </div>
-            </div>
+          <div className="px-2 py-2 mb-1">
+            <div className="text-xs font-semibold truncate">{user.email}</div>
+            <div className="text-[10px] text-muted-foreground">Admin</div>
           </div>
         )}
         <Button
           variant="ghost"
           size="sm"
-          className="w-full justify-start text-destructive/80 hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
+          className="w-full justify-start text-xs"
           onClick={logout}
         >
-          <LogOut className="h-4 w-4 mr-2" />
+          <LogOut className="h-3.5 w-3.5 mr-2" />
           {!collapsed && "Sign Out"}
         </Button>
       </SidebarFooter>
