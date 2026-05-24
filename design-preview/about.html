@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>About · Hare Krishna Vaikuntham</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<style>
+.about-story { padding: 5rem 0; }
+.about-story-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; max-width: 1140px; margin: 0 auto; }
+@media (max-width: 900px) { .about-story-grid { grid-template-columns: 1fr; } }
+.about-story-text h2 { font-size: clamp(2rem, 3.4vw, 2.8rem); margin-bottom: 1rem; }
+.about-story-text > p { color: var(--ink-soft); font-size: 1.02rem; line-height: 1.7; margin-bottom: 1.25rem; }
+.about-story-text > p b { color: var(--ink); font-weight: 600; }
+.about-story-image { aspect-ratio: 4/5; border-radius: var(--r-xl); background: linear-gradient(135deg, #d4a35a 0%, #b87a3a 50%, #8a4a3a 100%); box-shadow: var(--shadow-lg); }
+.practices-title { font-size: 1.5rem; margin: 2rem 0 1rem; }
+.practice-pill { background: var(--bg-soft); padding: 0.85rem 1.25rem; border-radius: var(--r-pill); margin-bottom: 8px; font-weight: 500; }
+.initiatives { padding: 6rem 0; background: var(--bg-tint); position: relative; overflow: hidden; }
+.initiatives-head { text-align: center; max-width: 700px; margin: 0 auto 3rem; }
+.initiatives-head h2 { font-size: clamp(2rem, 3.4vw, 2.8rem); margin-bottom: 0.75rem; }
+.initiatives-head h2 .accent { color: var(--blue-600); }
+.initiatives-head p { color: var(--ink-soft); }
+.initiatives-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; max-width: 1140px; margin: 0 auto; }
+@media (max-width: 900px) { .initiatives-grid { grid-template-columns: repeat(2, 1fr); } }
+.init-card { background: #fff; padding: 1.5rem 1rem; border-radius: var(--r-lg); text-align: center; box-shadow: var(--shadow-sm); cursor: pointer; transition: all 0.25s; }
+.init-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.init-icon { width: 64px; height: 64px; margin: 0 auto 0.75rem; background: var(--blue-50); border-radius: var(--r-md); display: flex; align-items: center; justify-content: center; color: var(--blue-600); font-size: 1.8rem; }
+.init-card h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 4px; }
+.init-card p { color: var(--ink-soft); font-size: 0.8rem; }
+
+.vision { padding: 5rem 0; background: #fff; }
+.vision-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; max-width: 1140px; margin: 0 auto; }
+@media (max-width: 900px) { .vision-grid { grid-template-columns: 1fr; } }
+.vision-card { padding: 2rem; background: var(--bg-soft); border-radius: var(--r-lg); border-top: 4px solid var(--blue-500); }
+.vision-card .vc-icon { width: 56px; height: 56px; background: var(--blue-100); color: var(--blue-700); border-radius: var(--r-md); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; }
+.vision-card h3 { font-size: 1.4rem; margin-bottom: 0.75rem; }
+.vision-card p { color: var(--ink-soft); line-height: 1.7; }
+</style>
+</head>
+<body>
+<div id="top-bar"></div>
+<div id="main-nav"></div>
+
+<section class="subpage-hero">
+  <div>
+    <h1>About Hare Krishna Vaikuntham</h1>
+    <div class="breadcrumb"><a href="home.html">Home</a><span class="sep">/</span><a href="about.html">Mandir</a><span class="sep">/</span><span style="opacity:0.7">About</span></div>
+  </div>
+</section>
+
+<section class="about-story">
+  <div class="container">
+    <div class="about-story-grid">
+      <div class="about-story-text">
+        <h2>The Story of Hare Krishna Vaikuntham</h2>
+        <p style="color:var(--ink-soft); font-style: italic; margin-bottom: 1.5rem">A mission to revive devotion and spiritual culture in Visakhapatnam.</p>
+        <p>The <b>Hare Krishna Movement</b> in Vizag began with a simple yet powerful purpose — to deliver the highest knowledge of <b>Vedic scriptures like the Bhagavad-Gita and Srimad Bhagavatam</b>.</p>
+        <p>By following the core philosophies of these sacred texts preserved through the <b>Gaudiya Vaishnav disciplic lineage</b>, our guiding practice offers devotees a practical path to attain spiritual growth and devotion in today's modern lifestyle.</p>
+        <h3 class="practices-title">Daily Spiritual Practices We Follow:</h3>
+        <div class="practice-pill">Chanting Hare Krishna Maha-Mantra</div>
+        <div class="practice-pill">Studying the Vedic Scriptures</div>
+        <div class="practice-pill">Honoring sanctified prasadam</div>
+        <div class="practice-pill">Serving the holy devotees</div>
+      </div>
+      <div class="about-story-image"></div>
+    </div>
+  </div>
+</section>
+
+<section class="initiatives">
+  <div class="container">
+    <div class="initiatives-head">
+      <h2>Our <span class="accent">Activities</span> and <span class="accent">Initiatives</span></h2>
+      <p>Creating an impact through devotion and service at the Hare Krishna temple.</p>
+    </div>
+    <div class="initiatives-grid">
+      <a href="category.html" class="init-card"><div class="init-icon">📖</div><h4>Education</h4><p>Bhagavad Gita classes for all ages</p></a>
+      <a href="category.html" class="init-card"><div class="init-icon">🍲</div><h4>Anna Daan</h4><p>Daily prasadam distribution</p></a>
+      <a href="category.html" class="init-card"><div class="init-icon">🐄</div><h4>Gau Seva</h4><p>Indigenous cow protection</p></a>
+      <a href="category.html" class="init-card"><div class="init-icon">🪷</div><h4>Festivals</h4><p>Sacred celebrations year-round</p></a>
+      <a href="category.html" class="init-card"><div class="init-icon">🧘</div><h4>Yoga &amp; Bhajan</h4><p>Group spiritual sessions</p></a>
+    </div>
+  </div>
+</section>
+
+<section class="vision">
+  <div class="container">
+    <div class="section-head" style="justify-content:center;text-align:center"><h2 style="text-align:center">Our Vision &amp; Mission</h2></div>
+    <div class="vision-grid">
+      <div class="vision-card">
+        <div class="vc-icon"><svg class="icon" viewBox="0 0 24 24" style="font-size:26px"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg></div>
+        <h3>Vision</h3>
+        <p>Spread Krishna consciousness through inspirational programs, deep spiritual learning, and authentic Vedic culture — touching every life in Vizag and beyond with the timeless wisdom of the Bhagavad-Gita.</p>
+      </div>
+      <div class="vision-card">
+        <div class="vc-icon"><svg class="icon" viewBox="0 0 24 24" style="font-size:26px"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4z"/></svg></div>
+        <h3>Mission</h3>
+        <p>Build a grand cultural and spiritual center — Hare Krishna Vaikuntham — where every visitor experiences the divine, finds peace, and reconnects with India's eternal spiritual heritage through devotion and service.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="main-footer"></div>
+<script src="shared.js"></script>
+</body>
+</html>

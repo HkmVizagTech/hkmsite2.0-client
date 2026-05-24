@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Contact &amp; Get Involved · Hare Krishna Vaikuntham</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<style>
+.contact-section { padding: 5rem 0; }
+.contact-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 3rem; max-width: 1140px; margin: 0 auto; padding: 0 1.75rem; }
+@media (max-width: 900px) { .contact-grid { grid-template-columns: 1fr; } }
+
+.info-cards { display: flex; flex-direction: column; gap: 1rem; }
+.info-card { background: #fff; border: 1px solid var(--border-soft); border-radius: var(--r-lg); padding: 1.5rem; display: flex; gap: 1rem; transition: all 0.2s; }
+.info-card:hover { border-color: var(--blue-200); box-shadow: var(--shadow-sm); }
+.info-card .ic { width: 48px; height: 48px; border-radius: var(--r-md); background: var(--blue-50); color: var(--blue-600); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.info-card h4 { font-size: 1rem; margin-bottom: 4px; }
+.info-card p { color: var(--ink-soft); font-size: 0.92rem; line-height: 1.55; }
+.info-card a { color: var(--blue-600); font-weight: 600; }
+
+.form-card { background: #fff; border-radius: var(--r-xl); padding: 2.5rem; box-shadow: var(--shadow-md); border: 1px solid var(--border-soft); }
+.form-card h3 { font-size: 1.6rem; margin-bottom: 0.5rem; }
+.form-card > p { color: var(--ink-soft); margin-bottom: 2rem; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+@media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+.form-field { display: flex; flex-direction: column; gap: 6px; }
+.form-field label { font-size: 0.82rem; font-weight: 600; color: var(--ink); }
+.form-field input, .form-field textarea, .form-field select {
+  padding: 0.8rem 1rem; border: 1.5px solid var(--border); border-radius: var(--r-md);
+  font-family: var(--font-body); font-size: 0.95rem; background: var(--bg-soft);
+  transition: all 0.2s;
+}
+.form-field input:focus, .form-field textarea:focus, .form-field select:focus {
+  outline: none; border-color: var(--blue-500); background: #fff;
+}
+.form-field textarea { resize: vertical; min-height: 120px; }
+
+.map-section { padding: 0 0 5rem; }
+.map-wrap { background: linear-gradient(135deg, #c8d2f5, #a8b8e5); aspect-ratio: 21/9; border-radius: var(--r-xl); max-width: 1140px; margin: 0 auto; position: relative; overflow: hidden; }
+.map-pin { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -100%); width: 48px; height: 48px; background: var(--blue-600); border-radius: 50% 50% 50% 0; transform: rotate(-45deg) translate(-50%, -100%); display: flex; align-items: center; justify-content: center; color: #fff; box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+.map-pin svg { transform: rotate(45deg); }
+
+.volunteer-section { padding: 5rem 0; background: var(--bg-tint); }
+.volunteer-head { text-align: center; max-width: 700px; margin: 0 auto 3rem; padding: 0 1.75rem; }
+.volunteer-head h2 { font-size: clamp(2rem, 3.4vw, 2.8rem); margin-bottom: 0.75rem; }
+.volunteer-head p { color: var(--ink-soft); line-height: 1.7; }
+.volunteer-roles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; max-width: 1140px; margin: 0 auto; padding: 0 1.75rem; }
+@media (max-width: 900px) { .volunteer-roles { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 500px) { .volunteer-roles { grid-template-columns: 1fr; } }
+.role-card { background: #fff; padding: 1.5rem; border-radius: var(--r-lg); box-shadow: var(--shadow-sm); cursor: pointer; transition: all 0.25s; }
+.role-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.role-card .ic { width: 56px; height: 56px; border-radius: var(--r-md); background: var(--blue-50); color: var(--blue-600); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; }
+.role-card h4 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+.role-card p { color: var(--ink-soft); font-size: 0.88rem; line-height: 1.55; }
+
+.schedule-section { padding: 5rem 0; }
+.schedule-card { background: #fff; border: 1px solid var(--border-soft); border-radius: var(--r-xl); padding: 2.5rem; max-width: 760px; margin: 0 auto; box-shadow: var(--shadow-sm); }
+.schedule-row { display: flex; align-items: center; gap: 1.25rem; padding: 1rem 0; border-bottom: 1px dashed var(--border); }
+.schedule-row:last-child { border: none; }
+.schedule-time { background: var(--blue-50); color: var(--blue-700); padding: 6px 14px; border-radius: var(--r-pill); font-family: var(--font-heading); font-weight: 700; font-size: 0.95rem; min-width: 110px; text-align: center; }
+.schedule-row h5 { font-size: 1.02rem; font-weight: 600; margin-bottom: 2px; }
+.schedule-row p { color: var(--ink-soft); font-size: 0.85rem; }
+</style>
+</head>
+<body>
+<div id="top-bar"></div>
+<div id="main-nav"></div>
+
+<section class="subpage-hero">
+  <div>
+    <h1>Get in Touch</h1>
+    <div class="breadcrumb"><a href="home.html">Home</a><span class="sep">/</span><span style="opacity:0.7">Contact</span></div>
+  </div>
+</section>
+
+<section class="contact-section">
+  <div class="contact-grid">
+    <div class="info-cards">
+      <div class="info-card">
+        <div class="ic"><svg class="icon" viewBox="0 0 24 24" style="font-size:22px"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+        <div><h4>Visit Us</h4><p>Hare Krishna Vaikuntham<br/>Near Simhachalam,<br/>Visakhapatnam – 530028</p></div>
+      </div>
+      <div class="info-card">
+        <div class="ic"><svg class="icon" viewBox="0 0 24 24" style="font-size:22px"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 014.15 13a19.79 19.79 0 01-3.07-8.71 2 2 0 012-2.18h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg></div>
+        <div><h4>Call Us</h4><p><a href="tel:+919876543210">+91 98765 43210</a><br/><a href="tel:+918912345678">+91 891 234 5678</a></p></div>
+      </div>
+      <div class="info-card">
+        <div class="ic"><svg class="icon" viewBox="0 0 24 24" style="font-size:22px"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zm16 2l-8 5-8-5"/></svg></div>
+        <div><h4>Email</h4><p><a href="mailto:info@harekrishnavizag.org">info@harekrishnavizag.org</a><br/><a href="mailto:donate@harekrishnavizag.org">donate@harekrishnavizag.org</a></p></div>
+      </div>
+      <div class="info-card">
+        <div class="ic"><svg class="icon" viewBox="0 0 24 24" style="font-size:22px"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+        <div><h4>Darshan Timings</h4><p>Morning: 4:30 AM – 1:00 PM<br/>Evening: 4:00 PM – 8:30 PM</p></div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <h3>Send us a Message</h3>
+      <p>We'd love to hear from you. Send us a message and we'll respond within 24 hours.</p>
+      <form onsubmit="event.preventDefault(); alert('Form preview only')">
+        <div class="form-row">
+          <div class="form-field"><label>First Name</label><input type="text" placeholder="Your first name" required /></div>
+          <div class="form-field"><label>Last Name</label><input type="text" placeholder="Your last name" required /></div>
+        </div>
+        <div class="form-row">
+          <div class="form-field"><label>Email</label><input type="email" placeholder="you@example.com" required /></div>
+          <div class="form-field"><label>Phone</label><input type="tel" placeholder="+91 98765 43210" /></div>
+        </div>
+        <div class="form-field" style="margin-bottom:1rem">
+          <label>Subject</label>
+          <select>
+            <option>General Enquiry</option>
+            <option>Volunteer Application</option>
+            <option>Donation Question</option>
+            <option>Event / Booking</option>
+            <option>Media / Press</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-field" style="margin-bottom:1.5rem">
+          <label>Message</label>
+          <textarea placeholder="Tell us how we can help..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-pill-blue" style="width:100%;justify-content:center;padding:0.95rem">Send Message <svg class="icon" viewBox="0 0 24 24" style="font-size:14px"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4z"/></svg></button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<section class="map-section">
+  <div class="map-wrap">
+    <div style="position:absolute;inset:0;background-image:radial-gradient(circle,#fff 1.5px,transparent 1.5px);background-size:30px 30px;opacity:0.3"></div>
+    <div class="map-pin"><svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3" fill="#1F36A0"/></svg></div>
+  </div>
+</section>
+
+<section class="volunteer-section">
+  <div class="volunteer-head">
+    <h2>Volunteer with Us</h2>
+    <p>Offer your talents and heart in the loving service of Sri Sri Krishna Balaram. Support the temple's spiritual and outreach activities by volunteering — and become an instrument in Srila Prabhupada's mission.</p>
+  </div>
+  <div class="volunteer-roles">
+    <div class="role-card">
+      <div class="ic"><svg class="icon" viewBox="0 0 24 24" style="font-size:24px"><path d="M3 11h18M5 11V7a7 7 0 0114 0v4M5 11v6a3 3 0 003 3h8a3 3 0 003-3v-6"/></svg></div>
+      <h4>Food Distribution</h4>
+      <p>Help serve prasadam during festivals and weekly anna daan drives.</p>
+    </div>
+    <div class="role-card">
+      <div class="ic"><svg class="icon" viewBox="0 0 24 24" style="font-size:24px"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2zM22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></div>
+      <h4>Education</h4>
+      <p>Teach Bhagavad Gita, lead Sunday school, or mentor youth programs.</p>
+    </div>
+    <div class="role-card">
+      <div class="ic"><svg class="icon" viewBox="0 0 24 24" style="font-size:24px"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
+      <h4>Media &amp; Tech</h4>
+      <p>Web development, photography, social media, video editing.</p>
+    </div>
+    <div class="role-card">
+      <div class="ic"><svg class="icon" viewBox="0 0 24 24" style="font-size:24px"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l7-3 7 3z"/></svg></div>
+      <h4>Festival Seva</h4>
+      <p>Decoration, hospitality, deity dressing, and event coordination.</p>
+    </div>
+  </div>
+</section>
+
+<section class="schedule-section">
+  <div class="container">
+    <div class="section-head" style="justify-content:center;text-align:center">
+      <div><h2 style="text-align:center">Daily Temple Schedule</h2></div>
+    </div>
+    <p class="section-sub" style="text-align:center;margin:0 auto 3rem">Plan your visit. The temple follows a consistent daily aarti schedule, year-round.</p>
+    <div class="schedule-card">
+      <div class="schedule-row"><div class="schedule-time">4:30 AM</div><div><h5>Mangala Aarti</h5><p>The most auspicious early morning worship</p></div></div>
+      <div class="schedule-row"><div class="schedule-time">7:30 AM</div><div><h5>Shringar Darshan</h5><p>Beautifully decorated deities revealed</p></div></div>
+      <div class="schedule-row"><div class="schedule-time">8:15 AM</div><div><h5>Bhagavatam Class</h5><p>Daily scriptural discourse open to all</p></div></div>
+      <div class="schedule-row"><div class="schedule-time">12:00 PM</div><div><h5>Rajbhog Aarti</h5><p>Midday offering followed by prasadam</p></div></div>
+      <div class="schedule-row"><div class="schedule-time">4:30 PM</div><div><h5>Dhoop Aarti</h5><p>Evening incense offering ceremony</p></div></div>
+      <div class="schedule-row"><div class="schedule-time">7:00 PM</div><div><h5>Sandhya Aarti</h5><p>Sunset worship — devotional highlight of the evening</p></div></div>
+      <div class="schedule-row"><div class="schedule-time">8:15 PM</div><div><h5>Shayan Aarti</h5><p>Final worship before deity rest</p></div></div>
+    </div>
+  </div>
+</section>
+
+<div id="main-footer"></div>
+<script src="shared.js"></script>
+</body>
+</html>
