@@ -344,151 +344,156 @@ export default function DonationsClient() {
     }
   };
 
-  const renderOptions = (options: DonationOption[]) => (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {options.map((option) => (
+  const renderOptions = (options: DonationOption[], kind: "annadaan" | "gau") => (
+    <div className="donation-grid">
+      {options.map((option) => {
+        const isCustom = !option.amount;
+        return (
         <article
           key={option.id}
-          className="flex min-h-[188px] flex-col items-center justify-between border border-[#f0d9a2] bg-white px-5 py-6 text-center shadow-[0_3px_12px_rgba(136,84,10,0.12)]"
+          className={`donation-card-exact ${isCustom ? "donation-card-full " : ""}${kind === "annadaan" ? "donation-card-annadaan" : "donation-card-gau"}`}
         >
-          <div>
-            <h3 className="text-[18px] font-semibold leading-snug text-[#30241d]">{option.title}</h3>
-            <p className="mt-4 min-h-7 text-[20px] font-bold text-[#c02218]">
-              {option.amount ? `Rs. ${formatAmount(option.amount)}` : ""}
-            </p>
+          <div className="donation-card-head">
+            <div className={`seva-icon ${kind === "annadaan" ? "seva-icon-annadaan" : "seva-icon-gau"}`} aria-hidden="true">
+              <span className={kind === "annadaan" ? "plate-icon" : "cow-icon"}>{kind === "annadaan" ? "A" : "G"}</span>
+            </div>
           </div>
-          <Button
-            type="button"
-            onClick={() => openCheckout(option)}
-            className="mt-5 h-11 rounded-none bg-[#f4bd16] px-8 text-[13px] font-bold uppercase tracking-wide text-[#2c2109] shadow-none hover:bg-[#e9ac08]"
-          >
-            Donate Now
-          </Button>
+          <h3>{option.title}</h3>
+          <div className={`donation-card-row ${isCustom ? "single" : ""}`}>
+            {!isCustom && (
+              <div className={`donation-amount ${kind === "annadaan" ? "donation-amount-annadaan" : "donation-amount-gau"}`}>
+                <strong>Rs. {formatAmount(option.amount as number)}</strong>
+              </div>
+            )}
+            <button
+              type="button"
+              onClick={() => openCheckout(option)}
+              className={`donate-button ${kind === "annadaan" ? "donate-button-annadaan" : "donate-button-gau"}`}
+            >
+              DONATE NOW
+            </button>
+          </div>
         </article>
-      ))}
+        );
+      })}
     </div>
   );
 
   return (
     <>
-      <main className="bg-[#fff7e5] text-[#30241d]">
-        <section className="bg-[#fff7e5] pt-8">
-          <div className="mx-auto max-w-6xl px-4">
-            <img src={settings.bannerImage} alt="Donation banner" className="h-auto w-full border border-[#f1d99d] object-cover shadow-[0_5px_18px_rgba(117,72,12,0.16)]" />
-          </div>
-          <div className="mx-auto max-w-5xl px-4 py-9 text-center">
-            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.18em] text-[#9b1d15]">{settings.heroEyebrow}</p>
-            <h1 className="text-4xl font-extrabold leading-tight text-[#3d2a17] md:text-6xl">{settings.heroTitle}</h1>
-            <h2 className="mx-auto mt-4 max-w-3xl text-xl font-semibold leading-8 text-[#7b3f17] md:text-2xl">{settings.heroSubtitle}</h2>
-            <div className="mt-7 flex flex-wrap justify-center gap-4">
-              <a href="#annadaan" className="inline-flex h-12 min-w-40 items-center justify-center bg-[#f4bd16] px-8 text-sm font-bold uppercase tracking-wide text-[#2c2109] hover:bg-[#e9ac08]">
-                Annadaan
-              </a>
-              <a href="#goseva" className="inline-flex h-12 min-w-40 items-center justify-center bg-[#f4bd16] px-8 text-sm font-bold uppercase tracking-wide text-[#2c2109] hover:bg-[#e9ac08]">
-                Go Seva
+      <main className="exact-page" id="top">
+        <section className="hero-slider">
+          <div className="container-hero">
+            <div className="carousel-shell carousel-fallback">
+              <a href="#annadaan" className="carousel-slide">
+                <picture>
+                  <img src={settings.bannerImage} alt="Narasimha Jayanthi Annadaan donation banner for ISKCON Charity Vizag" className="carousel-image" />
+                </picture>
               </a>
             </div>
           </div>
         </section>
 
-        <section className="bg-white py-8">
-          <div className="mx-auto max-w-5xl px-4">
-            <div className="grid gap-5 md:grid-cols-2">
-              <img src={settings.annadaanImage} alt="Annadaan seva" className="h-64 w-full border border-[#f1d99d] object-cover" />
-              <img src={settings.goSevaImage} alt="Gau seva" className="h-64 w-full border border-[#f1d99d] object-cover" />
-            </div>
+        <section className="headline-wrap container-narrow">
+          <div className="headline-block">
+            <h1>{settings.heroTitle}</h1>
+            <h2>{settings.heroSubtitle}</h2>
+          </div>
+          <div className="headline-actions">
+            <a href="#annadaan" className="cta-yellow">ANNADAAN</a>
+            <a href="#goseva" className="cta-green">GO SEVA</a>
           </div>
         </section>
 
-        <section id="annadaan" className="bg-[#fff7e5] py-12">
-          <div className="mx-auto max-w-6xl px-4">
-            <h2 className="text-center text-3xl font-bold text-[#3d2a17] md:text-4xl">We are thankful for your kind gesture!</h2>
-            <h3 className="mt-9 bg-[#f4bd16] px-5 py-4 text-center text-2xl font-extrabold uppercase tracking-wide text-[#3d2a17]">
-              {settings.annadaanTitle}
-            </h3>
-            <p className="mx-auto mt-5 max-w-4xl text-center text-base leading-7 text-[#6e4a2f]">{settings.annadaanDescription}</p>
-            <div className="mt-8">{renderOptions(annadaan)}</div>
+        <section className="blue-banner">
+          <div className="container-narrow blue-banner-inner">
+            <img src={settings.annadaanImage} alt="Festival trustee banner" />
           </div>
         </section>
 
-        <section id="goseva" className="bg-[#fff7e5] pb-14">
-          <div className="mx-auto max-w-6xl px-4">
-            <h3 className="bg-[#f4bd16] px-5 py-4 text-center text-2xl font-extrabold uppercase tracking-wide text-[#3d2a17]">
-              {settings.goSevaTitle}
-            </h3>
-            <p className="mx-auto mt-5 max-w-4xl text-center text-base leading-7 text-[#6e4a2f]">{settings.goSevaDescription}</p>
-            <div className="mt-8">{renderOptions(goSeva)}</div>
+        <section className="donation-section container-wide">
+          <div className="headline-block thanks">
+            <h2>We are thankful for your kind gesture!</h2>
           </div>
+          <div className="section-title-wrap">
+            <h2 className="section-title annadaan-title" id="annadaan">{settings.annadaanTitle.toUpperCase()}</h2>
+          </div>
+          {renderOptions(annadaan, "annadaan")}
+          <div className="section-title-wrap">
+            <h2 className="section-title goseva-title" id="goseva">{settings.goSevaTitle.toUpperCase()}</h2>
+          </div>
+          {renderOptions(goSeva, "gau")}
         </section>
 
-        <section className="border-y border-[#e9cf90] bg-white py-10">
-          <div className="mx-auto max-w-6xl px-4">
-            <p className="text-base font-semibold leading-8 text-[#4a3422]">
-              {settings.contact.note} You may also call on this number for other queries:{" "}
-              <a className="font-bold text-[#b82017]" href={`tel:${phoneHref}`}>+91 {settings.contact.phone}</a>{" "}
-              or mail{" "}
-              <a className="font-bold text-[#b82017]" href={`mailto:${settings.contact.email}`}>{settings.contact.email}</a>.
+        <section className="black-strip">
+          <div className="container-wide">
+            <p>
+              {settings.contact.note} on our Whatsapp Number{" "}
+              <a href={`tel:${phoneHref}`}>+91 {settings.contact.phone}</a> or to our mail ID{" "}
+              <a href={`mailto:${settings.contact.email}`}>{settings.contact.email}</a>. You may also call on this number for other queries.
             </p>
-            <div className="mt-8 max-w-3xl">
-              <h3 className="text-xl font-bold text-[#3d2a17]">Donation Through Bank (NEFT/ RTGS)</h3>
-              <p className="mt-4 text-base leading-8 text-[#4a3422]">
-                Beneficiary Name : {settings.bankDetails.beneficiaryName}<br />
-                Bank Name: {settings.bankDetails.bankName}<br />
-                A/c No: {settings.bankDetails.accountNumber}<br />
-                IFSC code: {settings.bankDetails.ifsc}
-              </p>
-            </div>
           </div>
         </section>
 
-        <section className="bg-[#fff7e5] py-10">
-          <div className="mx-auto grid max-w-6xl gap-5 px-4 md:grid-cols-2">
-            <img src={settings.annadaanImage} alt="Annadaan supporters" className="h-72 w-full border border-[#f1d99d] object-cover" />
-            <img src={settings.goSevaImage} alt="Gau seva supporters" className="h-72 w-full border border-[#f1d99d] object-cover" />
+        <section className="bank-section container-wide">
+          <div className="bank-box">
+            <h4>Donation Through Bank (NEFT/ RTGS)</h4>
+            <p>
+              Beneficiary Name : {settings.bankDetails.beneficiaryName}<br />
+              Bank Name: {settings.bankDetails.bankName}<br />
+              A/c No: {settings.bankDetails.accountNumber}<br />
+              IFSC code: {settings.bankDetails.ifsc}
+            </p>
           </div>
         </section>
 
-        <section className="bg-[#2f2118] py-12 text-white">
-          <div className="mx-auto grid max-w-6xl gap-9 px-4 md:grid-cols-2 lg:grid-cols-4">
+        <section className="gallery-section container-wide">
+          <div className="gallery-grid">
+            <img src={settings.annadaanImage} alt="Supporters of Hare Krishna Movement Vizag charity seva" loading="lazy" decoding="async" />
+            <img src={settings.goSevaImage} alt="Well-wishers supporting Annadaan and Gau Seva donations" loading="lazy" decoding="async" />
+            <img src={settings.annadaanImage} alt="Daily Annadaan food distribution service in Visakhapatnam" loading="lazy" decoding="async" />
+            <img src={settings.goSevaImage} alt="Children receiving Annadaan meal support" loading="lazy" decoding="async" />
+          </div>
+        </section>
+
+        <footer className="site-footer">
+          <div className="footer-grid container-wide">
             <div>
-              <h3 className="text-lg font-bold uppercase text-[#f4bd16]">About Us</h3>
-              <p className="mt-4 text-sm leading-7 text-white/75">
-                We are trying to give human society an opportunity for a life of happiness, good health, peace of mind and good qualities through God Consciousness.
-              </p>
-            </div>
-            <div>
-              <h3 className="text-lg font-bold uppercase text-[#f4bd16]">Social Connect</h3>
-              <div className="mt-4 flex flex-col gap-2 text-sm text-white/75">
-                <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" className="hover:text-[#f4bd16]">Facebook</a>
-                <a href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" className="hover:text-[#f4bd16]">YouTube</a>
-                <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" className="hover:text-[#f4bd16]">Instagram</a>
+              <h3>ABOUT US</h3>
+              <p>We are trying to give human society an opportunity for a life of happiness, good health, peace of mind and all good qualities through God Consciousness.</p>
+              <h3>SOCIAL CONNECT</h3>
+              <div className="social-links">
+                <a href="https://www.facebook.com/hkm.vizag" target="_blank" rel="noreferrer">Facebook</a>
+                <a href="https://www.youtube.com/user/harekrishnavizag" target="_blank" rel="noreferrer">YouTube</a>
+                <a href="https://www.instagram.com/harekrishnavizag/" target="_blank" rel="noreferrer">Instagram</a>
               </div>
             </div>
             <div>
-              <h3 className="text-lg font-bold uppercase text-[#f4bd16]">Address</h3>
-              <p className="mt-4 text-sm leading-7 text-white/75">
-                Sri Radha Madan Mohan Mandir<br />
+              <h3>ADDRESS</h3>
+              <p>
+                <strong>Sri Radha Madan Mohan Mandir</strong><br />
                 Hare Krishna Movement<br />
                 IIM Rd, opp. Akshaya Patra Foundation,<br />
-                Gambhiram, Visakhapatnam,<br />
+                Gambhiram,<br />
+                Visakhapatnam,<br />
                 Andhra Pradesh 531163
               </p>
             </div>
             <div>
-              <h3 className="text-lg font-bold uppercase text-[#f4bd16]">Contact Info</h3>
-              <div className="mt-4 flex flex-col gap-2 text-sm text-white/75">
-                <a href={`tel:${phoneHref}`} className="hover:text-[#f4bd16]">+91 {settings.contact.phone}</a>
-                <a href={`mailto:${settings.contact.email}`} className="hover:text-[#f4bd16]">{settings.contact.email}</a>
-                <a href={`https://wa.me/${phoneHref.replace(/\D/g, "")}`} target="_blank" rel="noopener noreferrer" className="hover:text-[#f4bd16]">
-                  WhatsApp {settings.contact.phone}
-                </a>
-              </div>
+              <h3>CONTACT INFO</h3>
+              <ul className="footer-links">
+                <li><a href={`tel:${phoneHref}`}>{settings.contact.phone}</a></li>
+                <li><a href={`mailto:${settings.contact.email}`}>{settings.contact.email}</a></li>
+                <li><a href={`https://wa.me/${phoneHref.replace(/\D/g, "")}`} target="_blank" rel="noreferrer">WhatsApp {settings.contact.phone}</a></li>
+              </ul>
             </div>
           </div>
-          <p className="mx-auto mt-10 max-w-6xl border-t border-white/10 px-4 pt-6 text-center text-xs text-white/55">
-            Copyright &copy; 2026 Hare Krishna Movement India.
-          </p>
-        </section>
+          <div className="copyright-row">
+            <div className="container-wide copyright-inner">
+              <p>Copyright &copy; 2026 Hare Krishna Movement India.</p>
+            </div>
+          </div>
+        </footer>
       </main>
 
       {status.message && !selected && (
