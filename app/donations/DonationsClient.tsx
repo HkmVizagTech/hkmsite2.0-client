@@ -302,7 +302,7 @@ export default function DonationsClient() {
       <main className="bg-[#fff8ec]">
         <section className="relative overflow-hidden bg-slate-950 pt-28 text-white">
           <div className="absolute inset-0">
-            <Image src="/assets/donations-seva-hero.jpg" alt="Seva offering" fill priority className="object-cover opacity-55" />
+            <Image src="/assets/donations-annadana-real.jpg" alt="Annadaan seva" fill priority className="object-cover opacity-45" />
             <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-slate-950/35" />
           </div>
           <div className="container relative z-10 mx-auto grid min-h-[680px] items-center gap-10 px-4 py-16 lg:grid-cols-[1.05fr_0.95fr]">
