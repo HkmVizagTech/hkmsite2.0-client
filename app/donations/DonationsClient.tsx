@@ -413,7 +413,7 @@ export default function DonationsClient() {
               </div>
               <div className="mt-10 grid max-w-xl gap-3 sm:grid-cols-3">
                 {[
-                  ["21", "seva options"],
+                  [String(donationOptions.length), "seva options"],
                   ["80G", "details supported"],
                   ["Rs.100", "minimum custom seva"],
                 ].map(([value, label]) => (
