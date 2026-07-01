@@ -4,7 +4,7 @@ import { FormEvent, useMemo, useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Heart, Leaf, Mail, Phone, ShieldCheck, Utensils, X } from "lucide-react";
+import { ArrowRight, CheckCircle2, HandHeart, Heart, IndianRupee, Leaf, Mail, Phone, ShieldCheck, Utensils, X } from "lucide-react";
 
 type DonationOption = {
   id: number;
@@ -259,24 +259,36 @@ export default function DonationsClient() {
   };
 
   const renderOptions = (options: DonationOption[], accent: "amber" | "green") => (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
       {options.map((option) => (
-        <article key={option.id} className="rounded-lg border border-border bg-card p-5 shadow-sm">
-          <div className="flex min-h-24 flex-col justify-between gap-4">
+        <article
+          key={option.id}
+          className={`group rounded-lg border bg-white p-4 shadow-sm transition-all hover:-translate-y-1 hover:shadow-elevated dark:bg-slate-950 ${
+            accent === "amber" ? "border-amber-200/80" : "border-emerald-200/80"
+          }`}
+        >
+          <div className="flex min-h-36 flex-col justify-between gap-5">
             <div>
-              <h3 className="text-lg font-bold text-foreground">{option.title}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{option.category}</p>
+              <div className={`mb-4 inline-flex h-10 w-10 items-center justify-center rounded-lg ${
+                accent === "amber" ? "bg-amber-100 text-amber-700" : "bg-emerald-100 text-emerald-700"
+              }`}>
+                {accent === "amber" ? <Utensils className="h-5 w-5" /> : <Leaf className="h-5 w-5" />}
+              </div>
+              <h3 className="text-base font-bold leading-snug text-foreground">{option.title}</h3>
+              <p className="mt-2 text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">{option.category}</p>
             </div>
-            <div className="flex items-center justify-between gap-3">
-              <p className="text-xl font-bold text-primary">
+            <div className="flex items-center justify-between gap-3 border-t border-border pt-4">
+              <p className="text-lg font-bold text-primary">
                 {option.amount ? `Rs. ${formatAmount(option.amount)}` : "Custom"}
               </p>
               <Button
                 type="button"
                 onClick={() => openCheckout(option)}
-                className={accent === "amber" ? "bg-amber-500 text-amber-950 hover:bg-amber-400" : "bg-green-600 text-white hover:bg-green-500"}
+                className={`h-10 rounded-lg px-3 text-sm font-bold ${
+                  accent === "amber" ? "bg-amber-500 text-amber-950 hover:bg-amber-400" : "bg-emerald-600 text-white hover:bg-emerald-500"
+                }`}
               >
-                Donate Now
+                Donate Now <ArrowRight className="ml-1.5 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </Button>
             </div>
           </div>
@@ -287,79 +299,137 @@ export default function DonationsClient() {
 
   return (
     <>
-      <main className="bg-gradient-warm">
-        <section className="relative min-h-[78vh] overflow-hidden pt-32">
-          <Image src="/assets/gallery-annadaan-1.jpg" alt="Annadaan seva" fill priority className="object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/55 to-slate-950/25" />
-          <div className="container relative z-10 mx-auto px-4 py-20 text-white">
+      <main className="bg-[#fff8ec]">
+        <section className="relative overflow-hidden bg-slate-950 pt-28 text-white">
+          <div className="absolute inset-0">
+            <Image src="/assets/donations-seva-hero.jpg" alt="Seva offering" fill priority className="object-cover opacity-55" />
+            <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-slate-950/35" />
+          </div>
+          <div className="container relative z-10 mx-auto grid min-h-[680px] items-center gap-10 px-4 py-16 lg:grid-cols-[1.05fr_0.95fr]">
             <div className="max-w-3xl">
-              <p className="mb-4 inline-flex items-center rounded-full bg-white/10 px-4 py-2 text-sm font-semibold backdrop-blur">
-                <Utensils className="mr-2 h-4 w-4" />
+              <p className="mb-5 inline-flex items-center rounded-lg border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold backdrop-blur">
+                <HandHeart className="mr-2 h-4 w-4 text-amber-300" />
                 Annadaan Seva and Go Seva
               </p>
               <h1 className="text-4xl font-bold leading-tight md:text-6xl">
-                Your open-hearted contribution will make a difference
+                Serve prasadam. Protect cows. Offer with devotion.
               </h1>
-              <p className="mt-6 max-w-2xl text-lg text-white/85">
-                Support food distribution for hungry and needy people, and help care for cows through daily seva.
+              <p className="mt-6 max-w-2xl text-lg leading-8 text-white/85">
+                Continue the same trusted Hare Krishna Vizag donation flow with a richer, clearer seva experience for devotees.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
-                <Button asChild size="lg" className="bg-amber-500 text-amber-950 hover:bg-amber-400">
-                  <a href="#annadaan">Annadaan</a>
+                <Button asChild size="lg" className="rounded-lg bg-amber-500 text-amber-950 hover:bg-amber-400">
+                  <a href="#annadaan">Offer Annadaan</a>
                 </Button>
-                <Button asChild size="lg" className="bg-green-600 text-white hover:bg-green-500">
-                  <a href="#goseva">Go Seva</a>
+                <Button asChild size="lg" className="rounded-lg bg-emerald-600 text-white hover:bg-emerald-500">
+                  <a href="#goseva">Offer Go Seva</a>
                 </Button>
               </div>
+              <div className="mt-10 grid max-w-xl gap-3 sm:grid-cols-3">
+                {[
+                  ["21", "seva options"],
+                  ["80G", "details supported"],
+                  ["Rs.100", "minimum custom seva"],
+                ].map(([value, label]) => (
+                  <div key={label} className="rounded-lg border border-white/15 bg-white/10 p-4 backdrop-blur">
+                    <p className="text-2xl font-bold text-amber-300">{value}</p>
+                    <p className="mt-1 text-xs uppercase tracking-[0.16em] text-white/65">{label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              {[
+                ["/assets/donations-annadana-real.jpg", "Annadaan", "Sponsor freshly served prasadam for devotees and needy people."],
+                ["/assets/donations-gau-seva-real.jpeg", "Go Seva", "Support fodder, medicines and daily care for protected cows."],
+              ].map(([src, title, text]) => (
+                <article key={title} className="overflow-hidden rounded-lg border border-white/15 bg-white/10 shadow-2xl backdrop-blur">
+                  <div className="relative aspect-[4/3]">
+                    <Image src={src} alt={title} fill className="object-cover" />
+                  </div>
+                  <div className="p-5">
+                    <h2 className="text-xl font-bold">{title}</h2>
+                    <p className="mt-2 text-sm leading-6 text-white/75">{text}</p>
+                  </div>
+                </article>
+              ))}
             </div>
           </div>
         </section>
 
-        <section className="bg-primary py-10 text-primary-foreground">
-          <div className="container mx-auto grid gap-6 px-4 md:grid-cols-3">
+        <section className="border-b border-amber-200/70 bg-white py-8 dark:bg-slate-950">
+          <div className="container mx-auto grid gap-4 px-4 md:grid-cols-3">
             {[
-              ["Daily feeding", "Offer prasadam to devotees and needy people."],
-              ["Cow care", "Support fodder, grass and medicines for protected cows."],
-              ["80G support", "PAN and address can be captured for eligible receipts."],
+              ["Daily prasadam", "Offer food with dignity, devotion and care."],
+              ["Protected cow care", "Support fodder, grass and medical needs."],
+              ["Secure checkout", "Razorpay payment with receipt-ready donor details."],
             ].map(([title, text]) => (
-              <div key={title} className="rounded-lg border border-white/15 bg-white/10 p-5">
-                <ShieldCheck className="mb-3 h-6 w-6 text-amber-300" />
-                <h2 className="text-lg font-bold">{title}</h2>
-                <p className="mt-2 text-sm text-white/80">{text}</p>
+              <div key={title} className="flex items-start gap-4 rounded-lg border border-amber-100 bg-amber-50/60 p-5 dark:border-slate-800 dark:bg-slate-900">
+                <CheckCircle2 className="mt-0.5 h-6 w-6 flex-none text-emerald-600" />
+                <div>
+                  <h2 className="text-base font-bold text-foreground">{title}</h2>
+                  <p className="mt-1 text-sm leading-6 text-muted-foreground">{text}</p>
+                </div>
               </div>
             ))}
           </div>
         </section>
 
         <section id="annadaan" className="container mx-auto px-4 py-16">
-          <div className="mb-8 flex items-end justify-between gap-6">
-            <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.18em] text-amber-600">We are thankful for your kind gesture</p>
-              <h2 className="mt-2 text-3xl font-bold text-foreground md:text-4xl">Annadaan Seva</h2>
+          <div className="mb-8 grid gap-6 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
+            <div className="relative aspect-[4/3] overflow-hidden rounded-lg shadow-elevated">
+              <Image src="/assets/donations-annadana-real.jpg" alt="Annadaan prasadam distribution" fill className="object-cover" />
             </div>
-            <Utensils className="hidden h-10 w-10 text-amber-500 md:block" />
+            <div className="max-w-3xl">
+              <p className="text-sm font-bold uppercase tracking-[0.18em] text-amber-600">We are thankful for your kind gesture</p>
+              <h2 className="mt-2 text-3xl font-bold text-foreground md:text-5xl">Annadaan Seva</h2>
+              <p className="mt-4 text-base leading-7 text-muted-foreground">
+                Choose the number of people you would like to feed. Each offering supports prasadam distribution and community service.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-3 text-sm">
+                {["Feed 50 to 10,000 people", "Custom amount available", "Prasadam option above Rs.1000"].map((item) => (
+                  <span key={item} className="rounded-lg border border-amber-200 bg-white px-3 py-2 font-semibold text-amber-800">
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
           {renderOptions(annadaan, "amber")}
         </section>
 
-        <section id="goseva" className="bg-white/70 py-16 dark:bg-slate-950/30">
+        <section id="goseva" className="bg-[#eef9f0] py-16 dark:bg-slate-950/30">
           <div className="container mx-auto px-4">
-            <div className="mb-8 flex items-end justify-between gap-6">
-              <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-green-700">Serve and protect cows</p>
-                <h2 className="mt-2 text-3xl font-bold text-foreground md:text-4xl">Go Seva</h2>
+            <div className="mb-8 grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
+              <div className="max-w-3xl">
+                <p className="text-sm font-bold uppercase tracking-[0.18em] text-emerald-700">Serve and protect cows</p>
+                <h2 className="mt-2 text-3xl font-bold text-foreground md:text-5xl">Go Seva</h2>
+                <p className="mt-4 text-base leading-7 text-muted-foreground">
+                  Support daily care for cows through food, medicines, green grass and yearly adoption sevas.
+                </p>
+                <div className="mt-6 flex flex-wrap gap-3 text-sm">
+                  {["Daily care", "Fodder and grass", "Adoption sevas"].map((item) => (
+                    <span key={item} className="rounded-lg border border-emerald-200 bg-white px-3 py-2 font-semibold text-emerald-800">
+                      {item}
+                    </span>
+                  ))}
+                </div>
               </div>
-              <Leaf className="hidden h-10 w-10 text-green-600 md:block" />
+              <div className="relative aspect-[4/3] overflow-hidden rounded-lg shadow-elevated">
+                <Image src="/assets/donations-gau-seva-real.jpeg" alt="Go seva cow care" fill className="object-cover" />
+              </div>
             </div>
             {renderOptions(goSeva, "green")}
           </div>
         </section>
 
-        <section className="bg-slate-950 py-12 text-white">
-          <div className="container mx-auto grid gap-8 px-4 md:grid-cols-2">
+        <section className="bg-slate-950 py-14 text-white">
+          <div className="container mx-auto grid gap-6 px-4 lg:grid-cols-[1.1fr_0.9fr]">
             <div>
-              <h2 className="text-2xl font-bold">Gentle Request</h2>
-              <p className="mt-3 text-sm leading-7 text-white/75">
+              <p className="text-sm font-bold uppercase tracking-[0.18em] text-amber-300">Offline donation support</p>
+              <h2 className="mt-2 text-3xl font-bold">Gentle Request</h2>
+              <p className="mt-4 max-w-2xl text-sm leading-7 text-white/75">
                 While doing Paytm, UPI app payments or bank NEFT/RTGS, please send us a screenshot with complete address and PAN details.
               </p>
               <div className="mt-5 flex flex-wrap gap-4 text-sm">
@@ -373,14 +443,24 @@ export default function DonationsClient() {
                 </a>
               </div>
             </div>
-            <div className="rounded-lg border border-white/10 bg-white/10 p-6">
-              <h3 className="text-xl font-bold">Donation Through Bank</h3>
-              <p className="mt-4 text-sm leading-7 text-white/80">
-                Beneficiary Name: HARE KRISHNA MOVEMENT INDIA<br />
-                Bank Name: IDFC FIRST BANK LTD<br />
-                A/c No: 10091415313<br />
-                IFSC code: IDFB0080412
-              </p>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="rounded-lg border border-white/10 bg-white/10 p-5">
+                <IndianRupee className="mb-3 h-6 w-6 text-amber-300" />
+                <h3 className="text-lg font-bold">Donation Through Bank</h3>
+                <p className="mt-3 text-sm leading-7 text-white/80">
+                  Beneficiary Name: HARE KRISHNA MOVEMENT INDIA<br />
+                  Bank Name: IDFC FIRST BANK LTD<br />
+                  A/c No: 10091415313<br />
+                  IFSC code: IDFB0080412
+                </p>
+              </div>
+              <div className="rounded-lg border border-white/10 bg-white/10 p-5">
+                <ShieldCheck className="mb-3 h-6 w-6 text-emerald-300" />
+                <h3 className="text-lg font-bold">Receipt Details</h3>
+                <p className="mt-3 text-sm leading-7 text-white/80">
+                  Donor name, mobile, email, PAN and address are collected where required for follow-up and receipt support.
+                </p>
+              </div>
             </div>
           </div>
         </section>
