@@ -1,7 +1,6 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
-import Image from "next/image";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowRight, CheckCircle2, HandHeart, Heart, IndianRupee, Leaf, Mail, Phone, ShieldCheck, Utensils, X } from "lucide-react";
@@ -33,7 +32,36 @@ type CheckoutForm = {
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 
-const donationOptions: DonationOption[] = [
+type DonationPageSettings = {
+  heroEyebrow: string;
+  heroTitle: string;
+  heroSubtitle: string;
+  bannerImage: string;
+  annadaanImage: string;
+  goSevaImage: string;
+  annadaanTitle: string;
+  annadaanDescription: string;
+  goSevaTitle: string;
+  goSevaDescription: string;
+  donationOptions: DonationOption[];
+  impactItems: Array<{ title: string; text: string }>;
+  bankDetails: {
+    beneficiaryName: string;
+    bankName: string;
+    accountNumber: string;
+    ifsc: string;
+  };
+  contact: {
+    phone: string;
+    email: string;
+    note: string;
+  };
+};
+
+const defaultDonationOptions: DonationOption[] = [
+  { id: 101, category: "ANNADAAN", title: "Offer Annadaan Seva", amount: 251 },
+  { id: 102, category: "ANNADAAN", title: "Support Annadaan Seva", amount: 500 },
+  { id: 103, category: "ANNADAAN", title: "Sponsor Annadaan Seva", amount: 1000 },
   { id: 11, category: "ANNADAAN", title: "Feed 50 people", amount: 1501 },
   { id: 1, category: "ANNADAAN", title: "Feed 100 people", amount: 3001 },
   { id: 2, category: "ANNADAAN", title: "Feed 200 people", amount: 6001 },
@@ -45,6 +73,9 @@ const donationOptions: DonationOption[] = [
   { id: 8, category: "ANNADAAN", title: "Feed 5000 people", amount: 150000 },
   { id: 9, category: "ANNADAAN", title: "Feed 10,000 people", amount: 300000 },
   { id: 10, category: "ANNADAAN", title: "Donate any other Amount", amount: null },
+  { id: 201, category: "GO SEVA", title: "Offer Gau Seva", amount: 251 },
+  { id: 202, category: "GO SEVA", title: "Support Gau Seva", amount: 500 },
+  { id: 203, category: "GO SEVA", title: "Sponsor Gau Seva", amount: 1000 },
   { id: 21, category: "GO SEVA", title: "Feed 10 Cows For A Day", amount: 1500 },
   { id: 12, category: "GO SEVA", title: "Medicines For Cow", amount: 2500 },
   { id: 13, category: "GO SEVA", title: "Feed A Cow For A Month", amount: 3500 },
@@ -79,6 +110,36 @@ const formatAmount = (amount: number) => amount.toLocaleString("en-IN");
 
 const apiBase = () => process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
+const defaultSettings: DonationPageSettings = {
+  heroEyebrow: "Annadaan Seva and Go Seva",
+  heroTitle: "Serve prasadam. Protect cows. Offer with devotion.",
+  heroSubtitle: "Continue the trusted Hare Krishna Vizag donation flow with a clearer seva experience for devotees.",
+  bannerImage: "/assets/donations-annadana-real.jpg",
+  annadaanImage: "/assets/donations-annadana-real.jpg",
+  goSevaImage: "/assets/donations-gau-seva-real.jpeg",
+  annadaanTitle: "Annadaan Seva",
+  annadaanDescription: "Choose the number of people you would like to feed. Each offering supports prasadam distribution and community service.",
+  goSevaTitle: "Go Seva",
+  goSevaDescription: "Support daily care for cows through food, medicines, green grass and yearly adoption sevas.",
+  donationOptions: defaultDonationOptions,
+  impactItems: [
+    { title: "Daily prasadam", text: "Offer food with dignity, devotion and care." },
+    { title: "Protected cow care", text: "Support fodder, grass and medical needs." },
+    { title: "Secure checkout", text: "Razorpay payment with receipt-ready donor details." },
+  ],
+  bankDetails: {
+    beneficiaryName: "HARE KRISHNA MOVEMENT INDIA",
+    bankName: "IDFC FIRST BANK LTD",
+    accountNumber: "10091415313",
+    ifsc: "IDFB0080412",
+  },
+  contact: {
+    phone: "9063 020 108",
+    email: "social@hkmvizag.org",
+    note: "While doing Paytm, UPI app payments or bank NEFT/RTGS, please send us a screenshot with complete address and PAN details.",
+  },
+};
+
 const loadRazorpay = () =>
   new Promise<void>((resolve, reject) => {
     const win = window as unknown as { Razorpay?: RazorpayConstructor };
@@ -104,18 +165,43 @@ export default function DonationsClient() {
   const [form, setForm] = useState<CheckoutForm>(initialForm);
   const [status, setStatus] = useState<{ type: "success" | "error" | "idle"; message: string }>({ type: "idle", message: "" });
   const [submitting, setSubmitting] = useState(false);
+  const [settings, setSettings] = useState<DonationPageSettings>(defaultSettings);
 
+  const donationOptions = settings.donationOptions.length ? settings.donationOptions : defaultDonationOptions;
   const annadaan = donationOptions.filter((option) => option.category === "ANNADAAN");
   const goSeva = donationOptions.filter((option) => option.category === "GO SEVA");
   const finalAmount = selected?.amount ?? Number(form.customAmount || 0);
   const showTaxField = finalAmount >= 500;
   const showPrasadamField = finalAmount >= 1000;
   const needsAddress = form.want80G || form.wantPrasadam;
+  const phoneDigits = settings.contact.phone.replace(/\D/g, "");
+  const phoneHref = phoneDigits.startsWith("91") ? `+${phoneDigits}` : `+91${phoneDigits}`;
 
   const selectedSummary = useMemo(() => {
     if (!selected) return "";
     return `${selected.category} - ${selected.title}`;
   }, [selected]);
+
+  useEffect(() => {
+    let active = true;
+    fetch(`${apiBase()}/donation-page`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!active || !data?.page) return;
+        setSettings({
+          ...defaultSettings,
+          ...data.page,
+          bankDetails: { ...defaultSettings.bankDetails, ...(data.page.bankDetails || {}) },
+          contact: { ...defaultSettings.contact, ...(data.page.contact || {}) },
+          impactItems: Array.isArray(data.page.impactItems) && data.page.impactItems.length ? data.page.impactItems : defaultSettings.impactItems,
+          donationOptions: Array.isArray(data.page.donationOptions) && data.page.donationOptions.length ? data.page.donationOptions : defaultDonationOptions,
+        });
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const openCheckout = (option: DonationOption) => {
     setSelected(option);
@@ -302,20 +388,20 @@ export default function DonationsClient() {
       <main className="bg-[#fff8ec]">
         <section className="relative overflow-hidden bg-slate-950 pt-28 text-white">
           <div className="absolute inset-0">
-            <Image src="/assets/donations-annadana-real.jpg" alt="Annadaan seva" fill priority className="object-cover opacity-45" />
+            <img src={settings.bannerImage} alt="Donation banner" className="h-full w-full object-cover opacity-45" />
             <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-slate-950/35" />
           </div>
           <div className="container relative z-10 mx-auto grid min-h-[680px] items-center gap-10 px-4 py-16 lg:grid-cols-[1.05fr_0.95fr]">
             <div className="max-w-3xl">
               <p className="mb-5 inline-flex items-center rounded-lg border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold backdrop-blur">
                 <HandHeart className="mr-2 h-4 w-4 text-amber-300" />
-                Annadaan Seva and Go Seva
+                {settings.heroEyebrow}
               </p>
               <h1 className="text-4xl font-bold leading-tight md:text-6xl">
-                Serve prasadam. Protect cows. Offer with devotion.
+                {settings.heroTitle}
               </h1>
               <p className="mt-6 max-w-2xl text-lg leading-8 text-white/85">
-                Continue the same trusted Hare Krishna Vizag donation flow with a richer, clearer seva experience for devotees.
+                {settings.heroSubtitle}
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Button asChild size="lg" className="rounded-lg bg-amber-500 text-amber-950 hover:bg-amber-400">
@@ -341,12 +427,12 @@ export default function DonationsClient() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               {[
-                ["/assets/donations-annadana-real.jpg", "Annadaan", "Sponsor freshly served prasadam for devotees and needy people."],
-                ["/assets/donations-gau-seva-real.jpeg", "Go Seva", "Support fodder, medicines and daily care for protected cows."],
+                [settings.annadaanImage, "Annadaan", "Sponsor freshly served prasadam for devotees and needy people."],
+                [settings.goSevaImage, "Go Seva", "Support fodder, medicines and daily care for protected cows."],
               ].map(([src, title, text]) => (
                 <article key={title} className="overflow-hidden rounded-lg border border-white/15 bg-white/10 shadow-2xl backdrop-blur">
                   <div className="relative aspect-[4/3]">
-                    <Image src={src} alt={title} fill className="object-cover" />
+                    <img src={src} alt={title} className="h-full w-full object-cover" />
                   </div>
                   <div className="p-5">
                     <h2 className="text-xl font-bold">{title}</h2>
@@ -361,10 +447,8 @@ export default function DonationsClient() {
         <section className="border-b border-amber-200/70 bg-white py-8 dark:bg-slate-950">
           <div className="container mx-auto grid gap-4 px-4 md:grid-cols-3">
             {[
-              ["Daily prasadam", "Offer food with dignity, devotion and care."],
-              ["Protected cow care", "Support fodder, grass and medical needs."],
-              ["Secure checkout", "Razorpay payment with receipt-ready donor details."],
-            ].map(([title, text]) => (
+              ...settings.impactItems,
+            ].slice(0, 3).map(({ title, text }) => (
               <div key={title} className="flex items-start gap-4 rounded-lg border border-amber-100 bg-amber-50/60 p-5 dark:border-slate-800 dark:bg-slate-900">
                 <CheckCircle2 className="mt-0.5 h-6 w-6 flex-none text-emerald-600" />
                 <div>
@@ -379,13 +463,13 @@ export default function DonationsClient() {
         <section id="annadaan" className="container mx-auto px-4 py-16">
           <div className="mb-8 grid gap-6 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
             <div className="relative aspect-[4/3] overflow-hidden rounded-lg shadow-elevated">
-              <Image src="/assets/donations-annadana-real.jpg" alt="Annadaan prasadam distribution" fill className="object-cover" />
+              <img src={settings.annadaanImage} alt="Annadaan prasadam distribution" className="h-full w-full object-cover" />
             </div>
             <div className="max-w-3xl">
               <p className="text-sm font-bold uppercase tracking-[0.18em] text-amber-600">We are thankful for your kind gesture</p>
-              <h2 className="mt-2 text-3xl font-bold text-foreground md:text-5xl">Annadaan Seva</h2>
+              <h2 className="mt-2 text-3xl font-bold text-foreground md:text-5xl">{settings.annadaanTitle}</h2>
               <p className="mt-4 text-base leading-7 text-muted-foreground">
-                Choose the number of people you would like to feed. Each offering supports prasadam distribution and community service.
+                {settings.annadaanDescription}
               </p>
               <div className="mt-6 flex flex-wrap gap-3 text-sm">
                 {["Feed 50 to 10,000 people", "Custom amount available", "Prasadam option above Rs.1000"].map((item) => (
@@ -404,9 +488,9 @@ export default function DonationsClient() {
             <div className="mb-8 grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
               <div className="max-w-3xl">
                 <p className="text-sm font-bold uppercase tracking-[0.18em] text-emerald-700">Serve and protect cows</p>
-                <h2 className="mt-2 text-3xl font-bold text-foreground md:text-5xl">Go Seva</h2>
+                <h2 className="mt-2 text-3xl font-bold text-foreground md:text-5xl">{settings.goSevaTitle}</h2>
                 <p className="mt-4 text-base leading-7 text-muted-foreground">
-                  Support daily care for cows through food, medicines, green grass and yearly adoption sevas.
+                  {settings.goSevaDescription}
                 </p>
                 <div className="mt-6 flex flex-wrap gap-3 text-sm">
                   {["Daily care", "Fodder and grass", "Adoption sevas"].map((item) => (
@@ -417,7 +501,7 @@ export default function DonationsClient() {
                 </div>
               </div>
               <div className="relative aspect-[4/3] overflow-hidden rounded-lg shadow-elevated">
-                <Image src="/assets/donations-gau-seva-real.jpeg" alt="Go seva cow care" fill className="object-cover" />
+                <img src={settings.goSevaImage} alt="Go seva cow care" className="h-full w-full object-cover" />
               </div>
             </div>
             {renderOptions(goSeva, "green")}
@@ -430,16 +514,16 @@ export default function DonationsClient() {
               <p className="text-sm font-bold uppercase tracking-[0.18em] text-amber-300">Offline donation support</p>
               <h2 className="mt-2 text-3xl font-bold">Gentle Request</h2>
               <p className="mt-4 max-w-2xl text-sm leading-7 text-white/75">
-                While doing Paytm, UPI app payments or bank NEFT/RTGS, please send us a screenshot with complete address and PAN details.
+                {settings.contact.note}
               </p>
               <div className="mt-5 flex flex-wrap gap-4 text-sm">
-                <a className="inline-flex items-center gap-2 text-amber-300" href="tel:+919063020108">
+                <a className="inline-flex items-center gap-2 text-amber-300" href={`tel:${phoneHref}`}>
                   <Phone className="h-4 w-4" />
-                  9063 020 108
+                  {settings.contact.phone}
                 </a>
-                <a className="inline-flex items-center gap-2 text-amber-300" href="mailto:social@hkmvizag.org">
+                <a className="inline-flex items-center gap-2 text-amber-300" href={`mailto:${settings.contact.email}`}>
                   <Mail className="h-4 w-4" />
-                  social@hkmvizag.org
+                  {settings.contact.email}
                 </a>
               </div>
             </div>
@@ -448,10 +532,10 @@ export default function DonationsClient() {
                 <IndianRupee className="mb-3 h-6 w-6 text-amber-300" />
                 <h3 className="text-lg font-bold">Donation Through Bank</h3>
                 <p className="mt-3 text-sm leading-7 text-white/80">
-                  Beneficiary Name: HARE KRISHNA MOVEMENT INDIA<br />
-                  Bank Name: IDFC FIRST BANK LTD<br />
-                  A/c No: 10091415313<br />
-                  IFSC code: IDFB0080412
+                  Beneficiary Name: {settings.bankDetails.beneficiaryName}<br />
+                  Bank Name: {settings.bankDetails.bankName}<br />
+                  A/c No: {settings.bankDetails.accountNumber}<br />
+                  IFSC code: {settings.bankDetails.ifsc}
                 </p>
               </div>
               <div className="rounded-lg border border-white/10 bg-white/10 p-5">
