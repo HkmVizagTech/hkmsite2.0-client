@@ -3,7 +3,7 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowRight, CheckCircle2, HandHeart, Heart, IndianRupee, Leaf, Mail, Phone, ShieldCheck, Utensils, X } from "lucide-react";
+import { Heart, X } from "lucide-react";
 
 type DonationOption = {
   id: number;
@@ -111,15 +111,15 @@ const formatAmount = (amount: number) => amount.toLocaleString("en-IN");
 const apiBase = () => process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
 const defaultSettings: DonationPageSettings = {
-  heroEyebrow: "Annadaan Seva and Go Seva",
-  heroTitle: "Serve prasadam. Protect cows. Offer with devotion.",
-  heroSubtitle: "Continue the trusted Hare Krishna Vizag donation flow with a clearer seva experience for devotees.",
+  heroEyebrow: "Hare Krishna Movement Vizag",
+  heroTitle: "Donate Annadaan and Gau Seva Online",
+  heroSubtitle: "Support prasadam distribution and protected cow care with a heartfelt seva offering.",
   bannerImage: "/assets/donations-annadana-real.jpg",
   annadaanImage: "/assets/donations-annadana-real.jpg",
   goSevaImage: "/assets/donations-gau-seva-real.jpeg",
   annadaanTitle: "Annadaan Seva",
   annadaanDescription: "Choose the number of people you would like to feed. Each offering supports prasadam distribution and community service.",
-  goSevaTitle: "Go Seva",
+  goSevaTitle: "Gau Seva",
   goSevaDescription: "Support daily care for cows through food, medicines, green grass and yearly adoption sevas.",
   donationOptions: defaultDonationOptions,
   impactItems: [
@@ -134,9 +134,9 @@ const defaultSettings: DonationPageSettings = {
     ifsc: "IDFB0080412",
   },
   contact: {
-    phone: "9063 020 108",
-    email: "social@hkmvizag.org",
-    note: "While doing Paytm, UPI app payments or bank NEFT/RTGS, please send us a screenshot with complete address and PAN details.",
+    phone: "89777 61187",
+    email: "mukunda@hkmvizag.org",
+    note: "Gentle Request! While doing Paytm/UPI App Payments or Bank (NEFT/RTGS), please send us a screenshot along with complete address and PAN details.",
   },
 };
 
@@ -344,40 +344,26 @@ export default function DonationsClient() {
     }
   };
 
-  const renderOptions = (options: DonationOption[], accent: "amber" | "green") => (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+  const renderOptions = (options: DonationOption[]) => (
+    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {options.map((option) => (
         <article
           key={option.id}
-          className={`group rounded-lg border bg-white p-4 shadow-sm transition-all hover:-translate-y-1 hover:shadow-elevated dark:bg-slate-950 ${
-            accent === "amber" ? "border-amber-200/80" : "border-emerald-200/80"
-          }`}
+          className="flex min-h-[188px] flex-col items-center justify-between border border-[#f0d9a2] bg-white px-5 py-6 text-center shadow-[0_3px_12px_rgba(136,84,10,0.12)]"
         >
-          <div className="flex min-h-36 flex-col justify-between gap-5">
-            <div>
-              <div className={`mb-4 inline-flex h-10 w-10 items-center justify-center rounded-lg ${
-                accent === "amber" ? "bg-amber-100 text-amber-700" : "bg-emerald-100 text-emerald-700"
-              }`}>
-                {accent === "amber" ? <Utensils className="h-5 w-5" /> : <Leaf className="h-5 w-5" />}
-              </div>
-              <h3 className="text-base font-bold leading-snug text-foreground">{option.title}</h3>
-              <p className="mt-2 text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">{option.category}</p>
-            </div>
-            <div className="flex items-center justify-between gap-3 border-t border-border pt-4">
-              <p className="text-lg font-bold text-primary">
-                {option.amount ? `Rs. ${formatAmount(option.amount)}` : "Custom"}
-              </p>
-              <Button
-                type="button"
-                onClick={() => openCheckout(option)}
-                className={`h-10 rounded-lg px-3 text-sm font-bold ${
-                  accent === "amber" ? "bg-amber-500 text-amber-950 hover:bg-amber-400" : "bg-emerald-600 text-white hover:bg-emerald-500"
-                }`}
-              >
-                Donate Now <ArrowRight className="ml-1.5 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-              </Button>
-            </div>
+          <div>
+            <h3 className="text-[18px] font-semibold leading-snug text-[#30241d]">{option.title}</h3>
+            <p className="mt-4 min-h-7 text-[20px] font-bold text-[#c02218]">
+              {option.amount ? `Rs. ${formatAmount(option.amount)}` : ""}
+            </p>
           </div>
+          <Button
+            type="button"
+            onClick={() => openCheckout(option)}
+            className="mt-5 h-11 rounded-none bg-[#f4bd16] px-8 text-[13px] font-bold uppercase tracking-wide text-[#2c2109] shadow-none hover:bg-[#e9ac08]"
+          >
+            Donate Now
+          </Button>
         </article>
       ))}
     </div>
@@ -385,168 +371,123 @@ export default function DonationsClient() {
 
   return (
     <>
-      <main className="bg-[#fff8ec]">
-        <section className="relative overflow-hidden bg-slate-950 pt-28 text-white">
-          <div className="absolute inset-0">
-            <img src={settings.bannerImage} alt="Donation banner" className="h-full w-full object-cover opacity-45" />
-            <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/80 to-slate-950/35" />
+      <main className="bg-[#fff7e5] text-[#30241d]">
+        <section className="bg-[#fff7e5] pt-8">
+          <div className="mx-auto max-w-6xl px-4">
+            <img src={settings.bannerImage} alt="Donation banner" className="h-auto w-full border border-[#f1d99d] object-cover shadow-[0_5px_18px_rgba(117,72,12,0.16)]" />
           </div>
-          <div className="container relative z-10 mx-auto grid min-h-[680px] items-center gap-10 px-4 py-16 lg:grid-cols-[1.05fr_0.95fr]">
-            <div className="max-w-3xl">
-              <p className="mb-5 inline-flex items-center rounded-lg border border-white/20 bg-white/10 px-4 py-2 text-sm font-semibold backdrop-blur">
-                <HandHeart className="mr-2 h-4 w-4 text-amber-300" />
-                {settings.heroEyebrow}
+          <div className="mx-auto max-w-5xl px-4 py-9 text-center">
+            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.18em] text-[#9b1d15]">{settings.heroEyebrow}</p>
+            <h1 className="text-4xl font-extrabold leading-tight text-[#3d2a17] md:text-6xl">{settings.heroTitle}</h1>
+            <h2 className="mx-auto mt-4 max-w-3xl text-xl font-semibold leading-8 text-[#7b3f17] md:text-2xl">{settings.heroSubtitle}</h2>
+            <div className="mt-7 flex flex-wrap justify-center gap-4">
+              <a href="#annadaan" className="inline-flex h-12 min-w-40 items-center justify-center bg-[#f4bd16] px-8 text-sm font-bold uppercase tracking-wide text-[#2c2109] hover:bg-[#e9ac08]">
+                Annadaan
+              </a>
+              <a href="#goseva" className="inline-flex h-12 min-w-40 items-center justify-center bg-[#f4bd16] px-8 text-sm font-bold uppercase tracking-wide text-[#2c2109] hover:bg-[#e9ac08]">
+                Go Seva
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <section className="bg-white py-8">
+          <div className="mx-auto max-w-5xl px-4">
+            <div className="grid gap-5 md:grid-cols-2">
+              <img src={settings.annadaanImage} alt="Annadaan seva" className="h-64 w-full border border-[#f1d99d] object-cover" />
+              <img src={settings.goSevaImage} alt="Gau seva" className="h-64 w-full border border-[#f1d99d] object-cover" />
+            </div>
+          </div>
+        </section>
+
+        <section id="annadaan" className="bg-[#fff7e5] py-12">
+          <div className="mx-auto max-w-6xl px-4">
+            <h2 className="text-center text-3xl font-bold text-[#3d2a17] md:text-4xl">We are thankful for your kind gesture!</h2>
+            <h3 className="mt-9 bg-[#f4bd16] px-5 py-4 text-center text-2xl font-extrabold uppercase tracking-wide text-[#3d2a17]">
+              {settings.annadaanTitle}
+            </h3>
+            <p className="mx-auto mt-5 max-w-4xl text-center text-base leading-7 text-[#6e4a2f]">{settings.annadaanDescription}</p>
+            <div className="mt-8">{renderOptions(annadaan)}</div>
+          </div>
+        </section>
+
+        <section id="goseva" className="bg-[#fff7e5] pb-14">
+          <div className="mx-auto max-w-6xl px-4">
+            <h3 className="bg-[#f4bd16] px-5 py-4 text-center text-2xl font-extrabold uppercase tracking-wide text-[#3d2a17]">
+              {settings.goSevaTitle}
+            </h3>
+            <p className="mx-auto mt-5 max-w-4xl text-center text-base leading-7 text-[#6e4a2f]">{settings.goSevaDescription}</p>
+            <div className="mt-8">{renderOptions(goSeva)}</div>
+          </div>
+        </section>
+
+        <section className="border-y border-[#e9cf90] bg-white py-10">
+          <div className="mx-auto max-w-6xl px-4">
+            <p className="text-base font-semibold leading-8 text-[#4a3422]">
+              {settings.contact.note} You may also call on this number for other queries:{" "}
+              <a className="font-bold text-[#b82017]" href={`tel:${phoneHref}`}>+91 {settings.contact.phone}</a>{" "}
+              or mail{" "}
+              <a className="font-bold text-[#b82017]" href={`mailto:${settings.contact.email}`}>{settings.contact.email}</a>.
+            </p>
+            <div className="mt-8 max-w-3xl">
+              <h3 className="text-xl font-bold text-[#3d2a17]">Donation Through Bank (NEFT/ RTGS)</h3>
+              <p className="mt-4 text-base leading-8 text-[#4a3422]">
+                Beneficiary Name : {settings.bankDetails.beneficiaryName}<br />
+                Bank Name: {settings.bankDetails.bankName}<br />
+                A/c No: {settings.bankDetails.accountNumber}<br />
+                IFSC code: {settings.bankDetails.ifsc}
               </p>
-              <h1 className="text-4xl font-bold leading-tight md:text-6xl">
-                {settings.heroTitle}
-              </h1>
-              <p className="mt-6 max-w-2xl text-lg leading-8 text-white/85">
-                {settings.heroSubtitle}
-              </p>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <Button asChild size="lg" className="rounded-lg bg-amber-500 text-amber-950 hover:bg-amber-400">
-                  <a href="#annadaan">Offer Annadaan</a>
-                </Button>
-                <Button asChild size="lg" className="rounded-lg bg-emerald-600 text-white hover:bg-emerald-500">
-                  <a href="#goseva">Offer Go Seva</a>
-                </Button>
-              </div>
-              <div className="mt-10 grid max-w-xl gap-3 sm:grid-cols-3">
-                {[
-                  [String(donationOptions.length), "seva options"],
-                  ["80G", "details supported"],
-                  ["Rs.100", "minimum custom seva"],
-                ].map(([value, label]) => (
-                  <div key={label} className="rounded-lg border border-white/15 bg-white/10 p-4 backdrop-blur">
-                    <p className="text-2xl font-bold text-amber-300">{value}</p>
-                    <p className="mt-1 text-xs uppercase tracking-[0.16em] text-white/65">{label}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              {[
-                [settings.annadaanImage, "Annadaan", "Sponsor freshly served prasadam for devotees and needy people."],
-                [settings.goSevaImage, "Go Seva", "Support fodder, medicines and daily care for protected cows."],
-              ].map(([src, title, text]) => (
-                <article key={title} className="overflow-hidden rounded-lg border border-white/15 bg-white/10 shadow-2xl backdrop-blur">
-                  <div className="relative aspect-[4/3]">
-                    <img src={src} alt={title} className="h-full w-full object-cover" />
-                  </div>
-                  <div className="p-5">
-                    <h2 className="text-xl font-bold">{title}</h2>
-                    <p className="mt-2 text-sm leading-6 text-white/75">{text}</p>
-                  </div>
-                </article>
-              ))}
             </div>
           </div>
         </section>
 
-        <section className="border-b border-amber-200/70 bg-white py-8 dark:bg-slate-950">
-          <div className="container mx-auto grid gap-4 px-4 md:grid-cols-3">
-            {[
-              ...settings.impactItems,
-            ].slice(0, 3).map(({ title, text }) => (
-              <div key={title} className="flex items-start gap-4 rounded-lg border border-amber-100 bg-amber-50/60 p-5 dark:border-slate-800 dark:bg-slate-900">
-                <CheckCircle2 className="mt-0.5 h-6 w-6 flex-none text-emerald-600" />
-                <div>
-                  <h2 className="text-base font-bold text-foreground">{title}</h2>
-                  <p className="mt-1 text-sm leading-6 text-muted-foreground">{text}</p>
-                </div>
-              </div>
-            ))}
+        <section className="bg-[#fff7e5] py-10">
+          <div className="mx-auto grid max-w-6xl gap-5 px-4 md:grid-cols-2">
+            <img src={settings.annadaanImage} alt="Annadaan supporters" className="h-72 w-full border border-[#f1d99d] object-cover" />
+            <img src={settings.goSevaImage} alt="Gau seva supporters" className="h-72 w-full border border-[#f1d99d] object-cover" />
           </div>
         </section>
 
-        <section id="annadaan" className="container mx-auto px-4 py-16">
-          <div className="mb-8 grid gap-6 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
-            <div className="relative aspect-[4/3] overflow-hidden rounded-lg shadow-elevated">
-              <img src={settings.annadaanImage} alt="Annadaan prasadam distribution" className="h-full w-full object-cover" />
-            </div>
-            <div className="max-w-3xl">
-              <p className="text-sm font-bold uppercase tracking-[0.18em] text-amber-600">We are thankful for your kind gesture</p>
-              <h2 className="mt-2 text-3xl font-bold text-foreground md:text-5xl">{settings.annadaanTitle}</h2>
-              <p className="mt-4 text-base leading-7 text-muted-foreground">
-                {settings.annadaanDescription}
-              </p>
-              <div className="mt-6 flex flex-wrap gap-3 text-sm">
-                {["Feed 50 to 10,000 people", "Custom amount available", "Prasadam option above Rs.1000"].map((item) => (
-                  <span key={item} className="rounded-lg border border-amber-200 bg-white px-3 py-2 font-semibold text-amber-800">
-                    {item}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-          {renderOptions(annadaan, "amber")}
-        </section>
-
-        <section id="goseva" className="bg-[#eef9f0] py-16 dark:bg-slate-950/30">
-          <div className="container mx-auto px-4">
-            <div className="mb-8 grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
-              <div className="max-w-3xl">
-                <p className="text-sm font-bold uppercase tracking-[0.18em] text-emerald-700">Serve and protect cows</p>
-                <h2 className="mt-2 text-3xl font-bold text-foreground md:text-5xl">{settings.goSevaTitle}</h2>
-                <p className="mt-4 text-base leading-7 text-muted-foreground">
-                  {settings.goSevaDescription}
-                </p>
-                <div className="mt-6 flex flex-wrap gap-3 text-sm">
-                  {["Daily care", "Fodder and grass", "Adoption sevas"].map((item) => (
-                    <span key={item} className="rounded-lg border border-emerald-200 bg-white px-3 py-2 font-semibold text-emerald-800">
-                      {item}
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <div className="relative aspect-[4/3] overflow-hidden rounded-lg shadow-elevated">
-                <img src={settings.goSevaImage} alt="Go seva cow care" className="h-full w-full object-cover" />
-              </div>
-            </div>
-            {renderOptions(goSeva, "green")}
-          </div>
-        </section>
-
-        <section className="bg-slate-950 py-14 text-white">
-          <div className="container mx-auto grid gap-6 px-4 lg:grid-cols-[1.1fr_0.9fr]">
+        <section className="bg-[#2f2118] py-12 text-white">
+          <div className="mx-auto grid max-w-6xl gap-9 px-4 md:grid-cols-2 lg:grid-cols-4">
             <div>
-              <p className="text-sm font-bold uppercase tracking-[0.18em] text-amber-300">Offline donation support</p>
-              <h2 className="mt-2 text-3xl font-bold">Gentle Request</h2>
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-white/75">
-                {settings.contact.note}
+              <h3 className="text-lg font-bold uppercase text-[#f4bd16]">About Us</h3>
+              <p className="mt-4 text-sm leading-7 text-white/75">
+                We are trying to give human society an opportunity for a life of happiness, good health, peace of mind and good qualities through God Consciousness.
               </p>
-              <div className="mt-5 flex flex-wrap gap-4 text-sm">
-                <a className="inline-flex items-center gap-2 text-amber-300" href={`tel:${phoneHref}`}>
-                  <Phone className="h-4 w-4" />
-                  {settings.contact.phone}
-                </a>
-                <a className="inline-flex items-center gap-2 text-amber-300" href={`mailto:${settings.contact.email}`}>
-                  <Mail className="h-4 w-4" />
-                  {settings.contact.email}
-                </a>
+            </div>
+            <div>
+              <h3 className="text-lg font-bold uppercase text-[#f4bd16]">Social Connect</h3>
+              <div className="mt-4 flex flex-col gap-2 text-sm text-white/75">
+                <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" className="hover:text-[#f4bd16]">Facebook</a>
+                <a href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" className="hover:text-[#f4bd16]">YouTube</a>
+                <a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" className="hover:text-[#f4bd16]">Instagram</a>
               </div>
             </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="rounded-lg border border-white/10 bg-white/10 p-5">
-                <IndianRupee className="mb-3 h-6 w-6 text-amber-300" />
-                <h3 className="text-lg font-bold">Donation Through Bank</h3>
-                <p className="mt-3 text-sm leading-7 text-white/80">
-                  Beneficiary Name: {settings.bankDetails.beneficiaryName}<br />
-                  Bank Name: {settings.bankDetails.bankName}<br />
-                  A/c No: {settings.bankDetails.accountNumber}<br />
-                  IFSC code: {settings.bankDetails.ifsc}
-                </p>
-              </div>
-              <div className="rounded-lg border border-white/10 bg-white/10 p-5">
-                <ShieldCheck className="mb-3 h-6 w-6 text-emerald-300" />
-                <h3 className="text-lg font-bold">Receipt Details</h3>
-                <p className="mt-3 text-sm leading-7 text-white/80">
-                  Donor name, mobile, email, PAN and address are collected where required for follow-up and receipt support.
-                </p>
+            <div>
+              <h3 className="text-lg font-bold uppercase text-[#f4bd16]">Address</h3>
+              <p className="mt-4 text-sm leading-7 text-white/75">
+                Sri Radha Madan Mohan Mandir<br />
+                Hare Krishna Movement<br />
+                IIM Rd, opp. Akshaya Patra Foundation,<br />
+                Gambhiram, Visakhapatnam,<br />
+                Andhra Pradesh 531163
+              </p>
+            </div>
+            <div>
+              <h3 className="text-lg font-bold uppercase text-[#f4bd16]">Contact Info</h3>
+              <div className="mt-4 flex flex-col gap-2 text-sm text-white/75">
+                <a href={`tel:${phoneHref}`} className="hover:text-[#f4bd16]">+91 {settings.contact.phone}</a>
+                <a href={`mailto:${settings.contact.email}`} className="hover:text-[#f4bd16]">{settings.contact.email}</a>
+                <a href={`https://wa.me/${phoneHref.replace(/\D/g, "")}`} target="_blank" rel="noopener noreferrer" className="hover:text-[#f4bd16]">
+                  WhatsApp {settings.contact.phone}
+                </a>
               </div>
             </div>
           </div>
+          <p className="mx-auto mt-10 max-w-6xl border-t border-white/10 px-4 pt-6 text-center text-xs text-white/55">
+            Copyright &copy; 2026 Hare Krishna Movement India.
+          </p>
         </section>
       </main>
 

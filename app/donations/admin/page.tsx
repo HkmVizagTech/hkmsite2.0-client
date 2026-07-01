@@ -75,15 +75,15 @@ const defaultDonationOptions: DonationOption[] = [
 ];
 
 const defaultSettings: DonationPageSettings = {
-  heroEyebrow: "Annadaan Seva and Go Seva",
-  heroTitle: "Serve prasadam. Protect cows. Offer with devotion.",
-  heroSubtitle: "Continue the trusted Hare Krishna Vizag donation flow with a clearer seva experience for devotees.",
+  heroEyebrow: "Hare Krishna Movement Vizag",
+  heroTitle: "Donate Annadaan and Gau Seva Online",
+  heroSubtitle: "Support prasadam distribution and protected cow care with a heartfelt seva offering.",
   bannerImage: "/assets/donations-annadana-real.jpg",
   annadaanImage: "/assets/donations-annadana-real.jpg",
   goSevaImage: "/assets/donations-gau-seva-real.jpeg",
   annadaanTitle: "Annadaan Seva",
   annadaanDescription: "Choose the number of people you would like to feed. Each offering supports prasadam distribution and community service.",
-  goSevaTitle: "Go Seva",
+  goSevaTitle: "Gau Seva",
   goSevaDescription: "Support daily care for cows through food, medicines, green grass and yearly adoption sevas.",
   donationOptions: defaultDonationOptions,
   impactItems: [
@@ -98,9 +98,9 @@ const defaultSettings: DonationPageSettings = {
     ifsc: "IDFB0080412",
   },
   contact: {
-    phone: "9063 020 108",
-    email: "social@hkmvizag.org",
-    note: "While doing Paytm, UPI app payments or bank NEFT/RTGS, please send us a screenshot with complete address and PAN details.",
+    phone: "89777 61187",
+    email: "mukunda@hkmvizag.org",
+    note: "Gentle Request! While doing Paytm/UPI App Payments or Bank (NEFT/RTGS), please send us a screenshot along with complete address and PAN details.",
   },
 };
 
