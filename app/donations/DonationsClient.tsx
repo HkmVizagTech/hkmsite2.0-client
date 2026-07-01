@@ -37,6 +37,8 @@ type DonationPageSettings = {
   heroTitle: string;
   heroSubtitle: string;
   bannerImage: string;
+  bannerMobileImage: string;
+  trusteeBannerImage: string;
   annadaanImage: string;
   goSevaImage: string;
   annadaanTitle: string;
@@ -44,6 +46,7 @@ type DonationPageSettings = {
   goSevaTitle: string;
   goSevaDescription: string;
   donationOptions: DonationOption[];
+  galleryImages: string[];
   impactItems: Array<{ title: string; text: string }>;
   bankDetails: {
     beneficiaryName: string;
@@ -113,8 +116,10 @@ const apiBase = () => process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
 const defaultSettings: DonationPageSettings = {
   heroEyebrow: "Hare Krishna Movement Vizag",
   heroTitle: "Donate Annadaan and Gau Seva Online",
-  heroSubtitle: "Support prasadam distribution and protected cow care with a heartfelt seva offering.",
-  bannerImage: "/assets/donations-annadana-real.jpg",
+  heroSubtitle: "Support Narasimha Jayanthi meals for hungry and needy people.",
+  bannerImage: "/assets/donations-nsj-annadan-web.jpeg",
+  bannerMobileImage: "/assets/donations-nsj-annadan-mobile.jpeg",
+  trusteeBannerImage: "/assets/donations-trustee-banner.png",
   annadaanImage: "/assets/donations-annadana-real.jpg",
   goSevaImage: "/assets/donations-gau-seva-real.jpeg",
   annadaanTitle: "Annadaan Seva",
@@ -122,6 +127,12 @@ const defaultSettings: DonationPageSettings = {
   goSevaTitle: "Gau Seva",
   goSevaDescription: "Support daily care for cows through food, medicines, green grass and yearly adoption sevas.",
   donationOptions: defaultDonationOptions,
+  galleryImages: [
+    "/assets/donations-service-activity-1.png",
+    "/assets/donations-service-activity-2.png",
+    "/assets/donations-service-activity-3.png",
+    "/assets/donations-service-activity-4.png",
+  ],
   impactItems: [
     { title: "Daily prasadam", text: "Offer food with dignity, devotion and care." },
     { title: "Protected cow care", text: "Support fodder, grass and medical needs." },
@@ -176,6 +187,7 @@ export default function DonationsClient() {
   const needsAddress = form.want80G || form.wantPrasadam;
   const phoneDigits = settings.contact.phone.replace(/\D/g, "");
   const phoneHref = phoneDigits.startsWith("91") ? `+${phoneDigits}` : `+91${phoneDigits}`;
+  const galleryImages = settings.galleryImages.length ? settings.galleryImages : defaultSettings.galleryImages;
 
   const selectedSummary = useMemo(() => {
     if (!selected) return "";
@@ -195,6 +207,7 @@ export default function DonationsClient() {
           contact: { ...defaultSettings.contact, ...(data.page.contact || {}) },
           impactItems: Array.isArray(data.page.impactItems) && data.page.impactItems.length ? data.page.impactItems : defaultSettings.impactItems,
           donationOptions: Array.isArray(data.page.donationOptions) && data.page.donationOptions.length ? data.page.donationOptions : defaultDonationOptions,
+          galleryImages: Array.isArray(data.page.galleryImages) && data.page.galleryImages.length ? data.page.galleryImages : defaultSettings.galleryImages,
         });
       })
       .catch(() => {});
@@ -387,6 +400,7 @@ export default function DonationsClient() {
             <div className="carousel-shell carousel-fallback">
               <a href="#annadaan" className="carousel-slide">
                 <picture>
+                  <source media="(max-width: 640px)" srcSet={settings.bannerMobileImage || settings.bannerImage} />
                   <img src={settings.bannerImage} alt="Narasimha Jayanthi Annadaan donation banner for ISKCON Charity Vizag" className="carousel-image" />
                 </picture>
               </a>
@@ -407,7 +421,7 @@ export default function DonationsClient() {
 
         <section className="blue-banner">
           <div className="container-narrow blue-banner-inner">
-            <img src={settings.annadaanImage} alt="Festival trustee banner" />
+            <img src={settings.trusteeBannerImage} alt="Festival trustee banner" />
           </div>
         </section>
 
@@ -449,10 +463,20 @@ export default function DonationsClient() {
 
         <section className="gallery-section container-wide">
           <div className="gallery-grid">
-            <img src={settings.annadaanImage} alt="Supporters of Hare Krishna Movement Vizag charity seva" loading="lazy" decoding="async" />
-            <img src={settings.goSevaImage} alt="Well-wishers supporting Annadaan and Gau Seva donations" loading="lazy" decoding="async" />
-            <img src={settings.annadaanImage} alt="Daily Annadaan food distribution service in Visakhapatnam" loading="lazy" decoding="async" />
-            <img src={settings.goSevaImage} alt="Children receiving Annadaan meal support" loading="lazy" decoding="async" />
+            {galleryImages.slice(0, 4).map((src, index) => (
+              <img
+                key={`${src}-${index}`}
+                src={src}
+                alt={[
+                  "Supporters of Hare Krishna Movement Vizag charity seva",
+                  "Well-wishers supporting Annadaan and Gau Seva donations",
+                  "Daily Annadaan food distribution service in Visakhapatnam",
+                  "Children receiving Annadaan meal support",
+                ][index] || "Hare Krishna charity seva"}
+                loading="lazy"
+                decoding="async"
+              />
+            ))}
           </div>
         </section>
 

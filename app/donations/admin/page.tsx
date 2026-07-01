@@ -21,6 +21,8 @@ type DonationPageSettings = {
   heroTitle: string;
   heroSubtitle: string;
   bannerImage: string;
+  bannerMobileImage: string;
+  trusteeBannerImage: string;
   annadaanImage: string;
   goSevaImage: string;
   annadaanTitle: string;
@@ -28,6 +30,7 @@ type DonationPageSettings = {
   goSevaTitle: string;
   goSevaDescription: string;
   donationOptions: DonationOption[];
+  galleryImages: string[];
   impactItems: Array<{ title: string; text: string }>;
   bankDetails: {
     beneficiaryName: string;
@@ -77,8 +80,10 @@ const defaultDonationOptions: DonationOption[] = [
 const defaultSettings: DonationPageSettings = {
   heroEyebrow: "Hare Krishna Movement Vizag",
   heroTitle: "Donate Annadaan and Gau Seva Online",
-  heroSubtitle: "Support prasadam distribution and protected cow care with a heartfelt seva offering.",
-  bannerImage: "/assets/donations-annadana-real.jpg",
+  heroSubtitle: "Support Narasimha Jayanthi meals for hungry and needy people.",
+  bannerImage: "/assets/donations-nsj-annadan-web.jpeg",
+  bannerMobileImage: "/assets/donations-nsj-annadan-mobile.jpeg",
+  trusteeBannerImage: "/assets/donations-trustee-banner.png",
   annadaanImage: "/assets/donations-annadana-real.jpg",
   goSevaImage: "/assets/donations-gau-seva-real.jpeg",
   annadaanTitle: "Annadaan Seva",
@@ -86,6 +91,12 @@ const defaultSettings: DonationPageSettings = {
   goSevaTitle: "Gau Seva",
   goSevaDescription: "Support daily care for cows through food, medicines, green grass and yearly adoption sevas.",
   donationOptions: defaultDonationOptions,
+  galleryImages: [
+    "/assets/donations-service-activity-1.png",
+    "/assets/donations-service-activity-2.png",
+    "/assets/donations-service-activity-3.png",
+    "/assets/donations-service-activity-4.png",
+  ],
   impactItems: [
     { title: "Daily prasadam", text: "Offer food with dignity, devotion and care." },
     { title: "Protected cow care", text: "Support fodder, grass and medical needs." },
@@ -125,6 +136,7 @@ export default function DonationsAdminPage() {
           contact: { ...defaultSettings.contact, ...(data.page.contact || {}) },
           impactItems: Array.isArray(data.page.impactItems) && data.page.impactItems.length ? data.page.impactItems : defaultSettings.impactItems,
           donationOptions: Array.isArray(data.page.donationOptions) && data.page.donationOptions.length ? data.page.donationOptions : defaultDonationOptions,
+          galleryImages: Array.isArray(data.page.galleryImages) && data.page.galleryImages.length ? data.page.galleryImages : defaultSettings.galleryImages,
         });
       })
       .catch(() => setMessage({ type: "error", text: "Could not load donation page settings." }))
@@ -156,7 +168,9 @@ export default function DonationsAdminPage() {
     update({ donationOptions: form.donationOptions.filter((_, i) => i !== index) });
   };
 
-  const uploadImage = async (field: "bannerImage" | "annadaanImage" | "goSevaImage", event: ChangeEvent<HTMLInputElement>) => {
+  type ImageField = "bannerImage" | "bannerMobileImage" | "trusteeBannerImage" | "annadaanImage" | "goSevaImage";
+
+  const uploadImage = async (field: ImageField, event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -210,7 +224,13 @@ export default function DonationsAdminPage() {
     }
   };
 
-  const imageField = (label: string, field: "bannerImage" | "annadaanImage" | "goSevaImage") => (
+  const updateGalleryImage = (index: number, value: string) => {
+    const galleryImages = [...form.galleryImages];
+    galleryImages[index] = value;
+    update({ galleryImages });
+  };
+
+  const imageField = (label: string, field: ImageField) => (
     <div className="rounded-lg border border-border bg-card p-4">
       <div className="mb-3 flex items-center justify-between gap-3">
         <label className="text-sm font-bold text-foreground">{label}</label>
@@ -350,8 +370,23 @@ export default function DonationsAdminPage() {
 
             <section className="space-y-6">
               {imageField("Banner Image", "bannerImage")}
+              {imageField("Mobile Banner Image", "bannerMobileImage")}
+              {imageField("Trustee Banner Image", "trusteeBannerImage")}
               {imageField("Annadaan Image", "annadaanImage")}
               {imageField("Go Seva Image", "goSevaImage")}
+
+              <div className="rounded-lg border border-border bg-background p-5">
+                <h2 className="text-xl font-bold">Gallery Images</h2>
+                <div className="mt-5 grid gap-4">
+                  {form.galleryImages.slice(0, 4).map((src, index) => (
+                    <div key={index} className="rounded-lg border border-border p-4">
+                      <label className="mb-2 block text-sm font-bold text-foreground">Gallery Image {index + 1}</label>
+                      {src && <img src={src} alt={`Gallery image ${index + 1}`} className="mb-3 h-36 w-full rounded-lg object-cover" />}
+                      <Input value={src} onChange={(event) => updateGalleryImage(index, event.target.value)} placeholder="Paste image URL" />
+                    </div>
+                  ))}
+                </div>
+              </div>
 
               <div className="rounded-lg border border-border bg-background p-5">
                 <h2 className="text-xl font-bold">Bank Details</h2>
