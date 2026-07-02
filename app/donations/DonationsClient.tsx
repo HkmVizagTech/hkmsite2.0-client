@@ -458,18 +458,20 @@ export default function DonationsClient() {
         <section className="gallery-section container-wide">
           <div className="gallery-grid">
             {galleryImages.slice(0, 4).map((src, index) => (
-              <img
-                key={`${src}-${index}`}
-                src={src}
-                alt={[
-                  "Supporters of Hare Krishna Movement Vizag charity seva",
-                  "Well-wishers supporting Annadaan and Gau Seva donations",
-                  "Daily Annadaan food distribution service in Visakhapatnam",
-                  "Children receiving Annadaan meal support",
-                ][index] || "Hare Krishna charity seva"}
-                loading="lazy"
-                decoding="async"
-              />
+              <figure key={`${src}-${index}`} className="gallery-tile">
+                <img
+                  src={src}
+                  alt={[
+                    "Supporters of Hare Krishna Movement Vizag charity seva",
+                    "Well-wishers supporting Annadaan and Gau Seva donations",
+                    "Daily Annadaan food distribution service in Visakhapatnam",
+                    "Children receiving Annadaan meal support",
+                  ][index] || "Hare Krishna charity seva"}
+                  loading="lazy"
+                  decoding="async"
+                  className={`gallery-image gallery-image-${index + 1}`}
+                />
+              </figure>
             ))}
           </div>
         </section>
