@@ -50,7 +50,7 @@ export default function DonationForm({ config, setToast }: any) {
       }
       formData.country = 'India';
     }
-  const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+  const apiBase = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080').replace(/\/+$/, '');
     try {
   const orderRes = await fetch(`${apiBase}/payments/order`, {
         method: 'POST',

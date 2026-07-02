@@ -105,7 +105,7 @@ const initialForm: CheckoutForm = {
 
 const formatAmount = (amount: number) => amount.toLocaleString("en-IN");
 
-const apiBase = () => process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+const apiBase = () => (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(/\/+$/, "");
 
 const defaultSettings: DonationPageSettings = {
   heroEyebrow: "Hare Krishna Movement Vizag",
