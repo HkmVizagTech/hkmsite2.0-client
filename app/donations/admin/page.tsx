@@ -48,9 +48,6 @@ type DonationPageSettings = {
 const apiUrl = () => process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
 const defaultDonationOptions: DonationOption[] = [
-  { id: 101, category: "ANNADAAN", title: "Offer Annadaan Seva", amount: 251 },
-  { id: 102, category: "ANNADAAN", title: "Support Annadaan Seva", amount: 500 },
-  { id: 103, category: "ANNADAAN", title: "Sponsor Annadaan Seva", amount: 1000 },
   { id: 11, category: "ANNADAAN", title: "Feed 50 people", amount: 1501 },
   { id: 1, category: "ANNADAAN", title: "Feed 100 people", amount: 3001 },
   { id: 2, category: "ANNADAAN", title: "Feed 200 people", amount: 6001 },
@@ -62,9 +59,6 @@ const defaultDonationOptions: DonationOption[] = [
   { id: 8, category: "ANNADAAN", title: "Feed 5000 people", amount: 150000 },
   { id: 9, category: "ANNADAAN", title: "Feed 10,000 people", amount: 300000 },
   { id: 10, category: "ANNADAAN", title: "Donate any other Amount", amount: null },
-  { id: 201, category: "GO SEVA", title: "Offer Gau Seva", amount: 251 },
-  { id: 202, category: "GO SEVA", title: "Support Gau Seva", amount: 500 },
-  { id: 203, category: "GO SEVA", title: "Sponsor Gau Seva", amount: 1000 },
   { id: 21, category: "GO SEVA", title: "Feed 10 Cows For A Day", amount: 1500 },
   { id: 12, category: "GO SEVA", title: "Medicines For Cow", amount: 2500 },
   { id: 13, category: "GO SEVA", title: "Feed A Cow For A Month", amount: 3500 },
