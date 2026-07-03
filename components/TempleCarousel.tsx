@@ -7,29 +7,28 @@ import Image from "next/image";
 
 const slides = [
   {
-    src: "/assets/home-hero-desktop.webp",
-    mobileSrc: "/assets/home-hero-mobile.webp",
-    title: "Hare Krishna Vaikuntham",
-    subtitle: "A sacred spiritual home rising in Visakhapatnam for darshan, seva, festivals, and prasadam.",
+    src: "/assets/home-banner-chaitanya-bhavan.webp",
+    title: "Chaitanya Bhavan",
+    subtitle: "A devotional landmark for culture, community, and seva in Visakhapatnam.",
     tag: "Featured",
   },
   {
-    src: "/assets/home-temple-construction-banner.webp",
-    title: "Temple Construction Seva",
-    subtitle: "Every contribution helps build a lasting temple for worship, culture, and Krishna consciousness.",
-    tag: "Seva",
-  },
-  {
-    src: "/assets/hero-temple.jpg",
-    title: "Daily Darshan and Worship",
-    subtitle: "A living temple atmosphere of arati, kirtan, study, and devotional service throughout the day.",
+    src: "/assets/home-banner-daily-darshan.webp",
+    title: "Daily Darshan",
+    subtitle: "Sri Sri Radha Madan Mohan blessing devotees with sacred worship and grace.",
     tag: "Darshan",
   },
   {
-    src: "/assets/home-subhojanam-banner.webp",
-    title: "Annadana and Subhojanam",
-    subtitle: "Offer prasadam seva with compassion and help nourish hundreds with sanctified meals.",
-    tag: "Prasadam",
+    src: "/assets/home-banner-radha-madan-mohan.webp",
+    title: "Sri Sri Radha Madan Mohan",
+    subtitle: "A serene space for devotion, culture, and community.",
+    tag: "Worship",
+  },
+  {
+    src: "/assets/home-banner-jagannatha-rath-yatra.webp",
+    title: "Jagannatha Rath Yatra",
+    subtitle: "Join the sacred procession of Lord Jagannatha and celebrate with the temple family.",
+    tag: "Festival",
   },
 ];
 
@@ -99,84 +98,18 @@ const TempleCarousel = () => {
           transition={{ duration: 0.9, ease: [0.25, 0.8, 0.25, 1] }}
           className="absolute inset-0"
         >
-          {currentSlide.mobileSrc ? (
-            <>
-              <Image
-                src={currentSlide.mobileSrc}
-                alt={currentSlide.title}
-                fill
-                sizes="100vw"
-                className="object-cover object-center md:hidden"
-                priority
-              />
-              <Image
-                src={currentSlide.src}
-                alt={currentSlide.title}
-                fill
-                sizes="100vw"
-                className="hidden object-cover object-center md:block"
-                priority
-              />
-            </>
-          ) : (
-            <Image
-              src={currentSlide.src}
-              alt={currentSlide.title}
-              fill
-              sizes="100vw"
-              className="object-cover object-center"
-              priority
-            />
-          )}
+          <Image
+            src={currentSlide.src}
+            alt={currentSlide.title}
+            fill
+            sizes="100vw"
+            className="object-cover object-center"
+            priority
+          />
           <div className="absolute inset-0 bg-linear-to-t from-foreground via-foreground/25 to-transparent" />
           <div className="absolute inset-0 bg-linear-to-r from-foreground/75 via-foreground/30 to-transparent" />
         </motion.div>
       </AnimatePresence>
-
-      {
-}
-      <div className="absolute top-8 left-8 z-20 flex items-center gap-3">
-        <motion.span
-          key={`num-${current}`}
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-xs font-mono text-background/50 tracking-widest"
-        >
-          {String(current + 1).padStart(2, "0")} / {String(slides.length).padStart(2, "0")}
-        </motion.span>
-        <motion.span
-          key={`tag-${current}`}
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="px-3 py-1 rounded-full text-xs font-medium bg-secondary/80 text-secondary-foreground backdrop-blur-sm"
-        >
-          {slides[current].tag}
-        </motion.span>
-      </div>
-
-      {
-}
-      <div className="absolute inset-0 z-10 flex h-[80vh] items-end pb-24 md:pb-32">
-        <div className="container mx-auto px-4 md:px-8">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={current}
-              initial={{ opacity: 0, y: 40, filter: "blur(10px)" }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-              exit={{ opacity: 0, y: -20, filter: "blur(5px)" }}
-              transition={{ duration: 0.6, delay: 0.15 }}
-              className="max-w-3xl"
-            >
-              <h2 className="mb-4 font-heading text-4xl font-bold leading-[1.05] text-background md:text-6xl lg:text-7xl">
-                {currentSlide.title}
-              </h2>
-              <p className="max-w-xl text-base font-light leading-relaxed text-background/75 md:text-xl">
-                {currentSlide.subtitle}
-              </p>
-            </motion.div>
-          </AnimatePresence>
-        </div>
-      </div>
 
       {
 }
@@ -225,34 +158,6 @@ const TempleCarousel = () => {
                 width: i === current ? `${progress}%` : i < current ? "100%" : "0%",
               }}
               transition={{ duration: 0.1, ease: "linear" }}
-            />
-          </button>
-        ))}
-      </div>
-
-      {
-}
-      <div className="hidden xl:flex absolute right-10 top-1/2 -translate-y-1/2 z-20 flex-col gap-2">
-        {slides.map((slide, i) => (
-          <button
-            key={i}
-            onClick={() => {
-              setDirection(i > current ? 1 : -1);
-              setCurrent(i);
-              setProgress(0);
-            }}
-            className={`w-16 h-12 rounded-lg overflow-hidden border-2 transition-all duration-300 ${
-              i === current
-                ? "border-secondary shadow-glow scale-110"
-                : "border-transparent opacity-50 hover:opacity-80"
-            }`}
-          >
-            <Image
-              src={slide.src}
-              alt=""
-              width={64}
-              height={48}
-              className="w-full h-full object-cover"
             />
           </button>
         ))}
