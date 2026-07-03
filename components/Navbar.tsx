@@ -56,7 +56,7 @@ const Navbar = () => {
             transition={{ duration: 0.3 }}
             className="fixed top-0 left-0 right-0 z-[60] bg-gradient-navy text-primary-foreground"
           >
-            <div className="container mx-auto px-4 flex items-center justify-between h-10 text-xs">
+            <div className="container mx-auto flex h-8 items-center justify-between px-3 text-[10px] md:h-10 md:px-4 md:text-xs">
               <div className="flex items-center gap-4">
                 <a href="tel:+919876543210" className="flex items-center gap-1.5 hover:text-secondary transition-colors">
                   <Phone className="w-3 h-3" />
@@ -86,19 +86,19 @@ const Navbar = () => {
         animate={{ y: 0 }}
         className={`fixed left-0 right-0 z-50 transition-all duration-500 ${
           scrolled
-            ? "top-3 mx-4 md:mx-8 rounded-2xl bg-background/90 backdrop-blur-xl shadow-elevated border border-border/50"
-            : "top-10 bg-background/80 backdrop-blur-sm"
+            ? "top-2 mx-2 md:mx-8 rounded-2xl bg-background/92 backdrop-blur-xl shadow-elevated border border-border/50"
+            : "top-8 md:top-10 bg-background/84 backdrop-blur-sm"
         }`}
       >
         <div className={`container mx-auto flex items-center justify-between ${
-          scrolled ? "px-5 h-14" : "px-4 h-16"
+          scrolled ? "px-4 h-12 md:px-5 md:h-14" : "px-3 h-14 md:px-4 md:h-16"
         }`}>
           <Link href="/" className="flex items-center gap-3">
             <Image
               src={typeof ISKLogo === 'string' ? ISKLogo : ISKLogo.src}
               alt="Hare Krishna Movement Vizag"
-              width={scrolled ? 70 : 80}
-              height={scrolled ? 70 : 80}
+              width={scrolled ? 64 : 74}
+              height={scrolled ? 64 : 74}
               priority
               loading="eager"
               className="w-auto transition-all duration-300"

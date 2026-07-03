@@ -96,7 +96,7 @@ const TempleCarousel = () => {
   const currentSlide = slides[current];
 
   return (
-    <section className="relative mt-16 w-full overflow-hidden bg-foreground aspect-[1080/1350] md:mt-24 md:aspect-[1920/700]">
+    <section className="relative w-full overflow-hidden bg-foreground aspect-[1080/1350] md:aspect-[1920/700]">
       <AnimatePresence custom={direction} mode="popLayout">
         <motion.div
           key={current}
