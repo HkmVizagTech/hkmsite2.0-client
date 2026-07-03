@@ -8,27 +8,38 @@ import Image from "next/image";
 const slides = [
   {
     src: "/assets/home-banner-chaitanya-bhavan.webp",
+    mobileSrc: "/assets/home-banner-chaitanya-bhavan-mobile.webp",
     title: "Chaitanya Bhavan",
     subtitle: "A devotional landmark for culture, community, and seva in Visakhapatnam.",
     tag: "Featured",
   },
   {
     src: "/assets/home-banner-daily-darshan.webp",
+    mobileSrc: "/assets/home-banner-daily-darshan-mobile.webp",
     title: "Daily Darshan",
     subtitle: "Sri Sri Radha Madan Mohan blessing devotees with sacred worship and grace.",
     tag: "Darshan",
   },
   {
     src: "/assets/home-banner-radha-madan-mohan.webp",
+    mobileSrc: "/assets/home-banner-radha-madan-mohan-mobile.webp",
     title: "Sri Sri Radha Madan Mohan",
     subtitle: "A serene space for devotion, culture, and community.",
     tag: "Worship",
   },
   {
     src: "/assets/home-banner-jagannatha-rath-yatra.webp",
+    mobileSrc: "/assets/home-banner-jagannatha-rath-yatra-mobile.webp",
     title: "Jagannatha Rath Yatra",
     subtitle: "Join the sacred procession of Lord Jagannatha and celebrate with the temple family.",
     tag: "Festival",
+  },
+  {
+    src: "/assets/home-banner-srinivasa-govinda.webp",
+    mobileSrc: "/assets/home-banner-srinivasa-govinda-mobile.webp",
+    title: "Srinivasa Govinda Temple",
+    subtitle: "A divine temple project rising in Visakhapatnam with grace and devotion.",
+    tag: "Temple",
   },
 ];
 
@@ -50,7 +61,6 @@ const TempleCarousel = () => {
     setProgress(0);
   }, []);
 
- 
   useEffect(() => {
     if (!isPlaying) return;
     const interval = setInterval(() => {
@@ -86,7 +96,7 @@ const TempleCarousel = () => {
   const currentSlide = slides[current];
 
   return (
-    <section className="relative mt-16 w-full overflow-hidden bg-foreground h-[420px] sm:h-[520px] md:mt-24 md:h-auto md:aspect-[1920/700]">
+    <section className="relative mt-16 w-full overflow-hidden bg-foreground aspect-[1080/1350] md:mt-24 md:aspect-[1920/700]">
       <AnimatePresence custom={direction} mode="popLayout">
         <motion.div
           key={current}
@@ -99,45 +109,49 @@ const TempleCarousel = () => {
           className="absolute inset-0"
         >
           <Image
+            src={currentSlide.mobileSrc}
+            alt={currentSlide.title}
+            fill
+            sizes="100vw"
+            className="object-cover object-center md:hidden"
+            priority
+          />
+          <Image
             src={currentSlide.src}
             alt={currentSlide.title}
             fill
             sizes="100vw"
-            className="object-cover object-center"
+            className="hidden object-cover object-center md:block"
             priority
           />
         </motion.div>
       </AnimatePresence>
 
-      {
-}
-      <div className="absolute right-6 md:right-10 bottom-24 md:bottom-32 z-20 flex items-center gap-3">
+      <div className="absolute right-4 bottom-4 z-20 flex items-center gap-2 md:right-10 md:bottom-32 md:gap-3">
         <button
           onClick={prev}
-          className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-background/5 backdrop-blur-xl border border-background/10 flex items-center justify-center text-background/70 hover:bg-background/15 hover:text-background transition-all duration-300 group"
+          className="group flex h-10 w-10 items-center justify-center rounded-full border border-background/10 bg-background/5 text-background/70 backdrop-blur-xl transition-all duration-300 hover:bg-background/15 hover:text-background md:h-14 md:w-14"
           aria-label="Previous slide"
         >
-          <ChevronLeft className="w-5 h-5 md:w-6 md:h-6 group-hover:-translate-x-0.5 transition-transform" />
+          <ChevronLeft className="h-5 w-5 transition-transform group-hover:-translate-x-0.5 md:h-6 md:w-6" />
         </button>
         <button
           onClick={next}
-          className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-background/5 backdrop-blur-xl border border-background/10 flex items-center justify-center text-background/70 hover:bg-background/15 hover:text-background transition-all duration-300 group"
+          className="group flex h-10 w-10 items-center justify-center rounded-full border border-background/10 bg-background/5 text-background/70 backdrop-blur-xl transition-all duration-300 hover:bg-background/15 hover:text-background md:h-14 md:w-14"
           aria-label="Next slide"
         >
-          <ChevronRight className="w-5 h-5 md:w-6 md:h-6 group-hover:translate-x-0.5 transition-transform" />
+          <ChevronRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5 md:h-6 md:w-6" />
         </button>
         <button
           onClick={() => setIsPlaying(!isPlaying)}
-          className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-background/5 backdrop-blur-xl border border-background/10 flex items-center justify-center text-background/70 hover:bg-background/15 hover:text-background transition-all duration-300"
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-background/10 bg-background/5 text-background/70 backdrop-blur-xl transition-all duration-300 hover:bg-background/15 hover:text-background md:h-14 md:w-14"
           aria-label={isPlaying ? "Pause" : "Play"}
         >
-          {isPlaying ? <Pause className="w-4 h-4 md:w-5 md:h-5" /> : <Play className="w-4 h-4 md:w-5 md:h-5" />}
+          {isPlaying ? <Pause className="h-4 w-4 md:h-5 md:w-5" /> : <Play className="h-4 w-4 md:h-5 md:w-5" />}
         </button>
       </div>
 
-      {
-}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-2 max-w-md w-full px-8">
+      <div className="absolute bottom-8 left-1/2 z-20 flex w-full max-w-md -translate-x-1/2 gap-2 px-8">
         {slides.map((_, i) => (
           <button
             key={i}
@@ -146,7 +160,7 @@ const TempleCarousel = () => {
               setCurrent(i);
               setProgress(0);
             }}
-            className="flex-1 h-1 rounded-full overflow-hidden bg-background/15 hover:bg-background/25 transition-colors"
+            className="h-1 flex-1 overflow-hidden rounded-full bg-background/15 transition-colors hover:bg-background/25"
             aria-label={`Go to slide ${i + 1}`}
           >
             <motion.div
