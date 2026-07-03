@@ -8,32 +8,34 @@ import EventCard from "@/components/EventCard";
 
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
+
+const futureDate = (daysAhead: number) =>
+  new Date(Date.now() + daysAhead * 24 * 60 * 60 * 1000).toISOString();
 
 const fallbackEvents = [
   {
     title: "Janmashtami Celebrations",
-    date: "August 26, 2024",
+    date: futureDate(45),
     time: "6:00 AM - 12:00 AM",
     location: "Temple Premises",
     description: "Grand celebration of Lord Krishna's appearance day with abhishekam, kirtan, and midnight aarti.",
-    image: "/assets/gallery-festival-1.jpg",
+    image: "/assets/home-event-janmashtami.webp",
   },
   {
     title: "Radhashtami Festival",
-    date: "September 11, 2024",
+    date: futureDate(75),
     time: "6:00 AM - 9:00 PM",
     location: "Temple Premises",
     description: "Celebration of Srimati Radharani's appearance with special darshan and offerings.",
-    image: "/assets/gallery-festival-2.jpg",
+    image: "/assets/home-event-radhashtami.webp",
   },
   {
     title: "Gita Jayanti",
-    date: "December 22, 2024",
+    date: futureDate(135),
     time: "5:00 AM - 8:00 PM",
     location: "Temple Premises",
     description: "Commemoration of the day when Lord Krishna spoke the Bhagavad Gita to Arjuna.",
-    image: "/assets/gallery-class.jpg",
+    image: "/assets/home-event-gita-jayanti.webp",
   },
 ];
 

@@ -7,12 +7,12 @@ import Link from "next/link";
 import { ArrowRight, Check } from "lucide-react";
 
 const benefits = [
-  "Support temple activities",
-  "Receive prasadam at home",
+  "Support daily prasadam seva",
+  "Offer meals with devotion",
   "80G tax benefits",
-  "Monthly newsletter",
-  "Priority event access",
-  "Personalized blessings",
+  "Receive temple updates",
+  "Monthly seva participation",
+  "Blessings from the Lordships",
 ];
 
 const SubhojanamSection = () => {
@@ -34,8 +34,9 @@ const SubhojanamSection = () => {
               Subhojanam Program
             </h2>
             <p className="text-muted-foreground text-lg mb-8">
-              Contribute monthly to the temple&apos;s Anna Daan program and receive blessed prasadam 
-              at your doorstep. Your donation feeds hundreds of people daily and supports spiritual activities.
+              Offer monthly support for annadana seva and help serve sanctified prasadam with care.
+              Your contribution nourishes devotees, visitors, and families while sustaining the temple&apos;s
+              daily service mood.
             </p>
 
             <div className="grid grid-cols-2 gap-4 mb-8">
@@ -76,11 +77,11 @@ const SubhojanamSection = () => {
             className="order-1 md:order-2"
           >
             <Image
-              src="/assets/subhojanam.jpg"
+              src="/assets/home-subhojanam-banner.webp"
               alt="Subhojanam Program"
               width={600}
               height={450}
-              className="rounded-2xl shadow-elevated w-full"
+              className="rounded-2xl shadow-elevated w-full object-cover"
             />
           </motion.div>
         </div>

@@ -6,13 +6,31 @@ import { ChevronLeft, ChevronRight, Play, Pause } from "lucide-react";
 import Image from "next/image";
 
 const slides = [
-  { src: "/assets/hero-temple.jpg", title: "Hare Krishna Vaikuntham", subtitle: "Upcoming Cultural & Spiritual Center in Vizag", tag: "Featured" },
-  { src: "/assets/gallery-darshan-1.jpg", title: "Daily Darshan", subtitle: "Experience the divine beauty of the Lord every day", tag: "Darshan" },
-  { src: "/assets/gallery-festival-1.jpg", title: "Grand Festivals", subtitle: "Celebrating the glory of Lord Krishna with devotion", tag: "Festivals" },
-  { src: "/assets/gallery-aarti.jpg", title: "Mangala Aarti", subtitle: "The sacred morning worship that awakens the spirit", tag: "Worship" },
-  { src: "/assets/gallery-annadaan-1.jpg", title: "Anna Daan Seva", subtitle: "Serving prasadam to thousands with love and care", tag: "Seva" },
-  { src: "/assets/gallery-festival-2.jpg", title: "Temple Celebrations", subtitle: "Joyful gatherings filled with kirtan and prasadam", tag: "Events" },
-  { src: "/assets/temple-seva.jpg", title: "Temple Seva", subtitle: "Devotees coming together to serve the Lord", tag: "Community" },
+  {
+    src: "/assets/home-hero-desktop.webp",
+    mobileSrc: "/assets/home-hero-mobile.webp",
+    title: "Hare Krishna Vaikuntham",
+    subtitle: "A sacred spiritual home rising in Visakhapatnam for darshan, seva, festivals, and prasadam.",
+    tag: "Featured",
+  },
+  {
+    src: "/assets/home-temple-construction-banner.webp",
+    title: "Temple Construction Seva",
+    subtitle: "Every contribution helps build a lasting temple for worship, culture, and Krishna consciousness.",
+    tag: "Seva",
+  },
+  {
+    src: "/assets/hero-temple.jpg",
+    title: "Daily Darshan and Worship",
+    subtitle: "A living temple atmosphere of arati, kirtan, study, and devotional service throughout the day.",
+    tag: "Darshan",
+  },
+  {
+    src: "/assets/home-subhojanam-banner.webp",
+    title: "Annadana and Subhojanam",
+    subtitle: "Offer prasadam seva with compassion and help nourish hundreds with sanctified meals.",
+    tag: "Prasadam",
+  },
 ];
 
 const TempleCarousel = () => {
@@ -66,9 +84,10 @@ const TempleCarousel = () => {
     }),
   };
 
+  const currentSlide = slides[current];
+
   return (
-    <section className="relative w-full h-[calc(75vh-38px)] md:h-[calc(90vh-38px)] overflow-hidden bg-foreground mt-16 md:mt-24">
-      
+    <section className="relative mt-16 h-[calc(78vh-38px)] w-full overflow-hidden bg-foreground md:mt-24 md:h-[calc(90vh-38px)]">
       <AnimatePresence custom={direction} mode="popLayout">
         <motion.div
           key={current}
@@ -80,17 +99,37 @@ const TempleCarousel = () => {
           transition={{ duration: 0.9, ease: [0.25, 0.8, 0.25, 1] }}
           className="absolute inset-0"
         >
-          <Image
-            src={slides[current].src}
-            alt={slides[current].title}
-            fill
-            sizes="100vw"
-            className="object-cover"
-            priority
-          />
-        
-          <div className="absolute inset-0 bg-linear-to-t from-foreground/90 via-foreground/30 to-transparent" />
-          <div className="absolute inset-0 bg-linear-to-r from-foreground/50 via-transparent to-transparent" />
+          {currentSlide.mobileSrc ? (
+            <>
+              <Image
+                src={currentSlide.mobileSrc}
+                alt={currentSlide.title}
+                fill
+                sizes="100vw"
+                className="object-cover object-center md:hidden"
+                priority
+              />
+              <Image
+                src={currentSlide.src}
+                alt={currentSlide.title}
+                fill
+                sizes="100vw"
+                className="hidden object-cover object-center md:block"
+                priority
+              />
+            </>
+          ) : (
+            <Image
+              src={currentSlide.src}
+              alt={currentSlide.title}
+              fill
+              sizes="100vw"
+              className="object-cover object-center"
+              priority
+            />
+          )}
+          <div className="absolute inset-0 bg-linear-to-t from-foreground via-foreground/25 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-r from-foreground/75 via-foreground/30 to-transparent" />
         </motion.div>
       </AnimatePresence>
 
@@ -117,7 +156,7 @@ const TempleCarousel = () => {
 
       {
 }
-      <div className="absolute inset-0 z-10 flex items-end pb-24 md:pb-32 h-[80vh]">
+      <div className="absolute inset-0 z-10 flex h-[80vh] items-end pb-24 md:pb-32">
         <div className="container mx-auto px-4 md:px-8">
           <AnimatePresence mode="wait">
             <motion.div
@@ -128,11 +167,11 @@ const TempleCarousel = () => {
               transition={{ duration: 0.6, delay: 0.15 }}
               className="max-w-3xl"
             >
-              <h2 className="font-heading text-4xl md:text-6xl lg:text-7xl font-bold text-background mb-4 leading-[1.1]">
-                {slides[current].title}
+              <h2 className="mb-4 font-heading text-4xl font-bold leading-[1.05] text-background md:text-6xl lg:text-7xl">
+                {currentSlide.title}
               </h2>
-              <p className="text-background/60 text-base md:text-xl font-light max-w-xl leading-relaxed">
-                {slides[current].subtitle}
+              <p className="max-w-xl text-base font-light leading-relaxed text-background/75 md:text-xl">
+                {currentSlide.subtitle}
               </p>
             </motion.div>
           </AnimatePresence>

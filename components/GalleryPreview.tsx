@@ -7,10 +7,10 @@ import Link from "next/link";
 import { ArrowRight, Image as ImageIcon } from "lucide-react";
 
 const previewImages = [
-  { src: "/assets/gallery-darshan-1.jpg", title: "Sri Krishna Darshan" },
-  { src: "/assets/gallery-festival-1.jpg", title: "Festival Celebrations" },
-  { src: "/assets/gallery-aarti.jpg", title: "Mangala Aarti" },
-  { src: "/assets/gallery-festival-2.jpg", title: "Temple Decorations" },
+  { src: "/assets/home-gallery-radha-krishna.webp", title: "Sri Sri Radha Govinda" },
+  { src: "/assets/home-gallery-srinivasa-govinda.webp", title: "Srinivasa Govinda Darshan" },
+  { src: "/assets/home-gallery-aarti.webp", title: "Mangala Aarti" },
+  { src: "/assets/home-gallery-annadana.webp", title: "Annadana Seva" },
 ];
 
 const GalleryPreview = () => {
@@ -31,7 +31,7 @@ const GalleryPreview = () => {
             Divine Moments
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Experience the beauty of daily darshan, grand festivals, and community service through our gallery.
+            Glimpses of darshan, worship, prasadam distribution, and festival life at Hare Krishna Vaikuntham.
           </p>
         </motion.div>
 
