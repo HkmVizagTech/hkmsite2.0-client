@@ -86,7 +86,7 @@ const TempleCarousel = () => {
   const currentSlide = slides[current];
 
   return (
-    <section className="relative mt-16 h-[calc(78vh-38px)] w-full overflow-hidden bg-foreground md:mt-24 md:h-[calc(90vh-38px)]">
+    <section className="relative mt-16 w-full overflow-hidden bg-foreground h-[420px] sm:h-[520px] md:mt-24 md:h-auto md:aspect-[1920/700]">
       <AnimatePresence custom={direction} mode="popLayout">
         <motion.div
           key={current}
@@ -106,8 +106,6 @@ const TempleCarousel = () => {
             className="object-cover object-center"
             priority
           />
-          <div className="absolute inset-0 bg-linear-to-t from-foreground via-foreground/25 to-transparent" />
-          <div className="absolute inset-0 bg-linear-to-r from-foreground/75 via-foreground/30 to-transparent" />
         </motion.div>
       </AnimatePresence>
 
