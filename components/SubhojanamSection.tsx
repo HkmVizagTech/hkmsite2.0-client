@@ -4,15 +4,19 @@ import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Check } from "lucide-react";
+import { Check } from "lucide-react";
 
 const benefits = [
   "Support daily prasadam seva",
   "Offer meals with devotion",
   "80G tax benefits",
-  "Receive temple updates",
   "Monthly seva participation",
-  "Blessings from the Lordships",
+];
+
+const impact = [
+  { value: "1000s", label: "Meals Every Day" },
+  { value: "₹55", label: "Feeds One Person" },
+  { value: "80G", label: "Tax Exemption" },
 ];
 
 const SubhojanamSection = () => {
@@ -20,69 +24,80 @@ const SubhojanamSection = () => {
   const inView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section className="py-24 md:py-32 bg-card">
-      <div className="container mx-auto px-4" ref={ref}>
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+    <section ref={ref} className="relative overflow-hidden py-24 md:py-32">
+      {/* Full-bleed photo with navy scrim */}
+      <Image
+        src="/assets/home-subhojanam-banner.webp"
+        alt="Subhojanam meal distribution"
+        fill
+        sizes="100vw"
+        className="object-cover"
+      />
+      <div className="absolute inset-0 bg-[linear-gradient(100deg,hsl(220,85%,10%,0.94)_30%,hsl(220,85%,12%,0.72)_70%,hsl(220,85%,14%,0.5))]" />
+
+      <div className="container relative z-10 mx-auto px-4">
+        <div className="max-w-2xl">
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
+            initial={{ opacity: 0, y: 26 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8 }}
-            className="order-2 md:order-1"
           >
-            <p className="text-primary text-sm tracking-[0.2em] uppercase mb-4 font-medium">Monthly Seva</p>
-            <h2 className="font-heading text-3xl md:text-5xl font-bold text-foreground mb-6">
-              Subhojanam Program
-            </h2>
-            <p className="text-muted-foreground text-lg mb-8">
-              Offer monthly support for annadana seva and help serve sanctified prasadam with care.
-              Your contribution nourishes devotees, visitors, and families while sustaining the temple&apos;s
-              daily service mood.
+            <p className="mb-4 text-sm font-medium uppercase tracking-[0.2em] text-[hsl(var(--gold))]">
+              Subhojanam · Anna Daan
             </p>
-
-            <div className="grid grid-cols-2 gap-4 mb-8">
-              {benefits.map((benefit, index) => (
-                <motion.div
-                  key={benefit}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={inView ? { opacity: 1, x: 0 } : {}}
-                  transition={{ duration: 0.4, delay: 0.3 + index * 0.1 }}
-                  className="flex items-center gap-2"
-                >
-                  <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center">
-                    <Check className="w-3 h-3 text-primary" />
-                  </div>
-                  <span className="text-sm text-foreground">{benefit}</span>
-                </motion.div>
-              ))}
-            </div>
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={inView ? { opacity: 1 } : {}}
-              transition={{ delay: 0.8 }}
-            >
-              <Link
-                href="/subhojanam"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-primary-foreground rounded-xl font-semibold shadow-warm hover:opacity-90 transition-opacity"
-              >
-                Join Subhojanam <ArrowRight className="w-5 h-5" />
-              </Link>
-            </motion.div>
+            <h2 className="mb-5 font-heading text-3xl font-bold leading-[1.15] text-background md:text-5xl">
+              No One Should Go{" "}
+              <em className="font-serif-display italic text-[hsl(var(--gold))]">Hungry</em>{" "}
+              Within Our Reach
+            </h2>
+            <p className="mb-8 max-w-xl leading-relaxed text-background/85">
+              Through Subhojanam, we serve fresh, sanctified mid-day meals to school children and
+              the underprivileged across Visakhapatnam — every single day. Your monthly support
+              sustains this uninterrupted seva.
+            </p>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="order-1 md:order-2"
+            initial={{ opacity: 0, y: 20 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="mb-9 flex flex-wrap gap-x-10 gap-y-5"
           >
-            <Image
-              src="/assets/home-subhojanam-banner.webp"
-              alt="Subhojanam Program"
-              width={600}
-              height={450}
-              className="rounded-2xl shadow-elevated w-full object-cover"
-            />
+            {impact.map((s) => (
+              <div key={s.label}>
+                <b className="block text-3xl font-bold leading-none text-[hsl(var(--gold))] md:text-4xl">{s.value}</b>
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-background/70">{s.label}</span>
+              </div>
+            ))}
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.35 }}
+            className="mb-9 grid max-w-md grid-cols-2 gap-3"
+          >
+            {benefits.map((b) => (
+              <div key={b} className="flex items-center gap-2">
+                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[hsl(42,92%,56%,0.25)]">
+                  <Check className="h-3 w-3 text-[hsl(var(--gold))]" />
+                </span>
+                <span className="text-xs text-background/85 md:text-sm">{b}</span>
+              </div>
+            ))}
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={inView ? { opacity: 1 } : {}}
+            transition={{ delay: 0.5 }}
+          >
+            <Link
+              href="/subhojanam"
+              className="inline-flex items-center gap-2 rounded-full bg-gradient-gold px-8 py-4 text-base font-bold text-[hsl(220,60%,12%)] shadow-gold transition-transform hover:-translate-y-0.5"
+            >
+              🍛 Sponsor Meals Today
+            </Link>
           </motion.div>
         </div>
       </div>

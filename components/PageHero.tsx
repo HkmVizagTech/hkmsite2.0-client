@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import Ornament from "@/components/Ornament";
 
 interface PageHeroProps {
   title: string;
@@ -35,7 +36,15 @@ const PageHero = ({ title, subtitle, breadcrumb, backgroundImage }: PageHeroProp
         >
           <Link href="/" className="hover:text-accent transition-colors">Home</Link>
           <ChevronRight className="w-4 h-4" />
-          <span className="text-accent">{breadcrumb}</span>
+          <span className="text-[hsl(var(--gold))]">{breadcrumb}</span>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.1 }}
+        >
+          <Ornament className="mb-5 text-[hsl(var(--gold))]" />
         </motion.div>
 
         <motion.h1

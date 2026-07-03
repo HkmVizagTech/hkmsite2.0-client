@@ -3,6 +3,7 @@
 import { motion, useInView } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
+import Ornament from "@/components/Ornament";
 import { ArrowRight, Clock, Calendar } from "lucide-react";
 
 interface Blog {
@@ -58,9 +59,10 @@ const BlogPreview = () => {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <p className="text-primary text-sm tracking-[0.2em] uppercase mb-4 font-medium">
+          <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">
             Blog
           </p>
+          <Ornament className="mb-5" />
           <h2 className="font-heading text-3xl md:text-5xl font-bold text-foreground mb-6">
             Spiritual Wisdom &amp; Stories
           </h2>

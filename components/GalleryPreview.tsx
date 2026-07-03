@@ -5,12 +5,16 @@ import { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Image as ImageIcon } from "lucide-react";
+import Ornament from "@/components/Ornament";
 
-const previewImages = [
-  { src: "/assets/home-gallery-radha-krishna.webp", title: "Sri Sri Radha Govinda" },
-  { src: "/assets/home-gallery-srinivasa-govinda.webp", title: "Srinivasa Govinda Darshan" },
-  { src: "/assets/home-gallery-aarti.webp", title: "Mangala Aarti" },
-  { src: "/assets/home-gallery-annadana.webp", title: "Annadana Seva" },
+// Asymmetric editorial grid — one hero tile, one tall tile, four standard
+const tiles = [
+  { src: "/assets/home-gallery-radha-krishna.webp", title: "Sri Sri Radha Madan Mohan", span: "col-span-2 row-span-2" },
+  { src: "/assets/home-gallery-aarti.webp", title: "Sandhya Aarti", span: "row-span-2" },
+  { src: "/assets/home-gallery-srinivasa-govinda.webp", title: "Srinivasa Govinda Darshan", span: "" },
+  { src: "/assets/home-gallery-annadana.webp", title: "Annadana Seva", span: "" },
+  { src: "/assets/home-banner-jagannatha-rath-yatra.webp", title: "Jagannatha Rath Yatra", span: "" },
+  { src: "/assets/home-banner-chaitanya-bhavan.webp", title: "Chaitanya Bhavan", span: "" },
 ];
 
 const GalleryPreview = () => {
@@ -18,43 +22,43 @@ const GalleryPreview = () => {
   const inView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section className="py-24 md:py-32 bg-card" ref={ref}>
+    <section className="bg-card py-24 md:py-32" ref={ref}>
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8 }}
-          className="text-center mb-14"
+          className="mb-14 text-center"
         >
-          <p className="text-primary text-sm tracking-[0.2em] uppercase mb-4 font-medium">Gallery</p>
-          <h2 className="font-heading text-3xl md:text-5xl font-bold text-foreground mb-4">
-            Divine Moments
+          <p className="mb-3 text-sm font-medium uppercase tracking-[0.2em] text-gold">Divine Moments</p>
+          <Ornament className="mb-5" />
+          <h2 className="mb-4 font-heading text-3xl font-bold text-foreground md:text-5xl">
+            Temple Gallery
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+          <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
             Glimpses of darshan, worship, prasadam distribution, and festival life at Hare Krishna Vaikuntham.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
-          {previewImages.map((img, i) => (
+        <div className="mx-auto mb-10 grid max-w-5xl auto-rows-[140px] grid-cols-2 gap-3.5 md:auto-rows-[150px] md:grid-cols-4 md:gap-4">
+          {tiles.map((img, i) => (
             <motion.div
               key={img.title}
-              initial={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0, scale: 0.94 }}
               animate={inView ? { opacity: 1, scale: 1 } : {}}
-              transition={{ duration: 0.5, delay: 0.2 + i * 0.1 }}
-              className="relative group overflow-hidden rounded-2xl aspect-square"
+              transition={{ duration: 0.5, delay: 0.15 + i * 0.08 }}
+              className={`group relative overflow-hidden rounded-2xl shadow-warm ${img.span}`}
             >
               <Image
                 src={img.src}
                 alt={img.title}
                 fill
-                sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
-                className="object-cover group-hover:scale-110 transition-transform duration-500"
+                sizes="(min-width: 1024px) 25vw, 50vw"
+                className="object-cover transition-transform duration-700 group-hover:scale-[1.07]"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-foreground/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              <p className="absolute bottom-3 left-3 right-3 text-background text-sm font-heading font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
-                {img.title}
-              </p>
+              <div className="absolute inset-0 flex items-end bg-gradient-to-t from-[hsl(220,85%,10%,0.72)] via-transparent to-transparent p-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                <p className="font-heading text-sm font-semibold text-background">{img.title}</p>
+              </div>
             </motion.div>
           ))}
         </div>
@@ -62,11 +66,11 @@ const GalleryPreview = () => {
         <div className="text-center">
           <Link
             href="/gallery"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90 transition-opacity"
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:opacity-90"
           >
-            <ImageIcon className="w-4 h-4" />
+            <ImageIcon className="h-4 w-4" />
             View Full Gallery
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       </div>

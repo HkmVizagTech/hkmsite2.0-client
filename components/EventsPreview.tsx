@@ -3,6 +3,7 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import Link from "next/link";
+import Ornament from "@/components/Ornament";
 import { ArrowRight } from "lucide-react";
 import EventCard from "@/components/EventCard";
 
@@ -82,7 +83,8 @@ const EventsPreview = () => {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <p className="text-primary text-sm tracking-[0.2em] uppercase mb-4 font-medium">Events</p>
+          <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">Events</p>
+          <Ornament className="mb-5" />
           <h2 className="font-heading text-3xl md:text-5xl font-bold text-foreground mb-6">
             Upcoming Celebrations
           </h2>

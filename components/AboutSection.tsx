@@ -1,9 +1,10 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { useInView } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
+import Image from "next/image";
 import { Heart, BookOpen, Users, Flower2 } from "lucide-react";
+import Ornament from "@/components/Ornament";
 
 const highlights = [
   { icon: Heart, title: "Spiritual Well-being", desc: "Programs for physical, emotional and spiritual growth" },
@@ -12,57 +13,114 @@ const highlights = [
   { icon: Flower2, title: "Value Education", desc: "Inculcating values in children through engaging programs" },
 ];
 
+const stats = [
+  { value: "2015", label: "Serving Since" },
+  { value: "1000s", label: "Meals Daily" },
+  { value: "21+", label: "Festivals a Year" },
+];
+
 const AboutSection = () => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="about" className="py-24 md:py-32 bg-background">
+    <section id="about" className="py-24 md:py-32 bg-background overflow-hidden">
       <div className="container mx-auto px-4" ref={ref}>
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
-          className="text-center max-w-3xl mx-auto mb-16"
-        >
-          <p className="text-primary text-sm tracking-[0.2em] uppercase mb-4 font-medium">About Us</p>
-          <h2 className="font-heading text-3xl md:text-5xl font-bold text-foreground mb-6">
-            Spreading Krishna Consciousness
-          </h2>
-          <p className="text-muted-foreground text-lg leading-relaxed">
-            Following in the footsteps of our revered Founder-Acharya Srila Prabhupada, 
-            Hare Krishna Movement India (HKMI), Visakhapatnam has been conducting spiritual, 
-            educational and cultural activities since 2015 — bringing about physical, emotional 
-            and spiritual well-being.
-          </p>
-        </motion.div>
+        {/* Welcome split — circular deity photo + copy */}
+        <div className="mx-auto mb-24 grid max-w-5xl items-center gap-14 md:grid-cols-[1fr_1.15fr] md:gap-16">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92 }}
+            animate={inView ? { opacity: 1, scale: 1 } : {}}
+            transition={{ duration: 0.9 }}
+            className="relative mx-auto w-full max-w-sm"
+          >
+            <div className="absolute -inset-4 rounded-full ring-gold-dashed animate-slow-spin" aria-hidden />
+            <div className="relative aspect-square overflow-hidden rounded-full shadow-elevated">
+              <Image
+                src="/assets/home-gallery-radha-krishna.webp"
+                alt="Sri Sri Radha Madan Mohan"
+                fill
+                sizes="(min-width: 768px) 400px, 90vw"
+                className="object-cover"
+              />
+            </div>
+            <div className="absolute -right-2 bottom-[8%] rounded-2xl bg-card px-5 py-3.5 text-center shadow-elevated">
+              <b className="block text-2xl font-bold leading-none text-primary">10+</b>
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Years of Seva</span>
+            </div>
+          </motion.div>
 
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            animate={inView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.15 }}
+          >
+            <Ornament className="mb-4 !justify-start" />
+            <h2 className="mb-5 font-heading text-3xl font-bold leading-[1.14] text-foreground md:text-4xl lg:text-[2.6rem]">
+              Spreading{" "}
+              <em className="font-serif-display font-semibold not-italic italic text-gold">
+                Krishna Consciousness
+              </em>{" "}
+              in the City of Destiny
+            </h2>
+            <p className="mb-4 leading-relaxed text-muted-foreground">
+              Following in the footsteps of our revered Founder-Acharya Srila Prabhupada,
+              Hare Krishna Movement India (HKMI), Visakhapatnam has been conducting spiritual,
+              educational and cultural activities since 2015 — bringing about physical, emotional
+              and spiritual well-being.
+            </p>
+            <blockquote className="my-6 rounded-r-2xl border-l-[3px] border-[hsl(var(--gold))] bg-[hsl(42,92%,56%,0.07)] px-5 py-4">
+              <p className="font-serif-display italic text-foreground">
+                &ldquo;If you want peace, then you must develop Krishna consciousness. This is the only way.&rdquo;
+              </p>
+              <cite className="mt-1.5 block text-[11px] font-semibold not-italic uppercase tracking-wider text-muted-foreground">
+                — Srila Prabhupada
+              </cite>
+            </blockquote>
+            <div className="grid grid-cols-3 gap-3">
+              {stats.map((s, i) => (
+                <motion.div
+                  key={s.label}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={inView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ delay: 0.4 + i * 0.1 }}
+                  className="rounded-2xl border border-border bg-card px-3 py-4 text-center"
+                >
+                  <b className="block text-xl font-bold text-primary md:text-2xl">{s.value}</b>
+                  <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">{s.label}</span>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Pillars */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="max-w-4xl mx-auto mb-16"
+          className="mx-auto mb-14 max-w-3xl text-center"
         >
-          <p className="text-muted-foreground text-center leading-relaxed">
-            The advancement of Science and Technology has come to drastically change the dynamics of life. 
-            HKMI digs deep into the ancient Vedic scriptures to derive insights that address the important 
+          <p className="text-muted-foreground leading-relaxed">
+            The advancement of Science and Technology has come to drastically change the dynamics of life.
+            HKMI digs deep into the ancient Vedic scriptures to derive insights that address the important
             questions and enigmas of life, bringing about alternative paradigms for better living.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {highlights.map((item, i) => (
             <motion.div
               key={item.title}
               initial={{ opacity: 0, y: 30 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.3 + i * 0.1 }}
-              className="bg-card p-8 rounded-2xl border border-border hover:shadow-warm transition-shadow duration-300 text-center group"
+              className="group rounded-2xl border border-border bg-card p-8 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-elevated"
             >
-              <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-5 group-hover:bg-primary/20 transition-colors">
-                <item.icon className="w-7 h-7 text-primary" />
+              <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-xl bg-primary/10 transition-colors group-hover:bg-gradient-gold group-hover:text-[hsl(220,60%,12%)]">
+                <item.icon className="h-7 w-7 text-primary transition-colors group-hover:text-[hsl(220,60%,12%)]" />
               </div>
-              <h3 className="font-heading text-lg font-semibold text-foreground mb-2">{item.title}</h3>
+              <h3 className="mb-2 font-heading text-lg font-semibold text-foreground">{item.title}</h3>
               <p className="text-sm text-muted-foreground">{item.desc}</p>
             </motion.div>
           ))}

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import { Poppins, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { Toaster } from "@/components/ui/toaster";
@@ -9,6 +9,13 @@ import ReduxProvider from "@/components/ReduxProvider";
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+});
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  style: ["normal", "italic"],
+  variable: "--font-playfair",
 });
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://hkmsite2-0-client-9fyg.vercel.app";
@@ -63,7 +70,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-  <html lang="en" className={`h-full antialiased`} suppressHydrationWarning>
+  <html lang="en" className={`h-full antialiased ${playfair.variable}`} suppressHydrationWarning>
       <body className={`${poppins.className} min-h-full flex flex-col`}>
         <script
           type="application/ld+json"
