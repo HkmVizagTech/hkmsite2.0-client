@@ -5,6 +5,7 @@ import FounderSection from "@/components/FounderSection";
 import SevasSection from "@/components/SevasSection";
 import GalleryPreview from "@/components/GalleryPreview";
 import EventsPreview from "@/components/EventsPreview";
+import BlogPreview from "@/components/BlogPreview";
 import SubhojanamSection from "@/components/SubhojanamSection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
@@ -19,6 +20,7 @@ export default function Home() {
       <SevasSection />
       <GalleryPreview />
       <EventsPreview />
+      <BlogPreview />
       <SubhojanamSection />
       <ContactSection />
       <Footer />

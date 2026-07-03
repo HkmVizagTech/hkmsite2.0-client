@@ -11,6 +11,7 @@ const quickLinks = [
   { label: "Founder", href: "/founder" },
   { label: "Gallery", href: "/gallery" },
   { label: "Events", href: "/events" },
+  { label: "Blogs", href: "/blogs" },
 ];
 
 const sevaLinks = [
@@ -170,6 +171,13 @@ const Footer = () => {
               Copyright {new Date().getFullYear()} Hare Krishna Movement India, Visakhapatnam. Made with
               <Heart className="h-3.5 w-3.5 fill-primary text-primary" /> for devotion.
             </p>
+            <div className="flex items-center gap-4 text-xs text-background/40">
+              <Link href="/privacy-policy" className="transition-colors hover:text-primary">Privacy Policy</Link>
+              <span className="text-background/20">·</span>
+              <Link href="/terms-and-conditions" className="transition-colors hover:text-primary">Terms</Link>
+              <span className="text-background/20">·</span>
+              <Link href="/refund-policy" className="transition-colors hover:text-primary">Refunds</Link>
+            </div>
             <button
               onClick={scrollToTop}
               className="flex h-10 w-10 items-center justify-center rounded-full bg-background/10 text-background/60 transition-all duration-300 hover:bg-primary hover:text-primary-foreground"

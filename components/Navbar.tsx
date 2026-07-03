@@ -16,6 +16,7 @@ const navItems = [
   { label: "Seva's", href: "/sevas" },
   { label: "Gallery", href: "/gallery" },
   { label: "Events", href: "/events" },
+  { label: "Blog", href: "/blogs" },
   { label: "Schedule", href: "/daily-schedule" },
   { label: "Subhojanam", href: "/subhojanam" },
   { label: "Anna-Daan", href: "/anna-daan-seva" },
