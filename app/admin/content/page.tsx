@@ -1,70 +1,100 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Pencil, Save, X, FileText, Globe, Phone, Mail, MapPin, Clock } from "lucide-react";
+import { Pencil, Save, X, FileText, Globe, Phone, Mail, MapPin, Clock, Loader2 } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+
+interface SiteContent {
+  hero: { title: string; subtitle: string; tagline: string };
+  about: { heading: string; body: string };
+  contact: { phone: string; email: string; address: string; morningHours: string; eveningHours: string };
+}
+
+const defaultContent: SiteContent = {
+  hero: { title: "Hare Krishna Movement", subtitle: "Visakhapatnam", tagline: "Spreading the timeless message of Lord Krishna through devotion, service, and community" },
+  about: { heading: "A Legacy of Devotion & Service", body: "" },
+  contact: { phone: "+91 98765 43210", email: "info@harekrishnavizag.org", address: "Hare Krishna Marg, Visakhapatnam, Andhra Pradesh, India - 530003", morningHours: "4:30 AM - 1:00 PM", eveningHours: "4:00 PM - 8:30 PM" },
+};
 
 export default function AdminContent() {
+  const [content, setContent] = useState<SiteContent>(defaultContent);
   const [editingSection, setEditingSection] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
-  const [heroContent, setHeroContent] = useState({
-    title: "Hare Krishna Movement",
-    subtitle: "Visakhapatnam",
-    tagline: "Spreading the timeless message of Lord Krishna through devotion, service, and community",
-  });
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch(`${API_URL}/site-content`);
+        if (res.ok) {
+          const data = await res.json();
+          setContent({ ...defaultContent, ...data.content });
+        }
+      } catch {}
+      setLoading(false);
+    })();
+  }, []);
 
-  const [aboutContent, setAboutContent] = useState({
-    title: "About Our Movement",
-    description: "The Hare Krishna Movement Vizag is dedicated to spreading the teachings of Lord Sri Krishna as presented by His Divine Grace A.C. Bhaktivedanta Swami Prabhupada. Through temple worship, community service, and spiritual education, we strive to create a God-conscious society.",
-    mission: "To systematically propagate spiritual knowledge to society at large and to educate all people in the techniques of spiritual life.",
-  });
+  const handleSave = async (section: "hero" | "about" | "contact") => {
+    setSaving(true);
+    try {
+      const res = await fetch(`${API_URL}/site-content`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ [section]: content[section] }),
+      });
+      if (res.ok) {
+        toast({ title: "Saved", description: "This is now live on the public website." });
+        setEditingSection(null);
+      } else {
+        const json = await res.json().catch(() => ({}));
+        toast({ title: "Failed to save", description: json.message, variant: "destructive" });
+      }
+    } catch (e: any) {
+      toast({ title: "Network error", description: e.message, variant: "destructive" });
+    } finally {
+      setSaving(false);
+    }
+  };
 
-  const [contactInfo, setContactInfo] = useState({
-    phone: "+91 98765 43210",
-    email: "info@harekrishnavizag.org",
-    address: "Hare Krishna Movement, Visakhapatnam, Andhra Pradesh, India - 530003",
-    timings: "4:30 AM – 8:30 PM",
-  });
-
-  const [scheduleItems, setScheduleItems] = useState([
-    { time: "4:30 AM", activity: "Mangala Aarti" },
-    { time: "5:00 AM", activity: "Tulasi Puja" },
-    { time: "7:15 AM", activity: "Guru Puja" },
-    { time: "7:30 AM", activity: "Srimad Bhagavatam Class" },
-    { time: "12:30 PM", activity: "Raj Bhog Aarti" },
-    { time: "4:30 PM", activity: "Sandhya Aarti" },
-    { time: "7:00 PM", activity: "Gaura Aarti" },
-    { time: "8:15 PM", activity: "Shayan Aarti" },
-  ]);
+  if (loading) {
+    return <div className="py-24 text-center text-muted-foreground">Loading content…</div>;
+  }
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="font-heading text-3xl font-bold">Content Management</h1>
-        <p className="text-muted-foreground">Edit all website content from one place</p>
+        <p className="text-muted-foreground">
+          Edit site copy. Changes save to the database and take effect immediately on the public site.
+        </p>
       </div>
 
       <Tabs defaultValue="hero" className="space-y-4">
-        <TabsList className="grid grid-cols-4 w-full max-w-lg">
+        <TabsList className="grid grid-cols-3 w-full max-w-md">
           <TabsTrigger value="hero">Hero</TabsTrigger>
           <TabsTrigger value="about">About</TabsTrigger>
           <TabsTrigger value="contact">Contact</TabsTrigger>
-          <TabsTrigger value="schedule">Schedule</TabsTrigger>
         </TabsList>
 
-        {
-}
+        {/* HERO */}
         <TabsContent value="hero">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="flex items-center gap-2"><Globe className="w-5 h-5" /> Hero Section</CardTitle>
               {editingSection === "hero" ? (
                 <div className="flex gap-2">
-                  <Button onClick={() => setEditingSection(null)}><Save className="w-4 h-4 mr-1" /> Save</Button>
+                  <Button onClick={() => handleSave("hero")} disabled={saving}>
+                    {saving ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Save className="w-4 h-4 mr-1" />} Save
+                  </Button>
                   <Button className="bg-transparent text-foreground hover:bg-muted" onClick={() => setEditingSection(null)}><X className="w-4 h-4" /></Button>
                 </div>
               ) : (
@@ -74,29 +104,30 @@ export default function AdminContent() {
             <CardContent className="space-y-4">
               <div>
                 <label className="text-sm font-medium mb-1 block">Title</label>
-                <Input value={heroContent.title} disabled={editingSection !== "hero"} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setHeroContent({ ...heroContent, title: e.target.value })} />
+                <Input value={content.hero.title} disabled={editingSection !== "hero"} onChange={(e) => setContent({ ...content, hero: { ...content.hero, title: e.target.value } })} />
               </div>
               <div>
                 <label className="text-sm font-medium mb-1 block">Subtitle</label>
-                <Input value={heroContent.subtitle} disabled={editingSection !== "hero"} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setHeroContent({ ...heroContent, subtitle: e.target.value })} />
+                <Input value={content.hero.subtitle} disabled={editingSection !== "hero"} onChange={(e) => setContent({ ...content, hero: { ...content.hero, subtitle: e.target.value } })} />
               </div>
               <div>
                 <label className="text-sm font-medium mb-1 block">Tagline</label>
-                <Textarea value={heroContent.tagline} disabled={editingSection !== "hero"} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setHeroContent({ ...heroContent, tagline: e.target.value })} rows={2} />
+                <Textarea value={content.hero.tagline} disabled={editingSection !== "hero"} onChange={(e) => setContent({ ...content, hero: { ...content.hero, tagline: e.target.value } })} rows={2} />
               </div>
             </CardContent>
           </Card>
         </TabsContent>
 
-        {
-}
+        {/* ABOUT */}
         <TabsContent value="about">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="flex items-center gap-2"><FileText className="w-5 h-5" /> About Section</CardTitle>
               {editingSection === "about" ? (
                 <div className="flex gap-2">
-                  <Button onClick={() => setEditingSection(null)}><Save className="w-4 h-4 mr-1" /> Save</Button>
+                  <Button onClick={() => handleSave("about")} disabled={saving}>
+                    {saving ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Save className="w-4 h-4 mr-1" />} Save
+                  </Button>
                   <Button className="bg-transparent text-foreground hover:bg-muted" onClick={() => setEditingSection(null)}><X className="w-4 h-4" /></Button>
                 </div>
               ) : (
@@ -105,30 +136,27 @@ export default function AdminContent() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label className="text-sm font-medium mb-1 block">Title</label>
-                <Input value={aboutContent.title} disabled={editingSection !== "about"} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAboutContent({ ...aboutContent, title: e.target.value })} />
+                <label className="text-sm font-medium mb-1 block">Heading</label>
+                <Input value={content.about.heading} disabled={editingSection !== "about"} onChange={(e) => setContent({ ...content, about: { ...content.about, heading: e.target.value } })} />
               </div>
               <div>
-                <label className="text-sm font-medium mb-1 block">Description</label>
-                <Textarea value={aboutContent.description} disabled={editingSection !== "about"} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setAboutContent({ ...aboutContent, description: e.target.value })} rows={4} />
-              </div>
-              <div>
-                <label className="text-sm font-medium mb-1 block">Mission</label>
-                <Textarea value={aboutContent.mission} disabled={editingSection !== "about"} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setAboutContent({ ...aboutContent, mission: e.target.value })} rows={3} />
+                <label className="text-sm font-medium mb-1 block">Body</label>
+                <Textarea value={content.about.body} disabled={editingSection !== "about"} onChange={(e) => setContent({ ...content, about: { ...content.about, body: e.target.value } })} rows={5} placeholder="Optional — leave blank to use the default About page copy" />
               </div>
             </CardContent>
           </Card>
         </TabsContent>
 
-        {
-}
+        {/* CONTACT */}
         <TabsContent value="contact">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="flex items-center gap-2"><Phone className="w-5 h-5" /> Contact Info</CardTitle>
+              <CardTitle className="flex items-center gap-2"><Phone className="w-5 h-5" /> Contact Information</CardTitle>
               {editingSection === "contact" ? (
                 <div className="flex gap-2">
-                  <Button onClick={() => setEditingSection(null)}><Save className="w-4 h-4 mr-1" /> Save</Button>
+                  <Button onClick={() => handleSave("contact")} disabled={saving}>
+                    {saving ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Save className="w-4 h-4 mr-1" />} Save
+                  </Button>
                   <Button className="bg-transparent text-foreground hover:bg-muted" onClick={() => setEditingSection(null)}><X className="w-4 h-4" /></Button>
                 </div>
               ) : (
@@ -136,57 +164,27 @@ export default function AdminContent() {
               )}
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium mb-1 flex items-center gap-1"><Phone className="w-3.5 h-3.5" /> Phone</label>
-                  <Input value={contactInfo.phone} disabled={editingSection !== "contact"} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setContactInfo({ ...contactInfo, phone: e.target.value })} />
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-1 flex items-center gap-1"><Mail className="w-3.5 h-3.5" /> Email</label>
-                  <Input value={contactInfo.email} disabled={editingSection !== "contact"} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setContactInfo({ ...contactInfo, email: e.target.value })} />
-                </div>
+              <div>
+                <label className="text-sm font-medium mb-1 block flex items-center gap-1"><Phone className="w-3.5 h-3.5" /> Phone</label>
+                <Input value={content.contact.phone} disabled={editingSection !== "contact"} onChange={(e) => setContent({ ...content, contact: { ...content.contact, phone: e.target.value } })} />
               </div>
               <div>
-                <label className="text-sm font-medium mb-1 flex items-center gap-1"><MapPin className="w-3.5 h-3.5" /> Address</label>
-                <Textarea value={contactInfo.address} disabled={editingSection !== "contact"} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setContactInfo({ ...contactInfo, address: e.target.value })} rows={2} />
+                <label className="text-sm font-medium mb-1 block flex items-center gap-1"><Mail className="w-3.5 h-3.5" /> Email</label>
+                <Input value={content.contact.email} disabled={editingSection !== "contact"} onChange={(e) => setContent({ ...content, contact: { ...content.contact, email: e.target.value } })} />
               </div>
               <div>
-                <label className="text-sm font-medium mb-1 flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> Timings</label>
-                <Input value={contactInfo.timings} disabled={editingSection !== "contact"} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setContactInfo({ ...contactInfo, timings: e.target.value })} />
+                <label className="text-sm font-medium mb-1 block flex items-center gap-1"><MapPin className="w-3.5 h-3.5" /> Address</label>
+                <Textarea value={content.contact.address} disabled={editingSection !== "contact"} onChange={(e) => setContent({ ...content, contact: { ...content.contact, address: e.target.value } })} rows={2} />
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {
-}
-        <TabsContent value="schedule">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2"><Clock className="w-5 h-5" /> Daily Schedule</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {scheduleItems.map((item, i) => (
-                  <div key={i} className="flex items-center gap-3 bg-muted/50 p-3 rounded-lg">
-                    <Input value={item.time} onChange={(e) => {
-                      const updated = [...scheduleItems];
-                      updated[i].time = e.target.value;
-                      setScheduleItems(updated);
-                    }} className="w-28" />
-                    <Input value={item.activity} onChange={(e) => {
-                      const updated = [...scheduleItems];
-                      updated[i].activity = e.target.value;
-                      setScheduleItems(updated);
-                    }} className="flex-1" />
-                    <Button className="p-2 h-auto bg-transparent text-destructive hover:bg-destructive/10" onClick={() => setScheduleItems(scheduleItems.filter((_, j) => j !== i))}>
-                      <X className="w-4 h-4" />
-                    </Button>
-                  </div>
-                ))}
-                <Button className="w-full bg-transparent border border-dashed border-border text-muted-foreground hover:bg-muted" onClick={() => setScheduleItems([...scheduleItems, { time: "", activity: "" }])}>
-                  + Add Schedule Item
-                </Button>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm font-medium mb-1 block flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> Morning Hours</label>
+                  <Input value={content.contact.morningHours} disabled={editingSection !== "contact"} onChange={(e) => setContent({ ...content, contact: { ...content.contact, morningHours: e.target.value } })} />
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-1 block flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> Evening Hours</label>
+                  <Input value={content.contact.eveningHours} disabled={editingSection !== "contact"} onChange={(e) => setContent({ ...content, contact: { ...content.contact, eveningHours: e.target.value } })} />
+                </div>
               </div>
             </CardContent>
           </Card>

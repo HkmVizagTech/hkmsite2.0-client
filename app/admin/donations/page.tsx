@@ -298,8 +298,9 @@ export default function AdminDonations() {
               <div className="pt-3 flex gap-2">
                 <Button onClick={async () => {
                   try {
-                    await fetch(`${apiUrl}/donations/${selectedDonation._id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({}) });
-                    alert('Receipt resend requested');
+                    const r = await fetch(`${apiUrl}/donations/${selectedDonation._id}/resend-receipt`, { method: 'POST', credentials: 'include' });
+                    const j = await r.json().catch(() => ({}));
+                    alert(j.message || (r.ok ? 'Receipt resync triggered' : 'Failed to resend receipt'));
                   } catch (err) { console.error(err); alert('Failed'); }
                 }}>Resend Receipt</Button>
                 <Button variant="outline" onClick={() => { navigator.clipboard.writeText(JSON.stringify(selectedDonation, null, 2)); alert('Copied'); }}>Copy JSON</Button>
