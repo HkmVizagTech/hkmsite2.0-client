@@ -145,7 +145,7 @@ const Navbar = () => {
               className="rounded-full px-5 bg-gradient-ocean text-primary-foreground border-0 hover:opacity-90"
               asChild
             >
-              <Link href="/donate">
+              <Link href="/donations">
                 <Heart className="w-4 h-4 mr-1.5 fill-current" />
                 Donate Now
               </Link>
@@ -200,7 +200,7 @@ const Navbar = () => {
                   className="mt-2 rounded-full bg-gradient-ocean text-primary-foreground border-0"
                   asChild
                 >
-                  <Link href="/donate">
+                  <Link href="/donations">
                     <Heart className="w-4 h-4 mr-1.5 fill-current" />
                     Donate Now
                   </Link>

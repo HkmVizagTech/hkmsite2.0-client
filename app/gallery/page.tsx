@@ -6,6 +6,7 @@ import { X, ZoomIn } from "lucide-react";
 import Image from "next/image";
 import PageLayout from "@/components/PageLayout";
 import PageHero from "@/components/PageHero";
+import Ornament from "@/components/Ornament";
 import DailyDarshanGallery from "@/components/DailyDarshanGallery";
 import { getGalleryImages } from "@/lib/galleryApi";
 
@@ -144,9 +145,6 @@ export default function GalleryPage() {
             ))}
           </div>
 
-          {
-}
-
           <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             <AnimatePresence mode="popLayout">
               {loading
@@ -197,9 +195,6 @@ export default function GalleryPage() {
           </motion.div>
         </div>
       </section>
-
-      {
-}
       <AnimatePresence>
         {groupModal && groupModal.group && (
           <motion.div
@@ -259,9 +254,6 @@ export default function GalleryPage() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {
-}
       <AnimatePresence>
         {lightbox && lightbox.images && typeof lightbox.index === "number" && (
           <motion.div

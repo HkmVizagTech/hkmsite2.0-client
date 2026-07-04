@@ -2,6 +2,7 @@
 
 import PageLayout from "@/components/PageLayout";
 import PageHero from "@/components/PageHero";
+import Ornament from "@/components/Ornament";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { Utensils, Heart, Calendar, Users, CheckCircle, Sparkles } from "lucide-react";
@@ -48,9 +49,6 @@ export default function AnnaDaanPage() {
         breadcrumb="Anna-Daan Seva"
         backgroundImage="/assets/anna-daan.jpg"
       />
-
-      {
-}
       <section className="py-24 bg-background" ref={ref1}>
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
@@ -59,7 +57,8 @@ export default function AnnaDaanPage() {
               animate={inView1 ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.8 }}
             >
-              <p className="text-primary text-sm tracking-[0.2em] uppercase mb-4 font-medium">Sacred Service</p>
+              <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">Sacred Service</p>
+            <Ornament className="mb-5" />
               <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-6">
                 The Glory of Anna-Daan
               </h2>
@@ -88,9 +87,6 @@ export default function AnnaDaanPage() {
           </div>
         </div>
       </section>
-
-      {
-}
       <section className="py-24 bg-card" ref={ref2}>
         <div className="container mx-auto px-4">
           <motion.div
@@ -99,7 +95,8 @@ export default function AnnaDaanPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <p className="text-primary text-sm tracking-[0.2em] uppercase mb-4 font-medium">Why It Matters</p>
+            <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">Why It Matters</p>
+            <Ornament className="mb-5" />
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground">
               The Significance of Food Charity
             </h2>
@@ -111,7 +108,7 @@ export default function AnnaDaanPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={inView2 ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: 0.2 + i * 0.1 }}
-                className="flex gap-5 bg-background p-6 rounded-2xl border border-border hover:shadow-warm transition-shadow"
+                className="flex gap-5 bg-background p-6 rounded-2xl border border-border hover:shadow-warm transition-shadow group"
               >
                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
                   <item.icon className="w-6 h-6 text-primary" />
@@ -125,9 +122,6 @@ export default function AnnaDaanPage() {
           </div>
         </div>
       </section>
-
-      {
-}
       <section className="py-24 bg-background" ref={ref3}>
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
@@ -158,7 +152,8 @@ export default function AnnaDaanPage() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="order-1 md:order-2"
             >
-              <p className="text-primary text-sm tracking-[0.2em] uppercase mb-4 font-medium">Our Prasadam</p>
+              <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">Our Prasadam</p>
+            <Ornament className="mb-5" />
               <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-6">
                 What We Serve
               </h2>
@@ -175,9 +170,6 @@ export default function AnnaDaanPage() {
           </div>
         </div>
       </section>
-
-      {
-}
       <section className="py-24 bg-card" ref={ref4}>
         <div className="container mx-auto px-4">
           <motion.div
@@ -186,7 +178,8 @@ export default function AnnaDaanPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <p className="text-primary text-sm tracking-[0.2em] uppercase mb-4 font-medium">Become a Sponsor</p>
+            <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">Become a Sponsor</p>
+            <Ornament className="mb-5" />
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-4">
               Sponsorship Options
             </h2>
@@ -201,7 +194,7 @@ export default function AnnaDaanPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={inView4 ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.5, delay: 0.2 + i * 0.1 }}
-                className="bg-background rounded-2xl p-6 border border-border hover:shadow-warm transition-shadow"
+                className="bg-background rounded-2xl p-6 border border-border hover:shadow-warm transition-shadow group"
               >
                 <Utensils className="w-6 h-6 text-primary mb-3" />
                 <h3 className="font-heading text-lg font-bold text-foreground mb-1">{opt.title}</h3>
@@ -211,8 +204,8 @@ export default function AnnaDaanPage() {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={() => window.open("https://www.harekrishnavizag.org/donate", "_blank")}
-                  className="w-full py-2.5 bg-primary text-primary-foreground rounded-xl font-semibold text-sm hover:opacity-90 transition-opacity"
+                  onClick={() => window.open("/donations", "_self")}
+                  className="w-full py-2.5 rounded-full bg-gradient-gold text-[hsl(220,60%,12%)] font-bold text-sm shadow-gold hover:opacity-90 transition-opacity"
                 >
                   Sponsor Now
                 </motion.button>

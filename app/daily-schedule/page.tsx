@@ -6,6 +6,7 @@ import { Clock, Sun, Sunrise, Sunset, Moon, Music, BookOpen, Heart } from "lucid
 import Image from "next/image";
 import PageLayout from "@/components/PageLayout";
 import PageHero from "@/components/PageHero";
+import Ornament from "@/components/Ornament";
 
 const schedule = [
   { time: "4:30 AM", event: "Mangala Aarti", icon: Moon, desc: "The first aarti of the day, offered in the pre-dawn hours to awaken the Lord from His divine rest." },
@@ -57,13 +58,11 @@ export default function DailySchedulePage() {
         breadcrumb="Daily Schedule"
         backgroundImage="/assets/gallery-aarti.jpg"
       />
-
-      {
-}
       <section className="py-20 bg-background" ref={ref}>
         <div className="container mx-auto px-4">
           <div className="text-center mb-14">
-            <p className="text-primary text-sm tracking-[0.2em] uppercase mb-4 font-medium">Temple Timings</p>
+            <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">Temple Timings</p>
+            <Ornament className="mb-5" />
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground">
               Daily Program Schedule
             </h2>
@@ -81,27 +80,19 @@ export default function DailySchedulePage() {
                 transition={{ duration: 0.5, delay: i * 0.08 }}
                 className="flex gap-4 md:gap-6 mb-1"
               >
-                {
-}
                 <div className="w-20 md:w-24 shrink-0 text-right pt-5">
                   <span className="text-sm font-bold text-primary font-heading">{item.time}</span>
                 </div>
-
-                {
-}
                 <div className="flex flex-col items-center">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center border-2 border-primary/30 mt-4">
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center border-2 border-[hsl(var(--gold))]/40 mt-4">
                     <item.icon className="w-4 h-4 text-primary" />
                   </div>
                   {i < schedule.length - 1 && (
                     <div className="w-0.5 flex-1 bg-border" />
                   )}
                 </div>
-
-                {
-}
                 <div className="flex-1 pb-8">
-                  <div className="bg-card rounded-xl border border-border p-5 hover:shadow-warm transition-shadow">
+                  <div className="bg-card rounded-xl border border-border p-5 hover:shadow-warm transition-shadow group">
                     <h3 className="font-heading text-lg font-semibold text-foreground">{item.event}</h3>
                     <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">{item.desc}</p>
                   </div>
@@ -111,13 +102,11 @@ export default function DailySchedulePage() {
           </div>
         </div>
       </section>
-
-      {
-}
       <section className="py-20 bg-card">
         <div className="container mx-auto px-4">
           <div className="text-center mb-14">
-            <p className="text-primary text-sm tracking-[0.2em] uppercase mb-4 font-medium">Weekly Programs</p>
+            <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">Weekly Programs</p>
+            <Ornament className="mb-5" />
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground">
               Special Programs
             </h2>
@@ -130,7 +119,7 @@ export default function DailySchedulePage() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={inView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.6, delay: 0.3 + i * 0.15 }}
-                className="bg-background rounded-2xl border border-border overflow-hidden group hover:shadow-warm transition-shadow"
+                className="bg-background rounded-2xl border border-border overflow-hidden group hover:shadow-warm transition-shadow group"
               >
                 <div className="h-48 overflow-hidden relative">
                   <Image
@@ -153,9 +142,6 @@ export default function DailySchedulePage() {
           </div>
         </div>
       </section>
-
-      {
-}
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-10">
@@ -197,9 +183,6 @@ export default function DailySchedulePage() {
           </div>
         </div>
       </section>
-
-      {
-}
       <section className="py-20 bg-gradient-hero text-center">
         <div className="container mx-auto px-4 max-w-3xl">
           <motion.div

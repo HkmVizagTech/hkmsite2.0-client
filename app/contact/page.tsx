@@ -2,6 +2,7 @@
 
 import PageLayout from "@/components/PageLayout";
 import PageHero from "@/components/PageHero";
+import Ornament from "@/components/Ornament";
 import { motion, useInView } from "framer-motion";
 import { useRef, useState } from "react";
 import { MapPin, Phone, Mail, Clock, Send, Facebook, Instagram, Youtube, Building } from "lucide-react";
@@ -35,14 +36,33 @@ export default function ContactPage() {
   const inView4 = useInView(ref4, { once: true, margin: "-80px" });
   const { toast } = useToast();
   const [sending, setSending] = useState(false);
+  const [form, setForm] = useState({ name: "", phone: "", email: "", subject: "", message: "" });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleChange = (field: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+    setForm((f) => ({ ...f, [field]: e.target.value }));
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSending(true);
-    setTimeout(() => {
-      setSending(false);
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+      const res = await fetch(`${apiUrl}/contact-messages`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (!res.ok) throw new Error("Failed to send");
       toast({ title: "Message Sent!", description: "Hare Krishna! We'll respond soon." });
-    }, 1000);
+      setForm({ name: "", phone: "", email: "", subject: "", message: "" });
+    } catch (err) {
+      toast({
+        title: "Couldn't send message",
+        description: "Please try again, or reach us directly at info@harekrishnavizag.org",
+        variant: "destructive",
+      });
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -53,20 +73,16 @@ export default function ContactPage() {
         breadcrumb="Contact"
       />
 
-      {
-}
       <section className="py-24 bg-background" ref={ref1}>
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12">
-            {
-}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={inView1 ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.8 }}
               className="space-y-5"
             >
-              <p className="text-primary text-sm tracking-[0.2em] uppercase font-medium">Reach Out</p>
+              <p className="text-gold text-sm tracking-[0.2em] uppercase font-medium">Reach Out</p>
               <h2 className="font-heading text-3xl font-bold text-foreground mb-6">Get In Touch</h2>
               {contactInfo.map((info, i) => (
                 <motion.div
@@ -89,8 +105,6 @@ export default function ContactPage() {
               ))}
             </motion.div>
 
-            {
-}
             <motion.form
               onSubmit={handleSubmit}
               initial={{ opacity: 0, x: 30 }}
@@ -100,12 +114,12 @@ export default function ContactPage() {
             >
               <h3 className="font-heading text-xl font-bold text-foreground mb-2">Send a Message</h3>
               <div className="grid grid-cols-2 gap-4">
-                <Input placeholder="Your Name" required className="bg-background" />
-                <Input placeholder="Phone Number" className="bg-background" />
+                <Input placeholder="Your Name" required value={form.name} onChange={handleChange("name")} className="bg-background" />
+                <Input placeholder="Phone Number" value={form.phone} onChange={handleChange("phone")} className="bg-background" />
               </div>
-              <Input placeholder="Email Address" type="email" required className="bg-background" />
-              <Input placeholder="Subject" required className="bg-background" />
-              <Textarea placeholder="Your Message" rows={5} required className="bg-background resize-none" />
+              <Input placeholder="Email Address" type="email" required value={form.email} onChange={handleChange("email")} className="bg-background" />
+              <Input placeholder="Subject" required value={form.subject} onChange={handleChange("subject")} className="bg-background" />
+              <Textarea placeholder="Your Message" rows={5} required value={form.message} onChange={handleChange("message")} className="bg-background resize-none" />
               <Button type="submit" className="w-full" disabled={sending}>
                 <Send className="w-4 h-4 mr-2" />
                 {sending ? "Sending..." : "Send Message"}
@@ -115,8 +129,6 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {
-}
       <section className="py-24 bg-card" ref={ref2}>
         <div className="container mx-auto px-4">
           <motion.div
@@ -125,7 +137,8 @@ export default function ContactPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <p className="text-primary text-sm tracking-[0.2em] uppercase mb-4 font-medium">Bank Transfer</p>
+            <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">Bank Transfer</p>
+            <Ornament className="mb-5" />
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground">Donation Details</h2>
           </motion.div>
           <motion.div
@@ -161,8 +174,6 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {
-}
       <section className="py-24 bg-background" ref={ref3}>
         <div className="container mx-auto px-4">
           <motion.div
@@ -171,7 +182,8 @@ export default function ContactPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-12"
           >
-            <p className="text-primary text-sm tracking-[0.2em] uppercase mb-4 font-medium">Stay Connected</p>
+            <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">Stay Connected</p>
+            <Ornament className="mb-5" />
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-4">Follow Us</h2>
             <p className="text-muted-foreground max-w-lg mx-auto">
               Stay updated with our latest events, festivals, and seva activities through our social media channels.
@@ -190,7 +202,7 @@ export default function ContactPage() {
                 animate={inView3 ? { opacity: 1, y: 0 } : {}}
                 transition={{ delay: 0.3 + i * 0.1 }}
                 whileHover={{ scale: 1.05 }}
-                className="bg-card rounded-2xl p-6 border border-border text-center hover:shadow-warm transition-shadow"
+                className="bg-card rounded-2xl p-6 border border-border text-center hover:shadow-warm transition-shadow group"
               >
                 <div className={`w-14 h-14 rounded-xl ${social.color} flex items-center justify-center mx-auto mb-3`}>
                   <social.icon className="w-7 h-7 text-primary" />
@@ -202,8 +214,6 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {
-}
       <section className="py-24 bg-card" ref={ref4}>
         <div className="container mx-auto px-4">
           <motion.div
@@ -212,7 +222,8 @@ export default function ContactPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <p className="text-primary text-sm tracking-[0.2em] uppercase mb-4 font-medium">Common Questions</p>
+            <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">Common Questions</p>
+            <Ornament className="mb-5" />
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground">FAQs</h2>
           </motion.div>
           <div className="max-w-3xl mx-auto space-y-4">

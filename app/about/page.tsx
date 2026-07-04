@@ -2,6 +2,7 @@
 
 import PageLayout from "@/components/PageLayout";
 import PageHero from "@/components/PageHero";
+import Ornament from "@/components/Ornament";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import { Heart, BookOpen, Users, Flower2, Globe, Calendar, Music, GraduationCap } from "lucide-react";
@@ -48,9 +49,6 @@ export default function AboutPage() {
         breadcrumb="About Us"
         backgroundImage="/assets/about-community.jpg"
       />
-
-      {
-}
       <section className="py-24 bg-background" ref={ref1}>
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
@@ -59,7 +57,8 @@ export default function AboutPage() {
               animate={inView1 ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.8 }}
             >
-              <p className="text-primary text-sm tracking-[0.2em] uppercase mb-4 font-medium">Our Story</p>
+              <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">Our Story</p>
+            <Ornament className="mb-5" />
               <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-6">
                 A Legacy of Devotion & Service
               </h2>
@@ -94,9 +93,6 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-
-      {
-}
       <section className="py-24 bg-card" ref={ref2}>
         <div className="container mx-auto px-4">
           <motion.div
@@ -105,7 +101,8 @@ export default function AboutPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <p className="text-primary text-sm tracking-[0.2em] uppercase mb-4 font-medium">What We Stand For</p>
+            <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">What We Stand For</p>
+            <Ornament className="mb-5" />
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground">Our Core Values</h2>
           </motion.div>
           <div className="max-w-5xl mx-auto grid sm:grid-cols-2 gap-8">
@@ -115,9 +112,9 @@ export default function AboutPage() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={inView2 ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.6, delay: 0.2 + i * 0.1 }}
-                className="flex gap-5 bg-background p-6 rounded-2xl border border-border hover:shadow-warm transition-shadow"
+                className="flex gap-5 bg-background p-6 rounded-2xl border border-border hover:shadow-warm transition-shadow group"
               >
-                <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 transition-colors group-hover:bg-gradient-gold">
                   <item.icon className="w-7 h-7 text-primary" />
                 </div>
                 <div>
@@ -129,9 +126,6 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-
-      {
-}
       <section className="py-24 bg-background" ref={ref3}>
         <div className="container mx-auto px-4">
           <motion.div
@@ -140,7 +134,8 @@ export default function AboutPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <p className="text-primary text-sm tracking-[0.2em] uppercase mb-4 font-medium">What We Do</p>
+            <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">What We Do</p>
+            <Ornament className="mb-5" />
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground">Our Activities</h2>
           </motion.div>
           <div className="max-w-5xl mx-auto grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -150,9 +145,9 @@ export default function AboutPage() {
                 initial={{ opacity: 0, y: 30 }}
                 animate={inView3 ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.6, delay: 0.2 + i * 0.1 }}
-                className="bg-card p-6 rounded-2xl border border-border text-center hover:shadow-warm transition-shadow"
+                className="bg-card p-6 rounded-2xl border border-border text-center hover:shadow-warm transition-shadow group"
               >
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mx-auto mb-4 transition-colors group-hover:bg-gradient-gold">
                   <item.icon className="w-6 h-6 text-primary" />
                 </div>
                 <h3 className="font-heading font-semibold text-foreground mb-2">{item.title}</h3>
@@ -162,9 +157,6 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-
-      {
-}
       <section className="py-24 bg-card" ref={ref4}>
         <div className="container mx-auto px-4">
           <motion.div
@@ -173,7 +165,8 @@ export default function AboutPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <p className="text-primary text-sm tracking-[0.2em] uppercase mb-4 font-medium">Our Journey</p>
+            <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">Our Journey</p>
+            <Ornament className="mb-5" />
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground">Key Milestones</h2>
           </motion.div>
           <div className="max-w-2xl mx-auto space-y-0">
@@ -186,7 +179,7 @@ export default function AboutPage() {
                 className="flex gap-6 items-start relative pb-8"
               >
                 <div className="flex flex-col items-center">
-                  <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold text-xs shrink-0">
+                  <div className="w-12 h-12 rounded-full bg-gradient-gold flex items-center justify-center text-[hsl(220,60%,12%)] font-bold text-xs shrink-0">
                     {m.year}
                   </div>
                   {i < milestones.length - 1 && (

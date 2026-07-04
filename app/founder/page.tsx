@@ -2,6 +2,7 @@
 
 import PageLayout from "@/components/PageLayout";
 import PageHero from "@/components/PageHero";
+import Ornament from "@/components/Ornament";
 import { motion, useInView } from "framer-motion";
 import { useRef, ReactNode } from "react";
 import Image from "next/image";
@@ -67,7 +68,8 @@ const teachings = [
 
 const SectionHeader = ({ label, title }: { label: string; title: string }) => (
   <div className="text-center mb-16">
-    <p className="text-primary text-sm tracking-[0.2em] uppercase mb-4 font-medium">{label}</p>
+    <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">{label}</p>
+            <Ornament className="mb-5" />
     <h2 className="text-3xl md:text-5xl font-bold text-foreground">{title}</h2>
   </div>
 );
@@ -120,7 +122,7 @@ export default function FounderPage() {
               </div>
 
               <div className="md:col-span-3 space-y-6">
-                <p className="text-primary text-sm tracking-[0.2em] uppercase font-medium">About Srila Prabhupada</p>
+                <p className="text-gold text-sm tracking-[0.2em] uppercase font-medium">About Srila Prabhupada</p>
                 <h2 className="text-3xl md:text-4xl font-bold text-foreground">
                   The Acharya Who Changed the World
                 </h2>
@@ -172,7 +174,7 @@ export default function FounderPage() {
             {qualities.map((q) => (
               <AnimatedSection key={q.title}>
                 <div className="bg-background rounded-2xl p-6 border border-border hover:shadow-warm hover:-translate-y-1 transition-all duration-300 h-full">
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4 transition-colors group-hover:bg-gradient-gold">
                     <Sparkles className="w-5 h-5 text-primary" />
                   </div>
                   <h3 className="text-lg font-semibold text-foreground mb-2">{q.title}</h3>
@@ -200,7 +202,7 @@ export default function FounderPage() {
                 <AnimatedSection key={item.year}>
                   <div className={`relative flex items-start mb-12 ${isLeft ? "md:flex-row" : "md:flex-row-reverse"}`}>
                    
-                    <div className="absolute left-6 md:left-1/2 w-4 h-4 rounded-full bg-primary border-4 border-background -translate-x-2 md:-translate-x-2 z-10 mt-1" />
+                    <div className="absolute left-6 md:left-1/2 w-4 h-4 rounded-full bg-[hsl(var(--gold))] border-4 border-background -translate-x-2 md:-translate-x-2 z-10 mt-1" />
 
                    
                     <div className={`ml-16 md:ml-0 md:w-[calc(50%-2rem)] ${isLeft ? "md:pr-8 md:text-right" : "md:pl-8"}`}>

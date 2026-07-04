@@ -2,6 +2,7 @@
 
 import PageLayout from "@/components/PageLayout";
 import PageHero from "@/components/PageHero";
+import Ornament from "@/components/Ornament";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import Image from "next/image";
@@ -68,9 +69,6 @@ export default function SevasPage() {
         breadcrumb="Seva's"
         backgroundImage="/assets/temple-seva.jpg"
       />
-
-      {
-}
       <section className="py-24 bg-background" ref={ref1}>
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
@@ -79,7 +77,8 @@ export default function SevasPage() {
               animate={inView1 ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.8 }}
             >
-              <p className="text-primary text-sm tracking-[0.2em] uppercase mb-4 font-medium">The Vision</p>
+              <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">The Vision</p>
+            <Ornament className="mb-5" />
               <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-6">
                 Hare Krishna Vaikuntham Temple
               </h2>
@@ -103,9 +102,6 @@ export default function SevasPage() {
           </div>
         </div>
       </section>
-
-      {
-}
       <section className="py-24 bg-card" ref={ref2}>
         <div className="container mx-auto px-4">
           <motion.div
@@ -114,7 +110,8 @@ export default function SevasPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <p className="text-primary text-sm tracking-[0.2em] uppercase mb-4 font-medium">Ways to Contribute</p>
+            <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">Ways to Contribute</p>
+            <Ornament className="mb-5" />
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground">Choose Your Seva</h2>
           </motion.div>
           <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
@@ -142,8 +139,8 @@ export default function SevasPage() {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={() => window.open("https://www.harekrishnavizag.org/temple-sevas", "_blank")}
-                  className="w-full mt-6 py-3 bg-primary text-primary-foreground rounded-xl font-semibold shadow-warm hover:opacity-90 transition-opacity"
+                  onClick={() => window.open("/donations", "_self")}
+                  className="w-full mt-6 py-3 rounded-full font-bold bg-gradient-gold text-[hsl(220,60%,12%)] shadow-gold hover:opacity-90 transition-opacity"
                 >
                   Donate Now
                 </motion.button>
@@ -152,9 +149,6 @@ export default function SevasPage() {
           </div>
         </div>
       </section>
-
-      {
-}
       <section className="py-24 bg-background" ref={ref3}>
         <div className="container mx-auto px-4">
           <motion.div
@@ -163,7 +157,8 @@ export default function SevasPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <p className="text-primary text-sm tracking-[0.2em] uppercase mb-4 font-medium">What&apos;s Being Built</p>
+            <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">What&apos;s Being Built</p>
+            <Ornament className="mb-5" />
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground">Temple Features</h2>
           </motion.div>
           <div className="max-w-3xl mx-auto grid sm:grid-cols-2 gap-4">
@@ -182,9 +177,6 @@ export default function SevasPage() {
           </div>
         </div>
       </section>
-
-      {
-}
       <section className="py-24 bg-card" ref={ref4}>
         <div className="container mx-auto px-4">
           <motion.div
@@ -193,7 +185,8 @@ export default function SevasPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <p className="text-primary text-sm tracking-[0.2em] uppercase mb-4 font-medium">Why Contribute</p>
+            <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">Why Contribute</p>
+            <Ornament className="mb-5" />
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground">Benefits of Seva</h2>
           </motion.div>
           <div className="max-w-5xl mx-auto grid sm:grid-cols-2 gap-6">

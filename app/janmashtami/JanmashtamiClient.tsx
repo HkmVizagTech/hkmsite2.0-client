@@ -522,9 +522,9 @@ export default function JanmashtamiClient() {
               <li><a className="hover:text-white" href="/about">Hare Krishna Movement</a></li>
               <li><a className="hover:text-white" href="/contact">Contact Us</a></li>
               <li><a className="hover:text-white" href="/subhojanam">Subhojanam</a></li>
-              <li><a className="hover:text-white" href="https://www.harekrishnavizag.org/terms_and_conditions">Terms & Conditions</a></li>
-              <li><a className="hover:text-white" href="https://www.harekrishnavizag.org/cancellation_and_refund_policy">Refund Policy</a></li>
-              <li><a className="hover:text-white" href="https://www.harekrishnavizag.org/privacy_policy">Privacy Policy</a></li>
+              <li><a className="hover:text-white" href="/terms-and-conditions">Terms & Conditions</a></li>
+              <li><a className="hover:text-white" href="/refund-policy">Refund Policy</a></li>
+              <li><a className="hover:text-white" href="/privacy-policy">Privacy Policy</a></li>
             </ul>
           </div>
           <div>

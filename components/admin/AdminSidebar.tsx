@@ -13,6 +13,7 @@ import {
   IndianRupee,
   ChevronRight,
   PenSquare, // <-- NEW
+  MessageSquare,
 } from "lucide-react";
 import NextImage from "next/image";
 import Link from "next/link";
@@ -49,6 +50,7 @@ const contentItems = [
 ];
 
 const systemItems = [
+  { title: "Messages", url: "/admin/messages", icon: MessageSquare },
   { title: "Notifications", url: "/admin/notifications", icon: Bell },
   { title: "Devotees", url: "/admin/devotees", icon: Users },
   { title: "Settings", url: "/admin/settings", icon: Settings },

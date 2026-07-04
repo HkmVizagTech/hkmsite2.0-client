@@ -2,6 +2,7 @@
 
 import PageLayout from "@/components/PageLayout";
 import PageHero from "@/components/PageHero";
+import Ornament from "@/components/Ornament";
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import Image from "next/image";
@@ -60,9 +61,6 @@ export default function SubhojanamPage() {
         breadcrumb="Subhojanam"
         backgroundImage="/assets/subhojanam.jpg"
       />
-
-      {
-}
       <section className="py-24 bg-background" ref={ref1}>
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
@@ -71,7 +69,8 @@ export default function SubhojanamPage() {
               animate={inView1 ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.8 }}
             >
-              <p className="text-primary text-sm tracking-[0.2em] uppercase mb-4 font-medium">The Programme</p>
+              <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">The Programme</p>
+            <Ornament className="mb-5" />
               <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-6">
                 Feeding Hope, One Meal at a Time
               </h2>
@@ -100,9 +99,6 @@ export default function SubhojanamPage() {
           </div>
         </div>
       </section>
-
-      {
-}
       <section className="py-24 bg-card" ref={ref2}>
         <div className="container mx-auto px-4">
           <motion.div
@@ -111,7 +107,8 @@ export default function SubhojanamPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <p className="text-primary text-sm tracking-[0.2em] uppercase mb-4 font-medium">Our Impact</p>
+            <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">Our Impact</p>
+            <Ornament className="mb-5" />
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground">Numbers That Matter</h2>
           </motion.div>
           <div className="max-w-4xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
@@ -129,9 +126,6 @@ export default function SubhojanamPage() {
               </motion.div>
             ))}
           </div>
-
-          {
-}
           <div className="max-w-3xl mx-auto grid md:grid-cols-2 gap-6">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -158,9 +152,6 @@ export default function SubhojanamPage() {
           </div>
         </div>
       </section>
-
-      {
-}
       <section className="py-24 bg-background" ref={ref3}>
         <div className="container mx-auto px-4">
           <motion.div
@@ -169,7 +160,8 @@ export default function SubhojanamPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <p className="text-primary text-sm tracking-[0.2em] uppercase mb-4 font-medium">Stories of Impact</p>
+            <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">Stories of Impact</p>
+            <Ornament className="mb-5" />
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground">Voices of Gratitude</h2>
           </motion.div>
           <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-6">
@@ -192,9 +184,6 @@ export default function SubhojanamPage() {
           </div>
         </div>
       </section>
-
-      {
-}
       <section className="py-24 bg-card" ref={ref4}>
         <div className="container mx-auto px-4">
           <motion.div
@@ -203,7 +192,8 @@ export default function SubhojanamPage() {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <p className="text-primary text-sm tracking-[0.2em] uppercase mb-4 font-medium">Support Us</p>
+            <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">Support Us</p>
+            <Ornament className="mb-5" />
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-4">
               Choose Your Contribution
             </h2>
@@ -221,7 +211,7 @@ export default function SubhojanamPage() {
                 transition={{ duration: 0.5, delay: 0.2 + i * 0.1 }}
                 className={`rounded-2xl p-6 border text-center ${
                   tier.popular
-                    ? "bg-primary text-primary-foreground border-primary shadow-warm"
+                    ? "bg-gradient-gold text-[hsl(220,60%,12%)] border-transparent shadow-gold"
                     : "bg-background border-border"
                 }`}
               >
@@ -237,11 +227,11 @@ export default function SubhojanamPage() {
                 <motion.button
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
-                  onClick={() => window.open("https://www.harekrishnavizag.org/subhojanam", "_blank")}
-                  className={`w-full py-2.5 rounded-xl font-semibold text-sm transition-opacity hover:opacity-90 ${
+                  onClick={() => window.open("/donations", "_self")}
+                  className={`w-full py-2.5 rounded-full font-semibold text-sm transition-opacity hover:opacity-90 ${
                     tier.popular
-                      ? "bg-primary-foreground text-primary"
-                      : "bg-primary text-primary-foreground"
+                      ? "bg-[hsl(220,60%,12%)] text-[hsl(var(--gold))]"
+                      : "bg-gradient-gold text-[hsl(220,60%,12%)]"
                   }`}
                 >
                   Donate
@@ -251,9 +241,6 @@ export default function SubhojanamPage() {
           </div>
         </div>
       </section>
-
-      {
-}
       <section className="py-24 bg-background" ref={ref5}>
         <div className="container mx-auto px-4">
           <motion.div
