@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 
 import { getGalleryImages, createGalleryImage, deleteGalleryImage } from "@/lib/galleryApi";
+import { getToken } from "@/lib/authClient";
 import { useAdminLoader } from "@/contexts/AdminLoaderContext";
 import { parseCookies } from "nookies";
 import * as yup from "yup";
@@ -94,7 +95,7 @@ export default function AdminGallery() {
 
   const handleDelete = async (id: string) => {
   if (!id) return;
-  await deleteGalleryImage(id);
+  await deleteGalleryImage(id, getToken() || undefined);
   setImages((prev) => prev.filter((img) => img._id !== id));
   };
 
@@ -147,7 +148,7 @@ export default function AdminGallery() {
         images: urls,
         date: uploadForm.date || new Date().toISOString().split("T")[0],
         category: uploadForm.category,
-      });
+      }, getToken() || undefined);
       setImages((prev) => [...prev, newItem]);
       setShowUpload(false);
       setUploadForm({ title: "", category: "Daily Darshan", date: "", files: [], previews: [] });

@@ -1,4 +1,5 @@
 "use client";
+import { authFetch } from "@/lib/authClient";
 
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -38,7 +39,7 @@ export default function AdminMessages() {
       const params = new URLSearchParams();
       if (filter !== "all") params.set("status", filter);
       params.set("limit", "100");
-      const res = await fetch(`${API_URL}/contact-messages?${params.toString()}`, { credentials: "include" });
+      const res = await authFetch(`${API_URL}/contact-messages?${params.toString()}`, { credentials: "include" });
       const json = await res.json();
       if (res.ok) {
         setMessages(json.messages || []);
@@ -60,7 +61,7 @@ export default function AdminMessages() {
 
   const updateStatus = async (id: string, status: ContactMessage["status"]) => {
     try {
-      const res = await fetch(`${API_URL}/contact-messages/${id}/status`, {
+      const res = await authFetch(`${API_URL}/contact-messages/${id}/status`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -82,7 +83,7 @@ export default function AdminMessages() {
   const handleDelete = async (m: ContactMessage) => {
     if (!confirm(`Delete message from ${m.name}?`)) return;
     try {
-      const res = await fetch(`${API_URL}/contact-messages/${m._id}`, { method: "DELETE", credentials: "include" });
+      const res = await authFetch(`${API_URL}/contact-messages/${m._id}`, { method: "DELETE", credentials: "include" });
       if (res.ok) {
         setMessages((ms) => ms.filter((x) => x._id !== m._id));
         if (selected?._id === m._id) setSelected(null);

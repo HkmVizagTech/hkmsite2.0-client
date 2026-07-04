@@ -1,4 +1,5 @@
 "use client";
+import { authFetch } from "@/lib/authClient";
 
 import React, { useEffect, useState } from "react";
 import QRScannerModal from "./QRScannerModal";
@@ -38,7 +39,7 @@ export default function RegistrationsList({ eventId, tableOnly }: { eventId: str
       if (!eventId) return;
       try {
         const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3003";
-  const res = await fetch(`${apiUrl}/events/${eventId}`, { credentials: 'include' });
+  const res = await authFetch(`${apiUrl}/events/${eventId}`, { credentials: 'include' });
         if (!res.ok) return;
         const json = await res.json();
         const rf = json.event?.registrationForm;
@@ -63,7 +64,7 @@ export default function RegistrationsList({ eventId, tableOnly }: { eventId: str
   if (query) params.set('q', query);
   if (filterPresent === 'present') params.set('attended', 'true');
   if (filterPresent === 'absent') params.set('attended', 'false');
-  const res = await fetch(`/api/events/${eventId}/registrations?${params.toString()}`);
+  const res = await authFetch(`/api/events/${eventId}/registrations?${params.toString()}`);
       if (!res.ok) {
         let errMsg = `Status ${res.status}`;
         try {
@@ -141,7 +142,7 @@ export default function RegistrationsList({ eventId, tableOnly }: { eventId: str
 
   async function markAttendance(token: string) {
     try {
-      const res = await fetch(`/api/events/${eventId}/registrations/${token}/attendance`, { method: "POST" });
+      const res = await authFetch(`/api/events/${eventId}/registrations/${token}/attendance`, { method: "POST" });
       if (!res.ok) throw new Error("failed");
       fetchPage(page);
     } catch (e) {

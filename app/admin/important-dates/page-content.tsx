@@ -1,4 +1,5 @@
 "use client";
+import { authFetch } from "@/lib/authClient";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Card, CardContent } from "@/components/ui/card";
@@ -25,7 +26,7 @@ export default function AdminImportantDatesPage() {
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
   async function fetchDates() {
-    const res = await fetch(`${apiUrl}/important-dates`, { credentials: "include" });
+    const res = await authFetch(`${apiUrl}/important-dates`, { credentials: "include" });
     const data = await res.json();
     setDates(Array.isArray(data) ? data : data.dates || []);
   }
@@ -51,14 +52,14 @@ export default function AdminImportantDatesPage() {
 
   async function onSubmit(data: Partial<ImportantDate>) {
     if (editing) {
-      await fetch(`${apiUrl}/important-dates/${editing._id}`, {
+      await authFetch(`${apiUrl}/important-dates/${editing._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
         credentials: "include",
       });
     } else {
-      await fetch(`${apiUrl}/important-dates`, {
+      await authFetch(`${apiUrl}/important-dates`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -71,7 +72,7 @@ export default function AdminImportantDatesPage() {
   }
 
   async function handleDelete(id: string) {
-    await fetch(`${apiUrl}/important-dates/${id}`, { method: "DELETE", credentials: "include" });
+    await authFetch(`${apiUrl}/important-dates/${id}`, { method: "DELETE", credentials: "include" });
     fetchDates();
   }
 

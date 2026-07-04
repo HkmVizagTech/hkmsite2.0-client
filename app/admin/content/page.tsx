@@ -1,4 +1,5 @@
 "use client";
+import { authFetch } from "@/lib/authClient";
 
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -32,7 +33,7 @@ export default function AdminContent() {
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetch(`${API_URL}/site-content`);
+        const res = await authFetch(`${API_URL}/site-content`);
         if (res.ok) {
           const data = await res.json();
           setContent({ ...defaultContent, ...data.content });
@@ -45,7 +46,7 @@ export default function AdminContent() {
   const handleSave = async (section: "hero" | "about" | "contact") => {
     setSaving(true);
     try {
-      const res = await fetch(`${API_URL}/site-content`, {
+      const res = await authFetch(`${API_URL}/site-content`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

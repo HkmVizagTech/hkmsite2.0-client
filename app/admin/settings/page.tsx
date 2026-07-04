@@ -1,4 +1,5 @@
 "use client";
+import { authFetch } from "@/lib/authClient";
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -47,7 +48,7 @@ export default function AdminSettings() {
 
     (async () => {
       try {
-        const res = await fetch(`${API_URL}/users/profile`, { credentials: "include" });
+        const res = await authFetch(`${API_URL}/users/profile`, { credentials: "include" });
         if (res.ok) {
           const data = await res.json();
           setProfile({ name: data.user.name || "", email: data.user.email || "" });
@@ -66,7 +67,7 @@ export default function AdminSettings() {
   const handleSaveProfile = async () => {
     setSavingProfile(true);
     try {
-      const res = await fetch(`${API_URL}/users/update`, {
+      const res = await authFetch(`${API_URL}/users/update`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -93,7 +94,7 @@ export default function AdminSettings() {
     }
     setSavingPassword(true);
     try {
-      const res = await fetch(`${API_URL}/users/update`, {
+      const res = await authFetch(`${API_URL}/users/update`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -118,7 +119,7 @@ export default function AdminSettings() {
     setNotifications(updated); // optimistic
     setSavingPrefs(true);
     try {
-      const res = await fetch(`${API_URL}/users/update`, {
+      const res = await authFetch(`${API_URL}/users/update`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

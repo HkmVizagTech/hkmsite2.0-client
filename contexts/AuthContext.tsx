@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { authFetch, setToken, clearToken } from "@/lib/authClient";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -19,9 +20,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/profile`, {
-          credentials: "include",
-        });
+        // authFetch attaches the stored Bearer token alongside the cookie,
+        // so this still works even if the cross-site cookie was blocked.
+        const res = await authFetch(`${process.env.NEXT_PUBLIC_API_URL}/users/profile`);
         if (res.ok) {
           const data = await res.json();
           setUser({ email: data.user.email, name: data.user.name });
@@ -47,6 +48,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
       if (!res.ok) return false;
       const data = await res.json();
+      if (data.token) setToken(data.token); // localStorage fallback for cross-site cookie blocking
       setUser({ email: data.user.email, name: data.user.name });
       return true;
     } catch {
@@ -55,10 +57,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = async () => {
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/logout`, {
-      method: "POST",
-      credentials: "include",
-    });
+    try {
+      await authFetch(`${process.env.NEXT_PUBLIC_API_URL}/users/logout`, { method: "POST" });
+    } catch {}
+    clearToken();
     setUser(null);
   };
 

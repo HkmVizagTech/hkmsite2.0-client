@@ -1,4 +1,5 @@
 "use client";
+import { authFetch } from "@/lib/authClient";
 
 import { useEffect, useState, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -37,7 +38,7 @@ export default function AdminDevotees() {
       if (search) params.set("q", search);
       if (statusFilter !== "all") params.set("status", statusFilter);
       params.set("limit", "200");
-      const res = await fetch(`${API_URL}/devotees?${params.toString()}`, { credentials: "include" });
+      const res = await authFetch(`${API_URL}/devotees?${params.toString()}`, { credentials: "include" });
       if (res.ok) {
         const data = await res.json();
         setDevotees(data.devotees || []);

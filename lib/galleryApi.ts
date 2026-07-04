@@ -22,9 +22,11 @@ export const getGalleryImages = async () => {
 };
 
 export const createGalleryImage = async (
-  data: { title: string; description?: string; images: string[]; date: string; category?: string; type?: string; status?: string }
+  data: { title: string; description?: string; images: string[]; date: string; category?: string; type?: string; status?: string },
+  token?: string
 ) => {
   const res = await axios.post(`${API_BASE}/gallery`, data, {
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
     withCredentials: true,
   });
   return res.data.item;
@@ -33,17 +35,18 @@ export const createGalleryImage = async (
 export const updateGalleryImage = async (
   id: string,
   data: { title?: string; description?: string; images?: string[]; date?: string; category?: string; type?: string; status?: string },
-  token: string
+  token?: string
 ) => {
   const res = await axios.put(`${API_BASE}/gallery/${id}`, data, {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
     withCredentials: true,
   });
   return res.data.item;
 };
 
-export const deleteGalleryImage = async (id: string) => {
+export const deleteGalleryImage = async (id: string, token?: string) => {
   await axios.delete(`${API_BASE}/gallery/${id}`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
     withCredentials: true,
   });
 };

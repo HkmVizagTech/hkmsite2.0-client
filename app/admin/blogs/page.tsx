@@ -1,4 +1,5 @@
 "use client";
+import { authFetch } from "@/lib/authClient";
 
 import { useState, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
@@ -102,7 +103,7 @@ export default function AdminBlogs() {
       if (filter.category) params.set("category", filter.category);
       if (filter.q) params.set("q", filter.q);
       params.set("limit", "50");
-      const res = await fetch(`${API_URL}/blogs?${params.toString()}`, {
+      const res = await authFetch(`${API_URL}/blogs?${params.toString()}`, {
         credentials: "include",
       });
       const json = await res.json();
@@ -211,7 +212,7 @@ export default function AdminBlogs() {
 
       const url = editing ? `${API_URL}/blogs/${editing._id}` : `${API_URL}/blogs`;
       const method = editing ? "PUT" : "POST";
-      const res = await fetch(url, { method, body: fd, credentials: "include" });
+      const res = await authFetch(url, { method, body: fd, credentials: "include" });
       const json = await res.json();
 
       if (res.ok) {
@@ -237,7 +238,7 @@ export default function AdminBlogs() {
     if (!confirm(`Delete "${blog.title}"? This cannot be undone.`)) return;
     show && show("Deleting…");
     try {
-      const res = await fetch(`${API_URL}/blogs/${blog._id}`, {
+      const res = await authFetch(`${API_URL}/blogs/${blog._id}`, {
         method: "DELETE",
         credentials: "include",
       });

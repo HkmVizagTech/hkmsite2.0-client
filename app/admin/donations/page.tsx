@@ -1,4 +1,5 @@
 "use client";
+import { authFetch } from "@/lib/authClient";
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
@@ -57,7 +58,7 @@ export default function AdminDonations() {
   const fetchDonations = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${apiUrl}/donations?page=${page}&limit=${limit}`, { credentials: 'include' });
+      const res = await authFetch(`${apiUrl}/donations?page=${page}&limit=${limit}`, { credentials: 'include' });
       if (!res.ok) return;
       const data = await res.json();
       setDonations(data.donations || []);
@@ -298,7 +299,7 @@ export default function AdminDonations() {
               <div className="pt-3 flex gap-2">
                 <Button onClick={async () => {
                   try {
-                    const r = await fetch(`${apiUrl}/donations/${selectedDonation._id}/resend-receipt`, { method: 'POST', credentials: 'include' });
+                    const r = await authFetch(`${apiUrl}/donations/${selectedDonation._id}/resend-receipt`, { method: 'POST', credentials: 'include' });
                     const j = await r.json().catch(() => ({}));
                     alert(j.message || (r.ok ? 'Receipt resync triggered' : 'Failed to resend receipt'));
                   } catch (err) { console.error(err); alert('Failed'); }

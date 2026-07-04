@@ -1,4 +1,5 @@
 "use client";
+import { authFetch } from "@/lib/authClient";
 
 import { useEffect, useMemo, useState, Fragment } from "react";
 import { Button } from "@/components/ui/button";
@@ -27,7 +28,7 @@ export default function FestivalDonations() {
       if (filters.from) q.set('from', filters.from);
       if (filters.to) q.set('to', filters.to);
       if (filters.q) q.set('q', filters.q);
-      const res = await fetch(`${apiUrl}/donations?${q.toString()}`, { credentials: 'include' });
+      const res = await authFetch(`${apiUrl}/donations?${q.toString()}`, { credentials: 'include' });
       if (!res.ok) return;
       const data = await res.json();
       setDonations(data.donations || []);
@@ -51,7 +52,7 @@ export default function FestivalDonations() {
 
   const resendReceipt = async (donationId: string) => {
     try {
-      const res = await fetch(`${apiUrl}/donations/${donationId}`, {
+      const res = await authFetch(`${apiUrl}/donations/${donationId}`, {
         method: 'PUT',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },

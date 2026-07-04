@@ -1,4 +1,5 @@
 "use client";
+import { authFetch } from "@/lib/authClient";
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
@@ -39,7 +40,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetch(`${API_URL}/dashboard/stats`, { credentials: "include" });
+        const res = await authFetch(`${API_URL}/dashboard/stats`, { credentials: "include" });
         if (res.ok) {
           const data = await res.json();
           setStats(data.stats);

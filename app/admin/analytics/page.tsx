@@ -1,4 +1,5 @@
 "use client";
+import { authFetch } from "@/lib/authClient";
 
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,8 +28,8 @@ export default function AdminAnalytics() {
     (async () => {
       try {
         const [statsRes, devoteesRes] = await Promise.all([
-          fetch(`${API_URL}/dashboard/stats`, { credentials: "include" }),
-          fetch(`${API_URL}/devotees?limit=5`, { credentials: "include" }),
+          authFetch(`${API_URL}/dashboard/stats`, { credentials: "include" }),
+          authFetch(`${API_URL}/devotees?limit=5`, { credentials: "include" }),
         ]);
         if (statsRes.ok) {
           const d = await statsRes.json();

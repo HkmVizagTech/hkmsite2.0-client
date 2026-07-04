@@ -1,4 +1,5 @@
 "use client";
+import { authFetch } from "@/lib/authClient";
 
 import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
@@ -71,7 +72,7 @@ export default function AdminEvents() {
     let description = '';
     let date = '';
     try {
-      const evRes = await fetch(`${apiUrl}/events/${eventId}`, { credentials: 'include' });
+      const evRes = await authFetch(`${apiUrl}/events/${eventId}`, { credentials: 'include' });
       if (evRes.ok) {
         const evJson = await evRes.json().catch(()=>null);
         const ev = evJson?.event || evJson;
@@ -90,7 +91,7 @@ export default function AdminEvents() {
     if (description) fd.append('description', description);
     if (date) fd.append('date', date);
 
-    const res = await fetch(`${apiUrl}/events/${eventId}`, { method: "PUT", body: fd, credentials: "include" });
+    const res = await authFetch(`${apiUrl}/events/${eventId}`, { method: "PUT", body: fd, credentials: "include" });
     if (res.ok) {
         console.log('saveRegistrationForm: response ok for', eventId);
         try {
@@ -103,7 +104,7 @@ export default function AdminEvents() {
             try { setRegistrationForm((updated as any).registrationForm || null); } catch (_) {}
             // fetch the event to confirm persistence
             try {
-              const check = await fetch(`${apiUrl}/events/${eventId}`, { credentials: 'include' });
+              const check = await authFetch(`${apiUrl}/events/${eventId}`, { credentials: 'include' });
               if (check.ok) {
                 const j = await check.json().catch(()=>null);
                 console.log('saveRegistrationForm: fetched after save', j?.event || j);
@@ -113,7 +114,7 @@ export default function AdminEvents() {
           }
         } catch (_) {}
         // revalidate the public page for this event
-        try { fetch(`/api/revalidate`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ path: `/events/${eventId}` }) }).catch(()=>null); } catch (_) {}
+        try { authFetch(`/api/revalidate`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ path: `/events/${eventId}` }) }).catch(()=>null); } catch (_) {}
     } else {
       const txt = await res.text().catch(()=>null);
       toast({ title: 'Failed to save form', description: txt || res.statusText });
@@ -132,7 +133,7 @@ export default function AdminEvents() {
   const handleDelete = async (id: number) => {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3003";
     try {
-      const res = await fetch(`${apiUrl}/events/${id}`, {
+      const res = await authFetch(`${apiUrl}/events/${id}`, {
         method: "DELETE",
         credentials: "include",
       });
@@ -153,7 +154,7 @@ export default function AdminEvents() {
     const fetchEvents = async () => {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3003";
       try {
-  const res = await fetch(`${apiUrl}/events`, { credentials: 'include' });
+  const res = await authFetch(`${apiUrl}/events`, { credentials: 'include' });
         if (!res.ok) return;
         const data = await res.json();
         if (Array.isArray(data.events)) {
@@ -182,7 +183,7 @@ export default function AdminEvents() {
             fd.append("registrationForm", JSON.stringify(registrationForm));
           } catch (_) {}
         }
-        const res = await fetch(`${apiUrl}/events/${editing}`, { method: "PUT", body: fd, credentials: "include" });
+        const res = await authFetch(`${apiUrl}/events/${editing}`, { method: "PUT", body: fd, credentials: "include" });
           if (res.ok) {
           const json = await res.json().catch(() => null);
           if (json) {
@@ -190,7 +191,7 @@ export default function AdminEvents() {
             const normalized = { ...ev, id: ev._id || ev.id || `temp-${Date.now()}` } as any;
             dispatch(updateEvent(normalized));
             // revalidate updated event page
-            try { fetch(`/api/revalidate`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ path: `/events/${normalized._id || normalized.id}` }) }).catch(()=>null); } catch (_) {}
+            try { authFetch(`/api/revalidate`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ path: `/events/${normalized._id || normalized.id}` }) }).catch(()=>null); } catch (_) {}
           }
           success = true;
         } else {
@@ -205,7 +206,7 @@ export default function AdminEvents() {
             fd.append("registrationForm", JSON.stringify(registrationForm));
           } catch (_) {}
         }
-        const res = await fetch(`${apiUrl}/events`, { method: "POST", body: fd, credentials: "include" });
+        const res = await authFetch(`${apiUrl}/events`, { method: "POST", body: fd, credentials: "include" });
   if (res.ok) {
           const json = await res.json().catch(() => null);
           if (json) {
@@ -213,7 +214,7 @@ export default function AdminEvents() {
             const normalized = { ...ev, id: ev._id || ev.id || `temp-${Date.now()}` } as any;
             dispatch(addEvent(normalized));
             // revalidate created event page
-            try { fetch(`/api/revalidate`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ path: `/events/${normalized._id || normalized.id}` }) }).catch(()=>null); } catch (_) {}
+            try { authFetch(`/api/revalidate`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ path: `/events/${normalized._id || normalized.id}` }) }).catch(()=>null); } catch (_) {}
           }
           success = true;
         } else {

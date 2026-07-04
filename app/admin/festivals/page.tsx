@@ -1,4 +1,5 @@
 "use client";
+import { authFetch } from "@/lib/authClient";
 
 import { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
@@ -31,7 +32,7 @@ export default function AdminFestivals() {
   async function fetchFestivals() {
     setLoading(true);
     try {
-      const res = await fetch(`${apiUrl}/festival-donations`, { credentials: 'include' });
+      const res = await authFetch(`${apiUrl}/festival-donations`, { credentials: 'include' });
       if (!res.ok) return;
       const data = await res.json();
       setFestivals(Array.isArray(data) ? data : []);
@@ -77,7 +78,7 @@ export default function AdminFestivals() {
 
   const handleDelete = async (id: string) => {
     try {
-      const res = await fetch(`${apiUrl}/festival-donations/${id}`, { method: 'DELETE', credentials: 'include' });
+      const res = await authFetch(`${apiUrl}/festival-donations/${id}`, { method: 'DELETE', credentials: 'include' });
       if (res.ok) fetchFestivals();
     } catch (err) {}
   };
@@ -103,9 +104,9 @@ export default function AdminFestivals() {
       };
       let res;
       if (editing) {
-        res = await fetch(`${apiUrl}/festival-donations/${editing._id || editing.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), credentials: 'include' });
+        res = await authFetch(`${apiUrl}/festival-donations/${editing._id || editing.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), credentials: 'include' });
       } else {
-        res = await fetch(`${apiUrl}/festival-donations`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), credentials: 'include' });
+        res = await authFetch(`${apiUrl}/festival-donations`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload), credentials: 'include' });
       }
       if (res.ok) {
         try {
