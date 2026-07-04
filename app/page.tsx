@@ -1,6 +1,5 @@
 import Navbar from "@/components/Navbar";
 import TempleCarousel from "@/components/TempleCarousel";
-import QuickStrip from "@/components/QuickStrip";
 import AboutSection from "@/components/AboutSection";
 import FounderSection from "@/components/FounderSection";
 import SevasSection from "@/components/SevasSection";
@@ -16,7 +15,6 @@ export default function Home() {
     <div className="min-h-screen bg-background pt-[88px] md:pt-[104px]">
       <Navbar />
       <TempleCarousel />
-      <QuickStrip />
       <AboutSection />
       <FounderSection />
       <SevasSection />
