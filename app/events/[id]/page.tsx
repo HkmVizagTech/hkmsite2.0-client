@@ -7,7 +7,7 @@ import Image from "next/image";
 
 export default async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+  const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:3000";
   let event: any = null;
   let fetchStatus: number | null = null;
   let fetchBody: any = null;

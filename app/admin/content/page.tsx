@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Pencil, Save, X, FileText, Globe, Phone, Mail, MapPin, Clock, Loader2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 
 interface SiteContent {
   hero: { title: string; subtitle: string; tagline: string };

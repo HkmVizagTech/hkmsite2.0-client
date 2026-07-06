@@ -15,7 +15,7 @@ export default function FestivalDonations() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [total, setTotal] = useState(0);
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3003";
+  const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:3003";
 
   useEffect(() => { if (festivalId) fetchDonations(); }, [festivalId, page, pageSize, filters]);
 

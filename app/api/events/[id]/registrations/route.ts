@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3003';
+const API = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || 'http://localhost:3003';
 
 export async function GET(req: Request, context: any) {
   const params = context?.params || {};

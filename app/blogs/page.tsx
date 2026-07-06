@@ -42,7 +42,7 @@ interface LandingData {
   recent: Blog[];
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:3000";
 
 // Color tokens used for category tile placeholders when no image is uploaded
 const CATEGORY_COLORS: Record<string, string> = {

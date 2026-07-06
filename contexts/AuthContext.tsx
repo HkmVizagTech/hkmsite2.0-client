@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       try {
         // authFetch attaches the stored Bearer token alongside the cookie,
         // so this still works even if the cross-site cookie was blocked.
-        const res = await authFetch(`${process.env.NEXT_PUBLIC_API_URL}/users/profile`);
+        const res = await authFetch(`${(process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "")}/users/profile`);
         if (res.ok) {
           const data = await res.json();
           setUser({ email: data.user.email, name: data.user.name });
@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (email: string, password: string) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/login`, {
+      const res = await fetch(`${(process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "")}/users/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -58,7 +58,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = async () => {
     try {
-      await authFetch(`${process.env.NEXT_PUBLIC_API_URL}/users/logout`, { method: "POST" });
+      await authFetch(`${(process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "")}/users/logout`, { method: "POST" });
     } catch {}
     clearToken();
     setUser(null);

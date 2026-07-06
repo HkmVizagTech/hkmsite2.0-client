@@ -24,7 +24,7 @@ export default function AdminImportantDatesPage() {
   const [editing, setEditing] = useState<ImportantDate | null>(null);
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<Partial<ImportantDate>>();
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+  const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
   async function fetchDates() {
     const res = await authFetch(`${apiUrl}/important-dates`, { credentials: "include" });
     const data = await res.json();

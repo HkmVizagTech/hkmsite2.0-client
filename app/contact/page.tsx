@@ -45,7 +45,7 @@ export default function ContactPage() {
     e.preventDefault();
     setSending(true);
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+      const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
       const res = await fetch(`${apiUrl}/contact-messages`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

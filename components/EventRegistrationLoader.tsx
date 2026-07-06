@@ -18,7 +18,7 @@ export default function EventRegistrationLoader({ eventId, initialFormSchema, in
    
     if (!formSchema) {
       let mounted = true;
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+      const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
       const tryFetch = async (attempt: number) => {
         try {
           setLoading(true);

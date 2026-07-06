@@ -25,7 +25,7 @@ export default function ImportantDatesPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+    const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
     fetch(`${apiUrl}/important-dates`)
       .then((res) => res.json())
       .then((data) => setDates(Array.isArray(data) ? data : data.dates || []))

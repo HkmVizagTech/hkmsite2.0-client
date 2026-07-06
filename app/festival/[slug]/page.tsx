@@ -5,7 +5,7 @@ import ContentSection from '@/components/festival/ContentSection';
 import DonationFormWrapper from '@/components/festival/DonationFormWrapper';
 
 async function getFestivalDonation(slug: string) {
-  const base = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"; // server runs on 8080 in this workspace
+  const base = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080"; // server runs on 8080 in this workspace
   try {
     const res = await fetch(`${base}/festival-donations/${slug}`);
     if (!res.ok) return null;

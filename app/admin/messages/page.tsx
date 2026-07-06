@@ -23,7 +23,7 @@ interface ContactMessage {
   createdAt: string;
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 
 export default function AdminMessages() {
   const [messages, setMessages] = useState<ContactMessage[]>([]);

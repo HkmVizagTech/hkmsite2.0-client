@@ -34,7 +34,7 @@ interface Category {
   count: number;
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:3000";
 const DONATE_URL = process.env.NEXT_PUBLIC_DONATE_URL || "https://donate.harekrishnavizag.org";
 
 async function getBlog(slug: string): Promise<Blog | null> {

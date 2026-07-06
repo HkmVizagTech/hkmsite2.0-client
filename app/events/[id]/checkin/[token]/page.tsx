@@ -13,7 +13,7 @@ export default function CheckinPage({ params }: any) {
     async function doCheckin() {
       setLoading(true);
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+        const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:3000";
   const res = await fetch(`${apiUrl}/events/${id}/checkin/${encodeURIComponent(token)}`, { method: 'POST', credentials: 'include' });
         const json = await res.json();
         if (res.ok) {

@@ -17,7 +17,7 @@ interface RichTextEditorProps {
   onChange: (html: string) => void;
   placeholder?: string;
   disabled?: boolean;
-  /** API base URL — defaults to process.env.NEXT_PUBLIC_API_URL */
+  /** API base URL — defaults to (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") */
   apiUrl?: string;
 }
 
@@ -33,7 +33,7 @@ export default function RichTextEditor({
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const base = apiUrl || process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+  const base = apiUrl || (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:3000";
 
   // Initialize CKEditor on mount (client only)
   useEffect(() => {

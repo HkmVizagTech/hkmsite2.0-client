@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Search, Users, Mail, Phone, MapPin, Eye, Download } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 
 interface Devotee {
   _id: string;

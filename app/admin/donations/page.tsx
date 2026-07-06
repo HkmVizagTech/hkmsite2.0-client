@@ -14,7 +14,7 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell,
 } from "recharts";
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3003';
+const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || 'http://localhost:3003';
 
 
 const monthlyDonations = [

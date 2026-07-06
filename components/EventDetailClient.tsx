@@ -14,7 +14,7 @@ export default function EventDetailClient({ id }: { id: string }) {
     const fetchEvent = async () => {
       setLoading(true);
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+        const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
         const res = await fetch(`${apiUrl}/events/${id}`, { credentials: 'include' });
         if (!mounted) return;
         if (!res.ok) {

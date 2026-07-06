@@ -45,7 +45,7 @@ type DonationPageSettings = {
   };
 };
 
-const apiUrl = () => process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+const apiUrl = () => (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 
 const defaultDonationOptions: DonationOption[] = [
   { id: 11, category: "ANNADAAN", title: "Feed 50 people", amount: 1501 },

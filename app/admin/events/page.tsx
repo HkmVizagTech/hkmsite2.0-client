@@ -61,7 +61,7 @@ export default function AdminEvents() {
   const { show, hide } = useAdminLoader();
 
   const saveRegistrationForm = async (eventId: string | number, formSchema: any) => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+    const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:3000";
     let success = false;
   try {
   setSubmitting(true);
@@ -131,7 +131,7 @@ export default function AdminEvents() {
   };
 
   const handleDelete = async (id: number) => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3003";
+    const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:3003";
     try {
       const res = await authFetch(`${apiUrl}/events/${id}`, {
         method: "DELETE",
@@ -152,7 +152,7 @@ export default function AdminEvents() {
 
   useEffect(() => {
     const fetchEvents = async () => {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3003";
+      const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:3003";
       try {
   const res = await authFetch(`${apiUrl}/events`, { credentials: 'include' });
         if (!res.ok) return;
@@ -166,7 +166,7 @@ export default function AdminEvents() {
   }, [dispatch]);
 
   async function onSubmit(data: any) {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3003";
+    const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:3003";
     let success = false;
   try {
   setSubmitting(true);

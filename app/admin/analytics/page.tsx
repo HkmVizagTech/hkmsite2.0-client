@@ -10,7 +10,7 @@ import {
 } from "recharts";
 import { IndianRupee, TrendingUp, Users, Crown } from "lucide-react";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 const COLORS = ["hsl(30,85%,50%)", "hsl(350,45%,35%)", "hsl(42,90%,55%)", "hsl(200,70%,50%)", "hsl(150,60%,40%)", "hsl(270,50%,55%)"];
 const STATUS_COLORS: Record<string, string> = { completed: "hsl(150,60%,40%)", pending: "hsl(42,90%,55%)", failed: "hsl(0,70%,55%)" };
 

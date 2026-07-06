@@ -28,7 +28,7 @@ const BlogPreview = () => {
     async function fetchBlogs() {
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"}/blogs?limit=3`
+          `${(process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080"}/blogs?limit=3`
         );
         if (!res.ok) return;
         const data = await res.json();
