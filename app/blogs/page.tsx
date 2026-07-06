@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import PageLayout from "@/components/PageLayout";
 import {
   Calendar,
   Clock,
@@ -94,22 +95,27 @@ export default function BlogsListPage() {
 
   if (loading) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center text-muted-foreground">
+      <PageLayout>
+      <div className="min-h-[60vh] flex items-center justify-center text-muted-foreground pt-20">
         Loading blogs…
       </div>
+      </PageLayout>
     );
   }
 
   if (!data) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center text-muted-foreground">
+      <PageLayout>
+      <div className="min-h-[60vh] flex items-center justify-center text-muted-foreground pt-20">
         Failed to load blogs. Please try again later.
       </div>
+      </PageLayout>
     );
   }
 
   return (
-    <main className="bg-background">
+    <PageLayout>
+    <main className="bg-background pt-20">
       {/* ─── HERO + RECENTS STRIP ─── */}
       <section className="container mx-auto px-4 pt-10 pb-12">
         <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-6 max-w-3xl">
@@ -336,6 +342,7 @@ export default function BlogsListPage() {
         </div>
       </section>
     </main>
+    </PageLayout>
   );
 }
 

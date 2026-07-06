@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import PageLayout from "@/components/PageLayout";
 import {
   Calendar,
   Clock,
@@ -121,7 +122,8 @@ export default async function BlogPostPage({
   )}`;
 
   return (
-    <main className="bg-background">
+    <PageLayout>
+    <main className="bg-background pt-20">
       <article className="container mx-auto px-4 py-8 md:py-12">
         {/* Breadcrumb */}
         <nav className="text-xs md:text-sm text-muted-foreground mb-6 flex items-center gap-1.5 flex-wrap">
@@ -465,5 +467,6 @@ export default async function BlogPostPage({
         .scrollbar-hide::-webkit-scrollbar { display: none; }
       `}</style>
     </main>
+    </PageLayout>
   );
 }

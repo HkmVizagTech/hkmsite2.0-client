@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import PageLayout from "@/components/PageLayout";
 
 interface Blog {
   _id: string;
@@ -78,7 +79,8 @@ export default async function CategoryPage({
   const otherCats = categories.filter((c) => c.slug !== slug && c.count > 0).slice(0, 8);
 
   return (
-    <main className="bg-background">
+    <PageLayout>
+    <main className="bg-background pt-20">
       <div className="container mx-auto px-4 py-8 md:py-12">
         {/* Breadcrumb */}
         <nav className="text-xs md:text-sm text-muted-foreground mb-6 flex items-center gap-1.5 flex-wrap">
@@ -179,5 +181,6 @@ export default async function CategoryPage({
         )}
       </div>
     </main>
+    </PageLayout>
   );
 }

@@ -3,6 +3,7 @@ import Link from "next/link";
 import HeroBanner from '@/components/festival/HeroBanner';
 import ContentSection from '@/components/festival/ContentSection';
 import DonationFormWrapper from '@/components/festival/DonationFormWrapper';
+import PageLayout from "@/components/PageLayout";
 
 async function getFestivalDonation(slug: string) {
   const base = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080"; // server runs on 8080 in this workspace
@@ -41,18 +42,13 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   };
 
   return (
-    <main className="min-h-screen bg-background">
+    <PageLayout>
+    <main className="min-h-screen bg-background pt-20">
   <HeroBanner config={config} />
 
       <div className="container mx-auto px-4 py-12 grid gap-8 lg:grid-cols-5">
         <div className="lg:col-span-3 space-y-6">
           <ContentSection config={config} />
-
-          {
-}
-
-          {
-}
         </div>
 
   <aside className="lg:col-span-2">
@@ -60,5 +56,6 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         </aside>
       </div>
     </main>
+    </PageLayout>
   );
 }
