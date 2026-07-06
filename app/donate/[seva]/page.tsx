@@ -9,6 +9,7 @@ import { motion } from "framer-motion";
 import { ChevronRight, CheckCircle2, Loader2, ShieldCheck } from "lucide-react";
 import { getSevaBySlug, sevas } from "@/lib/sevaConfig";
 import Ornament from "@/components/Ornament";
+import PageLayout from "@/components/PageLayout";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 
@@ -157,9 +158,10 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
   const otherSevas = sevas.filter((s) => s.slug !== seva.slug);
 
   return (
+    <PageLayout>
     <main className="bg-background">
       {/* Hero */}
-      <section className="relative overflow-hidden">
+      <section className="relative overflow-hidden pt-20">
         <div className="relative aspect-[16/7] w-full md:aspect-[21/7]">
           <Image src={seva.image} alt={seva.title} fill priority sizes="100vw" className="object-cover" />
           <div className="absolute inset-0 bg-[linear-gradient(180deg,hsl(220,85%,10%,0.35)_0%,hsl(220,85%,8%,0.85)_100%)]" />
@@ -353,5 +355,6 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
         </div>
       </div>
     </main>
+    </PageLayout>
   );
 }
