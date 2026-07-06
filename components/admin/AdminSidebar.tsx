@@ -14,6 +14,7 @@ import {
   ChevronRight,
   PenSquare, // <-- NEW
   MessageSquare,
+  GalleryHorizontal,
 } from "lucide-react";
 import NextImage from "next/image";
 import Link from "next/link";
@@ -41,6 +42,7 @@ const mainItems = [
 ];
 
 const contentItems = [
+  { title: "Hero Banners", url: "/admin/banners", icon: GalleryHorizontal },
   { title: "Events", url: "/admin/events", icon: CalendarDays },
   { title: "Important Dates", url: "/admin/important-dates", icon: CalendarDays },
   { title: "Gallery", url: "/admin/gallery", icon: Image },
