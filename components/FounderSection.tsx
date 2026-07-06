@@ -3,6 +3,7 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import Image from "next/image";
+import Ornament from "@/components/Ornament";
 
 const FounderSection = () => {
   const ref = useRef(null);
@@ -17,11 +18,13 @@ const FounderSection = () => {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <p className="text-primary text-sm tracking-[0.2em] uppercase mb-4 font-medium">
+          <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">
             Humble Dedication
           </p>
+          <Ornament className="mb-5" />
           <h2 className="text-3xl md:text-5xl font-bold text-foreground">
-            His Divine Grace Srila Prabhupada
+            His Divine Grace{" "}
+            <em className="font-serif-display not-italic italic text-gold">Srila Prabhupada</em>
           </h2>
         </motion.div>
 
@@ -33,7 +36,7 @@ const FounderSection = () => {
             className="md:col-span-2"
           >
             <div className="relative">
-              <div className="absolute -inset-3 bg-primary/10 rounded-2xl -rotate-3" />
+              <div className="absolute -inset-3 rounded-2xl bg-gradient-gold opacity-15 -rotate-3" />
               <Image
                 src="https://www.harekrishnavizag.org/assets/img/grace_srila_prabhupada.jpg"
                 alt="Srila Prabhupada"

@@ -1,10 +1,16 @@
 "use client";
 
 import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import { Heart, BookOpen, Users, Flower2 } from "lucide-react";
 import Ornament from "@/components/Ornament";
+
+const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
+
+const DEFAULT_HEADING = "A Legacy of Devotion & Service";
+const DEFAULT_BODY =
+  "Following in the footsteps of our revered Founder-Acharya Srila Prabhupada, Hare Krishna Movement India (HKMI), Visakhapatnam has been conducting spiritual, educational and cultural activities since 2015 — bringing about physical, emotional and spiritual well-being.";
 
 const highlights = [
   { icon: Heart, title: "Spiritual Well-being", desc: "Programs for physical, emotional and spiritual growth" },
@@ -22,6 +28,21 @@ const stats = [
 const AboutSection = () => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
+  const [customHeading, setCustomHeading] = useState("");
+  const [customBody, setCustomBody] = useState("");
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch(`${API_URL}/site-content`);
+        if (res.ok) {
+          const data = await res.json();
+          setCustomHeading(data.content?.about?.heading || "");
+          setCustomBody(data.content?.about?.body || "");
+        }
+      } catch {}
+    })();
+  }, []);
 
   return (
     <section id="about" className="py-24 md:py-32 bg-background overflow-hidden">
@@ -56,18 +77,21 @@ const AboutSection = () => {
             transition={{ duration: 0.8, delay: 0.15 }}
           >
             <Ornament className="mb-4 !justify-start" />
-            <h2 className="mb-5 font-heading text-3xl font-bold leading-[1.14] text-foreground md:text-4xl lg:text-[2.6rem]">
-              Spreading{" "}
-              <em className="font-serif-display font-semibold not-italic italic text-gold">
-                Krishna Consciousness
-              </em>{" "}
-              in the City of Destiny
-            </h2>
+            {customHeading ? (
+              <h2 className="mb-5 font-heading text-3xl font-bold leading-[1.14] text-foreground md:text-4xl lg:text-[2.6rem]">
+                {customHeading}
+              </h2>
+            ) : (
+              <h2 className="mb-5 font-heading text-3xl font-bold leading-[1.14] text-foreground md:text-4xl lg:text-[2.6rem]">
+                Spreading{" "}
+                <em className="font-serif-display font-semibold not-italic italic text-gold">
+                  Krishna Consciousness
+                </em>{" "}
+                in the City of Destiny
+              </h2>
+            )}
             <p className="mb-4 leading-relaxed text-muted-foreground">
-              Following in the footsteps of our revered Founder-Acharya Srila Prabhupada,
-              Hare Krishna Movement India (HKMI), Visakhapatnam has been conducting spiritual,
-              educational and cultural activities since 2015 — bringing about physical, emotional
-              and spiritual well-being.
+              {customBody || DEFAULT_BODY}
             </p>
             <blockquote className="my-6 rounded-r-2xl border-l-[3px] border-[hsl(var(--gold))] bg-[hsl(42,92%,56%,0.07)] px-5 py-4">
               <p className="font-serif-display italic text-foreground">
