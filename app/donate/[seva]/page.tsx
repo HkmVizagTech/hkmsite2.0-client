@@ -6,7 +6,10 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ChevronRight, CheckCircle2, Loader2, ShieldCheck } from "lucide-react";
+import {
+  ChevronRight, CheckCircle2, Loader2, ShieldCheck, Users, TrendingUp,
+  ChevronDown, Copy, Check, Building2,
+} from "lucide-react";
 import { getSevaBySlug, sevas } from "@/lib/sevaConfig";
 import Ornament from "@/components/Ornament";
 import PageLayout from "@/components/PageLayout";
@@ -35,6 +38,42 @@ const loadRazorpay = () =>
     document.body.appendChild(script);
   });
 
+interface Donor {
+  name: string;
+  amount: number;
+  time: string;
+}
+
+const BANK_DETAILS = {
+  beneficiaryName: "HARE KRISHNA MOVEMENT INDIA",
+  bankName: "IDFC FIRST BANK LTD",
+  accountNumber: "10091415313",
+  ifsc: "IDFB0080412",
+};
+
+const FAQS = [
+  {
+    q: "Will I receive a donation receipt?",
+    a: "Yes. An email receipt is sent automatically the moment your payment is confirmed. If you request an 80G certificate during checkout, that follows separately once your PAN is verified.",
+  },
+  {
+    q: "Is this donation eligible for tax exemption?",
+    a: "Yes, donations to Hare Krishna Movement Visakhapatnam qualify for tax exemption under Section 80G of the Income Tax Act. Check the '80G receipt' box during checkout and provide your PAN.",
+  },
+  {
+    q: "Is it safe to donate online here?",
+    a: "Yes. All payments are processed through Razorpay, a PCI-DSS-compliant payment gateway used by thousands of Indian organizations. We never see or store your card details.",
+  },
+  {
+    q: "Can I donate via bank transfer instead of card/UPI?",
+    a: "Yes — see the bank transfer details below. Please email us your transaction reference and PAN (if you need an 80G receipt) after transferring.",
+  },
+  {
+    q: "Can I donate from outside India?",
+    a: "Yes, international cards are accepted through the same checkout. For large international transfers, please contact us directly for wire transfer details.",
+  },
+];
+
 export default function DonateSevaPage({ params }: { params: Promise<{ seva: string }> }) {
   const { seva: slug } = use(params);
   const seva = getSevaBySlug(slug);
@@ -49,6 +88,13 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
+  const [donors, setDonors] = useState<Donor[]>([]);
+  const [totalRaised, setTotalRaised] = useState(0);
+  const [donorCount, setDonorCount] = useState(0);
+  const [statsLoading, setStatsLoading] = useState(true);
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
+
   useEffect(() => {
     if (!seva) return;
     const amountParam = searchParams.get("amount");
@@ -62,11 +108,36 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
     }
   }, [seva, searchParams]);
 
+  useEffect(() => {
+    if (!seva) return;
+    (async () => {
+      try {
+        const res = await fetch(
+          `${apiBase()}/seva-stats?sevaName=${encodeURIComponent(seva.title)}&category=${encodeURIComponent(seva.category)}&limit=10`
+        );
+        if (res.ok) {
+          const data = await res.json();
+          setDonors(data.donors || []);
+          setTotalRaised(data.totalAmount || 0);
+          setDonorCount(data.donorCount || 0);
+        }
+      } catch {}
+      setStatsLoading(false);
+    })();
+  }, [seva]);
+
   if (!seva) {
     notFound();
   }
 
   const finalAmount = useCustom ? Number(customAmount) || 0 : seva.tiers[tierIndex]?.amount || 0;
+
+  const handleCopy = (field: string, value: string) => {
+    navigator.clipboard.writeText(value).then(() => {
+      setCopiedField(field);
+      setTimeout(() => setCopiedField(null), 2000);
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -137,6 +208,9 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
               type: "success",
               message: "Thank you! Your donation has been received. Hare Krishna 🙏",
             });
+            setDonors((d) => [{ name: `${form.name.split(" ")[0]} ${form.name.split(" ").slice(-1)[0].charAt(0)}.`, amount: finalAmount, time: "just now" }, ...d]);
+            setTotalRaised((t) => t + finalAmount);
+            setDonorCount((c) => c + 1);
           } catch (err) {
             setStatus({
               type: "error",
@@ -178,8 +252,32 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
         </div>
       </section>
 
+      {/* Impact stats strip */}
+      <section className="border-b border-border bg-card">
+        <div className="container mx-auto grid grid-cols-2 gap-4 px-4 py-6 sm:grid-cols-3">
+          <div className="text-center">
+            <p className="flex items-center justify-center gap-1.5 font-heading text-2xl font-bold text-gold md:text-3xl">
+              <TrendingUp className="h-5 w-5" />
+              {statsLoading ? "…" : `₹${totalRaised.toLocaleString("en-IN")}`}
+            </p>
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Raised for this Seva</p>
+          </div>
+          <div className="text-center">
+            <p className="flex items-center justify-center gap-1.5 font-heading text-2xl font-bold text-primary md:text-3xl">
+              <Users className="h-5 w-5" />
+              {statsLoading ? "…" : donorCount.toLocaleString("en-IN")}
+            </p>
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Devotees Contributed</p>
+          </div>
+          <div className="col-span-2 text-center sm:col-span-1">
+            <p className="font-heading text-2xl font-bold text-primary md:text-3xl">80G</p>
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Tax Exemption Available</p>
+          </div>
+        </div>
+      </section>
+
       <div className="container mx-auto grid gap-10 px-4 py-14 lg:grid-cols-[1fr_420px]">
-        {/* Left: description + tiers */}
+        {/* Left column */}
         <div>
           <Ornament className="mb-5 !justify-start" />
           <h2 className="mb-4 font-heading text-2xl font-bold">About This Seva</h2>
@@ -207,18 +305,55 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
           <button
             type="button"
             onClick={() => setUseCustom(true)}
-            className={`mb-8 w-full rounded-xl border-[1.5px] px-3 py-3 text-sm font-semibold transition-all sm:w-auto ${
+            className={`mb-10 w-full rounded-xl border-[1.5px] px-3 py-3 text-sm font-semibold transition-all sm:w-auto ${
               useCustom ? "border-[hsl(var(--gold-deep))] bg-[hsl(42,92%,56%,0.12)] text-gold" : "border-border hover:border-[hsl(var(--gold-deep))]"
             }`}
           >
             Enter a custom amount
           </button>
 
+          {/* Live Donor Wall — real data */}
+          {donors.length > 0 && (
+            <div className="mb-10">
+              <div className="mb-4 flex items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-green-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-green-600">
+                  <span className="relative flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-75" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
+                  </span>
+                  Live
+                </span>
+                <h3 className="text-sm font-bold uppercase tracking-wide text-muted-foreground">
+                  Recent Devotees Supporting This Seva
+                </h3>
+              </div>
+              <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                {donors.map((d, i) => (
+                  <motion.div
+                    key={`${d.name}-${i}`}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.05 }}
+                    className="flex items-center gap-3 rounded-xl border border-border bg-card px-3.5 py-2.5"
+                  >
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[hsl(42,92%,56%,0.15)] text-xs font-bold text-gold">
+                      {d.name.charAt(0)}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-semibold">{d.name}</p>
+                      <p className="text-[11px] text-muted-foreground">Donated ₹{d.amount.toLocaleString("en-IN")} · {d.time}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Other sevas */}
           <h3 className="mb-4 text-sm font-bold uppercase tracking-wide text-muted-foreground">
             Other Ways to Serve
           </h3>
-          <div className="flex flex-wrap gap-2">
+          <div className="mb-12 flex flex-wrap gap-2">
             {otherSevas.map((s) => (
               <Link
                 key={s.slug}
@@ -228,6 +363,65 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
                 {s.icon} {s.shortTitle}
               </Link>
             ))}
+          </div>
+
+          {/* Bank transfer alternative */}
+          <div className="mb-12 rounded-2xl border border-border bg-card p-6">
+            <h3 className="mb-4 flex items-center gap-2 font-heading text-lg font-bold">
+              <Building2 className="h-5 w-5 text-primary" /> Prefer a Direct Bank Transfer?
+            </h3>
+            <p className="mb-4 text-sm text-muted-foreground">
+              You can also donate via NEFT/RTGS/UPI directly to our temple account. Please email us your
+              transaction reference and PAN (if you need an 80G receipt) to <a href="mailto:info@harekrishnavizag.org" className="text-primary underline">info@harekrishnavizag.org</a>.
+            </p>
+            <div className="space-y-2 rounded-xl bg-muted/40 p-4 text-sm">
+              {Object.entries({
+                "Beneficiary Name": BANK_DETAILS.beneficiaryName,
+                "Bank Name": BANK_DETAILS.bankName,
+                "Account Number": BANK_DETAILS.accountNumber,
+                "IFSC Code": BANK_DETAILS.ifsc,
+              }).map(([label, value]) => (
+                <div key={label} className="flex items-center justify-between gap-3">
+                  <span className="text-muted-foreground">{label}</span>
+                  <button
+                    type="button"
+                    onClick={() => handleCopy(label, value)}
+                    className="flex items-center gap-1.5 font-semibold text-foreground hover:text-primary"
+                  >
+                    {value}
+                    {copiedField === label ? (
+                      <Check className="h-3.5 w-3.5 text-green-500" />
+                    ) : (
+                      <Copy className="h-3.5 w-3.5 text-muted-foreground" />
+                    )}
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* FAQ */}
+          <div>
+            <h3 className="mb-4 font-heading text-lg font-bold">Frequently Asked Questions</h3>
+            <div className="space-y-2">
+              {FAQS.map((faq, i) => (
+                <div key={faq.q} className="overflow-hidden rounded-xl border border-border">
+                  <button
+                    type="button"
+                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                    className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left text-sm font-semibold"
+                  >
+                    {faq.q}
+                    <ChevronDown className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform ${openFaq === i ? "rotate-180" : ""}`} />
+                  </button>
+                  {openFaq === i && (
+                    <div className="border-t border-border px-4 py-3.5 text-sm leading-relaxed text-muted-foreground">
+                      {faq.a}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
