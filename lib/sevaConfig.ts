@@ -35,7 +35,7 @@ export const sevas: Seva[] = [
       { label: "Rs. 24,000 / 4 sq ft", amount: 24000 },
     ],
     category: "SQFT",
-    account: "donations",
+    account: "default",
     icon: "🏛️",
   },
   {
@@ -53,7 +53,7 @@ export const sevas: Seva[] = [
       { label: "Rs. 6,000 / 4 bricks", amount: 6000 },
     ],
     category: "BRICK",
-    account: "donations",
+    account: "default",
     icon: "🧱",
   },
   {
@@ -71,7 +71,7 @@ export const sevas: Seva[] = [
       { label: "Rs. 5,555 / 101 plates", amount: 5555 },
     ],
     category: "ANNADAAN",
-    account: "donations",
+    account: "default",
     icon: "🍛",
   },
   {
@@ -89,7 +89,7 @@ export const sevas: Seva[] = [
       { label: "Rs. 9,000 / green grass, 1 day", amount: 9000 },
     ],
     category: "GO SEVA",
-    account: "donations",
+    account: "default",
     icon: "🐄",
   },
   {
@@ -107,7 +107,7 @@ export const sevas: Seva[] = [
       { label: "Rs. 15,000 / 50 Gitas", amount: 15000 },
     ],
     category: "GITA DAAN",
-    account: "donations",
+    account: "default",
     icon: "📖",
   },
   {
@@ -125,7 +125,7 @@ export const sevas: Seva[] = [
       { label: "Rs. 11,000 / full month", amount: 11000 },
     ],
     category: "VASTRA",
-    account: "donations",
+    account: "default",
     icon: "👘",
   },
 ];
