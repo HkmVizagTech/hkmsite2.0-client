@@ -15,6 +15,7 @@ import {
   PenSquare, // <-- NEW
   MessageSquare,
   GalleryHorizontal,
+  Megaphone,
 } from "lucide-react";
 import NextImage from "next/image";
 import Link from "next/link";
@@ -39,6 +40,7 @@ const mainItems = [
   { title: "Dashboard", url: "/admin", icon: LayoutDashboard },
   { title: "Analytics", url: "/admin/analytics", icon: BarChart3 },
   { title: "Donations", url: "/admin/donations", icon: IndianRupee },
+  { title: "Campaigners", url: "/admin/campaigners", icon: Megaphone },
 ];
 
 const contentItems = [

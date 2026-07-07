@@ -14,10 +14,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import {
-  Phone, ShieldCheck, Loader2, CheckCircle2, ChevronDown, Copy, Check,
+  ShieldCheck, Loader2, CheckCircle2, ChevronDown, Copy, Check,
   Building2, Award, FileCheck2, Sparkles, UtensilsCrossed, ScrollText,
-  Landmark, HeartHandshake, Users,
+  Landmark, HeartHandshake, Users, Share2, Megaphone, Target,
 } from "lucide-react";
+import PageLayout from "@/components/PageLayout";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 
@@ -173,6 +174,17 @@ interface CampaignStats {
   largest: DonorEntry[];
 }
 
+export interface CampaignerData {
+  name: string;
+  slug: string;
+  goalSqft: number;
+  message: string;
+  raisedAmount: number;
+  sqftRaised: number;
+  donorCount: number;
+  donors: DonorEntry[];
+}
+
 const donorLabel = (d: DonorEntry) =>
   d.sqft >= 1
     ? `${d.sqft} square ${d.sqft === 1 ? "foot" : "feet"}`
@@ -225,8 +237,9 @@ function CountUp({ value, prefix = "", suffix = "" }: { value: number; prefix?: 
   );
 }
 
-export default function SqftCampaignClient() {
+export default function SqftCampaignClient({ campaigner }: { campaigner?: CampaignerData }) {
   const reduce = useReducedMotion();
+  const [copiedShare, setCopiedShare] = useState(false);
 
   const [stats, setStats] = useState<CampaignStats | null>(null);
   const [wallTab, setWallTab] = useState<"latest" | "largest">("latest");
@@ -288,7 +301,7 @@ export default function SqftCampaignClient() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           account: "default",
-          sourcePage: "/sqft-seva-campaign",
+          sourcePage: campaigner ? `/sqft-seva-campaign/c/${campaigner.slug}` : "/sqft-seva-campaign",
           type: "SQFT",
           sevaName: "Square Foot Seva",
           name: form.name.trim(),
@@ -297,6 +310,7 @@ export default function SqftCampaignClient() {
           amount: finalAmount,
           certificate: want80G,
           panNumber: want80G ? form.panNumber.trim() : undefined,
+          campaignerSlug: campaigner?.slug || undefined,
         }),
       });
 
@@ -316,9 +330,10 @@ export default function SqftCampaignClient() {
         order_id: order.orderId,
         prefill: { name: form.name, email: form.email, contact: form.mobile },
         notes: {
-          sourcePage: "/sqft-seva-campaign",
+          sourcePage: campaigner ? `/sqft-seva-campaign/c/${campaigner.slug}` : "/sqft-seva-campaign",
           sevaName: "Square Foot Seva",
           sevaType: "SQFT",
+          campaignerSlug: campaigner?.slug || "",
         },
         handler: async (response: Record<string, string>) => {
           try {
@@ -387,38 +402,23 @@ export default function SqftCampaignClient() {
 
   const wallEntries = wallTab === "latest" ? stats?.latest || [] : stats?.largest || [];
 
-  return (
-    <main className="bg-background">
-      {/* ---------- Minimal campaign header ---------- */}
-      <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[hsl(220,90%,12%)]/95 backdrop-blur">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <Link href="/" className="flex items-center gap-2.5">
-            <Image src="/assets/logo.png" alt="Hare Krishna Movement Vizag" width={38} height={38} className="rounded-full" />
-            <div className="leading-tight">
-              <p className="font-heading text-sm font-bold text-white md:text-base">Hare Krishna Vaikuntham</p>
-              <p className="text-[10px] uppercase tracking-widest text-gold">Square Foot Seva</p>
-            </div>
-          </Link>
-          <div className="flex items-center gap-3">
-            <a
-              href={CAMPAIGN.phoneHref}
-              className="hidden items-center gap-1.5 text-sm text-white/85 hover:text-white sm:flex"
-            >
-              <Phone className="h-4 w-4 text-gold" />
-              {CAMPAIGN.phone}
-            </a>
-            <button
-              onClick={scrollToDonate}
-              className="rounded-full bg-gradient-gold px-5 py-2 text-sm font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)] transition-transform hover:scale-105"
-            >
-              Donate
-            </button>
-          </div>
-        </div>
-      </header>
+  const shareUrl = campaigner && typeof window !== "undefined"
+    ? `${window.location.origin}/sqft-seva-campaign/c/${campaigner.slug}`
+    : "";
 
+  const handleShareCopy = () => {
+    if (!shareUrl) return;
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      setCopiedShare(true);
+      setTimeout(() => setCopiedShare(false), 2000);
+    });
+  };
+
+  return (
+    <PageLayout>
+    <main className="bg-background">
       {/* ---------- Hero ---------- */}
-      <section className="relative overflow-hidden pt-16">
+      <section className="relative overflow-hidden pt-20">
         <div className="relative min-h-[72vh] w-full md:min-h-[80vh]">
           <Image
             src={CAMPAIGN.heroImage}
@@ -436,7 +436,9 @@ export default function SqftCampaignClient() {
               transition={{ duration: 0.6 }}
               className="mb-3 text-[11px] font-semibold uppercase tracking-[0.25em] text-gold md:text-xs"
             >
-              A fundraising initiative of Hare Krishna Movement Visakhapatnam
+              {campaigner
+                ? `${campaigner.name}'s fundraising campaign for`
+                : "A fundraising initiative of Hare Krishna Movement Visakhapatnam"}
             </motion.p>
             <motion.h1
               initial={reduce ? false : { opacity: 0, y: 16 }}
@@ -478,6 +480,101 @@ export default function SqftCampaignClient() {
           </div>
         </div>
       </section>
+
+      {/* ---------- Campaigner card (P2P pages only) ---------- */}
+      {campaigner && (
+        <section className="bg-background py-10 md:py-14">
+          <div className="container mx-auto max-w-3xl px-4">
+            <div className="rounded-2xl border-2 border-gold/40 bg-card p-6 md:p-8">
+              <p className="mb-1 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-gold">
+                <Megaphone className="h-3.5 w-3.5" /> Fundraising Campaign
+              </p>
+              <h2 className="mb-2 font-heading text-xl font-bold text-primary md:text-2xl">
+                Support {campaigner.name}&apos;s Square Foot Seva
+              </h2>
+              {campaigner.message && (
+                <p className="mb-4 text-sm italic leading-relaxed text-muted-foreground">&ldquo;{campaigner.message}&rdquo;</p>
+              )}
+
+              <div className="mb-4 grid grid-cols-3 gap-3 text-center">
+                <div className="rounded-xl bg-background p-3">
+                  <p className="font-heading text-lg font-bold text-gold md:text-xl">{campaigner.sqftRaised.toLocaleString("en-IN")}</p>
+                  <p className="text-[10px] uppercase tracking-wide text-muted-foreground">sq ft raised</p>
+                </div>
+                <div className="rounded-xl bg-background p-3">
+                  <p className="font-heading text-lg font-bold text-primary md:text-xl">₹{campaigner.raisedAmount.toLocaleString("en-IN")}</p>
+                  <p className="text-[10px] uppercase tracking-wide text-muted-foreground">collected</p>
+                </div>
+                <div className="rounded-xl bg-background p-3">
+                  <p className="font-heading text-lg font-bold text-primary md:text-xl">{campaigner.donorCount.toLocaleString("en-IN")}</p>
+                  <p className="text-[10px] uppercase tracking-wide text-muted-foreground">supporters</p>
+                </div>
+              </div>
+
+              {campaigner.goalSqft > 0 && (
+                <div className="mb-4">
+                  <div className="mb-1.5 flex items-center justify-between text-xs text-muted-foreground">
+                    <span className="flex items-center gap-1"><Target className="h-3.5 w-3.5 text-gold" /> Personal goal</span>
+                    <span className="font-semibold text-foreground">
+                      {campaigner.sqftRaised} / {campaigner.goalSqft} sq ft
+                    </span>
+                  </div>
+                  <div className="h-2.5 overflow-hidden rounded-full bg-background">
+                    <div
+                      className="h-full rounded-full bg-gradient-gold transition-all duration-700"
+                      style={{ width: `${Math.min(100, (campaigner.sqftRaised / campaigner.goalSqft) * 100)}%` }}
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <button
+                  onClick={scrollToDonate}
+                  className="flex-1 rounded-full bg-gradient-gold py-3 text-sm font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)] transition-transform hover:scale-[1.02]"
+                >
+                  Donate to {campaigner.name.split(" ")[0]}&apos;s Campaign
+                </button>
+                <a
+                  href={`https://wa.me/?text=${encodeURIComponent(
+                    `Hare Krishna! 🙏 Join me in building the Hare Krishna Vaikuntham Temple — sponsor a square foot through my campaign: ${shareUrl}`
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex flex-1 items-center justify-center gap-2 rounded-full border-2 border-gold py-3 text-sm font-bold text-gold transition-colors hover:bg-gold/10"
+                >
+                  <Share2 className="h-4 w-4" /> Share on WhatsApp
+                </a>
+                <button
+                  onClick={handleShareCopy}
+                  aria-label="Copy campaign link"
+                  className="flex items-center justify-center gap-2 rounded-full border border-border px-5 py-3 text-sm font-semibold text-muted-foreground hover:border-gold hover:text-gold"
+                >
+                  {copiedShare ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
+                  {copiedShare ? "Copied" : "Copy link"}
+                </button>
+              </div>
+
+              {campaigner.donors.length > 0 && (
+                <div className="mt-5 border-t border-border pt-4">
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Recent supporters</p>
+                  <ul className="space-y-1.5">
+                    {campaigner.donors.slice(0, 6).map((d, i) => (
+                      <li key={`${d.name}-${i}`} className="flex items-center justify-between text-sm">
+                        <span className="text-foreground">
+                          {d.name} <span className="text-muted-foreground">offered</span>{" "}
+                          <span className="font-semibold text-gold">{donorLabel(d)}</span>
+                        </span>
+                        <span className="text-xs text-muted-foreground">{d.time}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ---------- Live progress: the Foundation Grid ---------- */}
       <section className="bg-[hsl(220,90%,12%)] py-14 md:py-20">
@@ -817,6 +914,38 @@ export default function SqftCampaignClient() {
         </div>
       </section>
 
+      {/* ---------- Start your fundraising campaign ---------- */}
+      <section className="bg-[hsl(220,90%,12%)] py-14 md:py-20">
+        <div className="container mx-auto max-w-3xl px-4 text-center">
+          <Megaphone className="mx-auto mb-3 h-9 w-9 text-gold" />
+          <h2 className="mb-3 font-heading text-2xl font-bold text-white md:text-4xl">
+            Start Your Own Fundraising Campaign
+          </h2>
+          <p className="mx-auto mb-6 max-w-xl text-sm leading-relaxed text-white/80 md:text-base">
+            Multiply your seva. Create your personal campaign page, share it with friends and family
+            on WhatsApp, and inspire them to sponsor square feet of the temple through your link.
+          </p>
+          <div className="mx-auto mb-8 grid max-w-2xl gap-3 text-left sm:grid-cols-3">
+            {[
+              "Create your campaign page in under a minute",
+              "Share your personal link with friends & family",
+              "Watch your collective seva grow on your page",
+            ].map((step, i) => (
+              <div key={step} className="rounded-xl border border-white/15 bg-white/5 p-4">
+                <p className="mb-1 font-heading text-lg font-bold text-gold">{i + 1}</p>
+                <p className="text-xs leading-relaxed text-white/85">{step}</p>
+              </div>
+            ))}
+          </div>
+          <Link
+            href="/sqft-seva-campaign/register"
+            className="inline-block rounded-full bg-gradient-gold px-10 py-3.5 text-base font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)] transition-transform hover:scale-105"
+          >
+            Create My Fundraising Campaign
+          </Link>
+        </div>
+      </section>
+
       {/* ---------- FAQ ---------- */}
       <section className="bg-background py-14 md:py-20">
         <div className="container mx-auto max-w-3xl px-4">
@@ -912,29 +1041,6 @@ export default function SqftCampaignClient() {
         </div>
       </section>
 
-      <footer className="border-t border-white/10 bg-[hsl(220,90%,10%)] pb-24 pt-10 text-center md:pb-10">
-        <div className="container mx-auto max-w-3xl space-y-3 px-4">
-          <p className="font-heading text-sm font-bold text-white">Hare Krishna Movement Visakhapatnam</p>
-          <p className="text-xs leading-relaxed text-white/60">
-            Gambheeram, Visakhapatnam, Andhra Pradesh. Donations are eligible for tax exemption under
-            Section 80G of the Income Tax Act, 1961.
-          </p>
-          <p className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-xs text-white/75">
-            <a href={CAMPAIGN.phoneHref} className="flex items-center gap-1.5 hover:text-white">
-              <Phone className="h-3.5 w-3.5 text-gold" /> {CAMPAIGN.phone}
-            </a>
-            <a href={`mailto:${CAMPAIGN.email}`} className="hover:text-white">{CAMPAIGN.email}</a>
-          </p>
-          <p className="text-[11px] text-white/40">
-            <Link href="/privacy-policy" className="hover:text-white/70">Privacy</Link>
-            {" · "}
-            <Link href="/terms-and-conditions" className="hover:text-white/70">Terms</Link>
-            {" · "}
-            <Link href="/refund-policy" className="hover:text-white/70">Refunds</Link>
-          </p>
-        </div>
-      </footer>
-
       {/* ---------- Sticky mobile donate bar ---------- */}
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 p-3 backdrop-blur md:hidden">
         <button
@@ -945,5 +1051,6 @@ export default function SqftCampaignClient() {
         </button>
       </div>
     </main>
+    </PageLayout>
   );
 }
