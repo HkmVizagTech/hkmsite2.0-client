@@ -1,5 +1,10 @@
 "use client";
 
+// Admin pages must never be statically cached at the CDN edge — they show
+// live, admin-managed data (banners here) and a stale cached shell can end
+// up referencing an old JS bundle indefinitely.
+export const dynamic = "force-dynamic";
+
 import { authFetch } from "@/lib/authClient";
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";

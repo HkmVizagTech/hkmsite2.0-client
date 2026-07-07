@@ -1,6 +1,12 @@
 
 "use client";
 
+// Admin pages must never be statically cached at the CDN edge — they show
+// live, admin-managed data and a stale cached shell can end up referencing
+// an old JS bundle indefinitely.
+export const dynamic = "force-dynamic";
+
+
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";

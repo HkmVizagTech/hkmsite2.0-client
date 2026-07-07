@@ -1,5 +1,11 @@
 "use client";
 
+// Admin pages must never be statically cached at the CDN edge — they show
+// live, admin-managed data and a stale cached shell can end up referencing
+// an old JS bundle indefinitely.
+export const dynamic = "force-dynamic";
+
+
 import React, { useEffect, useState } from "react";
 import RegistrationsList from "@/components/admin/RegistrationsList";
 import { useSearchParams, useRouter } from "next/navigation";

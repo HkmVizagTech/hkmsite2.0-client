@@ -1,8 +1,14 @@
 "use client";
+
+// Admin pages must never be statically cached at the CDN edge — they show
+// live, admin-managed data and a stale cached shell can end up referencing
+// an old JS bundle indefinitely.
+export const dynamic = "force-dynamic";
+
 import { authFetch } from "@/lib/authClient";
 
 import { useState, useEffect, useRef } from "react";
-import dynamic from "next/dynamic";
+import nextDynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,7 +22,7 @@ import {
 import { toast } from "@/hooks/use-toast";
 import { useAdminLoader } from "@/contexts/AdminLoaderContext";
 
-const RichTextEditor = dynamic(() => import("@/components/ui/rich-text-editor"), {
+const RichTextEditor = nextDynamic(() => import("@/components/ui/rich-text-editor"), {
   ssr: false,
   loading: () => (
     <div className="text-sm text-muted-foreground px-3 py-12 border rounded-md bg-muted/30 text-center">
