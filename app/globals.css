@@ -46,7 +46,6 @@
     /* Custom gradient tokens — navy to cyan */
     --gradient-hero: linear-gradient(135deg, hsl(220 90% 18%), hsl(200 80% 30%));
     --gradient-warm: linear-gradient(180deg, hsl(210 30% 97%), hsl(210 25% 94%));
-    --gradient-gold: linear-gradient(135deg, hsl(190 85% 55%), hsl(195 80% 45%));
     --gradient-navy: linear-gradient(135deg, hsl(220 90% 18%), hsl(220 70% 28%));
     --gradient-ocean: linear-gradient(135deg, hsl(220 90% 20%), hsl(190 85% 55%));
     --shadow-warm: 0 10px 40px -10px hsl(220 90% 20% / 0.2);

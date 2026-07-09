@@ -8,7 +8,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   ChevronRight, CheckCircle2, Loader2, ShieldCheck, Users, TrendingUp,
-  ChevronDown, Copy, Check, Building2,
+  ChevronDown, Copy, Check, Building2, UtensilsCrossed, FileCheck2, Landmark, Sparkles,
 } from "lucide-react";
 import { getSevaBySlug, sevas, getSevaHref } from "@/lib/sevaConfig";
 import Ornament from "@/components/Ornament";
@@ -43,6 +43,14 @@ interface Donor {
   amount: number;
   time: string;
 }
+
+// Shown on every seva page — matches the Square Foot Seva campaign privileges.
+const SEVA_PRIVILEGES = [
+  { icon: UtensilsCrossed, title: "Sanctified Prasadam", text: "Receive the Lord's prasadam as a blessing for your seva (within India)." },
+  { icon: Sparkles, title: "Deity Blessings", text: "Your name is included in the sankalpa offered to Their Lordships." },
+  { icon: FileCheck2, title: "Email Receipt", text: "An instant receipt for every donation, the moment payment succeeds." },
+  { icon: Landmark, title: "80G Tax Exemption", text: "Donations qualify for exemption under Section 80G of the Income Tax Act." },
+];
 
 const BANK_DETAILS = {
   beneficiaryName: "HARE KRISHNA MOVEMENT INDIA",
@@ -279,6 +287,21 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
         </div>
       </section>
 
+      {/* Donor privileges strip */}
+      <section className="border-b border-border bg-background">
+        <div className="container mx-auto grid grid-cols-2 gap-4 px-4 py-8 lg:grid-cols-4">
+          {SEVA_PRIVILEGES.map((p) => (
+            <div key={p.title} className="flex items-start gap-3">
+              <p.icon className="mt-0.5 h-6 w-6 shrink-0 text-gold" />
+              <div>
+                <p className="text-sm font-bold text-primary">{p.title}</p>
+                <p className="text-xs leading-relaxed text-muted-foreground">{p.text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <div className="container mx-auto grid gap-10 px-4 py-14 lg:grid-cols-[1fr_420px]">
         {/* Left column */}
         <div>
@@ -429,7 +452,7 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
         </div>
 
         {/* Right: sticky donation form */}
-        <div className="lg:sticky lg:top-24 lg:self-start">
+        <div id="donation-form" className="scroll-mt-24 lg:sticky lg:top-24 lg:self-start">
           <div className="rounded-3xl border border-border bg-card p-6 shadow-elevated">
             {status?.type === "success" ? (
               <motion.div
@@ -550,6 +573,16 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
             )}
           </div>
         </div>
+      </div>
+
+      {/* Sticky mobile donate bar — the form sits below the fold on phones */}
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 p-3 backdrop-blur lg:hidden">
+        <button
+          onClick={() => document.getElementById("donation-form")?.scrollIntoView({ behavior: "smooth" })}
+          className="w-full rounded-full bg-gradient-gold py-3 text-base font-bold text-[hsl(220,60%,12%)] shadow-gold"
+        >
+          🪔 Sponsor {seva.shortTitle}
+        </button>
       </div>
     </main>
     </PageLayout>

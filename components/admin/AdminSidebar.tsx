@@ -16,6 +16,7 @@ import {
   MessageSquare,
   GalleryHorizontal,
   Megaphone,
+  FolderOpen,
 } from "lucide-react";
 import NextImage from "next/image";
 import Link from "next/link";
@@ -48,6 +49,7 @@ const contentItems = [
   { title: "Events", url: "/admin/events", icon: CalendarDays },
   { title: "Important Dates", url: "/admin/important-dates", icon: CalendarDays },
   { title: "Gallery", url: "/admin/gallery", icon: Image },
+  { title: "Media Library", url: "/admin/media", icon: FolderOpen },
   { title: "Festivals", url: "/admin/festivals", icon: Image },
   { title: "Blogs", url: "/admin/blogs", icon: PenSquare }, // <-- NEW
   { title: "Content", url: "/admin/content", icon: FileText },
