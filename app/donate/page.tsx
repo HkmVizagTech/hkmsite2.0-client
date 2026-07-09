@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  Heart, Users, TrendingUp, ShieldCheck, Home, Sparkles,
+  Heart, Users, TrendingUp, ShieldCheck, Sparkles,
   Gift, Award, Crown, ArrowRight,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
@@ -64,12 +64,12 @@ export default function DonateHubPage() {
   return (
     <PageLayout>
       <main className="bg-background">
-        {/* ══ HERO — Mandir Nirman Seva flagship ══ */}
+        {/* ══ HERO — common to all donations, no seva-specific numbers ══ */}
         <section className="relative overflow-hidden pt-20">
           <div className="relative aspect-[16/9] w-full md:aspect-[21/8]">
             <Image
-              src="/assets/home-temple-construction-banner.webp"
-              alt="Mandir Nirman Seva — Hare Krishna Vaikuntham Temple construction"
+              src="/assets/home-banner-daily-darshan.webp"
+              alt="Support Hare Krishna Vaikuntham"
               fill
               priority
               sizes="100vw"
@@ -79,52 +79,33 @@ export default function DonateHubPage() {
           </div>
           <div className="absolute inset-0 flex flex-col items-center justify-end px-4 pb-10 text-center md:pb-14">
             <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-background/25 bg-background/10 px-4 py-1.5 text-xs font-semibold tracking-wide text-background backdrop-blur-md">
-              🏛️ Flagship Campaign
+              🪔 Seva &amp; Devotion
             </span>
             <h1 className="mb-3 font-heading text-3xl font-bold leading-tight text-background md:text-5xl">
-              Mandir Nirman Seva
+              Support Hare Krishna Vaikuntham
             </h1>
             <p className="mb-7 max-w-xl text-sm text-background/85 md:text-base">
-              Be part of building the Hare Krishna Vaikuntham Temple, Visakhapatnam — every square foot
-              you sponsor becomes an eternal part of the Lord&apos;s home.
+              Every offering — a brick, a plate of prasadam, a Bhagavad Gita placed in someone&apos;s
+              hands — is an act of devotion that sustains this mission.
             </p>
-
-            {/* Live goal progress */}
-            {sqft && sqft.totalAmount > 0 && (
-              <div className="mb-7 w-full max-w-md">
-                <div className="mb-1.5 flex items-center justify-between text-xs text-background/80">
-                  <span>{sqft.sqftRaised.toLocaleString("en-IN")} / {sqft.goalSqft.toLocaleString("en-IN")} sq ft funded</span>
-                  <span className="font-bold text-[hsl(var(--gold))]">{sqft.percent}%</span>
-                </div>
-                <div className="h-2.5 overflow-hidden rounded-full bg-background/20">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${sqft.percent}%` }}
-                    transition={{ duration: 1, ease: "easeOut" }}
-                    className="h-full rounded-full bg-gradient-gold"
-                  />
-                </div>
-              </div>
-            )}
-
             <div className="flex flex-wrap items-center justify-center gap-3">
-              <Link
-                href="/sqft-seva-campaign"
+              <a
+                href="#sevas"
                 className="inline-flex items-center gap-2 rounded-full bg-gradient-gold px-8 py-3.5 text-sm font-bold text-[hsl(220,60%,12%)] shadow-gold transition-transform hover:-translate-y-0.5 md:text-base"
               >
-                🪔 Donate to Mandir Nirman Seva
-              </Link>
+                🪔 Choose a Seva
+              </a>
               <Link
-                href="/sqft-seva-campaign/register"
+                href="/contact"
                 className="inline-flex items-center gap-2 rounded-full border border-background/40 bg-background/10 px-8 py-3.5 text-sm font-semibold text-background backdrop-blur-md transition-colors hover:bg-background/20 md:text-base"
               >
-                Start Your Own Campaign
+                Talk to Us
               </Link>
             </div>
           </div>
         </section>
 
-        {/* ══ AGGREGATE IMPACT STRIP — real data ══ */}
+        {/* ══ AGGREGATE IMPACT STRIP — site-wide totals, real data ══ */}
         <section className="border-b border-border bg-card">
           <div className="container mx-auto grid grid-cols-2 gap-4 px-4 py-6 sm:grid-cols-4">
             <div className="text-center">
@@ -152,65 +133,100 @@ export default function DonateHubPage() {
           </div>
         </section>
 
-        {/* ══ POPULAR DONATIONS GRID ══ */}
+        {/* ══ MANDIR NIRMAN SEVA — dedicated section, detailed treatment ══ */}
         <section className="py-16 md:py-24">
           <div className="container mx-auto px-4">
+            <div className="mx-auto grid max-w-5xl items-center gap-10 lg:grid-cols-2">
+              <motion.div
+                initial={{ opacity: 0, x: -24 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: "-80px" }}
+                transition={{ duration: 0.7 }}
+                className="relative"
+              >
+                <div className="absolute -inset-3 -rotate-2 rounded-2xl bg-gradient-gold opacity-15" />
+                <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-elevated">
+                  <Image
+                    src="/assets/home-temple-construction-banner.webp"
+                    alt="Mandir Nirman Seva — temple construction"
+                    fill
+                    sizes="(min-width: 1024px) 480px, 92vw"
+                    className="object-cover"
+                  />
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, x: 24 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: "-80px" }}
+                transition={{ duration: 0.7, delay: 0.1 }}
+              >
+                <span className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-gradient-gold px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-[hsl(220,60%,12%)]">
+                  🏛️ Flagship Campaign
+                </span>
+                <Ornament className="mb-4 !justify-start" />
+                <h2 className="mb-4 font-heading text-2xl font-bold text-foreground md:text-3xl">
+                  Mandir Nirman Seva
+                </h2>
+                <p className="mb-6 leading-relaxed text-muted-foreground">
+                  Be part of building the Hare Krishna Vaikuntham Temple, Visakhapatnam — every square
+                  foot you sponsor becomes a permanent, eternal offering laid into the foundation of the
+                  Lord&apos;s home.
+                </p>
+
+                {sqft && sqft.totalAmount > 0 && (
+                  <div className="mb-6">
+                    <div className="mb-1.5 flex items-center justify-between text-xs text-muted-foreground">
+                      <span>{sqft.sqftRaised.toLocaleString("en-IN")} / {sqft.goalSqft.toLocaleString("en-IN")} sq ft funded</span>
+                      <span className="font-bold text-gold">{sqft.percent}%</span>
+                    </div>
+                    <div className="h-2.5 overflow-hidden rounded-full bg-muted">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        whileInView={{ width: `${sqft.percent}%` }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 1, ease: "easeOut" }}
+                        className="h-full rounded-full bg-gradient-gold"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex flex-wrap items-center gap-3">
+                  <Link
+                    href="/sqft-seva-campaign"
+                    className="inline-flex items-center gap-2 rounded-full bg-gradient-gold px-7 py-3.5 text-sm font-bold text-[hsl(220,60%,12%)] shadow-gold transition-transform hover:-translate-y-0.5"
+                  >
+                    🪔 Donate Now
+                  </Link>
+                  <Link
+                    href="/sqft-seva-campaign/register"
+                    className="inline-flex items-center gap-2 rounded-full border border-border px-7 py-3.5 text-sm font-semibold text-foreground transition-colors hover:border-primary hover:text-primary"
+                  >
+                    Start Your Own Campaign
+                  </Link>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+
+        {/* ══ OTHER SEVAS GRID ══ */}
+        <section id="sevas" className="border-t border-border py-16 md:py-24">
+          <div className="container mx-auto px-4">
             <div className="mb-12 text-center">
-              <p className="mb-3 text-sm font-medium uppercase tracking-[0.2em] text-gold">Ways to Serve</p>
+              <p className="mb-3 text-sm font-medium uppercase tracking-[0.2em] text-gold">More Ways to Serve</p>
               <Ornament className="mb-5" />
               <h2 className="mb-4 font-heading text-3xl font-bold text-foreground md:text-5xl">
                 Choose Your Seva
               </h2>
               <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-                Every contribution — a brick, a plate of prasadam, a Bhagavad Gita placed in someone&apos;s
-                hands — is an offering of devotion.
+                Beyond temple construction, there are many ways to serve — each one a form of devotion.
               </p>
             </div>
 
             <div className="mx-auto grid max-w-6xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {/* Flagship Mandir Nirman / Square Foot card, always first */}
-              <Link
-                href="/sqft-seva-campaign"
-                className="group relative overflow-hidden rounded-3xl border-2 border-[hsl(var(--gold-deep))] bg-card shadow-elevated transition-all duration-300 hover:-translate-y-1.5 sm:col-span-2 lg:col-span-1"
-              >
-                <div className="relative aspect-[16/9] overflow-hidden">
-                  <Image
-                    src="/assets/home-temple-construction-banner.webp"
-                    alt="Mandir Nirman Seva"
-                    fill
-                    sizes="(min-width: 1024px) 380px, (min-width: 640px) 50vw, 92vw"
-                    className="object-cover transition-transform duration-700 group-hover:scale-[1.06]"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[hsl(220,85%,10%,0.8)] via-transparent to-transparent" />
-                  <span className="absolute right-3 top-3 rounded-full bg-gradient-gold px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-[hsl(220,60%,12%)]">
-                    Flagship
-                  </span>
-                  <h3 className="absolute bottom-4 left-5 font-heading text-xl font-bold text-background">
-                    🏛️ Mandir Nirman Seva
-                  </h3>
-                </div>
-                <div className="p-6">
-                  {sqft && sqft.totalAmount > 0 && (
-                    <div className="mb-4">
-                      <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
-                        <span>{sqft.sqftRaised.toLocaleString("en-IN")} / {sqft.goalSqft.toLocaleString("en-IN")} sq ft</span>
-                        <span className="font-bold text-gold">{sqft.percent}%</span>
-                      </div>
-                      <div className="h-2 overflow-hidden rounded-full bg-muted">
-                        <div className="h-full rounded-full bg-gradient-gold" style={{ width: `${sqft.percent}%` }} />
-                      </div>
-                    </div>
-                  )}
-                  <p className="mb-5 text-xs text-muted-foreground">
-                    Sponsor the sacred ground of the rising temple — from ₹6,000/sq ft
-                  </p>
-                  <span className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-gold py-3.5 text-[15px] font-bold text-[hsl(220,60%,12%)] shadow-gold">
-                    🪔 Donate Now <ArrowRight className="h-4 w-4" />
-                  </span>
-                </div>
-              </Link>
-
-              {/* Remaining sevas */}
               {sevas.map((seva) => {
                 const progress = sevaProgress(seva);
                 return (
