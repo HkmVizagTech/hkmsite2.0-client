@@ -139,7 +139,7 @@ export default function SevasPage() {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={() => window.open("/donations", "_self")}
+                  onClick={() => window.open("/donate", "_self")}
                   className="w-full mt-6 py-3 rounded-full font-bold bg-gradient-gold text-[hsl(220,60%,12%)] shadow-gold hover:opacity-90 transition-opacity"
                 >
                   Donate Now

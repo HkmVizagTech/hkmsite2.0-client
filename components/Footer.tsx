@@ -19,7 +19,7 @@ const sevaLinks = [
   { label: "Subhojanam", href: "/subhojanam" },
   { label: "Anna-Daan Seva", href: "/anna-daan-seva" },
   { label: "Daily Schedule", href: "/daily-schedule" },
-  { label: "Donate", href: "/donations" },
+  { label: "Donate", href: "/donate" },
   { label: "Contact Us", href: "/contact" },
 ];
 
@@ -49,7 +49,7 @@ const Footer = () => {
             </p>
           </div>
           <Button size="lg" variant="secondary" className="shrink-0 rounded-full px-8 text-base font-semibold" asChild>
-            <Link href="/donations">
+            <Link href="/donate">
               Donate Now <ExternalLink className="ml-2 h-4 w-4" />
             </Link>
           </Button>

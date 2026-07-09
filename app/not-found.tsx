@@ -26,7 +26,7 @@ export default function NotFound() {
             { href: "/", label: "Home", icon: Home },
             { href: "/events", label: "Events", icon: Calendar },
             { href: "/blogs", label: "Blog", icon: BookOpen },
-            { href: "/donations", label: "Donate", icon: Heart },
+            { href: "/donate", label: "Donate", icon: Heart },
           ].map(({ href, label, icon: Icon }) => (
             <Link
               key={href}

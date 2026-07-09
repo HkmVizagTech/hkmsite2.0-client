@@ -5,7 +5,7 @@ import { useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Ornament from "@/components/Ornament";
-import { sevas } from "@/lib/sevaConfig";
+import { sevas, getSevaHref } from "@/lib/sevaConfig";
 
 const SevasSection = () => {
   const ref = useRef(null);
@@ -16,9 +16,15 @@ const SevasSection = () => {
   );
 
   const handleSponsor = (slug: string) => {
+    const seva = sevas.find((s) => s.slug === slug);
+    if (!seva) return;
+    if (seva.externalHref) {
+      router.push(seva.externalHref);
+      return;
+    }
     const tierIndex = selected[slug] ?? 0;
-    const amount = sevas.find((s) => s.slug === slug)?.tiers[tierIndex]?.amount;
-    router.push(`/donate/${slug}${amount ? `?amount=${amount}` : ""}`);
+    const amount = seva.tiers[tierIndex]?.amount;
+    router.push(`${getSevaHref(seva)}${amount ? `?amount=${amount}` : ""}`);
   };
 
   return (

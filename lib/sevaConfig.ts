@@ -14,6 +14,11 @@ export interface Seva {
   category: string; // used for DCC / receipt categorization
   account: "default" | "donations";
   icon: string;
+  // If set, every link to this seva (homepage cards, cross-links on other
+  // seva pages, the donation hub) points here instead of /donate/[slug].
+  // Used for Square Foot Seva, which has a richer dedicated campaign page
+  // with live goal progress and peer-to-peer fundraising.
+  externalHref?: string;
 }
 
 // Single source of truth for every seva shown on the homepage AND its
@@ -37,6 +42,7 @@ export const sevas: Seva[] = [
     category: "SQFT",
     account: "default",
     icon: "🏛️",
+    externalHref: "/sqft-seva-campaign",
   },
   {
     slug: "brick-seva",
@@ -131,3 +137,8 @@ export const sevas: Seva[] = [
 ];
 
 export const getSevaBySlug = (slug: string) => sevas.find((s) => s.slug === slug);
+
+// Use this everywhere a "go donate to this seva" link is built, instead of
+// manually writing `/donate/${slug}` - respects externalHref when a seva has
+// a richer dedicated page elsewhere on the site.
+export const getSevaHref = (seva: Seva) => seva.externalHref || `/donate/${seva.slug}`;

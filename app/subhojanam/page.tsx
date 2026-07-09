@@ -227,7 +227,7 @@ export default function SubhojanamPage() {
                 <motion.button
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
-                  onClick={() => window.open("/donations", "_self")}
+                  onClick={() => window.open("/donate/anna-daan-seva", "_self")}
                   className={`w-full py-2.5 rounded-full font-semibold text-sm transition-opacity hover:opacity-90 ${
                     tier.popular
                       ? "bg-[hsl(220,60%,12%)] text-[hsl(var(--gold))]"

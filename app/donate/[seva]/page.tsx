@@ -2,7 +2,7 @@
 
 import { useState, useEffect, use } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -10,7 +10,7 @@ import {
   ChevronRight, CheckCircle2, Loader2, ShieldCheck, Users, TrendingUp,
   ChevronDown, Copy, Check, Building2,
 } from "lucide-react";
-import { getSevaBySlug, sevas } from "@/lib/sevaConfig";
+import { getSevaBySlug, sevas, getSevaHref } from "@/lib/sevaConfig";
 import Ornament from "@/components/Ornament";
 import PageLayout from "@/components/PageLayout";
 
@@ -128,6 +128,9 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
 
   if (!seva) {
     notFound();
+  }
+  if (seva.externalHref) {
+    redirect(seva.externalHref);
   }
 
   const finalAmount = useCustom ? Number(customAmount) || 0 : seva.tiers[tierIndex]?.amount || 0;
@@ -357,7 +360,7 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
             {otherSevas.map((s) => (
               <Link
                 key={s.slug}
-                href={`/donate/${s.slug}`}
+                href={getSevaHref(s)}
                 className="inline-flex items-center gap-1.5 rounded-full border border-border px-4 py-2 text-xs font-medium transition-colors hover:border-primary hover:text-primary"
               >
                 {s.icon} {s.shortTitle}

@@ -204,7 +204,7 @@ export default function AnnaDaanPage() {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={() => window.open("/donations", "_self")}
+                  onClick={() => window.open("/donate/anna-daan-seva", "_self")}
                   className="w-full py-2.5 rounded-full bg-gradient-gold text-[hsl(220,60%,12%)] font-bold text-sm shadow-gold hover:opacity-90 transition-opacity"
                 >
                   Sponsor Now
