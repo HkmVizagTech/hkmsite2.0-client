@@ -105,6 +105,61 @@ export default function DonateHubPage() {
           </div>
         </section>
 
+        {/* ══ OTHER SEVAS GRID ══ */}
+        <section id="sevas" className="border-t border-border py-16 md:py-24">
+          <div className="container mx-auto px-4">
+            <div className="mb-12 text-center">
+              <p className="mb-3 text-sm font-medium uppercase tracking-[0.2em] text-gold">More Ways to Serve</p>
+              <Ornament className="mb-5" />
+              <h2 className="mb-4 font-heading text-3xl font-bold text-foreground md:text-5xl">
+                Choose Your Seva
+              </h2>
+              <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+                Beyond temple construction, there are many ways to serve — each one a form of devotion.
+              </p>
+            </div>
+
+            <div className="mx-auto grid max-w-6xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {sevas.map((seva) => {
+                const progress = sevaProgress(seva);
+                return (
+                  <Link
+                    key={seva.slug}
+                    href={getSevaHref(seva)}
+                    className="group overflow-hidden rounded-3xl border border-border bg-card shadow-warm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-elevated"
+                  >
+                    <div className="relative aspect-[16/9] overflow-hidden">
+                      <Image
+                        src={seva.image}
+                        alt={seva.title}
+                        fill
+                        sizes="(min-width: 1024px) 380px, (min-width: 640px) 50vw, 92vw"
+                        className="object-cover transition-transform duration-700 group-hover:scale-[1.06]"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[hsl(220,85%,10%,0.78)] via-transparent to-transparent" />
+                      <h3 className="absolute bottom-4 left-5 font-heading text-xl font-bold text-background">
+                        {seva.icon} {seva.title}
+                      </h3>
+                    </div>
+                    <div className="p-6">
+                      {progress.donors > 0 && (
+                        <p className="mb-3 text-xs text-muted-foreground">
+                          <span className="font-semibold text-gold">₹{progress.amount.toLocaleString("en-IN")}</span> raised
+                          from <span className="font-semibold">{progress.donors}</span> devotees
+                        </p>
+                      )}
+                      <p className="mb-5 text-xs text-muted-foreground">{seva.tagline}</p>
+                      <span className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-gold py-3.5 text-[15px] font-bold text-[hsl(220,60%,12%)] shadow-gold">
+                        🪔 Sponsor {seva.shortTitle} <ArrowRight className="h-4 w-4" />
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
         {/* ══ AGGREGATE IMPACT STRIP — site-wide totals, real data ══ */}
         <section className="border-b border-border bg-card">
           <div className="container mx-auto grid grid-cols-2 gap-4 px-4 py-6 sm:grid-cols-4">
@@ -208,61 +263,6 @@ export default function DonateHubPage() {
                   </Link>
                 </div>
               </motion.div>
-            </div>
-          </div>
-        </section>
-
-        {/* ══ OTHER SEVAS GRID ══ */}
-        <section id="sevas" className="border-t border-border py-16 md:py-24">
-          <div className="container mx-auto px-4">
-            <div className="mb-12 text-center">
-              <p className="mb-3 text-sm font-medium uppercase tracking-[0.2em] text-gold">More Ways to Serve</p>
-              <Ornament className="mb-5" />
-              <h2 className="mb-4 font-heading text-3xl font-bold text-foreground md:text-5xl">
-                Choose Your Seva
-              </h2>
-              <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-                Beyond temple construction, there are many ways to serve — each one a form of devotion.
-              </p>
-            </div>
-
-            <div className="mx-auto grid max-w-6xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {sevas.map((seva) => {
-                const progress = sevaProgress(seva);
-                return (
-                  <Link
-                    key={seva.slug}
-                    href={getSevaHref(seva)}
-                    className="group overflow-hidden rounded-3xl border border-border bg-card shadow-warm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-elevated"
-                  >
-                    <div className="relative aspect-[16/9] overflow-hidden">
-                      <Image
-                        src={seva.image}
-                        alt={seva.title}
-                        fill
-                        sizes="(min-width: 1024px) 380px, (min-width: 640px) 50vw, 92vw"
-                        className="object-cover transition-transform duration-700 group-hover:scale-[1.06]"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[hsl(220,85%,10%,0.78)] via-transparent to-transparent" />
-                      <h3 className="absolute bottom-4 left-5 font-heading text-xl font-bold text-background">
-                        {seva.icon} {seva.title}
-                      </h3>
-                    </div>
-                    <div className="p-6">
-                      {progress.donors > 0 && (
-                        <p className="mb-3 text-xs text-muted-foreground">
-                          <span className="font-semibold text-gold">₹{progress.amount.toLocaleString("en-IN")}</span> raised
-                          from <span className="font-semibold">{progress.donors}</span> devotees
-                        </p>
-                      )}
-                      <p className="mb-5 text-xs text-muted-foreground">{seva.tagline}</p>
-                      <span className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-gold py-3.5 text-[15px] font-bold text-[hsl(220,60%,12%)] shadow-gold">
-                        🪔 Sponsor {seva.shortTitle} <ArrowRight className="h-4 w-4" />
-                      </span>
-                    </div>
-                  </Link>
-                );
-              })}
             </div>
           </div>
         </section>
