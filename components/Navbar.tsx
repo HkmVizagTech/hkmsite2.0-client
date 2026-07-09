@@ -26,7 +26,16 @@ const navItems = [
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  // Persist theme choice — previously the toggle reset to light on every
+  // navigation because this state remounts per page (colour "inversion" bug).
   const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("hkm-theme");
+      if (stored === "dark") setDarkMode(true);
+    } catch {}
+  }, []);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -42,6 +51,9 @@ const Navbar = () => {
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
+    try {
+      localStorage.setItem("hkm-theme", darkMode ? "dark" : "light");
+    } catch {}
   }, [darkMode]);
 
   return (
@@ -59,9 +71,9 @@ const Navbar = () => {
           >
             <div className="container mx-auto flex h-8 items-center justify-between px-3 text-[10px] md:h-10 md:px-4 md:text-xs">
               <div className="flex items-center gap-4">
-                <a href="tel:+919876543210" className="flex items-center gap-1.5 hover:text-secondary transition-colors">
+                <a href="tel:+919063020108" className="flex items-center gap-1.5 hover:text-secondary transition-colors">
                   <Phone className="w-3 h-3" />
-                  <span>+91 98765 43210</span>
+                  <span>+91 9063 020 108</span>
                 </a>
                 <a href="mailto:info@harekrishnavizag.org" className="hidden sm:flex items-center gap-1.5 hover:text-secondary transition-colors">
                   <Mail className="w-3 h-3" />

@@ -16,9 +16,9 @@ import { motion, useReducedMotion } from "framer-motion";
 import {
   ShieldCheck, Loader2, CheckCircle2, ChevronDown, Copy, Check,
   Building2, Award, FileCheck2, Sparkles, UtensilsCrossed, ScrollText,
-  Landmark, HeartHandshake, Users, Share2, Megaphone, Target,
+  Landmark, HeartHandshake, Users, Share2, Megaphone, Target, PhoneCall,
 } from "lucide-react";
-import PageLayout from "@/components/PageLayout";
+import Footer from "@/components/Footer";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 
@@ -415,10 +415,44 @@ export default function SqftCampaignClient({ campaigner }: { campaigner?: Campai
   };
 
   return (
-    <PageLayout>
+    <div className="min-h-screen bg-background">
+    {/* ---------- VCM-style campaign header ---------- */}
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[hsl(220,90%,12%)]/95 backdrop-blur">
+      <div className="container mx-auto flex h-16 items-center justify-between gap-2 px-4">
+        <Link href="/" className="flex min-w-0 items-center gap-2.5">
+          <Image src="/assets/logo.png" alt="Hare Krishna Movement Vizag" width={40} height={40} className="shrink-0 rounded-full" />
+          <div className="min-w-0 leading-tight">
+            <p className="truncate font-heading text-sm font-bold text-white md:text-base">Hare Krishna Vaikuntham</p>
+            <p className="text-[10px] uppercase tracking-widest text-gold">Square Foot Seva</p>
+          </div>
+        </Link>
+        <div className="flex shrink-0 items-center gap-2 md:gap-4">
+          <a
+            href={CAMPAIGN.phoneHref}
+            className="hidden items-center gap-1.5 text-sm text-white/85 transition-colors hover:text-white md:flex"
+          >
+            <PhoneCall className="h-4 w-4 text-gold" />
+            {CAMPAIGN.phone}
+          </a>
+          <a
+            href={CAMPAIGN.phoneHref}
+            aria-label="Call us"
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-white/85 md:hidden"
+          >
+            <PhoneCall className="h-4 w-4" />
+          </a>
+          <button
+            onClick={scrollToDonate}
+            className="rounded-full bg-gradient-gold px-5 py-2 text-sm font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)] transition-transform hover:scale-105 md:px-6"
+          >
+            Donate Now
+          </button>
+        </div>
+      </div>
+    </header>
     <main className="bg-background">
       {/* ---------- Hero ---------- */}
-      <section className="relative overflow-hidden pt-20">
+      <section className="relative overflow-hidden pt-16">
         <div className="relative min-h-[72vh] w-full md:min-h-[80vh]">
           <Image
             src={CAMPAIGN.heroImage}
@@ -576,47 +610,40 @@ export default function SqftCampaignClient({ campaigner }: { campaigner?: Campai
         </section>
       )}
 
-      {/* ---------- Live progress: the Foundation Grid ---------- */}
-      <section className="bg-[hsl(220,90%,12%)] py-14 md:py-20">
-        <div className="container mx-auto max-w-4xl px-4 text-center">
-          <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-gold">Our heartfelt gratitude for your kind support</p>
-          <h2 className="mb-8 font-heading text-2xl font-bold text-white md:text-4xl">
-            <CountUp value={stats?.sqftRaised ?? 0} />{" "}
-            <span className="text-gold">square feet</span> offered so far
-          </h2>
-
-          {/* Foundation grid — each square is a piece of the temple's ground */}
-          <div
-            className="mx-auto mb-4 grid max-w-2xl gap-1 sm:gap-1.5"
-            style={{ gridTemplateColumns: "repeat(20, minmax(0, 1fr))" }}
-            role="img"
-            aria-label={`${percent}% of the campaign goal raised`}
-          >
-            {Array.from({ length: gridSquares }).map((_, i) => (
-              <motion.div
-                key={i}
-                initial={reduce ? false : { opacity: 0, scale: 0.6 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: reduce ? 0 : i * 0.02, duration: 0.3 }}
-                className={`aspect-square rounded-[3px] ${
-                  i < filledSquares
-                    ? "bg-gradient-gold shadow-[0_0_8px_hsl(42,92%,56%,0.5)]"
-                    : "border border-white/15 bg-white/5"
-                }`}
-              />
-            ))}
+      {/* ---------- About / inspiration ---------- */}
+      <section className="bg-card py-14 md:py-20">
+        <div className="container mx-auto grid max-w-5xl items-center gap-8 px-4 md:grid-cols-2">
+          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
+            <Image
+              src={CAMPAIGN.aboutImage}
+              alt="Hare Krishna Vaikuntham Temple"
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover"
+            />
           </div>
-
-          <p className="mb-1 font-heading text-xl font-bold text-gold md:text-2xl">{percent}% raised</p>
-          <p className="text-sm text-white/75">
-            {(stats?.sqftRaised ?? 0).toLocaleString("en-IN")} square feet raised of a goal of{" "}
-            {(stats?.goalSqft ?? 5000).toLocaleString("en-IN")} square feet
-          </p>
-          <p className="mt-3 flex items-center justify-center gap-1.5 text-xs text-white/60">
-            <Users className="h-3.5 w-3.5" />
-            {(stats?.donorCount ?? 0).toLocaleString("en-IN")} devotees have contributed
-          </p>
+          <div>
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-gold">Inspiration &amp; Aspiration</p>
+            <h2 className="mb-4 font-heading text-2xl font-bold text-primary md:text-3xl">
+              A spiritual landmark rising in Visakhapatnam
+            </h2>
+            <p className="mb-4 text-sm leading-relaxed text-muted-foreground md:text-base">
+              The Hare Krishna Vaikuntham Temple at Gambheeram is destined to become a beacon of devotion,
+              culture and compassion for the City of Destiny — with grand temple halls for Their Lordships,
+              an Annadana hall serving free sanctified meals, and centres for Vedic education and outreach.
+            </p>
+            <p className="mb-6 text-sm leading-relaxed text-muted-foreground md:text-base">
+              Inspired by the vision of Srila Prabhupada, Founder-Acharya of the worldwide Hare Krishna
+              Movement, this temple is being built brick by brick, square foot by square foot, through the
+              devotion of thousands of well-wishers like you.
+            </p>
+            <button
+              onClick={scrollToDonate}
+              className="rounded-full bg-gradient-gold px-8 py-3 text-sm font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)] transition-transform hover:scale-105"
+            >
+              Sponsor a Square Foot
+            </button>
+          </div>
         </div>
       </section>
 
@@ -855,40 +882,47 @@ export default function SqftCampaignClient({ campaigner }: { campaigner?: Campai
         </div>
       </section>
 
-      {/* ---------- About / inspiration ---------- */}
-      <section className="bg-background py-14 md:py-20">
-        <div className="container mx-auto grid max-w-5xl items-center gap-8 px-4 md:grid-cols-2">
-          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
-            <Image
-              src={CAMPAIGN.aboutImage}
-              alt="Hare Krishna Vaikuntham Temple"
-              fill
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover"
-            />
+      {/* ---------- Live progress: the Foundation Grid ---------- */}
+      <section className="bg-[hsl(220,90%,12%)] py-14 md:py-20">
+        <div className="container mx-auto max-w-4xl px-4 text-center">
+          <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-gold">Our heartfelt gratitude for your kind support</p>
+          <h2 className="mb-8 font-heading text-2xl font-bold text-white md:text-4xl">
+            <CountUp value={stats?.sqftRaised ?? 0} />{" "}
+            <span className="text-gold">square feet</span> offered so far
+          </h2>
+
+          {/* Foundation grid — each square is a piece of the temple's ground */}
+          <div
+            className="mx-auto mb-4 grid max-w-2xl gap-1 sm:gap-1.5"
+            style={{ gridTemplateColumns: "repeat(20, minmax(0, 1fr))" }}
+            role="img"
+            aria-label={`${percent}% of the campaign goal raised`}
+          >
+            {Array.from({ length: gridSquares }).map((_, i) => (
+              <motion.div
+                key={i}
+                initial={reduce ? false : { opacity: 0, scale: 0.6 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: reduce ? 0 : i * 0.02, duration: 0.3 }}
+                className={`aspect-square rounded-[3px] ${
+                  i < filledSquares
+                    ? "bg-gradient-gold shadow-[0_0_8px_hsl(42,92%,56%,0.5)]"
+                    : "border border-white/15 bg-white/5"
+                }`}
+              />
+            ))}
           </div>
-          <div>
-            <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-gold">Inspiration &amp; Aspiration</p>
-            <h2 className="mb-4 font-heading text-2xl font-bold text-primary md:text-3xl">
-              A spiritual landmark rising in Visakhapatnam
-            </h2>
-            <p className="mb-4 text-sm leading-relaxed text-muted-foreground md:text-base">
-              The Hare Krishna Vaikuntham Temple at Gambheeram is destined to become a beacon of devotion,
-              culture and compassion for the City of Destiny — with grand temple halls for Their Lordships,
-              an Annadana hall serving free sanctified meals, and centres for Vedic education and outreach.
-            </p>
-            <p className="mb-6 text-sm leading-relaxed text-muted-foreground md:text-base">
-              Inspired by the vision of Srila Prabhupada, Founder-Acharya of the worldwide Hare Krishna
-              Movement, this temple is being built brick by brick, square foot by square foot, through the
-              devotion of thousands of well-wishers like you.
-            </p>
-            <button
-              onClick={scrollToDonate}
-              className="rounded-full bg-gradient-gold px-8 py-3 text-sm font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)] transition-transform hover:scale-105"
-            >
-              Sponsor a Square Foot
-            </button>
-          </div>
+
+          <p className="mb-1 font-heading text-xl font-bold text-gold md:text-2xl">{percent}% raised</p>
+          <p className="text-sm text-white/75">
+            {(stats?.sqftRaised ?? 0).toLocaleString("en-IN")} square feet raised of a goal of{" "}
+            {(stats?.goalSqft ?? 67000).toLocaleString("en-IN")} square feet
+          </p>
+          <p className="mt-3 flex items-center justify-center gap-1.5 text-xs text-white/60">
+            <Users className="h-3.5 w-3.5" />
+            {(stats?.donorCount ?? 0).toLocaleString("en-IN")} devotees have contributed
+          </p>
         </div>
       </section>
 
@@ -1051,6 +1085,7 @@ export default function SqftCampaignClient({ campaigner }: { campaigner?: Campai
         </button>
       </div>
     </main>
-    </PageLayout>
+    <Footer />
+    </div>
   );
 }

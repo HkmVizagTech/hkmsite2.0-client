@@ -149,11 +149,11 @@ const Footer = () => {
                   </Link>
                 ))}
                 <a
-                  href="tel:+919876543210"
+                  href="tel:+919063020108"
                   className="group mt-4 flex items-start gap-3 text-sm text-background/50 transition-colors hover:text-primary"
                 >
                   <Phone className="mt-0.5 h-4 w-4 shrink-0 group-hover:text-primary" />
-                  <span>+91 98765 43210</span>
+                  <span>+91 9063 020 108</span>
                 </a>
                 <a
                   href="mailto:info@harekrishnavizag.org"
