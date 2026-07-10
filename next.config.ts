@@ -23,12 +23,10 @@ const nextConfig: NextConfig = {
         hostname: "res.cloudinary.com",
         pathname: "/**",
       },
-      // TODO: replace with your actual R2 public domain (the value of
-      // R2_PUBLIC_URL on Railway) once known, e.g. "media.harekrishnavizag.org"
-      // or the *.r2.dev / *.r2.cloudflarestorage.com host Cloudflare gave you.
+      // Cloudflare R2 — hkmsite-media bucket public URL
       {
         protocol: "https",
-        hostname: "**.r2.dev",
+        hostname: "pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev",
         pathname: "/**",
       },
     ],
