@@ -245,10 +245,10 @@ export default function AdminBanners() {
             <Card key={banner._id} className={!banner.active ? "opacity-50" : ""}>
               <CardContent className="flex items-center gap-4 p-4">
                 <div className="relative h-16 w-28 shrink-0 overflow-hidden rounded-lg bg-muted">
-                  <Image src={banner.desktopImage} alt={banner.title} fill className="object-cover" />
+                  <Image src={banner.desktopImage} alt={banner.title} fill sizes="120px" className="object-cover" />
                 </div>
                 <div className="relative h-16 w-11 shrink-0 overflow-hidden rounded-lg bg-muted">
-                  <Image src={banner.mobileImage} alt={banner.title} fill className="object-cover" />
+                  <Image src={banner.mobileImage} alt={banner.title} fill sizes="60px" className="object-cover" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-medium">{banner.title}</p>

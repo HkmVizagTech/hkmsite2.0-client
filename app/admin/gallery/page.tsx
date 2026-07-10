@@ -223,7 +223,7 @@ export default function AdminGallery() {
                   <div className="flex flex-wrap gap-3 mb-2">
                     {uploadForm.previews.map((src, idx) => (
                       <div key={src} className="relative w-20 h-20">
-                        <Image src={src} alt="preview" fill className="object-cover rounded-lg" />
+                        <Image src={src} alt="preview" fill sizes="200px" className="object-cover rounded-lg" />
                         <button
                           type="button"
                           className="absolute -top-2 -right-2 bg-background rounded-full p-1 shadow"
@@ -292,6 +292,7 @@ export default function AdminGallery() {
                 src={(group.images && group.images[0]) ? group.images[0] : "/assets/gallery-aarti.jpg"}
                 alt={group.title || ''}
                 fill
+                sizes="(min-width: 1024px) 25vw, 50vw"
                 className="object-cover"
               />
               <div className="absolute inset-0 bg-foreground/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">

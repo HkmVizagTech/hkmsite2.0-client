@@ -126,6 +126,7 @@ export default function DailySchedulePage() {
                     src={prog.image}
                     alt={prog.title}
                     fill
+                    sizes="(min-width: 768px) 33vw, 100vw"
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                 </div>

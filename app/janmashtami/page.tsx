@@ -1,8 +1,5 @@
 import JanmashtamiClient from "./JanmashtamiClient";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
 export const metadata = {
   title: "Sri Krishna Janmashtami | Hare Krishna Movement Vizag",
   description:

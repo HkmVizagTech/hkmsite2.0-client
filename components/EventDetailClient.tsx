@@ -44,7 +44,7 @@ export default function EventDetailClient({ id }: { id: string }) {
           <div className="bg-card rounded-2xl p-6">
             <h1 className="font-heading text-2xl font-bold mb-2">{event.title}</h1>
             <p className="text-muted-foreground mb-4">{new Date(event.date).toLocaleString()}</p>
-            {event.images && event.images[0] && <div className="w-full h-72 relative mb-4"><Image src={event.images[0]} alt={event.title} fill className="object-cover rounded-lg"/></div>}
+            {event.images && event.images[0] && <div className="w-full h-72 relative mb-4"><Image src={event.images[0]} alt={event.title} fill sizes="100vw" className="object-cover rounded-lg"/></div>}
             <p className="mb-6">{event.description}</p>
             <EventRegistrationLoader eventId={event._id || id} initialFormSchema={event.registrationForm} initialEvent={event} />
           </div>

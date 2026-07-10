@@ -1,7 +1,5 @@
 import RegisterClient from "./RegisterClient";
 
-export const dynamic = "force-dynamic";
-
 export const metadata = {
   title: "Start Your Fundraising Campaign | Square Foot Seva",
   description:

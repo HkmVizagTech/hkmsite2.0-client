@@ -1,7 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Smaller images for browsers that support them (falls back to webp/original
+  // automatically); Next negotiates via the Accept header per request.
   images: {
+    formats: ["image/avif", "image/webp"],
     remotePatterns: [
       {
         protocol: "https",
@@ -30,6 +33,11 @@ const nextConfig: NextConfig = {
         pathname: "/**",
       },
     ],
+  },
+  // Ensures per-icon tree-shaking for large barrel-export libraries so a
+  // page importing 3 icons doesn't pull the whole package into its bundle.
+  experimental: {
+    optimizePackageImports: ["lucide-react", "recharts"],
   },
 };
 

@@ -1,8 +1,5 @@
 import SqftCampaignClient from "./SqftCampaignClient";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
 export const metadata = {
   title: "Square Foot Seva | Hare Krishna Vaikuntham Temple, Visakhapatnam",
   description:

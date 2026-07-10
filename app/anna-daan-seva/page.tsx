@@ -82,7 +82,7 @@ export default function AnnaDaanPage() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="relative aspect-[4/3] rounded-2xl overflow-hidden"
             >
-              <Image src="https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677363792-1783677363601-462395264797134589073566144398536696847591n.jpg" alt="Anna-Daan Seva" fill className="object-cover shadow-elevated" />
+              <Image src="https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677363792-1783677363601-462395264797134589073566144398536696847591n.jpg" alt="Anna-Daan Seva" fill sizes="(min-width: 1024px) 480px, 92vw" className="object-cover shadow-elevated" />
             </motion.div>
           </div>
         </div>
