@@ -66,7 +66,7 @@ export const sevas: Seva[] = [
     slug: "anna-daan-seva",
     title: "Anna Daan Seva",
     shortTitle: "Anna Daan",
-    image: "/assets/home-gallery-annadana.webp",
+    image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677363792-1783677363601-462395264797134589073566144398536696847591n.jpg",
     tagline: "Feed the hungry with sanctified prasadam",
     description:
       "The scriptures glorify Anna Daan as the highest of all charities. Your contribution provides freshly cooked, sanctified prasadam to devotees, students, and the underprivileged across Visakhapatnam.",
