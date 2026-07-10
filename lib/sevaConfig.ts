@@ -120,7 +120,7 @@ export const sevas: Seva[] = [
     slug: "vastra-seva",
     title: "Vastra & Alankara Seva",
     shortTitle: "Vastra Seva",
-    image: "/assets/home-banner-radha-madan-mohan.webp",
+    image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677419371-1783677418690-DietyPhotos.jpeg",
     tagline: "Offer new garments and ornaments to Their Lordships",
     description:
       "Sri Sri Radha Madan Mohan are dressed and decorated fresh each day. Sponsor Vastra (garments) and Alankara (ornamentation) seva to support this daily loving service to the Deities.",
