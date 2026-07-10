@@ -66,7 +66,7 @@ const AboutSection = () => {
               />
             </div>
             <div className="absolute -right-2 bottom-[8%] rounded-2xl bg-card px-5 py-3.5 text-center shadow-elevated">
-              <b className="block text-2xl font-bold leading-none text-primary">10+</b>
+              <b className="block text-2xl font-bold leading-none text-primary">18+</b>
               <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Years of Seva</span>
             </div>
           </motion.div>

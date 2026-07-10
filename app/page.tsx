@@ -4,7 +4,6 @@ import AboutSection from "@/components/AboutSection";
 import FounderSection from "@/components/FounderSection";
 import SevasSection from "@/components/SevasSection";
 import GalleryPreview from "@/components/GalleryPreview";
-import EventsPreview from "@/components/EventsPreview";
 import BlogPreview from "@/components/BlogPreview";
 import SubhojanamSection from "@/components/SubhojanamSection";
 import ContactSection from "@/components/ContactSection";
@@ -19,7 +18,8 @@ export default function Home() {
       <FounderSection />
       <SevasSection />
       <GalleryPreview />
-      <EventsPreview />
+      {/* Upcoming Celebrations temporarily disabled — component kept intact
+          in components/EventsPreview.tsx, just not rendered here for now. */}
       <BlogPreview />
       <SubhojanamSection />
       <ContactSection />

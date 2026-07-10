@@ -202,7 +202,7 @@ export default function DonateHubPage() {
                 <div className="absolute -inset-3 -rotate-2 rounded-2xl bg-gradient-gold opacity-15" />
                 <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-elevated">
                   <Image
-                    src="/assets/home-temple-construction-banner.webp"
+                    src="https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783672822355-1783672821116-ChatGPTImageJul92026043238PM.png"
                     alt="Mandir Nirman Seva — temple construction"
                     fill
                     sizes="(min-width: 1024px) 480px, 92vw"

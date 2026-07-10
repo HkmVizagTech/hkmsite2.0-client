@@ -97,7 +97,7 @@ export default function SevasPage() {
               animate={inView1 ? { opacity: 1, scale: 1 } : {}}
               transition={{ duration: 0.8, delay: 0.2 }}
             >
-              <Image src="/assets/temple-seva.jpg" alt="Temple rendering" width={600} height={400} className="rounded-2xl shadow-elevated w-full" />
+              <Image src="https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783672822355-1783672821116-ChatGPTImageJul92026043238PM.png" alt="Temple rendering" width={600} height={400} className="rounded-2xl shadow-elevated w-full" />
             </motion.div>
           </div>
         </div>

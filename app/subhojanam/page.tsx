@@ -59,7 +59,7 @@ export default function SubhojanamPage() {
         title="Subhojanam"
         subtitle="Free, hygienic, and nutritious meals for the underprivileged"
         breadcrumb="Subhojanam"
-        backgroundImage="/assets/subhojanam.jpg"
+        backgroundImage="https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677363792-1783677363601-462395264797134589073566144398536696847591n.jpg"
       />
       <section className="py-24 bg-background" ref={ref1}>
         <div className="container mx-auto px-4">
@@ -94,7 +94,7 @@ export default function SubhojanamPage() {
               animate={inView1 ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.8, delay: 0.2 }}
             >
-              <Image src="/assets/subhojanam.jpg" alt="Subhojanam food distribution" width={600} height={400} className="rounded-2xl shadow-elevated w-full" />
+              <Image src="https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677363792-1783677363601-462395264797134589073566144398536696847591n.jpg" alt="Subhojanam food distribution" width={600} height={400} className="rounded-2xl shadow-elevated w-full" />
             </motion.div>
           </div>
         </div>

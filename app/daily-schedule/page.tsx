@@ -28,7 +28,7 @@ const specialPrograms = [
     day: "Every Sunday",
     time: "5:00 PM - 8:30 PM",
     desc: "A grand weekly celebration with kirtan, discourse, and sumptuous prasadam feast open to all.",
-    image: "/assets/gallery-class.jpg",
+    image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677824913-1783677824553-Screenshot2026-07-10153331.png",
   },
   {
     title: "Ekadashi Program",
@@ -42,7 +42,7 @@ const specialPrograms = [
     day: "Every Saturday",
     time: "6:00 PM - 8:00 PM",
     desc: "Community satsang with bhajans, Q&A on spiritual topics, and light prasadam.",
-    image: "/assets/gallery-darshan-1.jpg",
+    image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677824913-1783677824553-Screenshot2026-07-10153331.png",
   },
 ];
 
