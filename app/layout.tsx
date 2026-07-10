@@ -18,7 +18,7 @@ const playfair = Playfair_Display({
   variable: "--font-playfair",
 });
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://hkmsite2-0-client-9fyg.vercel.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://harekrishnavizag.org";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

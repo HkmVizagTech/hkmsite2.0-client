@@ -17,12 +17,12 @@ export default function AdminRootLayout({
 
   useEffect(() => {
     setIsLoading(false);
-    if (!isAuthenticated && pathname !== "/admin/login" && pathname !== "/admin/register") {
+    if (!isAuthenticated && pathname !== "/admin/login") {
       router.push("/admin/login");
     }
   }, [isAuthenticated, router, pathname]);
 
-  if (pathname === "/admin/login" || pathname === "/admin/register") {
+  if (pathname === "/admin/login") {
     return <>{children}</>;
   }
 

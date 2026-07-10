@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Mail, Lock, User, AlertCircle } from "lucide-react";
+import { Mail, Lock, User, AlertCircle, ShieldCheck } from "lucide-react";
+import { authFetch } from "@/lib/authClient";
 
 export default function AdminRegister() {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
@@ -22,7 +23,9 @@ export default function AdminRegister() {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch(`${(process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "")}/users/register`, {
+      // This endpoint now requires an authenticated admin — you must already
+      // be logged in as an admin to invite another staff account.
+      const res = await authFetch(`${(process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "")}/users/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -30,7 +33,8 @@ export default function AdminRegister() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Registration failed");
-      router.push("/admin/login");
+      setForm({ name: "", email: "", password: "" });
+      router.push("/admin/settings");
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -47,10 +51,10 @@ export default function AdminRegister() {
       >
         <div className="text-center mb-8">
           <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center mx-auto mb-4">
-            <span className="text-primary-foreground font-heading font-bold text-2xl">ॐ</span>
+            <ShieldCheck className="w-7 h-7 text-primary-foreground" />
           </div>
-          <h1 className="font-heading text-3xl font-bold">Admin Register</h1>
-          <p className="text-muted-foreground mt-2">Hare Krishna Movement, Visakhapatnam</p>
+          <h1 className="font-heading text-3xl font-bold">Add Staff Account</h1>
+          <p className="text-muted-foreground mt-2">You must be logged in as an admin to add a new account.</p>
         </div>
         <div className="bg-card rounded-2xl shadow-elevated p-8 border border-border">
           <form onSubmit={handleSubmit} className="space-y-5">
@@ -108,9 +112,8 @@ export default function AdminRegister() {
               {loading ? "Registering..." : "Register"}
             </Button>
           </form>
-          <p className="text-xs text-center mt-4">
-            Already have an account?{' '}
-            <a href="/admin/login" className="text-primary underline hover:opacity-80">Login here</a>
+          <p className="text-xs text-center mt-4 text-muted-foreground">
+            New accounts are created with standard (non-admin) access by default.
           </p>
         </div>
       </motion.div>
