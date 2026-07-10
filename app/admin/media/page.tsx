@@ -108,12 +108,21 @@ export default function AdminMedia() {
         credentials: "include",
         body: JSON.stringify(editForm),
       });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.message || "Update failed");
+
+      let json: any = {};
+      try {
+        json = await res.json();
+      } catch {
+        throw new Error(`Server returned status ${res.status} (not valid JSON) — check server logs`);
+      }
+
+      if (!res.ok) throw new Error(json.message || `Update failed (status ${res.status})`);
+
       setItems((list) => list.map((x) => (x._id === editing._id ? { ...x, ...editForm } : x)));
       setEditing(null);
       toast({ title: "Saved" });
     } catch (e: any) {
+      console.error("media saveEdit error:", e);
       toast({ title: "Failed to save", description: e.message, variant: "destructive" });
     }
   };
@@ -211,10 +220,10 @@ export default function AdminMedia() {
                       className="h-8 text-xs"
                     />
                     <div className="flex gap-1.5">
-                      <Button size="sm" className="h-7 flex-1 text-xs" onClick={saveEdit}>
+                      <Button type="button" size="sm" className="h-7 flex-1 text-xs" onClick={saveEdit}>
                         <Check className="mr-1 h-3 w-3" /> Save
                       </Button>
-                      <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => setEditing(null)}>
+                      <Button type="button" size="sm" variant="outline" className="h-7 text-xs" onClick={() => setEditing(null)}>
                         <X className="h-3 w-3" />
                       </Button>
                     </div>
