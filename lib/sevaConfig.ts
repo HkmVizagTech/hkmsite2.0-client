@@ -29,7 +29,7 @@ export const sevas: Seva[] = [
     slug: "square-foot-seva",
     title: "Square Foot Seva",
     shortTitle: "Square Foot",
-    image: "/assets/home-temple-construction-banner.webp",
+    image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677157979-1783677157883-Screenshot2026-07-10152227.png",
     tagline: "Sponsor the sacred ground of the rising temple",
     description:
       "Every square foot you sponsor becomes a permanent part of the Hare Krishna Vaikuntham Temple's foundation — an eternal offering inscribed into the ground Their Lordships will bless with Their presence.",
@@ -48,7 +48,7 @@ export const sevas: Seva[] = [
     slug: "brick-seva",
     title: "Brick Seva",
     shortTitle: "Brick Seva",
-    image: "/assets/home-gallery-annadana.webp",
+    image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677097861-1783677097620-Screenshot2026-07-10152116.png",
     tagline: "Every brick becomes an eternal part of Krishna's home",
     description:
       "The temple rises one brick at a time. Sponsor bricks in memory of loved ones or in gratitude for blessings received — each one is laid with devotion into the walls of the Lord's abode.",
@@ -84,7 +84,7 @@ export const sevas: Seva[] = [
     slug: "gau-seva",
     title: "Gau Seva",
     shortTitle: "Gau Seva",
-    image: "/assets/home-gallery-srinivasa-govinda.webp",
+    image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783676646237-1783676645536-ChatGPTImageJul102026031357PM.png",
     tagline: "Support daily care for our protected cows",
     description:
       "Cows hold a sacred place in Vedic culture. Your Gau Seva donation supports fodder, medical care, and shelter for the cows in our care — an act of compassion Lord Krishna Himself cherishes.",
@@ -102,7 +102,7 @@ export const sevas: Seva[] = [
     slug: "gita-daan-seva",
     title: "Gita Daan Seva",
     shortTitle: "Gita Daan",
-    image: "/assets/home-banner-daily-darshan.webp",
+    image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783672760162-1783672758959-ChatGPTImageJul92026043444PM.png",
     tagline: "Gift the wisdom of the Bhagavad Gita to a seeker",
     description:
       "There is no greater gift than transcendental knowledge. Sponsor copies of Bhagavad-Gita As It Is for distribution to students, prisoners, and spiritual seekers — planting a seed that can transform a life forever.",

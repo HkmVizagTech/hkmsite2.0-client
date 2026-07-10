@@ -67,7 +67,7 @@ export default function SevasPage() {
         title="Temple Seva's"
         subtitle="Contribute to building the Hare Krishna Vaikuntham Temple in Visakhapatnam"
         breadcrumb="Seva's"
-        backgroundImage="/assets/temple-seva.jpg"
+        backgroundImage="https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783675995608-1783675986681-SAV01474.JPG.jpg"
       />
       <section className="py-24 bg-background" ref={ref1}>
         <div className="container mx-auto px-4">

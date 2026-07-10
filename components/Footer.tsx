@@ -58,7 +58,7 @@ const Footer = () => {
 
       <div className="relative h-[300px] w-full overflow-hidden md:h-[400px]">
         <Image
-          src="/assets/home-footer-bg.webp"
+          src="https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783676580620-1783676579037-03.jpg"
           alt="Hare Krishna Vaikuntham Temple Vizag"
           fill
           sizes="100vw"
