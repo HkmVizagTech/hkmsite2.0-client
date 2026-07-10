@@ -470,7 +470,7 @@ export default function JanmashtamiClient() {
       <section className="bg-[#080808] px-4 py-7 text-white">
         <div className="mx-auto max-w-6xl text-sm leading-7 md:text-base">
           Gentle Request! While doing Paytm/UPI App Payments or Bank (NEFT/ RTGS), please send us a screenshot along with complete address and PAN details on our Whatsapp Number{" "}
-          <a className="font-bold text-[#ffdb68]" href="tel:+919063020108">+91 9063 020 108</a> or to our mail ID{" "}
+          <a className="font-bold text-[#ffdb68]" href="tel:+918977761187">+91 89777 61187</a> or to our mail ID{" "}
           <a className="font-bold text-[#ffdb68]" href="mailto:social@hkmvizag.org">social@hkmvizag.org</a>. You may also call on this number for other queries.
         </div>
       </section>
@@ -542,9 +542,9 @@ export default function JanmashtamiClient() {
             <img src="/assets/janmashtami-hkv_logo.webp" alt="Hare Krishna Movement Vizag" className="h-auto w-36" loading="lazy" decoding="async" />
             <h3 className="mt-6 text-lg font-bold text-[#ffdb68]">CONTACT INFO</h3>
             <ul className="mt-3 space-y-3 text-sm text-white/75">
-              <li><a className="flex items-center gap-2 hover:text-white" href="tel:+919063020108"><Phone className="h-4 w-4" /> 9063 020 108</a></li>
+              <li><a className="flex items-center gap-2 hover:text-white" href="tel:+918977761187"><Phone className="h-4 w-4" /> 89777 61187</a></li>
               <li><a className="flex items-center gap-2 hover:text-white" href="mailto:social@hkmvizag.org"><Mail className="h-4 w-4" /> social@hkmvizag.org</a></li>
-              <li><a className="flex items-center gap-2 hover:text-white" href="https://wa.me/919063020108" target="_blank" rel="noreferrer"><MessageCircle className="h-4 w-4" /> WhatsApp 9063 020 108</a></li>
+              <li><a className="flex items-center gap-2 hover:text-white" href="https://wa.me/918977761187" target="_blank" rel="noreferrer"><MessageCircle className="h-4 w-4" /> WhatsApp 89777 61187</a></li>
             </ul>
           </div>
         </div>
@@ -554,7 +554,7 @@ export default function JanmashtamiClient() {
       </footer>
 
       <a
-        href="https://wa.me/919063020108"
+        href="https://wa.me/918977761187"
         target="_blank"
         rel="noreferrer"
         className="fixed bottom-5 right-5 z-40 inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#19b05f] text-sm font-black text-white shadow-2xl transition hover:scale-105"

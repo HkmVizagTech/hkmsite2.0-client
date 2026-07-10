@@ -51,10 +51,10 @@ const loadRazorpay = () =>
 const CAMPAIGN = {
   pricePerSqft: 6000,
   minCustomAmount: 500,
-  phone: "+91 9063 020 108",
-  phoneHref: "tel:+919063020108",
+  phone: "+91 89777 61187",
+  phoneHref: "tel:+918977761187",
   email: "info.vizag@hkm-group.org",
-  heroImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783675995608-1783675986681-SAV01474.JPG.jpg",
+  heroImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783672822355-1783672821116-ChatGPTImageJul92026043238PM.png",
   aboutImage: "/assets/vizag-temple-1.jpeg",
   gallery: [
     { src: "/assets/home-temple-construction-banner.webp", alt: "Hare Krishna Vaikuntham Temple construction" },
