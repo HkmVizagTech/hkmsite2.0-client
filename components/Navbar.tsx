@@ -147,7 +147,7 @@ const Navbar = () => {
           <div className="hidden lg:flex items-center gap-2">
             <button
               onClick={() => setDarkMode(!darkMode)}
-              className="w-9 h-9 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition-all"
+              className="w-11 h-11 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition-all"
               aria-label="Toggle dark mode"
             >
               {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
@@ -169,7 +169,7 @@ const Navbar = () => {
           <div className="lg:hidden flex items-center gap-2">
             <button
               onClick={() => setDarkMode(!darkMode)}
-              className="w-9 h-9 rounded-full border border-border flex items-center justify-center text-muted-foreground"
+              className="w-11 h-11 rounded-full border border-border flex items-center justify-center text-muted-foreground"
               aria-label="Toggle dark mode"
             >
               {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
