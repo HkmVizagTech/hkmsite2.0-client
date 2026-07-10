@@ -23,6 +23,7 @@ const activities = [
 ];
 
 const milestones = [
+  { year: "2008", event: "Began humble seva activities in Visakhapatnam" },
   { year: "2015", event: "Registered as a trust in Visakhapatnam" },
   { year: "2016", event: "Began regular Bhagavad Gita study circles" },
   { year: "2018", event: "Launched Subhojanam food distribution programme" },
@@ -73,7 +74,8 @@ export default function AboutPage() {
                 the devoted purpose of bringing about physical, emotional and spiritual well-being.
               </p>
               <p className="text-muted-foreground leading-relaxed">
-                Registered as a trust in the year 2015, HKMI&apos;s activities have been growing consistently ever since, 
+                Serving the community since 2008 and registered as a trust in the year 2015, HKMI&apos;s
+                activities have been growing consistently ever since,
                 touching thousands of lives across Visakhapatnam and beyond.
               </p>
             </motion.div>

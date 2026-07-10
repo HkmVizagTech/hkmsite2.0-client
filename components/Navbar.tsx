@@ -71,13 +71,13 @@ const Navbar = () => {
           >
             <div className="container mx-auto flex h-8 items-center justify-between px-3 text-[10px] md:h-10 md:px-4 md:text-xs">
               <div className="flex items-center gap-4">
-                <a href="tel:+919063020108" className="flex items-center gap-1.5 hover:text-secondary transition-colors">
+                <a href="tel:+919666611108" className="flex items-center gap-1.5 hover:text-secondary transition-colors">
                   <Phone className="w-3 h-3" />
-                  <span>+91 9063 020 108</span>
+                  <span>+91 96666 11108</span>
                 </a>
-                <a href="mailto:info@harekrishnavizag.org" className="hidden sm:flex items-center gap-1.5 hover:text-secondary transition-colors">
+                <a href="mailto:info.vizag@hkm-group.org" className="hidden sm:flex items-center gap-1.5 hover:text-secondary transition-colors">
                   <Mail className="w-3 h-3" />
-                  <span>info@harekrishnavizag.org</span>
+                  <span>info.vizag@hkm-group.org</span>
                 </a>
               </div>
               <div className="flex items-center gap-4">
@@ -188,20 +188,21 @@ const Navbar = () => {
         <AnimatePresence>
           {mobileOpen && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="lg:hidden bg-background/98 backdrop-blur-md border-t border-border overflow-hidden rounded-b-2xl"
+              initial={{ height: 0 }}
+              animate={{ height: "auto" }}
+              exit={{ height: 0 }}
+              transition={{ duration: 0.25, ease: "easeInOut" }}
+              className="lg:hidden bg-background backdrop-blur-md border-t border-border overflow-hidden rounded-b-2xl"
             >
               <div className="container mx-auto px-4 py-4 flex flex-col gap-1">
                 {navItems.map((item) => (
                   <Link
                     key={item.label}
                     href={item.href}
-                    className={`text-left px-4 py-3 rounded-lg transition-colors ${
+                    className={`text-left px-4 py-3 rounded-lg font-medium transition-colors ${
                       pathname === item.href
-                        ? "text-primary bg-primary/5"
-                        : "text-foreground hover:text-primary hover:bg-primary/5"
+                        ? "text-primary bg-primary/10"
+                        : "text-foreground hover:text-primary hover:bg-primary/10"
                     }`}
                   >
                     {item.label}

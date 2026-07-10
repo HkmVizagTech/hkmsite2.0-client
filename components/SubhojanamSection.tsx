@@ -14,8 +14,8 @@ const benefits = [
 ];
 
 const impact = [
-  { value: "1000s", label: "Meals Every Day" },
-  { value: "₹55", label: "Feeds One Person" },
+  { value: "2 Lakh+", label: "Meals Every Day" },
+  { value: "₹25", label: "Feeds One Person" },
   { value: "80G", label: "Tax Exemption" },
 ];
 

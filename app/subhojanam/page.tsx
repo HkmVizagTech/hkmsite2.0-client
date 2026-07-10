@@ -9,9 +9,9 @@ import Image from "next/image";
 import { Utensils, Hospital, Users, Clock, Heart, TrendingUp, Target } from "lucide-react";
 
 const stats = [
-  { icon: Utensils, value: "1,000+", label: "Meals Served Daily" },
+  { icon: Utensils, value: "3,000+", label: "Meals Served Daily" },
   { icon: Hospital, value: "2", label: "Government Hospitals" },
-  { icon: Users, value: "3,65,000+", label: "Annual Beneficiaries" },
+  { icon: Users, value: "10,95,000+", label: "Annual Beneficiaries" },
   { icon: Clock, value: "365", label: "Days a Year" },
 ];
 

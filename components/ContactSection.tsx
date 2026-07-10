@@ -12,9 +12,9 @@ import Ornament from "@/components/Ornament";
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 
 const DEFAULT_CONTACT = {
-  phone: "+91 98765 43210",
-  email: "info@harekrishnavizag.org",
-  address: "Hare Krishna Marg, Visakhapatnam, Andhra Pradesh, India - 530003",
+  phone: "+91 96666 11108",
+  email: "info.vizag@hkm-group.org",
+  address: "Chaitanya Bhavan, Hare Krishna Vaikuntam Cultural Centre, IIM Rd, opp. Akshaya Patra Foundation, Gambhiram, Visakhapatnam, Andhra Pradesh 531163",
   morningHours: "4:30 AM - 1:00 PM",
   eveningHours: "4:00 PM - 8:30 PM",
 };

@@ -45,7 +45,7 @@ const sections = [
   },
   {
     h: "Contact",
-    p: "Questions about these terms may be directed to info@harekrishnavizag.org.",
+    p: "Questions about these terms may be directed to info.vizag@hkm-group.org.",
   },
 ];
 

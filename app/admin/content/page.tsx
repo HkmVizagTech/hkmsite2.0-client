@@ -27,7 +27,7 @@ interface SiteContent {
 const defaultContent: SiteContent = {
   hero: { title: "Hare Krishna Movement", subtitle: "Visakhapatnam", tagline: "Spreading the timeless message of Lord Krishna through devotion, service, and community" },
   about: { heading: "A Legacy of Devotion & Service", body: "" },
-  contact: { phone: "+91 98765 43210", email: "info@harekrishnavizag.org", address: "Hare Krishna Marg, Visakhapatnam, Andhra Pradesh, India - 530003", morningHours: "4:30 AM - 1:00 PM", eveningHours: "4:00 PM - 8:30 PM" },
+  contact: { phone: "+91 96666 11108", email: "info.vizag@hkm-group.org", address: "Chaitanya Bhavan, Hare Krishna Vaikuntam Cultural Centre, IIM Rd, opp. Akshaya Patra Foundation, Gambhiram, Visakhapatnam, Andhra Pradesh 531163", morningHours: "4:30 AM - 1:00 PM", eveningHours: "4:00 PM - 8:30 PM" },
 };
 
 export default function AdminContent() {

@@ -13,7 +13,7 @@ const sections = [
   },
   {
     h: "Erroneous or Duplicate Transactions",
-    p: "If a donation was made in error — such as a duplicate payment, an incorrect amount due to a technical issue, or an unauthorised transaction — please write to us at info@harekrishnavizag.org within 7 days of the transaction with your payment reference number. Genuine cases will be reviewed and, where approved, refunded to the original payment method within 7–10 working days.",
+    p: "If a donation was made in error — such as a duplicate payment, an incorrect amount due to a technical issue, or an unauthorised transaction — please write to us at info.vizag@hkm-group.org within 7 days of the transaction with your payment reference number. Genuine cases will be reviewed and, where approved, refunded to the original payment method within 7–10 working days.",
   },
   {
     h: "80G Receipt Implications",
@@ -29,7 +29,7 @@ const sections = [
   },
   {
     h: "How to Request a Refund",
-    p: "Email info@harekrishnavizag.org with: your full name, date of transaction, amount, payment reference/UTR number, and reason for the request. We aim to respond within 3 working days.",
+    p: "Email info.vizag@hkm-group.org with: your full name, date of transaction, amount, payment reference/UTR number, and reason for the request. We aim to respond within 3 working days.",
   },
 ];
 

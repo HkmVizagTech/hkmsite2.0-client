@@ -33,7 +33,7 @@ const sections = [
   },
   {
     h: "Your Rights",
-    p: "You may request access to, correction of, or deletion of your personal data at any time by writing to us at info@harekrishnavizag.org. Note that donation records tied to 80G receipts must be retained as required by law.",
+    p: "You may request access to, correction of, or deletion of your personal data at any time by writing to us at info.vizag@hkm-group.org. Note that donation records tied to 80G receipts must be retained as required by law.",
   },
   {
     h: "Changes to This Policy",
@@ -41,7 +41,7 @@ const sections = [
   },
   {
     h: "Contact Us",
-    p: "For any privacy-related questions, contact: Hare Krishna Movement, Visakhapatnam, Andhra Pradesh, India – 530003. Email: info@harekrishnavizag.org",
+    p: "For any privacy-related questions, contact: Chaitanya Bhavan, Hare Krishna Vaikuntam Cultural Centre, IIM Rd, Gambhiram, Visakhapatnam, Andhra Pradesh 531163. Email: info.vizag@hkm-group.org",
   },
 ];
 

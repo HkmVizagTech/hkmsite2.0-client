@@ -53,14 +53,14 @@ const organizationJsonLd = {
   url: SITE_URL,
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Hare Krishna Marg",
+    streetAddress: "Chaitanya Bhavan, Hare Krishna Vaikuntam Cultural Centre, IIM Rd, opp. Akshaya Patra Foundation, Gambhiram",
     addressLocality: "Visakhapatnam",
     addressRegion: "Andhra Pradesh",
-    postalCode: "530003",
+    postalCode: "531163",
     addressCountry: "IN",
   },
-  telephone: "+91 98765 43210",
-  email: "info@harekrishnavizag.org",
+  telephone: "+91 96666 11108",
+  email: "info.vizag@hkm-group.org",
   openingHours: "Mo-Su 04:30-20:30",
 };
 

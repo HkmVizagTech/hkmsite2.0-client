@@ -10,7 +10,7 @@ const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "
 
 const DEFAULT_HEADING = "A Legacy of Devotion & Service";
 const DEFAULT_BODY =
-  "Following in the footsteps of our revered Founder-Acharya Srila Prabhupada, Hare Krishna Movement India (HKMI), Visakhapatnam has been conducting spiritual, educational and cultural activities since 2015 — bringing about physical, emotional and spiritual well-being.";
+  "Following in the footsteps of our revered Founder-Acharya Srila Prabhupada, Hare Krishna Movement India (HKMI), Visakhapatnam has been conducting spiritual, educational and cultural activities since 2008 — bringing about physical, emotional and spiritual well-being.";
 
 const highlights = [
   { icon: Heart, title: "Spiritual Well-being", desc: "Programs for physical, emotional and spiritual growth" },
@@ -20,8 +20,8 @@ const highlights = [
 ];
 
 const stats = [
-  { value: "2015", label: "Serving Since" },
-  { value: "1000s", label: "Meals Daily" },
+  { value: "2008", label: "Serving Since" },
+  { value: "2 Lakh+", label: "Meals Daily" },
   { value: "21+", label: "Festivals a Year" },
 ];
 

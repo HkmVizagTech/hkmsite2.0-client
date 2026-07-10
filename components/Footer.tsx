@@ -76,9 +76,11 @@ const Footer = () => {
                 <span className="text-xs uppercase tracking-widest text-background/60">Visakhapatnam</span>
               </div>
               <p className="mb-4 text-sm leading-relaxed text-background/50">
-                Hare Krishna Marg, Visakhapatnam,
+                Chaitanya Bhavan, Hare Krishna Vaikuntam Cultural Centre,
                 <br />
-                Andhra Pradesh, India - 530003
+                IIM Rd, opp. Akshaya Patra Foundation, Gambhiram,
+                <br />
+                Visakhapatnam, Andhra Pradesh 531163
               </p>
               <div className="mb-4 flex gap-3">
                 {[
@@ -149,18 +151,18 @@ const Footer = () => {
                   </Link>
                 ))}
                 <a
-                  href="tel:+919063020108"
+                  href="tel:+919666611108"
                   className="group mt-4 flex items-start gap-3 text-sm text-background/50 transition-colors hover:text-primary"
                 >
                   <Phone className="mt-0.5 h-4 w-4 shrink-0 group-hover:text-primary" />
-                  <span>+91 9063 020 108</span>
+                  <span>+91 96666 11108</span>
                 </a>
                 <a
-                  href="mailto:info@harekrishnavizag.org"
+                  href="mailto:info.vizag@hkm-group.org"
                   className="group flex items-start gap-3 text-sm text-background/50 transition-colors hover:text-primary"
                 >
                   <Mail className="mt-0.5 h-4 w-4 shrink-0 group-hover:text-primary" />
-                  <span>info@harekrishnavizag.org</span>
+                  <span>info.vizag@hkm-group.org</span>
                 </a>
               </div>
             </div>

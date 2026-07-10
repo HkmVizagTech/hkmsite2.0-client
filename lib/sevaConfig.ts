@@ -71,10 +71,10 @@ export const sevas: Seva[] = [
     description:
       "The scriptures glorify Anna Daan as the highest of all charities. Your contribution provides freshly cooked, sanctified prasadam to devotees, students, and the underprivileged across Visakhapatnam.",
     tiers: [
-      { label: "Rs. 550 / 10 plates", amount: 550 },
-      { label: "Rs. 1,100 / 20 plates", amount: 1100 },
-      { label: "Rs. 2,805 / 51 plates", amount: 2805 },
-      { label: "Rs. 5,555 / 101 plates", amount: 5555 },
+      { label: "Rs. 250 / 10 plates", amount: 250 },
+      { label: "Rs. 500 / 20 plates", amount: 500 },
+      { label: "Rs. 1,000 / 40 plates", amount: 1000 },
+      { label: "Rs. 2,500 / 100 plates", amount: 2500 },
     ],
     category: "ANNADAAN",
     account: "default",

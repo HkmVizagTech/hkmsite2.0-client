@@ -53,7 +53,7 @@ const CAMPAIGN = {
   minCustomAmount: 500,
   phone: "+91 9063 020 108",
   phoneHref: "tel:+919063020108",
-  email: "info@harekrishnavizag.org",
+  email: "info.vizag@hkm-group.org",
   heroImage: "/assets/home-temple-construction-banner.webp",
   aboutImage: "/assets/vizag-temple-1.jpeg",
   gallery: [
