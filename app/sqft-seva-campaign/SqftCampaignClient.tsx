@@ -16,9 +16,9 @@ import { motion, useReducedMotion } from "framer-motion";
 import {
   ShieldCheck, Loader2, CheckCircle2, ChevronDown, Copy, Check,
   Building2, Award, FileCheck2, Sparkles, UtensilsCrossed, ScrollText,
-  Landmark, HeartHandshake, Users, Share2, Megaphone, Target, PhoneCall,
+  Landmark, HeartHandshake, Users, Share2, Megaphone, Target,
 } from "lucide-react";
-import Footer from "@/components/Footer";
+import PageLayout from "@/components/PageLayout";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 
@@ -415,44 +415,10 @@ export default function SqftCampaignClient({ campaigner }: { campaigner?: Campai
   };
 
   return (
-    <div className="min-h-screen bg-background">
-    {/* ---------- VCM-style campaign header ---------- */}
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[hsl(220,90%,12%)]/95 backdrop-blur">
-      <div className="container mx-auto flex h-16 items-center justify-between gap-2 px-4">
-        <Link href="/" className="flex min-w-0 items-center gap-2.5">
-          <Image src="/assets/logo.png" alt="Hare Krishna Movement Vizag" width={40} height={40} className="shrink-0 rounded-full" />
-          <div className="min-w-0 leading-tight">
-            <p className="truncate font-heading text-sm font-bold text-white md:text-base">Hare Krishna Vaikuntham</p>
-            <p className="text-[10px] uppercase tracking-widest text-gold">Square Foot Seva</p>
-          </div>
-        </Link>
-        <div className="flex shrink-0 items-center gap-2 md:gap-4">
-          <a
-            href={CAMPAIGN.phoneHref}
-            className="hidden items-center gap-1.5 text-sm text-white/85 transition-colors hover:text-white md:flex"
-          >
-            <PhoneCall className="h-4 w-4 text-gold" />
-            {CAMPAIGN.phone}
-          </a>
-          <a
-            href={CAMPAIGN.phoneHref}
-            aria-label="Call us"
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-white/85 md:hidden"
-          >
-            <PhoneCall className="h-4 w-4" />
-          </a>
-          <button
-            onClick={scrollToDonate}
-            className="rounded-full bg-gradient-gold px-5 py-2 text-sm font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)] transition-transform hover:scale-105 md:px-6"
-          >
-            Donate Now
-          </button>
-        </div>
-      </div>
-    </header>
+    <PageLayout>
     <main className="bg-background">
       {/* ---------- Hero ---------- */}
-      <section className="relative overflow-hidden pt-16">
+      <section className="relative overflow-hidden pt-20">
         <div className="relative min-h-[72vh] w-full md:min-h-[80vh]">
           <Image
             src={CAMPAIGN.heroImage}
@@ -1085,7 +1051,6 @@ export default function SqftCampaignClient({ campaigner }: { campaigner?: Campai
         </button>
       </div>
     </main>
-    <Footer />
-    </div>
+    </PageLayout>
   );
 }
