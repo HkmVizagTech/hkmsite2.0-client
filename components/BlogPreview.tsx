@@ -77,7 +77,7 @@ const BlogPreview = () => {
             <motion.article
               key={blog._id}
               initial={{ opacity: 0, y: 24 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.15 }}
             >
               <Link
@@ -122,7 +122,7 @@ const BlogPreview = () => {
 
         <motion.div
           initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
+          animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
           className="text-center mt-12"
         >
