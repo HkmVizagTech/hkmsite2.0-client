@@ -14,7 +14,7 @@ const schedule = [
   { time: "7:15 AM", event: "Shringar Darshan", icon: Sunrise, desc: "The deities are beautifully dressed and decorated for the morning darshan." },
   { time: "7:30 AM", event: "Guru Puja", icon: Music, desc: "Worship of the spiritual master with kirtan, flower offerings, and devotional songs." },
   { time: "8:00 AM", event: "Srimad Bhagavatam Class", icon: BookOpen, desc: "Daily discourse on Srimad Bhagavatam, the ripened fruit of the Vedic literature." },
-  { time: "12:30 PM", event: "Raj Bhog Aarti", icon: Sun, desc: "Grand noon offering with elaborate bhog preparation for the Lord." },
+  { time: "12:00 PM", event: "Raj Bhog Aarti", icon: Sun, desc: "Grand noon offering with elaborate bhog preparation for the Lord." },
   { time: "1:00 PM", event: "Prasadam Distribution", icon: Heart, desc: "Sanctified food is distributed to all visitors and devotees present." },
   { time: "4:15 PM", event: "Temple Reopens", icon: Sunset, desc: "The temple doors reopen after the Lord's afternoon rest period." },
   { time: "6:30 PM", event: "Sandhya Aarti", icon: Sunset, desc: "Evening aarti with beautiful kirtan as the sun sets — a deeply moving ceremony." },
