@@ -23,16 +23,18 @@ const navItems = [
   { label: "Contact", href: "/contact" },
 ];
 
-// Real temple darshan windows (matches /daily-schedule exactly):
-//   Morning  4:30 AM – 1:00 PM  (open)
-//   Midday   1:00 PM – 4:30 PM  (closed, the Lord's rest)
-//   Evening  4:30 PM – 8:30 PM  (open)
+// Real temple darshan windows (source of truth — keep /daily-schedule's
+// displayed timings in sync with this if it's ever updated again):
+//   4:30 AM – 5:00 AM    (Mangala Aarti darshan)
+//   7:15 AM – 12:20 PM   (morning darshan through Raj Bhog)
+//   4:15 PM – 8:15 PM    (evening darshan through Shayan Aarti)
 // Computed against India Standard Time specifically — NOT the visitor's
 // local timezone, since devotees browsing from abroad should see the
 // temple's actual current status, not a status based on their own clock.
 const DARSHAN_WINDOWS = [
-  { startMin: 4 * 60 + 30, endMin: 13 * 60, label: "Darshan Open · 4:30 AM – 1:00 PM" },
-  { startMin: 16 * 60 + 30, endMin: 20 * 60 + 30, label: "Darshan Open · 4:30 PM – 8:30 PM" },
+  { startMin: 4 * 60 + 30, endMin: 5 * 60, label: "Darshan Open · 4:30 AM – 5:00 AM" },
+  { startMin: 7 * 60 + 15, endMin: 12 * 60 + 20, label: "Darshan Open · 7:15 AM – 12:20 PM" },
+  { startMin: 16 * 60 + 15, endMin: 20 * 60 + 15, label: "Darshan Open · 4:15 PM – 8:15 PM" },
 ];
 
 const getDarshanStatus = () => {

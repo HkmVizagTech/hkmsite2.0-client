@@ -16,7 +16,7 @@ const schedule = [
   { time: "8:00 AM", event: "Srimad Bhagavatam Class", icon: BookOpen, desc: "Daily discourse on Srimad Bhagavatam, the ripened fruit of the Vedic literature." },
   { time: "12:30 PM", event: "Raj Bhog Aarti", icon: Sun, desc: "Grand noon offering with elaborate bhog preparation for the Lord." },
   { time: "1:00 PM", event: "Prasadam Distribution", icon: Heart, desc: "Sanctified food is distributed to all visitors and devotees present." },
-  { time: "4:30 PM", event: "Temple Reopens", icon: Sunset, desc: "The temple doors reopen after the Lord's afternoon rest period." },
+  { time: "4:15 PM", event: "Temple Reopens", icon: Sunset, desc: "The temple doors reopen after the Lord's afternoon rest period." },
   { time: "6:30 PM", event: "Sandhya Aarti", icon: Sunset, desc: "Evening aarti with beautiful kirtan as the sun sets — a deeply moving ceremony." },
   { time: "7:00 PM", event: "Bhagavad Gita Class", icon: BookOpen, desc: "Evening discourse on the Bhagavad Gita — the Song of God spoken by Lord Krishna." },
   { time: "8:30 PM", event: "Shayan Aarti", icon: Moon, desc: "The final aarti of the day, putting the Lord to rest for the night." },
@@ -151,12 +151,13 @@ export default function DailySchedulePage() {
               <div className="space-y-4">
                 <div className="bg-card rounded-xl border border-border p-5">
                   <h3 className="font-heading font-semibold text-foreground mb-2">Temple Hours</h3>
-                  <p className="text-sm text-muted-foreground">Morning: 4:30 AM – 1:00 PM</p>
-                  <p className="text-sm text-muted-foreground">Evening: 4:30 PM – 8:30 PM</p>
+                  <p className="text-sm text-muted-foreground">Mangala Darshan: 4:30 AM – 5:00 AM</p>
+                  <p className="text-sm text-muted-foreground">Morning: 7:15 AM – 12:20 PM</p>
+                  <p className="text-sm text-muted-foreground">Evening: 4:15 PM – 8:15 PM</p>
                 </div>
                 <div className="bg-card rounded-xl border border-border p-5">
                   <h3 className="font-heading font-semibold text-foreground mb-2">Rest Period</h3>
-                  <p className="text-sm text-muted-foreground">The temple is closed for darshan between 1:00 PM and 4:30 PM while the Lord rests.</p>
+                  <p className="text-sm text-muted-foreground">The temple is closed for darshan between 5:00 AM and 7:15 AM, and again between 12:20 PM and 4:15 PM, while the Lord rests.</p>
                 </div>
                 <div className="bg-card rounded-xl border border-border p-5">
                   <h3 className="font-heading font-semibold text-foreground mb-2">Dress Code</h3>
