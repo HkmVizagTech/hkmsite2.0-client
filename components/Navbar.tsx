@@ -23,9 +23,49 @@ const navItems = [
   { label: "Contact", href: "/contact" },
 ];
 
+// Real temple darshan windows (matches /daily-schedule exactly):
+//   Morning  4:30 AM – 1:00 PM  (open)
+//   Midday   1:00 PM – 4:30 PM  (closed, the Lord's rest)
+//   Evening  4:30 PM – 8:30 PM  (open)
+// Computed against India Standard Time specifically — NOT the visitor's
+// local timezone, since devotees browsing from abroad should see the
+// temple's actual current status, not a status based on their own clock.
+const DARSHAN_WINDOWS = [
+  { startMin: 4 * 60 + 30, endMin: 13 * 60, label: "Darshan Open · 4:30 AM – 1:00 PM" },
+  { startMin: 16 * 60 + 30, endMin: 20 * 60 + 30, label: "Darshan Open · 4:30 PM – 8:30 PM" },
+];
+
+const getDarshanStatus = () => {
+  const istNow = new Date(
+    new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" })
+  );
+  const minutesNow = istNow.getHours() * 60 + istNow.getMinutes();
+
+  const activeWindow = DARSHAN_WINDOWS.find(
+    (w) => minutesNow >= w.startMin && minutesNow < w.endMin
+  );
+  if (activeWindow) return { isOpen: true, label: activeWindow.label };
+
+  // Closed — figure out which reopening time is next, for a helpful label.
+  const nextWindow = DARSHAN_WINDOWS.find((w) => minutesNow < w.startMin);
+  const reopenLabel = nextWindow
+    ? `Reopens ${nextWindow.label.split("· ")[1].split(" – ")[0]}`
+    : "Reopens 4:30 AM";
+  return { isOpen: false, label: `Darshan Closed · ${reopenLabel}` };
+};
+
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [darshanStatus, setDarshanStatus] = useState(getDarshanStatus());
+
+  useEffect(() => {
+    // Recompute every minute so the indicator flips live at 1:00 PM,
+    // 4:30 PM, etc. without needing a page refresh.
+    const interval = setInterval(() => setDarshanStatus(getDarshanStatus()), 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   // Persist theme choice — previously the toggle reset to light on every
   // navigation because this state remounts per page (colour "inversion" bug).
   const [darkMode, setDarkMode] = useState(false);
@@ -82,9 +122,13 @@ const Navbar = () => {
               </div>
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                  <span
+                    className={`w-2 h-2 rounded-full ${
+                      darshanStatus.isOpen ? "bg-green-400 animate-pulse" : "bg-white/40"
+                    }`}
+                  />
                   <Clock className="w-3 h-3" />
-                  <span>Darshan Open 4:30 - 20:30</span>
+                  <span suppressHydrationWarning>{darshanStatus.label}</span>
                 </div>
               </div>
             </div>
