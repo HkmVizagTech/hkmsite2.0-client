@@ -294,6 +294,7 @@ export default function AdminDonations() {
               <div className="flex justify-between"><span className="text-muted-foreground">Order ID</span><span className="font-mono">{selectedDonation.razorpayOrderId || '-'}</span></div>
               <div className="flex justify-between"><span className="text-muted-foreground">Payment ID</span><span className="font-mono">{selectedDonation.razorpayPaymentId || '-'}</span></div>
               <div className="flex justify-between"><span className="text-muted-foreground">Receipt</span><span>{selectedDonation.receiptNumber || selectedDonation.receipt || '-'}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">WhatsApp Receipt</span><span>{selectedDonation.whatsappReceiptSentAt ? `Sent ${new Date(selectedDonation.whatsappReceiptSentAt).toLocaleString('en-IN')}` : (selectedDonation.whatsappReceiptError ? 'Failed' : 'Not sent')}</span></div>
               {selectedDonation.wantPrasadam && selectedDonation.prasadamAddress && (
                 <div className="border-t pt-3">
                   <div className="text-sm text-muted-foreground mb-2">Maha Prasadam Delivery</div>
@@ -302,7 +303,7 @@ export default function AdminDonations() {
                   <div className="text-xs">{selectedDonation.prasadamAddress.city} - {selectedDonation.prasadamAddress.pincode}, {selectedDonation.prasadamAddress.state}</div>
                 </div>
               )}
-              <div className="pt-3 flex gap-2">
+              <div className="pt-3 flex flex-wrap gap-2">
                 <Button onClick={async () => {
                   try {
                     const r = await authFetch(`${apiUrl}/donations/${selectedDonation._id}/resend-receipt`, { method: 'POST', credentials: 'include' });
@@ -310,6 +311,13 @@ export default function AdminDonations() {
                     alert(j.message || (r.ok ? 'Receipt resync triggered' : 'Failed to resend receipt'));
                   } catch (err) { console.error(err); alert('Failed'); }
                 }}>Resend Receipt</Button>
+                <Button variant="outline" onClick={async () => {
+                  try {
+                    const r = await authFetch(`${apiUrl}/donations/${selectedDonation._id}/resend-whatsapp`, { method: 'POST', credentials: 'include' });
+                    const j = await r.json().catch(() => ({}));
+                    alert(j.message || (r.ok ? 'WhatsApp receipt sent' : 'Failed to send WhatsApp receipt'));
+                  } catch (err) { console.error(err); alert('Failed'); }
+                }}>Resend WhatsApp</Button>
                 <Button variant="outline" onClick={() => { navigator.clipboard.writeText(JSON.stringify(selectedDonation, null, 2)); alert('Copied'); }}>Copy JSON</Button>
               </div>
             </div>
