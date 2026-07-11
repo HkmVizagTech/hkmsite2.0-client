@@ -88,7 +88,12 @@ const TempleCarousel = () => {
   const variants = {
     enter: (dir: number) => ({ x: dir > 0 ? "100%" : "-100%", scale: 1.1, opacity: 0 }),
     center: { x: 0, scale: 1, opacity: 1 },
-    exit: (dir: number) => ({ x: dir > 0 ? "-30%" : "30%", scale: 0.95, opacity: 0 }),
+    // Fully clear the frame on exit (100%, not a partial 30%) — a partial
+    // exit briefly overlaps the outgoing and incoming slides, and if their
+    // edge colors/borders differ (e.g. one banner has a maroon border,
+    // the next doesn't), that overlap can look like a stray colored strip
+    // for the ~0.9s transition window.
+    exit: (dir: number) => ({ x: dir > 0 ? "-100%" : "100%", scale: 0.95, opacity: 0 }),
   };
 
   const currentSlide = slides[current] || slides[0];
