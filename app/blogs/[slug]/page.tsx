@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import PageLayout from "@/components/PageLayout";
 import {
   Calendar,
@@ -36,7 +37,6 @@ interface Category {
 }
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:3000";
-const DONATE_URL = process.env.NEXT_PUBLIC_DONATE_URL || "https://donate.harekrishnavizag.org";
 
 async function getBlog(slug: string): Promise<Blog | null> {
   try {
@@ -303,50 +303,51 @@ export default async function BlogPostPage({
               </div>
             </div>
 
-            {/* Sponsored Ads — donation banner links */}
+            {/* Seva promotions — real pages on this site, with each seva's actual image */}
             <div>
-              <h4 className="text-base font-bold mb-4">Sponsored</h4>
-              <div className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
-                Ads
-              </div>
+              <h4 className="text-base font-bold mb-4">Support Our Sevas</h4>
               <div className="space-y-3">
                 {[
                   {
-                    href: `${DONATE_URL}/anna-daan-seva?utm_source=blog&utm_medium=sidebar&utm_campaign=${blog.slug}`,
+                    href: `/donate/anna-daan-seva?utm_source=blog&utm_medium=sidebar&utm_campaign=${blog.slug}`,
                     title: "Anna Daan Seva",
                     sub: "Feed thousands of devotees",
-                    gradient: "from-amber-600 to-orange-500",
+                    image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677363792-1783677363601-462395264797134589073566144398536696847591n.jpg",
                   },
                   {
-                    href: `${DONATE_URL}/gau-seva?utm_source=blog&utm_medium=sidebar&utm_campaign=${blog.slug}`,
+                    href: `/donate/gau-seva?utm_source=blog&utm_medium=sidebar&utm_campaign=${blog.slug}`,
                     title: "Gau Seva",
                     sub: "Protect indigenous cows",
-                    gradient: "from-emerald-700 to-emerald-500",
+                    image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783676646237-1783676645536-ChatGPTImageJul102026031357PM.png",
                   },
                   {
-                    href: `${DONATE_URL}/c/square-feet-seva?utm_source=blog&utm_medium=sidebar&utm_campaign=${blog.slug}`,
-                    title: "Square Feet Seva",
+                    href: `/sqft-seva-campaign?utm_source=blog&utm_medium=sidebar&utm_campaign=${blog.slug}`,
+                    title: "Square Foot Seva",
                     sub: "Build Vizag's biggest temple",
-                    gradient: "from-blue-700 to-indigo-600",
+                    image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677157979-1783677157883-Screenshot2026-07-10152227.png",
                   },
                   {
-                    href: `${DONATE_URL}/ekadashi-daan?utm_source=blog&utm_medium=sidebar&utm_campaign=${blog.slug}`,
-                    title: "Ekadashi Daan",
-                    sub: "Special blessings on Ekadashi",
-                    gradient: "from-purple-700 to-fuchsia-500",
+                    href: `/donate/gita-daan-seva?utm_source=blog&utm_medium=sidebar&utm_campaign=${blog.slug}`,
+                    title: "Gita Daan Seva",
+                    sub: "Spread the wisdom of Krishna",
+                    image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783672760162-1783672758959-ChatGPTImageJul92026043444PM.png",
                   },
-                ].map((ad, i) => (
-                  <a
-                    key={i}
+                ].map((ad) => (
+                  <Link
+                    key={ad.href}
                     href={ad.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block group rounded-xl overflow-hidden border hover:shadow-lg transition"
+                    className="block group relative overflow-hidden rounded-xl border hover:shadow-lg transition"
                   >
-                    <div
-                      className={`aspect-[16/9] bg-gradient-to-br ${ad.gradient} relative flex items-end p-4`}
-                    >
-                      <div>
+                    <div className="relative aspect-[16/9]">
+                      <Image
+                        src={ad.image}
+                        alt={ad.title}
+                        fill
+                        sizes="300px"
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
+                      <div className="absolute inset-x-0 bottom-0 p-4">
                         <div className="text-white font-bold text-base leading-tight">
                           {ad.title}
                         </div>
@@ -356,7 +357,7 @@ export default async function BlogPostPage({
                         →
                       </div>
                     </div>
-                  </a>
+                  </Link>
                 ))}
               </div>
             </div>
