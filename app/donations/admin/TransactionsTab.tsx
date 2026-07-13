@@ -12,7 +12,7 @@ import {
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { Search, Loader2, ChevronLeft, ChevronRight, Tag } from "lucide-react";
+import { Search, Loader2, ChevronLeft, ChevronRight, Tag, Download } from "lucide-react";
 
 const apiUrl = () => (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 
@@ -71,6 +71,23 @@ export default function TransactionsTab() {
     return () => clearTimeout(t);
   }, [fetchTransactions]);
 
+  const exportCsv = () => {
+    const params = new URLSearchParams();
+    if (status !== "all") params.set("status", status);
+    // authFetch attaches the Bearer token; window.open wouldn't include it,
+    // so fetch the CSV as a blob and trigger the download manually.
+    authFetch(`${apiUrl()}/donations-admin/export?${params.toString()}`, { credentials: "include" })
+      .then((res) => res.blob())
+      .then((blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `donations-transactions-${Date.now()}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -83,17 +100,22 @@ export default function TransactionsTab() {
             className="pl-9"
           />
         </div>
-        <Select value={status} onValueChange={(v) => { setPage(1); setStatus(v); }}>
-          <SelectTrigger className="w-full sm:w-40">
-            <SelectValue placeholder="Status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All statuses</SelectItem>
-            <SelectItem value="completed">Completed</SelectItem>
-            <SelectItem value="pending">Pending</SelectItem>
-            <SelectItem value="failed">Failed</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="flex gap-2">
+          <Select value={status} onValueChange={(v) => { setPage(1); setStatus(v); }}>
+            <SelectTrigger className="w-full sm:w-40">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All statuses</SelectItem>
+              <SelectItem value="completed">Completed</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="failed">Failed</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button variant="outline" onClick={exportCsv}>
+            <Download className="mr-1.5 h-4 w-4" /> Export CSV
+          </Button>
+        </div>
       </div>
 
       <p className="text-sm text-muted-foreground">
