@@ -8,6 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, ExternalLink, ImagePlus, Loader2, Plus, Save, Trash2 } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import DashboardTab from "./DashboardTab";
+import TransactionsTab from "./TransactionsTab";
+import UtmStatsTab from "./UtmStatsTab";
 
 type DonationOption = {
   id: number;
@@ -263,26 +267,48 @@ export default function DonationsAdminPage() {
               Back to donations page
             </Link>
             <h1 className="mt-3 text-3xl font-bold text-foreground">Donations Page Admin</h1>
-            <p className="mt-1 text-muted-foreground">Manage only the public /donations landing page.</p>
+            <p className="mt-1 text-muted-foreground">Dashboard, transactions, campaign attribution, and page content for /donations.</p>
           </div>
-          <div className="flex gap-3">
-            <Button asChild variant="outline">
-              <Link href="/donations" target="_blank">
-                Preview <ExternalLink className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-            <Button onClick={save} disabled={saving}>
-              {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
-              Save
-            </Button>
-          </div>
+          <Button asChild variant="outline">
+            <Link href="/donations" target="_blank">
+              Preview <ExternalLink className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
         </div>
 
-        {message && (
-          <div className={`rounded-lg px-4 py-3 text-sm font-semibold ${message.type === "success" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
-            {message.text}
-          </div>
-        )}
+        <Tabs defaultValue="dashboard">
+          <TabsList>
+            <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+            <TabsTrigger value="transactions">Transactions</TabsTrigger>
+            <TabsTrigger value="utm">UTM Campaigns</TabsTrigger>
+            <TabsTrigger value="content">Page Content</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="dashboard" className="mt-6">
+            <DashboardTab />
+          </TabsContent>
+
+          <TabsContent value="transactions" className="mt-6">
+            <TransactionsTab />
+          </TabsContent>
+
+          <TabsContent value="utm" className="mt-6">
+            <UtmStatsTab />
+          </TabsContent>
+
+          <TabsContent value="content" className="mt-6 space-y-6">
+            <div className="flex justify-end">
+              <Button onClick={save} disabled={saving}>
+                {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+                Save
+              </Button>
+            </div>
+
+            {message && (
+              <div className={`rounded-lg px-4 py-3 text-sm font-semibold ${message.type === "success" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
+                {message.text}
+              </div>
+            )}
 
         {loading ? (
           <div className="rounded-lg bg-background p-10 text-center text-muted-foreground">Loading settings...</div>
@@ -403,6 +429,8 @@ export default function DonationsAdminPage() {
             </section>
           </div>
         )}
+          </TabsContent>
+        </Tabs>
       </div>
     </main>
   );

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Heart, X } from "lucide-react";
+import { captureTracking, getStoredTracking } from "@/lib/tracking";
 
 type DonationOption = {
   id: number;
@@ -190,6 +191,12 @@ export default function DonationsClient() {
   }, [selected]);
 
   useEffect(() => {
+    // Capture UTM/referrer data once on mount so it's ready by the time
+    // the donor submits — attached to the order request below.
+    captureTracking();
+  }, []);
+
+  useEffect(() => {
     let active = true;
     fetch(`${apiBase()}/donation-page`)
       .then((res) => (res.ok ? res.json() : null))
@@ -269,6 +276,7 @@ export default function DonationsClient() {
           certificate: form.want80G,
           panNumber: form.want80G ? form.panNumber : undefined,
           mahaprasadam: form.wantPrasadam,
+          utm: getStoredTracking() || undefined,
           prasadamAddress: needsAddress
             ? {
                 doorNo: form.doorNo,
