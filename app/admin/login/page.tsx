@@ -32,7 +32,7 @@ export default function AdminLogin() {
     if (success) {
       router.push("/admin");
     } else {
-      setError("Invalid credentials. Try admin@harekrishnavizag.org / admin123");
+      setError("Invalid email or password.");
     }
   };
 
@@ -70,7 +70,7 @@ export default function AdminLogin() {
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   type="email"
-                  placeholder="admin@harekrishnavizag.org"
+                  placeholder="you@example.com"
                   value={email}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                   className="pl-10"
@@ -96,14 +96,6 @@ export default function AdminLogin() {
               Sign In
             </Button>
           </form>
-
-          <p className="text-xs text-muted-foreground text-center mt-6">
-            Demo: admin@harekrishnavizag.org / admin123
-          </p>
-          <p className="text-xs text-center mt-4">
-            New admin?{' '}
-            <a href="/admin/register" className="text-primary underline hover:opacity-80">Register here</a>
-          </p>
         </div>
       </motion.div>
     </div>
