@@ -25,11 +25,22 @@ interface Transaction {
   amount: number;
   date: string;
   status: string;
+  sevaName?: string;
+  message?: string;
   panNumber?: string;
+  certificate?: boolean;
+  wantPrasadam?: boolean;
+  prasadamAddress?: {
+    doorNo?: string; house?: string; street?: string; area?: string;
+    city?: string; state?: string; pincode?: string; country?: string;
+  };
   receiptNumber?: string;
+  dccSyncStatus?: string;
   razorpayPaymentId?: string;
+  razorpayOrderId?: string;
   utm?: { source?: string; medium?: string; campaign?: string; content?: string; term?: string };
   whatsappReceiptSentAt?: string;
+  whatsappReceiptError?: string;
 }
 
 const statusColor: Record<string, string> = {
@@ -144,6 +155,8 @@ export default function TransactionsTab() {
                     )}
                   </div>
                   <p className="truncate text-xs text-muted-foreground">
+                    {txn.sevaName && <span className="font-medium text-foreground/80">{txn.sevaName}</span>}
+                    {txn.sevaName && " · "}
                     {txn.donorEmail} · {txn.donorMobile} · {new Date(txn.date).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
                   </p>
                 </div>
@@ -167,20 +180,36 @@ export default function TransactionsTab() {
       )}
 
       <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-h-[85vh] max-w-lg overflow-y-auto">
           <DialogHeader><DialogTitle>Transaction Details</DialogTitle></DialogHeader>
           {selected && (
             <div className="space-y-3 text-sm">
               <Row label="Donor" value={selected.donorName || "Anonymous"} />
               <Row label="Email" value={selected.donorEmail} />
               <Row label="Mobile" value={selected.donorMobile} />
+              <Row label="Seva" value={selected.sevaName} />
               <Row label="Amount" value={`₹${selected.amount.toLocaleString("en-IN")}`} />
               <Row label="Status" value={selected.status} />
               <Row label="Date" value={new Date(selected.date).toLocaleString("en-IN")} />
+              {selected.message && <Row label="Occasion / Note" value={selected.message} />}
               <Row label="Razorpay Payment ID" value={selected.razorpayPaymentId} />
+              <Row label="80G Requested" value={selected.certificate ? "Yes" : "No"} />
               <Row label="PAN" value={selected.panNumber} />
+              <Row label="Mahaprasadam Requested" value={selected.wantPrasadam ? "Yes" : "No"} />
+              {selected.wantPrasadam && selected.prasadamAddress && (
+                <Row
+                  label="Prasadam Address"
+                  value={[
+                    selected.prasadamAddress.doorNo, selected.prasadamAddress.house, selected.prasadamAddress.street,
+                    selected.prasadamAddress.area, selected.prasadamAddress.city, selected.prasadamAddress.state,
+                    selected.prasadamAddress.pincode, selected.prasadamAddress.country,
+                  ].filter(Boolean).join(", ")}
+                />
+              )}
               <Row label="Receipt Number" value={selected.receiptNumber} />
+              <Row label="DCC Sync Status" value={selected.dccSyncStatus} />
               <Row label="WhatsApp Receipt" value={selected.whatsappReceiptSentAt ? new Date(selected.whatsappReceiptSentAt).toLocaleString("en-IN") : "Not sent"} />
+              {selected.whatsappReceiptError && <Row label="WhatsApp Error" value={selected.whatsappReceiptError} />}
               {selected.utm && (selected.utm.source || selected.utm.campaign) && (
                 <div className="rounded-lg border border-border bg-muted/40 p-3">
                   <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Campaign Attribution</p>
