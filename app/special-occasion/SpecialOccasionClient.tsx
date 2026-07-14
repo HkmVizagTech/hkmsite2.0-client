@@ -13,12 +13,14 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import {
   ShieldCheck, Loader2, ChevronDown, Gift, Cake, Heart,
-  PartyPopper, Home, Briefcase, Sparkles,
+  PartyPopper, Home, Briefcase, Sparkles, UtensilsCrossed, Building2,
+  FileCheck2, Clock3,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
+import Ornament from "@/components/Ornament";
 import { sevas, getSevaHref, type Seva } from "@/lib/sevaConfig";
 import { getStoredTracking } from "@/lib/tracking";
 
@@ -79,6 +81,67 @@ const FAQS = [
     q: "Will I get a receipt and confirmation?",
     a: "Yes. You'll receive an instant confirmation, and a receipt with your seva details once processed — sent to the email and phone number you provide.",
   },
+];
+
+// Fades content in on mount — deliberately NOT scroll-gated (no
+// whileInView/useInView). A near-identical pattern on this site's
+// homepage left blog cards permanently invisible because their
+// IntersectionObserver trigger fired before the cards existed in the
+// DOM; mount-based animation can't have that failure mode; every
+// section is guaranteed to become visible shortly after the page loads.
+function Reveal({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
+  const reduce = useReducedMotion();
+  return (
+    <motion.div
+      initial={reduce ? undefined : { opacity: 0, y: 16 }}
+      animate={reduce ? undefined : { opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: Math.min(delay, 0.4) }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+// A handful of drifting sparkles over the hero — the one place this page
+// spends its "one bold move": a quiet celebratory shimmer, not confetti
+// clutter, that reads as festive without fighting the photograph beneath it.
+function HeroSparkles() {
+  const reduce = useReducedMotion();
+  if (reduce) return null;
+  const sparkles = [
+    { left: "8%", top: "18%", size: 5, delay: 0 },
+    { left: "14%", top: "62%", size: 3, delay: 0.8 },
+    { left: "22%", top: "38%", size: 4, delay: 1.6 },
+    { left: "6%", top: "78%", size: 3, delay: 2.4 },
+    { left: "27%", top: "12%", size: 3, delay: 1.1 },
+  ];
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+      {sparkles.map((s, i) => (
+        <motion.span
+          key={i}
+          className="absolute rounded-full bg-gold"
+          style={{ left: s.left, top: s.top, width: s.size, height: s.size }}
+          animate={{ opacity: [0, 1, 0], scale: [0.5, 1.3, 0.5], y: [0, -14, 0] }}
+          transition={{ duration: 3.5, delay: s.delay, repeat: Infinity, ease: "easeInOut" }}
+        />
+      ))}
+    </div>
+  );
+}
+
+const BENEFITS = [
+  { icon: UtensilsCrossed, title: "Anna Daan", text: "Feed devotees and the underprivileged with sanctified prasadam" },
+  { icon: Heart, title: "Gau Seva", text: "Care for the temple's cows through fodder, shelter, and medicine" },
+  { icon: Building2, title: "Temple Rising", text: "Become part of the Hare Krishna Vaikuntham Temple, brick by brick" },
+];
+
+const TRUST_BADGES = [
+  { icon: FileCheck2, label: "80G Tax Exemption" },
+  { icon: UtensilsCrossed, label: "Mahaprasadam Sent" },
+  { icon: Clock3, label: "Instant Confirmation" },
+  { icon: ShieldCheck, label: "Secure Razorpay Checkout" },
 ];
 
 export default function SpecialOccasionClient() {
@@ -200,89 +263,159 @@ export default function SpecialOccasionClient() {
       <main className="bg-background">
         {/* ---------- Hero — fully-designed banners, native aspect ratio ---------- */}
         <section className="relative overflow-hidden pt-20">
-          <button onClick={scrollToForm} className="block w-full text-left" aria-label="Sponsor a seva for your special occasion">
+          <button onClick={scrollToForm} className="relative block w-full text-left" aria-label="Sponsor a seva for your special occasion">
             <div className="relative hidden w-full md:block" style={{ aspectRatio: "2006 / 784" }}>
               <Image src={HERO_DESKTOP} alt="Special Occasion — sponsor a seva for your celebration" fill priority sizes="100vw" className="object-cover" />
+              <HeroSparkles />
             </div>
             <div className="relative w-full md:hidden" style={{ aspectRatio: "941 / 1672" }}>
               <Image src={HERO_MOBILE} alt="Special Occasion — sponsor a seva for your celebration" fill priority sizes="100vw" className="object-cover" />
+              <HeroSparkles />
             </div>
           </button>
         </section>
 
+        {/* ---------- Trust strip ---------- */}
+        <section className="border-b border-border bg-[hsl(220,90%,12%)] py-3">
+          <div className="container mx-auto flex flex-wrap items-center justify-center gap-x-8 gap-y-2 px-4">
+            {TRUST_BADGES.map((b) => (
+              <span key={b.label} className="flex items-center gap-1.5 text-xs font-medium text-white/85 md:text-sm">
+                <b.icon className="h-3.5 w-3.5 text-gold" /> {b.label}
+              </span>
+            ))}
+          </div>
+        </section>
+
         {/* ---------- Occasion picker ---------- */}
-        <section className="bg-card py-10 md:py-14">
+        <section className="bg-card py-12 md:py-16">
           <div className="container mx-auto max-w-4xl px-4 text-center">
-            <p className="mb-5 text-sm font-semibold uppercase tracking-wide text-muted-foreground">What are you celebrating?</p>
-            <div className="flex flex-wrap justify-center gap-2.5">
-              {OCCASIONS.map((o) => (
-                <button
-                  key={o.label}
-                  onClick={() => setOccasion(o.label)}
-                  className={`flex items-center gap-2 rounded-full border-2 px-4 py-2 text-sm font-semibold transition-colors ${
-                    occasion === o.label ? "border-gold bg-gold/10 text-primary" : "border-border text-muted-foreground hover:border-gold/50"
-                  }`}
-                >
-                  <o.icon className="h-4 w-4" /> {o.label}
-                </button>
-              ))}
+            <Reveal>
+              <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.25em] text-gold">Step One</p>
+              <h2 className="mb-7 font-heading text-xl font-bold text-primary md:text-2xl">What are you celebrating?</h2>
+            </Reveal>
+            <div className="flex flex-wrap justify-center gap-3">
+              {OCCASIONS.map((o, i) => {
+                const active = occasion === o.label;
+                return (
+                  <Reveal key={o.label} delay={i * 0.05}>
+                    <button
+                      onClick={() => setOccasion(o.label)}
+                      className={`group flex w-28 flex-col items-center gap-2 rounded-2xl border-2 px-3 py-4 text-center transition-all md:w-32 ${
+                        active
+                          ? "border-gold bg-gradient-gold shadow-gold scale-105"
+                          : "border-border bg-background hover:-translate-y-0.5 hover:border-gold/50 hover:shadow-md"
+                      }`}
+                    >
+                      <span
+                        className={`flex h-10 w-10 items-center justify-center rounded-full transition-colors ${
+                          active ? "bg-white/25" : "bg-gold/10 group-hover:bg-gold/20"
+                        }`}
+                      >
+                        <o.icon className={`h-5 w-5 ${active ? "text-[hsl(220,90%,12%)]" : "text-gold"}`} />
+                      </span>
+                      <span className={`text-xs font-semibold leading-tight ${active ? "text-[hsl(220,90%,12%)]" : "text-foreground"}`}>
+                        {o.label}
+                      </span>
+                    </button>
+                  </Reveal>
+                );
+              })}
             </div>
           </div>
         </section>
 
         {/* ---------- Why celebrate with seva ---------- */}
-        <section className="bg-background py-14 md:py-20">
-          <div className="container mx-auto max-w-3xl px-4 text-center">
-            <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-gold">A Different Kind of Celebration</p>
-            <h1 className="mb-5 font-heading text-2xl font-bold text-primary md:text-4xl">
-              Mark Your Special Day with an Offering to the Lord
-            </h1>
-            <p className="mb-4 text-sm leading-relaxed text-muted-foreground md:text-base">
-              A birthday, anniversary, or milestone is a moment of gratitude. Instead of — or alongside —
-              the usual celebration, sponsor a seva at the Hare Krishna Vaikuntham Temple in that spirit
-              of thanksgiving. Feed devotees through Anna Daan, care for the temple's cows through Gau
-              Seva, or become part of the temple rising brick by brick.
-            </p>
-            <p className="text-sm leading-relaxed text-muted-foreground md:text-base">
-              Every Special Occasion seva comes with mahaprasadam, an 80G tax-exemption receipt, and the
-              quiet satisfaction that your celebration became someone else's blessing too.
-            </p>
+        <section className="bg-background py-16 md:py-24">
+          <div className="container mx-auto max-w-4xl px-4 text-center">
+            <Reveal>
+              <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-gold">A Different Kind of Celebration</p>
+              <h1 className="mb-4 font-heading text-2xl font-bold text-primary md:text-4xl">
+                Mark Your Special Day with an Offering to the Lord
+              </h1>
+              <p className="mx-auto mb-3 max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">
+                A birthday, anniversary, or milestone is a moment of gratitude. Instead of — or alongside —
+                the usual celebration, sponsor a seva at the Hare Krishna Vaikuntham Temple in that spirit
+                of thanksgiving.
+              </p>
+              <Ornament className="my-8" />
+            </Reveal>
+
+            <div className="grid gap-5 sm:grid-cols-3">
+              {BENEFITS.map((b, i) => (
+                <Reveal key={b.title} delay={i * 0.1}>
+                  <div className="rounded-2xl border border-border bg-card p-6 text-center">
+                    <span className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gold/10">
+                      <b.icon className="h-6 w-6 text-gold" />
+                    </span>
+                    <h3 className="mb-1.5 font-heading text-base font-bold text-primary">{b.title}</h3>
+                    <p className="text-xs leading-relaxed text-muted-foreground">{b.text}</p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+
+            <Reveal delay={0.2}>
+              <p className="mx-auto mt-8 max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">
+                Every Special Occasion seva comes with mahaprasadam, an 80G tax-exemption receipt, and the
+                quiet satisfaction that your celebration became someone else's blessing too.
+              </p>
+            </Reveal>
           </div>
         </section>
 
         {/* ---------- Seva grid ---------- */}
-        <section className="bg-card py-14 md:py-20">
+        <section className="bg-card py-16 md:py-24">
           <div className="container mx-auto max-w-6xl px-4">
-            <h2 className="mb-10 text-center font-heading text-2xl font-bold text-primary md:text-3xl">
-              Choose a Seva for Your Occasion
-            </h2>
+            <Reveal>
+              <div className="mb-10 text-center">
+                <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.25em] text-gold">Step Two</p>
+                <h2 className="font-heading text-2xl font-bold text-primary md:text-3xl">Choose a Seva for Your Occasion</h2>
+              </div>
+            </Reveal>
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-              {sevas.map((seva) => (
-                <button
-                  key={seva.slug}
-                  onClick={() => pickSeva(seva)}
-                  className={`group rounded-2xl border-2 bg-background p-3 text-center transition-all hover:-translate-y-1 hover:shadow-lg ${
-                    selectedSeva.slug === seva.slug ? "border-gold" : "border-border"
-                  }`}
-                >
-                  <div className="relative mb-2 aspect-square overflow-hidden rounded-xl">
-                    <Image src={seva.image} alt={seva.title} fill sizes="150px" className="object-cover transition-transform duration-500 group-hover:scale-105" />
-                  </div>
-                  <p className="text-xs font-bold text-foreground md:text-sm">{seva.shortTitle}</p>
-                </button>
-              ))}
+              {sevas.map((seva, i) => {
+                const active = selectedSeva.slug === seva.slug;
+                return (
+                  <Reveal key={seva.slug} delay={i * 0.06}>
+                    <button
+                      onClick={() => pickSeva(seva)}
+                      className={`group relative w-full overflow-hidden rounded-2xl border-2 bg-background text-center transition-all hover:-translate-y-1 hover:shadow-lg ${
+                        active ? "border-gold shadow-gold" : "border-border"
+                      }`}
+                    >
+                      <div className="relative aspect-square overflow-hidden">
+                        <Image src={seva.image} alt={seva.title} fill sizes="150px" className="object-cover transition-transform duration-500 group-hover:scale-110" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/0 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                        <p className="absolute inset-x-0 bottom-0 translate-y-full p-2 text-left text-[10px] leading-snug text-white opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                          {seva.tagline}
+                        </p>
+                        {active && (
+                          <span className="absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-gradient-gold text-[10px] font-bold text-[hsl(220,90%,12%)] shadow-gold">
+                            ✓
+                          </span>
+                        )}
+                      </div>
+                      <p className="p-2 text-xs font-bold text-foreground md:text-sm">{seva.shortTitle}</p>
+                    </button>
+                  </Reveal>
+                );
+              })}
             </div>
           </div>
         </section>
 
         {/* ---------- Donation form ---------- */}
-        <section id="occasion-form" className="scroll-mt-20 bg-background py-14 md:py-20">
+        <section id="occasion-form" className="scroll-mt-20 bg-background py-16 md:py-24">
           <div className="container mx-auto max-w-2xl px-4">
-            <div className="mb-8 text-center">
-              <h2 className="mb-2 font-heading text-2xl font-bold text-primary md:text-4xl">Sponsor {selectedSeva.title}</h2>
-              <p className="text-sm text-muted-foreground md:text-base">For your {occasion.toLowerCase()} — {selectedSeva.tagline.toLowerCase()}</p>
-            </div>
+            <Reveal>
+              <div className="mb-8 text-center">
+                <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.25em] text-gold">Step Three</p>
+                <h2 className="mb-2 font-heading text-2xl font-bold text-primary md:text-4xl">Sponsor {selectedSeva.title}</h2>
+                <p className="text-sm text-muted-foreground md:text-base">For your {occasion.toLowerCase()} — {selectedSeva.tagline.toLowerCase()}</p>
+              </div>
+            </Reveal>
 
+            <Reveal delay={0.1}>
             <form onSubmit={handleSubmit} className="rounded-2xl border border-border bg-card p-5 shadow-lg md:p-8">
               <p className="mb-3 text-sm font-semibold text-foreground">Choose a seva</p>
               <div className="mb-5 flex flex-wrap gap-2">
@@ -363,30 +496,36 @@ export default function SpecialOccasionClient() {
                 <ShieldCheck className="h-3.5 w-3.5 text-gold" /> Secure payment via Razorpay
               </p>
             </form>
+            </Reveal>
           </div>
         </section>
 
         {/* ---------- FAQ ---------- */}
-        <section className="bg-card py-14 md:py-20">
+        <section className="bg-card py-16 md:py-24">
           <div className="container mx-auto max-w-3xl px-4">
-            <h2 className="mb-8 text-center font-heading text-2xl font-bold text-primary md:text-3xl">Frequently Asked Questions</h2>
+            <Reveal>
+              <h2 className="mb-8 text-center font-heading text-2xl font-bold text-primary md:text-3xl">Frequently Asked Questions</h2>
+            </Reveal>
             <div className="space-y-3">
               {FAQS.map((f, i) => (
-                <div key={f.q} className="overflow-hidden rounded-xl border border-border bg-background">
+                <Reveal key={f.q} delay={i * 0.05}>
+                <div className="overflow-hidden rounded-xl border border-border bg-background">
                   <button type="button" onClick={() => setOpenFaq(openFaq === i ? null : i)} aria-expanded={openFaq === i} className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left">
                     <span className="text-sm font-semibold text-foreground md:text-base">{f.q}</span>
                     <ChevronDown className={`h-4 w-4 shrink-0 text-gold transition-transform ${openFaq === i ? "rotate-180" : ""}`} />
                   </button>
                   {openFaq === i && <p className="border-t border-border px-5 py-4 text-sm leading-relaxed text-muted-foreground">{f.a}</p>}
                 </div>
+                </Reveal>
               ))}
             </div>
           </div>
         </section>
 
         {/* ---------- Cross-promo: Square Foot Seva ---------- */}
-        <section className="bg-[hsl(220,90%,12%)] py-14 text-center md:py-20">
+        <section className="bg-[hsl(220,90%,12%)] py-16 text-center md:py-24">
           <div className="container mx-auto max-w-2xl px-4">
+            <Reveal>
             <Gift className="mx-auto mb-3 h-9 w-9 text-gold" />
             <h2 className="mb-4 font-heading text-2xl font-bold text-white md:text-3xl">
               Make your celebration part of something permanent
@@ -397,6 +536,7 @@ export default function SpecialOccasionClient() {
             <Link href={getSevaHref(sevas[0])} className="inline-block rounded-full bg-gradient-gold px-10 py-3.5 text-base font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)] transition-transform hover:scale-105">
               Explore Square Foot Seva
             </Link>
+            </Reveal>
           </div>
         </section>
       </main>
