@@ -276,46 +276,63 @@ export default function SpecialOccasionClient() {
         </section>
 
         {/* ---------- Trust strip ---------- */}
-        <section className="border-b border-border bg-[hsl(220,90%,12%)] py-3">
-          <div className="container mx-auto flex flex-wrap items-center justify-center gap-x-8 gap-y-2 px-4">
+        <section className="border-y-2 border-gold/60 bg-[hsl(220,90%,10%)] py-3.5" style={{ backgroundImage: "radial-gradient(ellipse 60% 120% at 50% 0%, hsl(42 92% 56% / 0.12), transparent)" }}>
+          <div className="container mx-auto flex flex-wrap items-center justify-center gap-x-10 gap-y-2 px-4">
             {TRUST_BADGES.map((b) => (
-              <span key={b.label} className="flex items-center gap-1.5 text-xs font-medium text-white/85 md:text-sm">
-                <b.icon className="h-3.5 w-3.5 text-gold" /> {b.label}
+              <span key={b.label} className="flex items-center gap-2 text-xs font-semibold tracking-wide text-white/90 md:text-sm">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gold/15 ring-1 ring-gold/40">
+                  <b.icon className="h-3 w-3 text-gold" />
+                </span>
+                {b.label}
               </span>
             ))}
           </div>
         </section>
 
+        {/* ---------- Shloka band — the offering verse ---------- */}
+        <section className="relative overflow-hidden bg-[hsl(348,55%,13%)] py-14 md:py-16">
+          <div aria-hidden className="absolute inset-0" style={{ backgroundImage: "radial-gradient(ellipse 50% 80% at 50% 50%, hsl(42 92% 56% / 0.14), transparent), radial-gradient(circle at 12% 20%, hsl(42 92% 56% / 0.08), transparent 30%), radial-gradient(circle at 88% 80%, hsl(42 92% 56% / 0.08), transparent 30%)" }} />
+          <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold/70 to-transparent" />
+          <div aria-hidden className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-gold/70 to-transparent" />
+          <Reveal className="container relative mx-auto max-w-3xl px-4 text-center">
+            <p className="mb-4 font-heading text-lg italic leading-relaxed text-gold md:text-2xl">
+              patraṁ puṣpaṁ phalaṁ toyaṁ<br />yo me bhaktyā prayacchati
+            </p>
+            <p className="mx-auto mb-3 max-w-xl text-xs leading-relaxed text-white/75 md:text-sm">
+              &ldquo;If one offers Me with love and devotion a leaf, a flower, fruit or water, I will accept it.&rdquo;
+            </p>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-gold/70">Bhagavad Gita 9.26</p>
+            <Ornament className="mt-6 text-gold" />
+          </Reveal>
+        </section>
+
         {/* ---------- Occasion picker ---------- */}
-        <section className="bg-card py-12 md:py-16">
+        <section className="relative bg-card py-14 md:py-20" style={{ backgroundImage: "radial-gradient(ellipse 70% 50% at 50% 0%, hsl(42 92% 56% / 0.06), transparent)" }}>
           <div className="container mx-auto max-w-4xl px-4 text-center">
             <Reveal>
-              <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.25em] text-gold">Step One</p>
-              <h2 className="mb-7 font-heading text-xl font-bold text-primary md:text-2xl">What are you celebrating?</h2>
+              <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.3em] text-gold">Step One</p>
+              <h2 className="mb-2 font-heading text-2xl font-bold text-primary md:text-3xl">What Are You Celebrating?</h2>
+              <Ornament className="mb-8 mt-3" />
             </Reveal>
-            <div className="flex flex-wrap justify-center gap-3">
+            <div className="flex flex-wrap justify-center gap-3 md:gap-4">
               {OCCASIONS.map((o, i) => {
                 const active = occasion === o.label;
                 return (
                   <Reveal key={o.label} delay={i * 0.05}>
                     <button
                       onClick={() => setOccasion(o.label)}
-                      className={`group flex w-28 flex-col items-center gap-2 rounded-2xl border-2 px-3 py-4 text-center transition-all md:w-32 ${
+                      className={`group relative flex w-32 flex-col items-center gap-2.5 rounded-2xl border-2 px-3 py-5 text-center transition-all md:w-36 ${
                         active
                           ? "border-gold bg-gradient-gold shadow-gold scale-105"
-                          : "border-border bg-background hover:-translate-y-0.5 hover:border-gold/50 hover:shadow-md"
+                          : "border-gold/25 bg-background hover:-translate-y-1 hover:border-gold/60 hover:shadow-elevated"
                       }`}
                     >
-                      <span
-                        className={`flex h-10 w-10 items-center justify-center rounded-full transition-colors ${
-                          active ? "bg-white/25" : "bg-gold/10 group-hover:bg-gold/20"
-                        }`}
-                      >
-                        <o.icon className={`h-5 w-5 ${active ? "text-[hsl(220,90%,12%)]" : "text-gold"}`} />
+                      <span aria-hidden className={`pointer-events-none absolute left-1.5 top-1.5 h-2 w-2 rounded-tl-lg border-l-2 border-t-2 ${active ? "border-[hsl(220,90%,12%)]/40" : "border-gold/40"}`} />
+                      <span aria-hidden className={`pointer-events-none absolute bottom-1.5 right-1.5 h-2 w-2 rounded-br-lg border-b-2 border-r-2 ${active ? "border-[hsl(220,90%,12%)]/40" : "border-gold/40"}`} />
+                      <span className={`flex h-12 w-12 items-center justify-center rounded-full ring-2 transition-colors ${active ? "bg-white/25 ring-white/40" : "bg-gold/10 ring-gold/30 group-hover:bg-gold/20"}`}>
+                        <o.icon className={`h-6 w-6 ${active ? "text-[hsl(220,90%,12%)]" : "text-gold"}`} />
                       </span>
-                      <span className={`text-xs font-semibold leading-tight ${active ? "text-[hsl(220,90%,12%)]" : "text-foreground"}`}>
-                        {o.label}
-                      </span>
+                      <span className={`text-xs font-bold leading-tight ${active ? "text-[hsl(220,90%,12%)]" : "text-foreground"}`}>{o.label}</span>
                     </button>
                   </Reveal>
                 );
@@ -325,10 +342,11 @@ export default function SpecialOccasionClient() {
         </section>
 
         {/* ---------- Why celebrate with seva ---------- */}
-        <section className="bg-background py-16 md:py-24">
-          <div className="container mx-auto max-w-4xl px-4 text-center">
+        <section className="relative overflow-hidden bg-background py-16 md:py-24">
+          <div aria-hidden className="absolute inset-0" style={{ backgroundImage: "radial-gradient(circle at 0% 30%, hsl(42 92% 56% / 0.05), transparent 35%), radial-gradient(circle at 100% 70%, hsl(220 90% 20% / 0.05), transparent 35%)" }} />
+          <div className="container relative mx-auto max-w-4xl px-4 text-center">
             <Reveal>
-              <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-gold">A Different Kind of Celebration</p>
+              <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.3em] text-gold">A Different Kind of Celebration</p>
               <h1 className="mb-4 font-heading text-2xl font-bold text-primary md:text-4xl">
                 Mark Your Special Day with an Offering to the Lord
               </h1>
@@ -343,12 +361,14 @@ export default function SpecialOccasionClient() {
             <div className="grid gap-5 sm:grid-cols-3">
               {BENEFITS.map((b, i) => (
                 <Reveal key={b.title} delay={i * 0.1}>
-                  <div className="rounded-2xl border border-border bg-card p-6 text-center">
-                    <span className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gold/10">
-                      <b.icon className="h-6 w-6 text-gold" />
-                    </span>
-                    <h3 className="mb-1.5 font-heading text-base font-bold text-primary">{b.title}</h3>
-                    <p className="text-xs leading-relaxed text-muted-foreground">{b.text}</p>
+                  <div className="group relative h-full rounded-2xl border-2 border-gold/25 bg-card p-[3px] transition-all hover:-translate-y-1 hover:border-gold/60 hover:shadow-elevated">
+                    <div className="h-full rounded-xl border border-gold/15 bg-card px-5 py-7 text-center">
+                      <span className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-gold shadow-gold">
+                        <b.icon className="h-7 w-7 text-[hsl(220,90%,12%)]" />
+                      </span>
+                      <h3 className="mb-1.5 font-heading text-base font-bold text-primary">{b.title}</h3>
+                      <p className="text-xs leading-relaxed text-muted-foreground">{b.text}</p>
+                    </div>
                   </div>
                 </Reveal>
               ))}
@@ -357,46 +377,57 @@ export default function SpecialOccasionClient() {
             <Reveal delay={0.2}>
               <p className="mx-auto mt-8 max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">
                 Every Special Occasion seva comes with mahaprasadam, an 80G tax-exemption receipt, and the
-                quiet satisfaction that your celebration became someone else's blessing too.
+                quiet satisfaction that your celebration became someone else&apos;s blessing too.
               </p>
             </Reveal>
           </div>
         </section>
 
-        {/* ---------- Seva grid ---------- */}
-        <section className="bg-card py-16 md:py-24">
-          <div className="container mx-auto max-w-6xl px-4">
+        {/* ---------- Seva cards — GVD-style rich photo cards ---------- */}
+        <section className="relative overflow-hidden bg-[hsl(220,90%,10%)] py-16 md:py-24">
+          <div aria-hidden className="absolute inset-0" style={{ backgroundImage: "radial-gradient(ellipse 70% 60% at 50% 0%, hsl(42 92% 56% / 0.12), transparent), radial-gradient(circle at 8% 90%, hsl(42 92% 56% / 0.07), transparent 30%), radial-gradient(circle at 92% 90%, hsl(42 92% 56% / 0.07), transparent 30%)" }} />
+          <div className="container relative mx-auto max-w-6xl px-4">
             <Reveal>
-              <div className="mb-10 text-center">
-                <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.25em] text-gold">Step Two</p>
-                <h2 className="font-heading text-2xl font-bold text-primary md:text-3xl">Choose a Seva for Your Occasion</h2>
+              <div className="mb-12 text-center">
+                <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.3em] text-gold">Step Two</p>
+                <h2 className="font-heading text-2xl font-bold text-white md:text-4xl">Choose a Seva for Your Occasion</h2>
+                <Ornament className="mt-4 text-gold" />
               </div>
             </Reveal>
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {sevas.map((seva, i) => {
                 const active = selectedSeva.slug === seva.slug;
                 return (
-                  <Reveal key={seva.slug} delay={i * 0.06}>
-                    <button
-                      onClick={() => pickSeva(seva)}
-                      className={`group relative w-full overflow-hidden rounded-2xl border-2 bg-background text-center transition-all hover:-translate-y-1 hover:shadow-lg ${
-                        active ? "border-gold shadow-gold" : "border-border"
+                  <Reveal key={seva.slug} delay={Math.min(i * 0.07, 0.35)}>
+                    <div
+                      className={`group relative h-full overflow-hidden rounded-2xl p-[3px] transition-all hover:-translate-y-1.5 ${
+                        active ? "bg-gradient-gold shadow-gold" : "bg-gold/25 hover:bg-gold/60 hover:shadow-elevated"
                       }`}
                     >
-                      <div className="relative aspect-square overflow-hidden">
-                        <Image src={seva.image} alt={seva.title} fill sizes="150px" className="object-cover transition-transform duration-500 group-hover:scale-110" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/0 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                        <p className="absolute inset-x-0 bottom-0 translate-y-full p-2 text-left text-[10px] leading-snug text-white opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                          {seva.tagline}
-                        </p>
-                        {active && (
-                          <span className="absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-gradient-gold text-[10px] font-bold text-[hsl(220,90%,12%)] shadow-gold">
-                            ✓
-                          </span>
-                        )}
+                      <div className="flex h-full flex-col overflow-hidden rounded-xl bg-[hsl(220,80%,14%)]">
+                        <div className="relative aspect-[16/10] overflow-hidden">
+                          <Image src={seva.image} alt={seva.title} fill sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" className="object-cover transition-transform duration-700 group-hover:scale-110" />
+                          <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-[hsl(220,80%,14%)] via-transparent to-transparent" />
+                          {active && (
+                            <span className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-gradient-gold text-xs font-bold text-[hsl(220,90%,12%)] shadow-gold ring-2 ring-white/50">✓</span>
+                          )}
+                        </div>
+                        <div className="flex flex-1 flex-col px-5 pb-5 pt-3 text-center">
+                          <h3 className="mb-1 font-heading text-lg font-bold text-white">{seva.title}</h3>
+                          <p className="mb-4 flex-1 text-xs leading-relaxed text-white/70">{seva.tagline}</p>
+                          <button
+                            onClick={() => pickSeva(seva)}
+                            className={`mx-auto w-full max-w-[220px] rounded-full py-2.5 text-sm font-bold transition-all ${
+                              active
+                                ? "bg-gradient-gold text-[hsl(220,90%,12%)] shadow-gold"
+                                : "border-2 border-gold/60 text-gold hover:bg-gradient-gold hover:text-[hsl(220,90%,12%)] hover:shadow-gold"
+                            }`}
+                          >
+                            {active ? "Selected — Continue ↓" : `Sponsor for ${occasion}`}
+                          </button>
+                        </div>
                       </div>
-                      <p className="p-2 text-xs font-bold text-foreground md:text-sm">{seva.shortTitle}</p>
-                    </button>
+                    </div>
                   </Reveal>
                 );
               })}
@@ -404,21 +435,30 @@ export default function SpecialOccasionClient() {
           </div>
         </section>
 
-        {/* ---------- Donation form ---------- */}
-        <section id="occasion-form" className="scroll-mt-20 bg-background py-16 md:py-24">
+        {/* ---------- Donation form — gold-framed offering panel ---------- */}
+        <section id="occasion-form" className="relative scroll-mt-20 overflow-hidden bg-background py-16 md:py-24" style={{ backgroundImage: "radial-gradient(ellipse 60% 50% at 50% 100%, hsl(42 92% 56% / 0.07), transparent)" }}>
           <div className="container mx-auto max-w-2xl px-4">
             <Reveal>
-              <div className="mb-8 text-center">
-                <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.25em] text-gold">Step Three</p>
-                <h2 className="mb-2 font-heading text-2xl font-bold text-primary md:text-4xl">Sponsor {selectedSeva.title}</h2>
-                <p className="text-sm text-muted-foreground md:text-base">For your {occasion.toLowerCase()} — {selectedSeva.tagline.toLowerCase()}</p>
+              <div className="mb-10 text-center">
+                <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.3em] text-gold">Step Three</p>
+                <h2 className="mb-2 font-heading text-2xl font-bold text-primary md:text-4xl">Complete Your Offering</h2>
+                <p className="text-sm text-muted-foreground md:text-base">
+                  {selectedSeva.title} · for your {occasion.toLowerCase()}
+                </p>
+                <Ornament className="mt-4" />
               </div>
             </Reveal>
 
             <Reveal delay={0.1}>
-            <form onSubmit={handleSubmit} className="rounded-2xl border border-border bg-card p-5 shadow-lg md:p-8">
+            <div className="overflow-hidden rounded-3xl bg-gradient-gold p-[3px] shadow-elevated">
+            <div className="overflow-hidden rounded-[calc(1.5rem-3px)] bg-card">
+              <div className="relative bg-[hsl(220,90%,12%)] px-6 py-5 text-center" style={{ backgroundImage: "radial-gradient(ellipse 80% 100% at 50% 0%, hsl(42 92% 56% / 0.15), transparent)" }}>
+                <p className="font-heading text-lg font-bold text-white md:text-xl">{selectedSeva.icon} {selectedSeva.title}</p>
+                <p className="mt-0.5 text-xs text-gold">{selectedSeva.tagline}</p>
+              </div>
+            <form onSubmit={handleSubmit} className="p-5 md:p-8">
               <p className="mb-3 text-sm font-semibold text-foreground">Choose a seva</p>
-              <div className="mb-5 flex flex-wrap gap-2">
+              <div className="mb-6 flex flex-wrap gap-2">
                 {sevas.map((seva) => (
                   <button
                     type="button"
@@ -440,17 +480,17 @@ export default function SpecialOccasionClient() {
                     type="button"
                     key={tier.label}
                     onClick={() => { setUseCustom(false); setAmount(tier.amount); }}
-                    className={`rounded-xl border-2 px-2 py-3 text-center transition-colors ${
-                      !useCustom && amount === tier.amount ? "border-gold bg-gold/10" : "border-border bg-background hover:border-gold/50"
+                    className={`rounded-xl border-2 px-2 py-3 text-center transition-all ${
+                      !useCustom && amount === tier.amount ? "border-gold bg-gradient-gold shadow-gold" : "border-gold/25 bg-background hover:border-gold/60"
                     }`}
                   >
-                    <span className="block text-xs font-semibold text-gold">₹{tier.amount.toLocaleString("en-IN")}</span>
-                    <span className="mt-0.5 block text-[10px] text-muted-foreground">{tier.label.split("/")[1]?.trim() || tier.label}</span>
+                    <span className={`block text-sm font-bold ${!useCustom && amount === tier.amount ? "text-[hsl(220,90%,12%)]" : "text-gold"}`}>₹{tier.amount.toLocaleString("en-IN")}</span>
+                    <span className={`mt-0.5 block text-[10px] ${!useCustom && amount === tier.amount ? "text-[hsl(220,90%,12%)]/80" : "text-muted-foreground"}`}>{tier.label.split("/")[1]?.trim() || tier.label}</span>
                   </button>
                 ))}
               </div>
 
-              <div className="mb-5 flex items-center gap-2 rounded-xl border-2 border-border bg-background px-3 py-2 focus-within:border-gold">
+              <div className={`mb-6 flex items-center gap-2 rounded-xl border-2 bg-background px-3 py-2.5 transition-colors ${useCustom ? "border-gold" : "border-gold/25"}`}>
                 <label htmlFor="custom-amt" className="whitespace-nowrap text-xs font-semibold text-muted-foreground">Other amount ₹:</label>
                 <input
                   id="custom-amt"
@@ -488,14 +528,16 @@ export default function SpecialOccasionClient() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-gold py-3.5 text-base font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)] transition-transform hover:scale-[1.02] disabled:opacity-60"
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-gold py-4 text-base font-bold text-[hsl(220,90%,12%)] shadow-gold transition-transform hover:scale-[1.02] disabled:opacity-60"
               >
-                {submitting ? (<><Loader2 className="h-5 w-5 animate-spin" /> Processing…</>) : (<>Donate ₹{finalAmount > 0 ? finalAmount.toLocaleString("en-IN") : "—"}</>)}
+                {submitting ? (<><Loader2 className="h-5 w-5 animate-spin" /> Processing…</>) : (<>🪔 Offer ₹{finalAmount > 0 ? finalAmount.toLocaleString("en-IN") : "—"} for your {occasion}</>)}
               </button>
               <p className="mt-3 flex items-center justify-center gap-1.5 text-center text-xs text-muted-foreground">
-                <ShieldCheck className="h-3.5 w-3.5 text-gold" /> Secure payment via Razorpay
+                <ShieldCheck className="h-3.5 w-3.5 text-gold" /> Secure payment via Razorpay · 80G receipt available
               </p>
             </form>
+            </div>
+            </div>
             </Reveal>
           </div>
         </section>
@@ -504,17 +546,22 @@ export default function SpecialOccasionClient() {
         <section className="bg-card py-16 md:py-24">
           <div className="container mx-auto max-w-3xl px-4">
             <Reveal>
-              <h2 className="mb-8 text-center font-heading text-2xl font-bold text-primary md:text-3xl">Frequently Asked Questions</h2>
+              <div className="mb-8 text-center">
+                <h2 className="font-heading text-2xl font-bold text-primary md:text-3xl">Frequently Asked Questions</h2>
+                <Ornament className="mt-4" />
+              </div>
             </Reveal>
             <div className="space-y-3">
               {FAQS.map((f, i) => (
-                <Reveal key={f.q} delay={i * 0.05}>
-                <div className="overflow-hidden rounded-xl border border-border bg-background">
+                <Reveal key={f.q} delay={Math.min(i * 0.05, 0.3)}>
+                <div className={`overflow-hidden rounded-xl border-2 bg-background transition-colors ${openFaq === i ? "border-gold/50" : "border-border"}`}>
                   <button type="button" onClick={() => setOpenFaq(openFaq === i ? null : i)} aria-expanded={openFaq === i} className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left">
                     <span className="text-sm font-semibold text-foreground md:text-base">{f.q}</span>
-                    <ChevronDown className={`h-4 w-4 shrink-0 text-gold transition-transform ${openFaq === i ? "rotate-180" : ""}`} />
+                    <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full transition-all ${openFaq === i ? "bg-gradient-gold" : "bg-gold/10"}`}>
+                      <ChevronDown className={`h-3.5 w-3.5 transition-transform ${openFaq === i ? "rotate-180 text-[hsl(220,90%,12%)]" : "text-gold"}`} />
+                    </span>
                   </button>
-                  {openFaq === i && <p className="border-t border-border px-5 py-4 text-sm leading-relaxed text-muted-foreground">{f.a}</p>}
+                  {openFaq === i && <p className="border-t border-gold/20 px-5 py-4 text-sm leading-relaxed text-muted-foreground">{f.a}</p>}
                 </div>
                 </Reveal>
               ))}
@@ -523,17 +570,21 @@ export default function SpecialOccasionClient() {
         </section>
 
         {/* ---------- Cross-promo: Square Foot Seva ---------- */}
-        <section className="bg-[hsl(220,90%,12%)] py-16 text-center md:py-24">
-          <div className="container mx-auto max-w-2xl px-4">
+        <section className="relative overflow-hidden bg-[hsl(220,90%,10%)] py-16 text-center md:py-24">
+          <div aria-hidden className="absolute inset-0" style={{ backgroundImage: "radial-gradient(ellipse 60% 80% at 50% 100%, hsl(42 92% 56% / 0.15), transparent)" }} />
+          <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold/60 to-transparent" />
+          <div className="container relative mx-auto max-w-2xl px-4">
             <Reveal>
-            <Gift className="mx-auto mb-3 h-9 w-9 text-gold" />
+            <span className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-gold shadow-gold">
+              <Gift className="h-7 w-7 text-[hsl(220,90%,12%)]" />
+            </span>
             <h2 className="mb-4 font-heading text-2xl font-bold text-white md:text-3xl">
               Make your celebration part of something permanent
             </h2>
             <p className="mb-6 text-sm text-white/80 md:text-base">
-              Sponsor a Square Foot of the Hare Krishna Vaikuntham Temple's foundation in honour of your special day.
+              Sponsor a Square Foot of the Hare Krishna Vaikuntham Temple&apos;s foundation in honour of your special day.
             </p>
-            <Link href={getSevaHref(sevas[0])} className="inline-block rounded-full bg-gradient-gold px-10 py-3.5 text-base font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)] transition-transform hover:scale-105">
+            <Link href={getSevaHref(sevas[0])} className="inline-block rounded-full bg-gradient-gold px-10 py-3.5 text-base font-bold text-[hsl(220,90%,12%)] shadow-gold transition-transform hover:scale-105">
               Explore Square Foot Seva
             </Link>
             </Reveal>
