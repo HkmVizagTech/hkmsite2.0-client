@@ -4,6 +4,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
+import { authFetch } from "@/lib/authClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -172,25 +173,17 @@ export default function DonationsAdminPage() {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const cloud = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD;
-    const preset = process.env.NEXT_PUBLIC_CLOUDINARY_PRESET;
-    if (!cloud || !preset) {
-      setMessage({ type: "error", text: "Cloudinary env is not configured. Paste an image URL instead." });
-      return;
-    }
-
     setUploading(field);
     setMessage(null);
     try {
       const data = new FormData();
       data.append("file", file);
-      data.append("upload_preset", preset);
-      const res = await fetch(`https://api.cloudinary.com/v1_1/${cloud}/image/upload`, {
+      const res = await authFetch(`${apiUrl()}/donations-admin/upload-image`, {
         method: "POST",
         body: data,
       });
       const body = await res.json();
-      if (!res.ok || !body.secure_url) throw new Error("Image upload failed.");
+      if (!res.ok || !body.secure_url) throw new Error(body.message || "Image upload failed.");
       update({ [field]: body.secure_url } as Partial<DonationPageSettings>);
       setMessage({ type: "success", text: "Image uploaded. Save changes to publish it." });
     } catch (err) {
