@@ -172,6 +172,9 @@ export default function DonationsClient() {
   const [status, setStatus] = useState<{ type: "success" | "error" | "idle"; message: string }>({ type: "idle", message: "" });
   const [submitting, setSubmitting] = useState(false);
   const [settings, setSettings] = useState<DonationPageSettings>(defaultSettings);
+  // Donors can adjust a card's suggested amount before donating — keyed by
+  // option.id so each card's edit is independent of the others.
+  const [cardAmounts, setCardAmounts] = useState<Record<number, string>>({});
 
   const donationOptions = settings.donationOptions.length ? settings.donationOptions : defaultDonationOptions;
   const annadaan = donationOptions.filter((option) => option.category === "ANNADAAN");
@@ -218,7 +221,9 @@ export default function DonationsClient() {
   }, []);
 
   const openCheckout = (option: DonationOption) => {
-    setSelected(option);
+    const editedAmount = option.amount ? Number(cardAmounts[option.id]) : null;
+    const finalOption = editedAmount && editedAmount > 0 ? { ...option, amount: editedAmount } : option;
+    setSelected(finalOption);
     setForm(initialForm);
     setStatus({ type: "idle", message: "" });
   };
@@ -233,7 +238,7 @@ export default function DonationsClient() {
 
   const validate = () => {
     if (!selected) return "Please select a seva.";
-    if (!finalAmount || finalAmount < 100) return "Amount must be at least Rs.100.";
+    if (!finalAmount || finalAmount < 100) return "Amount must be at least ₹100.";
     if (!form.donorName.trim()) return "Donor name is required.";
     if (!/^[6-9]\d{9}$/.test(form.donorMobile)) return "Please enter a valid 10 digit mobile number.";
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.donorEmail)) return "Please enter a valid email address.";
@@ -377,7 +382,17 @@ export default function DonationsClient() {
           <div className={`donation-card-row ${isCustom ? "single" : ""}`}>
             {!isCustom && (
               <div className={`donation-amount ${kind === "annadaan" ? "donation-amount-annadaan" : "donation-amount-gau"}`}>
-                <strong>Rs. {formatAmount(option.amount as number)}</strong>
+                <span className="donation-amount-symbol">₹</span>
+                <input
+                  type="number"
+                  min={100}
+                  inputMode="numeric"
+                  className="donation-amount-input"
+                  value={cardAmounts[option.id] ?? String(option.amount)}
+                  onClick={(e) => e.stopPropagation()}
+                  onChange={(e) => setCardAmounts((prev) => ({ ...prev, [option.id]: e.target.value }))}
+                  aria-label={`Amount for ${option.title}`}
+                />
               </div>
             )}
             <button
@@ -572,7 +587,7 @@ export default function DonationsClient() {
                 <div>
                   <p className="text-xs font-semibold text-muted-foreground">Seva Amount</p>
                   <p className="mt-1 font-bold text-foreground">
-                    {selected.amount ? `Rs. ${formatAmount(selected.amount)}` : "Enter amount"}
+                    {selected.amount ? `₹${formatAmount(selected.amount)}` : "Enter amount"}
                   </p>
                 </div>
               </div>
@@ -588,7 +603,7 @@ export default function DonationsClient() {
                     placeholder="Enter amount"
                     className="mt-2"
                   />
-                  <span className="mt-1 block text-xs text-muted-foreground">Amount must be at least Rs.100.</span>
+                  <span className="mt-1 block text-xs text-muted-foreground">Amount must be at least ₹100.</span>
                 </label>
               )}
 
@@ -681,7 +696,7 @@ export default function DonationsClient() {
 
               <Button type="submit" disabled={submitting} className="w-full bg-amber-500 py-6 text-base font-bold text-amber-950 hover:bg-amber-400">
                 <Heart className="mr-2 h-5 w-5 fill-current" />
-                {submitting ? "Opening Checkout..." : `Donate Rs. ${formatAmount(finalAmount || 0)}`}
+                {submitting ? "Opening Checkout..." : `Donate ₹${formatAmount(finalAmount || 0)}`}
               </Button>
             </form>
           </div>
