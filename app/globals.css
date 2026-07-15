@@ -497,11 +497,13 @@
 }
 
 /* Tight wrapper so the ₹ and the number sit flush against each other,
-   not spread to opposite ends of the flex container */
+   centered within the card */
 .donation-amount-inner {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 2px;
+  width: 100%;
 }
 
 .donation-amount-symbol {
@@ -520,9 +522,8 @@
   color: hsl(8 62% 30%);
   font-size: 1.3rem;
   font-weight: 700;
-  text-align: left;
+  text-align: center;
   outline: none;
-  /* remove number spinner arrows so it doesn't read as a stepper control */
   -moz-appearance: textfield;
 }
 
