@@ -3,7 +3,7 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Heart, X, MessageCircle } from "lucide-react";
+import { Heart, X } from "lucide-react";
 import { captureTracking, getStoredTracking } from "@/lib/tracking";
 
 type DonationOption = {
@@ -407,7 +407,9 @@ export default function DonationsClient() {
           aria-label="Chat with us on WhatsApp"
           className="fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-elevated transition-transform hover:scale-105"
         >
-          <MessageCircle className="h-7 w-7" fill="currentColor" strokeWidth={0} />
+          <svg viewBox="0 0 32 32" className="h-8 w-8" fill="currentColor" aria-hidden>
+            <path d="M16.004 0C7.163 0 0 7.163 0 16c0 2.82.737 5.566 2.137 7.98L0 32l8.223-2.113A15.9 15.9 0 0 0 16.004 32C24.84 32 32 24.837 32 16S24.84 0 16.004 0Zm0 29.09a13.03 13.03 0 0 1-6.643-1.82l-.477-.283-4.878 1.253 1.303-4.755-.31-.488a13.06 13.06 0 0 1-2.005-6.997c0-7.226 5.879-13.106 13.014-13.106 3.477 0 6.745 1.355 9.202 3.815a12.94 12.94 0 0 1 3.808 9.204c0 7.226-5.879 13.177-13.014 13.177Zm7.13-9.78c-.39-.196-2.302-1.137-2.66-1.266-.357-.13-.617-.196-.877.196-.26.39-1.006 1.266-1.234 1.526-.227.26-.454.293-.844.098-.39-.196-1.647-.607-3.137-1.936-1.16-1.034-1.943-2.312-2.171-2.702-.227-.39-.024-.6.172-.795.176-.176.39-.454.585-.682.195-.227.26-.39.39-.65.13-.26.065-.487-.033-.682-.098-.196-.877-2.113-1.202-2.893-.316-.759-.638-.656-.877-.668-.227-.01-.487-.012-.747-.012-.26 0-.682.098-1.04.487-.357.39-1.364 1.333-1.364 3.25 0 1.917 1.397 3.77 1.592 4.03.195.26 2.75 4.2 6.663 5.888.931.402 1.658.642 2.225.822.935.298 1.786.256 2.459.155.75-.112 2.302-.941 2.627-1.85.325-.909.325-1.688.227-1.85-.098-.163-.357-.26-.747-.455Z" />
+          </svg>
         </a>
         <section className="hero-slider">
           <div className="container-hero">
