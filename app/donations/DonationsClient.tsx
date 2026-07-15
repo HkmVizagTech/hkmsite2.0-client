@@ -1,10 +1,9 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Heart, X } from "lucide-react";
+import { Heart, X, MessageCircle } from "lucide-react";
 import { captureTracking, getStoredTracking } from "@/lib/tracking";
 
 type DonationOption = {
@@ -398,15 +397,18 @@ export default function DonationsClient() {
   return (
     <>
       <main className="exact-page" id="top">
-        {/* Minimal home link — this page is intentionally a distraction-free
-            checkout flow without the full site nav, but visitors still need
-            some way back to the main site. */}
-        <Link
-          href="/"
-          className="fixed top-4 left-4 z-50 inline-flex items-center gap-2 rounded-full bg-background/90 px-4 py-2 text-xs font-semibold text-foreground shadow-elevated backdrop-blur-md transition-colors hover:bg-background"
+        {/* Floating WhatsApp contact — this page is intentionally a
+            distraction-free checkout flow without the full site nav, so a
+            quick way to ask a question stays available. */}
+        <a
+          href="https://wa.me/919063020108"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Chat with us on WhatsApp"
+          className="fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-elevated transition-transform hover:scale-105"
         >
-          ← Hare Krishna Vaikuntham
-        </Link>
+          <MessageCircle className="h-7 w-7" fill="currentColor" strokeWidth={0} />
+        </a>
         <section className="hero-slider">
           <div className="container-hero">
             <div className="carousel-shell carousel-fallback">
