@@ -379,7 +379,23 @@ export default function DonationsClient() {
             </div>
           </div>
           <h3>{option.title}</h3>
-          <div className={donation-card-row ${isCustom ? "single" : ""}}> {!isCustom && ( <div className={donation-amount ${kind === "annadaan" ? "donation-amount-annadaan" : "donation-amount-gau"}}> <span className="donation-amount-symbol">₹</span> <input type="number" min={100} inputMode="numeric" className="donation-amount-input" value={cardAmounts[option.id] ?? String(option.amount)} onClick={(e) => e.stopPropagation()} onChange={(e) => setCardAmounts((prev) => ({ ...prev, [option.id]: e.target.value }))} aria-label={Amount for ${option.title}} /> </div>
+          <div className={`donation-card-row ${isCustom ? "single" : ""}`}>
+            {!isCustom && (
+              <div className={`donation-amount ${kind === "annadaan" ? "donation-amount-annadaan" : "donation-amount-gau"}`}>
+                <span className="donation-amount-inner">
+                  <span className="donation-amount-symbol">₹</span>
+                  <input
+                    type="number"
+                    min={100}
+                    inputMode="numeric"
+                    className="donation-amount-input"
+                    value={cardAmounts[option.id] ?? String(option.amount)}
+                    onClick={(e) => e.stopPropagation()}
+                    onChange={(e) => setCardAmounts((prev) => ({ ...prev, [option.id]: e.target.value }))}
+                    aria-label={`Amount for ${option.title}`}
+                  />
+                </span>
+              </div>
             )}
             <button
               type="button"
