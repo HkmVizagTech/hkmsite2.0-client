@@ -169,11 +169,11 @@ export default function DonationsAdminPage() {
 
   type ImageField = "bannerImage" | "bannerMobileImage" | "trusteeBannerImage" | "annadaanImage" | "goSevaImage";
 
-  const uploadImage = async (field: ImageField, event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    setUploading(field);
+  // Generic upload core: any single-image slot (a named field, or one of the
+  // gallery slots) can reuse this — `key` is just used to track which
+  // upload is in-flight for the spinner, `onDone` applies the resulting URL.
+  const uploadToSlot = async (key: string, file: File, onDone: (url: string) => void) => {
+    setUploading(key);
     setMessage(null);
     try {
       const data = new FormData();
@@ -184,14 +184,27 @@ export default function DonationsAdminPage() {
       });
       const body = await res.json();
       if (!res.ok || !body.secure_url) throw new Error(body.message || "Image upload failed.");
-      update({ [field]: body.secure_url } as Partial<DonationPageSettings>);
+      onDone(body.secure_url);
       setMessage({ type: "success", text: "Image uploaded. Save changes to publish it." });
     } catch (err) {
       setMessage({ type: "error", text: err instanceof Error ? err.message : "Image upload failed." });
     } finally {
       setUploading(null);
-      event.target.value = "";
     }
+  };
+
+  const uploadImage = async (field: ImageField, event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    await uploadToSlot(field, file, (url) => update({ [field]: url } as Partial<DonationPageSettings>));
+    event.target.value = "";
+  };
+
+  const uploadGalleryImage = async (index: number, event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    await uploadToSlot(`gallery-${index}`, file, (url) => updateGalleryImage(index, url));
+    event.target.value = "";
   };
 
   const save = async () => {
@@ -395,7 +408,14 @@ export default function DonationsAdminPage() {
                 <div className="mt-5 grid gap-4">
                   {form.galleryImages.slice(0, 4).map((src, index) => (
                     <div key={index} className="rounded-lg border border-border p-4">
-                      <label className="mb-2 block text-sm font-bold text-foreground">Gallery Image {index + 1}</label>
+                      <div className="mb-2 flex items-center justify-between gap-3">
+                        <label className="text-sm font-bold text-foreground">Gallery Image {index + 1}</label>
+                        <label className="inline-flex cursor-pointer items-center rounded-lg border border-border px-3 py-2 text-xs font-semibold hover:bg-muted">
+                          {uploading === `gallery-${index}` ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ImagePlus className="mr-2 h-4 w-4" />}
+                          Upload
+                          <input type="file" accept="image/*" className="hidden" onChange={(event) => uploadGalleryImage(index, event)} />
+                        </label>
+                      </div>
                       {src && <img src={src} alt={`Gallery image ${index + 1}`} className="mb-3 h-36 w-full rounded-lg object-cover" />}
                       <Input value={src} onChange={(event) => updateGalleryImage(index, event.target.value)} placeholder="Paste image URL" />
                     </div>
