@@ -385,11 +385,12 @@ export default function DonationsClient() {
                 <span className="donation-amount-inner">
                   <span className="donation-amount-symbol">₹</span>
                   <input
-                    type="number"
-                    min={100}
+                    type="text"
                     inputMode="numeric"
+                    pattern="[0-9]*"
                     className="donation-amount-input"
                     value={cardAmounts[option.id] ?? String(option.amount)}
+                    size={Math.max(4, String(cardAmounts[option.id] ?? option.amount).length)}
                     onClick={(e) => e.stopPropagation()}
                     onChange={(e) => setCardAmounts((prev) => ({ ...prev, [option.id]: e.target.value }))}
                     aria-label={`Amount for ${option.title}`}
