@@ -12,14 +12,14 @@ export default function AdminLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { login, isAuthenticated } = useAuth();
+  const { login, isAuthenticated, user } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.push("/admin");
+      router.push(user?.role === "donations_admin" ? "/donations/admin" : "/admin");
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, user, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,11 +29,11 @@ export default function AdminLogin() {
       return;
     }
     const success = await login(email, password);
-    if (success) {
-      router.push("/admin");
-    } else {
+    if (!success) {
       setError("Invalid email or password.");
     }
+    // On success, the effect above redirects once `user` updates —
+    // avoids redirecting to /admin before we know the account's role.
   };
 
   if (isAuthenticated) {

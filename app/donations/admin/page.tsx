@@ -114,7 +114,7 @@ const defaultSettings: DonationPageSettings = {
 };
 
 export default function DonationsAdminPage() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const router = useRouter();
   const [form, setForm] = useState<DonationPageSettings>(defaultSettings);
   const [loading, setLoading] = useState(true);
@@ -243,7 +243,9 @@ export default function DonationsAdminPage() {
     </div>
   );
 
-  if (!isAuthenticated) {
+  const hasAccess = isAuthenticated && (user?.role === "admin" || user?.role === "donations_admin");
+
+  if (!hasAccess) {
     return (
       <main className="min-h-screen bg-muted px-4 py-16">
         <div className="mx-auto max-w-lg rounded-lg border border-border bg-background p-8 text-center shadow-elevated">

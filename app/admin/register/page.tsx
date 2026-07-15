@@ -9,7 +9,7 @@ import { Mail, Lock, User, AlertCircle, ShieldCheck } from "lucide-react";
 import { authFetch } from "@/lib/authClient";
 
 export default function AdminRegister() {
-  const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [form, setForm] = useState({ name: "", email: "", password: "", role: "user" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
@@ -33,7 +33,7 @@ export default function AdminRegister() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Registration failed");
-      setForm({ name: "", email: "", password: "" });
+      setForm({ name: "", email: "", password: "", role: "user" });
       router.push("/admin/settings");
     } catch (err: any) {
       setError(err.message);
@@ -85,7 +85,7 @@ export default function AdminRegister() {
                 <Input
                   name="email"
                   type="email"
-                  placeholder="admin@harekrishnavizag.org"
+                  placeholder="you@example.com"
                   value={form.email}
                   onChange={handleChange}
                   className="pl-10"
@@ -108,12 +108,33 @@ export default function AdminRegister() {
                 />
               </div>
             </div>
+            <div>
+              <label className="text-sm font-medium mb-1.5 block">Access Level</label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setForm({ ...form, role: "user" })}
+                  className={`rounded-lg border-2 p-3 text-left text-sm transition-colors ${form.role === "user" ? "border-primary bg-primary/5" : "border-border"}`}
+                >
+                  <span className="block font-semibold">Standard</span>
+                  <span className="block text-xs text-muted-foreground">No admin access</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setForm({ ...form, role: "donations_admin" })}
+                  className={`rounded-lg border-2 p-3 text-left text-sm transition-colors ${form.role === "donations_admin" ? "border-primary bg-primary/5" : "border-border"}`}
+                >
+                  <span className="block font-semibold">Donations Admin</span>
+                  <span className="block text-xs text-muted-foreground">Only /donations/admin</span>
+                </button>
+              </div>
+            </div>
             <Button type="submit" className="w-full" size="lg" disabled={loading}>
               {loading ? "Registering..." : "Register"}
             </Button>
           </form>
           <p className="text-xs text-center mt-4 text-muted-foreground">
-            New accounts are created with standard (non-admin) access by default.
+            Need a full admin account instead? That has to be set up separately — this form only creates Standard or Donations Admin accounts.
           </p>
         </div>
       </motion.div>
