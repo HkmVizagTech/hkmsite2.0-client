@@ -85,7 +85,7 @@ export default function AdminDonations() {
       donorStr.toLowerCase().includes(lowerSearch) ||
       idStr.toLowerCase().includes(lowerSearch) ||
       emailStr.toLowerCase().includes(lowerSearch);
-    const matchSeva = sevaFilter === "all" || d.seva === sevaFilter;
+    const matchSeva = sevaFilter === "all" || d.sevaName === sevaFilter || d.type === sevaFilter;
     return matchSearch && matchSeva;
   });
 
@@ -218,10 +218,10 @@ export default function AdminDonations() {
                   const rowKey = d._id || d.id || d.transactionId || d.razorpayOrderId || `don-${i}`;
                   return (
                     <tr key={rowKey} className="border-b hover:bg-muted/30">
-                      <td className="px-4 py-3 font-mono text-xs">{d.transactionId || d.razorpayOrderId || d._id}</td>
+                      <td className="px-4 py-3 font-mono text-xs">{d.razorpayPaymentId || d.razorpayOrderId || d._id}</td>
                       <td className="px-4 py-3">
-                        <div className="font-medium">{d.donor}</div>
-                        <div className="text-xs text-muted-foreground">{d.email}</div>
+                        <div className="font-medium">{d.donorName || "Anonymous"}</div>
+                        <div className="text-xs text-muted-foreground">{d.donorEmail || "-"}</div>
                       </td>
                       <td className="px-4 py-3 font-semibold">₹{(d.amount || 0).toLocaleString("en-IN")}</td>
                       <td className="px-4 py-3">
@@ -286,10 +286,11 @@ export default function AdminDonations() {
               <button onClick={() => setSelectedDonation(null)}><X className="w-5 h-5" /></button>
             </div>
             <div className="space-y-3 text-sm">
-              <div className="flex justify-between"><span className="text-muted-foreground">TXN ID</span><span className="font-mono">{selectedDonation.id}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Donor</span><span>{selectedDonation.donor}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Email</span><span>{selectedDonation.email}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Phone</span><span>{selectedDonation.phone || selectedDonation.donorMobile}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">TXN ID</span><span className="font-mono">{selectedDonation.transactionId || selectedDonation.razorpayPaymentId || selectedDonation._id || '-'}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Donor</span><span>{selectedDonation.donorName || '-'}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Email</span><span>{selectedDonation.donorEmail || '-'}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Seva</span><span>{selectedDonation.sevaName || selectedDonation.type || '-'}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Phone</span><span>{selectedDonation.donorMobile || '-'}</span></div>
               <div className="flex justify-between"><span className="text-muted-foreground">Amount</span><span className="font-semibold">₹{(selectedDonation.amount || 0).toLocaleString("en-IN")}</span></div>
               <div className="flex justify-between"><span className="text-muted-foreground">Order ID</span><span className="font-mono">{selectedDonation.razorpayOrderId || '-'}</span></div>
               <div className="flex justify-between"><span className="text-muted-foreground">Payment ID</span><span className="font-mono">{selectedDonation.razorpayPaymentId || '-'}</span></div>
