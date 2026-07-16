@@ -220,10 +220,59 @@ export default function TransactionsTab() {
                   {selected.utm.term && <Row label="Term" value={selected.utm.term} />}
                 </div>
               )}
+              {selected.status === "pending" && (
+                <ManualCompleteBox donationId={selected._id} onDone={() => { setSelected(null); fetchTransactions(); }} />
+              )}
             </div>
           )}
         </DialogContent>
       </Dialog>
+    </div>
+  );
+}
+
+function ManualCompleteBox({ donationId, onDone }: { donationId: string; onDone: () => void }) {
+  const [paymentId, setPaymentId] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
+
+  const submit = async () => {
+    if (!paymentId.trim()) return;
+    setSubmitting(true);
+    setMsg(null);
+    try {
+      const res = await authFetch(`${apiUrl()}/donations-admin/manual-complete`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ donationId, razorpayPaymentId: paymentId.trim() }),
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed");
+      setMsg(data.message);
+      setTimeout(onDone, 1200);
+    } catch (err) {
+      setMsg(err instanceof Error ? err.message : "Failed to mark as paid");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="rounded-lg border border-amber-300 bg-amber-50 p-3">
+      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-amber-800">
+        Found this paid in the Razorpay dashboard?
+      </p>
+      <p className="mb-2 text-xs text-amber-700">
+        Paste the Payment ID (starts with pay_) from Razorpay's dashboard to mark this complete and trigger the receipt/WhatsApp.
+      </p>
+      <div className="flex gap-2">
+        <Input placeholder="pay_..." value={paymentId} onChange={(e) => setPaymentId(e.target.value)} className="text-sm" />
+        <Button size="sm" onClick={submit} disabled={submitting || !paymentId.trim()}>
+          {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Mark Paid"}
+        </Button>
+      </div>
+      {msg && <p className="mt-2 text-xs font-medium text-amber-900">{msg}</p>}
     </div>
   );
 }
