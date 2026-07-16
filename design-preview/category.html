@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Activities · Hare Krishna Vaikuntham</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<style>
+.cat-intro { padding: 5rem 0 2rem; text-align: center; max-width: 880px; margin: 0 auto; }
+.cat-intro p { color: var(--ink-soft); font-size: 1.05rem; line-height: 1.7; }
+.cat-intro p b { color: var(--ink); font-weight: 600; }
+.filter-bar { padding: 1.5rem 0 3rem; }
+.filter-row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.filter-chip { padding: 0.6rem 1.4rem; border-radius: var(--r-pill); background: #fff; border: 1px solid var(--border); font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+.filter-chip.active { background: var(--blue-500); color: #fff; border-color: var(--blue-500); }
+.filter-chip:hover:not(.active) { border-color: var(--blue-300); color: var(--blue-600); }
+
+.cat-grid-section { padding: 0 0 6rem; }
+.cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; max-width: 1240px; margin: 0 auto; padding: 0 1.75rem; }
+@media (max-width: 1100px) { .cat-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 900px) { .cat-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) { .cat-grid { grid-template-columns: 1fr; } }
+.cat-card { background: #fff; border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--shadow-sm); transition: all 0.3s; cursor: pointer; display: flex; flex-direction: column; }
+.cat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.cat-card-img { aspect-ratio: 4/3; position: relative; }
+.cat-card-img .badge { position: absolute; top: 12px; left: 12px; background: rgba(255,255,255,0.95); padding: 4px 12px; border-radius: var(--r-pill); font-size: 0.72rem; font-weight: 600; color: var(--blue-700); }
+.cat-card-body { padding: 1.25rem; flex: 1; display: flex; flex-direction: column; }
+.cat-card-body h4 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+.cat-card-body p { color: var(--ink-soft); font-size: 0.9rem; line-height: 1.5; flex: 1; }
+.cat-card-meta { display: flex; align-items: center; gap: 6px; color: var(--blue-600); font-size: 0.82rem; font-weight: 600; margin-top: 0.75rem; }
+
+.pagination { display: flex; gap: 6px; justify-content: center; padding: 3rem 0; }
+.pag-btn { width: 38px; height: 38px; border-radius: var(--r-pill); background: #fff; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: 500; transition: all 0.2s; }
+.pag-btn:hover { border-color: var(--blue-400); color: var(--blue-600); }
+.pag-btn.active { background: var(--blue-500); color: #fff; border-color: var(--blue-500); }
+</style>
+</head>
+<body>
+<div id="top-bar"></div>
+<div id="main-nav"></div>
+
+<section class="subpage-hero">
+  <div>
+    <h1>Our Activities</h1>
+    <div class="breadcrumb"><a href="home.html">Home</a><span class="sep">/</span><span style="opacity:0.7">Activities</span></div>
+  </div>
+</section>
+
+<section class="cat-intro">
+  <div class="container">
+    <p>Discover all the regular spiritual, educational and cultural activities organized by <b>Hare Krishna Vaikuntham</b>, Vizag. From bhajan concerts and Gita classes to anna daan and cow protection — every initiative reflects the timeless wisdom of Vedic culture.</p>
+  </div>
+</section>
+
+<div class="filter-bar">
+  <div class="filter-row">
+    <button class="filter-chip active">All</button>
+    <button class="filter-chip">Events</button>
+    <button class="filter-chip">Education</button>
+    <button class="filter-chip">Food Distribution</button>
+    <button class="filter-chip">Cow Protection</button>
+    <button class="filter-chip">Cultural</button>
+    <button class="filter-chip">Youth</button>
+  </div>
+</div>
+
+<section class="cat-grid-section">
+  <div class="cat-grid">
+    <a href="event-detail.html" class="cat-card"><div class="cat-card-img" style="background:linear-gradient(135deg,#5d4a8a,#3F5FE5)"><span class="badge">Event</span></div><div class="cat-card-body"><h4>Bhajan Concert</h4><p>Monthly devotional music concerts featuring renowned kirtan artists from across India.</p><div class="cat-card-meta">Learn more →</div></div></a>
+    <a href="event-detail.html" class="cat-card"><div class="cat-card-img" style="background:linear-gradient(135deg,#a08840,#d4a35a)"><span class="badge">Food</span></div><div class="cat-card-body"><h4>Akshaya Patra</h4><p>Mid-day meal program nourishing thousands of underprivileged school children daily.</p><div class="cat-card-meta">Learn more →</div></div></a>
+    <a href="event-detail.html" class="cat-card"><div class="cat-card-img" style="background:linear-gradient(135deg,#5a8a6a,#7ab38a)"><span class="badge">Cow</span></div><div class="cat-card-body"><h4>Gau Shala</h4><p>Dedicated cow protection center with veterinary care and organic fodder.</p><div class="cat-card-meta">Learn more →</div></div></a>
+    <a href="event-detail.html" class="cat-card"><div class="cat-card-img" style="background:linear-gradient(135deg,#3a4a7a,#5d6aa0)"><span class="badge">Youth</span></div><div class="cat-card-body"><h4>International Gita Olympiad</h4><p>Annual competition encouraging students to study the Bhagavad-Gita deeply.</p><div class="cat-card-meta">Learn more →</div></div></a>
+    <a href="event-detail.html" class="cat-card"><div class="cat-card-img" style="background:linear-gradient(135deg,#8a3a5a,#c25a7a)"><span class="badge">Event</span></div><div class="cat-card-body"><h4>Colours of Devotion</h4><p>Vibrant festival celebrating Krishna's pastimes with art, music and dance.</p><div class="cat-card-meta">Learn more →</div></div></a>
+    <a href="event-detail.html" class="cat-card"><div class="cat-card-img" style="background:linear-gradient(135deg,#3a3a7a,#5d4a8a)"><span class="badge">Education</span></div><div class="cat-card-body"><h4>Activities for Kids</h4><p>Sunday school programs teaching Vedic values through stories, games and crafts.</p><div class="cat-card-meta">Learn more →</div></div></a>
+    <a href="event-detail.html" class="cat-card"><div class="cat-card-img" style="background:linear-gradient(135deg,#7a4a3a,#a87a5a)"><span class="badge">Cultural</span></div><div class="cat-card-body"><h4>Folk Sessions</h4><p>Authentic Indian folk music and dance evenings open to all devotees.</p><div class="cat-card-meta">Learn more →</div></div></a>
+    <a href="event-detail.html" class="cat-card"><div class="cat-card-img" style="background:linear-gradient(135deg,#5d4a8a,#a85a8a)"><span class="badge">Event</span></div><div class="cat-card-body"><h4>Jhulan Seva</h4><p>The divine swing festival celebrating the loving pastimes of Radha and Krishna.</p><div class="cat-card-meta">Learn more →</div></div></a>
+  </div>
+
+  <div class="pagination">
+    <button class="pag-btn">‹</button>
+    <button class="pag-btn active">1</button>
+    <button class="pag-btn">2</button>
+    <button class="pag-btn">3</button>
+    <button class="pag-btn">›</button>
+  </div>
+</section>
+
+<div id="main-footer"></div>
+<script src="shared.js"></script>
+</body>
+</html>
