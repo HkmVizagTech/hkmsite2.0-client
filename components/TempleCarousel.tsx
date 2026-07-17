@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import Link from "next/link";
 
 // Built-in fallback slides — shown until admin uploads real banners via
 // /admin/banners, and as a safety net if that API call ever fails.
@@ -11,26 +12,31 @@ const defaultSlides = [
     src: "/assets/home-banner-chaitanya-bhavan.webp",
     mobileSrc: "/assets/home-banner-chaitanya-bhavan-mobile.webp",
     title: "Chaitanya Bhavan",
+    linkUrl: "",
   },
   {
     src: "/assets/home-banner-daily-darshan.webp",
     mobileSrc: "/assets/home-banner-daily-darshan-mobile.webp",
     title: "Daily Darshan",
+    linkUrl: "",
   },
   {
     src: "/assets/home-banner-radha-madan-mohan.webp",
     mobileSrc: "/assets/home-banner-radha-madan-mohan-mobile.webp",
     title: "Sri Sri Radha Madan Mohan",
+    linkUrl: "",
   },
   {
     src: "/assets/home-banner-jagannatha-rath-yatra.webp",
     mobileSrc: "/assets/home-banner-jagannatha-rath-yatra-mobile.webp",
     title: "Jagannatha Rath Yatra",
+    linkUrl: "",
   },
   {
     src: "/assets/home-banner-srinivasa-govinda.webp",
     mobileSrc: "/assets/home-banner-srinivasa-govinda-mobile.webp",
     title: "Srinivasa Govinda Temple",
+    linkUrl: "",
   },
 ];
 
@@ -59,6 +65,7 @@ const TempleCarousel = () => {
                 src: b.desktopImage,
                 mobileSrc: b.mobileImage,
                 title: b.title,
+                linkUrl: b.linkUrl || "",
               }))
             );
           }
@@ -97,6 +104,29 @@ const TempleCarousel = () => {
   };
 
   const currentSlide = slides[current] || slides[0];
+  const hasLink = Boolean(currentSlide.linkUrl);
+  const isExternal = hasLink && /^https?:\/\//i.test(currentSlide.linkUrl);
+
+  const slideImages = (
+    <>
+      <Image
+        src={currentSlide.mobileSrc}
+        alt={currentSlide.title}
+        fill
+        sizes="100vw"
+        className="object-cover object-center md:hidden"
+        priority
+      />
+      <Image
+        src={currentSlide.src}
+        alt={currentSlide.title}
+        fill
+        sizes="100vw"
+        className="hidden object-cover object-center md:block"
+        priority
+      />
+    </>
+  );
 
   return (
     <section className="relative w-full overflow-hidden bg-foreground aspect-[1080/1350] md:aspect-[1920/700]">
@@ -111,22 +141,23 @@ const TempleCarousel = () => {
           transition={{ duration: 0.9, ease: [0.25, 0.8, 0.25, 1] }}
           className="absolute inset-0"
         >
-          <Image
-            src={currentSlide.mobileSrc}
-            alt={currentSlide.title}
-            fill
-            sizes="100vw"
-            className="object-cover object-center md:hidden"
-            priority
-          />
-          <Image
-            src={currentSlide.src}
-            alt={currentSlide.title}
-            fill
-            sizes="100vw"
-            className="hidden object-cover object-center md:block"
-            priority
-          />
+          {!hasLink ? (
+            slideImages
+          ) : isExternal ? (
+            <a
+              href={currentSlide.linkUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="absolute inset-0 block cursor-pointer"
+              aria-label={currentSlide.title}
+            >
+              {slideImages}
+            </a>
+          ) : (
+            <Link href={currentSlide.linkUrl} className="absolute inset-0 block cursor-pointer" aria-label={currentSlide.title}>
+              {slideImages}
+            </Link>
+          )}
         </motion.div>
       </AnimatePresence>
     </section>

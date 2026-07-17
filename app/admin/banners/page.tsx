@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   GalleryHorizontal, Upload, Trash2, Eye, EyeOff, ArrowUp, ArrowDown,
-  Monitor, Smartphone, Loader2, Plus, X,
+  Monitor, Smartphone, Loader2, Plus, X, Link2, Pencil, Check,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
@@ -24,6 +24,7 @@ interface Banner {
   title: string;
   desktopImage: string;
   mobileImage: string;
+  linkUrl?: string;
   order: number;
   active: boolean;
 }
@@ -33,11 +34,15 @@ export default function AdminBanners() {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [title, setTitle] = useState("");
+  const [linkUrl, setLinkUrl] = useState("");
   const [desktopFile, setDesktopFile] = useState<File | null>(null);
   const [mobileFile, setMobileFile] = useState<File | null>(null);
   const [desktopPreview, setDesktopPreview] = useState("");
   const [mobilePreview, setMobilePreview] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [editingLinkId, setEditingLinkId] = useState<string | null>(null);
+  const [editingLinkValue, setEditingLinkValue] = useState("");
+  const [savingLink, setSavingLink] = useState(false);
   const desktopInputRef = useRef<HTMLInputElement>(null);
   const mobileInputRef = useRef<HTMLInputElement>(null);
 
@@ -59,6 +64,7 @@ export default function AdminBanners() {
 
   const resetForm = () => {
     setTitle("");
+    setLinkUrl("");
     setDesktopFile(null);
     setMobileFile(null);
     setDesktopPreview("");
@@ -76,6 +82,7 @@ export default function AdminBanners() {
       const fd = new FormData();
       fd.append("title", title || `Banner ${banners.length + 1}`);
       fd.append("order", String(banners.length));
+      fd.append("linkUrl", linkUrl.trim());
       fd.append("desktopImage", desktopFile);
       fd.append("mobileImage", mobileFile);
 
@@ -104,6 +111,31 @@ export default function AdminBanners() {
         setBanners((bs) => bs.map((b) => (b._id === banner._id ? { ...b, active: !b.active } : b)));
       }
     } catch {}
+  };
+
+  const startEditLink = (banner: Banner) => {
+    setEditingLinkId(banner._id);
+    setEditingLinkValue(banner.linkUrl || "");
+  };
+
+  const saveLinkUrl = async (bannerId: string) => {
+    setSavingLink(true);
+    try {
+      const fd = new FormData();
+      fd.append("linkUrl", editingLinkValue.trim());
+      const res = await authFetch(`${API_URL}/hero-banners/${bannerId}`, { method: "PUT", body: fd });
+      if (res.ok) {
+        setBanners((bs) => bs.map((b) => (b._id === bannerId ? { ...b, linkUrl: editingLinkValue.trim() } : b)));
+        setEditingLinkId(null);
+        toast({ title: editingLinkValue.trim() ? "Link saved" : "Link removed" });
+      } else {
+        toast({ title: "Failed to save link", variant: "destructive" });
+      }
+    } catch (e: any) {
+      toast({ title: "Network error", description: e.message, variant: "destructive" });
+    } finally {
+      setSavingLink(false);
+    }
   };
 
   const handleDelete = async (banner: Banner) => {
@@ -159,6 +191,16 @@ export default function AdminBanners() {
               </button>
             </div>
             <Input placeholder="Banner title (internal label)" value={title} onChange={(e) => setTitle(e.target.value)} />
+            <div>
+              <Input
+                placeholder="Link URL (optional) — e.g. /sqft-seva-campaign or https://..."
+                value={linkUrl}
+                onChange={(e) => setLinkUrl(e.target.value)}
+              />
+              <p className="mt-1 text-xs text-muted-foreground">
+                Leave empty for a banner that just displays with no click-through. Use a path starting with / for pages on this site, or a full https:// link for elsewhere.
+              </p>
+            </div>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
@@ -243,31 +285,62 @@ export default function AdminBanners() {
         <div className="space-y-3">
           {banners.map((banner, i) => (
             <Card key={banner._id} className={!banner.active ? "opacity-50" : ""}>
-              <CardContent className="flex items-center gap-4 p-4">
-                <div className="relative h-16 w-28 shrink-0 overflow-hidden rounded-lg bg-muted">
-                  <Image src={banner.desktopImage} alt={banner.title} fill sizes="120px" className="object-cover" />
+              <CardContent className="flex flex-col gap-3 p-4">
+                <div className="flex items-center gap-4">
+                  <div className="relative h-16 w-28 shrink-0 overflow-hidden rounded-lg bg-muted">
+                    <Image src={banner.desktopImage} alt={banner.title} fill sizes="120px" className="object-cover" />
+                  </div>
+                  <div className="relative h-16 w-11 shrink-0 overflow-hidden rounded-lg bg-muted">
+                    <Image src={banner.mobileImage} alt={banner.title} fill sizes="60px" className="object-cover" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate font-medium">{banner.title}</p>
+                    <p className="text-xs text-muted-foreground">Position {i + 1} of {banners.length}</p>
+                    {banner.linkUrl ? (
+                      <p className="mt-0.5 flex items-center gap-1 truncate text-xs text-primary">
+                        <Link2 className="h-3 w-3 shrink-0" /> {banner.linkUrl}
+                      </p>
+                    ) : (
+                      <p className="mt-0.5 text-xs text-muted-foreground/60">No link — image only</p>
+                    )}
+                  </div>
+                  <div className="flex shrink-0 items-center gap-1">
+                    <Button size="sm" variant="ghost" onClick={() => startEditLink(banner)} className="h-8 w-8 p-0" title="Edit link">
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button size="sm" variant="ghost" onClick={() => move(i, -1)} disabled={i === 0} className="h-8 w-8 p-0">
+                      <ArrowUp className="h-4 w-4" />
+                    </Button>
+                    <Button size="sm" variant="ghost" onClick={() => move(i, 1)} disabled={i === banners.length - 1} className="h-8 w-8 p-0">
+                      <ArrowDown className="h-4 w-4" />
+                    </Button>
+                    <Button size="sm" variant="ghost" onClick={() => toggleActive(banner)} className="h-8 w-8 p-0" title={banner.active ? "Hide from homepage" : "Show on homepage"}>
+                      {banner.active ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                    </Button>
+                    <Button size="sm" variant="ghost" onClick={() => handleDelete(banner)} className="h-8 w-8 p-0 text-red-500 hover:bg-red-50 hover:text-red-600">
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
-                <div className="relative h-16 w-11 shrink-0 overflow-hidden rounded-lg bg-muted">
-                  <Image src={banner.mobileImage} alt={banner.title} fill sizes="60px" className="object-cover" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate font-medium">{banner.title}</p>
-                  <p className="text-xs text-muted-foreground">Position {i + 1} of {banners.length}</p>
-                </div>
-                <div className="flex shrink-0 items-center gap-1">
-                  <Button size="sm" variant="ghost" onClick={() => move(i, -1)} disabled={i === 0} className="h-8 w-8 p-0">
-                    <ArrowUp className="h-4 w-4" />
-                  </Button>
-                  <Button size="sm" variant="ghost" onClick={() => move(i, 1)} disabled={i === banners.length - 1} className="h-8 w-8 p-0">
-                    <ArrowDown className="h-4 w-4" />
-                  </Button>
-                  <Button size="sm" variant="ghost" onClick={() => toggleActive(banner)} className="h-8 w-8 p-0" title={banner.active ? "Hide from homepage" : "Show on homepage"}>
-                    {banner.active ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-                  </Button>
-                  <Button size="sm" variant="ghost" onClick={() => handleDelete(banner)} className="h-8 w-8 p-0 text-red-500 hover:bg-red-50 hover:text-red-600">
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
+                {editingLinkId === banner._id && (
+                  <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/30 p-2.5">
+                    <Link2 className="h-4 w-4 shrink-0 text-muted-foreground" />
+                    <Input
+                      autoFocus
+                      placeholder="/sqft-seva-campaign or https://..."
+                      value={editingLinkValue}
+                      onChange={(e) => setEditingLinkValue(e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && saveLinkUrl(banner._id)}
+                      className="h-8 text-sm"
+                    />
+                    <Button size="sm" onClick={() => saveLinkUrl(banner._id)} disabled={savingLink} className="h-8 shrink-0 px-3">
+                      {savingLink ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />}
+                    </Button>
+                    <Button size="sm" variant="ghost" onClick={() => setEditingLinkId(null)} className="h-8 w-8 shrink-0 p-0">
+                      <X className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
+                )}
               </CardContent>
             </Card>
           ))}
