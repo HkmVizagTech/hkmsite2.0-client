@@ -19,6 +19,14 @@ export interface Seva {
   // Used for Square Foot Seva, which has a richer dedicated campaign page
   // with live goal progress and peer-to-peer fundraising.
   externalHref?: string;
+  // Optional dedicated hero banner (fully designed, title/CTA baked into
+  // the image itself) shown at the top of /donate/[slug] instead of the
+  // generic photo+overlay+heading treatment. When set, both must be set —
+  // rendered responsively (desktop vs mobile) at native aspect ratio, no
+  // dark overlay or duplicate heading on top since the banner already has
+  // its own text.
+  heroImageDesktop?: string;
+  heroImageMobile?: string;
 }
 
 // Single source of truth for every seva shown on the homepage AND its
@@ -85,6 +93,8 @@ export const sevas: Seva[] = [
     title: "Gau Seva",
     shortTitle: "Gau Seva",
     image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783676646237-1783676645536-ChatGPTImageJul102026031357PM.png",
+    heroImageDesktop: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1784305732825-1784305730000-ChatGPTImageJul172026095835PM.png",
+    heroImageMobile: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1784305706071-1784305696382-ChatGPTImageJul172026095421PM.png",
     tagline: "Support daily care for our protected cows",
     description:
       "Cows hold a sacred place in Vedic culture. Your Gau Seva donation supports fodder, medical care, and shelter for the cows in our care — an act of compassion Lord Krishna Himself cherishes.",

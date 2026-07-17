@@ -7,7 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  ChevronRight, CheckCircle2, Loader2, ShieldCheck, Users, TrendingUp,
+  ChevronRight, CheckCircle2, Loader2, ShieldCheck,
   ChevronDown, Copy, Check, Building2, UtensilsCrossed, FileCheck2, Landmark, Sparkles,
 } from "lucide-react";
 import { getSevaBySlug, sevas, getSevaHref } from "@/lib/sevaConfig";
@@ -97,9 +97,6 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
   const [donors, setDonors] = useState<Donor[]>([]);
-  const [totalRaised, setTotalRaised] = useState(0);
-  const [donorCount, setDonorCount] = useState(0);
-  const [statsLoading, setStatsLoading] = useState(true);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
@@ -126,11 +123,8 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
         if (res.ok) {
           const data = await res.json();
           setDonors(data.donors || []);
-          setTotalRaised(data.totalAmount || 0);
-          setDonorCount(data.donorCount || 0);
         }
       } catch {}
-      setStatsLoading(false);
     })();
   }, [seva]);
 
@@ -220,8 +214,6 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
               message: "Thank you! Your donation has been received. Hare Krishna 🙏",
             });
             setDonors((d) => [{ name: `${form.name.split(" ")[0]} ${form.name.split(" ").slice(-1)[0].charAt(0)}.`, amount: finalAmount, time: "just now" }, ...d]);
-            setTotalRaised((t) => t + finalAmount);
-            setDonorCount((c) => c + 1);
           } catch (err) {
             setStatus({
               type: "error",
@@ -246,61 +238,51 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
     <PageLayout>
     <main className="bg-background">
       {/* Hero */}
-      <section className="relative overflow-hidden pt-20">
-        <div className="relative aspect-[16/7] w-full md:aspect-[21/7]">
-          <Image src={seva.image} alt={seva.title} fill priority sizes="100vw" className="object-cover" />
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,hsl(220,85%,10%,0.35)_0%,hsl(220,85%,8%,0.85)_100%)]" />
-        </div>
-        <div className="absolute inset-0 flex flex-col items-center justify-end px-4 pb-10 text-center md:pb-14">
-          <nav className="mb-4 flex items-center gap-1.5 text-xs text-background/70">
-            <Link href="/" className="hover:text-background">Home</Link>
+      {seva.heroImageDesktop && seva.heroImageMobile ? (
+        // Dedicated, fully-designed banner (title/CTA baked into the image
+        // itself) — shown plain and clear, no dark overlay or duplicate
+        // heading on top, since that would fight the banner's own text.
+        <section className="relative overflow-hidden pt-20">
+          <h1 className="sr-only">{seva.title}</h1>
+          <nav className="flex items-center gap-1.5 bg-card px-4 py-2.5 text-xs text-muted-foreground">
+            <Link href="/" className="hover:text-primary">Home</Link>
             <ChevronRight className="h-3 w-3" />
-            <span className="text-background">{seva.title}</span>
+            <span className="text-foreground">{seva.title}</span>
           </nav>
-          <span className="mb-3 text-3xl">{seva.icon}</span>
-          <h1 className="mb-2 font-heading text-3xl font-bold text-background md:text-5xl">{seva.title}</h1>
-          <p className="max-w-xl text-sm text-background/85 md:text-base">{seva.tagline}</p>
-        </div>
-      </section>
-
-      {/* Impact stats strip */}
-      <section className="border-b border-border bg-card">
-        <div className="container mx-auto grid grid-cols-2 gap-4 px-4 py-6 sm:grid-cols-3">
-          <div className="text-center">
-            <p className="flex items-center justify-center gap-1.5 font-heading text-2xl font-bold text-gold md:text-3xl">
-              <TrendingUp className="h-5 w-5" />
-              {statsLoading ? "…" : `₹${totalRaised.toLocaleString("en-IN")}`}
-            </p>
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Raised for this Seva</p>
-          </div>
-          <div className="text-center">
-            <p className="flex items-center justify-center gap-1.5 font-heading text-2xl font-bold text-primary md:text-3xl">
-              <Users className="h-5 w-5" />
-              {statsLoading ? "…" : donorCount.toLocaleString("en-IN")}
-            </p>
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Devotees Contributed</p>
-          </div>
-          <div className="col-span-2 text-center sm:col-span-1">
-            <p className="font-heading text-2xl font-bold text-primary md:text-3xl">80G</p>
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Tax Exemption Available</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Donor privileges strip */}
-      <section className="border-b border-border bg-background">
-        <div className="container mx-auto grid grid-cols-2 gap-4 px-4 py-8 lg:grid-cols-4">
-          {SEVA_PRIVILEGES.map((p) => (
-            <div key={p.title} className="flex items-start gap-3">
-              <p.icon className="mt-0.5 h-6 w-6 shrink-0 text-gold" />
-              <div>
-                <p className="text-sm font-bold text-primary">{p.title}</p>
-                <p className="text-xs leading-relaxed text-muted-foreground">{p.text}</p>
-              </div>
+          <button
+            onClick={() => document.getElementById("donation-form")?.scrollIntoView({ behavior: "smooth" })}
+            className="block w-full text-left"
+            aria-label={`Donate to ${seva.title}`}
+          >
+            <div className="relative hidden w-full md:block" style={{ aspectRatio: "1925 / 817" }}>
+              <Image src={seva.heroImageDesktop} alt={seva.title} fill priority sizes="100vw" className="object-cover" />
             </div>
-          ))}
-        </div>
-      </section>
+            <div className="relative w-full md:hidden" style={{ aspectRatio: "941 / 1672" }}>
+              <Image src={seva.heroImageMobile} alt={seva.title} fill priority sizes="100vw" className="object-cover" />
+            </div>
+          </button>
+        </section>
+      ) : (
+        <section className="relative overflow-hidden pt-20">
+          <div className="relative aspect-[16/7] w-full md:aspect-[21/7]">
+            <Image src={seva.image} alt={seva.title} fill priority sizes="100vw" className="object-cover" />
+            {/* Lightened from the previous 35%/85% dark gradient so the
+                banner photo itself reads clearly, while keeping just
+                enough contrast for the white heading text at the bottom. */}
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,hsl(220,85%,10%,0.08)_0%,hsl(220,85%,8%,0.55)_100%)]" />
+          </div>
+          <div className="absolute inset-0 flex flex-col items-center justify-end px-4 pb-10 text-center md:pb-14">
+            <nav className="mb-4 flex items-center gap-1.5 text-xs text-background/70">
+              <Link href="/" className="hover:text-background">Home</Link>
+              <ChevronRight className="h-3 w-3" />
+              <span className="text-background">{seva.title}</span>
+            </nav>
+            <span className="mb-3 text-3xl">{seva.icon}</span>
+            <h1 className="mb-2 font-heading text-3xl font-bold text-background md:text-5xl">{seva.title}</h1>
+            <p className="max-w-xl text-sm text-background/85 md:text-base">{seva.tagline}</p>
+          </div>
+        </section>
+      )}
 
       <div className="container mx-auto grid gap-10 px-4 py-14 lg:grid-cols-[1fr_420px]">
         {/* Left column */}
@@ -472,12 +454,14 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
               </motion.div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="rounded-2xl bg-[hsl(42,92%,56%,0.1)] p-4 text-center">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">You are donating</p>
-                  <p className="font-heading text-3xl font-bold text-gold">
-                    ₹{finalAmount ? finalAmount.toLocaleString("en-IN") : "0"}
-                  </p>
-                  <p className="text-xs text-muted-foreground">{seva.title}</p>
+                <div className="rounded-2xl bg-gradient-gold p-[2px] shadow-gold">
+                  <div className="rounded-[calc(1rem-2px)] bg-card p-4 text-center">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">You are donating</p>
+                    <p className="font-heading text-4xl font-extrabold text-gold drop-shadow-sm">
+                      ₹{finalAmount ? finalAmount.toLocaleString("en-IN") : "0"}
+                    </p>
+                    <p className="text-xs font-semibold text-muted-foreground">{seva.title}</p>
+                  </div>
                 </div>
 
                 {useCustom && (
@@ -574,6 +558,21 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
           </div>
         </div>
       </div>
+
+      {/* Donor privileges — moved below the payment form */}
+      <section className="border-t border-border bg-card">
+        <div className="container mx-auto grid grid-cols-2 gap-4 px-4 py-8 lg:grid-cols-4">
+          {SEVA_PRIVILEGES.map((p) => (
+            <div key={p.title} className="flex items-start gap-3">
+              <p.icon className="mt-0.5 h-6 w-6 shrink-0 text-gold" />
+              <div>
+                <p className="text-sm font-bold text-primary">{p.title}</p>
+                <p className="text-xs leading-relaxed text-muted-foreground">{p.text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
 
       {/* Sticky mobile donate bar — the form sits below the fold on phones */}
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 p-3 backdrop-blur lg:hidden">
