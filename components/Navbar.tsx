@@ -155,7 +155,7 @@ const Navbar = () => {
           <Link href="/" className="flex items-center gap-3">
             <Image
               src={typeof ISKLogo === 'string' ? ISKLogo : ISKLogo.src}
-              alt="Hare Krishna Movement Vizag"
+              alt="ISKCON Visakhapatnam - Hare Krishna Movement Vizag"
               width={scrolled ? 64 : 74}
               height={scrolled ? 64 : 74}
               priority

@@ -69,8 +69,9 @@ export default function AboutPage() {
                 Grace A.C. Bhaktivedanta Swami Prabhupada leaving the shores of India to fulfill this prophecy.
               </p>
               <p className="text-muted-foreground leading-relaxed mb-4">
-                Following in the footsteps of our revered Founder-Acharya, we at Hare Krishna Movement India 
-                (HKMI), Visakhapatnam have been conducting spiritual, educational and cultural activities with 
+                Following in the footsteps of our revered Founder-Acharya, we at Hare Krishna Movement India
+                (HKMI), Visakhapatnam — <strong className="text-foreground">ISKCON Visakhapatnam</strong>, located
+                in Gambheeram — have been conducting spiritual, educational and cultural activities with
                 the devoted purpose of bringing about physical, emotional and spiritual well-being.
               </p>
               <p className="text-muted-foreground leading-relaxed">

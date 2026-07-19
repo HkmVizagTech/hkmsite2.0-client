@@ -84,10 +84,11 @@ const fmtDate = (s?: string) => {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const blog = await getBlog(slug);
-  if (!blog) return { title: "Blog · Hare Krishna Vaikuntham" };
+  if (!blog) return { title: "Blog · ISKCON Visakhapatnam" };
   return {
-    title: blog.metaTitle || `${blog.title} · Hare Krishna Vaikuntham`,
+    title: blog.metaTitle || `${blog.title} · ISKCON Visakhapatnam Blog`,
     description: blog.metaDescription || blog.excerpt,
+    alternates: { canonical: `/blogs/${blog.slug}` },
     openGraph: {
       title: blog.title,
       description: blog.excerpt,
@@ -121,8 +122,34 @@ export default async function BlogPostPage({
     "Click here & start reading now!"
   )}`;
 
+  const blogPostingJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: blog.title,
+    description: blog.excerpt,
+    image: blog.coverImage ? [blog.coverImage] : undefined,
+    datePublished: blog.publishedAt,
+    dateModified: blog.updatedAt || blog.publishedAt,
+    author: {
+      "@type": "Person",
+      name: blog.author?.name || "Admin",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "ISKCON Visakhapatnam",
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `${process.env.NEXT_PUBLIC_SITE_URL || "https://harekrishnavizag.org"}/blogs/${blog.slug}`,
+    },
+  };
+
   return (
     <PageLayout>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostingJsonLd) }}
+    />
     <main className="bg-background pt-20">
       <article className="container mx-auto px-4 py-8 md:py-12">
         {/* Breadcrumb */}
