@@ -6,6 +6,7 @@
 export const dynamic = "force-dynamic";
 
 import { authFetch } from "@/lib/authClient";
+import { useAuth } from "@/contexts/AuthContext";
 
 import { useState, useEffect, useRef } from "react";
 import nextDynamic from "next/dynamic";
@@ -50,6 +51,8 @@ interface Blog {
   updatedAt: string;
   metaTitle?: string;
   metaDescription?: string;
+  deletionRequested?: boolean;
+  deletionRequestedAt?: string;
 }
 
 // GVD-style 13 categories
@@ -72,6 +75,8 @@ const CATEGORIES = [
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:3000";
 
 export default function AdminBlogs() {
+  const { user } = useAuth();
+  const isBlogsAdmin = user?.role === "blogs_admin";
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -241,15 +246,19 @@ export default function AdminBlogs() {
   };
 
   const handleDelete = async (blog: Blog) => {
-    if (!confirm(`Delete "${blog.title}"? This cannot be undone.`)) return;
-    show && show("Deleting…");
+    const confirmMsg = isBlogsAdmin
+      ? `Request deletion of "${blog.title}"? An admin will need to approve this before it's removed.`
+      : `Delete "${blog.title}"? This cannot be undone.`;
+    if (!confirm(confirmMsg)) return;
+    show && show(isBlogsAdmin ? "Requesting…" : "Deleting…");
     try {
       const res = await authFetch(`${API_URL}/blogs/${blog._id}`, {
         method: "DELETE",
         credentials: "include",
       });
+      const json = await res.json().catch(() => ({}));
       if (res.ok) {
-        toast({ title: "Deleted" });
+        toast({ title: isBlogsAdmin ? "Deletion requested" : "Deleted", description: isBlogsAdmin ? json.message : undefined });
         fetchBlogs();
       } else {
         toast({ title: "Delete failed", variant: "destructive" });
@@ -397,10 +406,23 @@ export default function AdminBlogs() {
                     variant="ghost"
                     className="h-8 text-red-600 hover:text-red-700 hover:bg-red-50"
                     onClick={() => handleDelete(blog)}
+                    disabled={!!blog.deletionRequested}
+                    title={
+                      blog.deletionRequested
+                        ? "Deletion already requested — waiting on admin approval"
+                        : isBlogsAdmin
+                        ? "Request deletion (needs admin approval)"
+                        : "Delete"
+                    }
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </Button>
                 </div>
+                {blog.deletionRequested && (
+                  <Badge variant="outline" className="mt-2 w-full justify-center border-amber-300 bg-amber-50 text-amber-700">
+                    Deletion pending approval
+                  </Badge>
+                )}
               </CardContent>
             </Card>
           ))}

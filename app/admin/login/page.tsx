@@ -17,7 +17,11 @@ export default function AdminLogin() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.push(user?.role === "donations_admin" ? "/donations/admin" : "/admin");
+      const dest =
+        user?.role === "donations_admin" ? "/donations/admin" :
+        user?.role === "blogs_admin" ? "/admin/blogs" :
+        "/admin";
+      router.push(dest);
     }
   }, [isAuthenticated, user, router]);
 

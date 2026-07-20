@@ -17,6 +17,7 @@ import {
   GalleryHorizontal,
   Megaphone,
   FolderOpen,
+  Trash2,
 } from "lucide-react";
 import NextImage from "next/image";
 import Link from "next/link";
@@ -52,6 +53,7 @@ const contentItems = [
   { title: "Media Library", url: "/admin/media", icon: FolderOpen },
   { title: "Festivals", url: "/admin/festivals", icon: Image },
   { title: "Blogs", url: "/admin/blogs", icon: PenSquare }, // <-- NEW
+  { title: "Pending Deletions", url: "/admin/blogs/deletion-requests", icon: Trash2 },
   { title: "Content", url: "/admin/content", icon: FileText },
 ];
 
@@ -127,11 +129,17 @@ const AdminSidebar = () => {
             </div>
           </div>
         )}
-        {renderGroup("Overview", mainItems)}
-        <Separator className="my-2" />
-        {renderGroup("Content", contentItems)}
-        <Separator className="my-2" />
-        {renderGroup("System", systemItems)}
+        {user?.role === "blogs_admin" ? (
+          renderGroup("Blogs", [{ title: "Blogs", url: "/admin/blogs", icon: PenSquare }])
+        ) : (
+          <>
+            {renderGroup("Overview", mainItems)}
+            <Separator className="my-2" />
+            {renderGroup("Content", contentItems)}
+            <Separator className="my-2" />
+            {renderGroup("System", systemItems)}
+          </>
+        )}
       </SidebarContent>
 
       <SidebarFooter className="border-t p-2">

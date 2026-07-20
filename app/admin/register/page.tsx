@@ -110,7 +110,7 @@ export default function AdminRegister() {
             </div>
             <div>
               <label className="text-sm font-medium mb-1.5 block">Access Level</label>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-3">
                 <button
                   type="button"
                   onClick={() => setForm({ ...form, role: "user" })}
@@ -126,6 +126,14 @@ export default function AdminRegister() {
                 >
                   <span className="block font-semibold">Donations Admin</span>
                   <span className="block text-xs text-muted-foreground">Only /donations/admin</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setForm({ ...form, role: "blogs_admin" })}
+                  className={`rounded-lg border-2 p-3 text-left text-sm transition-colors ${form.role === "blogs_admin" ? "border-primary bg-primary/5" : "border-border"}`}
+                >
+                  <span className="block font-semibold">Blog Manager</span>
+                  <span className="block text-xs text-muted-foreground">Write/edit only — deletion needs your approval</span>
                 </button>
               </div>
             </div>
