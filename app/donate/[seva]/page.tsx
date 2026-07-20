@@ -285,40 +285,13 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
       )}
 
       <div className="container mx-auto grid gap-10 px-4 py-14 lg:grid-cols-[1fr_420px]">
-        {/* Left column */}
-        <div>
+        {/* Left column — description + supplementary content. order-2 on
+            mobile so the payment form (right column) appears first, right
+            after the hero, instead of requiring a long scroll past this. */}
+        <div className="order-2 lg:order-1">
           <Ornament className="mb-5 !justify-start" />
           <h2 className="mb-4 font-heading text-2xl font-bold">About This Seva</h2>
           <p className="mb-8 leading-relaxed text-muted-foreground">{seva.description}</p>
-
-          <h3 className="mb-4 text-sm font-bold uppercase tracking-wide text-muted-foreground">
-            Choose an Amount
-          </h3>
-          <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            {seva.tiers.map((tier, i) => (
-              <button
-                key={tier.label}
-                type="button"
-                onClick={() => { setTierIndex(i); setUseCustom(false); }}
-                className={`rounded-xl border-[1.5px] px-3 py-3 text-center text-sm font-semibold transition-all ${
-                  !useCustom && tierIndex === i
-                    ? "border-[hsl(var(--gold-deep))] bg-[hsl(42,92%,56%,0.12)] text-gold"
-                    : "border-border hover:border-[hsl(var(--gold-deep))]"
-                }`}
-              >
-                {tier.label}
-              </button>
-            ))}
-          </div>
-          <button
-            type="button"
-            onClick={() => setUseCustom(true)}
-            className={`mb-10 w-full rounded-xl border-[1.5px] px-3 py-3 text-sm font-semibold transition-all sm:w-auto ${
-              useCustom ? "border-[hsl(var(--gold-deep))] bg-[hsl(42,92%,56%,0.12)] text-gold" : "border-border hover:border-[hsl(var(--gold-deep))]"
-            }`}
-          >
-            Enter a custom amount
-          </button>
 
           {/* Live Donor Wall — real data */}
           {donors.length > 0 && (
@@ -433,8 +406,10 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
           </div>
         </div>
 
-        {/* Right: sticky donation form */}
-        <div id="donation-form" className="scroll-mt-24 lg:sticky lg:top-24 lg:self-start">
+        {/* Right: sticky donation form. order-1 on mobile so this (and the
+            amount tiers below) appears right after the hero, not after the
+            long description/donor-wall/FAQ content in the left column. */}
+        <div id="donation-form" className="order-1 scroll-mt-24 lg:order-2 lg:sticky lg:top-24 lg:self-start">
           <div className="rounded-3xl border border-border bg-card p-6 shadow-elevated">
             {status?.type === "success" ? (
               <motion.div
@@ -454,6 +429,35 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
               </motion.div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
+                <h3 className="text-sm font-bold uppercase tracking-wide text-muted-foreground">
+                  Choose an Amount
+                </h3>
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                  {seva.tiers.map((tier, i) => (
+                    <button
+                      key={tier.label}
+                      type="button"
+                      onClick={() => { setTierIndex(i); setUseCustom(false); }}
+                      className={`rounded-xl border-[1.5px] px-3 py-3 text-center text-sm font-semibold transition-all ${
+                        !useCustom && tierIndex === i
+                          ? "border-[hsl(var(--gold-deep))] bg-[hsl(42,92%,56%,0.12)] text-gold"
+                          : "border-border hover:border-[hsl(var(--gold-deep))]"
+                      }`}
+                    >
+                      {tier.label}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setUseCustom(true)}
+                  className={`w-full rounded-xl border-[1.5px] px-3 py-3 text-sm font-semibold transition-all ${
+                    useCustom ? "border-[hsl(var(--gold-deep))] bg-[hsl(42,92%,56%,0.12)] text-gold" : "border-border hover:border-[hsl(var(--gold-deep))]"
+                  }`}
+                >
+                  Enter a custom amount
+                </button>
+
                 <div className="rounded-2xl bg-gradient-gold p-[2px] shadow-gold">
                   <div className="rounded-[calc(1rem-2px)] bg-card p-4 text-center">
                     <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">You are donating</p>
