@@ -6,6 +6,7 @@ import { Menu, X, Phone, Mail, Sun, Moon, Clock, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ISKLogo from "@/assets/ISKCONGambheeramLogo.jpeg";
 import HKVTLogo from "@/assets/HKVTLogo.png";
+import HKVTLogoIcon from "@/assets/HKVTLogoIcon.png";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
@@ -153,22 +154,47 @@ const Navbar = () => {
         <div className={`container mx-auto flex items-center justify-between ${
           scrolled ? "px-4 h-12 md:px-5 md:h-14" : "px-3 h-14 md:px-4 md:h-16"
         }`}>
-          <Link href="/" className="flex items-center gap-3">
+          <Link href="/" className="flex shrink-0 items-center gap-3">
             <Image
               src={typeof ISKLogo === 'string' ? ISKLogo : ISKLogo.src}
               alt="ISKCON Visakhapatnam - Hare Krishna Movement Vizag"
-              width={scrolled ? 64 : 74}
-              height={scrolled ? 64 : 74}
+              // Same fix as the HKVT logo below: width/height just need to
+              // match the real aspect ratio (819x305 ≈ 2.68:1) so Next
+              // requests a properly high-res source. The actual displayed
+              // height is controlled by the style prop, not these numbers
+              // (previously used matching width=height square values here,
+              // which made Next generate the real file only ~24-36px tall
+              // regardless of what the style said).
+              width={300}
+              height={112}
               priority
               loading="eager"
-              className="w-auto transition-all duration-300"
-              style={{ width: 'auto' }}
+              className="shrink-0 transition-all duration-300"
+              style={{ height: scrolled ? '64px' : '74px', width: 'auto' }}
             />
-            {/* Secondary mark for the Vaikuntam temple project — hidden on
-                mobile (hidden md:flex) since the compact mobile header has
-                no room for two logos alongside the hamburger + toggle. */}
-            <div className="hidden md:flex items-center gap-2.5">
-              <span className="h-6 w-px bg-border" aria-hidden />
+            {/* Compact icon-only mark for mobile/small-tablet -- the full
+                wordmark logo needs real estate that only shows up from
+                1350px+ (see below), so mobile gets just the temple
+                silhouette, small and unobtrusive next to ISKCON. */}
+            <div className="flex shrink-0 items-center gap-2 min-[1350px]:hidden">
+              <span className="h-5 w-px shrink-0 bg-border" aria-hidden />
+              <Image
+                src={typeof HKVTLogoIcon === 'string' ? HKVTLogoIcon : HKVTLogoIcon.src}
+                alt="Hare Krishna Vaikuntam Cultural Complex"
+                width={200}
+                height={202}
+                className="shrink-0 transition-all duration-300"
+                style={{ height: scrolled ? '26px' : '30px', width: 'auto' }}
+              />
+            </div>
+            {/* Secondary mark for the Vaikuntam temple project — full logo
+                only appears from 1350px+, where testing confirmed it fits
+                alongside all 11 nav items + icons + CTA without any
+                clipping (1280px and below were too tight even after
+                trimming nav spacing, so it stays icon-only/hidden below
+                that rather than risk the layout overflowing). */}
+            <div className="hidden shrink-0 items-center gap-2.5 min-[1350px]:flex">
+              <span className="h-6 w-px shrink-0 bg-border" aria-hidden />
               <Image
                 src={typeof HKVTLogo === 'string' ? HKVTLogo : HKVTLogo.src}
                 alt="Hare Krishna Vaikuntam Cultural Complex"
@@ -181,7 +207,7 @@ const Navbar = () => {
                 // itself came out only ~16px tall no matter what CSS said.)
                 width={300}
                 height={101}
-                className="transition-all duration-300"
+                className="shrink-0 transition-all duration-300"
                 style={{ height: scrolled ? '26px' : '30px', width: 'auto' }}
               />
             </div>
@@ -194,7 +220,7 @@ const Navbar = () => {
               <Link
                 key={item.label}
                 href={item.href}
-                className={`whitespace-nowrap px-2.5 py-2 text-sm font-medium transition-all duration-200 rounded-lg relative ${
+                className={`whitespace-nowrap px-2 py-2 text-[13px] font-medium transition-all duration-200 rounded-lg relative ${
                   pathname === item.href
                     ? "text-primary"
                     : "text-muted-foreground hover:text-primary"
@@ -212,17 +238,17 @@ const Navbar = () => {
             ))}
           </div>
 
-          <div className="hidden lg:flex items-center gap-2">
+          <div className="hidden lg:flex items-center gap-1.5">
             <button
               onClick={() => setDarkMode(!darkMode)}
-              className="w-11 h-11 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition-all"
+              className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition-all"
               aria-label="Toggle dark mode"
             >
               {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
             <Button
               variant="default"
-              className="rounded-full px-5 bg-gradient-ocean text-primary-foreground border-0 hover:opacity-90"
+              className="rounded-full px-4 bg-gradient-ocean text-primary-foreground border-0 hover:opacity-90"
               asChild
             >
               <Link href="/donate">
