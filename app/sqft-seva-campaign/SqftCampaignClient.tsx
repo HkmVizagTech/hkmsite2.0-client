@@ -53,7 +53,7 @@ const CAMPAIGN = {
   minCustomAmount: 500,
   phone: "+91 89777 61187",
   phoneHref: "tel:+918977761187",
-  email: "info.vizag@hkm-group.org",
+  email: "social@hkmvizag.org",
   heroImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783672822355-1783672821116-ChatGPTImageJul92026043238PM.png",
   aboutImage: "/assets/vizag-temple-1.jpeg",
   gallery: [

@@ -114,13 +114,13 @@ const Navbar = () => {
           >
             <div className="container mx-auto flex h-8 items-center justify-between px-3 text-[10px] md:h-10 md:px-4 md:text-xs">
               <div className="flex items-center gap-4">
-                <a href="tel:+919666611108" className="flex items-center gap-1.5 hover:text-secondary transition-colors">
+                <a href="tel:+918977761187" className="flex items-center gap-1.5 hover:text-secondary transition-colors">
                   <Phone className="w-3 h-3" />
-                  <span>+91 96666 11108</span>
+                  <span>+91 89777 61187</span>
                 </a>
-                <a href="mailto:info.vizag@hkm-group.org" className="hidden sm:flex items-center gap-1.5 hover:text-secondary transition-colors">
+                <a href="mailto:social@hkmvizag.org" className="hidden sm:flex items-center gap-1.5 hover:text-secondary transition-colors">
                   <Mail className="w-3 h-3" />
-                  <span>info.vizag@hkm-group.org</span>
+                  <span>social@hkmvizag.org</span>
                 </a>
               </div>
               <div className="flex items-center gap-4">

@@ -13,8 +13,8 @@ import { useToast } from "@/hooks/use-toast";
 
 const contactInfo = [
   { icon: MapPin, title: "Address", lines: ["Chaitanya Bhavan, Hare Krishna Vaikuntam Cultural Centre", "IIM Rd, opp. Akshaya Patra Foundation, Gambhiram", "Visakhapatnam, Andhra Pradesh 531163"] },
-  { icon: Phone, title: "Phone", lines: ["+91 96666 11108"] },
-  { icon: Mail, title: "Email", lines: ["info.vizag@hkm-group.org"] },
+  { icon: Phone, title: "Phone", lines: ["+91 89777 61187"] },
+  { icon: Mail, title: "Email", lines: ["social@hkmvizag.org"] },
   { icon: Clock, title: "Visiting Hours", lines: ["Morning: 4:30 AM - 1:00 PM", "Evening: 4:00 PM - 8:30 PM"] },
 ];
 
@@ -57,7 +57,7 @@ export default function ContactPage() {
     } catch (err) {
       toast({
         title: "Couldn't send message",
-        description: "Please try again, or reach us directly at info.vizag@hkm-group.org",
+        description: "Please try again, or reach us directly at social@hkmvizag.org",
         variant: "destructive",
       });
     } finally {

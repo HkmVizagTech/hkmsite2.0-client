@@ -353,7 +353,7 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
             </h3>
             <p className="mb-4 text-sm text-muted-foreground">
               You can also donate via NEFT/RTGS/UPI directly to our temple account. Please email us your
-              transaction reference and PAN (if you need an 80G receipt) to <a href="mailto:info.vizag@hkm-group.org" className="text-primary underline">info.vizag@hkm-group.org</a>.
+              transaction reference and PAN (if you need an 80G receipt) to <a href="mailto:social@hkmvizag.org" className="text-primary underline">social@hkmvizag.org</a>.
             </p>
             <div className="space-y-2 rounded-xl bg-muted/40 p-4 text-sm">
               {Object.entries({

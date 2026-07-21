@@ -67,8 +67,8 @@ const organizationJsonLd = {
     postalCode: "531163",
     addressCountry: "IN",
   },
-  telephone: "+91 96666 11108",
-  email: "info.vizag@hkm-group.org",
+  telephone: "+91 89777 61187",
+  email: "social@hkmvizag.org",
   openingHours: "Mo-Su 04:30-20:30",
 };
 

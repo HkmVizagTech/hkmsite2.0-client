@@ -151,18 +151,18 @@ const Footer = () => {
                   </Link>
                 ))}
                 <a
-                  href="tel:+919666611108"
+                  href="tel:+918977761187"
                   className="group mt-4 flex items-start gap-3 text-sm text-background/50 transition-colors hover:text-primary"
                 >
                   <Phone className="mt-0.5 h-4 w-4 shrink-0 group-hover:text-primary" />
-                  <span>+91 96666 11108</span>
+                  <span>+91 89777 61187</span>
                 </a>
                 <a
-                  href="mailto:info.vizag@hkm-group.org"
+                  href="mailto:social@hkmvizag.org"
                   className="group flex items-start gap-3 text-sm text-background/50 transition-colors hover:text-primary"
                 >
                   <Mail className="mt-0.5 h-4 w-4 shrink-0 group-hover:text-primary" />
-                  <span>info.vizag@hkm-group.org</span>
+                  <span>social@hkmvizag.org</span>
                 </a>
               </div>
             </div>
