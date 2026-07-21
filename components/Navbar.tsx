@@ -147,8 +147,8 @@ const Navbar = () => {
         animate={{ y: 0 }}
         className={`fixed left-0 right-0 z-50 transition-all duration-500 ${
           scrolled
-            ? "top-2 mx-2 md:mx-8 rounded-2xl bg-background/92 backdrop-blur-xl shadow-elevated border border-border/50"
-            : "top-8 md:top-10 bg-background/84 backdrop-blur-sm"
+            ? "top-2 mx-2 md:mx-8 rounded-2xl bg-background shadow-elevated border border-border/50"
+            : "top-8 md:top-10 bg-background border-b border-border/40"
         }`}
       >
         <div className={`container mx-auto flex items-center justify-between ${
