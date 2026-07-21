@@ -161,7 +161,7 @@ const Navbar = () => {
               // Same fix as the HKVT logo below: width/height just need to
               // match the real aspect ratio (819x305 ≈ 2.68:1) so Next
               // requests a properly high-res source. The actual displayed
-              // height is controlled by the style prop, not these numbers
+              // height is controlled by className, not these numbers
               // (previously used matching width=height square values here,
               // which made Next generate the real file only ~24-36px tall
               // regardless of what the style said).
@@ -169,8 +169,9 @@ const Navbar = () => {
               height={112}
               priority
               loading="eager"
-              className="shrink-0 transition-all duration-300"
-              style={{ height: scrolled ? '64px' : '74px', width: 'auto' }}
+              className={`w-auto shrink-0 transition-all duration-300 ${
+                scrolled ? "h-9 md:h-16" : "h-10 md:h-[74px]"
+              }`}
             />
             {/* Compact icon-only mark for mobile/small-tablet -- the full
                 wordmark logo needs real estate that only shows up from
@@ -183,8 +184,7 @@ const Navbar = () => {
                 alt="Hare Krishna Vaikuntam Cultural Complex"
                 width={200}
                 height={202}
-                className="shrink-0 transition-all duration-300"
-                style={{ height: scrolled ? '26px' : '30px', width: 'auto' }}
+                className={`w-auto shrink-0 transition-all duration-300 ${scrolled ? "h-7" : "h-8"}`}
               />
             </div>
             {/* Secondary mark for the Vaikuntam temple project — full logo
