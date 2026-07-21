@@ -169,7 +169,7 @@ const Navbar = () => {
               height={112}
               priority
               loading="eager"
-              className="h-9 w-auto shrink-0 transition-all duration-300 md:h-16"
+              className="h-9 w-auto shrink-0 transition-all duration-300 md:h-14"
             />
             {/* Compact icon-only mark for mobile/small-tablet -- the full
                 wordmark logo needs real estate that only shows up from

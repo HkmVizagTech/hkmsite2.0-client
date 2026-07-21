@@ -57,12 +57,11 @@ const CAMPAIGN = {
   heroImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783672822355-1783672821116-ChatGPTImageJul92026043238PM.png",
   aboutImage: "/assets/vizag-temple-1.jpeg",
   gallery: [
-    { src: "/assets/home-temple-construction-banner.webp", alt: "Hare Krishna Vaikuntham Temple construction" },
-    { src: "/assets/vizag-temple-1.jpeg", alt: "Temple view" },
-    { src: "/assets/gallery-darshan-1.jpg", alt: "Deity darshan" },
-    { src: "/assets/gallery-festival-1.jpg", alt: "Festival celebration" },
-    { src: "/assets/gallery-annadaan-1.jpg", alt: "Annadana Seva" },
-    { src: "/assets/gallery-aarti.jpg", alt: "Evening aarti" },
+    { src: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1784644186447-1784644185742-WhatsAppImage2026-07-03at1.56.13PM1.jpeg", alt: "Hare Krishna Vaikuntham Temple — architectural rendering" },
+    { src: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1784644186904-1784644186068-WhatsAppImage2026-07-03at1.56.13PM.jpeg", alt: "Hare Krishna Vaikuntham Temple — architectural rendering" },
+    { src: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1784644187783-1784644186209-WhatsAppImage2026-07-03at1.56.14PM.jpeg", alt: "Hare Krishna Vaikuntham Temple — architectural rendering" },
+    { src: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1784644188208-1784644186264-WhatsAppImage2026-07-03at1.57.26PM.jpeg", alt: "Hare Krishna Vaikuntham Temple — architectural rendering" },
+    { src: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1784644187338-1784644186154-WhatsAppImage2026-07-03at1.56.14PM2.jpeg", alt: "Hare Krishna Vaikuntham Temple — architectural rendering" },
   ],
 };
 
