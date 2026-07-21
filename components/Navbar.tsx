@@ -169,9 +169,7 @@ const Navbar = () => {
               height={112}
               priority
               loading="eager"
-              className={`w-auto shrink-0 transition-all duration-300 ${
-                scrolled ? "h-9 md:h-16" : "h-10 md:h-[74px]"
-              }`}
+              className="h-9 w-auto shrink-0 transition-all duration-300 md:h-16"
             />
             {/* Compact icon-only mark for mobile/small-tablet -- the full
                 wordmark logo needs real estate that only shows up from
@@ -182,9 +180,9 @@ const Navbar = () => {
               <Image
                 src={typeof HKVTLogoIcon === 'string' ? HKVTLogoIcon : HKVTLogoIcon.src}
                 alt="Hare Krishna Vaikuntam Cultural Complex"
-                width={200}
-                height={202}
-                className={`w-auto shrink-0 transition-all duration-300 ${scrolled ? "h-9" : "h-10"}`}
+                width={400}
+                height={406}
+                className="h-9 w-auto shrink-0 transition-all duration-300"
               />
             </div>
             {/* Secondary mark for the Vaikuntam temple project — full logo
@@ -208,7 +206,7 @@ const Navbar = () => {
                 width={300}
                 height={101}
                 className="shrink-0 transition-all duration-300"
-                style={{ height: scrolled ? '26px' : '30px', width: 'auto' }}
+                style={{ height: '26px', width: 'auto' }}
               />
             </div>
           </Link>
