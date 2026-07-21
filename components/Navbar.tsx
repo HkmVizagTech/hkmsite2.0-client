@@ -172,41 +172,23 @@ const Navbar = () => {
               className="h-9 w-auto shrink-0 transition-all duration-300 md:h-14"
             />
             {/* Compact icon-only mark for mobile/small-tablet -- the full
-                wordmark logo needs real estate that only shows up from
-                1350px+ (see below), so mobile gets just the temple
-                silhouette, small and unobtrusive next to ISKCON. */}
-            <div className="flex shrink-0 items-center gap-2 min-[1350px]:hidden">
-              <span className="h-5 w-px shrink-0 bg-border" aria-hidden />
-              <Image
-                src={typeof HKVTLogoIcon === 'string' ? HKVTLogoIcon : HKVTLogoIcon.src}
-                alt="Hare Krishna Vaikuntam Cultural Complex"
-                width={400}
-                height={406}
-                className="h-9 w-auto shrink-0 transition-all duration-300"
-              />
-            </div>
-            {/* Secondary mark for the Vaikuntam temple project — full logo
-                only appears from 1350px+, where testing confirmed it fits
-                alongside all 11 nav items + icons + CTA without any
-                clipping (1280px and below were too tight even after
-                trimming nav spacing, so it stays icon-only/hidden below
-                that rather than risk the layout overflowing). */}
-            <div className="hidden shrink-0 items-center gap-2.5 min-[1350px]:flex">
-              <span className="h-6 w-px shrink-0 bg-border" aria-hidden />
+            {/* Full Vaikuntam logo shown at every screen size. On mobile
+                there's room because the nav links collapse into a hamburger
+                (hidden below lg), and above lg the nav spacing is tight
+                enough to fit it alongside all items. Sized responsively:
+                smaller on phones, larger on desktop. */}
+            <div className="flex shrink-0 items-center gap-2 md:gap-2.5">
+              <span className="h-5 w-px shrink-0 bg-border md:h-6" aria-hidden />
               <Image
                 src={typeof HKVTLogo === 'string' ? HKVTLogo : HKVTLogo.src}
                 alt="Hare Krishna Vaikuntam Cultural Complex"
-                // width/height here just need to match the real aspect ratio
-                // (2438x825 ≈ 2.96:1) so Next requests a properly
-                // high-resolution source image -- the actual DISPLAYED size
-                // is controlled by the height in the style prop below.
-                // (Using a small width here was the bug: Next's optimizer
-                // generates the file at that width, so the source image
-                // itself came out only ~16px tall no matter what CSS said.)
+                // width/height just need to match the real aspect ratio
+                // (2438x825 ≈ 2.96:1) so Next requests a properly high-res
+                // source; actual displayed height is controlled by the
+                // className below.
                 width={300}
                 height={101}
-                className="shrink-0 transition-all duration-300"
-                style={{ height: '26px', width: 'auto' }}
+                className="h-6 w-auto shrink-0 transition-all duration-300 md:h-7"
               />
             </div>
           </Link>
