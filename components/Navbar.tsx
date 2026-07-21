@@ -167,8 +167,8 @@ const Navbar = () => {
             {/* Secondary mark for the Vaikuntam temple project — hidden on
                 mobile (hidden md:flex) since the compact mobile header has
                 no room for two logos alongside the hamburger + toggle. */}
-            <div className="hidden md:flex items-center gap-3">
-              <span className="h-8 w-px bg-border" aria-hidden />
+            <div className="hidden md:flex items-center gap-2.5">
+              <span className="h-6 w-px bg-border" aria-hidden />
               <Image
                 src={typeof HKVTLogo === 'string' ? HKVTLogo : HKVTLogo.src}
                 alt="Hare Krishna Vaikuntam Cultural Complex"
@@ -182,7 +182,7 @@ const Navbar = () => {
                 width={300}
                 height={101}
                 className="transition-all duration-300"
-                style={{ height: scrolled ? '42px' : '48px', width: 'auto' }}
+                style={{ height: scrolled ? '26px' : '30px', width: 'auto' }}
               />
             </div>
           </Link>
