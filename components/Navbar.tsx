@@ -184,7 +184,7 @@ const Navbar = () => {
                 alt="Hare Krishna Vaikuntam Cultural Complex"
                 width={200}
                 height={202}
-                className={`w-auto shrink-0 transition-all duration-300 ${scrolled ? "h-7" : "h-8"}`}
+                className={`w-auto shrink-0 transition-all duration-300 ${scrolled ? "h-9" : "h-10"}`}
               />
             </div>
             {/* Secondary mark for the Vaikuntam temple project — full logo
