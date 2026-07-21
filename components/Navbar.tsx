@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Phone, Mail, Sun, Moon, Clock, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ISKLogo from "@/assets/ISKCONGambheeramLogo.jpeg";
+import HKVTLogo from "@/assets/HKVTLogo.png";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
@@ -163,6 +164,20 @@ const Navbar = () => {
               className="w-auto transition-all duration-300"
               style={{ width: 'auto' }}
             />
+            {/* Secondary mark for the Vaikuntam temple project — hidden on
+                mobile (hidden md:flex) since the compact mobile header has
+                no room for two logos alongside the hamburger + toggle. */}
+            <div className="hidden md:flex items-center gap-3">
+              <span className="h-8 w-px bg-border" aria-hidden />
+              <Image
+                src={typeof HKVTLogo === 'string' ? HKVTLogo : HKVTLogo.src}
+                alt="Hare Krishna Vaikuntam Cultural Complex"
+                width={scrolled ? 32 : 38}
+                height={scrolled ? 32 : 38}
+                className="w-auto transition-all duration-300"
+                style={{ width: 'auto' }}
+              />
+            </div>
           </Link>
 
           {
