@@ -172,10 +172,17 @@ const Navbar = () => {
               <Image
                 src={typeof HKVTLogo === 'string' ? HKVTLogo : HKVTLogo.src}
                 alt="Hare Krishna Vaikuntam Cultural Complex"
-                width={scrolled ? 42 : 48}
-                height={scrolled ? 42 : 48}
-                className="w-auto transition-all duration-300"
-                style={{ width: 'auto' }}
+                // width/height here just need to match the real aspect ratio
+                // (2438x825 ≈ 2.96:1) so Next requests a properly
+                // high-resolution source image -- the actual DISPLAYED size
+                // is controlled by the height in the style prop below.
+                // (Using a small width here was the bug: Next's optimizer
+                // generates the file at that width, so the source image
+                // itself came out only ~16px tall no matter what CSS said.)
+                width={300}
+                height={101}
+                className="transition-all duration-300"
+                style={{ height: scrolled ? '42px' : '48px', width: 'auto' }}
               />
             </div>
           </Link>
@@ -187,7 +194,7 @@ const Navbar = () => {
               <Link
                 key={item.label}
                 href={item.href}
-                className={`px-3 py-2 text-sm font-medium transition-all duration-200 rounded-lg relative ${
+                className={`whitespace-nowrap px-2.5 py-2 text-sm font-medium transition-all duration-200 rounded-lg relative ${
                   pathname === item.href
                     ? "text-primary"
                     : "text-muted-foreground hover:text-primary"
