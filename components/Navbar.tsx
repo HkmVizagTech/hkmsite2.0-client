@@ -172,8 +172,8 @@ const Navbar = () => {
               <Image
                 src={typeof HKVTLogo === 'string' ? HKVTLogo : HKVTLogo.src}
                 alt="Hare Krishna Vaikuntam Cultural Complex"
-                width={scrolled ? 32 : 38}
-                height={scrolled ? 32 : 38}
+                width={scrolled ? 42 : 48}
+                height={scrolled ? 42 : 48}
                 className="w-auto transition-all duration-300"
                 style={{ width: 'auto' }}
               />
