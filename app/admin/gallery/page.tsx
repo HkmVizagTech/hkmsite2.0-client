@@ -18,9 +18,10 @@ import Image from "next/image";
 
 import { getGalleryImages, createGalleryImage, deleteGalleryImage } from "@/lib/galleryApi";
 import { getToken } from "@/lib/authClient";
+
+const apiBase = () =>
+  (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(/\/+$/, "");
 import { useAdminLoader } from "@/contexts/AdminLoaderContext";
-import { parseCookies } from "nookies";
-import * as yup from "yup";
 
 const categories = ["All", "Daily Darshan", "Festivals", "Seva", "Community"];
 
@@ -106,48 +107,34 @@ export default function AdminGallery() {
   };
 
   const handleUpload = async () => {
-    const schema = yup.object().shape({
-      title: yup.string().required("Please enter a title for the gallery images."),
-      files: yup.array().min(1, "Please select at least one image to upload."),
-    });
-    try {
-      setFormErrors({});
-      await schema.validate({ title: uploadForm.title, files: uploadForm.files }, { abortEarly: false });
-    } catch (err: any) {
-      const next: Record<string, string> = {};
-      if (err && err.inner && Array.isArray(err.inner)) {
-        for (const e of err.inner) {
-          if (e.path) next[e.path] = e.message;
-        }
-      } else if (err && err.message) {
-        next["general"] = err.message;
-      }
-      setFormErrors(next);
+    setFormErrors({});
+    if (!uploadForm.title.trim()) {
+      setFormErrors({ title: "Please enter a title for the gallery images." });
       return;
     }
-    if (!process.env.NEXT_PUBLIC_CLOUDINARY_PRESET || !process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD) {
-      setFormErrors({ general: "Cloudinary environment variables are missing. Please check your .env.local file." });
+    if (!uploadForm.files.length) {
+      setFormErrors({ files: "Please select at least one image to upload." });
       return;
     }
+
     try {
       show("Uploading...");
       const urls: string[] = [];
+      const token = getToken();
+
       for (const file of uploadForm.files) {
         const formData = new FormData();
         formData.append("file", file);
-        formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_PRESET);
-        const cloudRes = await fetch(`https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD}/image/upload`, {
+        const res = await fetch(`${apiBase()}/gallery/upload-image`, {
           method: "POST",
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
           body: formData,
         });
-        const cloudData = await cloudRes.json();
-        if (cloudData.secure_url) urls.push(cloudData.secure_url);
-        else {
-          console.error("Cloudinary upload failed", cloudData);
-          setFormErrors({ general: "Cloudinary upload failed. See console for details." });
-          hide && hide();
-          return;
+        const body = await res.json();
+        if (!res.ok || !body.secure_url) {
+          throw new Error(body.message || "Image upload to R2 failed");
         }
+        urls.push(body.secure_url);
       }
       const newItem = await createGalleryImage({
         title: uploadForm.title,
@@ -160,7 +147,7 @@ export default function AdminGallery() {
       setUploadForm({ title: "", category: "Daily Darshan", date: "", files: [], previews: [] });
     } catch (err) {
       console.error("Gallery upload error", err);
-      setFormErrors({ general: "Gallery upload failed. See console for details." });
+      setFormErrors({ general: err instanceof Error ? err.message : "Gallery upload failed. See console for details." });
     } finally {
       hide && hide();
     }
