@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { CheckCircle2 } from "lucide-react";
 import type { CampaignConfig } from "@/lib/campaignConfig";
@@ -17,6 +18,43 @@ export default function HeroSection({
   scrollToDonate,
   config,
 }: HeroSectionProps) {
+  // Banner mode: a pre-designed banner (text baked in) replaces the hero.
+  if (config.bannerImage) {
+    const altText = `${config.pageTitle} — ${config.heroHeading1} ${config.heroHeading2}`;
+    return (
+      <section className="bg-[#faf3df] pt-[72px] md:pt-[92px]">
+        {/* Whole banner is clickable — glides to the donation form */}
+        <button
+          type="button"
+          onClick={scrollToDonate}
+          aria-label="Donate — go to the donation form"
+          className="block w-full cursor-pointer"
+        >
+          {/* Mobile banner (portrait) */}
+          <Image
+            src={config.bannerImageMobile || config.bannerImage}
+            alt={altText}
+            width={941}
+            height={1672}
+            priority
+            sizes="100vw"
+            className="block h-auto w-full md:hidden"
+          />
+          {/* Desktop banner (landscape) */}
+          <Image
+            src={config.bannerImage}
+            alt={altText}
+            width={1672}
+            height={941}
+            priority
+            sizes="100vw"
+            className="hidden h-auto w-full md:block"
+          />
+        </button>
+      </section>
+    );
+  }
+
   return (
     <section className="relative min-h-[85vh] overflow-hidden bg-[hsl(220,90%,12%)]">
       {/* Background image with dark overlay */}

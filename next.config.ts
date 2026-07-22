@@ -32,6 +32,12 @@ const nextConfig: NextConfig = {
         hostname: "pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev",
         pathname: "/**",
       },
+      // Gupt Vrindavan Dham — donor privilege images
+      {
+        protocol: "https",
+        hostname: "guptvrindavandham.org",
+        pathname: "/**",
+      },
     ],
   },
   // Ensures per-icon tree-shaking for large barrel-export libraries so a

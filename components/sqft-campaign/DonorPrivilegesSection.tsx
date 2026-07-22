@@ -6,28 +6,37 @@ import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Ornament from "@/components/Ornament";
 
+const CLOUDINARY_BASE = "https://guptvrindavandham.org/media/campaign";
+
 const CAROUSEL_IMAGES = [
-  { src: "/assets/donor-priv-radha-madan-mohan.jpg", caption: "Sri Radha Madan Mohan" },
-  { src: "/assets/donor-priv-daily-darshan.webp", caption: "Daily Deity Darshan" },
-  { src: "/assets/gallery-aarti.jpg", caption: "Sacred Aarti" },
-  { src: "/assets/subhojanam.jpg", caption: "Prasadam Offering" },
+  { src: `${CLOUDINARY_BASE}/mhaprashdam_image_gallery.webp`, caption: "Maha Prasadam" },
+  { src: `${CLOUDINARY_BASE}/80g_Wbxrdiv_gFmZMqH.webp`, caption: "80G Tax Exemption" },
+  { src: `${CLOUDINARY_BASE}/SANKALPA_SQUARE_FEET_SEVA.webp`, caption: "Sankalpa & Aarti" },
+  { src: `${CLOUDINARY_BASE}/NARSIMHA_KAVACH_SUTRA_SQUARE_FEET.webp`, caption: "Narasimha Kavach Sutra" },
+  { src: `${CLOUDINARY_BASE}/square_feet_seva.webp`, caption: "Square Feet Seva" },
+  { src: `${CLOUDINARY_BASE}/Donor_privileges.webp`, caption: "Donor Privileges" },
+  { src: `${CLOUDINARY_BASE}/narsimha_tilak_1.webp`, caption: "Narasimha Yagna Tilak" },
+  { src: `${CLOUDINARY_BASE}/Picture_of_Krishna_image_gallery_YWVbbL6.webp`, caption: "Sri Krishna" },
 ];
 
 const PRIVILEGES = [
   { lead: "Maha Prasadam", rest: " from the temple kitchen, sent to your home as a blessing for your seva." },
-  { lead: "Puja & Aarti Participation", rest: " on the temple's most auspicious days, in your name." },
+  { lead: "Sankalp and Aarti", rest: " will be performed on your name." },
   { lead: "Spiritual Books", rest: " — a special gift to deepen your journey in Krishna consciousness." },
   { lead: "80G Tax Exemption", rest: " on your donation, under Section 80G of the Income Tax Act." },
   { lead: "Digital Contribution Certificate", rest: " honouring your valued seva to the temple." },
+  { lead: "Narasimha Kavach Sutra", rest: " for protection from all dangers." },
+  { lead: "Narasimha Yagna Tilak", rest: " — a sacred tilak blessed during yagna." },
 ];
 
 const OTHER_PRIVILEGES = [
-  { src: "/assets/hero-temple.jpg", caption: "Name Inscription" },
-  { src: "/assets/gallery-annadaan-1.jpg", caption: "Maha Prasadam" },
-  { src: "/assets/gallery-class.jpg", caption: "Spiritual Books" },
-  { src: "/assets/gallery-festival-1.jpg", caption: "Special Family Pujas" },
-  { src: "/assets/donor-priv-radha-madan-mohan.jpg", caption: "Deity Blessings" },
-  { src: "/assets/vizag-temple-1.jpeg", caption: "Inauguration Invitation" },
+  { src: `${CLOUDINARY_BASE}/Untitled_design.webp`, caption: "Name Inscription" },
+  { src: `${CLOUDINARY_BASE}/3_UhAzXJT.png`, caption: "Special Family Pujas" },
+  { src: `${CLOUDINARY_BASE}/mahaprashdam_box_image.webp`, caption: "Maha Prasadam Box" },
+  { src: `${CLOUDINARY_BASE}/7.png`, caption: "Spiritual Books Set" },
+  { src: `${CLOUDINARY_BASE}/6_FDX1D3S.webp`, caption: "Inauguration Invitation" },
+  { src: `${CLOUDINARY_BASE}/1_vT6BI21.png`, caption: "Deity Blessings" },
+  { src: `${CLOUDINARY_BASE}/4.png`, caption: "Premium Donor Gifts" },
 ];
 
 function PrivilegeCarousel() {
@@ -57,12 +66,6 @@ function PrivilegeCarousel() {
           />
         </div>
       ))}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-
-      <div className="absolute bottom-4 left-4 rounded-full bg-black/60 px-4 py-1.5 text-xs font-semibold text-white backdrop-blur">
-        {CAROUSEL_IMAGES[index].caption}
-      </div>
-
       <div className="absolute bottom-4 right-4 flex gap-1.5">
         {CAROUSEL_IMAGES.map((img, i) => (
           <button
@@ -113,6 +116,10 @@ function OtherPrivilegesGallery() {
         </div>
       </div>
 
+      <p className="mb-6 text-sm font-semibold text-primary">
+        Each of our respected contributors who donate more than 1 square foot will receive the following privileges based on Donation Level.
+      </p>
+
       <div
         ref={scrollerRef}
         className="flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
@@ -120,13 +127,9 @@ function OtherPrivilegesGallery() {
         {OTHER_PRIVILEGES.map((p) => (
           <div
             key={p.caption}
-            className="relative aspect-[4/3] w-80 shrink-0 snap-start overflow-hidden rounded-2xl border border-border sm:w-96"
+            className="relative aspect-[4/5] w-64 shrink-0 snap-start overflow-hidden rounded-2xl border border-border min-[360px]:w-80 sm:w-96"
           >
             <Image src={p.src} alt={p.caption} fill sizes="(max-width: 640px) 320px, 384px" className="object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-            <div className="absolute bottom-4 left-4 rounded-full bg-black/60 px-4 py-1.5 text-sm font-semibold text-white backdrop-blur">
-              {p.caption}
-            </div>
           </div>
         ))}
       </div>

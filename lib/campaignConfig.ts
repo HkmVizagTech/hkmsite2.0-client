@@ -45,6 +45,10 @@ export interface CampaignConfig {
   phoneHref: string;
   email: string;
   heroImage: string;
+  // Optional pre-designed banner (text baked in). When set, the hero renders
+  // this full-bleed image instead of the background + overlaid HTML text.
+  bannerImage?: string;
+  bannerImageMobile?: string;
   aboutImage: string;
   heroTagline: string;
   heroHeading1: string;
@@ -78,6 +82,8 @@ export const SQFT_CAMPAIGN: CampaignConfig = {
   email: "social@hkmvizag.org",
   heroImage:
     "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783672822355-1783672821116-ChatGPTImageJul92026043238PM.png",
+  bannerImage: "/assets/sqft-banner-desktop.webp",
+  bannerImageMobile: "/assets/sqft-banner-mobile.webp",
   aboutImage: "/assets/vizag-temple-1.jpeg",
   heroTagline: "A fundraising initiative of Hare Krishna Movement Visakhapatnam",
   heroHeading1: "Hare Krishna",
