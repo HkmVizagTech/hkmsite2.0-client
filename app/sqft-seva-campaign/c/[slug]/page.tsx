@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
-import SqftCampaignClient, { type CampaignerData } from "../../SqftCampaignClient";
+import SqftCampaignClient from "../../SqftCampaignClient";
+import type { CampaignerData } from "@/lib/campaignConfig";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;

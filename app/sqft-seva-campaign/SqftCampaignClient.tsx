@@ -1,26 +1,37 @@
 "use client";
 
-/**
- * Square Foot Seva Campaign — standalone landing page (VCM-style).
- * Intentionally has NO site Navbar/Footer (ad-campaign friendly, like /janmashtami).
- *
- * All editable campaign copy lives in the CAMPAIGN config object below.
- * Live stats come from GET /seva-stats/sqft-campaign (goal configurable via
- * SQFT_CAMPAIGN_GOAL env var on Railway).
- */
-
 import { useState, useEffect, useRef } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
 import {
   ShieldCheck, Loader2, CheckCircle2, ChevronDown, Copy, Check,
   Building2, Award, FileCheck2, Sparkles, UtensilsCrossed, ScrollText,
   Landmark, HeartHandshake, Users, Share2, Megaphone, Target,
+  User, Phone, Mail, Minus, Plus,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
+import Ornament from "@/components/Ornament";
+import HeroSection from "@/components/sqft-campaign/HeroSection";
+import StatsBar from "@/components/sqft-campaign/StatsBar";
+import DonationFormSection from "@/components/sqft-campaign/DonationFormSection";
+import DonorPrivilegesSection from "@/components/sqft-campaign/DonorPrivilegesSection";
+import TestimonialsSection from "@/components/sqft-campaign/TestimonialsSection";
+import AboutSection from "@/components/sqft-campaign/AboutSection";
+import ImportanceSection from "@/components/sqft-campaign/ImportanceSection";
+import ConstructionStatusSection from "@/components/sqft-campaign/ConstructionStatusSection";
+import TempleFeaturesSection from "@/components/sqft-campaign/TempleFeaturesSection";
+import ProgressSection from "@/components/sqft-campaign/ProgressSection";
+import GallerySection from "@/components/sqft-campaign/GallerySection";
+import FounderSection from "@/components/sqft-campaign/FounderSection";
+import FaqSection from "@/components/sqft-campaign/FaqSection";
+import DonorWallSection from "@/components/sqft-campaign/DonorWallSection";
+import FundraisingCtaSection from "@/components/sqft-campaign/FundraisingCtaSection";
+import FinalCtaSection from "@/components/sqft-campaign/FinalCtaSection";
+import StickyMobileBar from "@/components/sqft-campaign/StickyMobileBar";
+import CampaignerCard from "@/components/sqft-campaign/CampaignerCard";
+import { getCampaignConfig, type CampaignConfig, type CampaignerData, type DonorEntry } from "@/lib/campaignConfig";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
+
+const MAHA_PRASADAM_MIN_AMOUNT = 1000;
 
 const apiBase = () =>
   (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(/\/+$/, "");
@@ -45,76 +56,13 @@ const loadRazorpay = () =>
   });
 
 /* ------------------------------------------------------------------ */
-/* Campaign configuration — edit copy, images and privileges here.     */
+/* Shared data (same for both campaigns)                               */
 /* ------------------------------------------------------------------ */
 
-const CAMPAIGN = {
-  pricePerSqft: 6000,
-  minCustomAmount: 500,
-  phone: "+91 89777 61187",
-  phoneHref: "tel:+918977761187",
-  email: "social@hkmvizag.org",
-  heroImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783672822355-1783672821116-ChatGPTImageJul92026043238PM.png",
-  aboutImage: "/assets/vizag-temple-1.jpeg",
-  gallery: [
-    { src: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1784644186447-1784644185742-WhatsAppImage2026-07-03at1.56.13PM1.jpeg", alt: "Hare Krishna Vaikuntham Temple — architectural rendering" },
-    { src: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1784644186904-1784644186068-WhatsAppImage2026-07-03at1.56.13PM.jpeg", alt: "Hare Krishna Vaikuntham Temple — architectural rendering" },
-    { src: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1784644187783-1784644186209-WhatsAppImage2026-07-03at1.56.14PM.jpeg", alt: "Hare Krishna Vaikuntham Temple — architectural rendering" },
-    { src: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1784644188208-1784644186264-WhatsAppImage2026-07-03at1.57.26PM.jpeg", alt: "Hare Krishna Vaikuntham Temple — architectural rendering" },
-    { src: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1784644187338-1784644186154-WhatsAppImage2026-07-03at1.56.14PM2.jpeg", alt: "Hare Krishna Vaikuntham Temple — architectural rendering" },
-  ],
-};
-
-const PRIVILEGES = [
+const FAQS = (config: CampaignConfig) => [
   {
-    icon: UtensilsCrossed,
-    title: "Sanctified Prasadam",
-    text: "Receive the Lord's prasadam from the temple as a blessing for your seva (within India).",
-  },
-  {
-    icon: Sparkles,
-    title: "Puja Participation",
-    text: "Participate in the pujas conducted on the auspicious inauguration day of the temple.",
-  },
-  {
-    icon: FileCheck2,
-    title: "Contribution Certificate",
-    text: "A digital certificate honouring your valued contribution to the temple construction.",
-  },
-  {
-    icon: Landmark,
-    title: "80G Tax Exemption",
-    text: "Donations qualify for tax exemption under Section 80G of the Income Tax Act.",
-  },
-];
-
-const HIGHER_PRIVILEGES = [
-  {
-    icon: ScrollText,
-    title: "Name Inscription",
-    text: "Larger contributions are honoured with the donor's family name inscribed at the temple.",
-  },
-  {
-    icon: Award,
-    title: "Maha Prasadam Box",
-    text: "A special Maha prasadam box offered to Their Lordships, sent to your home.",
-  },
-  {
-    icon: HeartHandshake,
-    title: "Special Family Pujas",
-    text: "Pujas performed in the temple on special occasions of your family — birthdays and anniversaries.",
-  },
-  {
-    icon: Building2,
-    title: "Inauguration Invitation",
-    text: "A personal invitation to the grand Prana Pratistha ceremonies of Their Lordships.",
-  },
-];
-
-const FAQS = [
-  {
-    q: "What is Square Foot Seva?",
-    a: "Square Foot Seva invites you to sponsor one or more square feet of the Hare Krishna Vaikuntham Temple's construction at ₹6,000 per square foot. Every square foot you sponsor becomes a permanent part of the Lord's abode.",
+    q: `What is ${config.pageTitle}?`,
+    a: `${config.pageTitle} invites you to sponsor one or more ${config.unitNamePlural} of the Hare Krishna Vaikuntham Temple's construction at ₹${config.pricePerUnit.toLocaleString("en-IN")} per ${config.unitName}. Every ${config.unitName} you sponsor becomes a permanent part of the Lord's abode.`,
   },
   {
     q: "How will my donation be utilised?",
@@ -133,8 +81,8 @@ const FAQS = [
     a: "Donors within India can expect to receive prasadam within a month of their donation. Our team will reach out for your address details.",
   },
   {
-    q: "What is the minimum amount I can donate?",
-    a: `While one square foot is ₹${CAMPAIGN.pricePerSqft.toLocaleString("en-IN")}, contributions of any amount from ₹${CAMPAIGN.minCustomAmount} are gratefully accepted — every rupee is laid into the Lord's home with devotion.`,
+    q: `What is the minimum amount I can donate?`,
+    a: `While one ${config.unitName} is ₹${config.pricePerUnit.toLocaleString("en-IN")}, contributions of any amount from ₹${config.minCustomAmount} are gratefully accepted — every rupee is laid into the Lord's home with devotion.`,
   },
   {
     q: "Is it safe to donate online here?",
@@ -146,21 +94,7 @@ const FAQS = [
   },
 ];
 
-const BANK_DETAILS = {
-  beneficiaryName: "HARE KRISHNA MOVEMENT INDIA",
-  bankName: "IDFC FIRST BANK LTD",
-  accountNumber: "10091415313",
-  ifsc: "IDFB0080412",
-};
-
 /* ------------------------------------------------------------------ */
-
-interface DonorEntry {
-  name: string;
-  amount: number;
-  sqft: number;
-  time: string;
-}
 
 interface CampaignStats {
   pricePerSqft: number;
@@ -173,97 +107,56 @@ interface CampaignStats {
   largest: DonorEntry[];
 }
 
-export interface CampaignerData {
-  name: string;
-  slug: string;
-  goalSqft: number;
-  message: string;
-  raisedAmount: number;
-  sqftRaised: number;
-  donorCount: number;
-  donors: DonorEntry[];
-}
-
-const donorLabel = (d: DonorEntry) =>
-  d.sqft >= 1
-    ? `${d.sqft} square ${d.sqft === 1 ? "foot" : "feet"}`
-    : `₹${d.amount.toLocaleString("en-IN")}`;
-
-/** Animated counter that eases up to `value`. */
-function CountUp({ value, prefix = "", suffix = "" }: { value: number; prefix?: string; suffix?: string }) {
-  const [display, setDisplay] = useState(0);
-  const reduce = useReducedMotion();
-  const started = useRef(false);
-  const ref = useRef<HTMLSpanElement>(null);
-
-  useEffect(() => {
-    if (reduce) {
-      setDisplay(value);
-      return;
-    }
-    const el = ref.current;
-    if (!el) return;
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (!entries[0].isIntersecting || started.current) return;
-        started.current = true;
-        const t0 = performance.now();
-        const dur = 1400;
-        const tick = (t: number) => {
-          const p = Math.min(1, (t - t0) / dur);
-          setDisplay(Math.round(value * (1 - Math.pow(1 - p, 3))));
-          if (p < 1) requestAnimationFrame(tick);
-        };
-        requestAnimationFrame(tick);
-      },
-      { threshold: 0.4 }
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, [value, reduce]);
-
-  // If value updates after animation (live stats refresh), snap to it.
-  useEffect(() => {
-    if (started.current) setDisplay(value);
-  }, [value]);
-
-  return (
-    <span ref={ref}>
-      {prefix}
-      {display.toLocaleString("en-IN")}
-      {suffix}
-    </span>
-  );
-}
-
-export default function SqftCampaignClient({ campaigner }: { campaigner?: CampaignerData }) {
-  const reduce = useReducedMotion();
+export default function SqftCampaignClient({
+  campaigner,
+  campaignType = "SQFT",
+}: {
+  campaigner?: CampaignerData;
+  campaignType?: "SQFT" | "BRICK";
+}) {
+  const config = getCampaignConfig(campaignType);
   const [copiedShare, setCopiedShare] = useState(false);
-
   const [stats, setStats] = useState<CampaignStats | null>(null);
   const [wallTab, setWallTab] = useState<"latest" | "largest">("latest");
 
   const [sqftCount, setSqftCount] = useState(1);
   const [useCustom, setUseCustom] = useState(false);
   const [customAmount, setCustomAmount] = useState("");
-  const [form, setForm] = useState({ name: "", email: "", mobile: "", panNumber: "" });
+  const [form, setForm] = useState({ name: "", email: "", mobile: "", panNumber: "", address: "" });
   const [want80G, setWant80G] = useState(false);
+  const [wantsMahaPrasadam, setWantsMahaPrasadam] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
-  const price = stats?.pricePerSqft || CAMPAIGN.pricePerSqft;
+  const price = config.pricePerUnit;
   const finalAmount = useCustom ? Number(customAmount) || 0 : sqftCount * price;
+  const mahaPrasadamEligible = finalAmount > MAHA_PRASADAM_MIN_AMOUNT;
+
+  useEffect(() => {
+    if (!mahaPrasadamEligible && wantsMahaPrasadam) setWantsMahaPrasadam(false);
+  }, [mahaPrasadamEligible, wantsMahaPrasadam]);
+  const sqftRaised = stats ? Math.floor(stats.totalAmount / price) : 0;
+  const percent = stats && stats.goalSqft > 0
+    ? Math.min(100, Math.round((stats.totalAmount / (stats.goalSqft * price)) * 10000) / 100)
+    : 0;
+  const campaignerSqftRaised = campaigner ? Math.floor(campaigner.raisedAmount / price) : 0;
+
+  const BANK_DETAILS = {
+    beneficiaryName: "HARE KRISHNA MOVEMENT INDIA",
+    bankName: "IDFC FIRST BANK LTD",
+    accountNumber: "10091415313",
+    ifsc: "IDFB0080412",
+  };
 
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetch(`${apiBase()}/seva-stats/sqft-campaign`, { cache: "no-store" });
+        const res = await fetch(`${apiBase()}${config.statsApiEndpoint}`, { cache: "no-store" });
         if (res.ok) setStats(await res.json());
       } catch {}
     })();
-  }, []);
+  }, [config.statsApiEndpoint]);
 
   const handleCopy = (field: string, value: string) => {
     navigator.clipboard.writeText(value).then(() => {
@@ -273,15 +166,15 @@ export default function SqftCampaignClient({ campaigner }: { campaigner?: Campai
   };
 
   const scrollToDonate = () => {
-    document.getElementById("donate")?.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
+    document.getElementById("donate")?.scrollIntoView({ behavior: "smooth" });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus(null);
 
-    if (finalAmount < CAMPAIGN.minCustomAmount) {
-      setStatus({ type: "error", message: `Minimum donation is ₹${CAMPAIGN.minCustomAmount}.` });
+    if (finalAmount < config.minCustomAmount) {
+      setStatus({ type: "error", message: `Minimum donation is ₹${config.minCustomAmount}.` });
       return;
     }
     if (!form.name.trim() || !form.email.trim() || !form.mobile.trim()) {
@@ -292,6 +185,10 @@ export default function SqftCampaignClient({ campaigner }: { campaigner?: Campai
       setStatus({ type: "error", message: "PAN number is required for an 80G receipt." });
       return;
     }
+    if (wantsMahaPrasadam && !form.address.trim()) {
+      setStatus({ type: "error", message: "Please provide your delivery address for Maha Prasadam." });
+      return;
+    }
 
     setSubmitting(true);
     try {
@@ -300,9 +197,9 @@ export default function SqftCampaignClient({ campaigner }: { campaigner?: Campai
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           account: "default",
-          sourcePage: campaigner ? `/sqft-seva-campaign/c/${campaigner.slug}` : "/sqft-seva-campaign",
-          type: "SQFT",
-          sevaName: "Square Foot Seva",
+          sourcePage: campaigner ? `/sqft-seva-campaign/c/${campaigner.slug}` : `/${campaignType === "BRICK" ? "brick-seva-campaign" : "sqft-seva-campaign"}`,
+          type: config.orderType,
+          sevaName: config.pageTitle,
           name: form.name.trim(),
           email: form.email.trim().toLowerCase(),
           mobile: form.mobile.trim(),
@@ -310,6 +207,9 @@ export default function SqftCampaignClient({ campaigner }: { campaigner?: Campai
           certificate: want80G,
           panNumber: want80G ? form.panNumber.trim() : undefined,
           campaignerSlug: campaigner?.slug || undefined,
+          // TODO: backend doesn't accept these fields yet — wire up once /payments/order supports them.
+          // wantsMahaPrasadam,
+          // address: wantsMahaPrasadam ? form.address.trim() : undefined,
         }),
       });
 
@@ -325,13 +225,13 @@ export default function SqftCampaignClient({ campaigner }: { campaigner?: Campai
         amount: Math.round(finalAmount * 100),
         currency: "INR",
         name: "Hare Krishna Movement Vizag",
-        description: "Square Foot Seva — Hare Krishna Vaikuntham Temple",
+        description: `${config.pageTitle} — Hare Krishna Vaikuntham Temple`,
         order_id: order.orderId,
         prefill: { name: form.name, email: form.email, contact: form.mobile },
         notes: {
-          sourcePage: campaigner ? `/sqft-seva-campaign/c/${campaigner.slug}` : "/sqft-seva-campaign",
-          sevaName: "Square Foot Seva",
-          sevaType: "SQFT",
+          sourcePage: campaigner ? `/sqft-seva-campaign/c/${campaigner.slug}` : `/${campaignType === "BRICK" ? "brick-seva-campaign" : "sqft-seva-campaign"}`,
+          sevaName: config.pageTitle,
+          sevaType: config.orderType,
           campaignerSlug: campaigner?.slug || "",
         },
         handler: async (response: Record<string, string>) => {
@@ -349,7 +249,7 @@ export default function SqftCampaignClient({ campaigner }: { campaigner?: Campai
             if (!verifyRes.ok) throw new Error("Payment verification failed.");
             setStatus({
               type: "success",
-              message: "Thank you! Your square feet have been offered to Their Lordships. Hare Krishna 🙏",
+              message: `Thank you! Your ${config.unitNamePlural} have been offered to Their Lordships. Hare Krishna 🙏`,
             });
             const nameParts = form.name.trim().split(/\s+/);
             const displayName =
@@ -368,11 +268,6 @@ export default function SqftCampaignClient({ campaigner }: { campaigner?: Campai
                     ...s,
                     totalAmount: s.totalAmount + finalAmount,
                     donorCount: s.donorCount + 1,
-                    sqftRaised: Math.floor((s.totalAmount + finalAmount) / price),
-                    percent: Math.min(
-                      100,
-                      Math.round(((s.totalAmount + finalAmount) / (s.goalSqft * price)) * 10000) / 100
-                    ),
                     latest: [entry, ...s.latest],
                   }
                 : s
@@ -395,14 +290,9 @@ export default function SqftCampaignClient({ campaigner }: { campaigner?: Campai
     }
   };
 
-  const percent = stats?.percent ?? 0;
-  const gridSquares = 40; // foundation grid — each square = 2.5% of the goal
-  const filledSquares = Math.round((percent / 100) * gridSquares);
-
-  const wallEntries = wallTab === "latest" ? stats?.latest || [] : stats?.largest || [];
-
+  const campaignPath = campaignType === "BRICK" ? "brick-seva-campaign" : "sqft-seva-campaign";
   const shareUrl = campaigner && typeof window !== "undefined"
-    ? `${window.location.origin}/sqft-seva-campaign/c/${campaigner.slug}`
+    ? `${window.location.origin}/${campaignPath}/c/${campaigner.slug}`
     : "";
 
   const handleShareCopy = () => {
@@ -415,641 +305,117 @@ export default function SqftCampaignClient({ campaigner }: { campaigner?: Campai
 
   return (
     <PageLayout>
-    <main className="bg-background">
-      {/* ---------- Hero ---------- */}
-      <section className="relative overflow-hidden pt-20">
-        <div className="relative min-h-[72vh] w-full md:min-h-[80vh]">
-          <Image
-            src={CAMPAIGN.heroImage}
-            alt="Hare Krishna Vaikuntham Temple"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover"
+      <main className="bg-background">
+        {/* Hero section — full‑width cinematic banner */}
+        <HeroSection
+          campaigner={campaigner}
+          price={price}
+          scrollToDonate={scrollToDonate}
+          config={config}
+        />
+
+        {/* Stats bar — slides slightly up over the hero */}
+        <StatsBar stats={stats} campaigner={campaigner} price={price} config={config} />
+
+        {/* Campaigner card (P2P pages only) */}
+        {campaigner && (
+          <CampaignerCard
+            campaigner={campaigner}
+            price={price}
+            campaignerSqftRaised={campaignerSqftRaised}
+            scrollToDonate={scrollToDonate}
+            shareUrl={shareUrl}
+            copiedShare={copiedShare}
+            handleShareCopy={handleShareCopy}
+            config={config}
           />
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,hsl(220,85%,10%,0.55)_0%,hsl(220,85%,8%,0.5)_45%,hsl(220,85%,8%,0.92)_100%)]" />
-          <div className="absolute inset-0 flex flex-col items-center justify-end px-4 pb-14 text-center md:pb-20">
-            <motion.p
-              initial={reduce ? false : { opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="mb-3 text-[11px] font-semibold uppercase tracking-[0.25em] text-gold md:text-xs"
-            >
-              {campaigner
-                ? `${campaigner.name}'s fundraising campaign for`
-                : "A fundraising initiative of Hare Krishna Movement Visakhapatnam"}
-            </motion.p>
-            <motion.h1
-              initial={reduce ? false : { opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.1 }}
-              className="mb-4 max-w-3xl font-heading text-4xl font-bold text-white md:text-6xl"
-            >
-              Hare Krishna Vaikuntham Temple
-            </motion.h1>
-            <motion.p
-              initial={reduce ? false : { opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.2 }}
-              className="mb-6 max-w-2xl text-sm text-white/90 md:text-lg"
-            >
-              Be a part of the temple in the making — sponsor one or more square feet of construction.
-            </motion.p>
-            <motion.div
-              initial={reduce ? false : { opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.3 }}
-              className="flex flex-col items-center gap-4"
-            >
-              <p className="rounded-full border border-gold/50 bg-white/5 px-6 py-2 font-heading text-lg font-bold text-gold md:text-2xl">
-                ₹{price.toLocaleString("en-IN")} <span className="text-sm font-normal text-white/80 md:text-base">per square foot</span>
-              </p>
-              <button
-                onClick={scrollToDonate}
-                className="rounded-full bg-gradient-gold px-10 py-3.5 text-base font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)] transition-transform hover:scale-105 md:text-lg"
-              >
-                Donate Now
-              </button>
-              <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-xs text-white/80 md:text-sm">
-                <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-gold" /> Prasadam from the temple</span>
-                <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-gold" /> Puja on inauguration day</span>
-                <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-gold" /> 80G tax exemption</span>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
+        )}
 
-      {/* ---------- Campaigner card (P2P pages only) ---------- */}
-      {campaigner && (
-        <section className="bg-background py-10 md:py-14">
-          <div className="container mx-auto max-w-3xl px-4">
-            <div className="rounded-2xl border-2 border-gold/40 bg-card p-6 md:p-8">
-              <p className="mb-1 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-gold">
-                <Megaphone className="h-3.5 w-3.5" /> Fundraising Campaign
-              </p>
-              <h2 className="mb-2 font-heading text-xl font-bold text-primary md:text-2xl">
-                Support {campaigner.name}&apos;s Square Foot Seva
-              </h2>
-              {campaigner.message && (
-                <p className="mb-4 text-sm italic leading-relaxed text-muted-foreground">&ldquo;{campaigner.message}&rdquo;</p>
-              )}
+        {/* Donation form — the core interactive section */}
+        <DonationFormSection
+          price={price}
+          minCustomAmount={config.minCustomAmount}
+          sqftCount={sqftCount}
+          useCustom={useCustom}
+          customAmount={customAmount}
+          form={form}
+          want80G={want80G}
+          wantsMahaPrasadam={wantsMahaPrasadam}
+          mahaPrasadamEligible={mahaPrasadamEligible}
+          mahaPrasadamMinAmount={MAHA_PRASADAM_MIN_AMOUNT}
+          submitting={submitting}
+          status={status}
+          copiedField={copiedField}
+          bankDetails={BANK_DETAILS}
+          email={config.email}
+          finalAmount={finalAmount}
+          setSqftCount={setSqftCount}
+          setUseCustom={setUseCustom}
+          setCustomAmount={setCustomAmount}
+          setForm={setForm}
+          setWant80G={setWant80G}
+          setWantsMahaPrasadam={setWantsMahaPrasadam}
+          handleSubmit={handleSubmit}
+          handleCopy={handleCopy}
+          config={config}
+        />
 
-              <div className="mb-4 grid grid-cols-3 gap-3 text-center">
-                <div className="rounded-xl bg-background p-3">
-                  <p className="font-heading text-lg font-bold text-gold md:text-xl">{campaigner.sqftRaised.toLocaleString("en-IN")}</p>
-                  <p className="text-[10px] uppercase tracking-wide text-muted-foreground">sq ft raised</p>
-                </div>
-                <div className="rounded-xl bg-background p-3">
-                  <p className="font-heading text-lg font-bold text-primary md:text-xl">₹{campaigner.raisedAmount.toLocaleString("en-IN")}</p>
-                  <p className="text-[10px] uppercase tracking-wide text-muted-foreground">collected</p>
-                </div>
-                <div className="rounded-xl bg-background p-3">
-                  <p className="font-heading text-lg font-bold text-primary md:text-xl">{campaigner.donorCount.toLocaleString("en-IN")}</p>
-                  <p className="text-[10px] uppercase tracking-wide text-muted-foreground">supporters</p>
-                </div>
-              </div>
+        {/* Donor privileges */}
+        <DonorPrivilegesSection scrollToDonate={scrollToDonate} />
 
-              {campaigner.goalSqft > 0 && (
-                <div className="mb-4">
-                  <div className="mb-1.5 flex items-center justify-between text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1"><Target className="h-3.5 w-3.5 text-gold" /> Personal goal</span>
-                    <span className="font-semibold text-foreground">
-                      {campaigner.sqftRaised} / {campaigner.goalSqft} sq ft
-                    </span>
-                  </div>
-                  <div className="h-2.5 overflow-hidden rounded-full bg-background">
-                    <div
-                      className="h-full rounded-full bg-gradient-gold transition-all duration-700"
-                      style={{ width: `${Math.min(100, (campaigner.sqftRaised / campaigner.goalSqft) * 100)}%` }}
-                    />
-                  </div>
-                </div>
-              )}
+        {/* Testimonials — new */}
+        <TestimonialsSection />
 
-              <div className="flex flex-col gap-2 sm:flex-row">
-                <button
-                  onClick={scrollToDonate}
-                  className="flex-1 rounded-full bg-gradient-gold py-3 text-sm font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)] transition-transform hover:scale-[1.02]"
-                >
-                  Donate to {campaigner.name.split(" ")[0]}&apos;s Campaign
-                </button>
-                <a
-                  href={`https://wa.me/?text=${encodeURIComponent(
-                    `Hare Krishna! 🙏 Join me in building the Hare Krishna Vaikuntham Temple — sponsor a square foot through my campaign: ${shareUrl}`
-                  )}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex flex-1 items-center justify-center gap-2 rounded-full border-2 border-gold py-3 text-sm font-bold text-gold transition-colors hover:bg-gold/10"
-                >
-                  <Share2 className="h-4 w-4" /> Share on WhatsApp
-                </a>
-                <button
-                  onClick={handleShareCopy}
-                  aria-label="Copy campaign link"
-                  className="flex items-center justify-center gap-2 rounded-full border border-border px-5 py-3 text-sm font-semibold text-muted-foreground hover:border-gold hover:text-gold"
-                >
-                  {copiedShare ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
-                  {copiedShare ? "Copied" : "Copy link"}
-                </button>
-              </div>
+        {/* About / inspiration */}
+        <AboutSection
+          aboutImage={config.aboutImage}
+          scrollToDonate={scrollToDonate}
+        />
 
-              {campaigner.donors.length > 0 && (
-                <div className="mt-5 border-t border-border pt-4">
-                  <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Recent supporters</p>
-                  <ul className="space-y-1.5">
-                    {campaigner.donors.slice(0, 6).map((d, i) => (
-                      <li key={`${d.name}-${i}`} className="flex items-center justify-between text-sm">
-                        <span className="text-foreground">
-                          {d.name} <span className="text-muted-foreground">offered</span>{" "}
-                          <span className="font-semibold text-gold">{donorLabel(d)}</span>
-                        </span>
-                        <span className="text-xs text-muted-foreground">{d.time}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          </div>
-        </section>
-      )}
+        {/* Scriptural significance of temple construction */}
+        <ImportanceSection />
 
-      {/* ---------- About / inspiration ---------- */}
-      <section className="bg-card py-14 md:py-20">
-        <div className="container mx-auto grid max-w-5xl items-center gap-8 px-4 md:grid-cols-2">
-          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
-            <Image
-              src={CAMPAIGN.aboutImage}
-              alt="Hare Krishna Vaikuntham Temple"
-              fill
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover"
-            />
-          </div>
-          <div>
-            <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-gold">Inspiration &amp; Aspiration</p>
-            <h2 className="mb-4 font-heading text-2xl font-bold text-primary md:text-3xl">
-              A spiritual landmark rising in Visakhapatnam
-            </h2>
-            <p className="mb-4 text-sm leading-relaxed text-muted-foreground md:text-base">
-              The Hare Krishna Vaikuntham Temple at Gambheeram is destined to become a beacon of devotion,
-              culture and compassion for the City of Destiny — with grand temple halls for Their Lordships,
-              an Annadana hall serving free sanctified meals, and centres for Vedic education and outreach.
-            </p>
-            <p className="mb-6 text-sm leading-relaxed text-muted-foreground md:text-base">
-              Inspired by the vision of Srila Prabhupada, Founder-Acharya of the worldwide Hare Krishna
-              Movement, this temple is being built brick by brick, square foot by square foot, through the
-              devotion of thousands of well-wishers like you.
-            </p>
-            <button
-              onClick={scrollToDonate}
-              className="rounded-full bg-gradient-gold px-8 py-3 text-sm font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)] transition-transform hover:scale-105"
-            >
-              Sponsor a Square Foot
-            </button>
-          </div>
-        </div>
-      </section>
+        {/* Temple features */}
+        <TempleFeaturesSection />
 
-      {/* ---------- Donation form ---------- */}
-      <section id="donate" className="scroll-mt-20 bg-background py-14 md:py-20">
-        <div className="container mx-auto max-w-2xl px-4">
-          <div className="mb-8 text-center">
-            <h2 className="mb-2 font-heading text-2xl font-bold text-primary md:text-4xl">Sponsor Your Square Feet</h2>
-            <p className="text-sm text-muted-foreground md:text-base">
-              Every square foot becomes a permanent part of the Lord&apos;s abode.
-            </p>
-          </div>
+        {/* Live progress — foundation grid */}
+        <ProgressSection
+          sqftRaised={sqftRaised}
+          percent={percent}
+          goalSqft={stats?.goalSqft ?? 67000}
+          donorCount={stats?.donorCount ?? 0}
+          config={config}
+        />
 
-          <form
-            onSubmit={handleSubmit}
-            className="rounded-2xl border border-border bg-card p-5 shadow-lg md:p-8"
-          >
-            {/* Square feet selector */}
-            <p className="mb-3 text-sm font-semibold text-foreground">Choose your seva</p>
-            <div className="mb-3 grid grid-cols-4 gap-2">
-              {[1, 2, 3, 4].map((n) => (
-                <button
-                  key={n}
-                  type="button"
-                  onClick={() => {
-                    setUseCustom(false);
-                    setSqftCount(n);
-                  }}
-                  className={`rounded-xl border-2 px-2 py-3 text-center transition-colors ${
-                    !useCustom && sqftCount === n
-                      ? "border-gold bg-gold/10"
-                      : "border-border bg-background hover:border-gold/50"
-                  }`}
-                >
-                  <span className="block font-heading text-lg font-bold text-primary">{n}</span>
-                  <span className="block text-[10px] uppercase tracking-wide text-muted-foreground">
-                    sq {n === 1 ? "foot" : "feet"}
-                  </span>
-                  <span className="mt-1 block text-xs font-semibold text-gold">
-                    ₹{(n * price).toLocaleString("en-IN")}
-                  </span>
-                </button>
-              ))}
-            </div>
+        {/* Photo + video proof of ongoing construction */}
+        <ConstructionStatusSection scrollToDonate={scrollToDonate} />
 
-            <div className="mb-5 flex flex-col gap-2 sm:flex-row">
-              <div className="flex flex-1 items-center gap-2 rounded-xl border-2 border-border bg-background px-3 py-2">
-                <label htmlFor="sqft-count" className="whitespace-nowrap text-xs font-semibold text-muted-foreground">
-                  More sq ft:
-                </label>
-                <input
-                  id="sqft-count"
-                  type="number"
-                  min={1}
-                  max={999}
-                  value={useCustom ? "" : sqftCount}
-                  onChange={(e) => {
-                    setUseCustom(false);
-                    setSqftCount(Math.max(1, Math.min(999, Number(e.target.value) || 1)));
-                  }}
-                  className="w-full bg-transparent text-sm font-semibold outline-none"
-                />
-              </div>
-              <div
-                className={`flex flex-1 items-center gap-2 rounded-xl border-2 px-3 py-2 ${
-                  useCustom ? "border-gold bg-gold/5" : "border-border bg-background"
-                }`}
-              >
-                <label htmlFor="custom-amount" className="whitespace-nowrap text-xs font-semibold text-muted-foreground">
-                  Other amount ₹:
-                </label>
-                <input
-                  id="custom-amount"
-                  type="number"
-                  min={CAMPAIGN.minCustomAmount}
-                  placeholder={`${CAMPAIGN.minCustomAmount}+`}
-                  value={customAmount}
-                  onFocus={() => setUseCustom(true)}
-                  onChange={(e) => {
-                    setUseCustom(true);
-                    setCustomAmount(e.target.value);
-                  }}
-                  className="w-full bg-transparent text-sm font-semibold outline-none"
-                />
-              </div>
-            </div>
+        {/* Gallery */}
+        <GallerySection />
 
-            {/* Donor details */}
-            <div className="mb-4 grid gap-3 sm:grid-cols-2">
-              <input
-                type="text"
-                required
-                placeholder="Full name *"
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none focus:border-gold"
-              />
-              <input
-                type="tel"
-                required
-                placeholder="Mobile number *"
-                value={form.mobile}
-                onChange={(e) => setForm({ ...form, mobile: e.target.value })}
-                className="rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none focus:border-gold"
-              />
-              <input
-                type="email"
-                required
-                placeholder="Email address *"
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none focus:border-gold sm:col-span-2"
-              />
-            </div>
+        {/* Founder's words */}
+        <FounderSection />
 
-            <label className="mb-3 flex cursor-pointer items-center gap-2 text-sm text-foreground">
-              <input
-                type="checkbox"
-                checked={want80G}
-                onChange={(e) => setWant80G(e.target.checked)}
-                className="h-4 w-4 accent-[hsl(42,92%,46%)]"
-              />
-              I need an 80G tax exemption receipt
-            </label>
-            {want80G && (
-              <input
-                type="text"
-                placeholder="PAN number *"
-                value={form.panNumber}
-                onChange={(e) => setForm({ ...form, panNumber: e.target.value.toUpperCase() })}
-                className="mb-4 w-full rounded-xl border border-border bg-background px-4 py-3 text-sm uppercase outline-none focus:border-gold"
-              />
-            )}
+        {/* FAQ */}
+        <FaqSection faqs={FAQS(config)} />
 
-            {status && (
-              <p
-                className={`mb-4 rounded-xl px-4 py-3 text-sm font-medium ${
-                  status.type === "success"
-                    ? "bg-green-50 text-green-800"
-                    : "bg-red-50 text-red-700"
-                }`}
-              >
-                {status.message}
-              </p>
-            )}
+        {/* Donor wall */}
+        <DonorWallSection
+          stats={stats}
+          wallTab={wallTab}
+          setWallTab={setWallTab}
+          price={price}
+        />
 
-            <button
-              type="submit"
-              disabled={submitting}
-              className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-gold py-3.5 text-base font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)] transition-transform hover:scale-[1.02] disabled:opacity-60"
-            >
-              {submitting ? (
-                <>
-                  <Loader2 className="h-5 w-5 animate-spin" /> Processing…
-                </>
-              ) : (
-                <>Donate ₹{finalAmount > 0 ? finalAmount.toLocaleString("en-IN") : "—"}</>
-              )}
-            </button>
-            <p className="mt-3 flex items-center justify-center gap-1.5 text-center text-xs text-muted-foreground">
-              <ShieldCheck className="h-3.5 w-3.5 text-gold" />
-              Secure payment via Razorpay · UPI, cards &amp; netbanking accepted
-            </p>
-          </form>
+        {/* Start your fundraising campaign */}
+        <FundraisingCtaSection campaignType={campaignType} />
 
-          {/* Bank transfer */}
-          <div className="mt-6 rounded-2xl border border-border bg-card p-5 md:p-6">
-            <p className="mb-3 flex items-center gap-2 font-heading text-base font-bold text-primary">
-              <Building2 className="h-4 w-4 text-gold" /> Prefer direct bank transfer?
-            </p>
-            <dl className="grid gap-2 text-sm sm:grid-cols-2">
-              {(
-                [
-                  ["Beneficiary", BANK_DETAILS.beneficiaryName],
-                  ["Bank", BANK_DETAILS.bankName],
-                  ["Account No.", BANK_DETAILS.accountNumber],
-                  ["IFSC", BANK_DETAILS.ifsc],
-                ] as const
-              ).map(([label, value]) => (
-                <div key={label} className="flex items-center justify-between gap-2 rounded-lg bg-background px-3 py-2">
-                  <div>
-                    <dt className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</dt>
-                    <dd className="font-semibold text-foreground">{value}</dd>
-                  </div>
-                  <button
-                    type="button"
-                    aria-label={`Copy ${label}`}
-                    onClick={() => handleCopy(label, value)}
-                    className="rounded-md p-1.5 text-muted-foreground hover:bg-gold/10 hover:text-gold"
-                  >
-                    {copiedField === label ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
-                  </button>
-                </div>
-              ))}
-            </dl>
-            <p className="mt-3 text-xs text-muted-foreground">
-              After transferring, please email your transaction reference and PAN (for 80G) to{" "}
-              <a href={`mailto:${CAMPAIGN.email}`} className="font-semibold text-gold">{CAMPAIGN.email}</a>.
-            </p>
-          </div>
-        </div>
-      </section>
+        {/* Final CTA */}
+        <FinalCtaSection scrollToDonate={scrollToDonate} />
 
-      {/* ---------- Donor privileges ---------- */}
-      <section className="bg-card py-14 md:py-20">
-        <div className="container mx-auto max-w-5xl px-4">
-          <div className="mb-10 text-center">
-            <h2 className="mb-2 font-heading text-2xl font-bold text-primary md:text-4xl">Donor Privileges</h2>
-            <p className="text-sm text-muted-foreground md:text-base">
-              Every contributor of at least one square foot receives these privileges.
-            </p>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {PRIVILEGES.map((p) => (
-              <div key={p.title} className="rounded-2xl border border-border bg-background p-5 text-center">
-                <p.icon className="mx-auto mb-3 h-8 w-8 text-gold" />
-                <h3 className="mb-1.5 font-heading text-base font-bold text-primary">{p.title}</h3>
-                <p className="text-xs leading-relaxed text-muted-foreground">{p.text}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-12 text-center">
-            <h3 className="mb-2 font-heading text-xl font-bold text-primary md:text-2xl">Higher Seva Privileges</h3>
-            <p className="mb-6 text-sm text-muted-foreground">Offered with gratitude to larger contributions, based on donation level.</p>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {HIGHER_PRIVILEGES.map((p) => (
-                <div key={p.title} className="rounded-2xl border border-gold/30 bg-background p-5 text-center">
-                  <p.icon className="mx-auto mb-3 h-8 w-8 text-gold" />
-                  <h3 className="mb-1.5 font-heading text-base font-bold text-primary">{p.title}</h3>
-                  <p className="text-xs leading-relaxed text-muted-foreground">{p.text}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ---------- Live progress: the Foundation Grid ---------- */}
-      <section className="bg-[hsl(220,90%,12%)] py-14 md:py-20">
-        <div className="container mx-auto max-w-4xl px-4 text-center">
-          <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-gold">Our heartfelt gratitude for your kind support</p>
-          <h2 className="mb-8 font-heading text-2xl font-bold text-white md:text-4xl">
-            <CountUp value={stats?.sqftRaised ?? 0} />{" "}
-            <span className="text-gold">square feet</span> offered so far
-          </h2>
-
-          {/* Foundation grid — each square is a piece of the temple's ground */}
-          <div
-            className="mx-auto mb-4 grid max-w-2xl gap-1 sm:gap-1.5"
-            style={{ gridTemplateColumns: "repeat(20, minmax(0, 1fr))" }}
-            role="img"
-            aria-label={`${percent}% of the campaign goal raised`}
-          >
-            {Array.from({ length: gridSquares }).map((_, i) => (
-              <motion.div
-                key={i}
-                initial={reduce ? false : { opacity: 0, scale: 0.6 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: reduce ? 0 : i * 0.02, duration: 0.3 }}
-                className={`aspect-square rounded-[3px] ${
-                  i < filledSquares
-                    ? "bg-gradient-gold shadow-[0_0_8px_hsl(42,92%,56%,0.5)]"
-                    : "border border-white/15 bg-white/5"
-                }`}
-              />
-            ))}
-          </div>
-
-          <p className="mb-1 font-heading text-xl font-bold text-gold md:text-2xl">{percent}% raised</p>
-          <p className="text-sm text-white/75">
-            {(stats?.sqftRaised ?? 0).toLocaleString("en-IN")} square feet raised of a goal of{" "}
-            {(stats?.goalSqft ?? 67000).toLocaleString("en-IN")} square feet
-          </p>
-          <p className="mt-3 flex items-center justify-center gap-1.5 text-xs text-white/60">
-            <Users className="h-3.5 w-3.5" />
-            {(stats?.donorCount ?? 0).toLocaleString("en-IN")} devotees have contributed
-          </p>
-        </div>
-      </section>
-
-      {/* ---------- Gallery ---------- */}
-      <section className="bg-card py-14 md:py-20">
-        <div className="container mx-auto max-w-5xl px-4">
-          <h2 className="mb-8 text-center font-heading text-2xl font-bold text-primary md:text-3xl">
-            Temple &amp; Seva Glimpses
-          </h2>
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
-            {CAMPAIGN.gallery.map((g) => (
-              <div key={g.src + g.alt} className="relative aspect-[4/3] overflow-hidden rounded-xl">
-                <Image
-                  src={g.src}
-                  alt={g.alt}
-                  fill
-                  sizes="(max-width: 768px) 50vw, 33vw"
-                  className="object-cover transition-transform duration-500 hover:scale-105"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ---------- Start your fundraising campaign ---------- */}
-      <section className="bg-[hsl(220,90%,12%)] py-14 md:py-20">
-        <div className="container mx-auto max-w-3xl px-4 text-center">
-          <Megaphone className="mx-auto mb-3 h-9 w-9 text-gold" />
-          <h2 className="mb-3 font-heading text-2xl font-bold text-white md:text-4xl">
-            Start Your Own Fundraising Campaign
-          </h2>
-          <p className="mx-auto mb-6 max-w-xl text-sm leading-relaxed text-white/80 md:text-base">
-            Multiply your seva. Create your personal campaign page, share it with friends and family
-            on WhatsApp, and inspire them to sponsor square feet of the temple through your link.
-          </p>
-          <div className="mx-auto mb-8 grid max-w-2xl gap-3 text-left sm:grid-cols-3">
-            {[
-              "Create your campaign page in under a minute",
-              "Share your personal link with friends & family",
-              "Watch your collective seva grow on your page",
-            ].map((step, i) => (
-              <div key={step} className="rounded-xl border border-white/15 bg-white/5 p-4">
-                <p className="mb-1 font-heading text-lg font-bold text-gold">{i + 1}</p>
-                <p className="text-xs leading-relaxed text-white/85">{step}</p>
-              </div>
-            ))}
-          </div>
-          <Link
-            href="/sqft-seva-campaign/register"
-            className="inline-block rounded-full bg-gradient-gold px-10 py-3.5 text-base font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)] transition-transform hover:scale-105"
-          >
-            Create My Fundraising Campaign
-          </Link>
-        </div>
-      </section>
-
-      {/* ---------- FAQ ---------- */}
-      <section className="bg-background py-14 md:py-20">
-        <div className="container mx-auto max-w-3xl px-4">
-          <h2 className="mb-8 text-center font-heading text-2xl font-bold text-primary md:text-3xl">
-            Frequently Asked Questions
-          </h2>
-          <div className="space-y-3">
-            {FAQS.map((f, i) => (
-              <div key={f.q} className="overflow-hidden rounded-xl border border-border bg-card">
-                <button
-                  type="button"
-                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  aria-expanded={openFaq === i}
-                  className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left"
-                >
-                  <span className="text-sm font-semibold text-foreground md:text-base">{f.q}</span>
-                  <ChevronDown
-                    className={`h-4 w-4 shrink-0 text-gold transition-transform ${openFaq === i ? "rotate-180" : ""}`}
-                  />
-                </button>
-                {openFaq === i && (
-                  <p className="border-t border-border px-5 py-4 text-sm leading-relaxed text-muted-foreground">
-                    {f.a}
-                  </p>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ---------- Donor wall: Latest / Largest ---------- */}
-      <section className="bg-card py-14 md:py-20">
-        <div className="container mx-auto max-w-3xl px-4">
-          <h2 className="mb-2 text-center font-heading text-2xl font-bold text-primary md:text-3xl">
-            Respected Contributors
-          </h2>
-          <p className="mb-6 text-center text-sm text-muted-foreground">
-            Join the devotees building the Lord&apos;s home.
-          </p>
-
-          <div className="mb-5 flex justify-center gap-2">
-            {(["latest", "largest"] as const).map((tab) => (
-              <button
-                key={tab}
-                type="button"
-                onClick={() => setWallTab(tab)}
-                className={`rounded-full px-6 py-2 text-sm font-semibold capitalize transition-colors ${
-                  wallTab === tab
-                    ? "bg-primary text-white"
-                    : "bg-background text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
-
-          {wallEntries.length === 0 ? (
-            <p className="rounded-xl border border-dashed border-border bg-background px-5 py-8 text-center text-sm text-muted-foreground">
-              Be the first devotee to sponsor a square foot of the temple.
-            </p>
-          ) : (
-            <ul className="divide-y divide-border rounded-2xl border border-border bg-background">
-              {wallEntries.map((d, i) => (
-                <li key={`${d.name}-${d.time}-${i}`} className="flex items-center justify-between gap-3 px-5 py-3.5">
-                  <div>
-                    <p className="text-sm font-semibold text-foreground">
-                      {d.name} <span className="font-normal text-muted-foreground">offered</span>{" "}
-                      <span className="font-bold text-gold">{donorLabel(d)}</span>
-                    </p>
-                  </div>
-                  <span className="shrink-0 text-xs text-muted-foreground">{d.time}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      </section>
-
-      {/* ---------- Final CTA + trust footer ---------- */}
-      <section className="bg-[hsl(220,90%,12%)] py-14 text-center md:py-20">
-        <div className="container mx-auto max-w-3xl px-4">
-          <h2 className="mb-4 font-heading text-2xl font-bold text-white md:text-4xl">
-            Every square foot you offer becomes part of the Lord&apos;s eternal home.
-          </h2>
-          <button
-            onClick={scrollToDonate}
-            className="rounded-full bg-gradient-gold px-10 py-3.5 text-base font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)] transition-transform hover:scale-105 md:text-lg"
-          >
-            Donate Now
-          </button>
-        </div>
-      </section>
-
-      {/* ---------- Sticky mobile donate bar ---------- */}
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 p-3 backdrop-blur md:hidden">
-        <button
-          onClick={scrollToDonate}
-          className="w-full rounded-full bg-gradient-gold py-3 text-base font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)]"
-        >
-          Donate ₹{price.toLocaleString("en-IN")} / sq ft
-        </button>
-      </div>
-    </main>
+        {/* Sticky mobile donate bar */}
+        <StickyMobileBar price={price} scrollToDonate={scrollToDonate} config={config} />
+      </main>
     </PageLayout>
   );
 }
