@@ -4,9 +4,35 @@ import PageLayout from "@/components/PageLayout";
 import PageHero from "@/components/PageHero";
 import Ornament from "@/components/Ornament";
 import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
-import { Utensils, Hospital, Users, Clock, Heart, TrendingUp, Target } from "lucide-react";
+import TouchstoneCharitiesLogo from "@/assets/TouchstoneCharitiesLogo.png";
+import HKMLogoBlack from "@/assets/HKMLogoBlack.jpg";
+import { Utensils, Hospital, Users, Clock, Heart, TrendingUp, Target, X, CheckCircle2, Loader2 } from "lucide-react";
+
+type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
+
+const apiBase = () =>
+  (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(/\/+$/, "");
+
+const loadRazorpay = () =>
+  new Promise<void>((resolve, reject) => {
+    const win = window as unknown as { Razorpay?: RazorpayConstructor };
+    if (win.Razorpay) return resolve();
+    const existing = document.querySelector<HTMLScriptElement>(
+      'script[src="https://checkout.razorpay.com/v1/checkout.js"]'
+    );
+    if (existing) {
+      existing.addEventListener("load", () => resolve());
+      existing.addEventListener("error", () => reject(new Error("Unable to load Razorpay")));
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error("Unable to load Razorpay"));
+    document.body.appendChild(script);
+  });
 
 const stats = [
   { icon: Utensils, value: "3,000+", label: "Meals Served Daily" },
@@ -16,11 +42,11 @@ const stats = [
 ];
 
 const donationTiers = [
-  { meals: "500 Meals", amount: "₹12,500", popular: false },
-  { meals: "400 Meals", amount: "₹10,000", popular: true },
-  { meals: "300 Meals", amount: "₹7,500", popular: false },
-  { meals: "200 Meals", amount: "₹5,000", popular: false },
-  { meals: "100 Meals", amount: "₹2,500", popular: false },
+  { meals: "500 Meals", amount: "₹12,500", amountValue: 12500, popular: false },
+  { meals: "400 Meals", amount: "₹10,000", amountValue: 10000, popular: true },
+  { meals: "300 Meals", amount: "₹7,500", amountValue: 7500, popular: false },
+  { meals: "200 Meals", amount: "₹5,000", amountValue: 5000, popular: false },
+  { meals: "100 Meals", amount: "₹2,500", amountValue: 2500, popular: false },
 ];
 
 const impactStories = [
@@ -52,6 +78,96 @@ export default function SubhojanamPage() {
   const inView3 = useInView(ref3, { once: true, margin: "-80px" });
   const inView4 = useInView(ref4, { once: true, margin: "-80px" });
   const inView5 = useInView(ref5, { once: true, margin: "-80px" });
+
+  const [checkoutTier, setCheckoutTier] = useState<{ meals: string; amountValue: number } | null>(null);
+  const [form, setForm] = useState({ name: "", email: "", mobile: "" });
+  const [submitting, setSubmitting] = useState(false);
+  const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
+
+  const closeCheckout = () => {
+    if (!submitting) {
+      setCheckoutTier(null);
+      setStatus(null);
+      setForm({ name: "", email: "", mobile: "" });
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus(null);
+    if (!checkoutTier) return;
+
+    if (!form.name.trim() || !form.email.trim() || !form.mobile.trim()) {
+      setStatus({ type: "error", message: "Please fill in your name, email, and phone number." });
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const orderRes = await fetch(`${apiBase()}/payments/order`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          // Subhojanam donations belong to Touchstone Charities, a
+          // separate trust from the main HKM account -- this MUST use
+          // its own Razorpay account so funds settle correctly.
+          account: "touchstone",
+          sourcePage: "/subhojanam",
+          sevaName: "Subhojanam",
+          name: form.name.trim(),
+          email: form.email.trim().toLowerCase(),
+          mobile: form.mobile.trim(),
+          amount: checkoutTier.amountValue,
+        }),
+      });
+
+      if (!orderRes.ok) {
+        const body = await orderRes.json().catch(() => ({}));
+        throw new Error(body.message || "Unable to create payment order. Please try again.");
+      }
+      const order = await orderRes.json();
+
+      await loadRazorpay();
+      const win = window as unknown as { Razorpay?: RazorpayConstructor };
+      if (!win.Razorpay) throw new Error("Razorpay checkout is unavailable.");
+
+      new win.Razorpay({
+        key: order.key,
+        amount: Math.round(checkoutTier.amountValue * 100),
+        currency: "INR",
+        name: "Touchstone Charities",
+        description: `Subhojanam — ${checkoutTier.meals}`,
+        order_id: order.orderId,
+        prefill: { name: form.name, email: form.email, contact: form.mobile },
+        notes: { sourcePage: "/subhojanam", sevaName: "Subhojanam" },
+        handler: async (response: Record<string, string>) => {
+          try {
+            const verifyRes = await fetch(`${apiBase()}/payments/verify`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                donationId: order.donationId,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
+            });
+            if (!verifyRes.ok) throw new Error("Payment verification failed.");
+            setStatus({ type: "success", message: "Thank you! Your donation has been received. Hare Krishna 🙏" });
+          } catch (err) {
+            setStatus({ type: "error", message: err instanceof Error ? err.message : "Payment verification failed." });
+          } finally {
+            setSubmitting(false);
+          }
+        },
+        modal: { ondismiss: () => setSubmitting(false) },
+        theme: { color: "#D69E2E" },
+      }).open();
+    } catch (err) {
+      setStatus({ type: "error", message: err instanceof Error ? err.message : "Something went wrong." });
+      setSubmitting(false);
+    }
+  };
 
   return (
     <PageLayout>
@@ -227,7 +343,7 @@ export default function SubhojanamPage() {
                 <motion.button
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
-                  onClick={() => window.open("/donate/anna-daan-seva", "_self")}
+                  onClick={() => setCheckoutTier({ meals: tier.meals, amountValue: tier.amountValue })}
                   className={`w-full py-2.5 rounded-full font-semibold text-sm transition-opacity hover:opacity-90 ${
                     tier.popular
                       ? "bg-[hsl(220,60%,12%)] text-[hsl(var(--gold))]"
@@ -241,6 +357,37 @@ export default function SubhojanamPage() {
           </div>
         </div>
       </section>
+
+      {/* Trust & Transparency — Touchstone Charities attribution */}
+      <section className="border-y border-border bg-card py-16">
+        <div className="container mx-auto px-4">
+          <div className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center">
+            <div className="flex flex-wrap items-center justify-center gap-8">
+              <Image
+                src={TouchstoneCharitiesLogo}
+                alt="Touchstone Charities"
+                width={220}
+                height={220}
+                className="h-20 w-auto object-contain"
+              />
+              <span className="hidden h-14 w-px bg-border sm:block" aria-hidden />
+              <Image
+                src={HKMLogoBlack}
+                alt="Srila Prabhupada's Hare Krishna Movement Visakhapatnam"
+                width={300}
+                height={162}
+                className="h-14 w-auto object-contain"
+              />
+            </div>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              Subhojanam is run under <span className="font-semibold text-foreground">Touchstone Charities</span>,
+              an initiative by <span className="font-semibold text-foreground">Hare Krishna Movement Visakhapatnam</span> —
+              one of the trusts of Srila Prabhupada&apos;s ISKCON Gambheeram Visakhapatnam.
+            </p>
+          </div>
+        </div>
+      </section>
+
       <section className="py-24 bg-background" ref={ref5}>
         <div className="container mx-auto px-4">
           <motion.div
@@ -277,6 +424,99 @@ export default function SubhojanamPage() {
           </motion.div>
         </div>
       </section>
+
+      {/* Touchstone Charities checkout modal */}
+      {checkoutTier && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/50 p-4"
+          onClick={closeCheckout}
+        >
+          <div
+            className="w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-elevated"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="font-heading text-lg font-bold">Sponsor {checkoutTier.meals}</h3>
+              <button onClick={closeCheckout} aria-label="Close">
+                <X className="h-5 w-5 text-muted-foreground" />
+              </button>
+            </div>
+
+            {status?.type === "success" ? (
+              <div className="flex flex-col items-center py-6 text-center">
+                <CheckCircle2 className="mb-3 h-12 w-12 text-green-500" />
+                <p className="mb-6 text-sm text-muted-foreground">{status.message}</p>
+                <button
+                  onClick={closeCheckout}
+                  className="rounded-full bg-gradient-gold px-6 py-2.5 text-sm font-bold text-[hsl(220,60%,12%)]"
+                >
+                  Close
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="rounded-xl bg-[hsl(42,92%,56%,0.1)] p-3 text-center">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">You are donating</p>
+                  <p className="font-heading text-2xl font-bold text-gold">
+                    ₹{checkoutTier.amountValue.toLocaleString("en-IN")}
+                  </p>
+                  <p className="text-xs text-muted-foreground">to Touchstone Charities · Subhojanam</p>
+                </div>
+
+                <div>
+                  <label className="mb-1 block text-sm font-medium">Full Name</label>
+                  <input
+                    type="text"
+                    required
+                    value={form.name}
+                    onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+                    placeholder="Your name"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm font-medium">Email</label>
+                  <input
+                    type="email"
+                    required
+                    value={form.email}
+                    onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+                    placeholder="you@example.com"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-sm font-medium">Phone Number</label>
+                  <input
+                    type="tel"
+                    required
+                    value={form.mobile}
+                    onChange={(e) => setForm((f) => ({ ...f, mobile: e.target.value }))}
+                    className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+                    placeholder="10-digit mobile number"
+                  />
+                </div>
+
+                {status?.type === "error" && (
+                  <p className="text-sm text-destructive">{status.message}</p>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-gold py-3 text-sm font-bold text-[hsl(220,60%,12%)] disabled:opacity-60"
+                >
+                  {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                  {submitting ? "Processing..." : `Donate ₹${checkoutTier.amountValue.toLocaleString("en-IN")} Now`}
+                </button>
+                <p className="text-center text-xs text-muted-foreground">
+                  Payment goes to Touchstone Charities, an initiative by Hare Krishna Movement Visakhapatnam.
+                </p>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </PageLayout>
   );
 }
