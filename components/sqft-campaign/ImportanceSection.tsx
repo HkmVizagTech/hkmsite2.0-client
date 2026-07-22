@@ -7,29 +7,22 @@ import Ornament from "@/components/Ornament";
 
 const CLOUDINARY_BASE = "https://res.cloudinary.com/ddmzeqpkc/video/upload";
 
+// Short scriptural glorifications (no Sanskrit) shown as text over the video,
+// mirroring the "Power of Giving" section on the campaigns site.
 const SCRIPTURES = [
   {
     citation: "Garuda Purana",
-    sanskrit:
-      "मन्दिर निर्माणं य: कर्ता देवादिं तु समर्पयेत्।\nधर्मेण पूज्यतां सर्वे स्वर्गं गच्छंति नान्यथा॥",
-    translation:
-      "One who contributes to the construction of a temple and establishes the deities therein is honored by all and attains heaven through such righteous acts.",
+    text: "One who contributes to building a temple attains heaven and is honored by all.",
     video: `${CLOUDINARY_BASE}/garuda_purana.mp4`,
   },
   {
     citation: "Vishnu Purana (3.8.27)",
-    sanskrit:
-      "य: देवालयनिर्माणे य: च दानं समर्पयेत्।\nसर्वपापे विनिर्मुक्तो स्वर्गलोकं गमिष्यति॥",
-    translation:
-      "One who donates towards the construction of a temple is liberated from all sins and attains the heavenly realms.",
+    text: "One who donates towards the construction of a temple is liberated from all sins and attains the heavenly realms.",
     video: `${CLOUDINARY_BASE}/vishnu_purana.mp4`,
   },
   {
-    citation: "The Vamana Purana",
-    sanskrit:
-      "अ॒ज्ये॒ष्ठासो॒ अ॑निष्ठास ए॒ते सं भ्रात॑रो वावृधु॒: सौभ॑गाय ।\nयुवा॑ पि॒ता स्वपा॑ रु॒द्र ए॑षां सु॒दुघा॒ पृश्नि॑: सु॒दिना॑ म॒रुद्भ्य॑: ॥",
-    translation:
-      "One can attain the eternal spiritual world (Vaikuntha) by donating for the construction or renovation of a temple.",
+    citation: "Vamana Purana",
+    text: "One can attain the spiritual world (Vaikuntha) by helping construct or renovate a temple.",
     video: `${CLOUDINARY_BASE}/vamana_purana.mp4`,
   },
 ];
@@ -51,7 +44,10 @@ export default function ImportanceSection() {
               Sacred scriptures glorify those who support spiritual causes
             </p>
             <h2 className="font-heading text-2xl font-bold text-primary md:text-3xl">
-              The Power of <span className="bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-500 bg-clip-text text-transparent">Giving</span>
+              The Power of{" "}
+              <span className="bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-500 bg-clip-text text-transparent">
+                Giving
+              </span>
             </h2>
           </div>
           <div className="flex gap-2 md:hidden">
@@ -85,31 +81,23 @@ export default function ImportanceSection() {
           {SCRIPTURES.map((s) => (
             <div
               key={s.citation}
-              className="w-80 shrink-0 snap-start overflow-hidden rounded-2xl border border-border bg-background shadow-sm md:w-auto"
+              className="group relative aspect-[6/5] w-80 shrink-0 snap-start overflow-hidden rounded-2xl border border-border shadow-sm sm:w-96 md:w-auto"
             >
-              <div className="relative aspect-[16/9] w-full overflow-hidden">
-                <video
-                  src={s.video}
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  className="absolute inset-0 h-full w-full object-cover scale-150"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                <div className="absolute bottom-3 left-3 right-3">
-                  <h3 className="text-sm font-bold uppercase tracking-wide text-white drop-shadow-md">
-                    {s.citation}
-                  </h3>
-                </div>
-              </div>
-              <div className="p-5">
-                <p className="mb-3 font-heading text-sm leading-relaxed text-foreground/90 whitespace-pre-line">
-                  {s.sanskrit}
-                </p>
-                <p className="text-xs leading-relaxed text-muted-foreground">
-                  &ldquo;{s.translation}&rdquo;
-                </p>
+              <video
+                src={s.video}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="absolute inset-0 h-full w-full scale-150 object-cover transition-transform duration-700 group-hover:scale-[1.6]"
+              />
+              {/* Dark gradient so the overlaid text stays readable */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/5" />
+              <div className="absolute inset-x-0 bottom-0 p-6">
+                <span className="mb-3 inline-block rounded-full bg-gold px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-[hsl(220,90%,12%)]">
+                  {s.citation}
+                </span>
+                <p className="text-sm leading-relaxed text-white md:text-base">{s.text}</p>
               </div>
             </div>
           ))}
