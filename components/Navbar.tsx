@@ -169,7 +169,7 @@ const Navbar = () => {
               height={112}
               priority
               loading="eager"
-              className="h-9 w-auto shrink-0 transition-all duration-300 md:h-14"
+              className="h-9 w-auto shrink-0 transition-all duration-300 md:h-[52px]"
             />
             {/* Compact icon-only mark for mobile/small-tablet -- the full
             {/* Full Vaikuntam logo shown at every screen size. On mobile
@@ -188,7 +188,7 @@ const Navbar = () => {
                 // className below.
                 width={300}
                 height={101}
-                className="h-6 w-auto shrink-0 transition-all duration-300 md:h-12"
+                className="h-6 w-auto shrink-0 transition-all duration-300 md:h-11"
               />
             </div>
           </Link>
