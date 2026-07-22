@@ -10,7 +10,6 @@ import {
 import PageLayout from "@/components/PageLayout";
 import Ornament from "@/components/Ornament";
 import HeroSection from "@/components/sqft-campaign/HeroSection";
-import StatsBar from "@/components/sqft-campaign/StatsBar";
 import DonationFormSection from "@/components/sqft-campaign/DonationFormSection";
 import DonorPrivilegesSection from "@/components/sqft-campaign/DonorPrivilegesSection";
 import TestimonialsSection from "@/components/sqft-campaign/TestimonialsSection";
@@ -31,7 +30,8 @@ import { getCampaignConfig, type CampaignConfig, type CampaignerData, type Donor
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 
-const MAHA_PRASADAM_MIN_AMOUNT = 1000;
+// Maha Prasadam & 80G tax-exemption options unlock once the amount crosses this.
+const ADDONS_MIN_AMOUNT = 999;
 
 const apiBase = () =>
   (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(/\/+$/, "");
@@ -122,7 +122,16 @@ export default function SqftCampaignClient({
   const [sqftCount, setSqftCount] = useState(1);
   const [useCustom, setUseCustom] = useState(false);
   const [customAmount, setCustomAmount] = useState("");
-  const [form, setForm] = useState({ name: "", email: "", mobile: "", panNumber: "", address: "" });
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    mobile: "",
+    panNumber: "",
+    addressLine: "",
+    city: "",
+    state: "",
+    pincode: "",
+  });
   const [want80G, setWant80G] = useState(false);
   const [wantsMahaPrasadam, setWantsMahaPrasadam] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -131,11 +140,14 @@ export default function SqftCampaignClient({
 
   const price = config.pricePerUnit;
   const finalAmount = useCustom ? Number(customAmount) || 0 : sqftCount * price;
-  const mahaPrasadamEligible = finalAmount > MAHA_PRASADAM_MIN_AMOUNT;
+  const addonsEligible = finalAmount > ADDONS_MIN_AMOUNT;
 
   useEffect(() => {
-    if (!mahaPrasadamEligible && wantsMahaPrasadam) setWantsMahaPrasadam(false);
-  }, [mahaPrasadamEligible, wantsMahaPrasadam]);
+    if (!addonsEligible && wantsMahaPrasadam) setWantsMahaPrasadam(false);
+  }, [addonsEligible, wantsMahaPrasadam]);
+  useEffect(() => {
+    if (!addonsEligible && want80G) setWant80G(false);
+  }, [addonsEligible, want80G]);
   const sqftRaised = stats ? Math.floor(stats.totalAmount / price) : 0;
   const percent = stats && stats.goalSqft > 0
     ? Math.min(100, Math.round((stats.totalAmount / (stats.goalSqft * price)) * 10000) / 100)
@@ -185,8 +197,18 @@ export default function SqftCampaignClient({
       setStatus({ type: "error", message: "PAN number is required for an 80G receipt." });
       return;
     }
-    if (wantsMahaPrasadam && !form.address.trim()) {
-      setStatus({ type: "error", message: "Please provide your delivery address for Maha Prasadam." });
+    if (
+      wantsMahaPrasadam &&
+      (!form.addressLine.trim() ||
+        !form.city.trim() ||
+        !form.state.trim() ||
+        !/^\d{6}$/.test(form.pincode.trim()))
+    ) {
+      setStatus({
+        type: "error",
+        message:
+          "Please complete the delivery address (door no./area, city, state and a valid 6-digit PIN code) for Maha Prasadam.",
+      });
       return;
     }
 
@@ -207,9 +229,19 @@ export default function SqftCampaignClient({
           certificate: want80G,
           panNumber: want80G ? form.panNumber.trim() : undefined,
           campaignerSlug: campaigner?.slug || undefined,
-          // TODO: backend doesn't accept these fields yet — wire up once /payments/order supports them.
-          // wantsMahaPrasadam,
-          // address: wantsMahaPrasadam ? form.address.trim() : undefined,
+          // Maha Prasadam courier details — backend stores these on the donation
+          // (wantPrasadam + structured prasadamAddress) and feeds them to the
+          // DCC delivery sync and receipt. Only sent when opted in.
+          mahaprasadam: wantsMahaPrasadam,
+          prasadamAddress: wantsMahaPrasadam
+            ? {
+                street: form.addressLine.trim(),
+                city: form.city.trim(),
+                state: form.state.trim(),
+                pincode: form.pincode.trim(),
+                country: "India",
+              }
+            : undefined,
         }),
       });
 
@@ -233,6 +265,9 @@ export default function SqftCampaignClient({
           sevaName: config.pageTitle,
           sevaType: config.orderType,
           campaignerSlug: campaigner?.slug || "",
+          // Flag only — the full courier address is stored on the donation in our
+          // DB, so we don't send the donor's home address to Razorpay.
+          ...(wantsMahaPrasadam ? { mahaPrasadam: "yes" } : {}),
         },
         handler: async (response: Record<string, string>) => {
           try {
@@ -314,9 +349,6 @@ export default function SqftCampaignClient({
           config={config}
         />
 
-        {/* Stats bar — slides slightly up over the hero */}
-        <StatsBar stats={stats} campaigner={campaigner} price={price} config={config} />
-
         {/* Campaigner card (P2P pages only) */}
         {campaigner && (
           <CampaignerCard
@@ -341,8 +373,8 @@ export default function SqftCampaignClient({
           form={form}
           want80G={want80G}
           wantsMahaPrasadam={wantsMahaPrasadam}
-          mahaPrasadamEligible={mahaPrasadamEligible}
-          mahaPrasadamMinAmount={MAHA_PRASADAM_MIN_AMOUNT}
+          mahaPrasadamEligible={addonsEligible}
+          addonsEligible={addonsEligible}
           submitting={submitting}
           status={status}
           copiedField={copiedField}
@@ -393,8 +425,14 @@ export default function SqftCampaignClient({
         {/* Gallery */}
         <GallerySection />
 
+        {/* Final CTA — below Temple & Seva Glimpses */}
+        <FinalCtaSection scrollToDonate={scrollToDonate} />
+
         {/* Founder's words */}
         <FounderSection />
+
+        {/* Start your fundraising campaign */}
+        <FundraisingCtaSection campaignType={campaignType} />
 
         {/* FAQ */}
         <FaqSection faqs={FAQS(config)} />
@@ -406,12 +444,6 @@ export default function SqftCampaignClient({
           setWallTab={setWallTab}
           price={price}
         />
-
-        {/* Start your fundraising campaign */}
-        <FundraisingCtaSection campaignType={campaignType} />
-
-        {/* Final CTA */}
-        <FinalCtaSection scrollToDonate={scrollToDonate} />
 
         {/* Sticky mobile donate bar */}
         <StickyMobileBar price={price} scrollToDonate={scrollToDonate} config={config} />

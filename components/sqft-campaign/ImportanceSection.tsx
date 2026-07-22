@@ -2,47 +2,35 @@
 
 import { useRef } from "react";
 import { motion } from "framer-motion";
-import { Quote, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import Ornament from "@/components/Ornament";
+
+const CLOUDINARY_BASE = "https://res.cloudinary.com/ddmzeqpkc/video/upload";
 
 const SCRIPTURES = [
   {
-    citation: "Mahabharata, Anushasana Parva (13.40)",
-    sanskrit:
-      "य: पुजां च दानं च समर्पयेत् स्वयं देवालये। तस्य पुण्यं महत्त्वं च, स्वर्गगच्छंति हरं तदा॥",
-    translation:
-      "He who donates and offers worship for the construction of a temple attains great merit and is granted the highest spiritual rewards.",
-  },
-  {
     citation: "Garuda Purana",
     sanskrit:
-      "मन्दिर निर्माणं य: कर्ता देवादिं तु समर्पयेत्। धर्मेण पूज्यतां सर्वे स्वर्गं गच्छंति नान्यथा॥",
+      "मन्दिर निर्माणं य: कर्ता देवादिं तु समर्पयेत्।\nधर्मेण पूज्यतां सर्वे स्वर्गं गच्छंति नान्यथा॥",
     translation:
-      "One who contributes to the construction of a temple and establishes the deities therein is honored by all and attains heaven.",
-  },
-  {
-    citation: "The Vamana Purana",
-    sanskrit: "अ॒ज्ये॒ष्ठासो॒ अ॑निष्ठास ए॒ते सं भ्रात॑रो वावृधु॒: सौभ॑गाय ।",
-    translation: "One can attain the eternal spiritual world (Vaikuntha) by donating for temple construction.",
+      "One who contributes to the construction of a temple and establishes the deities therein is honored by all and attains heaven through such righteous acts.",
+    video: `${CLOUDINARY_BASE}/garuda_purana.mp4`,
   },
   {
     citation: "Vishnu Purana (3.8.27)",
     sanskrit:
-      "य: देवालयनिर्माणे य: च दानं समर्पयेत्। सर्वपापे विनिर्मुक्तो स्वर्गलोकं गमिष्यति॥",
-    translation: "One who donates towards temple construction is liberated from all sins and attains heavenly realms.",
-  },
-  {
-    citation: "The Skanda Purana",
-    sanskrit:
-      "आत्मनं देवालये समर्पयेत् य: सदा प्रार्थयेत्। शान्तं शान्ति प्राप्तं च पुण्यं लभेत् सदा महात्मनम्॥",
+      "य: देवालयनिर्माणे य: च दानं समर्पयेत्।\nसर्वपापे विनिर्मुक्तो स्वर्गलोकं गमिष्यति॥",
     translation:
-      "Donating for temple construction wipes out sins from seven births and delivers forefathers from hellish planets.",
+      "One who donates towards the construction of a temple is liberated from all sins and attains the heavenly realms.",
+    video: `${CLOUDINARY_BASE}/vishnu_purana.mp4`,
   },
   {
-    citation: "Yajurveda (16.3)",
+    citation: "The Vamana Purana",
     sanskrit:
-      "आत्मनं देवालये समर्पयेत् य: सदा प्रार्थयेत्। शान्तं शान्ति प्राप्तं च पुण्यं लभेत् सदा महात्मनम्॥",
-    translation: "One dedicating themselves to the temple receives peace, blessings, and merit.",
+      "अ॒ज्ये॒ष्ठासो॒ अ॑निष्ठास ए॒ते सं भ्रात॑रो वावृधु॒: सौभ॑गाय ।\nयुवा॑ पि॒ता स्वपा॑ रु॒द्र ए॑षां सु॒दुघा॒ पृश्नि॑: सु॒दिना॑ म॒रुद्भ्य॑: ॥",
+    translation:
+      "One can attain the eternal spiritual world (Vaikuntha) by donating for the construction or renovation of a temple.",
+    video: `${CLOUDINARY_BASE}/vamana_purana.mp4`,
   },
 ];
 
@@ -60,11 +48,13 @@ export default function ImportanceSection() {
         <div className="mb-8 flex items-end justify-between gap-4">
           <div className="max-w-2xl">
             <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-gold">
-              Scriptural Significance
+              Sacred scriptures glorify those who support spiritual causes
             </p>
-            <h2 className="font-heading text-2xl font-bold text-primary md:text-3xl">Importance</h2>
+            <h2 className="font-heading text-2xl font-bold text-primary md:text-3xl">
+              The Power of <span className="bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-500 bg-clip-text text-transparent">Giving</span>
+            </h2>
           </div>
-          <div className="hidden gap-2 sm:flex">
+          <div className="flex gap-2 md:hidden">
             <button
               type="button"
               aria-label="Scroll left"
@@ -90,17 +80,37 @@ export default function ImportanceSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
           ref={scrollerRef}
-          className="flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2 md:grid md:grid-cols-3 md:overflow-visible md:pb-0 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           {SCRIPTURES.map((s) => (
             <div
               key={s.citation}
-              className="w-80 shrink-0 snap-start rounded-2xl border border-border bg-background p-6 shadow-sm sm:w-96"
+              className="w-80 shrink-0 snap-start overflow-hidden rounded-2xl border border-border bg-background shadow-sm md:w-auto"
             >
-              <Quote className="mb-4 h-7 w-7 text-gold/70" />
-              <h3 className="mb-3 text-sm font-bold uppercase tracking-wide text-primary">{s.citation}</h3>
-              <p className="mb-4 font-heading text-base leading-relaxed text-foreground/90">{s.sanskrit}</p>
-              <p className="text-sm leading-relaxed text-muted-foreground">&ldquo;{s.translation}&rdquo;</p>
+              <div className="relative aspect-[16/9] w-full overflow-hidden">
+                <video
+                  src={s.video}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="absolute inset-0 h-full w-full object-cover scale-150"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                <div className="absolute bottom-3 left-3 right-3">
+                  <h3 className="text-sm font-bold uppercase tracking-wide text-white drop-shadow-md">
+                    {s.citation}
+                  </h3>
+                </div>
+              </div>
+              <div className="p-5">
+                <p className="mb-3 font-heading text-sm leading-relaxed text-foreground/90 whitespace-pre-line">
+                  {s.sanskrit}
+                </p>
+                <p className="text-xs leading-relaxed text-muted-foreground">
+                  &ldquo;{s.translation}&rdquo;
+                </p>
+              </div>
             </div>
           ))}
         </motion.div>

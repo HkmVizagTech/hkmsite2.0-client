@@ -39,7 +39,7 @@ export default function ConstructionStatusSection({ scrollToDonate }: { scrollTo
           >
             <div className="relative aspect-[9/16] overflow-hidden rounded-[28px] border border-border shadow-elevated">
               <iframe
-                src={`https://www.youtube-nocookie.com/embed/${CONSTRUCTION_VIDEO_ID}?rel=0&modestbranding=1&playsinline=1`}
+                src={`https://www.youtube-nocookie.com/embed/${CONSTRUCTION_VIDEO_ID}?autoplay=1&mute=1&controls=0&modestbranding=1&showinfo=0&rel=0&iv_load_policy=3&playsinline=1`}
                 title="Hare Krishna Vaikuntham Temple — Monthly Construction Update"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen

@@ -1,9 +1,22 @@
 "use client";
 
+import type { Dispatch, SetStateAction } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { ShieldCheck, Loader2, User, Phone, Mail, Check, Copy, ChevronDown } from "lucide-react";
+import { ShieldCheck, Loader2, User, Phone, Mail, Check, Copy, ChevronDown, MapPin } from "lucide-react";
 import Ornament from "@/components/Ornament";
 import type { CampaignConfig } from "@/lib/campaignConfig";
+
+export interface DonorForm {
+  name: string;
+  email: string;
+  mobile: string;
+  panNumber: string;
+  addressLine: string;
+  city: string;
+  state: string;
+  pincode: string;
+}
 
 interface DonationFormSectionProps {
   price: number;
@@ -11,11 +24,11 @@ interface DonationFormSectionProps {
   sqftCount: number;
   useCustom: boolean;
   customAmount: string;
-  form: { name: string; email: string; mobile: string; panNumber: string; address: string };
+  form: DonorForm;
   want80G: boolean;
   wantsMahaPrasadam: boolean;
   mahaPrasadamEligible: boolean;
-  mahaPrasadamMinAmount: number;
+  addonsEligible: boolean;
   submitting: boolean;
   status: { type: "success" | "error"; message: string } | null;
   copiedField: string | null;
@@ -30,7 +43,7 @@ interface DonationFormSectionProps {
   setSqftCount: (n: number) => void;
   setUseCustom: (v: boolean) => void;
   setCustomAmount: (v: string) => void;
-  setForm: (f: { name: string; email: string; mobile: string; panNumber: string; address: string }) => void;
+  setForm: Dispatch<SetStateAction<DonorForm>>;
   setWant80G: (v: boolean) => void;
   setWantsMahaPrasadam: (v: boolean) => void;
   handleSubmit: (e: React.FormEvent) => void;
@@ -45,6 +58,9 @@ const inputClass =
 const labelClass = "mb-1 block text-[11px] font-medium text-muted-foreground";
 const addonBoxClass = "rounded-lg border border-border bg-background/60 px-3 py-2";
 
+// Preset quantities: row 1 = small (1–4), row 2 = bulk (11, 21, 51, 108).
+const UNIT_PRESETS = [1, 2, 3, 4, 11, 21, 51, 108];
+
 export default function DonationFormSection({
   price,
   minCustomAmount,
@@ -55,7 +71,7 @@ export default function DonationFormSection({
   want80G,
   wantsMahaPrasadam,
   mahaPrasadamEligible,
-  mahaPrasadamMinAmount,
+  addonsEligible,
   submitting,
   status,
   copiedField,
@@ -72,6 +88,64 @@ export default function DonationFormSection({
   handleCopy,
   config,
 }: DonationFormSectionProps) {
+  // Raw text for the "Other <unit>" quantity input — kept separate from
+  // sqftCount so partially-typed values (e.g. "1" while typing "12") aren't
+  // clobbered by preset matching.
+  const [customSqftText, setCustomSqftText] = useState("");
+  const [pinLoading, setPinLoading] = useState(false);
+  const [pinError, setPinError] = useState<string | null>(null);
+  const lastPin = useRef("");
+
+  // Auto-fill city & state from a 6-digit PIN code (India Post public API).
+  useEffect(() => {
+    const pin = form.pincode.trim();
+    if (!/^\d{6}$/.test(pin)) {
+      lastPin.current = "";
+      return;
+    }
+    if (lastPin.current === pin) return;
+    lastPin.current = pin;
+
+    let cancelled = false;
+    setPinLoading(true);
+    setPinError(null);
+    fetch(`https://api.postalpincode.in/pincode/${pin}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (cancelled) return;
+        const rec = Array.isArray(data) ? data[0] : null;
+        const po = rec?.Status === "Success" ? rec?.PostOffice?.[0] : null;
+        if (po) {
+          setForm((prev) => ({
+            ...prev,
+            city: po.District || po.Block || po.Name || prev.city,
+            state: po.State || prev.state,
+          }));
+        } else {
+          setPinError("Couldn't find that PIN code — please enter city & state manually.");
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setPinError("Couldn't look up PIN code — please enter city & state manually.");
+      })
+      .finally(() => {
+        if (!cancelled) setPinLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+    // Only re-run when the PIN code itself changes.
+  }, [form.pincode]);
+
+  const isCustomSqft = !useCustom && customSqftText !== "";
+
+  const selectPreset = (n: number) => {
+    setUseCustom(false);
+    setCustomSqftText("");
+    setSqftCount(n);
+  };
+
   return (
     <section id="donate" className="scroll-mt-24 bg-background py-10 md:py-16">
       <div className="container mx-auto max-w-4xl px-4">
@@ -93,7 +167,7 @@ export default function DonationFormSection({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="overflow-hidden rounded-[28px] border border-border bg-card shadow-elevated"
+          className="overflow-hidden rounded-[28px] border border-border bg-white shadow-elevated"
         >
           {/* Amount summary strip */}
           <div className="flex items-center justify-between gap-3 bg-gradient-gold px-6 py-4 sm:px-8">
@@ -116,32 +190,63 @@ export default function DonationFormSection({
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                 Choose Amount
               </p>
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-2">
-                {[1, 2, 3, 4].map((n) => (
+              <div className="grid grid-cols-4 gap-2">
+                {UNIT_PRESETS.map((n) => (
                   <button
                     key={n}
                     type="button"
-                    onClick={() => {
-                      setUseCustom(false);
-                      setSqftCount(n);
-                    }}
-                    className={`rounded-lg border px-3 py-2.5 text-center transition-colors ${
-                      !useCustom && sqftCount === n
+                    onClick={() => selectPreset(n)}
+                    className={`rounded-lg border px-2 py-2 text-center transition-colors ${
+                      !useCustom && !isCustomSqft && sqftCount === n
                         ? "border-gold bg-gold/10"
                         : "border-border bg-card hover:border-gold/60"
                     }`}
                   >
-                    <span className="block text-lg font-bold text-primary">{n}</span>
+                    <span className="block text-base font-bold text-primary sm:text-lg">{n}</span>
                     <span className="block text-[10px] uppercase tracking-wide text-muted-foreground">
                       {n === 1 ? config.unitName : config.unitNamePlural}
                     </span>
-                    <span className="mt-1 block text-xs font-semibold text-gold">
+                    <span className="mt-0.5 block text-[11px] font-semibold text-gold">
                       ₹{(n * price).toLocaleString("en-IN")}
                     </span>
                   </button>
                 ))}
               </div>
 
+              {/* Other quantity — type any number of units */}
+              <div
+                className={`flex items-center gap-2 rounded-lg border px-3 transition-colors ${
+                  isCustomSqft ? "border-gold bg-gold/5" : "border-border bg-card"
+                }`}
+              >
+                <label htmlFor="custom-sqft" className="shrink-0 text-xs font-medium text-muted-foreground">
+                  Other {config.unitShort}
+                </label>
+                <input
+                  id="custom-sqft"
+                  type="number"
+                  inputMode="numeric"
+                  min={1}
+                  max={100000}
+                  placeholder="Enter a number"
+                  value={customSqftText}
+                  onFocus={() => setUseCustom(false)}
+                  onChange={(e) => {
+                    const raw = e.target.value.replace(/[^\d]/g, "");
+                    setCustomSqftText(raw);
+                    setUseCustom(false);
+                    setSqftCount(raw === "" ? 0 : Math.max(1, Math.min(100000, Number(raw))));
+                  }}
+                  className="h-10 w-full min-w-0 bg-transparent text-sm font-semibold text-foreground outline-none placeholder:font-normal placeholder:text-muted-foreground"
+                />
+                {isCustomSqft && sqftCount > 0 && (
+                  <span className="shrink-0 text-xs font-semibold text-gold">
+                    ₹{(sqftCount * price).toLocaleString("en-IN")}
+                  </span>
+                )}
+              </div>
+
+              {/* Other rupee amount */}
               <div
                 className={`flex items-center gap-3 rounded-lg border px-3 transition-colors ${
                   useCustom ? "border-gold bg-gold/5" : "border-border bg-card"
@@ -157,9 +262,13 @@ export default function DonationFormSection({
                   min={minCustomAmount}
                   placeholder={`Min ${minCustomAmount}`}
                   value={customAmount}
-                  onFocus={() => setUseCustom(true)}
+                  onFocus={() => {
+                    setUseCustom(true);
+                    setCustomSqftText("");
+                  }}
                   onChange={(e) => {
                     setUseCustom(true);
+                    setCustomSqftText("");
                     setCustomAmount(e.target.value);
                   }}
                   className="h-10 w-full min-w-0 bg-transparent text-sm font-semibold text-foreground outline-none placeholder:font-normal placeholder:text-muted-foreground"
@@ -278,19 +387,68 @@ export default function DonationFormSection({
                     🙏 I&apos;d like Maha Prasadam delivered
                   </label>
                   {wantsMahaPrasadam && (
-                    <textarea
-                      required
-                      rows={2}
-                      value={form.address}
-                      onChange={(e) => setForm({ ...form, address: e.target.value })}
-                      className="mt-2 w-full rounded-lg border border-border bg-card px-3 py-2 text-xs outline-none focus:border-gold"
-                      placeholder="Delivery address — house/flat no., street, city, state, PIN"
-                    />
+                    <div className="mt-2 space-y-2">
+                      <p className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                        <MapPin className="h-3.5 w-3.5 shrink-0 text-gold" />
+                        Delivery address for your Maha Prasadam courier
+                      </p>
+                      <input
+                        type="text"
+                        required
+                        value={form.addressLine}
+                        onChange={(e) => setForm({ ...form, addressLine: e.target.value })}
+                        className="w-full rounded-lg border border-border bg-card px-3 py-2 text-xs outline-none focus:border-gold"
+                        placeholder="Door / flat no. & area, street *"
+                      />
+                      <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                        <div className="relative sm:col-span-1">
+                          <input
+                            type="text"
+                            required
+                            inputMode="numeric"
+                            maxLength={6}
+                            value={form.pincode}
+                            onChange={(e) =>
+                              setForm({ ...form, pincode: e.target.value.replace(/[^\d]/g, "").slice(0, 6) })
+                            }
+                            className="h-9 w-full rounded-lg border border-border bg-card px-3 pr-8 text-xs outline-none focus:border-gold"
+                            placeholder="PIN code *"
+                          />
+                          {pinLoading && (
+                            <Loader2 className="absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 animate-spin text-gold" />
+                          )}
+                        </div>
+                        <input
+                          type="text"
+                          required
+                          value={form.city}
+                          onChange={(e) => setForm({ ...form, city: e.target.value })}
+                          className="h-9 w-full rounded-lg border border-border bg-card px-3 text-xs outline-none focus:border-gold"
+                          placeholder="City *"
+                        />
+                        <input
+                          type="text"
+                          required
+                          value={form.state}
+                          onChange={(e) => setForm({ ...form, state: e.target.value })}
+                          className="h-9 w-full rounded-lg border border-border bg-card px-3 text-xs outline-none focus:border-gold"
+                          placeholder="State *"
+                        />
+                      </div>
+                      {pinError ? (
+                        <p className="text-[11px] text-red-600">{pinError}</p>
+                      ) : (
+                        <p className="text-[11px] text-muted-foreground">
+                          Enter your PIN code and we&apos;ll fill in city &amp; state automatically.
+                        </p>
+                      )}
+                    </div>
                   )}
                 </div>
               )}
 
               {/* 80G */}
+              {addonsEligible && (
               <div className={addonBoxClass}>
                 <label className="flex cursor-pointer items-center gap-2 text-xs font-medium text-foreground">
                   <input
@@ -312,6 +470,7 @@ export default function DonationFormSection({
                   />
                 )}
               </div>
+              )}
 
               {status && (
                 <p
