@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import {
   ShieldCheck, Loader2, CheckCircle2, ChevronDown, Copy, Check,
   Building2, Award, FileCheck2, Sparkles, UtensilsCrossed, ScrollText,
@@ -115,6 +116,7 @@ export default function SqftCampaignClient({
   campaignType?: "SQFT" | "BRICK";
 }) {
   const config = getCampaignConfig(campaignType);
+  const router = useRouter();
   const [copiedShare, setCopiedShare] = useState(false);
   const [stats, setStats] = useState<CampaignStats | null>(null);
   const [wallTab, setWallTab] = useState<"latest" | "largest">("latest");
@@ -282,31 +284,15 @@ export default function SqftCampaignClient({
               }),
             });
             if (!verifyRes.ok) throw new Error("Payment verification failed.");
-            setStatus({
-              type: "success",
-              message: `Thank you! Your ${config.unitNamePlural} have been offered to Their Lordships. Hare Krishna 🙏`,
+            // Send the donor to the thank-you page with their offering details.
+            const units = price > 0 ? Math.floor(finalAmount / price) : 0;
+            const params = new URLSearchParams({
+              amount: String(finalAmount),
+              units: String(units),
+              type: campaignType,
             });
-            const nameParts = form.name.trim().split(/\s+/);
-            const displayName =
-              nameParts.length === 1
-                ? nameParts[0]
-                : `${nameParts[0]} ${nameParts[nameParts.length - 1].charAt(0)}.`;
-            const entry: DonorEntry = {
-              name: displayName,
-              amount: finalAmount,
-              sqft: Math.floor(finalAmount / price),
-              time: "just now",
-            };
-            setStats((s) =>
-              s
-                ? {
-                    ...s,
-                    totalAmount: s.totalAmount + finalAmount,
-                    donorCount: s.donorCount + 1,
-                    latest: [entry, ...s.latest],
-                  }
-                : s
-            );
+            router.push(`/sqft-seva-campaign/thank-you?${params.toString()}`);
+            return;
           } catch (err) {
             setStatus({
               type: "error",
