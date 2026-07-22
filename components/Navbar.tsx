@@ -188,7 +188,7 @@ const Navbar = () => {
                 // className below.
                 width={300}
                 height={101}
-                className="h-6 w-auto shrink-0 transition-all duration-300 md:h-10"
+                className="h-6 w-auto shrink-0 transition-all duration-300 md:h-12"
               />
             </div>
           </Link>
