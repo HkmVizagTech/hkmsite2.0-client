@@ -76,7 +76,7 @@ export const SQFT_CAMPAIGN: CampaignConfig = {
   unitName: "square foot",
   unitNamePlural: "square feet",
   unitShort: "sq ft",
-  minCustomAmount: 1, // TEMP: ₹1 minimum for live payment testing — restore to 500 after.
+  minCustomAmount: 500,
   phone: "+91 89777 61187",
   phoneHref: "tel:+918977761187",
   email: "social@hkmvizag.org",
