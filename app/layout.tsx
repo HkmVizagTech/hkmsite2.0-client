@@ -23,23 +23,23 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://harekrishnavizag.o
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "ISKCON Visakhapatnam | Hare Krishna Movement Vizag",
-    template: "%s · ISKCON Visakhapatnam",
+    default: "ISKCON Gambheeram Visakhapatnam | Hare Krishna Movement Vizag",
+    template: "%s · ISKCON Gambheeram Visakhapatnam",
   },
-  description: "ISKCON Visakhapatnam (Hare Krishna Movement, Gambheeram) — spreading the timeless message of Lord Krishna through devotion, service, and community since 2008. Daily darshan, prasadam, festivals, and spiritual programs in Vizag.",
-  keywords: ["ISKCON Visakhapatnam", "ISKCON Vizag", "ISKCON Gambheeram", "Hare Krishna Vizag", "Hare Krishna Movement Visakhapatnam", "Hare Krishna", "ISKCON", "Visakhapatnam", "Temple", "Spiritual", "Krishna", "Prabhupada", "Vaikuntham", "Vizag temple"],
+  description: "ISKCON Gambheeram Visakhapatnam (Hare Krishna Movement, Gambheeram) — spreading the timeless message of Lord Krishna through devotion, service, and community since 2008. Daily darshan, prasadam, festivals, and spiritual programs in Vizag.",
+  keywords: ["ISKCON Gambheeram Visakhapatnam", "ISKCON Vizag", "ISKCON Gambheeram", "Hare Krishna Vizag", "Hare Krishna Movement Visakhapatnam", "Hare Krishna", "ISKCON", "Visakhapatnam", "Temple", "Spiritual", "Krishna", "Prabhupada", "Vaikuntham", "Vizag temple"],
   alternates: { canonical: "/" },
   openGraph: {
-    title: "ISKCON Visakhapatnam | Hare Krishna Movement Vizag",
-    description: "ISKCON Visakhapatnam (Hare Krishna Movement, Gambheeram) — daily darshan, prasadam, festivals, and spiritual programs in Vizag since 2008.",
+    title: "ISKCON Gambheeram Visakhapatnam | Hare Krishna Movement Vizag",
+    description: "ISKCON Gambheeram Visakhapatnam (Hare Krishna Movement, Gambheeram) — daily darshan, prasadam, festivals, and spiritual programs in Vizag since 2008.",
     type: "website",
     locale: "en_IN",
-    siteName: "ISKCON Visakhapatnam",
+    siteName: "ISKCON Gambheeram Visakhapatnam",
     url: SITE_URL,
   },
   twitter: {
     card: "summary_large_image",
-    title: "ISKCON Visakhapatnam | Hare Krishna Movement Vizag",
+    title: "ISKCON Gambheeram Visakhapatnam | Hare Krishna Movement Vizag",
     description: "Spreading the timeless message of Lord Krishna through devotion, service, and community.",
   },
   robots: { index: true, follow: true },
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
 const organizationJsonLd = {
   "@context": "https://schema.org",
   "@type": "HinduTemple",
-  name: "ISKCON Visakhapatnam",
+  name: "ISKCON Gambheeram Visakhapatnam",
   alternateName: [
     "Hare Krishna Movement Visakhapatnam",
     "Hare Krishna Vaikuntham",
@@ -56,7 +56,7 @@ const organizationJsonLd = {
     "ISKCON Vizag",
     "Hare Krishna Movement Vizag",
   ],
-  description: "ISKCON Visakhapatnam, also known as Hare Krishna Movement Vizag, is a center of the International Society for Krishna Consciousness serving the Gambheeram area of Visakhapatnam since 2008.",
+  description: "ISKCON Gambheeram Visakhapatnam, also known as Hare Krishna Movement Vizag, is a center of the International Society for Krishna Consciousness serving the Gambheeram area of Visakhapatnam since 2008.",
   url: SITE_URL,
   foundingDate: "2008",
   address: {
@@ -78,18 +78,18 @@ const faqJsonLd = {
   mainEntity: [
     {
       "@type": "Question",
-      name: "Is this ISKCON Visakhapatnam?",
+      name: "Is this ISKCON Gambheeram Visakhapatnam?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Yes. This is ISKCON Visakhapatnam, also known as Hare Krishna Movement Vizag, located in Gambheeram, Visakhapatnam. We are a center of the International Society for Krishna Consciousness (ISKCON), serving the community since 2008.",
+        text: "Yes. This is ISKCON Gambheeram Visakhapatnam, also known as Hare Krishna Movement Vizag, located in Gambheeram, Visakhapatnam. We are a center of the International Society for Krishna Consciousness (ISKCON), serving the community since 2008.",
       },
     },
     {
       "@type": "Question",
-      name: "Where is ISKCON Visakhapatnam located?",
+      name: "Where is ISKCON Gambheeram Visakhapatnam located?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "ISKCON Visakhapatnam is located at Chaitanya Bhavan, Hare Krishna Vaikuntam Cultural Centre, IIM Road, opposite Akshaya Patra Foundation, Gambhiram, Visakhapatnam, Andhra Pradesh 531163.",
+        text: "ISKCON Gambheeram Visakhapatnam is located at Chaitanya Bhavan, Hare Krishna Vaikuntam Cultural Centre, IIM Road, opposite Akshaya Patra Foundation, Gambhiram, Visakhapatnam, Andhra Pradesh 531163.",
       },
     },
   ],

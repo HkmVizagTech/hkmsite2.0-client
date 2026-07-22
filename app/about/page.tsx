@@ -70,7 +70,7 @@ export default function AboutPage() {
               </p>
               <p className="text-muted-foreground leading-relaxed mb-4">
                 Following in the footsteps of our revered Founder-Acharya, we at Hare Krishna Movement India
-                (HKMI), Visakhapatnam — <strong className="text-foreground">ISKCON Visakhapatnam</strong>, located
+                (HKMI), Visakhapatnam — <strong className="text-foreground">ISKCON Gambheeram Visakhapatnam</strong>, located
                 in Gambheeram — have been conducting spiritual, educational and cultural activities with
                 the devoted purpose of bringing about physical, emotional and spiritual well-being.
               </p>

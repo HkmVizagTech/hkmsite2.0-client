@@ -157,7 +157,7 @@ const Navbar = () => {
           <Link href="/" className="flex shrink-0 items-center gap-3">
             <Image
               src={typeof ISKLogo === 'string' ? ISKLogo : ISKLogo.src}
-              alt="ISKCON Visakhapatnam - Hare Krishna Movement Vizag"
+              alt="ISKCON Gambheeram Visakhapatnam - Hare Krishna Movement Vizag"
               // Same fix as the HKVT logo below: width/height just need to
               // match the real aspect ratio (819x305 ≈ 2.68:1) so Next
               // requests a properly high-res source. The actual displayed
