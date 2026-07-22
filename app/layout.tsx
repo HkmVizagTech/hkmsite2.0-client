@@ -101,8 +101,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-  <html lang="en" className={`h-full antialiased ${playfair.variable}`} suppressHydrationWarning>
-      <body className={`${poppins.className} min-h-full flex flex-col`}>
+  <html lang="en" className={`h-full antialiased overflow-x-hidden ${playfair.variable}`} suppressHydrationWarning>
+      <body className={`${poppins.className} min-h-full flex flex-col overflow-x-hidden`}>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
