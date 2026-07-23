@@ -51,8 +51,9 @@ const EKADASHI_CONFIG = {
   ogTitle: "Shayani Ekadashi Seva — Hare Krishna Vaikuntham Temple",
   ogDesc:
     "Offer seva on Shayani Ekadashi at the Hare Krishna Vaikuntham Temple. Your donation sustains daily worship, sacred bhog, and festive arrangements during Chaturmas.",
-  ogImage: "https://guptvrindavandham.org/media/landingpage/Ashadhi_Ekadashi.webp",
-  heroImage: "https://guptvrindavandham.org/media/landingpage/Ashadhi_Ekadashi.webp",
+  ogImage: "https://res.cloudinary.com/ddmzeqpkc/image/upload/f_auto,q_auto,w_1200,c_limit/shayani-ekadashi-d",
+  heroImage: "https://res.cloudinary.com/ddmzeqpkc/image/upload/f_auto,q_auto,w_2560,c_limit/shayani-ekadashi-d",
+  heroImageMobile: "https://res.cloudinary.com/ddmzeqpkc/image/upload/f_auto,q_auto,w_1200,c_limit/shayani-ekadashi-m",
   heroTagline: "A seva initiative of Hare Krishna Movement Visakhapatnam",
   heroHeading1: "Shayani Ekadashi",
   heroHeading2: "Seva",
@@ -424,7 +425,7 @@ export default function ShayaniEkadashiClient() {
             <picture>
               <source
                 media="(max-width: 767px)"
-                srcSet="https://guptvrindavandham.org/media/landingpage/Ashadhi_Ekadashi_1.webp"
+                srcSet={EKADASHI_CONFIG.heroImageMobile}
               />
               <source srcSet={EKADASHI_CONFIG.heroImage} />
               <img
