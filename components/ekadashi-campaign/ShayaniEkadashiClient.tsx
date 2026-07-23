@@ -67,11 +67,102 @@ const EKADASHI_CONFIG = {
   orderType: "EKADASHI",
 };
 
-const TIERS = [
-  { label: "Anna Daan", amount: 501, description: "Feed devotees with sanctified prasadam on Ekadashi" },
-  { label: "Gau Seva", amount: 1001, description: "Support cow care and protection on this sacred day" },
-  { label: "Vastra & Alankara", amount: 2101, description: "Dress and adorn the Deities for the festival" },
-  { label: "Maha Seva", amount: 5001, description: "Contribute to all Ekadashi arrangements at the temple" },
+interface EkadashiTier {
+  label?: string;
+  amount: number;
+}
+
+interface EkadashiSeva {
+  key: string;
+  label: string;
+  icon: string;
+  /** Name recorded on the donation / receipt. */
+  sevaName: string;
+  /** Category used for accounting — matches the main seva pages. */
+  category: string;
+  /** Preset amounts. Empty array → open (custom) amount only. */
+  tiers: EkadashiTier[];
+}
+
+// The sevas offered on the Ekadashi donation form. Amounts mirror the real
+// tiers on the dedicated /donate/[slug] pages (see lib/sevaConfig.ts) so the
+// pricing stays consistent everywhere. General Seva is open-amount only.
+const EKADASHI_SEVAS: EkadashiSeva[] = [
+  {
+    key: "annadan",
+    label: "Annadan Seva",
+    icon: "🍛",
+    sevaName: "Anna Daan Seva",
+    category: "ANNADAAN",
+    tiers: [
+      { label: "10 plates", amount: 250 },
+      { label: "20 plates", amount: 500 },
+      { label: "40 plates", amount: 1000 },
+      { label: "100 plates", amount: 2500 },
+    ],
+  },
+  {
+    key: "gau",
+    label: "Gau Seva",
+    icon: "🐄",
+    sevaName: "Gau Seva",
+    category: "GO SEVA",
+    tiers: [
+      { label: "10 cows, 1 day", amount: 1500 },
+      { label: "Medicines", amount: 2500 },
+      { label: "1 cow, 1 month", amount: 3500 },
+      { label: "Green grass, 1 day", amount: 9000 },
+    ],
+  },
+  {
+    key: "deity",
+    label: "Deity Seva",
+    icon: "🌸",
+    sevaName: "Vastra & Alankara Seva",
+    category: "VASTRA",
+    tiers: [
+      { label: "Daily vastra", amount: 501 },
+      { label: "Festival vastra", amount: 2100 },
+      { label: "Alankara set", amount: 5100 },
+      { label: "Full month", amount: 11000 },
+    ],
+  },
+  {
+    key: "sadhu-bhojan",
+    label: "Sadhu Vaishnav Bhojan Seva",
+    icon: "🍽️",
+    sevaName: "Sadhu Vaishnav Bhojan Seva",
+    category: "SADHU BHOJAN",
+    tiers: [
+      { amount: 501 },
+      { amount: 1100 },
+      { amount: 2100 },
+      { amount: 3100 },
+      { amount: 5100 },
+      { amount: 10000 },
+    ],
+  },
+  {
+    key: "vidya",
+    label: "Vidya Daan",
+    icon: "📚",
+    sevaName: "Gita Daan Seva",
+    category: "GITA DAAN",
+    tiers: [
+      { label: "1 Gita", amount: 300 },
+      { label: "5 Gitas", amount: 1500 },
+      { label: "10 Gitas", amount: 3000 },
+      { label: "50 Gitas", amount: 15000 },
+    ],
+  },
+  {
+    key: "general",
+    label: "General Seva",
+    icon: "🛕",
+    sevaName: "General Seva",
+    category: "GENERAL",
+    tiers: [],
+  },
 ];
 
 const SEVA_CARDS = [
@@ -188,6 +279,7 @@ const labelClass = "mb-1 block text-[11px] font-medium text-muted-foreground";
 
 export default function ShayaniEkadashiClient() {
   const router = useRouter();
+  const [sevaIndex, setSevaIndex] = useState(0);
   const [tierIndex, setTierIndex] = useState(0);
   const [customAmount, setCustomAmount] = useState("");
   const [useCustom, setUseCustom] = useState(false);
@@ -199,8 +291,22 @@ export default function ShayaniEkadashiClient() {
   const [significanceExpanded, setSignificanceExpanded] = useState(false);
   const [whyDonateExpanded, setWhyDonateExpanded] = useState(false);
 
-  const finalAmount = useCustom ? Number(customAmount) || 0 : TIERS[tierIndex]?.amount || 0;
+  const selectedSeva = EKADASHI_SEVAS[sevaIndex];
+  const customOnly = selectedSeva.tiers.length === 0;
+  const finalAmount =
+    useCustom || customOnly
+      ? Number(customAmount) || 0
+      : selectedSeva.tiers[tierIndex]?.amount || 0;
   const galleryRef = useRef<HTMLDivElement>(null);
+
+  // Switching seva resets the amount selection. Open-amount sevas (General)
+  // go straight to the custom input.
+  const selectSeva = (i: number) => {
+    setSevaIndex(i);
+    setTierIndex(0);
+    setUseCustom(EKADASHI_SEVAS[i].tiers.length === 0);
+    setCustomAmount("");
+  };
 
   const BANK_DETAILS = {
     beneficiaryName: "HARE KRISHNA MOVEMENT INDIA",
@@ -245,8 +351,8 @@ export default function ShayaniEkadashiClient() {
         body: JSON.stringify({
           account: "default",
           sourcePage: "/shayani-ekadashi",
-          type: EKADASHI_CONFIG.orderType,
-          sevaName: TIERS[tierIndex]?.label || "Ekadashi Seva",
+          type: selectedSeva.category,
+          sevaName: selectedSeva.sevaName,
           name: form.name.trim(),
           email: form.email.trim().toLowerCase(),
           mobile: form.mobile.trim(),
@@ -268,10 +374,10 @@ export default function ShayaniEkadashiClient() {
         amount: Math.round(finalAmount * 100),
         currency: "INR",
         name: "Hare Krishna Movement Vizag",
-        description: `${TIERS[tierIndex]?.label || "Ekadashi Seva"} — Hare Krishna Vaikuntham Temple`,
+        description: `${selectedSeva.sevaName} — Hare Krishna Vaikuntham Temple`,
         order_id: order.orderId,
         prefill: { name: form.name, email: form.email, contact: form.mobile },
-        notes: { sourcePage: "/shayani-ekadashi", sevaName: TIERS[tierIndex]?.label || "Ekadashi Seva", sevaType: EKADASHI_CONFIG.orderType },
+        notes: { sourcePage: "/shayani-ekadashi", sevaName: selectedSeva.sevaName, sevaType: selectedSeva.category },
         handler: async (response: Record<string, string>) => {
           try {
             const verifyRes = await fetch(`${apiBase()}/payments/verify`, {
@@ -285,8 +391,7 @@ export default function ShayaniEkadashiClient() {
               }),
             });
             if (!verifyRes.ok) throw new Error("Payment verification failed.");
-            const sevaLabel = TIERS[tierIndex]?.label || "Ekadashi Seva";
-            router.push(`/shayani-ekadashi/thank-you?seva=${encodeURIComponent(sevaLabel)}&amount=${finalAmount}`);
+            router.push(`/shayani-ekadashi/thank-you?seva=${encodeURIComponent(selectedSeva.sevaName)}&amount=${finalAmount}`);
           } catch (err) {
             setStatus({
               type: "error",
@@ -406,7 +511,7 @@ export default function ShayaniEkadashiClient() {
                     You&apos;re offering
                   </p>
                   <p className="text-lg font-extrabold text-[hsl(220,90%,12%)] sm:text-xl">
-                    {useCustom ? "Custom offering" : TIERS[tierIndex]?.label || "Select a tier"}
+                    {selectedSeva.label}
                   </p>
                 </div>
                 <p className="text-2xl font-extrabold text-[hsl(220,90%,12%)] sm:text-3xl">
@@ -415,57 +520,91 @@ export default function ShayaniEkadashiClient() {
               </div>
 
               <form onSubmit={handleSubmit} className="grid gap-6 p-5 sm:p-7 lg:grid-cols-2 lg:gap-8">
-                {/* Left: amount selection */}
-                <div className="space-y-3">
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                    Choose Your Seva
-                  </p>
-                  <div className="grid grid-cols-2 gap-2">
-                    {TIERS.map((tier, i) => (
-                      <button
-                        key={tier.amount}
-                        type="button"
-                        onClick={() => { setUseCustom(false); setTierIndex(i); }}
-                        className={`rounded-lg border px-3 py-3 text-left transition-colors ${
-                          !useCustom && tierIndex === i
-                            ? "border-gold bg-gold/10"
-                            : "border-border bg-card hover:border-gold/60"
-                        }`}
-                      >
-                        <span className="mb-1 block text-sm font-bold text-primary">{tier.label}</span>
-                        <span className="mb-1 block text-[11px] leading-snug text-muted-foreground">
-                          {tier.description}
-                        </span>
-                        <span className="block text-base font-extrabold text-gold">
-                          ₹{tier.amount.toLocaleString("en-IN")}
-                        </span>
-                      </button>
-                    ))}
+                {/* Left: seva + amount selection */}
+                <div className="space-y-4">
+                  {/* Step 1 — Choose Seva */}
+                  <div>
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                      Choose Seva
+                    </p>
+                    <div className="grid grid-cols-3 gap-2">
+                      {EKADASHI_SEVAS.map((seva, i) => (
+                        <button
+                          key={seva.key}
+                          type="button"
+                          onClick={() => selectSeva(i)}
+                          aria-pressed={sevaIndex === i}
+                          className={`flex flex-col items-center justify-center gap-1.5 rounded-xl border px-1.5 py-3 text-center transition-colors ${
+                            sevaIndex === i
+                              ? "border-gold bg-gold/10"
+                              : "border-border bg-card hover:border-gold/60"
+                          }`}
+                        >
+                          <span className="text-2xl leading-none">{seva.icon}</span>
+                          <span className="text-[11px] font-bold leading-tight text-primary">
+                            {seva.label}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
-                  {/* Custom amount */}
-                  <div
-                    className={`flex items-center gap-3 rounded-lg border px-3 transition-colors ${
-                      useCustom ? "border-gold bg-gold/5" : "border-border bg-card"
-                    }`}
-                  >
-                    <label htmlFor="custom-amount" className="shrink-0 text-xs font-medium text-muted-foreground">
-                      Other amount
-                    </label>
-                    <span className="text-sm text-foreground">₹</span>
-                    <input
-                      id="custom-amount"
-                      type="number"
-                      min={101}
-                      placeholder="Min ₹101"
-                      value={customAmount}
-                      onFocus={() => setUseCustom(true)}
-                      onChange={(e) => {
-                        setUseCustom(true);
-                        setCustomAmount(e.target.value);
-                      }}
-                      className="h-10 w-full min-w-0 bg-transparent text-sm font-semibold text-foreground outline-none placeholder:font-normal placeholder:text-muted-foreground"
-                    />
+                  {/* Step 2 — Choose Amount */}
+                  <div>
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                      Choose Amount
+                    </p>
+                    {!customOnly && (
+                      <div className="grid grid-cols-2 gap-2">
+                        {selectedSeva.tiers.map((tier, i) => (
+                          <button
+                            key={tier.amount}
+                            type="button"
+                            onClick={() => { setUseCustom(false); setTierIndex(i); }}
+                            aria-pressed={!useCustom && tierIndex === i}
+                            className={`rounded-lg border px-3 py-2.5 text-left transition-colors ${
+                              !useCustom && tierIndex === i
+                                ? "border-gold bg-gold/10"
+                                : "border-border bg-card hover:border-gold/60"
+                            }`}
+                          >
+                            <span className="block text-base font-extrabold text-gold">
+                              ₹{tier.amount.toLocaleString("en-IN")}
+                            </span>
+                            {tier.label && (
+                              <span className="block text-[11px] leading-snug text-muted-foreground">
+                                {tier.label}
+                              </span>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Custom / open amount */}
+                    <div
+                      className={`${customOnly ? "" : "mt-2"} flex items-center gap-3 rounded-lg border px-3 transition-colors ${
+                        useCustom || customOnly ? "border-gold bg-gold/5" : "border-border bg-card"
+                      }`}
+                    >
+                      <label htmlFor="custom-amount" className="shrink-0 text-xs font-medium text-muted-foreground">
+                        {customOnly ? "Enter amount" : "Other amount"}
+                      </label>
+                      <span className="text-sm text-foreground">₹</span>
+                      <input
+                        id="custom-amount"
+                        type="number"
+                        min={101}
+                        placeholder="Min ₹101"
+                        value={customAmount}
+                        onFocus={() => setUseCustom(true)}
+                        onChange={(e) => {
+                          setUseCustom(true);
+                          setCustomAmount(e.target.value);
+                        }}
+                        className="h-10 w-full min-w-0 bg-transparent text-sm font-semibold text-foreground outline-none placeholder:font-normal placeholder:text-muted-foreground"
+                      />
+                    </div>
                   </div>
 
                   {/* Bank transfer */}
@@ -775,9 +914,9 @@ export default function ShayaniEkadashiClient() {
         <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 p-3 backdrop-blur md:hidden">
           <button
             onClick={scrollToDonate}
-            className="w-full rounded-full bg-gradient-gold py-3.5 text-base font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)]"
+            className="mx-auto block rounded-full bg-gradient-gold px-8 py-3.5 text-base font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)]"
           >
-            Donate ₹{TIERS[tierIndex]?.amount.toLocaleString("en-IN") || "501"} / seva
+            Donate
           </button>
         </div>
       </main>
