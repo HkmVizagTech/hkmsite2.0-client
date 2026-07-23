@@ -316,15 +316,19 @@ export default function ShayaniEkadashiClient() {
             aria-label="Donate — go to the donation form"
             className="block w-full cursor-pointer"
           >
-            <Image
-              src={EKADASHI_CONFIG.heroImage}
-              alt="Shayani Ekadashi Seva — Hare Krishna Vaikuntham Temple"
-              width={1672}
-              height={941}
-              priority
-              sizes="100vw"
-              className="h-auto w-full"
-            />
+            <picture>
+              <source
+                media="(max-width: 767px)"
+                srcSet="https://guptvrindavandham.org/media/landingpage/Ashadhi_Ekadashi_1.webp"
+              />
+              <source srcSet={EKADASHI_CONFIG.heroImage} />
+              <img
+                src={EKADASHI_CONFIG.heroImage}
+                alt="Shayani Ekadashi Seva — Hare Krishna Vaikuntham Temple"
+                fetchPriority="high"
+                className="h-auto w-full"
+              />
+            </picture>
           </button>
         </section>
 
