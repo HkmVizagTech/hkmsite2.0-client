@@ -1,13 +1,18 @@
 "use client";
 
+import { useRef } from "react";
 import { motion } from "framer-motion";
 import Ornament from "@/components/Ornament";
+import useInViewVideo from "@/hooks/useInViewVideo";
 
 const INTRO_VIDEO_ID = "IJTMCgGBriw";
 
 export default function TempleFeaturesSection() {
+  const sectionRef = useRef<HTMLElement>(null);
+  useInViewVideo(sectionRef);
+
   return (
-    <section className="bg-background py-16 md:py-24">
+    <section ref={sectionRef} className="bg-background py-16 md:py-24">
       <div className="container mx-auto max-w-5xl px-4">
         <Ornament className="mb-6" />
         <div className="mb-10 text-center">
@@ -31,7 +36,7 @@ export default function TempleFeaturesSection() {
           <div className="relative overflow-hidden rounded-2xl border border-border shadow-2xl ring-1 ring-white/10 sm:rounded-3xl">
             <div className="relative aspect-video w-full">
               <iframe
-                src={`https://www.youtube.com/embed/${INTRO_VIDEO_ID}?autoplay=1&mute=1&controls=0&modestbranding=1&showinfo=0&rel=0&iv_load_policy=3&playsinline=1&logo=0`}
+                src={`https://www.youtube.com/embed/${INTRO_VIDEO_ID}?enablejsapi=1&mute=1&controls=0&modestbranding=1&showinfo=0&rel=0&iv_load_policy=3&playsinline=1&logo=0`}
                 title="Hare Krishna Vaikuntham Temple — Introduction"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen

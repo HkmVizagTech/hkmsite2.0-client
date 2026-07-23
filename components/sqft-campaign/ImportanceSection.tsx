@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Ornament from "@/components/Ornament";
+import useInViewVideo from "@/hooks/useInViewVideo";
 
 const CLOUDINARY_BASE = "https://res.cloudinary.com/ddmzeqpkc/video/upload";
 
@@ -29,13 +30,15 @@ const SCRIPTURES = [
 
 export default function ImportanceSection() {
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  useInViewVideo(sectionRef);
 
   const scrollBy = (dir: 1 | -1) => {
     scrollerRef.current?.scrollBy({ left: dir * 380, behavior: "smooth" });
   };
 
   return (
-    <section className="bg-card py-16 md:py-24">
+    <section ref={sectionRef} className="bg-card py-16 md:py-24">
       <div className="container mx-auto max-w-6xl px-4">
         <Ornament className="mb-6" />
         <div className="mb-8 flex items-end justify-between gap-4">
@@ -85,7 +88,6 @@ export default function ImportanceSection() {
             >
               <video
                 src={s.video}
-                autoPlay
                 loop
                 muted
                 playsInline

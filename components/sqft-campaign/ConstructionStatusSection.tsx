@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Ornament from "@/components/Ornament";
+import useInViewVideo from "@/hooks/useInViewVideo";
 
 const CONSTRUCTION_PHOTOS = [
   { src: "/assets/construction-update-1.jpg", caption: "Foundation & Ground Floor" },
@@ -18,13 +19,15 @@ const CONSTRUCTION_VIDEO_ID = "RRifRjrlc5s";
 
 export default function ConstructionStatusSection({ scrollToDonate }: { scrollToDonate?: () => void }) {
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  useInViewVideo(sectionRef);
 
   const scrollBy = (dir: 1 | -1) => {
     scrollerRef.current?.scrollBy({ left: dir * 380, behavior: "smooth" });
   };
 
   return (
-    <section className="relative overflow-hidden bg-[radial-gradient(circle_at_top,_rgba(255,221,91,0.14),_transparent_45%)] bg-card py-16 md:py-24">
+    <section ref={sectionRef} className="relative overflow-hidden bg-[radial-gradient(circle_at_top,_rgba(255,221,91,0.14),_transparent_45%)] bg-card py-16 md:py-24">
       <div className="container mx-auto max-w-6xl px-4">
         <Ornament className="mb-10" />
 
@@ -39,7 +42,7 @@ export default function ConstructionStatusSection({ scrollToDonate }: { scrollTo
           >
             <div className="relative aspect-[9/16] overflow-hidden rounded-[28px] border border-border shadow-elevated">
               <iframe
-                src={`https://www.youtube-nocookie.com/embed/${CONSTRUCTION_VIDEO_ID}?autoplay=1&mute=1&controls=0&modestbranding=1&showinfo=0&rel=0&iv_load_policy=3&playsinline=1`}
+                src={`https://www.youtube-nocookie.com/embed/${CONSTRUCTION_VIDEO_ID}?enablejsapi=1&mute=1&controls=0&modestbranding=1&showinfo=0&rel=0&iv_load_policy=3&playsinline=1`}
                 title="Hare Krishna Vaikuntham Temple — Monthly Construction Update"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
