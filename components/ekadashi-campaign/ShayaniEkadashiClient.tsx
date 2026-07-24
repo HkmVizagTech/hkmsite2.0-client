@@ -53,9 +53,9 @@ const EKADASHI_CONFIG = {
   ogTitle: "Shayani Ekadashi Seva — Hare Krishna Vaikuntham Temple",
   ogDesc:
     "Offer seva on Shayani Ekadashi at the Hare Krishna Vaikuntham Temple. Your donation sustains daily worship, sacred bhog, and festive arrangements during Chaturmas.",
-  ogImage: "https://res.cloudinary.com/ddmzeqpkc/image/upload/f_auto,q_auto,w_1200,c_limit/shayani-ekadashi-d",
-  heroImage: "https://res.cloudinary.com/ddmzeqpkc/image/upload/f_auto,q_auto,w_2560,c_limit/shayani-ekadashi-d",
-  heroImageMobile: "https://res.cloudinary.com/ddmzeqpkc/image/upload/f_auto,q_auto,w_1200,c_limit/shayani-ekadashi-m",
+  ogImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/ekadashi-posters/ad%20poster%201%2016-9%20%20final%20.jpg.webp",
+  heroImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/ekadashi-posters/ad%20poster%201%2016-9%20%20final%20.jpg.webp",
+  heroImageMobile: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/ekadashi-posters/poster%202%20final%20.jpg.webp",
   heroTagline: "A seva initiative of Hare Krishna Movement Visakhapatnam",
   heroHeading1: "Shayani Ekadashi",
   heroHeading2: "Seva",
@@ -73,6 +73,7 @@ const EKADASHI_CONFIG = {
 interface EkadashiTier {
   label?: string;
   amount: number;
+  popular?: boolean;
 }
 
 interface EkadashiSeva {
@@ -98,10 +99,10 @@ const EKADASHI_SEVAS: EkadashiSeva[] = [
     sevaName: "Anna Daan Seva",
     category: "ANNADAAN",
     tiers: [
-      { label: "10 plates", amount: 250 },
-      { label: "20 plates", amount: 500 },
-      { label: "40 plates", amount: 1000 },
-      { label: "100 plates", amount: 2500 },
+      { label: "20 plates", amount: 501 },
+      { label: "50 meals", amount: 1251 },
+      { label: "100 meals", amount: 2501, popular: true },
+      { label: "150 meals", amount: 3751 },
     ],
   },
   {
@@ -555,20 +556,25 @@ export default function ShayaniEkadashiClient() {
                             type="button"
                             onClick={() => { setUseCustom(false); setTierIndex(i); }}
                             aria-pressed={!useCustom && tierIndex === i}
-                            className={`rounded-lg border px-3 py-2.5 text-left transition-colors ${
-                              !useCustom && tierIndex === i
-                                ? "border-gold bg-gold/10"
-                                : "border-border bg-card hover:border-gold/60"
-                            }`}
-                          >
-                            <span className="block text-base font-extrabold text-gold">
-                              ₹{tier.amount.toLocaleString("en-IN")}
+                          className={`rounded-lg border px-3 py-2.5 text-left transition-colors ${
+                            !useCustom && tierIndex === i
+                              ? "border-gold bg-gold/10"
+                              : "border-border bg-card hover:border-gold/60"
+                          }`}
+                        >
+                          <span className="block text-base font-extrabold text-gold">
+                            ₹{tier.amount.toLocaleString("en-IN")}
+                          </span>
+                          {tier.label && (
+                            <span className="block text-[11px] leading-snug text-muted-foreground">
+                              {tier.label}
                             </span>
-                            {tier.label && (
-                              <span className="block text-[11px] leading-snug text-muted-foreground">
-                                {tier.label}
-                              </span>
-                            )}
+                          )}
+                          {tier.popular && (
+                            <span className="mt-1 inline-block rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                              Most Donated
+                            </span>
+                          )}
                           </button>
                         ))}
                       </div>
