@@ -12,6 +12,7 @@ import {
   Utensils, Hospital, Users, Clock, Heart, Phone, Mail,
   ChevronRight, ShieldCheck, X, CheckCircle2, Loader2, Quote
 } from "lucide-react";
+import { newEventId, getMetaBrowserData, trackInitiateCheckout, trackPurchase } from "@/lib/metaPixel";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 const apiBase = () => (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(/\/+$/, "");
@@ -92,9 +93,11 @@ export default function SubhojanamPage() {
     }
     setSubmitting(true);
     try {
+      const metaEventId = newEventId();
+      const metaBrowser = getMetaBrowserData();
       const orderRes = await fetch(`${apiBase()}/payments/order`, {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ account: "touchstone", sourcePage: "/subhojanam", sevaName: "Subhojanam", name: form.name.trim(), email: form.email.trim().toLowerCase(), mobile: form.mobile.trim(), amount: checkoutTier.amountValue }),
+        body: JSON.stringify({ account: "touchstone", sourcePage: "/subhojanam", sevaName: "Subhojanam", name: form.name.trim(), email: form.email.trim().toLowerCase(), mobile: form.mobile.trim(), amount: checkoutTier.amountValue, metaEventId, metaFbp: metaBrowser.fbp, metaFbc: metaBrowser.fbc }),
       });
       if (!orderRes.ok) { const body = await orderRes.json().catch(() => ({})); throw new Error(body.message || "Unable to create payment order."); }
       const order = await orderRes.json();
@@ -113,6 +116,9 @@ export default function SubhojanamPage() {
               body: JSON.stringify({ donationId: order.donationId, razorpay_order_id: response.razorpay_order_id, razorpay_payment_id: response.razorpay_payment_id, razorpay_signature: response.razorpay_signature }),
             });
             if (!verifyRes.ok) throw new Error("Payment verification failed.");
+            // Browser-side Purchase event — deduplicated with the server
+            // CAPI event via the shared metaEventId.
+            trackPurchase({ value: checkoutTier.amountValue, eventId: metaEventId, content_name: "Subhojanam" });
             setStatus({ type: "success", message: "Thank you! Your donation has been received. Hare Krishna 🙏" });
           } catch (err) { setStatus({ type: "error", message: err instanceof Error ? err.message : "Payment verification failed." }); }
           finally { setSubmitting(false); }
@@ -320,7 +326,7 @@ export default function SubhojanamPage() {
             {donationTiers.map((tier, i) => (
               <motion.button
                 key={tier.meals}
-                onClick={() => setCheckoutTier({ meals: tier.meals, amountValue: tier.amountValue })}
+                onClick={() => { setCheckoutTier({ meals: tier.meals, amountValue: tier.amountValue }); trackInitiateCheckout({ value: tier.amountValue, content_name: "Subhojanam" }); }}
                 initial={{ opacity: 0, y: 20 }} animate={inView4 ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.1 * i }}
                 whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
                 className={`relative flex flex-col items-center rounded-2xl border p-5 text-center transition-all ${

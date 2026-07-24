@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { Toaster } from "@/components/ui/toaster";
 import ReduxProvider from "@/components/ReduxProvider";
+import MetaPixel from "@/components/MetaPixel";
 
 
 const poppins = Poppins({
@@ -103,6 +104,7 @@ export default function RootLayout({
   return (
   <html lang="en" className={`h-full antialiased overflow-x-hidden ${playfair.variable}`} suppressHydrationWarning>
       <body className={`${poppins.className} min-h-full flex flex-col overflow-x-hidden`}>
+        <MetaPixel />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
