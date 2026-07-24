@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Heart, X } from "lucide-react";
+import { newEventId, getMetaBrowserData, trackPurchase } from "@/lib/metaPixel";
 import { captureTracking, getStoredTracking } from "@/lib/tracking";
 
 type DonationOption = {
@@ -265,6 +266,8 @@ export default function DonationsClient() {
     setStatus({ type: "idle", message: "" });
 
     try {
+      const metaEventId = newEventId();
+      const metaBrowser = getMetaBrowserData();
       const orderResponse = await fetch(`${apiBase()}/payments/order`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -281,6 +284,9 @@ export default function DonationsClient() {
           panNumber: form.want80G ? form.panNumber : undefined,
           mahaprasadam: form.wantPrasadam,
           utm: getStoredTracking() || undefined,
+          metaEventId,
+          metaFbp: metaBrowser.fbp,
+          metaFbc: metaBrowser.fbc,
           prasadamAddress: needsAddress
             ? {
                 doorNo: form.doorNo,
@@ -336,6 +342,7 @@ export default function DonationsClient() {
             });
 
             if (!verifyResponse.ok) throw new Error("Payment verification failed.");
+            trackPurchase({ value: finalAmount, eventId: metaEventId, content_name: selected.title });
             setStatus({ type: "success", message: "Thank you. Your donation has been received successfully." });
             setSelected(null);
           } catch (verifyError) {

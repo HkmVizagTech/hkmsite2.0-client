@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { notFound, redirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { newEventId, getMetaBrowserData, trackPurchase } from "@/lib/metaPixel";
 import { motion } from "framer-motion";
 import {
   ChevronRight, CheckCircle2, Loader2, ShieldCheck,
@@ -193,6 +194,8 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
 
     setSubmitting(true);
     try {
+      const metaEventId = newEventId();
+      const metaBrowser = getMetaBrowserData();
       const orderRes = await fetch(`${apiBase()}/payments/order`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -211,6 +214,9 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
           prasadamAddress: wantsMahaPrasadam
             ? { street: address.street.trim(), city: address.city.trim(), state: address.state.trim(), pincode: address.pincode.trim(), country: "India" }
             : undefined,
+          metaEventId,
+          metaFbp: metaBrowser.fbp,
+          metaFbc: metaBrowser.fbc,
         }),
       });
 
@@ -243,6 +249,7 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
               }),
             });
             if (!verifyRes.ok) throw new Error("Payment verification failed.");
+            trackPurchase({ value: finalAmount, eventId: metaEventId, content_name: seva.title });
             setStatus({
               type: "success",
               message: "Thank you! Your donation has been received. Hare Krishna 🙏",
