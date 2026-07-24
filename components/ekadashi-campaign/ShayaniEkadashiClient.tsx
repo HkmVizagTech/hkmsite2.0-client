@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -12,6 +12,8 @@ import {
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import Ornament from "@/components/Ornament";
+import AddressForm from "@/components/AddressForm";
+import type { PrasadamAddress } from "@/components/AddressForm";
 import FaqSection from "@/components/sqft-campaign/FaqSection";
 import FounderSection from "@/components/sqft-campaign/FounderSection";
 
@@ -135,12 +137,12 @@ const EKADASHI_SEVAS: EkadashiSeva[] = [
     sevaName: "Sadhu Vaishnav Bhojan Seva",
     category: "SADHU BHOJAN",
     tiers: [
-      { amount: 501 },
-      { amount: 1100 },
-      { amount: 2100 },
-      { amount: 3100 },
-      { amount: 5100 },
-      { amount: 10000 },
+      { label: "1 plate", amount: 100 },
+      { label: "5 plates", amount: 500 },
+      { label: "10 plates", amount: 1000 },
+      { label: "20 plates", amount: 2000 },
+      { label: "50 plates", amount: 5000 },
+      { label: "100 plates", amount: 10000 },
     ],
   },
   {
@@ -286,11 +288,27 @@ export default function ShayaniEkadashiClient() {
   const [useCustom, setUseCustom] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", mobile: "", panNumber: "" });
   const [want80G, setWant80G] = useState(false);
+  const [wantsMahaPrasadam, setWantsMahaPrasadam] = useState(false);
+  const [address, setAddress] = useState<PrasadamAddress>({ street: "", city: "", state: "", pincode: "", country: "India" });
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [significanceExpanded, setSignificanceExpanded] = useState(false);
   const [whyDonateExpanded, setWhyDonateExpanded] = useState(false);
+  const [showSticky, setShowSticky] = useState(false);
+
+  useEffect(() => {
+    const check = () => {
+      const el = document.getElementById("donate");
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const pastForm = rect.bottom < 0;
+      setShowSticky(pastForm);
+    };
+    check();
+    window.addEventListener("scroll", check, { passive: true });
+    return () => window.removeEventListener("scroll", check);
+  }, []);
 
   const selectedSeva = EKADASHI_SEVAS[sevaIndex];
   const customOnly = selectedSeva.tiers.length === 0;
@@ -299,6 +317,16 @@ export default function ShayaniEkadashiClient() {
       ? Number(customAmount) || 0
       : selectedSeva.tiers[tierIndex]?.amount || 0;
   const galleryRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (finalAmount <= 999) {
+      if (want80G) setWant80G(false);
+      if (wantsMahaPrasadam) {
+        setWantsMahaPrasadam(false);
+        setAddress({ street: "", city: "", state: "", pincode: "", country: "India" });
+      }
+    }
+  }, [finalAmount, want80G, wantsMahaPrasadam]);
 
   // Switching seva resets the amount selection. Open-amount sevas (General)
   // go straight to the custom input.
@@ -343,6 +371,10 @@ export default function ShayaniEkadashiClient() {
       setStatus({ type: "error", message: "PAN number is required for an 80G receipt." });
       return;
     }
+    if (wantsMahaPrasadam && (!address.street.trim() || !address.city.trim() || !address.state.trim() || !/^\d{6}$/.test(address.pincode.trim()))) {
+      setStatus({ type: "error", message: "Please complete the delivery address (door no./area, city, state and a valid 6-digit PIN code) for Maha Prasadam." });
+      return;
+    }
 
     setSubmitting(true);
     try {
@@ -360,6 +392,10 @@ export default function ShayaniEkadashiClient() {
           amount: finalAmount,
           certificate: want80G,
           panNumber: want80G ? form.panNumber.trim() : undefined,
+          mahaprasadam: wantsMahaPrasadam,
+          prasadamAddress: wantsMahaPrasadam
+            ? { street: address.street.trim(), city: address.city.trim(), state: address.state.trim(), pincode: address.pincode.trim(), country: "India" }
+            : undefined,
         }),
       });
 
@@ -413,9 +449,9 @@ export default function ShayaniEkadashiClient() {
 
   return (
     <PageLayout>
-      <main className="bg-background">
+      <main className="bg-white">
         {/* ── Hero Banner ── */}
-        <section className="bg-[#faf3df] pt-[72px] md:pt-[92px]">
+        <section className="bg-white pt-[72px] md:pt-[92px]">
           <button
             type="button"
             onClick={scrollToDonate}
@@ -438,55 +474,11 @@ export default function ShayaniEkadashiClient() {
           </button>
         </section>
 
-        {/* ── Spiritual Significance ── */}
-        <section className="bg-card py-10 md:py-16">
-          <div className="container mx-auto max-w-4xl px-4">
-            <Ornament className="mb-6" />
-            <div className="text-center">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-gold">
-                The divine occasion
-              </p>
-              <h2 className="mb-8 font-heading text-2xl font-bold text-primary md:text-3xl">
-                Spiritual Significance of Devshayani Ekadashi
-              </h2>
-            </div>
-
-            {/* Shloka */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="mb-8 rounded-2xl border border-gold/20 bg-gold/5 p-6 text-center md:p-8"
-            >
-              <p className="mb-4 font-heading text-lg leading-relaxed text-primary md:text-xl">
-                {SHLOKA.sanskrit}
-              </p>
-              <p className="mb-2 text-sm italic leading-relaxed text-muted-foreground md:text-base">
-                &ldquo;{SHLOKA.translation}&rdquo;
-              </p>
-              <p className="text-xs font-semibold text-gold">— {SHLOKA.reference}</p>
-            </motion.div>
-
-            <motion.p
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="mx-auto max-w-2xl text-center text-sm leading-relaxed text-muted-foreground md:text-base"
-            >
-              Contributing to Devshayani Ekadashi is one of the most meaningful ways to serve the Lord
-              as He begins His divine rest. Your donation supports special puja arrangements, sacred bhog,
-              and temple seva performed at the Hare Krishna Vaikuntham Temple on this holy day.
-            </motion.p>
-          </div>
-        </section>
-
-        {/* ── Donation Form ── */}
-        <section id="donate" className="scroll-mt-24 bg-card py-10 md:py-16">
+        {/* ── Donation Form (right after banner) ── */}
+        <section id="donate" className="scroll-mt-24 bg-white py-8 md:py-12">
           <div className="container mx-auto max-w-4xl px-4">
             <Ornament className="mb-4" />
-            <div className="mb-6 text-center">
+            <div className="mb-5 text-center">
               <p className="mb-1.5 text-xs font-semibold uppercase tracking-[0.25em] text-gold">
                 Ekadashi Seva
               </p>
@@ -609,7 +601,7 @@ export default function ShayaniEkadashiClient() {
                   </div>
 
                   {/* Bank transfer */}
-                  <details className="group rounded-lg border border-border bg-background/60 px-3 py-2">
+                  <details className="group rounded-lg border border-border bg-white/60 px-3 py-2">
                     <summary className="flex cursor-pointer list-none items-center justify-between text-xs font-semibold text-foreground">
                       Prefer a direct bank transfer?
                       <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" />
@@ -726,6 +718,22 @@ export default function ShayaniEkadashiClient() {
                     </div>
                   )}
 
+                  {/* Maha Prasadam */}
+                  {finalAmount > 999 && (
+                    <div className="rounded-lg border border-border bg-background/60 px-3 py-2">
+                      <label className="flex cursor-pointer items-center gap-2 text-xs font-medium text-foreground">
+                        <input
+                          type="checkbox"
+                          checked={wantsMahaPrasadam}
+                          onChange={(e) => setWantsMahaPrasadam(e.target.checked)}
+                          className="h-3.5 w-3.5 shrink-0 accent-[hsl(42,92%,46%)]"
+                        />
+                        🙏 I&apos;d like Maha Prasadam delivered
+                      </label>
+                      {wantsMahaPrasadam && <AddressForm address={address} setAddress={setAddress} />}
+                    </div>
+                  )}
+
                   {status && (
                     <p
                       className={`rounded-lg px-3 py-2 text-xs font-medium ${
@@ -761,11 +769,55 @@ export default function ShayaniEkadashiClient() {
           </div>
         </section>
 
+        {/* ── Spiritual Significance ── */}
+        <section className="bg-white py-8 md:py-12">
+          <div className="container mx-auto max-w-4xl px-4">
+            <Ornament className="mb-4" />
+            <div className="text-center">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-gold">
+                The divine occasion
+              </p>
+              <h2 className="mb-6 font-heading text-2xl font-bold text-primary md:text-3xl">
+                Spiritual Significance of Devshayani Ekadashi
+              </h2>
+            </div>
+
+            {/* Shloka */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="mb-6 rounded-2xl border border-gold/20 bg-primary/5 p-6 text-center md:p-8"
+            >
+              <p className="mb-4 font-heading text-lg leading-relaxed text-primary md:text-xl">
+                {SHLOKA.sanskrit}
+              </p>
+              <p className="mb-2 text-sm italic leading-relaxed text-muted-foreground md:text-base">
+                &ldquo;{SHLOKA.translation}&rdquo;
+              </p>
+              <p className="text-xs font-semibold text-gold">— {SHLOKA.reference}</p>
+            </motion.div>
+
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="mx-auto max-w-2xl text-center text-sm leading-relaxed text-muted-foreground md:text-base"
+            >
+              Contributing to Devshayani Ekadashi is one of the most meaningful ways to serve the Lord
+              as He begins His divine rest. Your donation supports special puja arrangements, sacred bhog,
+              and temple seva performed at the Hare Krishna Vaikuntham Temple on this holy day.
+            </motion.p>
+          </div>
+        </section>
+
         {/* ── Ekadashi Daan ── */}
-        <section className="bg-background py-10 md:py-16">
+        <section className="bg-white py-8 md:py-12">
           <div className="container mx-auto max-w-6xl px-4">
-            <Ornament className="mb-6" />
-            <div className="mb-10 text-center">
+            <Ornament className="mb-4" />
+            <div className="mb-6 text-center">
               <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-gold">
                 Sacred offerings
               </p>
@@ -819,10 +871,10 @@ export default function ShayaniEkadashiClient() {
         </section>
 
         {/* ── Significance Points ── */}
-        <section className="bg-card py-10 md:py-16">
+        <section className="bg-white py-8 md:py-12">
           <div className="container mx-auto max-w-4xl px-4">
-            <Ornament className="mb-6" />
-            <div className="mb-10 text-center">
+            <Ornament className="mb-4" />
+            <div className="mb-6 text-center">
               <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-gold">
                 Why this day matters
               </p>
@@ -831,7 +883,7 @@ export default function ShayaniEkadashiClient() {
               </h2>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-3">
               {SIGNIFICANCE_POINTS.map((point, i) => (
                 <motion.div
                   key={point.title}
@@ -839,7 +891,7 @@ export default function ShayaniEkadashiClient() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1, duration: 0.5 }}
-                  className="rounded-2xl border border-border bg-background p-5 md:p-6"
+                  className="rounded-2xl border border-border bg-card p-5 md:p-6"
                 >
                   <div className="flex items-start gap-4">
                     <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gold/10 text-gold">
@@ -861,10 +913,10 @@ export default function ShayaniEkadashiClient() {
         </section>
 
         {/* ── Why Donate on Ekadashi ── */}
-        <section className="bg-background py-10 md:py-16">
+        <section className="bg-white py-8 md:py-12">
           <div className="container mx-auto max-w-4xl px-4">
-            <Ornament className="mb-6" />
-            <div className="mb-10 text-center">
+            <Ornament className="mb-4" />
+            <div className="mb-6 text-center">
               <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-gold">
                 The divine merit
               </p>
@@ -873,7 +925,7 @@ export default function ShayaniEkadashiClient() {
               </h2>
             </div>
 
-            <div className="space-y-8">
+            <div className="space-y-4">
               {WHY_DONATE_SECTIONS.map((section, i) => (
                 <motion.div
                   key={section.title}
@@ -893,7 +945,7 @@ export default function ShayaniEkadashiClient() {
               ))}
             </div>
 
-            <div className="mt-10 text-center">
+            <div className="mt-6 text-center">
               <Link
                 href="/sqft-seva-campaign"
                 className="inline-flex items-center gap-2 rounded-full border border-gold/40 px-6 py-3 text-sm font-semibold text-gold transition-colors hover:bg-gold/10"
@@ -912,14 +964,16 @@ export default function ShayaniEkadashiClient() {
         <FounderSection />
 
         {/* ── Sticky mobile donate bar ── */}
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 p-3 backdrop-blur md:hidden">
+        {showSticky && (
+        <div className="fixed inset-x-0 bottom-0 z-40 flex justify-center px-3 pb-3 pt-1 md:hidden">
           <button
             onClick={scrollToDonate}
-            className="mx-auto block rounded-full bg-gradient-gold px-8 py-3.5 text-base font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)]"
+            className="inline-flex items-center gap-1.5 rounded-full bg-gradient-gold px-5 py-2 text-xs font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)]"
           >
-            Donate
+            🪔 Donate Now
           </button>
         </div>
+        )}
       </main>
     </PageLayout>
   );

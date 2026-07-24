@@ -103,6 +103,18 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
   const [donors, setDonors] = useState<Donor[]>([]);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [showSticky, setShowSticky] = useState(false);
+
+  useEffect(() => {
+    const form = document.getElementById("donation-form");
+    if (!form) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setShowSticky(!entry.isIntersecting),
+      { threshold: 0.1 }
+    );
+    observer.observe(form);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     if (!seva) return;
@@ -620,14 +632,16 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
       </section>
 
       {/* Sticky mobile donate bar — the form sits below the fold on phones */}
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 p-3 backdrop-blur lg:hidden">
+      {showSticky && (
+      <div className="fixed inset-x-0 bottom-0 z-40 flex justify-center px-3 pb-3 pt-1 lg:hidden">
         <button
           onClick={() => document.getElementById("donation-form")?.scrollIntoView({ behavior: "smooth" })}
-          className="w-full rounded-full bg-gradient-gold py-3 text-base font-bold text-[hsl(220,60%,12%)] shadow-gold"
+          className="inline-flex items-center gap-1.5 rounded-full bg-gradient-gold px-5 py-2 text-xs font-bold text-[hsl(220,60%,12%)] shadow-gold"
         >
-          🪔 Sponsor {seva.shortTitle}
+          🪔 Donate Now
         </button>
       </div>
+      )}
     </main>
     </PageLayout>
   );
