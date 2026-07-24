@@ -127,8 +127,7 @@ export default function DonationForm({ config, setToast }: any) {
             body: JSON.stringify(payload)
       ,      credentials: 'include' });
           if (!donateRes.ok) throw new Error('Failed to record donation after payment');
-          setToast({ message: `Thank you — payment successful (₹${fmt(totalAmount)}).`, type: 'success' });
-          setTimeout(() => setToast({}), 4000);
+          window.location.assign(`/payment/thank-you?type=seva&seva=${encodeURIComponent(config?.title || 'Festival seva')}&amount=${totalAmount}&source=${encodeURIComponent(config?.title || 'our festival seva programmes')}`);
         },
         prefill: {
           name: formData.name,

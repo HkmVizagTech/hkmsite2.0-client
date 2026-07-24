@@ -12,7 +12,7 @@ export default function TempleFeaturesSection() {
   useInViewVideo(sectionRef);
 
   return (
-    <section ref={sectionRef} className="bg-background py-16 md:py-24">
+    <section ref={sectionRef} className="bg-white py-12 md:py-16">
       <div className="container mx-auto max-w-5xl px-4">
         <Ornament className="mb-6" />
         <div className="mb-10 text-center">

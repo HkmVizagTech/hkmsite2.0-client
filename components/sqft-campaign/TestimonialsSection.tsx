@@ -70,7 +70,7 @@ export default function TestimonialsSection() {
   };
 
   return (
-    <section className="bg-background py-16 md:py-24">
+    <section className="bg-white py-12 md:py-16">
       <div className="container mx-auto max-w-7xl px-4">
         <Ornament className="mb-6" />
         <div className="mb-10 flex items-end justify-between gap-4">

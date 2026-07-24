@@ -331,8 +331,8 @@ export default function JanmashtamiClient() {
             });
 
             if (!verifyResponse.ok) throw new Error("Payment verification failed.");
+            window.location.assign(`/payment/thank-you?type=seva&seva=${encodeURIComponent(selected?.seva.title || "Janmashtami seva")}&amount=${finalAmount}&source=${encodeURIComponent("the Janmashtami seva programme")}`);
             setSelected(null);
-            setStatus({ type: "success", message: "Thank you. Your Janmashtami seva has been received successfully." });
           } catch (verifyError) {
             setStatus({
               type: "error",

@@ -243,10 +243,7 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
               }),
             });
             if (!verifyRes.ok) throw new Error("Payment verification failed.");
-            setStatus({
-              type: "success",
-              message: "Thank you! Your donation has been received. Hare Krishna 🙏",
-            });
+            router.push(`/payment/thank-you?type=donation&seva=${encodeURIComponent(seva.title)}&amount=${finalAmount}&source=${encodeURIComponent("our seva programmes")}`);
             setDonors((d) => [{ name: `${form.name.split(" ")[0]} ${form.name.split(" ").slice(-1)[0].charAt(0)}.`, amount: finalAmount, time: "just now" }, ...d]);
           } catch (err) {
             setStatus({
@@ -270,7 +267,7 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
 
   return (
     <PageLayout>
-    <main className="bg-background">
+    <main className="bg-white">
       {/* Hero */}
       {seva.heroImageDesktop && seva.heroImageMobile ? (
         // Dedicated, fully-designed banner (title/CTA baked into the image
@@ -617,7 +614,7 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
       </div>
 
       {/* Donor privileges — moved below the payment form */}
-      <section className="border-t border-border bg-card">
+      <section className="border-t border-border bg-white">
         <div className="container mx-auto grid grid-cols-2 gap-4 px-4 py-8 lg:grid-cols-4">
           {SEVA_PRIVILEGES.map((p) => (
             <div key={p.title} className="flex items-start gap-3">

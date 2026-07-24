@@ -294,10 +294,7 @@ export default function SqftCampaignClient({
               }),
             });
             if (!verifyRes.ok) throw new Error("Payment verification failed.");
-            setStatus({
-              type: "success",
-              message: `Thank you! Your ${config.unitNamePlural} have been offered to Their Lordships. Hare Krishna 🙏`,
-            });
+            window.location.assign(`/payment/thank-you?type=seva&seva=${encodeURIComponent(config.pageTitle)}&amount=${finalAmount}&source=${encodeURIComponent("the temple construction seva campaign")}`);
             const nameParts = form.name.trim().split(/\s+/);
             const displayName =
               nameParts.length === 1
@@ -352,7 +349,7 @@ export default function SqftCampaignClient({
 
   return (
     <PageLayout>
-      <main className="bg-background">
+      <main className="bg-white">
         {/* Hero section — full‑width cinematic banner */}
         <HeroSection
           campaigner={campaigner}

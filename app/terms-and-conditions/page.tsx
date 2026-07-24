@@ -53,7 +53,7 @@ export default function TermsAndConditions() {
   return (
     <PageLayout>
       <PageHero title="Terms & Conditions" subtitle="Terms governing use of this website and our services" breadcrumb="Terms & Conditions" />
-      <section className="py-16 bg-background">
+      <section className="py-12 md:py-16 bg-white">
         <div className="container mx-auto px-4 max-w-3xl">
           <p className="text-sm text-muted-foreground mb-10">Last updated: July 2026</p>
           {sections.map((s) => (

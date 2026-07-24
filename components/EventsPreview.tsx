@@ -75,7 +75,7 @@ const EventsPreview = () => {
   }, []);
 
   return (
-    <section className="py-24 md:py-32 bg-background">
+    <section className="py-12 md:py-16 bg-white">
       <div className="container mx-auto px-4" ref={ref}>
         <motion.div
           initial={{ opacity: 0, y: 30 }}

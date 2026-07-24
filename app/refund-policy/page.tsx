@@ -37,7 +37,7 @@ export default function RefundPolicy() {
   return (
     <PageLayout>
       <PageHero title="Refund & Cancellation Policy" subtitle="Our policy on refunds for donations and registrations" breadcrumb="Refund Policy" />
-      <section className="py-16 bg-background">
+      <section className="py-12 md:py-16 bg-white">
         <div className="container mx-auto px-4 max-w-3xl">
           <p className="text-sm text-muted-foreground mb-10">Last updated: July 2026</p>
           {sections.map((s) => (

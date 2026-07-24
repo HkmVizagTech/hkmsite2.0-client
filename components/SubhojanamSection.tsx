@@ -24,7 +24,7 @@ const SubhojanamSection = () => {
   const inView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section ref={ref} className="relative overflow-hidden py-24 md:py-32">
+    <section ref={ref} className="relative overflow-hidden py-12 md:py-16">
       {/* Full-bleed photo with navy scrim */}
       <Image
         src="/assets/home-subhojanam-banner.webp"

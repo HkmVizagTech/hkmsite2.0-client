@@ -7,7 +7,7 @@ import { getCampaignConfig } from "@/lib/campaignConfig";
 export default function FundraisingCtaSection({ campaignType }: { campaignType: "SQFT" | "BRICK" }) {
   const config = getCampaignConfig(campaignType);
   return (
-    <section className="bg-[hsl(220,90%,12%)] py-16 md:py-24">
+    <section className="bg-[hsl(220,90%,12%)] py-12 md:py-16">
       <div className="container mx-auto max-w-3xl px-4 text-center">
         <Megaphone className="mx-auto mb-4 h-10 w-10 text-gold" />
         <h2 className="mb-3 font-heading text-2xl font-bold text-white md:text-4xl">

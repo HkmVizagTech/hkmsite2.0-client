@@ -141,7 +141,7 @@ function OtherPrivilegesGallery({ config = SQFT_CAMPAIGN }: { config?: CampaignC
 
 export default function DonorPrivilegesSection({ scrollToDonate, config = SQFT_CAMPAIGN }: { scrollToDonate?: () => void; config?: CampaignConfig }) {
   return (
-    <section className="bg-[radial-gradient(circle_at_top,_rgba(255,221,91,0.14),_transparent_45%)] bg-card py-16 md:py-24">
+    <section className="bg-[radial-gradient(circle_at_top,_rgba(255,221,91,0.14),_transparent_45%)] bg-white py-12 md:py-16">
       <div className="container mx-auto max-w-6xl px-4">
         <Ornament className="mb-6" />
         <div className="mx-auto mb-10 max-w-2xl text-center">

@@ -39,7 +39,7 @@ export default async function EventDetail({ params }: { params: Promise<{ id: st
   return (
     <PageLayout>
       <PageHero title={event.title} subtitle={event.description} breadcrumb={event.title} backgroundImage={event.images && event.images[0] ? event.images[0] : "/assets/gallery-festival-2.jpg"} />
-      <section className="py-12 bg-background">
+      <section className="py-12 bg-white">
         <div className="container mx-auto px-4 max-w-3xl">
           <div className="bg-card rounded-2xl p-6">
             <h1 className="font-heading text-2xl font-bold mb-2">{event.title}</h1>

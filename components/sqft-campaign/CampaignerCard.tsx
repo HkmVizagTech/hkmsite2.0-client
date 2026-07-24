@@ -32,7 +32,7 @@ export default function CampaignerCard({
   config,
 }: CampaignerCardProps) {
   return (
-    <section className="bg-background py-10 md:py-14">
+    <section className="bg-white py-10 md:py-14">
       <div className="container mx-auto max-w-3xl px-4">
         <div className="overflow-hidden rounded-2xl border-2 border-gold/40 bg-card p-6 shadow-sm md:p-8">
           <p className="mb-1 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-gold">

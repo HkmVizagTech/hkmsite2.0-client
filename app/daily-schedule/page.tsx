@@ -58,7 +58,7 @@ export default function DailySchedulePage() {
         breadcrumb="Daily Schedule"
         backgroundImage="/assets/gallery-aarti.jpg"
       />
-      <section className="py-20 bg-background" ref={ref}>
+      <section className="py-12 md:py-16 bg-white" ref={ref}>
         <div className="container mx-auto px-4">
           <div className="text-center mb-14">
             <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">Temple Timings</p>
@@ -102,7 +102,7 @@ export default function DailySchedulePage() {
           </div>
         </div>
       </section>
-      <section className="py-20 bg-card">
+      <section className="py-12 md:py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-14">
             <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">Weekly Programs</p>
@@ -143,7 +143,7 @@ export default function DailySchedulePage() {
           </div>
         </div>
       </section>
-      <section className="py-20 bg-background">
+      <section className="py-12 md:py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-10">
             <div>

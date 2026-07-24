@@ -123,7 +123,7 @@ const EKADASHI_SEVAS: EkadashiSeva[] = [
     label: "Deity Seva",
     icon: "🌸",
     sevaName: "Vastra & Alankara Seva",
-    category: "VASTRA",
+    category: "GDGD",
     tiers: [
       { label: "Daily vastra", amount: 501 },
       { label: "Festival vastra", amount: 2100 },
@@ -136,7 +136,7 @@ const EKADASHI_SEVAS: EkadashiSeva[] = [
     label: "Sadhu Vaishnav Bhojan Seva",
     icon: "🍽️",
     sevaName: "Sadhu Vaishnav Bhojan Seva",
-    category: "SADHU BHOJAN",
+    category: "ANNADAAN",
     tiers: [
       { label: "1 plate", amount: 100 },
       { label: "5 plates", amount: 500 },
@@ -151,7 +151,7 @@ const EKADASHI_SEVAS: EkadashiSeva[] = [
     label: "Vidya Daan",
     icon: "📚",
     sevaName: "Gita Daan Seva",
-    category: "GITA DAAN",
+    category: "BD",
     tiers: [
       { label: "1 Gita", amount: 300 },
       { label: "5 Gitas", amount: 1500 },

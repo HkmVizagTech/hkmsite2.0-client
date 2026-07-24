@@ -113,7 +113,7 @@ export default function SubhojanamPage() {
               body: JSON.stringify({ donationId: order.donationId, razorpay_order_id: response.razorpay_order_id, razorpay_payment_id: response.razorpay_payment_id, razorpay_signature: response.razorpay_signature }),
             });
             if (!verifyRes.ok) throw new Error("Payment verification failed.");
-            setStatus({ type: "success", message: "Thank you! Your donation has been received. Hare Krishna 🙏" });
+            window.location.assign(`/payment/thank-you?type=donation&seva=${encodeURIComponent("Subhojanam")}&amount=${checkoutTier.amountValue}&source=${encodeURIComponent("the Subhojanam meal programme")}`);
           } catch (err) { setStatus({ type: "error", message: err instanceof Error ? err.message : "Payment verification failed." }); }
           finally { setSubmitting(false); }
         },
@@ -189,7 +189,7 @@ export default function SubhojanamPage() {
       </section>
 
       {/* ── ABOUT THE PROGRAMME ──────────────────────────────────── */}
-      <section id="about-section" className="py-24 bg-background" ref={ref1}>
+      <section id="about-section" className="py-12 md:py-16 bg-white" ref={ref1}>
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-14 items-center">
             <motion.div
@@ -244,7 +244,7 @@ export default function SubhojanamPage() {
       </section>
 
       {/* ── HOW IT WORKS ─────────────────────────────────────────── */}
-      <section className="py-24 bg-card" ref={ref2}>
+      <section className="py-12 md:py-16 bg-white" ref={ref2}>
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }} animate={inView2 ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8 }}
@@ -272,7 +272,7 @@ export default function SubhojanamPage() {
       </section>
 
       {/* ── TESTIMONIALS ─────────────────────────────────────────── */}
-      <section className="py-24 bg-background" ref={ref3}>
+      <section className="py-12 md:py-16 bg-white" ref={ref3}>
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }} animate={inView3 ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8 }}
@@ -352,7 +352,7 @@ export default function SubhojanamPage() {
       </section>
 
       {/* ── TRUST & TRANSPARENCY ─────────────────────────────────── */}
-      <section className="py-16 border-y border-border bg-card" ref={ref5}>
+      <section className="py-12 md:py-16 border-y border-border bg-white" ref={ref5}>
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }} animate={inView5 ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7 }}
@@ -382,7 +382,7 @@ export default function SubhojanamPage() {
       </section>
 
       {/* ── GET INVOLVED ─────────────────────────────────────────── */}
-      <section className="py-24 bg-background" ref={ref6}>
+      <section className="py-12 md:py-16 bg-white" ref={ref6}>
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }} animate={inView6 ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8 }}

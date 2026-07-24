@@ -147,7 +147,7 @@ export default function DonationFormSection({
   };
 
   return (
-    <section id="donate" className="scroll-mt-24 bg-background py-10 md:py-16">
+    <section id="donate" className="scroll-mt-24 bg-white py-10 md:py-16">
       <div className="container mx-auto max-w-4xl px-4">
         <Ornament className="mb-4" />
         <div className="mb-6 text-center">

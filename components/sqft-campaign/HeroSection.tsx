@@ -22,7 +22,7 @@ export default function HeroSection({
   if (config.bannerImage) {
     const altText = `${config.pageTitle} — ${config.heroHeading1} ${config.heroHeading2}`;
     return (
-      <section className="bg-[#faf3df] pt-[72px] md:pt-[92px]">
+      <section className="bg-white pt-[72px] md:pt-[92px]">
         {/* Whole banner is clickable — glides to the donation form */}
         <button
           type="button"

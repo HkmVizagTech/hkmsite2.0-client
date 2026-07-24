@@ -27,7 +27,7 @@ export default function ConstructionStatusSection({ scrollToDonate }: { scrollTo
   };
 
   return (
-    <section ref={sectionRef} className="relative overflow-hidden bg-[radial-gradient(circle_at_top,_rgba(255,221,91,0.14),_transparent_45%)] bg-card py-16 md:py-24">
+    <section ref={sectionRef} className="relative overflow-hidden bg-[radial-gradient(circle_at_top,_rgba(255,221,91,0.14),_transparent_45%)] bg-white py-12 md:py-16">
       <div className="container mx-auto max-w-6xl px-4">
         <Ornament className="mb-10" />
 

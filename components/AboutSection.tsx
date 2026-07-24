@@ -45,7 +45,7 @@ const AboutSection = () => {
   }, []);
 
   return (
-    <section id="about" className="py-24 md:py-32 bg-background overflow-hidden">
+    <section id="about" className="py-12 md:py-16 bg-white overflow-hidden">
       <div className="container mx-auto px-4" ref={ref}>
         {/* Welcome split — circular deity photo + copy */}
         <div className="mx-auto mb-24 grid max-w-5xl items-center gap-14 md:grid-cols-[1fr_1.15fr] md:gap-16">

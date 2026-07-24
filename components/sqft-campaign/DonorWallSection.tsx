@@ -36,7 +36,7 @@ export default function DonorWallSection({
   const wallEntries = wallTab === "latest" ? stats?.latest || [] : stats?.largest || [];
 
   return (
-    <section className="bg-card py-16 md:py-24">
+    <section className="bg-white py-12 md:py-16">
       <div className="container mx-auto max-w-3xl px-4">
         <Ornament className="mb-6" />
         <h2 className="mb-2 text-center font-heading text-2xl font-bold text-primary md:text-4xl">

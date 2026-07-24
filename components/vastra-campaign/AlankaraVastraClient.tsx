@@ -84,7 +84,7 @@ const VASTRA_CONFIG: CampaignConfig = {
   ],
   higherPrivileges: [],
   statsApiEndpoint: "",
-  orderType: "VASTRA",
+  orderType: "GDGD",
 };
 
 const TIERS = [
@@ -292,10 +292,7 @@ export default function AlankaraVastraClient() {
               }),
             });
             if (!verifyRes.ok) throw new Error("Payment verification failed.");
-            setStatus({
-              type: "success",
-              message: "Thank you! Your vastra offering has been received by Their Lordships. Hare Krishna 🙏",
-            });
+            window.location.assign(`/payment/thank-you?type=seva&seva=${encodeURIComponent(config.pageTitle)}&amount=${finalAmount}&source=${encodeURIComponent("the vastra and alankara seva programme")}`);
           } catch (err) {
             setStatus({
               type: "error",
@@ -316,10 +313,10 @@ export default function AlankaraVastraClient() {
 
   return (
     <PageLayout>
-      <main className="bg-background">
+      <main className="bg-white">
         {/* ── Hero Banner ── */}
         {config.bannerImage ? (
-          <section className="bg-[#faf3df] pt-[72px] md:pt-[92px]">
+          <section className="bg-white pt-[72px] md:pt-[92px]">
             <button
               type="button"
               onClick={scrollToDonate}
@@ -397,7 +394,7 @@ export default function AlankaraVastraClient() {
         )}
 
         {/* ── Donation Form ── */}
-        <section id="donate" ref={formRef} className="scroll-mt-24 bg-background py-10 md:py-16">
+        <section id="donate" ref={formRef} className="scroll-mt-24 bg-white py-8 md:py-12">
           <div className="container mx-auto max-w-4xl px-4">
             <Ornament className="mb-4" />
             <div className="mb-6 text-center">
@@ -661,7 +658,7 @@ export default function AlankaraVastraClient() {
         <DonorPrivilegesSection scrollToDonate={scrollToDonate} config={config} />
 
         {/* ── Deity Alankara Photos ── */}
-        <section className="bg-background py-16 md:py-24">
+        <section className="bg-white py-12 md:py-16">
           <div className="container mx-auto max-w-6xl px-4">
             <Ornament className="mb-6" />
             <div className="mb-8 flex items-end justify-between gap-4">
