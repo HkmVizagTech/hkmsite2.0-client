@@ -28,7 +28,7 @@ const SevasSection = () => {
   };
 
   return (
-    <section id="sevas" className="bg-gradient-warm py-24 md:py-32">
+    <section id="sevas" className="bg-gradient-warm py-14 md:py-20">
       <div className="container mx-auto px-4" ref={ref}>
         <motion.div
           initial={{ opacity: 0, y: 30 }}

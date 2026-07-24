@@ -108,7 +108,7 @@ export default function FounderPage() {
                 <div className="relative sticky top-28">
                   <div className="absolute -inset-3 bg-primary/10 rounded-2xl -rotate-3" />
                   <Image
-                    src="https://www.harekrishnavizag.org/assets/img/grace_srila_prabhupada.jpg"
+                    src="https://res.cloudinary.com/ddmzeqpkc/image/upload/prabhupada_home"
                     alt="Srila Prabhupada"
                     width={400}
                     height={500}

@@ -1,12 +1,10 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 
-// Built-in fallback slides — shown until admin uploads real banners via
-// /admin/banners, and as a safety net if that API call ever fails.
 const defaultSlides = [
   {
     src: "/assets/home-banner-chaitanya-bhavan.webp",
@@ -42,16 +40,13 @@ const defaultSlides = [
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 
-/**
- * Pure banner carousel — image only, no overlaid text, no controls,
- * no progress dots. Auto-rotates on a timer. Banners are managed
- * from /admin/banners (desktop + mobile pair per slide); falls back to
- * the built-in default slides if none are configured yet.
- */
 const TempleCarousel = () => {
   const [slides, setSlides] = useState(defaultSlides);
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(1);
+  const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
+  const isSwiping = useRef(false);
 
   useEffect(() => {
     (async () => {
@@ -70,9 +65,7 @@ const TempleCarousel = () => {
             );
           }
         }
-      } catch {
-        // Keep the built-in default slides on any failure.
-      }
+      } catch {}
     })();
   }, []);
 
@@ -81,26 +74,68 @@ const TempleCarousel = () => {
     setCurrent((prev) => (prev + 1) % slides.length);
   }, [slides.length]);
 
+  const prev = useCallback(() => {
+    setDirection(-1);
+    setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
+  }, [slides.length]);
+
   useEffect(() => {
     const interval = setInterval(next, 6000);
     return () => clearInterval(interval);
   }, [next]);
 
   useEffect(() => {
-    // Reset to the first slide if the slide set changes size (e.g. after
-    // the admin-configured banners load in) to avoid an out-of-range index.
     setCurrent(0);
   }, [slides.length]);
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+    isSwiping.current = false;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    const dx = Math.abs(e.touches[0].clientX - touchStartX.current);
+    const dy = Math.abs(e.touches[0].clientY - touchStartY.current);
+    if (dx > 10 && dx > dy * 1.5) {
+      isSwiping.current = true;
+    }
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!isSwiping.current) return;
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    if (Math.abs(dx) > 40) {
+      if (dx < 0) next();
+      else prev();
+    }
+    isSwiping.current = false;
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    touchStartX.current = e.clientX;
+    isSwiping.current = false;
+  };
+
+  const handleMouseUp = (e: React.MouseEvent) => {
+    if (!isSwiping.current) return;
+    const dx = e.clientX - touchStartX.current;
+    if (Math.abs(dx) > 40) {
+      if (dx < 0) next();
+      else prev();
+    }
+    isSwiping.current = false;
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    const dx = Math.abs(e.clientX - touchStartX.current);
+    if (dx > 5) isSwiping.current = true;
+  };
+
   const variants = {
-    enter: (dir: number) => ({ x: dir > 0 ? "100%" : "-100%", scale: 1.1, opacity: 0 }),
-    center: { x: 0, scale: 1, opacity: 1 },
-    // Fully clear the frame on exit (100%, not a partial 30%) — a partial
-    // exit briefly overlaps the outgoing and incoming slides, and if their
-    // edge colors/borders differ (e.g. one banner has a maroon border,
-    // the next doesn't), that overlap can look like a stray colored strip
-    // for the ~0.9s transition window.
-    exit: (dir: number) => ({ x: dir > 0 ? "-100%" : "100%", scale: 0.95, opacity: 0 }),
+    enter: (dir: number) => ({ x: dir > 0 ? "100%" : "-100%", opacity: 0 }),
+    center: { x: 0, opacity: 1 },
+    exit: (dir: number) => ({ x: dir > 0 ? "-100%" : "100%", opacity: 0 }),
   };
 
   const currentSlide = slides[current] || slides[0];
@@ -129,7 +164,16 @@ const TempleCarousel = () => {
   );
 
   return (
-    <section className="relative w-full overflow-hidden bg-foreground aspect-[1080/1350] md:aspect-[1920/700]">
+    <section
+      className="relative w-full overflow-hidden bg-foreground aspect-[1080/1350] md:aspect-[1920/700]"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      style={{ cursor: "grab" }}
+    >
       <AnimatePresence custom={direction} mode="popLayout">
         <motion.div
           key={current}
@@ -138,7 +182,7 @@ const TempleCarousel = () => {
           initial="enter"
           animate="center"
           exit="exit"
-          transition={{ duration: 0.9, ease: [0.25, 0.8, 0.25, 1] }}
+          transition={{ duration: 0.7, ease: [0.25, 0.8, 0.25, 1] }}
           className="absolute inset-0"
         >
           {!hasLink ? (

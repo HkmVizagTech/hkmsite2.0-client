@@ -51,7 +51,7 @@ const BlogPreview = () => {
       : "";
 
   return (
-    <section className="py-24 md:py-32 bg-muted/40">
+    <section className="py-14 md:py-20 bg-muted/40">
       <div className="container mx-auto px-4" ref={ref}>
         <motion.div
           initial={{ opacity: 0, y: 30 }}
