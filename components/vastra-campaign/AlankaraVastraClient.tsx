@@ -165,6 +165,19 @@ export default function AlankaraVastraClient() {
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [showSticky, setShowSticky] = useState(false);
+  const formRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const form = formRef.current;
+    if (!form) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setShowSticky(!entry.isIntersecting),
+      { threshold: 0.1 }
+    );
+    observer.observe(form);
+    return () => observer.disconnect();
+  }, []);
 
   const finalAmount = useCustom ? Number(customAmount) || 0 : TIERS[tierIndex]?.amount || 0;
   const config = VASTRA_CONFIG;
@@ -384,7 +397,7 @@ export default function AlankaraVastraClient() {
         )}
 
         {/* ── Donation Form ── */}
-        <section id="donate" className="scroll-mt-24 bg-background py-10 md:py-16">
+        <section id="donate" ref={formRef} className="scroll-mt-24 bg-background py-10 md:py-16">
           <div className="container mx-auto max-w-4xl px-4">
             <Ornament className="mb-4" />
             <div className="mb-6 text-center">
@@ -752,14 +765,16 @@ export default function AlankaraVastraClient() {
         <FounderSection />
 
         {/* ── Sticky mobile donate bar ── */}
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 p-3 backdrop-blur md:hidden">
+        {showSticky && (
+        <div className="fixed inset-x-0 bottom-0 z-40 flex justify-center px-3 pb-3 pt-1 md:hidden">
           <button
             onClick={scrollToDonate}
-            className="w-full rounded-full bg-gradient-gold py-3.5 text-base font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)]"
+            className="inline-flex items-center gap-1.5 rounded-full bg-gradient-gold px-5 py-2 text-xs font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)]"
           >
-            Donate ₹{TIERS[tierIndex]?.amount.toLocaleString("en-IN") || "501"} / offering
+            🪔 Donate Now
           </button>
         </div>
+        )}
       </main>
     </PageLayout>
   );

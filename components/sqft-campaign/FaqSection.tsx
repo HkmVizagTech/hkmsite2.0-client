@@ -17,7 +17,7 @@ export default function FaqSection({ faqs }: FaqSectionProps) {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   return (
-    <section className="bg-background py-16 md:py-24">
+    <section className="bg-white py-12 md:py-16">
       <div className="container mx-auto max-w-3xl px-4">
         <Ornament className="mb-6" />
         <h2 className="mb-8 text-center font-heading text-2xl font-bold text-primary md:text-3xl">

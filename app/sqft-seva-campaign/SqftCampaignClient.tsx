@@ -139,6 +139,18 @@ export default function SqftCampaignClient({
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [showSticky, setShowSticky] = useState(false);
+
+  useEffect(() => {
+    const form = document.getElementById("donate");
+    if (!form) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setShowSticky(!entry.isIntersecting),
+      { threshold: 0.1 }
+    );
+    observer.observe(form);
+    return () => observer.disconnect();
+  }, []);
 
   const price = config.pricePerUnit;
   const finalAmount = useCustom ? Number(customAmount) || 0 : sqftCount * price;
@@ -432,7 +444,7 @@ export default function SqftCampaignClient({
         />
 
         {/* Sticky mobile donate bar */}
-        <StickyMobileBar price={price} scrollToDonate={scrollToDonate} config={config} />
+        <StickyMobileBar scrollToDonate={scrollToDonate} visible={showSticky} />
       </main>
     </PageLayout>
   );
