@@ -343,7 +343,7 @@ export default function DonationsClient() {
 
             if (!verifyResponse.ok) throw new Error("Payment verification failed.");
             trackPurchase({ value: finalAmount, eventId: metaEventId, content_name: selected.title });
-            setStatus({ type: "success", message: "Thank you. Your donation has been received successfully." });
+            window.location.assign(`/payment/thank-you?type=donation&seva=${encodeURIComponent(selected?.title || "donation")}&amount=${finalAmount}&source=${encodeURIComponent("our donation programmes")}`);
             setSelected(null);
           } catch (verifyError) {
             setStatus({

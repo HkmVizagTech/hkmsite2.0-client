@@ -11,7 +11,7 @@ interface AboutSectionProps {
 
 export default function AboutSection({ aboutImage, scrollToDonate }: AboutSectionProps) {
   return (
-    <section className="bg-card py-16 md:py-24">
+    <section className="bg-white py-12 md:py-16">
       <div className="container mx-auto max-w-5xl px-4">
         <Ornament className="mb-6" />
         <motion.div

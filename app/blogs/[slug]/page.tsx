@@ -150,7 +150,7 @@ export default async function BlogPostPage({
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostingJsonLd) }}
     />
-    <main className="bg-background pt-20">
+    <main className="bg-white pt-20">
       <article className="container mx-auto px-4 py-8 md:py-12">
         {/* Breadcrumb */}
         <nav className="text-xs md:text-sm text-muted-foreground mb-6 flex items-center gap-1.5 flex-wrap">
@@ -394,7 +394,7 @@ export default async function BlogPostPage({
 
       {/* ─── RELATED ─── */}
       {related.length > 0 && (
-        <section className="bg-muted/30 py-16 border-t mt-12">
+        <section className="bg-white py-12 md:py-16 border-t mt-12">
           <div className="container mx-auto px-4">
             <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground mb-1">
               Related

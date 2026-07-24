@@ -100,7 +100,7 @@ export default function FounderPage() {
       />
 
      
-      <section className="py-24 bg-background">
+      <section className="py-12 md:py-16 bg-white">
         <div className="container mx-auto px-4">
           <AnimatedSection>
             <div className="max-w-6xl mx-auto grid md:grid-cols-5 gap-12 items-start">
@@ -165,7 +165,7 @@ export default function FounderPage() {
       </section>
 
      
-      <section className="py-24 bg-card">
+      <section className="py-12 md:py-16 bg-white">
         <div className="container mx-auto px-4">
           <AnimatedSection>
             <SectionHeader label="Divine Qualities" title="The Qualities of a Pure Devotee" />
@@ -187,7 +187,7 @@ export default function FounderPage() {
       </section>
 
      
-      <section className="py-24 bg-background">
+      <section className="py-12 md:py-16 bg-white">
         <div className="container mx-auto px-4">
           <AnimatedSection>
             <SectionHeader label="Milestone Timeline" title="A Life of Extraordinary Devotion" />
@@ -219,7 +219,7 @@ export default function FounderPage() {
       </section>
 
       
-      <section className="py-24 bg-card">
+      <section className="py-12 md:py-16 bg-white">
         <div className="container mx-auto px-4">
           <AnimatedSection>
             <SectionHeader label="Amazing Facts" title="Facts About Srila Prabhupada" />
@@ -240,7 +240,7 @@ export default function FounderPage() {
       </section>
 
      
-      <section className="py-24 bg-background">
+      <section className="py-12 md:py-16 bg-white">
         <div className="container mx-auto px-4">
           <AnimatedSection>
             <SectionHeader label="Sacred Literature" title="Timeless Teachings" />

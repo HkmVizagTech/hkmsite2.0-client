@@ -100,7 +100,7 @@ export default function AboutPage() {
       />
 
       {/* ── OUR STORY ─────────────────────────────────────────── */}
-      <section className="py-24 bg-background" ref={ref1}>
+      <section className="py-12 md:py-16 bg-white" ref={ref1}>
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
             <motion.div initial={{ opacity: 0, x: -30 }} animate={inView1 ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.8 }}>
@@ -132,7 +132,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── CORE VALUES ───────────────────────────────────────── */}
-      <section className="py-24 bg-card" ref={ref2}>
+      <section className="py-12 md:py-16 bg-white" ref={ref2}>
         <div className="container mx-auto px-4">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={inView2 ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8 }} className="text-center mb-16">
             <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">What We Stand For</p>
@@ -156,7 +156,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── ACTIVITIES ────────────────────────────────────────── */}
-      <section className="py-24 bg-background" ref={ref3}>
+      <section className="py-12 md:py-16 bg-white" ref={ref3}>
         <div className="container mx-auto px-4">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={inView3 ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8 }} className="text-center mb-16">
             <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">What We Do</p>
@@ -178,7 +178,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── MILESTONES ────────────────────────────────────────── */}
-      <section className="py-24 bg-card" ref={ref4}>
+      <section className="py-12 md:py-16 bg-white" ref={ref4}>
         <div className="container mx-auto px-4">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={inView4 ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8 }} className="text-center mb-16">
             <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">Our Journey</p>
@@ -202,7 +202,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── ASSOCIATED TRUSTS ─────────────────────────────────── */}
-      <section className="py-24 bg-background" ref={ref5}>
+      <section className="py-12 md:py-16 bg-white" ref={ref5}>
         <div className="container mx-auto px-4">
           <motion.div initial={{ opacity: 0, y: 30 }} animate={inView5 ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8 }} className="text-center mb-4">
             <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">Our Ecosystem</p>

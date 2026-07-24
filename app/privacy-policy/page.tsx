@@ -49,7 +49,7 @@ export default function PrivacyPolicy() {
   return (
     <PageLayout>
       <PageHero title="Privacy Policy" subtitle="How we collect, use, and protect your information" breadcrumb="Privacy Policy" />
-      <section className="py-16 bg-background">
+      <section className="py-12 md:py-16 bg-white">
         <div className="container mx-auto px-4 max-w-3xl">
           <p className="text-sm text-muted-foreground mb-10">Last updated: July 2026</p>
           {sections.map((s) => (

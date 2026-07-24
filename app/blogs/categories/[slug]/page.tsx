@@ -80,7 +80,7 @@ export default async function CategoryPage({
 
   return (
     <PageLayout>
-    <main className="bg-background pt-20">
+    <main className="bg-white pt-20">
       <div className="container mx-auto px-4 py-8 md:py-12">
         {/* Breadcrumb */}
         <nav className="text-xs md:text-sm text-muted-foreground mb-6 flex items-center gap-1.5 flex-wrap">

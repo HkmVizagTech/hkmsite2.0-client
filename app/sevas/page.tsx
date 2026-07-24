@@ -69,7 +69,7 @@ export default function SevasPage() {
         breadcrumb="Seva's"
         backgroundImage="https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783675995608-1783675986681-SAV01474.JPG.jpg"
       />
-      <section className="py-24 bg-background" ref={ref1}>
+      <section className="py-12 md:py-16 bg-white" ref={ref1}>
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -102,7 +102,7 @@ export default function SevasPage() {
           </div>
         </div>
       </section>
-      <section className="py-24 bg-card" ref={ref2}>
+      <section className="py-12 md:py-16 bg-white" ref={ref2}>
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -149,7 +149,7 @@ export default function SevasPage() {
           </div>
         </div>
       </section>
-      <section className="py-24 bg-background" ref={ref3}>
+      <section className="py-12 md:py-16 bg-white" ref={ref3}>
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -177,7 +177,7 @@ export default function SevasPage() {
           </div>
         </div>
       </section>
-      <section className="py-24 bg-card" ref={ref4}>
+      <section className="py-12 md:py-16 bg-white" ref={ref4}>
         <div className="container mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 30 }}

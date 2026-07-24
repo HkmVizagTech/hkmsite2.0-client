@@ -127,7 +127,7 @@ export default function GalleryPage() {
         dateData={dateData}
       />
 
-      <section className="py-12 bg-background">
+      <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
           <div className="flex flex-wrap justify-center gap-3 mb-12">
             {categories.map((cat) => (

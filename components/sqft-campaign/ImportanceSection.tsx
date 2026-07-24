@@ -38,7 +38,7 @@ export default function ImportanceSection() {
   };
 
   return (
-    <section ref={sectionRef} className="bg-card py-16 md:py-24">
+    <section ref={sectionRef} className="bg-white py-12 md:py-16">
       <div className="container mx-auto max-w-6xl px-4">
         <Ornament className="mb-6" />
         <div className="mb-8 flex items-end justify-between gap-4">

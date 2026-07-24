@@ -21,7 +21,7 @@ export default function ThankYouClient() {
 
   return (
     <PageLayout>
-      <main className="bg-background min-h-screen">
+      <main className="bg-white min-h-screen">
         <section className="flex min-h-[80vh] items-center justify-center px-4 py-20">
           <motion.div
             initial={{ opacity: 0, y: 24 }}

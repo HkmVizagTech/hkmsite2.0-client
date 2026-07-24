@@ -63,7 +63,7 @@ export default function DonateHubPage() {
 
   return (
     <PageLayout>
-      <main className="bg-background">
+      <main className="bg-white">
         {/* ══ HERO — common to all donations, no seva-specific numbers ══ */}
         <section className="relative overflow-hidden pt-20">
           <div className="relative aspect-[16/9] w-full md:aspect-[21/8]">
@@ -106,7 +106,7 @@ export default function DonateHubPage() {
         </section>
 
         {/* ══ OTHER SEVAS GRID ══ */}
-        <section id="sevas" className="border-t border-border py-16 md:py-24">
+        <section id="sevas" className="border-t border-border py-12 md:py-16">
           <div className="container mx-auto px-4">
             <div className="mb-12 text-center">
               <p className="mb-3 text-sm font-medium uppercase tracking-[0.2em] text-gold">More Ways to Serve</p>
@@ -161,7 +161,7 @@ export default function DonateHubPage() {
         </section>
 
         {/* ══ AGGREGATE IMPACT STRIP — site-wide totals, real data ══ */}
-        <section className="border-b border-border bg-card">
+        <section className="border-b border-border bg-white">
           <div className="container mx-auto grid grid-cols-2 gap-4 px-4 py-6 sm:grid-cols-4">
             <div className="text-center">
               <p className="flex items-center justify-center gap-1.5 font-heading text-2xl font-bold text-gold md:text-3xl">
@@ -189,7 +189,7 @@ export default function DonateHubPage() {
         </section>
 
         {/* ══ MANDIR NIRMAN SEVA — dedicated section, detailed treatment ══ */}
-        <section className="py-16 md:py-24">
+        <section className="py-12 md:py-16">
           <div className="container mx-auto px-4">
             <div className="mx-auto grid max-w-5xl items-center gap-10 lg:grid-cols-2">
               <motion.div
@@ -269,7 +269,7 @@ export default function DonateHubPage() {
 
         {/* ══ LIVE DONOR WALL — real, cross-seva ══ */}
         {overview && overview.donors.length > 0 && (
-          <section className="border-t border-border bg-muted/30 py-16">
+          <section className="border-t border-border bg-white py-16">
             <div className="container mx-auto px-4">
               <div className="mb-10 flex items-center justify-center gap-2">
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-green-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-green-600">
@@ -309,7 +309,7 @@ export default function DonateHubPage() {
         )}
 
         {/* ══ DONOR PRIVILEGES ══ */}
-        <section className="py-16 md:py-24">
+        <section className="py-12 md:py-16">
           <div className="container mx-auto px-4">
             <div className="mb-12 text-center">
               <h2 className="mb-3 font-heading text-2xl font-bold text-foreground md:text-3xl">

@@ -338,7 +338,7 @@ export default function SqftCampaignClient({
 
   return (
     <PageLayout>
-      <main className="bg-background">
+      <main className="bg-white">
         {/* Hero section — full‑width cinematic banner */}
         <HeroSection
           campaigner={campaigner}

@@ -33,7 +33,7 @@ export default function ProgressSection({
   const filledSquares = Math.round((percent / 100) * gridSquares);
 
   return (
-    <section className="bg-[hsl(220,90%,12%)] py-16 md:py-24">
+    <section className="bg-[hsl(220,90%,12%)] py-12 md:py-16">
       <div className="container mx-auto max-w-4xl px-4 text-center">
         <Ornament className="mb-6" />
         <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-gold">

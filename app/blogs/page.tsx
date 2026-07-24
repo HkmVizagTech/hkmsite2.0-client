@@ -115,7 +115,7 @@ export default function BlogsListPage() {
 
   return (
     <PageLayout>
-    <main className="bg-background pt-20">
+    <main className="bg-white pt-20">
       {/* ─── HERO + RECENTS STRIP ─── */}
       <section className="container mx-auto px-4 pt-10 pb-12">
         <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-6 max-w-3xl">
@@ -146,7 +146,7 @@ export default function BlogsListPage() {
       </section>
 
       {/* ─── DEVOTIONAL WISDOM ─── */}
-      <section className="bg-muted/30 py-16 border-y">
+      <section className="bg-white py-12 md:py-16 border-y">
         <div className="container mx-auto px-4">
           <p className="text-sm text-muted-foreground mb-1">
             Discover the Spiritual Essence of Our Vedic Literature
@@ -263,7 +263,7 @@ export default function BlogsListPage() {
       )}
 
       {/* ─── RECENT BLOGS — detailed cards with image + meta + category footer ─── */}
-      <section className="bg-muted/30 py-16">
+      <section className="bg-white py-12 md:py-16">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl md:text-3xl font-bold mb-8">Recent Blogs</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

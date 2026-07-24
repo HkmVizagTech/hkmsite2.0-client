@@ -4,7 +4,7 @@ import Ornament from "@/components/Ornament";
 
 export default function FounderSection() {
   return (
-    <section className="bg-card py-12 md:py-16">
+    <section className="bg-white py-12 md:py-16">
       <div className="container mx-auto max-w-2xl px-4 text-center">
         <Ornament className="mb-6" />
         <p className="mb-3 font-heading text-lg text-gold md:text-xl">
