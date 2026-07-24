@@ -69,6 +69,7 @@ export const sevas: Seva[] = [
     category: "BRICK",
     account: "default",
     icon: "🧱",
+    externalHref: "/brick-seva-campaign",
   },
   {
     slug: "anna-daan-seva",
@@ -143,6 +144,7 @@ export const sevas: Seva[] = [
     category: "VASTRA",
     account: "default",
     icon: "👘",
+    externalHref: "/alankara-vastra-seva",
   },
 ];
 

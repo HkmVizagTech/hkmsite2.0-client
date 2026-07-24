@@ -5,6 +5,8 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Ornament from "@/components/Ornament";
+import type { CampaignConfig } from "@/lib/campaignConfig";
+import { SQFT_CAMPAIGN } from "@/lib/campaignConfig";
 
 const CLOUDINARY_BASE = "https://guptvrindavandham.org/media/campaign";
 
@@ -83,7 +85,7 @@ function PrivilegeCarousel() {
   );
 }
 
-function OtherPrivilegesGallery() {
+function OtherPrivilegesGallery({ config = SQFT_CAMPAIGN }: { config?: CampaignConfig }) {
   const scrollerRef = useRef<HTMLDivElement>(null);
 
   const scrollBy = (dir: 1 | -1) => {
@@ -117,7 +119,7 @@ function OtherPrivilegesGallery() {
       </div>
 
       <p className="mb-6 text-sm font-semibold text-primary">
-        Each of our respected contributors who donate more than 1 square foot will receive the following privileges based on Donation Level.
+        Each of our respected contributors who donate more than 1 {config.unitName} will receive the following privileges based on Donation Level.
       </p>
 
       <div
@@ -137,7 +139,7 @@ function OtherPrivilegesGallery() {
   );
 }
 
-export default function DonorPrivilegesSection({ scrollToDonate }: { scrollToDonate?: () => void }) {
+export default function DonorPrivilegesSection({ scrollToDonate, config = SQFT_CAMPAIGN }: { scrollToDonate?: () => void; config?: CampaignConfig }) {
   return (
     <section className="bg-[radial-gradient(circle_at_top,_rgba(255,221,91,0.14),_transparent_45%)] bg-card py-16 md:py-24">
       <div className="container mx-auto max-w-6xl px-4">
@@ -185,7 +187,7 @@ export default function DonorPrivilegesSection({ scrollToDonate }: { scrollToDon
           </div>
         </motion.div>
 
-        <OtherPrivilegesGallery />
+        <OtherPrivilegesGallery config={config} />
       </div>
     </section>
   );

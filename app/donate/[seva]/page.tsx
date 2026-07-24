@@ -13,6 +13,8 @@ import {
 import { getSevaBySlug, sevas, getSevaHref } from "@/lib/sevaConfig";
 import Ornament from "@/components/Ornament";
 import PageLayout from "@/components/PageLayout";
+import AddressForm from "@/components/AddressForm";
+import type { PrasadamAddress } from "@/components/AddressForm";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 
@@ -93,6 +95,8 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
   const [useCustom, setUseCustom] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", mobile: "", panNumber: "" });
   const [want80G, setWant80G] = useState(false);
+  const [wantsMahaPrasadam, setWantsMahaPrasadam] = useState(false);
+  const [address, setAddress] = useState<PrasadamAddress>({ street: "", city: "", state: "", pincode: "", country: "India" });
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
@@ -137,6 +141,16 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
 
   const finalAmount = useCustom ? Number(customAmount) || 0 : seva.tiers[tierIndex]?.amount || 0;
 
+  useEffect(() => {
+    if (finalAmount <= 999) {
+      if (want80G) setWant80G(false);
+      if (wantsMahaPrasadam) {
+        setWantsMahaPrasadam(false);
+        setAddress({ street: "", city: "", state: "", pincode: "", country: "India" });
+      }
+    }
+  }, [finalAmount, want80G, wantsMahaPrasadam]);
+
   const handleCopy = (field: string, value: string) => {
     navigator.clipboard.writeText(value).then(() => {
       setCopiedField(field);
@@ -160,6 +174,10 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
       setStatus({ type: "error", message: "PAN number is required for an 80G receipt." });
       return;
     }
+    if (wantsMahaPrasadam && (!address.street.trim() || !address.city.trim() || !address.state.trim() || !/^\d{6}$/.test(address.pincode.trim()))) {
+      setStatus({ type: "error", message: "Please complete the delivery address (door no./area, city, state and a valid 6-digit PIN code) for Maha Prasadam." });
+      return;
+    }
 
     setSubmitting(true);
     try {
@@ -177,6 +195,10 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
           amount: finalAmount,
           certificate: want80G,
           panNumber: want80G ? form.panNumber.trim() : undefined,
+          mahaprasadam: wantsMahaPrasadam,
+          prasadamAddress: wantsMahaPrasadam
+            ? { street: address.street.trim(), city: address.city.trim(), state: address.state.trim(), pincode: address.pincode.trim(), country: "India" }
+            : undefined,
         }),
       });
 
@@ -516,6 +538,8 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
                   />
                 </div>
 
+                {finalAmount > 999 && (
+                <>
                 <label className="flex items-center gap-2 text-sm">
                   <input
                     type="checkbox"
@@ -536,6 +560,23 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
                       placeholder="ABCDE1234F"
                       maxLength={10}
                     />
+                  </div>
+                )}
+                </>
+                )}
+
+                {finalAmount > 999 && (
+                  <div className="rounded-lg border border-border bg-background/60 px-3 py-2">
+                    <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-foreground">
+                      <input
+                        type="checkbox"
+                        checked={wantsMahaPrasadam}
+                        onChange={(e) => setWantsMahaPrasadam(e.target.checked)}
+                        className="h-4 w-4 shrink-0 rounded accent-[hsl(42,92%,46%)]"
+                      />
+                      🙏 I&apos;d like Maha Prasadam delivered
+                    </label>
+                    {wantsMahaPrasadam && <AddressForm address={address} setAddress={setAddress} />}
                   </div>
                 )}
 

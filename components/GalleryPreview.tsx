@@ -22,7 +22,7 @@ const GalleryPreview = () => {
   const inView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section className="bg-card py-24 md:py-32" ref={ref}>
+    <section className="bg-card py-14 md:py-20" ref={ref}>
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
