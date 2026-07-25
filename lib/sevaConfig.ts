@@ -3,6 +3,24 @@ export interface SevaTier {
   amount: number;
 }
 
+// A seva priced per countable unit (a Gita, a plate, a brick). Lets an
+// arbitrary custom amount be translated into the impact it funds.
+export interface SevaUnit {
+  /** Cost of one unit, in rupees. */
+  price: number;
+  singular: string;
+  plural: string;
+}
+
+// Human-readable impact of an arbitrary amount — e.g. ₹500 on Gita Daan reads
+// "Supports 2 Gitas". Returns null when the seva isn't priced per unit or the
+// amount doesn't cover a single one.
+export function unitImpact(amount: number, unit?: SevaUnit): string | null {
+  if (!unit || !Number.isFinite(amount) || amount < unit.price) return null;
+  const count = Math.floor(amount / unit.price);
+  return `Supports ${count.toLocaleString("en-IN")} ${count === 1 ? unit.singular : unit.plural}`;
+}
+
 export interface Seva {
   slug: string;
   title: string;
@@ -11,6 +29,9 @@ export interface Seva {
   tagline: string;
   description: string;
   tiers: SevaTier[];
+  // Set when the seva is priced per countable unit, so a custom amount can be
+  // shown as the impact it funds (see unitImpact).
+  unit?: SevaUnit;
   category: string; // used for DCC / receipt categorization
   account: "default" | "donations";
   icon: string;
@@ -126,6 +147,7 @@ export const sevas: Seva[] = [
     category: "BD",
     account: "default",
     icon: "📖",
+    unit: { price: 300, singular: "Gita", plural: "Gitas" },
   },
   {
     slug: "vastra-seva",
