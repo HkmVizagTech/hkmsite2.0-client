@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import DonorExtrasFields from "@/components/DonorExtrasFields";
 
 const fmt = (n: number) => Number(n).toLocaleString("en-IN");
 
@@ -15,7 +16,7 @@ const DEFAULT_SEVA_OPTIONS = [
 export default function DonationForm({ config, setToast }: any) {
   const [selectedSevas, setSelectedSevas] = useState<any>({});
   const [expandedSeva, setExpandedSeva] = useState<string | null>(null);
-  const [formData, setFormData] = useState({ name: "", email: "", mobile: "", dob: "", panNumber: "", want80G: false, wantPrasadam: false,
+  const [formData, setFormData] = useState({ name: "", email: "", mobile: "", dob: "", sevakName: "", panNumber: "", want80G: false, wantPrasadam: false,
     doorNo: '', house: '', street: '', area: '', country: 'India', state: '', city: '', pincode: '' });
 
   const toggleSeva = (id: string) => setExpandedSeva(expandedSeva === id ? null : id);
@@ -63,6 +64,8 @@ export default function DonationForm({ config, setToast }: any) {
           panNumber: formData.panNumber,
           certificate: formData.want80G,
           mahaprasadam: formData.wantPrasadam,
+          sevakName: formData.sevakName.trim() || undefined,
+          dob: formData.dob || undefined,
           prasadamAddress: formData.wantPrasadam ? {
             doorNo: formData.doorNo,
             house: formData.house,
@@ -249,7 +252,13 @@ export default function DonationForm({ config, setToast }: any) {
           <input type="text" placeholder="Donor Name *" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className={inputCls} />
           <input type="email" placeholder="Email ID *" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className={inputCls} />
           <input type="tel" placeholder="Mobile Number *" value={formData.mobile} onChange={(e) => setFormData({ ...formData, mobile: e.target.value })} className={inputCls} />
-          <input type="date" value={formData.dob} onChange={(e) => setFormData({ ...formData, dob: e.target.value })} className={inputCls} />
+
+          <DonorExtrasFields
+            sevakName={formData.sevakName}
+            dob={formData.dob}
+            onSevakNameChange={(v) => setFormData({ ...formData, sevakName: v })}
+            onDobChange={(v) => setFormData({ ...formData, dob: v })}
+          />
 
           <label className="flex items-start gap-2 cursor-pointer py-1">
             <input type="checkbox" checked={formData.want80G} onChange={(e) => setFormData({ ...formData, want80G: e.target.checked })} className="mt-1 accent-amber-500" />

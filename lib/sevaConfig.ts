@@ -15,10 +15,11 @@ export interface SevaUnit {
 // Human-readable impact of an arbitrary amount — e.g. ₹500 on Gita Daan reads
 // "Supports 2 Gitas". Returns null when the seva isn't priced per unit or the
 // amount doesn't cover a single one.
-export function unitImpact(amount: number, unit?: SevaUnit): string | null {
+export function unitImpact(amount: number, unit?: SevaUnit, bare = false): string | null {
   if (!unit || !Number.isFinite(amount) || amount < unit.price) return null;
   const count = Math.floor(amount / unit.price);
-  return `Supports ${count.toLocaleString("en-IN")} ${count === 1 ? unit.singular : unit.plural}`;
+  const label = `${count.toLocaleString("en-IN")} ${count === 1 ? unit.singular : unit.plural}`;
+  return bare ? label : `Supports ${label}`;
 }
 
 export interface Seva {

@@ -23,6 +23,7 @@ import PageLayout from "@/components/PageLayout";
 import Ornament from "@/components/Ornament";
 import { sevas, getSevaHref, type Seva } from "@/lib/sevaConfig";
 import { getStoredTracking } from "@/lib/tracking";
+import DonorExtrasFields from "@/components/DonorExtrasFields";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 
@@ -156,6 +157,8 @@ export default function SpecialOccasionClient() {
   const [want80G, setWant80G] = useState(false);
   const [panNumber, setPanNumber] = useState("");
   const [dedication, setDedication] = useState("");
+  const [sevakName, setSevakName] = useState("");
+  const [dob, setDob] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -206,6 +209,8 @@ export default function SpecialOccasionClient() {
           amount: finalAmount,
           certificate: want80G,
           panNumber: want80G ? panNumber.trim() : undefined,
+          sevakName: sevakName.trim() || undefined,
+          dob: dob || undefined,
           utm: getStoredTracking() || undefined,
         }),
       });
@@ -507,6 +512,13 @@ export default function SpecialOccasionClient() {
                 <input type="email" required placeholder="Email address *" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none focus:border-gold sm:col-span-2" />
                 <input type="text" placeholder="Dedicate to / occasion note (optional)" value={dedication} onChange={(e) => setDedication(e.target.value)} className="rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none focus:border-gold sm:col-span-2" />
               </div>
+
+              <DonorExtrasFields
+                sevakName={sevakName}
+                dob={dob}
+                onSevakNameChange={setSevakName}
+                onDobChange={setDob}
+              />
 
               <label className="mb-3 flex cursor-pointer items-center gap-2 text-sm text-foreground">
                 <input type="checkbox" checked={want80G} onChange={(e) => setWant80G(e.target.checked)} className="h-4 w-4 accent-[hsl(42,92%,46%)]" />

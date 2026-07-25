@@ -16,6 +16,7 @@ import FaqSection from "@/components/sqft-campaign/FaqSection";
 import FounderSection from "@/components/sqft-campaign/FounderSection";
 import AddressForm from "@/components/AddressForm";
 import type { PrasadamAddress } from "@/components/AddressForm";
+import DonorExtrasFields from "@/components/DonorExtrasFields";
 import { type CampaignConfig } from "@/lib/campaignConfig";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
@@ -158,7 +159,7 @@ export default function AlankaraVastraClient() {
   const [tierIndex, setTierIndex] = useState(0);
   const [customAmount, setCustomAmount] = useState("");
   const [useCustom, setUseCustom] = useState(false);
-  const [form, setForm] = useState({ name: "", email: "", mobile: "", panNumber: "" });
+  const [form, setForm] = useState({ name: "", email: "", mobile: "", panNumber: "", sevakName: "", dob: "" });
   const [want80G, setWant80G] = useState(false);
   const [wantsMahaPrasadam, setWantsMahaPrasadam] = useState(false);
   const [address, setAddress] = useState<PrasadamAddress>({ street: "", city: "", state: "", pincode: "", country: "India" });
@@ -254,6 +255,8 @@ export default function AlankaraVastraClient() {
           email: form.email.trim().toLowerCase(),
           mobile: form.mobile.trim(),
           amount: finalAmount,
+          sevakName: form.sevakName.trim() || undefined,
+          dob: form.dob || undefined,
           certificate: want80G,
           panNumber: want80G ? form.panNumber.trim() : undefined,
           mahaprasadam: wantsMahaPrasadam,
@@ -577,6 +580,13 @@ export default function AlankaraVastraClient() {
                       />
                     </div>
                   </div>
+
+                  <DonorExtrasFields
+                    sevakName={form.sevakName}
+                    dob={form.dob}
+                    onSevakNameChange={(v) => setForm({ ...form, sevakName: v })}
+                    onDobChange={(v) => setForm({ ...form, dob: v })}
+                  />
 
                   {/* 80G */}
                   {finalAmount > 999 && (

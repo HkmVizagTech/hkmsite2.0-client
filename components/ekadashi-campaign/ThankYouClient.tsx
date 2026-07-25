@@ -57,7 +57,7 @@ export default function ThankYouClient() {
               transition={{ delay: 0.5 }}
               className="mb-8 text-sm leading-relaxed text-muted-foreground md:text-base"
             >
-              Your offering has been received with gratitude. May Lord Vishnu bless you
+              Your offering has been received with gratitude. May Lord Krishna bless you
               and your family throughout Chaturmas.
             </motion.p>
 

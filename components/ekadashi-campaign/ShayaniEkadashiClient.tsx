@@ -13,6 +13,7 @@ import {
 import PageLayout from "@/components/PageLayout";
 import Ornament from "@/components/Ornament";
 import AddressForm from "@/components/AddressForm";
+import DonorExtrasFields from "@/components/DonorExtrasFields";
 import type { PrasadamAddress } from "@/components/AddressForm";
 import FaqSection from "@/components/sqft-campaign/FaqSection";
 import FounderSection from "@/components/sqft-campaign/FounderSection";
@@ -110,7 +111,7 @@ const EKADASHI_SEVAS: EkadashiSeva[] = [
       { amount: 2501, popular: true },
       { amount: 3751 },
     ],
-    unit: { price: 25, singular: "plate", plural: "plates" },
+    unit: { price: 25, singular: "meal", plural: "meals" },
   },
   {
     key: "gau",
@@ -145,10 +146,10 @@ const EKADASHI_SEVAS: EkadashiSeva[] = [
     sevaName: "Sadhu Bhojan Seva",
     category: "ANNADAAN",
     tiers: [
-      { amount: 100 },
       { amount: 500 },
       { amount: 1000, default: true },
       { amount: 2000 },
+      { amount: 2500 },
       { amount: 5000 },
       { amount: 10000 },
     ],
@@ -161,10 +162,10 @@ const EKADASHI_SEVAS: EkadashiSeva[] = [
     sevaName: "Gita Daan Seva",
     category: "BD",
     tiers: [
-      { label: "1 Gita", amount: 250 },
-      { label: "5 Gitas", amount: 1250 },
-      { label: "10 Gitas", amount: 2500 },
-      { label: "50 Gitas", amount: 12500 },
+      { amount: 250 },
+      { amount: 1250 },
+      { amount: 2500 },
+      { amount: 12500 },
     ],
     unit: { price: 250, singular: "Gita", plural: "Gitas" },
   },
@@ -303,7 +304,7 @@ export default function ShayaniEkadashiClient() {
   const [tierIndex, setTierIndex] = useState(() => defaultTierIndex(EKADASHI_SEVAS[0]));
   const [customAmount, setCustomAmount] = useState("");
   const [useCustom, setUseCustom] = useState(false);
-  const [form, setForm] = useState({ name: "", email: "", mobile: "", panNumber: "" });
+  const [form, setForm] = useState({ name: "", email: "", mobile: "", panNumber: "", sevakName: "", dob: "" });
   const [want80G, setWant80G] = useState(false);
   const [wantsMahaPrasadam, setWantsMahaPrasadam] = useState(false);
   const [address, setAddress] = useState<PrasadamAddress>({ street: "", city: "", state: "", pincode: "", country: "India" });
@@ -413,6 +414,8 @@ export default function ShayaniEkadashiClient() {
           email: form.email.trim().toLowerCase(),
           mobile: form.mobile.trim(),
           amount: finalAmount,
+          sevakName: form.sevakName.trim() || undefined,
+          dob: form.dob || undefined,
           certificate: want80G,
           panNumber: want80G ? form.panNumber.trim() : undefined,
           mahaprasadam: wantsMahaPrasadam,
@@ -587,9 +590,13 @@ export default function ShayaniEkadashiClient() {
                           <span className="block text-base font-extrabold text-gold">
                             ₹{tier.amount.toLocaleString("en-IN")}
                           </span>
-                          {tier.label && !selectedSeva.unit && (
+                          {(selectedSeva.unit
+                            ? unitImpact(tier.amount, selectedSeva.unit, true)
+                            : tier.label) && (
                             <span className="block text-[11px] leading-snug text-muted-foreground">
-                              {tier.label}
+                              {selectedSeva.unit
+                                ? unitImpact(tier.amount, selectedSeva.unit, true)
+                                : tier.label}
                             </span>
                           )}
                           {tier.popular && (
@@ -600,11 +607,6 @@ export default function ShayaniEkadashiClient() {
                           </button>
                         ))}
                       </div>
-                    )}
-                    {selectedTierImpact && (
-                      <p className="mt-2 text-xs font-semibold text-gold">
-                        🙏 {selectedTierImpact}
-                      </p>
                     )}
 
                     {/* Custom / open amount */}
@@ -617,11 +619,6 @@ export default function ShayaniEkadashiClient() {
                     >
                       <label htmlFor="custom-amount" className="flex items-center gap-2 px-3.5 pt-2.5 pb-1 text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">
                         {customOnly ? "Enter amount" : "Enter custom amount"}
-                        {(useCustom || customOnly) && customImpact && (
-                          <span className="ml-auto rounded-full bg-gold/15 px-2.5 py-0.5 text-[11px] font-bold text-gold normal-case tracking-normal">
-                            {customImpact}
-                          </span>
-                        )}
                       </label>
                       <div className="flex items-center gap-2 px-3.5 pb-3">
                         <span className="text-lg font-bold text-gold">₹</span>
@@ -641,7 +638,7 @@ export default function ShayaniEkadashiClient() {
                       </div>
                     </div>
                     {customImpact && (
-                      <p className="mt-1.5 text-xs font-semibold text-gold">
+                      <p className="mt-2 text-xs font-semibold text-gold">
                         🙏 {customImpact}
                       </p>
                     )}
@@ -739,6 +736,13 @@ export default function ShayaniEkadashiClient() {
                       />
                     </div>
                   </div>
+
+                  <DonorExtrasFields
+                    sevakName={form.sevakName}
+                    dob={form.dob}
+                    onSevakNameChange={(v) => setForm({ ...form, sevakName: v })}
+                    onDobChange={(v) => setForm({ ...form, dob: v })}
+                  />
 
                   {/* 80G */}
                   {finalAmount > 999 && (

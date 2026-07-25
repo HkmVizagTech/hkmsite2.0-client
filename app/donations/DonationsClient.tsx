@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Heart, X } from "lucide-react";
 import { newEventId, getMetaBrowserData, trackPurchase } from "@/lib/metaPixel";
 import { captureTracking, getStoredTracking } from "@/lib/tracking";
+import DonorExtrasFields from "@/components/DonorExtrasFields";
 
 type DonationOption = {
   id: number;
@@ -30,6 +31,8 @@ type CheckoutForm = {
   pincode: string;
   city: string;
   state: string;
+  sevakName: string;
+  dob: string;
 };
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
@@ -103,6 +106,8 @@ const initialForm: CheckoutForm = {
   pincode: "",
   city: "",
   state: "",
+  sevakName: "",
+  dob: "",
 };
 
 const formatAmount = (amount: number) => amount.toLocaleString("en-IN");
@@ -280,6 +285,8 @@ export default function DonationsClient() {
           email: form.donorEmail.trim().toLowerCase(),
           mobile: form.donorMobile,
           amount: finalAmount,
+          sevakName: form.sevakName.trim() || undefined,
+          dob: form.dob || undefined,
           certificate: form.want80G,
           panNumber: form.want80G ? form.panNumber : undefined,
           mahaprasadam: form.wantPrasadam,
@@ -631,6 +638,13 @@ export default function DonationsClient() {
                   <Input type="email" value={form.donorEmail} onChange={(event) => updateForm({ donorEmail: event.target.value.toLowerCase() })} placeholder="Your Email" className="mt-2" />
                 </label>
               </div>
+
+              <DonorExtrasFields
+                sevakName={form.sevakName}
+                dob={form.dob}
+                onSevakNameChange={(v) => updateForm({ sevakName: v })}
+                onDobChange={(v) => updateForm({ dob: v })}
+              />
 
               <fieldset className="rounded-lg border border-border p-4">
                 <legend className="px-2 text-sm font-semibold text-foreground">Payment Option *</legend>

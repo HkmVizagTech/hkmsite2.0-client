@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { ShieldCheck, Loader2, User, Phone, Mail, Check, Copy, ChevronDown, MapPin } from "lucide-react";
 import Ornament from "@/components/Ornament";
+import DonorExtrasFields from "@/components/DonorExtrasFields";
 import type { CampaignConfig } from "@/lib/campaignConfig";
 
 export interface DonorForm {
@@ -16,6 +17,8 @@ export interface DonorForm {
   city: string;
   state: string;
   pincode: string;
+  sevakName: string;
+  dob: string;
 }
 
 interface DonationFormSectionProps {
@@ -373,6 +376,13 @@ export default function DonationFormSection({
                   />
                 </div>
               </div>
+
+              <DonorExtrasFields
+                sevakName={form.sevakName}
+                dob={form.dob}
+                onSevakNameChange={(v) => setForm({ ...form, sevakName: v })}
+                onDobChange={(v) => setForm({ ...form, dob: v })}
+              />
 
               {/* Maha Prasadam */}
               {mahaPrasadamEligible && (

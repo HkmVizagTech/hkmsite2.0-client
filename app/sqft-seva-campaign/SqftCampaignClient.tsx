@@ -133,6 +133,8 @@ export default function SqftCampaignClient({
     city: "",
     state: "",
     pincode: "",
+    sevakName: "",
+    dob: "",
   });
   const [want80G, setWant80G] = useState(false);
   const [wantsMahaPrasadam, setWantsMahaPrasadam] = useState(false);
@@ -240,6 +242,8 @@ export default function SqftCampaignClient({
           email: form.email.trim().toLowerCase(),
           mobile: form.mobile.trim(),
           amount: finalAmount,
+          sevakName: form.sevakName.trim() || undefined,
+          dob: form.dob || undefined,
           certificate: want80G,
           panNumber: want80G ? form.panNumber.trim() : undefined,
           campaignerSlug: campaigner?.slug || undefined,
