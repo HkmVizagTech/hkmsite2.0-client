@@ -74,6 +74,8 @@ interface EkadashiTier {
   label?: string;
   amount: number;
   popular?: boolean;
+  /** Pre-selected tier when this seva is first shown. */
+  default?: boolean;
 }
 
 interface EkadashiSeva {
@@ -100,7 +102,7 @@ const EKADASHI_SEVAS: EkadashiSeva[] = [
     category: "ANNADAAN",
     tiers: [
       { label: "20 plates", amount: 501 },
-      { label: "50 meals", amount: 1251 },
+      { label: "50 meals", amount: 1251, default: true },
       { label: "100 meals", amount: 2501, popular: true },
       { label: "150 meals", amount: 3751 },
     ],
@@ -140,7 +142,7 @@ const EKADASHI_SEVAS: EkadashiSeva[] = [
     tiers: [
       { label: "1 plate", amount: 100 },
       { label: "5 plates", amount: 500 },
-      { label: "10 plates", amount: 1000 },
+      { label: "10 plates", amount: 1000, default: true },
       { label: "20 plates", amount: 2000 },
       { label: "50 plates", amount: 5000 },
       { label: "100 plates", amount: 10000 },
@@ -275,6 +277,13 @@ const SHLOKA = {
 /* Component                                                           */
 /* ------------------------------------------------------------------ */
 
+// The tier pre-selected when a seva is first shown. Falls back to the first
+// tier when none is explicitly flagged as the default.
+const defaultTierIndex = (seva: EkadashiSeva) => {
+  const i = seva.tiers.findIndex((t) => t.default);
+  return i === -1 ? 0 : i;
+};
+
 const inputWrapClass =
   "relative flex items-center rounded-lg border border-border bg-card focus-within:border-gold transition-colors";
 const inputClass =
@@ -284,7 +293,7 @@ const labelClass = "mb-1 block text-[11px] font-medium text-muted-foreground";
 export default function ShayaniEkadashiClient() {
   const router = useRouter();
   const [sevaIndex, setSevaIndex] = useState(0);
-  const [tierIndex, setTierIndex] = useState(0);
+  const [tierIndex, setTierIndex] = useState(() => defaultTierIndex(EKADASHI_SEVAS[0]));
   const [customAmount, setCustomAmount] = useState("");
   const [useCustom, setUseCustom] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", mobile: "", panNumber: "" });
@@ -333,7 +342,7 @@ export default function ShayaniEkadashiClient() {
   // go straight to the custom input.
   const selectSeva = (i: number) => {
     setSevaIndex(i);
-    setTierIndex(0);
+    setTierIndex(defaultTierIndex(EKADASHI_SEVAS[i]));
     setUseCustom(EKADASHI_SEVAS[i].tiers.length === 0);
     setCustomAmount("");
   };
@@ -971,14 +980,20 @@ export default function ShayaniEkadashiClient() {
 
         {/* ── Sticky mobile donate bar ── */}
         {showSticky && (
-        <div className="fixed inset-x-0 bottom-0 z-40 flex justify-center px-3 pb-3 pt-1 md:hidden">
-          <button
-            onClick={scrollToDonate}
-            className="inline-flex items-center gap-1.5 rounded-full bg-gradient-gold px-5 py-2 text-xs font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)]"
+          <motion.div
+            initial={{ y: 80, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 320, damping: 30 }}
+            className="fixed inset-x-0 bottom-0 z-40 flex justify-center px-3 pb-3 pt-1 md:hidden"
           >
-            🪔 Donate Now
-          </button>
-        </div>
+            <button
+              onClick={scrollToDonate}
+              aria-label="Donate — go to the donation form"
+              className="inline-flex items-center gap-2 rounded-full bg-gradient-gold px-6 py-3 text-sm font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)] transition-transform active:scale-95"
+            >
+              Donate Now
+            </button>
+          </motion.div>
         )}
       </main>
     </PageLayout>
