@@ -3,6 +3,24 @@ export interface SevaTier {
   amount: number;
 }
 
+// A seva priced per countable unit (a Gita, a plate, a brick). Lets an
+// arbitrary custom amount be translated into the impact it funds.
+export interface SevaUnit {
+  /** Cost of one unit, in rupees. */
+  price: number;
+  singular: string;
+  plural: string;
+}
+
+// Human-readable impact of an arbitrary amount — e.g. ₹500 on Gita Daan reads
+// "Supports 2 Gitas". Returns null when the seva isn't priced per unit or the
+// amount doesn't cover a single one.
+export function unitImpact(amount: number, unit?: SevaUnit): string | null {
+  if (!unit || !Number.isFinite(amount) || amount < unit.price) return null;
+  const count = Math.floor(amount / unit.price);
+  return `Supports ${count.toLocaleString("en-IN")} ${count === 1 ? unit.singular : unit.plural}`;
+}
+
 export interface Seva {
   slug: string;
   title: string;
@@ -11,6 +29,9 @@ export interface Seva {
   tagline: string;
   description: string;
   tiers: SevaTier[];
+  // Set when the seva is priced per countable unit, so a custom amount can be
+  // shown as the impact it funds (see unitImpact).
+  unit?: SevaUnit;
   category: string; // used for DCC / receipt categorization
   account: "default" | "donations";
   icon: string;
@@ -118,11 +139,12 @@ export const sevas: Seva[] = [
     description:
       "There is no greater gift than transcendental knowledge. Sponsor copies of Bhagavad-Gita As It Is for distribution to students, prisoners, and spiritual seekers — planting a seed that can transform a life forever.",
     tiers: [
-      { label: "Rs. 300 / 1 Gita", amount: 300 },
-      { label: "Rs. 1,500 / 5 Gitas", amount: 1500 },
-      { label: "Rs. 3,000 / 10 Gitas", amount: 3000 },
-      { label: "Rs. 15,000 / 50 Gitas", amount: 15000 },
+      { label: "Rs. 250 / 1 Gita", amount: 250 },
+      { label: "Rs. 1,250 / 5 Gitas", amount: 1250 },
+      { label: "Rs. 2,500 / 10 Gitas", amount: 2500 },
+      { label: "Rs. 12,500 / 50 Gitas", amount: 12500 },
     ],
+    unit: { price: 250, singular: "Gita", plural: "Gitas" },
     category: "BD",
     account: "default",
     icon: "📖",

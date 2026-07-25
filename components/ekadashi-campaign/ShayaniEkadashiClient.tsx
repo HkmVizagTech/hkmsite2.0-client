@@ -16,6 +16,8 @@ import AddressForm from "@/components/AddressForm";
 import type { PrasadamAddress } from "@/components/AddressForm";
 import FaqSection from "@/components/sqft-campaign/FaqSection";
 import FounderSection from "@/components/sqft-campaign/FounderSection";
+import { unitImpact } from "@/lib/sevaConfig";
+import type { SevaUnit } from "@/lib/sevaConfig";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 
@@ -88,6 +90,8 @@ interface EkadashiSeva {
   category: string;
   /** Preset amounts. Empty array → open (custom) amount only. */
   tiers: EkadashiTier[];
+  /** Set for per-unit sevas so custom amounts show their impact. */
+  unit?: SevaUnit;
 }
 
 // The sevas offered on the Ekadashi donation form. Amounts mirror the real
@@ -155,11 +159,12 @@ const EKADASHI_SEVAS: EkadashiSeva[] = [
     sevaName: "Gita Daan Seva",
     category: "BD",
     tiers: [
-      { label: "1 Gita", amount: 300 },
-      { label: "5 Gitas", amount: 1500 },
-      { label: "10 Gitas", amount: 3000 },
-      { label: "50 Gitas", amount: 15000 },
+      { label: "1 Gita", amount: 250 },
+      { label: "5 Gitas", amount: 1250 },
+      { label: "10 Gitas", amount: 2500 },
+      { label: "50 Gitas", amount: 12500 },
     ],
+    unit: { price: 250, singular: "Gita", plural: "Gitas" },
   },
   {
     key: "general",
@@ -326,6 +331,8 @@ export default function ShayaniEkadashiClient() {
     useCustom || customOnly
       ? Number(customAmount) || 0
       : selectedSeva.tiers[tierIndex]?.amount || 0;
+  const customImpact =
+    (useCustom || customOnly) ? unitImpact(finalAmount, selectedSeva.unit) : null;
   const galleryRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -613,6 +620,11 @@ export default function ShayaniEkadashiClient() {
                         className="h-10 w-full min-w-0 bg-transparent text-sm font-semibold text-foreground outline-none placeholder:font-normal placeholder:text-muted-foreground"
                       />
                     </div>
+                    {customImpact && (
+                      <p className="mt-1.5 text-xs font-semibold text-gold">
+                        🙏 {customImpact}
+                      </p>
+                    )}
                   </div>
 
                   {/* Bank transfer */}

@@ -11,7 +11,7 @@ import {
   ChevronRight, CheckCircle2, Loader2, ShieldCheck,
   ChevronDown, Copy, Check, Building2, UtensilsCrossed, FileCheck2, Landmark, Sparkles,
 } from "lucide-react";
-import { getSevaBySlug, sevas, getSevaHref } from "@/lib/sevaConfig";
+import { getSevaBySlug, sevas, getSevaHref, unitImpact } from "@/lib/sevaConfig";
 import Ornament from "@/components/Ornament";
 import PageLayout from "@/components/PageLayout";
 import AddressForm from "@/components/AddressForm";
@@ -153,6 +153,7 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
   }
 
   const finalAmount = useCustom ? Number(customAmount) || 0 : seva.tiers[tierIndex]?.amount || 0;
+  const customImpact = useCustom ? unitImpact(finalAmount, seva.unit) : null;
 
   useEffect(() => {
     if (finalAmount <= 999) {
@@ -518,6 +519,11 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
                       className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus:border-primary"
                       placeholder="Enter amount"
                     />
+                    {customImpact && (
+                      <p className="mt-1.5 text-xs font-semibold text-gold">
+                        🙏 {customImpact}
+                      </p>
+                    )}
                   </div>
                 )}
 
