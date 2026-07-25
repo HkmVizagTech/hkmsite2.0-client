@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Poppins, Playfair_Display } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { Toaster } from "@/components/ui/toaster";
@@ -103,6 +104,20 @@ export default function RootLayout({
 }>) {
   return (
   <html lang="en" className={`h-full antialiased overflow-x-hidden ${playfair.variable}`} suppressHydrationWarning>
+      <head>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-XVDQNJK24G"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-XVDQNJK24G');
+          `}
+        </Script>
+      </head>
       <body className={`${poppins.className} min-h-full flex flex-col overflow-x-hidden`}>
         <MetaPixel />
         <script
