@@ -130,7 +130,12 @@ export default function TransactionsTab() {
       </div>
 
       <p className="text-sm text-muted-foreground">
-        <span className="font-semibold text-foreground">₹{totalAmount.toLocaleString("en-IN")}</span> total across matching transactions
+        <span className="font-semibold text-foreground">₹{totalAmount.toLocaleString("en-IN")}</span>{" "}
+        {status === "completed"
+          ? "confirmed (completed transactions)"
+          : status === "all"
+            ? "across all statuses — includes pending/failed, not confirmed revenue"
+            : `across matching "${status}" transactions — not confirmed revenue`}
       </p>
 
       {loading ? (

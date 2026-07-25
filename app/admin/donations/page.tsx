@@ -7,40 +7,22 @@ export const dynamic = "force-dynamic";
 
 import { authFetch } from "@/lib/authClient";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
-  IndianRupee, Search, Download, Eye, TrendingUp, Users, Calendar, CreditCard, Smartphone, Banknote, X
+  IndianRupee, Search, Download, Eye, TrendingUp, Users, Calendar, CreditCard, Smartphone, Banknote, X, Loader2,
 } from "lucide-react";
 import {
-  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell,
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend,
 } from "recharts";
 
-const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || 'http://localhost:3003';
+const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:3003";
 
-
-const monthlyDonations = [
-  { month: "Oct", amount: 185000 },
-  { month: "Nov", amount: 220000 },
-  { month: "Dec", amount: 340000 },
-  { month: "Jan", amount: 280000 },
-  { month: "Feb", amount: 310000 },
-  { month: "Mar", amount: 145700 },
-];
-
-const sevaWise = [
-  { name: "Square Foot", value: 42 },
-  { name: "Brick Seva", value: 22 },
-  { name: "Anna Daan", value: 18 },
-  { name: "Subhojanam", value: 12 },
-  { name: "General", value: 6 },
-];
-
-const COLORS = ["hsl(30,85%,50%)", "hsl(350,45%,35%)", "hsl(42,90%,55%)", "hsl(200,70%,50%)", "hsl(150,60%,40%)"];
+const COLORS = ["hsl(30,85%,50%)", "hsl(350,45%,35%)", "hsl(42,90%,55%)", "hsl(200,70%,50%)", "hsl(150,60%,40%)", "hsl(280,50%,50%)", "hsl(10,70%,45%)", "hsl(170,55%,40%)"];
 
 const methodIcons: Record<string, typeof CreditCard> = {
   UPI: Smartphone,
@@ -49,6 +31,16 @@ const methodIcons: Record<string, typeof CreditCard> = {
   Cash: IndianRupee,
 };
 
+interface Stats {
+  totalCollected: number;
+  totalCompletedCount: number;
+  totalTransactions: number;
+  totalDonors: number;
+  thisMonth: { value: number; changePct: number | null; label: string };
+  monthly: { month: string; amount: number; count: number }[];
+  sevaWise: { name: string; value: number; count: number }[];
+}
+
 export default function AdminDonations() {
   const [search, setSearch] = useState("");
   const [sevaFilter, setSevaFilter] = useState("all");
@@ -56,15 +48,30 @@ export default function AdminDonations() {
   const [selectedDonation, setSelectedDonation] = useState<any | null>(null);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(5);
+  const [limit, setLimit] = useState(20);
   const [total, setTotal] = useState(0);
+  const [stats, setStats] = useState<Stats | null>(null);
+  const [statsLoading, setStatsLoading] = useState(true);
+  const [statusFilter, setStatusFilter] = useState("all");
 
-  useEffect(() => { fetchDonations(); }, [page, limit]);
+  // Fetch real aggregated stats from the server
+  useEffect(() => {
+    setStatsLoading(true);
+    authFetch(`${apiUrl}/donations/stats`, { credentials: "include" })
+      .then((res) => res.json())
+      .then((data) => { if (data.success) setStats(data.stats); })
+      .catch(() => {})
+      .finally(() => setStatsLoading(false));
+  }, []);
 
-  const fetchDonations = async () => {
+  const fetchDonations = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await authFetch(`${apiUrl}/donations?page=${page}&limit=${limit}`, { credentials: 'include' });
+      const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+      if (search) params.set("q", search);
+      if (statusFilter !== "all") params.set("status", statusFilter);
+      if (sevaFilter !== "all") params.set("type", sevaFilter);
+      const res = await authFetch(`${apiUrl}/donations?${params.toString()}`, { credentials: "include" });
       if (!res.ok) return;
       const data = await res.json();
       setDonations(data.donations || []);
@@ -73,25 +80,45 @@ export default function AdminDonations() {
       console.error(err);
     }
     setLoading(false);
+  }, [page, limit, search, statusFilter, sevaFilter]);
+
+  useEffect(() => {
+    const t = setTimeout(fetchDonations, 300);
+    return () => clearTimeout(t);
+  }, [fetchDonations]);
+
+  const exportCsv = () => {
+    const params = new URLSearchParams();
+    if (statusFilter !== "all") params.set("status", statusFilter);
+    if (sevaFilter !== "all") params.set("type", sevaFilter);
+    if (search) params.set("q", search);
+    authFetch(`${apiUrl}/donations?${params.toString()}&limit=10000`, { credentials: "include" })
+      .then((res) => res.json())
+      .then((data) => {
+        const rows = (data.donations || []).map((d: any) => [
+          d.razorpayPaymentId || d.razorpayOrderId || d._id,
+          d.donorName || "",
+          d.donorEmail || "",
+          d.donorMobile || "",
+          d.amount,
+          d.status,
+          d.sevaName || d.type || "",
+          d.receiptNumber || "",
+          d.date ? new Date(d.date).toLocaleDateString("en-IN") : "",
+        ]);
+        const headers = ["TXN ID", "Donor", "Email", "Mobile", "Amount", "Status", "Seva", "Receipt", "Date"];
+        const csv = [headers.join(","), ...rows.map((r: string[]) => r.map((c: string) => `"${String(c).replace(/"/g, '""')}"`).join(","))].join("\n");
+        const blob = new Blob([csv], { type: "text/csv" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `donations-${Date.now()}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+      });
   };
 
-  const filtered = donations.filter((d: any) => {
-    const lowerSearch = search.toLowerCase();
-    const donorStr = (d.donor || d.donorName || d.donorEmail || "").toString();
-    const idStr = (d.transactionId || d.razorpayOrderId || d._id || d.id || "").toString();
-    const emailStr = (d.email || d.donorEmail || "").toString();
-
-    const matchSearch =
-      donorStr.toLowerCase().includes(lowerSearch) ||
-      idStr.toLowerCase().includes(lowerSearch) ||
-      emailStr.toLowerCase().includes(lowerSearch);
-    const matchSeva = sevaFilter === "all" || d.sevaName === sevaFilter || d.type === sevaFilter;
-    return matchSearch && matchSeva;
-  });
-
-  const totalCollected = donations.filter((d: any) => d.status === "completed").reduce((s: number, d: any) => s + (d.amount || 0), 0);
-  const totalDonors = new Set(donations.map((d: any) => d.donorEmail || d.donor)).size;
-  const thisMonth = donations.filter((d: any) => (d.date || '').toString().startsWith("2026-03") && d.status === "completed").reduce((s: number, d: any) => s + (d.amount || 0), 0);
+  const sevaOptions = stats?.sevaWise?.map((s) => s.name) || [];
 
   return (
     <div className="space-y-6">
@@ -100,103 +127,125 @@ export default function AdminDonations() {
           <h1 className="font-heading text-3xl font-bold">Donations & Payments</h1>
           <p className="text-muted-foreground">Track all seva donations and payment details</p>
         </div>
-        <Button className="gap-2 bg-transparent border border-border text-foreground hover:bg-muted">
+        <Button className="gap-2 bg-transparent border border-border text-foreground hover:bg-muted" onClick={exportCsv}>
           <Download className="w-4 h-4" /> Export CSV
         </Button>
       </div>
 
-      {
-}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          { label: "Total Collected", value: `₹${totalCollected.toLocaleString("en-IN")}`, icon: IndianRupee, sub: "All time", color: "text-green-600" },
-          { label: "This Month", value: `₹${thisMonth.toLocaleString("en-IN")}`, icon: TrendingUp, sub: "March 2026", color: "text-primary" },
-          { label: "Total Donors", value: totalDonors.toString(), icon: Users, sub: "Unique donors", color: "text-blue-500" },
-          { label: "Transactions", value: donations.length.toString(), icon: Calendar, sub: "All records", color: "text-purple-500" },
-        ].map((stat, i) => (
-          <motion.div key={stat.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
-            <Card>
-              <CardContent className="p-5">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground">{stat.label}</p>
-                    <p className="text-2xl font-bold mt-1">{stat.value}</p>
-                    <span className="text-xs text-muted-foreground">{stat.sub}</span>
-                  </div>
-                  <div className={`p-2.5 rounded-xl bg-muted ${stat.color}`}>
-                    <stat.icon className="w-5 h-5" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        ))}
-      </div>
-
-      {
-}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <Card className="lg:col-span-2">
-          <CardHeader><CardTitle className="text-lg">Monthly Donations</CardTitle></CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={260}>
-              <BarChart data={monthlyDonations}>
-                <XAxis dataKey="month" tick={{ fontSize: 12 }} />
-                <YAxis tick={{ fontSize: 12 }} />
-                <Tooltip formatter={(v: number) => `₹${v.toLocaleString("en-IN")}`} />
-                <Bar dataKey="amount" fill="hsl(30,85%,50%)" radius={[6, 6, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader><CardTitle className="text-lg">Seva-wise Split</CardTitle></CardHeader>
-          <CardContent className="flex items-center justify-center">
-            <ResponsiveContainer width="100%" height={200}>
-              <PieChart>
-                <Pie data={sevaWise} cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={4} dataKey="value">
-                  {sevaWise.map((_, i) => (
-                    <Cell key={i} fill={COLORS[i % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </CardContent>
-          <div className="px-6 pb-4 flex flex-wrap gap-3">
-            {sevaWise.map((item, i) => (
-              <div key={item.name} className="flex items-center gap-1.5 text-xs">
-                <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: COLORS[i] }} />
-                <span className="text-muted-foreground">{item.name}</span>
-              </div>
+      {/* Stats Cards — real data from /donations/stats */}
+      {statsLoading ? (
+        <div className="flex items-center justify-center py-8 text-muted-foreground">
+          <Loader2 className="mr-2 h-5 w-5 animate-spin" /> Loading analytics...
+        </div>
+      ) : stats ? (
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { label: "Total Collected", value: `₹${stats.totalCollected.toLocaleString("en-IN")}`, icon: IndianRupee, sub: `${stats.totalCompletedCount} completed`, color: "text-green-600" },
+              { label: "This Month", value: `₹${stats.thisMonth.value.toLocaleString("en-IN")}`, icon: TrendingUp, sub: stats.thisMonth.changePct !== null ? `${stats.thisMonth.changePct >= 0 ? "+" : ""}${stats.thisMonth.changePct}% vs last month` : stats.thisMonth.label, color: "text-primary" },
+              { label: "Total Donors", value: stats.totalDonors.toLocaleString("en-IN"), icon: Users, sub: "Unique donors", color: "text-blue-500" },
+              { label: "Transactions", value: stats.totalTransactions.toLocaleString("en-IN"), icon: Calendar, sub: "All records", color: "text-purple-500" },
+            ].map((stat, i) => (
+              <motion.div key={stat.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
+                <Card>
+                  <CardContent className="p-5">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <p className="text-sm text-muted-foreground">{stat.label}</p>
+                        <p className="text-2xl font-bold mt-1">{stat.value}</p>
+                        <span className="text-xs text-muted-foreground">{stat.sub}</span>
+                      </div>
+                      <div className={`p-2.5 rounded-xl bg-muted ${stat.color}`}>
+                        <stat.icon className="w-5 h-5" />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
             ))}
           </div>
-        </Card>
-      </div>
 
-      {
-}
+          {/* Charts — real data */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <Card className="lg:col-span-2">
+              <CardHeader><CardTitle className="text-lg">Monthly Donations</CardTitle></CardHeader>
+              <CardContent>
+                {stats.monthly.length > 0 ? (
+                  <ResponsiveContainer width="100%" height={260}>
+                    <BarChart data={stats.monthly}>
+                      <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+                      <YAxis tick={{ fontSize: 12 }} tickFormatter={(v: number) => `₹${(v / 1000).toFixed(0)}k`} />
+                      <Tooltip formatter={(v: number) => [`₹${v.toLocaleString("en-IN")}`, "Amount"]} />
+                      <Bar dataKey="amount" fill="hsl(30,85%,50%)" radius={[6, 6, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <p className="text-center text-muted-foreground py-8">No monthly data yet</p>
+                )}
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader><CardTitle className="text-lg">Seva-wise Split</CardTitle></CardHeader>
+              <CardContent className="flex items-center justify-center">
+                {stats.sevaWise.length > 0 ? (
+                  <ResponsiveContainer width="100%" height={200}>
+                    <PieChart>
+                      <Pie data={stats.sevaWise} cx="50%" cy="50%" innerRadius={50} outerRadius={80} paddingAngle={4} dataKey="value">
+                        {stats.sevaWise.map((_, i) => (
+                          <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip formatter={(v: number) => `₹${v.toLocaleString("en-IN")}`} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <p className="text-center text-muted-foreground py-8">No seva data yet</p>
+                )}
+              </CardContent>
+              <div className="px-6 pb-4 flex flex-wrap gap-3">
+                {stats.sevaWise.map((item, i) => (
+                  <div key={item.name} className="flex items-center gap-1.5 text-xs">
+                    <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
+                    <span className="text-muted-foreground">{item.name} (₹{item.value.toLocaleString("en-IN")})</span>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
+        </>
+      ) : (
+        <div className="rounded-lg bg-red-50 p-6 text-center text-red-700">Failed to load analytics</div>
+      )}
+
+      {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input placeholder="Search by name, email or TXN ID" value={search} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)} className="pl-10" />
+          <Input placeholder="Search by name, email or TXN ID" value={search} onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setSearch(e.target.value); setPage(1); }} className="pl-10" />
         </div>
         <select
           className="rounded-md border border-input bg-background px-3 py-2 text-sm"
           value={sevaFilter}
-          onChange={(e) => setSevaFilter(e.target.value)}
+          onChange={(e) => { setSevaFilter(e.target.value); setPage(1); }}
         >
           <option value="all">All Sevas</option>
-          <option value="Square Foot Seva">Square Foot Seva</option>
-          <option value="Brick Seva">Brick Seva</option>
-          <option value="Anna Daan">Anna Daan</option>
-          <option value="Subhojanam">Subhojanam</option>
-          <option value="General Donation">General Donation</option>
+          {sevaOptions.map((s) => (
+            <option key={s} value={s}>{s}</option>
+          ))}
+        </select>
+        <select
+          className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+          value={statusFilter}
+          onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
+        >
+          <option value="all">All Statuses</option>
+          <option value="completed">Completed</option>
+          <option value="pending">Pending</option>
+          <option value="failed">Failed</option>
         </select>
       </div>
 
-      {
-}
+      {/* Transactions Table */}
       <Card>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
@@ -213,7 +262,11 @@ export default function AdminDonations() {
                 </tr>
               </thead>
               <tbody>
-                    {filtered.map((d, i) => {
+                {loading ? (
+                  <tr><td colSpan={7} className="text-center py-8 text-muted-foreground"><Loader2 className="inline mr-2 h-4 w-4 animate-spin" />Loading...</td></tr>
+                ) : donations.length === 0 ? (
+                  <tr><td colSpan={7} className="text-center py-6 text-muted-foreground">No donations found.</td></tr>
+                ) : donations.map((d, i) => {
                   const MethodIcon = methodIcons[d.method] || IndianRupee;
                   const rowKey = d._id || d.id || d.transactionId || d.razorpayOrderId || `don-${i}`;
                   return (
@@ -227,75 +280,68 @@ export default function AdminDonations() {
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-1.5">
                           <MethodIcon className="w-4 h-4 text-muted-foreground" />
-                          <span>{d.method || (d.razorpayPaymentId ? 'Card/UPI' : 'N/A')}</span>
+                          <span>{d.method || (d.razorpayPaymentId ? "Card/UPI" : "N/A")}</span>
                         </div>
-                        <div className="text-xs text-muted-foreground mt-1">Order: {d.razorpayOrderId || '-'}</div>
-                        <div className="text-xs text-muted-foreground">Payment: {d.razorpayPaymentId || '-'}</div>
                       </td>
                       <td className="px-4 py-3">
-                        <Badge className={(d.status === "paid" || d.status === 'completed') ? "bg-green-100 text-green-700" : d.status === "pending" ? "bg-yellow-100 text-yellow-700" : "bg-red-100 text-red-700"}>
+                        <Badge className={(d.status === "paid" || d.status === "completed") ? "bg-green-100 text-green-700" : d.status === "pending" ? "bg-yellow-100 text-yellow-700" : "bg-red-100 text-red-700"}>
                           {d.status}
                         </Badge>
                       </td>
-                      <td className="px-4 py-3">{new Date(d.date).toLocaleDateString("en-IN")}</td>
+                      <td className="px-4 py-3">{new Date(d.date || d.createdAt).toLocaleDateString("en-IN")}</td>
                       <td className="px-4 py-3 flex gap-2">
                         <Button className="p-2 h-auto bg-transparent border border-border text-foreground hover:bg-muted" onClick={() => setSelectedDonation(d)}>
                           <Eye className="w-4 h-4" />
                         </Button>
-                        <Button className="p-2 h-auto bg-transparent border border-border text-foreground hover:bg-muted" onClick={() => navigator.clipboard.writeText(d.razorpayOrderId || d.transactionId || '')}>Copy</Button>
+                        <Button className="p-2 h-auto bg-transparent border border-border text-foreground hover:bg-muted" onClick={() => navigator.clipboard.writeText(d.razorpayOrderId || d.transactionId || "")}>Copy</Button>
                       </td>
                     </tr>
                   );
-                  })}
-                  {filtered.length === 0 && !loading && (
-                    <tr><td colSpan={7} className="text-center py-6 text-muted-foreground">No donations found.</td></tr>
-                  )}
+                })}
               </tbody>
             </table>
           </div>
         </CardContent>
       </Card>
 
-        {
-}
-        <div className="flex items-center justify-between">
-          <div className="text-sm text-muted-foreground">Showing {(page - 1) * limit + 1} - {Math.min(page * limit, total)} of {total}</div>
-          <div className="flex items-center gap-2">
-            <Button disabled={page <= 1} onClick={() => setPage(p => Math.max(1, p - 1))}>Previous</Button>
-            <div className="px-2">Page</div>
-            <Input value={String(page)} onChange={(e) => setPage(Math.max(1, Number(e.target.value || 1)))} className="w-16 text-center" />
-            <div className="px-2">Limit</div>
-            <select value={String(limit)} onChange={(e) => { setLimit(Number(e.target.value)); setPage(1); }} className="rounded-md border border-input bg-background px-2 py-1 text-sm">
-              <option value="5">5</option>
-              <option value="10">10</option>
-              <option value="20">20</option>
-              <option value="50">50</option>
-              <option value="100">100</option>
-            </select>
-            <Button disabled={page * limit >= total} onClick={() => setPage(p => p + 1)}>Next</Button>
-          </div>
+      {/* Pagination */}
+      <div className="flex items-center justify-between">
+        <div className="text-sm text-muted-foreground">
+          {total > 0 ? `Showing ${(page - 1) * limit + 1}–${Math.min(page * limit, total)} of ${total}` : "No results"}
         </div>
+        <div className="flex items-center gap-2">
+          <Button disabled={page <= 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>Previous</Button>
+          <span className="text-sm px-2">Page {page}</span>
+          <select value={String(limit)} onChange={(e) => { setLimit(Number(e.target.value)); setPage(1); }} className="rounded-md border border-input bg-background px-2 py-1 text-sm">
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+          <Button disabled={page * limit >= total} onClick={() => setPage((p) => p + 1)}>Next</Button>
+        </div>
+      </div>
 
-      {
-}
+      {/* Donation Detail Modal */}
       {selectedDonation && (
         <div className="fixed inset-0 z-50 bg-foreground/50 flex items-center justify-center p-4" onClick={() => setSelectedDonation(null)}>
-          <div className="bg-background rounded-2xl p-6 w-full max-w-md shadow-elevated" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-background rounded-2xl p-6 w-full max-w-md shadow-elevated max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-5">
               <h2 className="font-heading text-xl font-bold">Donation Details</h2>
               <button onClick={() => setSelectedDonation(null)}><X className="w-5 h-5" /></button>
             </div>
             <div className="space-y-3 text-sm">
-              <div className="flex justify-between"><span className="text-muted-foreground">TXN ID</span><span className="font-mono">{selectedDonation.transactionId || selectedDonation.razorpayPaymentId || selectedDonation._id || '-'}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Donor</span><span>{selectedDonation.donorName || '-'}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Email</span><span>{selectedDonation.donorEmail || '-'}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Seva</span><span>{selectedDonation.sevaName || selectedDonation.type || '-'}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Phone</span><span>{selectedDonation.donorMobile || '-'}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">TXN ID</span><span className="font-mono">{selectedDonation.transactionId || selectedDonation.razorpayPaymentId || selectedDonation._id || "-"}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Donor</span><span>{selectedDonation.donorName || "-"}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Email</span><span>{selectedDonation.donorEmail || "-"}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Seva</span><span>{selectedDonation.sevaName || selectedDonation.type || "-"}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Phone</span><span>{selectedDonation.donorMobile || "-"}</span></div>
               <div className="flex justify-between"><span className="text-muted-foreground">Amount</span><span className="font-semibold">₹{(selectedDonation.amount || 0).toLocaleString("en-IN")}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Order ID</span><span className="font-mono">{selectedDonation.razorpayOrderId || '-'}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Payment ID</span><span className="font-mono">{selectedDonation.razorpayPaymentId || '-'}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Receipt</span><span>{selectedDonation.receiptNumber || selectedDonation.receipt || '-'}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">WhatsApp Receipt</span><span>{selectedDonation.whatsappReceiptSentAt ? `Sent ${new Date(selectedDonation.whatsappReceiptSentAt).toLocaleString('en-IN')}` : (selectedDonation.whatsappReceiptError ? 'Failed' : 'Not sent')}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Order ID</span><span className="font-mono text-xs break-all">{selectedDonation.razorpayOrderId || "-"}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Payment ID</span><span className="font-mono text-xs break-all">{selectedDonation.razorpayPaymentId || "-"}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Receipt</span><span>{selectedDonation.receiptNumber || "-"}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">DCC Sync</span><span>{selectedDonation.dccSyncStatus || "-"}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">WhatsApp Receipt</span><span>{selectedDonation.whatsappReceiptSentAt ? `Sent ${new Date(selectedDonation.whatsappReceiptSentAt).toLocaleString("en-IN")}` : (selectedDonation.whatsappReceiptError ? "Failed" : "Not sent")}</span></div>
               {selectedDonation.wantPrasadam && selectedDonation.prasadamAddress && (
                 <div className="border-t pt-3">
                   <div className="text-sm text-muted-foreground mb-2">Maha Prasadam Delivery</div>
@@ -307,19 +353,19 @@ export default function AdminDonations() {
               <div className="pt-3 flex flex-wrap gap-2">
                 <Button onClick={async () => {
                   try {
-                    const r = await authFetch(`${apiUrl}/donations/${selectedDonation._id}/resend-receipt`, { method: 'POST', credentials: 'include' });
+                    const r = await authFetch(`${apiUrl}/donations/${selectedDonation._id}/resend-receipt`, { method: "POST", credentials: "include" });
                     const j = await r.json().catch(() => ({}));
-                    alert(j.message || (r.ok ? 'Receipt resync triggered' : 'Failed to resend receipt'));
-                  } catch (err) { console.error(err); alert('Failed'); }
+                    alert(j.message || (r.ok ? "Receipt resync triggered" : "Failed to resend receipt"));
+                  } catch (err) { console.error(err); alert("Failed"); }
                 }}>Resend Receipt</Button>
                 <Button variant="outline" onClick={async () => {
                   try {
-                    const r = await authFetch(`${apiUrl}/donations/${selectedDonation._id}/resend-whatsapp`, { method: 'POST', credentials: 'include' });
+                    const r = await authFetch(`${apiUrl}/donations/${selectedDonation._id}/resend-whatsapp`, { method: "POST", credentials: "include" });
                     const j = await r.json().catch(() => ({}));
-                    alert(j.message || (r.ok ? 'WhatsApp receipt sent' : 'Failed to send WhatsApp receipt'));
-                  } catch (err) { console.error(err); alert('Failed'); }
+                    alert(j.message || (r.ok ? "WhatsApp receipt sent" : "Failed to send WhatsApp receipt"));
+                  } catch (err) { console.error(err); alert("Failed"); }
                 }}>Resend WhatsApp</Button>
-                <Button variant="outline" onClick={() => { navigator.clipboard.writeText(JSON.stringify(selectedDonation, null, 2)); alert('Copied'); }}>Copy JSON</Button>
+                <Button variant="outline" onClick={() => { navigator.clipboard.writeText(JSON.stringify(selectedDonation, null, 2)); alert("Copied"); }}>Copy JSON</Button>
               </div>
             </div>
           </div>
