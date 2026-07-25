@@ -4,9 +4,11 @@ import PageLayout from "@/components/PageLayout";
 import PageHero from "@/components/PageHero";
 import Ornament from "@/components/Ornament";
 import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Utensils, Heart, Calendar, Users, CheckCircle, Sparkles } from "lucide-react";
 import Image from "next/image";
+
+const MEAL_PRICE = 25;
 
 const significance = [
   { icon: Heart, title: "Supreme Charity", desc: "Annadana (food donation) is considered the highest form of charity in Vedic tradition, as food sustains life itself." },
@@ -25,11 +27,15 @@ const mealDetails = [
 ];
 
 const sponsorOptions = [
-  { title: "Daily Sponsor", amount: "₹5,000", desc: "Sponsor all meals for one full day", meals: "200+ meals" },
-  { title: "Weekly Sponsor", amount: "₹25,000", desc: "Feed devotees and visitors for a week", meals: "1,400+ meals" },
-  { title: "Monthly Sponsor", amount: "₹1,00,000", desc: "Become a monthly Anna-Daan patron", meals: "6,000+ meals" },
-  { title: "Annual Patron", amount: "₹10,00,000", desc: "Year-round temple meal sponsorship", meals: "73,000+ meals" },
+  { title: "Daily Sponsor", amount: 5000, desc: "Sponsor all meals for one full day" },
+  { title: "Weekly Sponsor", amount: 25000, desc: "Feed devotees and visitors for a week" },
+  { title: "Monthly Sponsor", amount: 100000, desc: "Become a monthly Anna-Daan patron" },
+  { title: "Annual Patron", amount: 1000000, desc: "Year-round temple meal sponsorship" },
 ];
+
+function mealsForAmount(amount: number): number {
+  return Math.floor(amount / MEAL_PRICE);
+}
 
 export default function AnnaDaanPage() {
   const ref1 = useRef(null);
@@ -40,6 +46,13 @@ export default function AnnaDaanPage() {
   const inView2 = useInView(ref2, { once: true, margin: "-80px" });
   const inView3 = useInView(ref3, { once: true, margin: "-80px" });
   const inView4 = useInView(ref4, { once: true, margin: "-80px" });
+
+  const [selectedAmount, setSelectedAmount] = useState<number>(5000);
+  const [customAmount, setCustomAmount] = useState("");
+  const [useCustom, setUseCustom] = useState(false);
+
+  const activeAmount = useCustom ? (Number(customAmount) || 0) : selectedAmount;
+  const activeMeals = activeAmount >= MEAL_PRICE ? mealsForAmount(activeAmount) : 0;
 
   return (
     <PageLayout>
@@ -187,30 +200,90 @@ export default function AnnaDaanPage() {
               All donations are eligible for 80G tax benefits. Choose a sponsorship level that resonates with your heart.
             </p>
           </motion.div>
-          <div className="max-w-4xl mx-auto grid sm:grid-cols-2 gap-6">
-            {sponsorOptions.map((opt, i) => (
-              <motion.div
-                key={opt.title}
-                initial={{ opacity: 0, y: 20 }}
-                animate={inView4 ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.5, delay: 0.2 + i * 0.1 }}
-                className="bg-background rounded-2xl p-6 border border-border hover:shadow-warm transition-shadow group"
-              >
-                <Utensils className="w-6 h-6 text-primary mb-3" />
-                <h3 className="font-heading text-lg font-bold text-foreground mb-1">{opt.title}</h3>
-                <div className="text-2xl font-heading font-bold text-primary mb-2">{opt.amount}</div>
-                <p className="text-sm text-muted-foreground mb-1">{opt.desc}</p>
-                <p className="text-xs text-accent font-medium mb-4">{opt.meals}</p>
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => window.open("/donate/anna-daan-seva", "_self")}
-                  className="w-full py-2.5 rounded-full bg-gradient-gold text-[hsl(220,60%,12%)] font-bold text-sm shadow-gold hover:opacity-90 transition-opacity"
+          <div className="max-w-4xl mx-auto">
+            <div className="grid sm:grid-cols-2 gap-4 mb-6">
+              {sponsorOptions.map((opt, i) => (
+                <motion.div
+                  key={opt.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={inView4 ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.5, delay: 0.2 + i * 0.1 }}
+                  onClick={() => { setSelectedAmount(opt.amount); setUseCustom(false); setCustomAmount(""); }}
+                  className={`relative cursor-pointer rounded-2xl p-5 border-2 transition-all ${
+                    !useCustom && selectedAmount === opt.amount
+                      ? "border-gold bg-gold/5 shadow-md"
+                      : "border-border bg-background hover:border-gold/40 hover:shadow-warm"
+                  }`}
                 >
-                  Sponsor Now
-                </motion.button>
-              </motion.div>
-            ))}
+                  <Utensils className="w-5 h-5 text-primary mb-2" />
+                  <h3 className="font-heading text-base font-bold text-foreground mb-1">{opt.title}</h3>
+                  <div className="text-2xl font-heading font-bold text-primary mb-1">
+                    ₹{opt.amount.toLocaleString("en-IN")}
+                  </div>
+                  <p className="text-xs text-muted-foreground">{opt.desc}</p>
+                  <div className="mt-2.5 inline-flex items-center gap-1 rounded-full bg-gold/10 px-2.5 py-1 text-xs font-bold text-gold">
+                    🍽️ {mealsForAmount(opt.amount).toLocaleString("en-IN")} meals
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Custom amount input */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={inView4 ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.5, delay: 0.6 }}
+              className="overflow-hidden rounded-2xl border-2 border-border bg-card p-5 transition-all focus-within:border-gold/60 focus-within:shadow-[0_0_0_1px_rgba(214,158,46,0.15)]"
+            >
+              <label className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground mb-2">
+                Or enter a custom amount
+                {useCustom && activeMeals > 0 && (
+                  <span className="ml-auto rounded-full bg-gold/15 px-2.5 py-0.5 text-[11px] font-bold text-gold normal-case tracking-normal">
+                    🍽️ {activeMeals.toLocaleString("en-IN")} meals
+                  </span>
+                )}
+              </label>
+              <div className="flex items-center gap-2">
+                <span className="text-lg font-bold text-gold">₹</span>
+                <input
+                  type="number"
+                  min={25}
+                  placeholder="Enter any amount"
+                  value={customAmount}
+                  onFocus={() => setUseCustom(true)}
+                  onChange={(e) => { setUseCustom(true); setCustomAmount(e.target.value); }}
+                  className="h-11 w-full min-w-0 bg-transparent text-xl font-bold text-foreground outline-none placeholder:text-base placeholder:font-normal placeholder:text-muted-foreground"
+                />
+              </div>
+              {useCustom && activeMeals > 0 && (
+                <p className="mt-2 text-xs font-semibold text-gold">
+                  🙏 Your donation will provide {activeMeals.toLocaleString("en-IN")} meals
+                </p>
+              )}
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={inView4 ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.5, delay: 0.7 }}
+              className="mt-6"
+            >
+              <button
+                onClick={() => {
+                  const url = useCustom && activeAmount > 0
+                    ? `/donate/anna-daan-seva?amount=${activeAmount}`
+                    : `/donate/anna-daan-seva`;
+                  window.open(url, "_self");
+                }}
+                disabled={useCustom && activeAmount < MEAL_PRICE}
+                className="w-full py-3 rounded-full bg-gradient-gold text-[hsl(220,60%,12%)] font-bold text-sm shadow-gold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {activeMeals > 0 ? `Donate ₹${activeAmount.toLocaleString("en-IN")} — Feed ${activeMeals.toLocaleString("en-IN")} People` : "Sponsor Now"}
+              </button>
+              <p className="mt-2 text-center text-[11px] text-muted-foreground">
+                All donations eligible for 80G tax benefits
+              </p>
+            </motion.div>
           </div>
         </div>
       </section>

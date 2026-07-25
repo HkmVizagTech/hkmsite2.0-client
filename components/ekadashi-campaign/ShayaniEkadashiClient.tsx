@@ -105,11 +105,12 @@ const EKADASHI_SEVAS: EkadashiSeva[] = [
     sevaName: "Anna Daan Seva",
     category: "ANNADAAN",
     tiers: [
-      { label: "20 plates", amount: 501 },
-      { label: "50 meals", amount: 1251, default: true },
-      { label: "100 meals", amount: 2501, popular: true },
-      { label: "150 meals", amount: 3751 },
+      { amount: 501 },
+      { amount: 1251, default: true },
+      { amount: 2501, popular: true },
+      { amount: 3751 },
     ],
+    unit: { price: 25, singular: "plate", plural: "plates" },
   },
   {
     key: "gau",
@@ -139,18 +140,19 @@ const EKADASHI_SEVAS: EkadashiSeva[] = [
   },
   {
     key: "sadhu-bhojan",
-    label: "Sadhu Vaishnav Bhojan Seva",
+    label: "Sadhu Bhojan Seva",
     icon: "🍽️",
-    sevaName: "Sadhu Vaishnav Bhojan Seva",
+    sevaName: "Sadhu Bhojan Seva",
     category: "ANNADAAN",
     tiers: [
-      { label: "1 plate", amount: 100 },
-      { label: "5 plates", amount: 500 },
-      { label: "10 plates", amount: 1000, default: true },
-      { label: "20 plates", amount: 2000 },
-      { label: "50 plates", amount: 5000 },
-      { label: "100 plates", amount: 10000 },
+      { amount: 100 },
+      { amount: 500 },
+      { amount: 1000, default: true },
+      { amount: 2000 },
+      { amount: 5000 },
+      { amount: 10000 },
     ],
+    unit: { price: 100, singular: "plate", plural: "plates" },
   },
   {
     key: "vidya",
@@ -282,18 +284,18 @@ const SHLOKA = {
 /* Component                                                           */
 /* ------------------------------------------------------------------ */
 
+const inputWrapClass =
+  "relative flex items-center rounded-lg border border-border bg-card focus-within:border-gold transition-colors";
+const inputClass =
+  "h-10 w-full bg-transparent pl-9 pr-3 text-sm text-foreground outline-none placeholder:text-muted-foreground";
+const labelClass = "mb-1 block text-[11px] font-medium text-muted-foreground";
+
 // The tier pre-selected when a seva is first shown. Falls back to the first
 // tier when none is explicitly flagged as the default.
 const defaultTierIndex = (seva: EkadashiSeva) => {
   const i = seva.tiers.findIndex((t) => t.default);
   return i === -1 ? 0 : i;
 };
-
-const inputWrapClass =
-  "relative flex items-center rounded-lg border border-border bg-card focus-within:border-gold transition-colors";
-const inputClass =
-  "h-10 w-full bg-transparent pl-9 pr-3 text-sm text-foreground outline-none placeholder:text-muted-foreground";
-const labelClass = "mb-1 block text-[11px] font-medium text-muted-foreground";
 
 export default function ShayaniEkadashiClient() {
   const router = useRouter();
@@ -331,6 +333,10 @@ export default function ShayaniEkadashiClient() {
     useCustom || customOnly
       ? Number(customAmount) || 0
       : selectedSeva.tiers[tierIndex]?.amount || 0;
+  const selectedTierImpact =
+    (!useCustom && !customOnly && selectedSeva.unit)
+      ? unitImpact(selectedSeva.tiers[tierIndex]?.amount || 0, selectedSeva.unit)
+      : null;
   const customImpact =
     (useCustom || customOnly) ? unitImpact(finalAmount, selectedSeva.unit) : null;
   const galleryRef = useRef<HTMLDivElement>(null);
@@ -581,7 +587,7 @@ export default function ShayaniEkadashiClient() {
                           <span className="block text-base font-extrabold text-gold">
                             ₹{tier.amount.toLocaleString("en-IN")}
                           </span>
-                          {tier.label && (
+                          {tier.label && !selectedSeva.unit && (
                             <span className="block text-[11px] leading-snug text-muted-foreground">
                               {tier.label}
                             </span>
@@ -595,30 +601,44 @@ export default function ShayaniEkadashiClient() {
                         ))}
                       </div>
                     )}
+                    {selectedTierImpact && (
+                      <p className="mt-2 text-xs font-semibold text-gold">
+                        🙏 {selectedTierImpact}
+                      </p>
+                    )}
 
                     {/* Custom / open amount */}
                     <div
-                      className={`${customOnly ? "" : "mt-2"} flex items-center gap-3 rounded-lg border px-3 transition-colors ${
-                        useCustom || customOnly ? "border-gold bg-gold/5" : "border-border bg-card"
+                      className={`${customOnly ? "" : "mt-3"} overflow-hidden rounded-xl border-2 transition-all ${
+                        useCustom || customOnly
+                          ? "border-gold/60 bg-gradient-to-r from-gold/5 to-gold/10 shadow-[0_0_0_1px_rgba(214,158,46,0.15)]"
+                          : "border-border bg-card hover:border-gold/30"
                       }`}
                     >
-                      <label htmlFor="custom-amount" className="shrink-0 text-xs font-medium text-muted-foreground">
-                        {customOnly ? "Enter amount" : "Other amount"}
+                      <label htmlFor="custom-amount" className="flex items-center gap-2 px-3.5 pt-2.5 pb-1 text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">
+                        {customOnly ? "Enter amount" : "Enter custom amount"}
+                        {(useCustom || customOnly) && customImpact && (
+                          <span className="ml-auto rounded-full bg-gold/15 px-2.5 py-0.5 text-[11px] font-bold text-gold normal-case tracking-normal">
+                            {customImpact}
+                          </span>
+                        )}
                       </label>
-                      <span className="text-sm text-foreground">₹</span>
-                      <input
-                        id="custom-amount"
-                        type="number"
-                        min={101}
-                        placeholder="Min ₹101"
-                        value={customAmount}
-                        onFocus={() => setUseCustom(true)}
-                        onChange={(e) => {
-                          setUseCustom(true);
-                          setCustomAmount(e.target.value);
-                        }}
-                        className="h-10 w-full min-w-0 bg-transparent text-sm font-semibold text-foreground outline-none placeholder:font-normal placeholder:text-muted-foreground"
-                      />
+                      <div className="flex items-center gap-2 px-3.5 pb-3">
+                        <span className="text-lg font-bold text-gold">₹</span>
+                        <input
+                          id="custom-amount"
+                          type="number"
+                          min={101}
+                          placeholder="Enter any amount"
+                          value={customAmount}
+                          onFocus={() => setUseCustom(true)}
+                          onChange={(e) => {
+                            setUseCustom(true);
+                            setCustomAmount(e.target.value);
+                          }}
+                          className="h-10 w-full min-w-0 bg-transparent text-xl font-bold text-foreground outline-none placeholder:text-base placeholder:font-normal placeholder:text-muted-foreground"
+                        />
+                      </div>
                     </div>
                     {customImpact && (
                       <p className="mt-1.5 text-xs font-semibold text-gold">

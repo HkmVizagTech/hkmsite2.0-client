@@ -144,10 +144,10 @@ export const sevas: Seva[] = [
       { label: "Rs. 2,500 / 10 Gitas", amount: 2500 },
       { label: "Rs. 12,500 / 50 Gitas", amount: 12500 },
     ],
-    unit: { price: 250, singular: "Gita", plural: "Gitas" },
     category: "BD",
     account: "default",
     icon: "📖",
+    unit: { price: 300, singular: "Gita", plural: "Gitas" },
   },
   {
     slug: "vastra-seva",
