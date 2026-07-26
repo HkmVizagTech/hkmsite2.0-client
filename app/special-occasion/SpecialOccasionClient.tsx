@@ -22,7 +22,7 @@ import {
 import PageLayout from "@/components/PageLayout";
 import Ornament from "@/components/Ornament";
 import { sevas, getSevaHref, type Seva } from "@/lib/sevaConfig";
-import { getStoredTracking } from "@/lib/tracking";
+import { useAttribution } from "@/lib/useAttribution";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
@@ -147,6 +147,7 @@ const TRUST_BADGES = [
 
 export default function SpecialOccasionClient() {
   const reduce = useReducedMotion();
+  const attribution = useAttribution("/special-occasion");
 
   const [occasion, setOccasion] = useState<string>("Birthday");
   const [selectedSeva, setSelectedSeva] = useState<Seva>(sevas[2]); // Anna Daan Seva default
@@ -211,7 +212,7 @@ export default function SpecialOccasionClient() {
           panNumber: want80G ? panNumber.trim() : undefined,
           sevakName: sevakName.trim() || undefined,
           dob: dob || undefined,
-          utm: getStoredTracking() || undefined,
+          utm: attribution.payload().utm,
         }),
       });
 

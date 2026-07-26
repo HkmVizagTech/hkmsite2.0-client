@@ -13,6 +13,7 @@ import {
   ChevronRight, ShieldCheck, X, CheckCircle2, Loader2, Quote
 } from "lucide-react";
 import { newEventId, getMetaBrowserData, trackInitiateCheckout, trackPurchase } from "@/lib/metaPixel";
+import { useAttribution } from "@/lib/useAttribution";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 const apiBase = () => (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(/\/+$/, "");
@@ -82,6 +83,7 @@ export default function SubhojanamPage() {
   const [form, setForm] = useState({ name: "", email: "", mobile: "" });
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const attribution = useAttribution("/subhojanam");
 
   const closeCheckout = () => { if (!submitting) { setCheckoutTier(null); setStatus(null); setForm({ name: "", email: "", mobile: "" }); } };
 
@@ -97,7 +99,7 @@ export default function SubhojanamPage() {
       const metaBrowser = getMetaBrowserData();
       const orderRes = await fetch(`${apiBase()}/payments/order`, {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ account: "touchstone", sourcePage: "/subhojanam", sevaName: "Subhojanam", name: form.name.trim(), email: form.email.trim().toLowerCase(), mobile: form.mobile.trim(), amount: checkoutTier.amountValue, metaEventId, metaFbp: metaBrowser.fbp, metaFbc: metaBrowser.fbc }),
+        body: JSON.stringify({ account: "touchstone", sourcePage: "/subhojanam", utm: attribution.payload().utm, sevaName: "Subhojanam", name: form.name.trim(), email: form.email.trim().toLowerCase(), mobile: form.mobile.trim(), amount: checkoutTier.amountValue, metaEventId, metaFbp: metaBrowser.fbp, metaFbc: metaBrowser.fbc }),
       });
       if (!orderRes.ok) { const body = await orderRes.json().catch(() => ({})); throw new Error(body.message || "Unable to create payment order."); }
       const order = await orderRes.json();

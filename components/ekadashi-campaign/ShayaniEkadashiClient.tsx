@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useAttribution } from "@/lib/useAttribution";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -300,6 +301,7 @@ const defaultTierIndex = (seva: EkadashiSeva) => {
 
 export default function ShayaniEkadashiClient() {
   const router = useRouter();
+  const attribution = useAttribution("/shayani-ekadashi");
   const [sevaIndex, setSevaIndex] = useState(0);
   const [tierIndex, setTierIndex] = useState(() => defaultTierIndex(EKADASHI_SEVAS[0]));
   const [customAmount, setCustomAmount] = useState("");
@@ -408,6 +410,7 @@ export default function ShayaniEkadashiClient() {
         body: JSON.stringify({
           account: "default",
           sourcePage: "/shayani-ekadashi",
+          utm: attribution.payload().utm,
           type: selectedSeva.category,
           sevaName: selectedSeva.sevaName,
           name: form.name.trim(),

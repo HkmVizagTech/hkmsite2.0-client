@@ -13,6 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DashboardTab from "./DashboardTab";
 import TransactionsTab from "./TransactionsTab";
 import UtmStatsTab from "./UtmStatsTab";
+import UtmBuilderTab from "./UtmBuilderTab";
 
 type DonationOption = {
   id: number;
@@ -289,6 +290,7 @@ export default function DonationsAdminPage() {
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
             <TabsTrigger value="transactions">Transactions</TabsTrigger>
             <TabsTrigger value="utm">UTM Campaigns</TabsTrigger>
+            <TabsTrigger value="utm-builder">UTM Builder</TabsTrigger>
             <TabsTrigger value="content">Page Content</TabsTrigger>
           </TabsList>
 
@@ -302,6 +304,10 @@ export default function DonationsAdminPage() {
 
           <TabsContent value="utm" className="mt-6">
             <UtmStatsTab />
+          </TabsContent>
+
+          <TabsContent value="utm-builder" className="mt-6">
+            <UtmBuilderTab />
           </TabsContent>
 
           <TabsContent value="content" className="mt-6 space-y-6">

@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowRight, Heart, Mail, MessageCircle, Phone, ShieldCheck, 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
+import { useAttribution } from "@/lib/useAttribution";
 
 type SevaOption = {
   legacySevaId: number;
@@ -198,6 +199,7 @@ const loadRazorpay = () =>
   });
 
 export default function JanmashtamiClient() {
+  const attribution = useAttribution("janmashtami");
   const [activeSlide, setActiveSlide] = useState(0);
   const [selected, setSelected] = useState<SelectedOffering | null>(null);
   const [form, setForm] = useState<CheckoutForm>(initialForm);
@@ -269,6 +271,7 @@ export default function JanmashtamiClient() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           sourcePage: "janmashtami",
+          utm: attribution.payload().utm,
           festivalSlug: "janmashtami",
           type: "Sri Krishna Janmashtami",
           sevaName: selected.seva.title,

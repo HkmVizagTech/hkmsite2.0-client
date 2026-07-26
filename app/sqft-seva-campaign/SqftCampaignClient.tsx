@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useAttribution } from "@/lib/useAttribution";
 import { useRouter } from "next/navigation";
 import {
   ShieldCheck, Loader2, CheckCircle2, ChevronDown, Copy, Check,
@@ -117,6 +118,11 @@ export default function SqftCampaignClient({
 }) {
   const config = getCampaignConfig(campaignType);
   const router = useRouter();
+  const attribution = useAttribution(
+    campaigner
+      ? `/sqft-seva-campaign/c/${campaigner.slug}`
+      : `/${campaignType === "BRICK" ? "brick-seva-campaign" : "sqft-seva-campaign"}`
+  );
   const [copiedShare, setCopiedShare] = useState(false);
   const [stats, setStats] = useState<CampaignStats | null>(null);
   const [wallTab, setWallTab] = useState<"latest" | "largest">("latest");
@@ -236,6 +242,7 @@ export default function SqftCampaignClient({
         body: JSON.stringify({
           account: "default",
           sourcePage: campaigner ? `/sqft-seva-campaign/c/${campaigner.slug}` : `/${campaignType === "BRICK" ? "brick-seva-campaign" : "sqft-seva-campaign"}`,
+          utm: attribution.payload().utm,
           type: config.orderType,
           sevaName: config.pageTitle,
           name: form.name.trim(),

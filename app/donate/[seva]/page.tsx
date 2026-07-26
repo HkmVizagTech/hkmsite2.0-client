@@ -12,6 +12,7 @@ import {
   ChevronDown, Copy, Check, Building2, UtensilsCrossed, FileCheck2, Landmark, Sparkles,
 } from "lucide-react";
 import { getSevaBySlug, sevas, getSevaHref, unitImpact } from "@/lib/sevaConfig";
+import { useAttribution } from "@/lib/useAttribution";
 import Ornament from "@/components/Ornament";
 import PageLayout from "@/components/PageLayout";
 import AddressForm from "@/components/AddressForm";
@@ -91,6 +92,7 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
   const seva = getSevaBySlug(slug);
   const searchParams = useSearchParams();
   const router = useRouter();
+  const attribution = useAttribution(`/donate/${slug}`);
 
   const [tierIndex, setTierIndex] = useState(0);
   const [customAmount, setCustomAmount] = useState("");
@@ -204,6 +206,7 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
         body: JSON.stringify({
           account: seva.account,
           sourcePage: `/donate/${seva.slug}`,
+          utm: attribution.payload().utm,
           type: seva.category,
           sevaName: seva.title,
           name: form.name.trim(),

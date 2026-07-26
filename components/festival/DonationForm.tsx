@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useAttribution } from "@/lib/useAttribution";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
 
 const fmt = (n: number) => Number(n).toLocaleString("en-IN");
@@ -14,6 +15,7 @@ const DEFAULT_SEVA_OPTIONS = [
 ];
 
 export default function DonationForm({ config, setToast }: any) {
+  const attribution = useAttribution(config?.slug ? `/festival/${config.slug}` : "/festival");
   const [selectedSevas, setSelectedSevas] = useState<any>({});
   const [expandedSeva, setExpandedSeva] = useState<string | null>(null);
   const [formData, setFormData] = useState({ name: "", email: "", mobile: "", dob: "", sevakName: "", panNumber: "", want80G: false, wantPrasadam: false,
@@ -76,7 +78,9 @@ export default function DonationForm({ config, setToast }: any) {
             city: formData.city,
             pincode: formData.pincode,
           } : null,
-          festivalSlug: config?.slug || config?.title || undefined
+          festivalSlug: config?.slug || config?.title || undefined,
+          sourcePage: attribution.sourcePage,
+          utm: attribution.payload().utm
         })
       });
       if (!orderRes.ok) throw new Error('Failed to create payment order');

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useAttribution } from "@/lib/useAttribution";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import {
@@ -156,6 +157,7 @@ const inputClass =
 const labelClass = "mb-1 block text-[11px] font-medium text-muted-foreground";
 
 export default function AlankaraVastraClient() {
+  const attribution = useAttribution("/alankara-vastra-seva");
   const [tierIndex, setTierIndex] = useState(0);
   const [customAmount, setCustomAmount] = useState("");
   const [useCustom, setUseCustom] = useState(false);
@@ -249,6 +251,7 @@ export default function AlankaraVastraClient() {
         body: JSON.stringify({
           account: config.orderType === "VASTRA" ? "default" : "default",
           sourcePage: "/alankara-vastra-seva",
+          utm: attribution.payload().utm,
           type: config.orderType,
           sevaName: config.pageTitle,
           name: form.name.trim(),
