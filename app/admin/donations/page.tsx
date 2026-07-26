@@ -337,6 +337,17 @@ export default function AdminDonations() {
               <div className="flex justify-between"><span className="text-muted-foreground">Seva</span><span>{selectedDonation.sevaName || selectedDonation.type || "-"}</span></div>
               <div className="flex justify-between"><span className="text-muted-foreground">Phone</span><span>{selectedDonation.donorMobile || "-"}</span></div>
               <div className="flex justify-between"><span className="text-muted-foreground">Amount</span><span className="font-semibold">₹{(selectedDonation.amount || 0).toLocaleString("en-IN")}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Donated On</span><span>{selectedDonation.createdAt || selectedDonation.date ? new Date(selectedDonation.createdAt || selectedDonation.date).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" }) : "-"}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Source Page</span><span className="text-right max-w-[60%] break-words">{selectedDonation.sourcePage || "-"}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">UTM Source</span><span>{selectedDonation.utm?.source || "-"}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">UTM Medium</span><span>{selectedDonation.utm?.medium || "-"}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">UTM Campaign</span><span>{selectedDonation.utm?.campaign || "-"}</span></div>
+              {selectedDonation.utm?.content && (
+                <div className="flex justify-between"><span className="text-muted-foreground">UTM Content</span><span>{selectedDonation.utm.content}</span></div>
+              )}
+              {selectedDonation.utm?.term && (
+                <div className="flex justify-between"><span className="text-muted-foreground">UTM Term</span><span>{selectedDonation.utm.term}</span></div>
+              )}
               <div className="flex justify-between"><span className="text-muted-foreground">Order ID</span><span className="font-mono text-xs break-all">{selectedDonation.razorpayOrderId || "-"}</span></div>
               <div className="flex justify-between"><span className="text-muted-foreground">Payment ID</span><span className="font-mono text-xs break-all">{selectedDonation.razorpayPaymentId || "-"}</span></div>
               <div className="flex justify-between"><span className="text-muted-foreground">Receipt</span><span>{selectedDonation.receiptNumber || "-"}</span></div>
