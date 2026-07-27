@@ -19,6 +19,9 @@ import {
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend,
 } from "recharts";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import UtmBuilderTab from "@/app/donations/admin/UtmBuilderTab";
+import SiteUtmAnalyticsTab from "./SiteUtmAnalyticsTab";
 
 const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:3003";
 
@@ -131,6 +134,15 @@ export default function AdminDonations() {
           <Download className="w-4 h-4" /> Export CSV
         </Button>
       </div>
+
+      <Tabs defaultValue="overview">
+        <TabsList>
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="utm-analytics">UTM Analytics</TabsTrigger>
+          <TabsTrigger value="utm-builder">UTM Builder</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview" className="mt-6 space-y-6">
 
       {/* Stats Cards — real data from /donations/stats */}
       {statsLoading ? (
@@ -321,6 +333,17 @@ export default function AdminDonations() {
           <Button disabled={page * limit >= total} onClick={() => setPage((p) => p + 1)}>Next</Button>
         </div>
       </div>
+
+        </TabsContent>
+
+        <TabsContent value="utm-analytics" className="mt-6">
+          <SiteUtmAnalyticsTab />
+        </TabsContent>
+
+        <TabsContent value="utm-builder" className="mt-6">
+          <UtmBuilderTab />
+        </TabsContent>
+      </Tabs>
 
       {/* Donation Detail Modal */}
       {selectedDonation && (
