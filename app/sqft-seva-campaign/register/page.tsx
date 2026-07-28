@@ -1,4 +1,4 @@
-import RegisterClient from "./RegisterClient";
+import CampaignerRegisterClient from "@/components/campaign/CampaignerRegisterClient";
 
 export const metadata = {
   title: "Start Your Fundraising Campaign | Square Foot Seva",
@@ -7,5 +7,5 @@ export const metadata = {
 };
 
 export default function CampaignerRegisterPage() {
-  return <RegisterClient />;
+  return <CampaignerRegisterClient campaignType="SQFT" />;
 }

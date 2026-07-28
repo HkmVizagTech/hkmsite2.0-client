@@ -198,8 +198,16 @@ const loadRazorpay = () =>
     document.body.appendChild(script);
   });
 
-export default function JanmashtamiClient() {
-  const attribution = useAttribution("janmashtami");
+export interface JanmashtamiCampaigner {
+  name: string;
+  slug: string;
+  message?: string;
+  raisedAmount?: number;
+  donorCount?: number;
+}
+
+export default function JanmashtamiClient({ campaigner }: { campaigner?: JanmashtamiCampaigner } = {}) {
+  const attribution = useAttribution(campaigner ? `/janmashtami/c/${campaigner.slug}` : "janmashtami");
   const [activeSlide, setActiveSlide] = useState(0);
   const [selected, setSelected] = useState<SelectedOffering | null>(null);
   const [form, setForm] = useState<CheckoutForm>(initialForm);
@@ -270,7 +278,8 @@ export default function JanmashtamiClient() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          sourcePage: "janmashtami",
+          sourcePage: campaigner ? `/janmashtami/c/${campaigner.slug}` : "janmashtami",
+          campaignerSlug: campaigner?.slug || undefined,
           utm: attribution.payload().utm,
           festivalSlug: "janmashtami",
           type: "Sri Krishna Janmashtami",
@@ -375,6 +384,19 @@ export default function JanmashtamiClient() {
 
   return (
     <main className="min-h-screen bg-[#fff8e7] text-slate-950">
+      {campaigner && (
+        <div className="bg-gradient-to-r from-amber-600 to-amber-500 px-4 py-3 text-center text-white">
+          <p className="text-sm md:text-base">
+            🙏 You are supporting <span className="font-bold">{campaigner.name}</span>&apos;s Janmashtami seva campaign
+            {typeof campaigner.donorCount === "number" && campaigner.donorCount > 0 && (
+              <span> · {campaigner.donorCount} devotee{campaigner.donorCount === 1 ? "" : "s"} joined · ₹{(campaigner.raisedAmount || 0).toLocaleString("en-IN")} raised</span>
+            )}
+          </p>
+          {campaigner.message && (
+            <p className="mt-0.5 text-xs italic text-amber-50 md:text-sm">&ldquo;{campaigner.message}&rdquo;</p>
+          )}
+        </div>
+      )}
       <section className="relative overflow-hidden bg-[#130922]">
         <div className="relative">
           {banners.map((banner, index) => (
