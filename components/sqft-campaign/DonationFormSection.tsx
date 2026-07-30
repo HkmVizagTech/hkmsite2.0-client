@@ -55,11 +55,11 @@ interface DonationFormSectionProps {
 }
 
 const inputWrapClass =
-  "relative flex items-center rounded-lg border border-border bg-card focus-within:border-gold transition-colors";
+  "relative flex items-center rounded-lg border border-slate-300 bg-white focus-within:border-gold transition-colors";
 const inputClass =
   "h-10 w-full bg-transparent pl-9 pr-3 text-sm text-foreground outline-none placeholder:text-muted-foreground";
 const labelClass = "mb-1 block text-[11px] font-medium text-muted-foreground";
-const addonBoxClass = "rounded-lg border border-border bg-background/60 px-3 py-2";
+const addonBoxClass = "rounded-lg border border-slate-200 bg-white px-3 py-2";
 
 // Preset quantities: row 1 = small (1–4), row 2 = bulk (11, 21, 51, 108).
 const UNIT_PRESETS = [1, 2, 3, 4, 11, 21, 51, 108];
@@ -170,7 +170,7 @@ export default function DonationFormSection({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="overflow-hidden rounded-[28px] border border-border bg-white shadow-elevated"
+          className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-elevated"
         >
           {/* Amount summary strip */}
           <div className="flex items-center justify-between gap-3 bg-gradient-gold px-6 py-4 sm:px-8">
@@ -202,7 +202,7 @@ export default function DonationFormSection({
                     className={`rounded-lg border px-2 py-2 text-center transition-colors ${
                       !useCustom && !isCustomSqft && sqftCount === n
                         ? "border-gold bg-gold/10"
-                        : "border-border bg-card hover:border-gold/60"
+                        : "border-slate-300 bg-white hover:border-gold/60"
                     }`}
                   >
                     <span className="block text-base font-bold text-primary sm:text-lg">{n}</span>
@@ -219,7 +219,7 @@ export default function DonationFormSection({
               {/* Other quantity — type any number of units */}
               <div
                 className={`flex items-center gap-2 rounded-lg border px-3 transition-colors ${
-                  isCustomSqft ? "border-gold bg-gold/5" : "border-border bg-card"
+                  isCustomSqft ? "border-gold bg-gold/5" : "border-dashed border-slate-300 bg-white focus-within:border-gold"
                 }`}
               >
                 <label htmlFor="custom-sqft" className="shrink-0 text-xs font-medium text-muted-foreground">
@@ -231,7 +231,7 @@ export default function DonationFormSection({
                   inputMode="numeric"
                   min={1}
                   max={100000}
-                  placeholder="Enter a number"
+                  placeholder="Enter number"
                   value={customSqftText}
                   onFocus={() => setUseCustom(false)}
                   onChange={(e) => {
@@ -240,7 +240,7 @@ export default function DonationFormSection({
                     setUseCustom(false);
                     setSqftCount(raw === "" ? 0 : Math.max(1, Math.min(100000, Number(raw))));
                   }}
-                  className="h-10 w-full min-w-0 bg-transparent text-sm font-semibold text-foreground outline-none placeholder:font-normal placeholder:text-muted-foreground"
+                  className="h-10 w-full min-w-0 bg-transparent text-sm font-semibold text-foreground outline-none placeholder:font-normal placeholder:text-muted-foreground/60"
                 />
                 {isCustomSqft && sqftCount > 0 && (
                   <span className="shrink-0 text-xs font-semibold text-gold">
@@ -252,7 +252,7 @@ export default function DonationFormSection({
               {/* Other rupee amount */}
               <div
                 className={`flex items-center gap-3 rounded-lg border px-3 transition-colors ${
-                  useCustom ? "border-gold bg-gold/5" : "border-border bg-card"
+                  useCustom ? "border-gold bg-gold/5" : "border-dashed border-slate-300 bg-white focus-within:border-gold"
                 }`}
               >
                 <label htmlFor="custom-amount" className="shrink-0 text-xs font-medium text-muted-foreground">
@@ -263,7 +263,7 @@ export default function DonationFormSection({
                   id="custom-amount"
                   type="number"
                   min={minCustomAmount}
-                  placeholder={`Min ${minCustomAmount}`}
+                  placeholder={`Min ₹${minCustomAmount}`}
                   value={customAmount}
                   onFocus={() => {
                     setUseCustom(true);
@@ -274,12 +274,12 @@ export default function DonationFormSection({
                     setCustomSqftText("");
                     setCustomAmount(e.target.value);
                   }}
-                  className="h-10 w-full min-w-0 bg-transparent text-sm font-semibold text-foreground outline-none placeholder:font-normal placeholder:text-muted-foreground"
+                  className="h-10 w-full min-w-0 bg-transparent text-sm font-semibold text-foreground outline-none placeholder:font-normal placeholder:text-muted-foreground/60"
                 />
               </div>
 
               {/* Bank transfer — tucked under amount selection since it's an alternative to the form on the right */}
-              <details className="group rounded-lg border border-border bg-background/60 px-3 py-2">
+              <details className="group rounded-lg border border-slate-200 bg-background/60 px-3 py-2">
                 <summary className="flex cursor-pointer list-none items-center justify-between text-xs font-semibold text-foreground">
                   Prefer a direct bank transfer?
                   <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" />
@@ -407,8 +407,8 @@ export default function DonationFormSection({
                         required
                         value={form.addressLine}
                         onChange={(e) => setForm({ ...form, addressLine: e.target.value })}
-                        className="w-full rounded-lg border border-border bg-card px-3 py-2 text-xs outline-none focus:border-gold"
-                        placeholder="Door / flat no. & area, street *"
+className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs outline-none focus:border-gold"
+                          placeholder="Door / flat no. & area, street *"
                       />
                       <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
                         <div className="relative sm:col-span-1">
@@ -421,7 +421,7 @@ export default function DonationFormSection({
                             onChange={(e) =>
                               setForm({ ...form, pincode: e.target.value.replace(/[^\d]/g, "").slice(0, 6) })
                             }
-                            className="h-9 w-full rounded-lg border border-border bg-card px-3 pr-8 text-xs outline-none focus:border-gold"
+                            className="h-9 w-full rounded-lg border border-slate-300 bg-white px-3 pr-8 text-xs outline-none focus:border-gold"
                             placeholder="PIN code *"
                           />
                           {pinLoading && (
@@ -433,7 +433,7 @@ export default function DonationFormSection({
                           required
                           value={form.city}
                           onChange={(e) => setForm({ ...form, city: e.target.value })}
-                          className="h-9 w-full rounded-lg border border-border bg-card px-3 text-xs outline-none focus:border-gold"
+                          className="h-9 w-full rounded-lg border border-slate-300 bg-white px-3 text-xs outline-none focus:border-gold"
                           placeholder="City *"
                         />
                         <input
@@ -441,7 +441,7 @@ export default function DonationFormSection({
                           required
                           value={form.state}
                           onChange={(e) => setForm({ ...form, state: e.target.value })}
-                          className="h-9 w-full rounded-lg border border-border bg-card px-3 text-xs outline-none focus:border-gold"
+                          className="h-9 w-full rounded-lg border border-slate-300 bg-white px-3 text-xs outline-none focus:border-gold"
                           placeholder="State *"
                         />
                       </div>
@@ -476,7 +476,7 @@ export default function DonationFormSection({
                     placeholder="PAN number *"
                     value={form.panNumber}
                     onChange={(e) => setForm({ ...form, panNumber: e.target.value.toUpperCase() })}
-                    className="mt-2 h-9 w-full rounded-lg border border-border bg-card px-3 text-xs uppercase outline-none focus:border-gold"
+                    className="mt-2 h-9 w-full rounded-lg border border-slate-300 bg-white px-3 text-xs uppercase outline-none focus:border-gold"
                   />
                 )}
               </div>

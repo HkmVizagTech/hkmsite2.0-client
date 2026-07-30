@@ -21,7 +21,7 @@ export default function AboutSection({ aboutImage, scrollToDonate }: AboutSectio
           transition={{ duration: 0.6 }}
           className="grid items-center gap-10 md:grid-cols-2"
         >
-          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
+          <div className="relative aspect-[16/9] overflow-hidden rounded-2xl">
             <Image
               src={aboutImage}
               alt="Hare Krishna Vaikuntham Temple"
