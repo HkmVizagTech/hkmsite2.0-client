@@ -15,8 +15,7 @@ const CAROUSEL_IMAGES = [
   { src: `${CLOUDINARY_BASE}/80g_Wbxrdiv_gFmZMqH.webp`, caption: "80G Tax Exemption" },
   { src: `${CLOUDINARY_BASE}/SANKALPA_SQUARE_FEET_SEVA.webp`, caption: "Sankalpa & Aarti" },
   { src: `${CLOUDINARY_BASE}/NARSIMHA_KAVACH_SUTRA_SQUARE_FEET.webp`, caption: "Narasimha Kavach Sutra" },
-  { src: `${CLOUDINARY_BASE}/square_feet_seva.webp`, caption: "Square Feet Seva" },
-  { src: `${CLOUDINARY_BASE}/Donor_privileges.webp`, caption: "Donor Privileges" },
+  { src: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785398618210-1785398617184-sqftcert.webp", caption: "Contribution Certificate" },
   { src: `${CLOUDINARY_BASE}/narsimha_tilak_1.webp`, caption: "Narasimha Yagna Tilak" },
   { src: `${CLOUDINARY_BASE}/Picture_of_Krishna_image_gallery_YWVbbL6.webp`, caption: "Sri Krishna" },
 ];
@@ -43,6 +42,7 @@ const OTHER_PRIVILEGES = [
 
 function PrivilegeCarousel() {
   const [index, setIndex] = useState(0);
+  const touchStartX = useRef(0);
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -51,8 +51,18 @@ function PrivilegeCarousel() {
     return () => clearInterval(id);
   }, []);
 
+  const next = () => setIndex((i) => (i + 1) % CAROUSEL_IMAGES.length);
+  const prev = () => setIndex((i) => (i - 1 + CAROUSEL_IMAGES.length) % CAROUSEL_IMAGES.length);
+
   return (
-    <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[28px] border border-border shadow-sm sm:aspect-[5/4]">
+    <div
+      className="relative aspect-[4/3] w-full overflow-hidden rounded-[28px] border border-border shadow-sm sm:aspect-[5/4]"
+      onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
+      onTouchEnd={(e) => {
+        const diff = e.changedTouches[0].clientX - touchStartX.current;
+        if (Math.abs(diff) > 50) diff > 0 ? prev() : next();
+      }}
+    >
       {CAROUSEL_IMAGES.map((img, i) => (
         <div
           key={img.src}
@@ -68,7 +78,15 @@ function PrivilegeCarousel() {
           />
         </div>
       ))}
-      <div className="absolute bottom-4 right-4 flex gap-1.5">
+      <div className="absolute bottom-4 right-4 flex items-center gap-1.5">
+        <button
+          type="button"
+          aria-label="Previous image"
+          onClick={prev}
+          className="flex h-5 w-5 items-center justify-center rounded-full bg-white/60 text-foreground/70 transition hover:bg-gold hover:text-white"
+        >
+          <ChevronLeft className="h-3 w-3" />
+        </button>
         {CAROUSEL_IMAGES.map((img, i) => (
           <button
             key={img.src}
@@ -80,6 +98,14 @@ function PrivilegeCarousel() {
             }`}
           />
         ))}
+        <button
+          type="button"
+          aria-label="Next image"
+          onClick={next}
+          className="flex h-5 w-5 items-center justify-center rounded-full bg-white/60 text-foreground/70 transition hover:bg-gold hover:text-white"
+        >
+          <ChevronRight className="h-3 w-3" />
+        </button>
       </div>
     </div>
   );
