@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useAttribution } from "@/lib/useAttribution";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   ShieldCheck, Loader2, CheckCircle2, ChevronDown, Copy, Check,
   Building2, Award, FileCheck2, Sparkles, UtensilsCrossed, ScrollText,
@@ -118,6 +118,7 @@ export default function SqftCampaignClient({
 }) {
   const config = getCampaignConfig(campaignType);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const attribution = useAttribution(
     campaigner
       ? `/sqft-seva-campaign/c/${campaigner.slug}`
@@ -143,11 +144,28 @@ export default function SqftCampaignClient({
     dob: "",
   });
   const [want80G, setWant80G] = useState(false);
+  const [monthly, setMonthly] = useState(false);
   const [wantsMahaPrasadam, setWantsMahaPrasadam] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [showSticky, setShowSticky] = useState(false);
+
+  useEffect(() => {
+    const amountParam = searchParams.get("amount");
+    if (amountParam) {
+      const amt = Number(amountParam);
+      if (amt > 0 && amt % config.pricePerUnit === 0) {
+        setSqftCount(amt / config.pricePerUnit);
+      } else if (amt > 0) {
+        setUseCustom(true);
+        setCustomAmount(String(amt));
+      }
+      setTimeout(() => {
+        document.getElementById("donate")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 500);
+    }
+  }, [searchParams, config.pricePerUnit]);
 
   useEffect(() => {
     const form = document.getElementById("donate");
@@ -236,63 +254,80 @@ export default function SqftCampaignClient({
 
     setSubmitting(true);
     try {
-      const orderRes = await fetch(`${apiBase()}/payments/order`, {
+      const sourcePage = campaigner ? `/sqft-seva-campaign/c/${campaigner.slug}` : `/${campaignType === "BRICK" ? "brick-seva-campaign" : "sqft-seva-campaign"}`;
+      const units = price > 0 ? Math.floor(finalAmount / price) : 0;
+      const unitLabel = `${units} ${units === 1 ? config.unitName : config.unitNamePlural}`;
+
+      const baseBody = {
+        account: "default",
+        sourcePage,
+        utm: attribution.payload().utm,
+        type: config.orderType,
+        sevaName: config.pageTitle,
+        name: form.name.trim(),
+        email: form.email.trim().toLowerCase(),
+        mobile: form.mobile.trim(),
+        amount: finalAmount,
+        sevakName: form.sevakName.trim() || undefined,
+        dob: form.dob || undefined,
+        certificate: want80G,
+        panNumber: want80G ? form.panNumber.trim() : undefined,
+        campaignerSlug: campaigner?.slug || undefined,
+      };
+
+      // Monthly autopay → Razorpay Subscription; one-time → Razorpay Order.
+      const endpoint = monthly ? "/payments/subscription" : "/payments/order";
+      const createRes = await fetch(`${apiBase()}${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          account: "default",
-          sourcePage: campaigner ? `/sqft-seva-campaign/c/${campaigner.slug}` : `/${campaignType === "BRICK" ? "brick-seva-campaign" : "sqft-seva-campaign"}`,
-          utm: attribution.payload().utm,
-          type: config.orderType,
-          sevaName: config.pageTitle,
-          name: form.name.trim(),
-          email: form.email.trim().toLowerCase(),
-          mobile: form.mobile.trim(),
-          amount: finalAmount,
-          sevakName: form.sevakName.trim() || undefined,
-          dob: form.dob || undefined,
-          certificate: want80G,
-          panNumber: want80G ? form.panNumber.trim() : undefined,
-          campaignerSlug: campaigner?.slug || undefined,
-          // Maha Prasadam courier details — backend stores these on the donation
-          // (wantPrasadam + structured prasadamAddress) and feeds them to the
-          // DCC delivery sync and receipt. Only sent when opted in.
-          mahaprasadam: wantsMahaPrasadam,
-          prasadamAddress: wantsMahaPrasadam
-            ? {
-                street: form.addressLine.trim(),
-                city: form.city.trim(),
-                state: form.state.trim(),
-                pincode: form.pincode.trim(),
-                country: "India",
+        body: JSON.stringify(
+          monthly
+            ? { ...baseBody, sevaUnitLabel: unitLabel }
+            : {
+                ...baseBody,
+                // Maha Prasadam courier details — backend stores these on the donation
+                // (wantPrasadam + structured prasadamAddress) and feeds them to the
+                // DCC delivery sync and receipt. Only sent when opted in.
+                mahaprasadam: wantsMahaPrasadam,
+                prasadamAddress: wantsMahaPrasadam
+                  ? {
+                      street: form.addressLine.trim(),
+                      city: form.city.trim(),
+                      state: form.state.trim(),
+                      pincode: form.pincode.trim(),
+                      country: "India",
+                    }
+                  : undefined,
               }
-            : undefined,
-        }),
+        ),
       });
 
-      if (!orderRes.ok) throw new Error("Unable to create payment order. Please try again.");
-      const order = await orderRes.json();
+      if (!createRes.ok) {
+        throw new Error(
+          monthly
+            ? "Unable to start the monthly donation. Please try again."
+            : "Unable to create payment order. Please try again."
+        );
+      }
+      const created = await createRes.json();
 
       await loadRazorpay();
       const win = window as unknown as { Razorpay?: RazorpayConstructor };
       if (!win.Razorpay) throw new Error("Razorpay checkout is unavailable.");
 
-      new win.Razorpay({
-        key: order.key,
-        amount: Math.round(finalAmount * 100),
-        currency: "INR",
+      const checkoutOptions: Record<string, unknown> = {
+        key: created.key,
         name: "Hare Krishna Movement Vizag",
-        description: `${config.pageTitle} — Hare Krishna Vaikuntham Temple`,
-        order_id: order.orderId,
+        description: `${config.pageTitle}${monthly ? " — Monthly" : ""} — Hare Krishna Vaikuntham Temple`,
         prefill: { name: form.name, email: form.email, contact: form.mobile },
         notes: {
-          sourcePage: campaigner ? `/sqft-seva-campaign/c/${campaigner.slug}` : `/${campaignType === "BRICK" ? "brick-seva-campaign" : "sqft-seva-campaign"}`,
+          sourcePage,
           sevaName: config.pageTitle,
           sevaType: config.orderType,
           campaignerSlug: campaigner?.slug || "",
           // Flag only — the full courier address is stored on the donation in our
           // DB, so we don't send the donor's home address to Razorpay.
-          ...(wantsMahaPrasadam ? { mahaPrasadam: "yes" } : {}),
+          ...(wantsMahaPrasadam && !monthly ? { mahaPrasadam: "yes" } : {}),
         },
         handler: async (response: Record<string, string>) => {
           try {
@@ -300,19 +335,20 @@ export default function SqftCampaignClient({
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                donationId: order.donationId,
+                donationId: created.donationId,
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
+                razorpay_subscription_id: response.razorpay_subscription_id,
               }),
             });
             if (!verifyRes.ok) throw new Error("Payment verification failed.");
             // Send the donor to the thank-you page with their offering details.
-            const units = price > 0 ? Math.floor(finalAmount / price) : 0;
             const params = new URLSearchParams({
               amount: String(finalAmount),
               units: String(units),
               type: campaignType,
+              ...(monthly ? { recurring: "1" } : {}),
             });
             router.push(`/sqft-seva-campaign/thank-you?${params.toString()}`);
             return;
@@ -327,7 +363,18 @@ export default function SqftCampaignClient({
         },
         modal: { ondismiss: () => setSubmitting(false) },
         theme: { color: "#D69E2E" },
-      }).open();
+      };
+      // Subscriptions authorise via subscription_id (no amount/order_id);
+      // one-time payments pass the order and amount.
+      if (monthly) {
+        checkoutOptions.subscription_id = created.subscriptionId;
+      } else {
+        checkoutOptions.amount = Math.round(finalAmount * 100);
+        checkoutOptions.currency = "INR";
+        checkoutOptions.order_id = created.orderId;
+      }
+
+      new win.Razorpay(checkoutOptions).open();
     } catch (err) {
       setStatus({ type: "error", message: err instanceof Error ? err.message : "Something went wrong." });
       setSubmitting(false);
@@ -350,10 +397,8 @@ export default function SqftCampaignClient({
   return (
     <PageLayout>
       <main className="bg-white">
-        {/* Hero section — full‑width cinematic banner */}
+        {/* Hero section — full‑width banner */}
         <HeroSection
-          campaigner={campaigner}
-          price={price}
           scrollToDonate={scrollToDonate}
           config={config}
         />
@@ -381,6 +426,8 @@ export default function SqftCampaignClient({
           customAmount={customAmount}
           form={form}
           want80G={want80G}
+          monthly={monthly}
+          setMonthly={setMonthly}
           wantsMahaPrasadam={wantsMahaPrasadam}
           mahaPrasadamEligible={addonsEligible}
           addonsEligible={addonsEligible}
@@ -402,22 +449,23 @@ export default function SqftCampaignClient({
         />
 
         {/* Donor privileges */}
-        <DonorPrivilegesSection scrollToDonate={scrollToDonate} />
+        <DonorPrivilegesSection scrollToDonate={scrollToDonate} config={config} />
 
         {/* Testimonials — new */}
-        <TestimonialsSection />
+        <TestimonialsSection config={config} />
 
         {/* About / inspiration */}
         <AboutSection
           aboutImage={config.aboutImage}
           scrollToDonate={scrollToDonate}
+          config={config}
         />
 
         {/* Scriptural significance of temple construction */}
         <ImportanceSection />
 
         {/* Temple features */}
-        <TempleFeaturesSection />
+        <TempleFeaturesSection config={config} />
 
         {/* Live progress — foundation grid */}
         <ProgressSection
@@ -435,7 +483,7 @@ export default function SqftCampaignClient({
         <GallerySection />
 
         {/* Final CTA — below Temple & Seva Glimpses */}
-        <FinalCtaSection scrollToDonate={scrollToDonate} />
+        <FinalCtaSection scrollToDonate={scrollToDonate} config={config} />
 
         {/* Founder's words */}
         <FounderSection />
@@ -452,6 +500,7 @@ export default function SqftCampaignClient({
           wallTab={wallTab}
           setWallTab={setWallTab}
           price={price}
+          config={config}
         />
 
         {/* Sticky mobile donate bar */}

@@ -82,8 +82,8 @@ export const SQFT_CAMPAIGN: CampaignConfig = {
   email: "social@hkmvizag.org",
   heroImage:
     "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783672822355-1783672821116-ChatGPTImageJul92026043238PM.png",
-  bannerImage: "/assets/sqft-banner-desktop.webp",
-  bannerImageMobile: "/assets/sqft-banner-mobile.webp",
+  bannerImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785414429381-1785414428494-ChatGPTImageJul302026055512PM.webp",
+  bannerImageMobile: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785414429381-1785414428494-ChatGPTImageJul302026055512PM.webp",
   aboutImage: "https://res.cloudinary.com/ddmzeqpkc/image/upload/f_auto,q_auto/phase_1",
   heroTagline: "A fundraising initiative of Hare Krishna Movement Visakhapatnam",
   heroHeading1: "Hare Krishna",

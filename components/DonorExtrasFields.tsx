@@ -13,16 +13,16 @@ interface Props {
 export default function DonorExtrasFields({ sevakName, dob, onSevakNameChange, onDobChange, variant = "default" }: Props) {
   const isAmber = variant === "amber";
   const wrapperCls = isAmber
-    ? "relative flex items-center rounded-lg border border-amber-200 bg-white/50 focus-within:border-amber-500 transition-colors"
+    ? "relative flex items-center rounded-lg border border-amber-300 bg-white/90 shadow-sm focus-within:border-amber-500 transition-colors"
     : "relative flex items-center rounded-lg border border-border bg-white focus-within:border-gold transition-colors";
   const labelCls = isAmber
-    ? "mb-1 block text-[11px] font-medium text-amber-800/70"
+    ? "mb-1 block text-[11px] font-semibold text-amber-900"
     : "mb-1 block text-[11px] font-medium text-muted-foreground";
   const iconCls = isAmber
     ? "pointer-events-none absolute left-3 h-4 w-4 text-amber-600/60"
     : "pointer-events-none absolute left-3 h-4 w-4 text-muted-foreground";
   const inputCls = isAmber
-    ? "h-10 w-full bg-transparent pl-9 pr-3 text-sm text-[#331447] outline-none placeholder:text-amber-800/40"
+    ? "h-10 w-full bg-transparent pl-9 pr-3 text-sm text-foreground outline-none placeholder:text-amber-800/50"
     : "h-10 w-full bg-transparent pl-9 pr-3 text-sm text-foreground outline-none placeholder:text-muted-foreground";
 
   return (

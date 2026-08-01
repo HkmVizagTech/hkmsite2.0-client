@@ -15,16 +15,13 @@ const SevasSection = () => {
     Object.fromEntries(sevas.map((s) => [s.slug, 0]))
   );
 
-  const handleSponsor = (slug: string) => {
+  const handleSponsor = (slug: string, tierIndex?: number) => {
     const seva = sevas.find((s) => s.slug === slug);
     if (!seva) return;
-    if (seva.externalHref) {
-      router.push(seva.externalHref);
-      return;
-    }
-    const tierIndex = selected[slug] ?? 0;
-    const amount = seva.tiers[tierIndex]?.amount;
-    router.push(`${getSevaHref(seva)}${amount ? `?amount=${amount}` : ""}`);
+    const ti = tierIndex ?? selected[slug] ?? 0;
+    const amount = seva.tiers[ti]?.amount;
+    const hash = seva.externalHref ? "#donate" : "#donation-form";
+    router.push(`${getSevaHref(seva)}?amount=${amount}${hash}`);
   };
 
   return (
@@ -56,7 +53,7 @@ const SevasSection = () => {
               transition={{ duration: 0.7, delay: 0.15 + i * 0.08 }}
               className="group overflow-hidden rounded-3xl border border-border bg-card shadow-warm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-elevated"
             >
-              <div className="relative aspect-[16/9] overflow-hidden">
+              <div className="relative aspect-[16/11] overflow-hidden">
                 <Image
                   src={seva.image}
                   alt={seva.title}
@@ -78,8 +75,8 @@ const SevasSection = () => {
                       onClick={() => setSelected((s) => ({ ...s, [seva.slug]: ti }))}
                       className={`rounded-xl border-[1.5px] px-2.5 py-2.5 text-center text-[12.5px] font-semibold leading-tight transition-all ${
                         selected[seva.slug] === ti
-                          ? "border-[hsl(var(--gold-deep))] bg-[hsl(42,92%,56%,0.12)] text-gold"
-                          : "border-border text-foreground hover:border-[hsl(var(--gold-deep))]"
+                          ? "border-[hsl(var(--gold-deep))] bg-[hsl(42,92%,56%,0.15)] text-gold shadow-sm"
+                          : "border-border text-foreground hover:border-[hsl(var(--gold-deep))] hover:bg-[hsl(42,92%,56%,0.05)]"
                       }`}
                     >
                       {tier.label}
@@ -93,7 +90,7 @@ const SevasSection = () => {
                   onClick={() => handleSponsor(seva.slug)}
                   className="w-full rounded-full bg-gradient-gold py-3.5 text-[15px] font-bold text-[hsl(220,60%,12%)] shadow-gold transition-transform"
                 >
-                  🪔 Sponsor {seva.shortTitle}
+                  Sponsor {seva.shortTitle}
                 </motion.button>
               </div>
             </motion.div>

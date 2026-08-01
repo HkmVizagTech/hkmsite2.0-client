@@ -2,6 +2,8 @@
 
 import { Users } from "lucide-react";
 import Ornament from "@/components/Ornament";
+import type { CampaignConfig } from "@/lib/campaignConfig";
+import { SQFT_CAMPAIGN } from "@/lib/campaignConfig";
 
 interface DonorEntry {
   name: string;
@@ -18,12 +20,13 @@ interface DonorWallSectionProps {
   wallTab: "latest" | "largest";
   setWallTab: (t: "latest" | "largest") => void;
   price: number;
+  config?: CampaignConfig;
 }
 
-const donorLabel = (d: DonorEntry, price: number) => {
-  const sqft = Math.floor(d.amount / price);
-  return sqft >= 1
-    ? `${sqft} square ${sqft === 1 ? "foot" : "feet"}`
+const donorLabel = (d: DonorEntry, price: number, config: CampaignConfig) => {
+  const units = Math.floor(d.amount / price);
+  return units >= 1
+    ? `${units} ${units === 1 ? config.unitName : config.unitNamePlural}`
     : `₹${d.amount.toLocaleString("en-IN")}`;
 };
 
@@ -32,6 +35,7 @@ export default function DonorWallSection({
   wallTab,
   setWallTab,
   price,
+  config = SQFT_CAMPAIGN,
 }: DonorWallSectionProps) {
   const wallEntries = wallTab === "latest" ? stats?.latest || [] : stats?.largest || [];
 
@@ -65,7 +69,7 @@ export default function DonorWallSection({
 
         {wallEntries.length === 0 ? (
           <p className="rounded-xl border border-dashed border-border bg-background px-5 py-8 text-center text-sm text-muted-foreground">
-            Be the first devotee to sponsor a square foot of the temple.
+            Be the first devotee to sponsor a {config.unitName} of the temple.
           </p>
         ) : (
           <ul className="divide-y divide-border rounded-2xl border border-border bg-background">
@@ -81,7 +85,7 @@ export default function DonorWallSection({
                   <div>
                     <p className="text-sm font-semibold text-foreground">{d.name}</p>
                     <p className="text-xs text-muted-foreground">
-                      offered <span className="font-semibold text-gold">{donorLabel(d, price)}</span>
+                      offered <span className="font-semibold text-gold">{donorLabel(d, price, config)}</span>
                     </p>
                   </div>
                 </div>

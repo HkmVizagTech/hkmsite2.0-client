@@ -163,6 +163,7 @@ export default function AlankaraVastraClient() {
   const [useCustom, setUseCustom] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", mobile: "", panNumber: "", sevakName: "", dob: "" });
   const [want80G, setWant80G] = useState(false);
+  const [monthly, setMonthly] = useState(false);
   const [wantsMahaPrasadam, setWantsMahaPrasadam] = useState(false);
   const [address, setAddress] = useState<PrasadamAddress>({ street: "", city: "", state: "", pincode: "", country: "India" });
   const [submitting, setSubmitting] = useState(false);
@@ -245,44 +246,57 @@ export default function AlankaraVastraClient() {
 
     setSubmitting(true);
     try {
-      const orderRes = await fetch(`${apiBase()}/payments/order`, {
+      const baseBody = {
+        account: "default",
+        sourcePage: "/alankara-vastra-seva",
+        utm: attribution.payload().utm,
+        type: config.orderType,
+        sevaName: config.pageTitle,
+        name: form.name.trim(),
+        email: form.email.trim().toLowerCase(),
+        mobile: form.mobile.trim(),
+        amount: finalAmount,
+        sevakName: form.sevakName.trim() || undefined,
+        dob: form.dob || undefined,
+        certificate: want80G,
+        panNumber: want80G ? form.panNumber.trim() : undefined,
+      };
+
+      // Monthly autopay → Razorpay Subscription; one-time → Razorpay Order.
+      const endpoint = monthly ? "/payments/subscription" : "/payments/order";
+      const createRes = await fetch(`${apiBase()}${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          account: config.orderType === "VASTRA" ? "default" : "default",
-          sourcePage: "/alankara-vastra-seva",
-          utm: attribution.payload().utm,
-          type: config.orderType,
-          sevaName: config.pageTitle,
-          name: form.name.trim(),
-          email: form.email.trim().toLowerCase(),
-          mobile: form.mobile.trim(),
-          amount: finalAmount,
-          sevakName: form.sevakName.trim() || undefined,
-          dob: form.dob || undefined,
-          certificate: want80G,
-          panNumber: want80G ? form.panNumber.trim() : undefined,
-          mahaprasadam: wantsMahaPrasadam,
-          prasadamAddress: wantsMahaPrasadam
-            ? { street: address.street.trim(), city: address.city.trim(), state: address.state.trim(), pincode: address.pincode.trim(), country: "India" }
-            : undefined,
-        }),
+        body: JSON.stringify(
+          monthly
+            ? baseBody
+            : {
+                ...baseBody,
+                mahaprasadam: wantsMahaPrasadam,
+                prasadamAddress: wantsMahaPrasadam
+                  ? { street: address.street.trim(), city: address.city.trim(), state: address.state.trim(), pincode: address.pincode.trim(), country: "India" }
+                  : undefined,
+              }
+        ),
       });
 
-      if (!orderRes.ok) throw new Error("Unable to create payment order. Please try again.");
-      const order = await orderRes.json();
+      if (!createRes.ok) {
+        throw new Error(
+          monthly
+            ? "Unable to start the monthly donation. Please try again."
+            : "Unable to create payment order. Please try again."
+        );
+      }
+      const created = await createRes.json();
 
       await loadRazorpay();
       const win = window as unknown as { Razorpay?: RazorpayConstructor };
       if (!win.Razorpay) throw new Error("Razorpay checkout is unavailable.");
 
-      new win.Razorpay({
-        key: order.key,
-        amount: Math.round(finalAmount * 100),
-        currency: "INR",
+      const checkoutOptions: Record<string, unknown> = {
+        key: created.key,
         name: "Hare Krishna Movement Vizag",
-        description: `${config.pageTitle} — Hare Krishna Vaikuntham Temple`,
-        order_id: order.orderId,
+        description: `${config.pageTitle}${monthly ? " — Monthly" : ""} — Hare Krishna Vaikuntham Temple`,
         prefill: { name: form.name, email: form.email, contact: form.mobile },
         notes: { sourcePage: "/alankara-vastra-seva", sevaName: config.pageTitle, sevaType: config.orderType },
         handler: async (response: Record<string, string>) => {
@@ -291,14 +305,15 @@ export default function AlankaraVastraClient() {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                donationId: order.donationId,
+                donationId: created.donationId,
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
+                razorpay_subscription_id: response.razorpay_subscription_id,
               }),
             });
             if (!verifyRes.ok) throw new Error("Payment verification failed.");
-            window.location.assign(`/payment/thank-you?type=seva&seva=${encodeURIComponent(config.pageTitle)}&amount=${finalAmount}&source=${encodeURIComponent("the vastra and alankara seva programme")}`);
+            window.location.assign(`/payment/thank-you?type=seva&seva=${encodeURIComponent(config.pageTitle)}&amount=${finalAmount}&source=${encodeURIComponent("the vastra and alankara seva programme")}${monthly ? "&recurring=1" : ""}`);
           } catch (err) {
             setStatus({
               type: "error",
@@ -310,7 +325,18 @@ export default function AlankaraVastraClient() {
         },
         modal: { ondismiss: () => setSubmitting(false) },
         theme: { color: "#D69E2E" },
-      }).open();
+      };
+      // Subscriptions authorise via subscription_id (no amount/order_id);
+      // one-time payments pass the order and amount.
+      if (monthly) {
+        checkoutOptions.subscription_id = created.subscriptionId;
+      } else {
+        checkoutOptions.amount = Math.round(finalAmount * 100);
+        checkoutOptions.currency = "INR";
+        checkoutOptions.order_id = created.orderId;
+      }
+
+      new win.Razorpay(checkoutOptions).open();
     } catch (err) {
       setStatus({ type: "error", message: err instanceof Error ? err.message : "Something went wrong." });
       setSubmitting(false);
@@ -616,8 +642,8 @@ export default function AlankaraVastraClient() {
                   </div>
                   )}
 
-                  {/* Maha Prasadam */}
-                  {finalAmount > 999 && (
+                  {/* Maha Prasadam (one-time donations only) */}
+                  {finalAmount > 999 && !monthly && (
                     <div className="rounded-lg border border-border bg-background/60 px-3 py-2">
                       <label className="flex cursor-pointer items-center gap-2 text-xs font-medium text-foreground">
                         <input
@@ -631,6 +657,37 @@ export default function AlankaraVastraClient() {
                       {wantsMahaPrasadam && <AddressForm address={address} setAddress={setAddress} />}
                     </div>
                   )}
+
+                  {/* Monthly autopay toggle */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMonthly((m) => {
+                        const next = !m;
+                        if (next) setWantsMahaPrasadam(false);
+                        return next;
+                      });
+                    }}
+                    className={`flex w-full items-center gap-3 rounded-lg border px-3 py-2.5 text-left transition-colors ${
+                      monthly ? "border-gold bg-gold/10" : "border-border bg-card hover:border-gold/60"
+                    }`}
+                  >
+                    <span
+                      className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border ${
+                        monthly ? "border-gold bg-gold text-white" : "border-border"
+                      }`}
+                    >
+                      {monthly && <Check className="h-3.5 w-3.5" />}
+                    </span>
+                    <span className="flex-1">
+                      <span className="block text-sm font-bold text-primary">🔁 Make it a monthly seva</span>
+                      <span className="block text-[11px] leading-snug text-muted-foreground">
+                        {monthly && finalAmount > 0
+                          ? `Auto-pay ₹${finalAmount.toLocaleString("en-IN")} every month. Cancel anytime.`
+                          : "Give this offering automatically every month."}
+                      </span>
+                    </span>
+                  </button>
 
                   {status && (
                     <p
@@ -653,6 +710,8 @@ export default function AlankaraVastraClient() {
                       <>
                         <Loader2 className="h-4 w-4 animate-spin" /> Processing…
                       </>
+                    ) : monthly ? (
+                      <>🔁 Donate ₹{finalAmount > 0 ? finalAmount.toLocaleString("en-IN") : "—"} / month</>
                     ) : (
                       <>Donate ₹{finalAmount > 0 ? finalAmount.toLocaleString("en-IN") : "—"}</>
                     )}

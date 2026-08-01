@@ -4,10 +4,12 @@ import { useRef } from "react";
 import { motion } from "framer-motion";
 import Ornament from "@/components/Ornament";
 import useInViewVideo from "@/hooks/useInViewVideo";
+import type { CampaignConfig } from "@/lib/campaignConfig";
+import { SQFT_CAMPAIGN } from "@/lib/campaignConfig";
 
 const INTRO_VIDEO_ID = "IJTMCgGBriw";
 
-export default function TempleFeaturesSection() {
+export default function TempleFeaturesSection({ config = SQFT_CAMPAIGN }: { config?: CampaignConfig }) {
   const sectionRef = useRef<HTMLElement>(null);
   useInViewVideo(sectionRef);
 
@@ -20,7 +22,7 @@ export default function TempleFeaturesSection() {
             What&apos;s Being Built
           </h2>
           <p className="text-sm text-muted-foreground md:text-base">
-            Every square foot you sponsor becomes part of these halls and spaces.
+            Every {config.unitName} you sponsor becomes part of these halls and spaces.
           </p>
         </div>
 

@@ -3,7 +3,9 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-import Link from "next/link";
+
+const FALLBACK_IMG = "/assets/home-banner-chaitanya-bhavan.webp";
+const FALLBACK_IMG_MOBILE = "/assets/home-banner-chaitanya-bhavan-mobile.webp";
 
 const defaultSlides = [
   {
@@ -44,9 +46,8 @@ const TempleCarousel = () => {
   const [slides, setSlides] = useState(defaultSlides);
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(1);
-  const touchStartX = useRef(0);
-  const touchStartY = useRef(0);
-  const isSwiping = useRef(false);
+  const [imgErrors, setImgErrors] = useState<Record<string, boolean>>({});
+  const [dragging, setDragging] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -88,49 +89,72 @@ const TempleCarousel = () => {
     setCurrent(0);
   }, [slides.length]);
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-    touchStartY.current = e.touches[0].clientY;
-    isSwiping.current = false;
+  const carouselRef = useRef<HTMLElement>(null);
+  const pointerStartX = useRef(0);
+  const isDragging = useRef(false);
+
+  const startDrag = (clientX: number) => {
+    pointerStartX.current = clientX;
+    isDragging.current = false;
+    setDragging(false);
   };
 
-  const handleTouchMove = (e: React.TouchEvent) => {
-    const dx = Math.abs(e.touches[0].clientX - touchStartX.current);
-    const dy = Math.abs(e.touches[0].clientY - touchStartY.current);
-    if (dx > 10 && dx > dy * 1.5) {
-      isSwiping.current = true;
+  const moveDrag = (clientX: number) => {
+    if (!isDragging.current && Math.abs(clientX - pointerStartX.current) > 5) {
+      isDragging.current = true;
+      setDragging(true);
     }
   };
 
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (!isSwiping.current) return;
-    const dx = e.changedTouches[0].clientX - touchStartX.current;
+  const endDrag = useCallback((clientX: number) => {
+    setDragging(false);
+    if (!isDragging.current) {
+      const slide = slides[current];
+      if (slide?.linkUrl) {
+        const url = slide.linkUrl;
+        if (/^https?:\/\//i.test(url)) window.open(url, "_blank", "noopener");
+        else window.location.href = url;
+      }
+      return;
+    }
+    const dx = clientX - pointerStartX.current;
     if (Math.abs(dx) > 40) {
       if (dx < 0) next();
       else prev();
     }
-    isSwiping.current = false;
-  };
+    isDragging.current = false;
+  }, [next, prev, slides, current]);
 
-  const handleMouseDown = (e: React.MouseEvent) => {
-    touchStartX.current = e.clientX;
-    isSwiping.current = false;
-  };
+  useEffect(() => {
+    const el = carouselRef.current;
+    if (!el) return;
 
-  const handleMouseUp = (e: React.MouseEvent) => {
-    if (!isSwiping.current) return;
-    const dx = e.clientX - touchStartX.current;
-    if (Math.abs(dx) > 40) {
-      if (dx < 0) next();
-      else prev();
-    }
-    isSwiping.current = false;
-  };
+    const onPointerDown = (e: PointerEvent) => {
+      startDrag(e.clientX);
+      el.setPointerCapture(e.pointerId);
+    };
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    const dx = Math.abs(e.clientX - touchStartX.current);
-    if (dx > 5) isSwiping.current = true;
-  };
+    const onPointerMove = (e: PointerEvent) => moveDrag(e.clientX);
+
+    const onPointerUp = (e: PointerEvent) => endDrag(e.clientX);
+
+    const onPointerCancel = () => {
+      isDragging.current = false;
+      setDragging(false);
+    };
+
+    el.addEventListener("pointerdown", onPointerDown);
+    el.addEventListener("pointermove", onPointerMove);
+    el.addEventListener("pointerup", onPointerUp);
+    el.addEventListener("pointercancel", onPointerCancel);
+
+    return () => {
+      el.removeEventListener("pointerdown", onPointerDown);
+      el.removeEventListener("pointermove", onPointerMove);
+      el.removeEventListener("pointerup", onPointerUp);
+      el.removeEventListener("pointercancel", onPointerCancel);
+    };
+  }, [endDrag]);
 
   const variants = {
     enter: (dir: number) => ({ x: dir > 0 ? "100%" : "-100%", opacity: 0 }),
@@ -139,40 +163,40 @@ const TempleCarousel = () => {
   };
 
   const currentSlide = slides[current] || slides[0];
-  const hasLink = Boolean(currentSlide.linkUrl);
-  const isExternal = hasLink && /^https?:\/\//i.test(currentSlide.linkUrl);
+  const desktopBroken = imgErrors[currentSlide.src];
+  const mobileBroken = imgErrors[currentSlide.mobileSrc];
 
   const slideImages = (
     <>
       <Image
-        src={currentSlide.mobileSrc}
+        src={mobileBroken ? FALLBACK_IMG_MOBILE : currentSlide.mobileSrc}
         alt={currentSlide.title}
         fill
         sizes="100vw"
-        className="object-cover object-center md:hidden"
+        draggable={false}
+        className="select-none object-cover object-center md:hidden"
         priority
+        onError={() => setImgErrors((prev) => ({ ...prev, [currentSlide.mobileSrc]: true }))}
       />
       <Image
-        src={currentSlide.src}
+        src={desktopBroken ? FALLBACK_IMG : currentSlide.src}
         alt={currentSlide.title}
         fill
         sizes="100vw"
-        className="hidden object-cover object-center md:block"
+        draggable={false}
+        className="hidden select-none object-cover object-center md:block"
         priority
+        onError={() => setImgErrors((prev) => ({ ...prev, [currentSlide.src]: true }))}
       />
     </>
   );
 
   return (
     <section
-      className="relative w-full overflow-hidden bg-foreground aspect-[1080/1350] md:aspect-[1920/700]"
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      style={{ cursor: "grab" }}
+      ref={carouselRef}
+      onDragStart={(e) => e.preventDefault()}
+      className="relative w-full select-none overflow-hidden bg-foreground aspect-[1080/1350] md:aspect-[1920/700]"
+      style={{ cursor: dragging ? "grabbing" : "grab", touchAction: "pan-y" }}
     >
       <AnimatePresence custom={direction} mode="popLayout">
         <motion.div
@@ -185,23 +209,7 @@ const TempleCarousel = () => {
           transition={{ duration: 0.7, ease: [0.25, 0.8, 0.25, 1] }}
           className="absolute inset-0"
         >
-          {!hasLink ? (
-            slideImages
-          ) : isExternal ? (
-            <a
-              href={currentSlide.linkUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="absolute inset-0 block cursor-pointer"
-              aria-label={currentSlide.title}
-            >
-              {slideImages}
-            </a>
-          ) : (
-            <Link href={currentSlide.linkUrl} className="absolute inset-0 block cursor-pointer" aria-label={currentSlide.title}>
-              {slideImages}
-            </Link>
-          )}
+          {slideImages}
         </motion.div>
       </AnimatePresence>
     </section>

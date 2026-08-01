@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  Heart, Users, TrendingUp, ShieldCheck, Sparkles,
+  Heart, ShieldCheck, Sparkles,
   Gift, Award, Crown, ArrowRight,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
@@ -40,7 +40,6 @@ const PRIVILEGES = [
 export default function DonateHubPage() {
   const [overview, setOverview] = useState<OverviewStats | null>(null);
   const [sqft, setSqft] = useState<SqftStats | null>(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
@@ -52,14 +51,8 @@ export default function DonateHubPage() {
         if (ovRes.ok) setOverview(await ovRes.json());
         if (sqftRes.ok) setSqft(await sqftRes.json());
       } catch {}
-      setLoading(false);
     })();
   }, []);
-
-  const sevaProgress = (seva: (typeof sevas)[number]) => {
-    const stat = overview?.bySeva?.[seva.title];
-    return stat ? { amount: stat.totalAmount, donors: stat.donorCount } : { amount: 0, donors: 0 };
-  };
 
   return (
     <PageLayout>
@@ -121,7 +114,6 @@ export default function DonateHubPage() {
 
             <div className="mx-auto grid max-w-6xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {sevas.map((seva) => {
-                const progress = sevaProgress(seva);
                 return (
                   <Link
                     key={seva.slug}
@@ -142,12 +134,6 @@ export default function DonateHubPage() {
                       </h3>
                     </div>
                     <div className="p-6">
-                      {progress.donors > 0 && (
-                        <p className="mb-3 text-xs text-muted-foreground">
-                          <span className="font-semibold text-gold">₹{progress.amount.toLocaleString("en-IN")}</span> raised
-                          from <span className="font-semibold">{progress.donors}</span> devotees
-                        </p>
-                      )}
                       <p className="mb-5 text-xs text-muted-foreground">{seva.tagline}</p>
                       <span className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-gold py-3.5 text-[15px] font-bold text-[hsl(220,60%,12%)] shadow-gold">
                         🪔 Sponsor {seva.shortTitle} <ArrowRight className="h-4 w-4" />
@@ -156,34 +142,6 @@ export default function DonateHubPage() {
                   </Link>
                 );
               })}
-            </div>
-          </div>
-        </section>
-
-        {/* ══ AGGREGATE IMPACT STRIP — site-wide totals, real data ══ */}
-        <section className="border-b border-border bg-white">
-          <div className="container mx-auto grid grid-cols-2 gap-4 px-4 py-6 sm:grid-cols-4">
-            <div className="text-center">
-              <p className="flex items-center justify-center gap-1.5 font-heading text-2xl font-bold text-gold md:text-3xl">
-                <TrendingUp className="h-5 w-5" />
-                {loading ? "…" : `₹${(overview?.totalAmount || 0).toLocaleString("en-IN")}`}
-              </p>
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Total Raised</p>
-            </div>
-            <div className="text-center">
-              <p className="flex items-center justify-center gap-1.5 font-heading text-2xl font-bold text-primary md:text-3xl">
-                <Users className="h-5 w-5" />
-                {loading ? "…" : (overview?.donorCount || 0).toLocaleString("en-IN")}
-              </p>
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Devotees Contributed</p>
-            </div>
-            <div className="text-center">
-              <p className="font-heading text-2xl font-bold text-primary md:text-3xl">{sevas.length + 1}</p>
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Active Sevas</p>
-            </div>
-            <div className="text-center">
-              <p className="font-heading text-2xl font-bold text-primary md:text-3xl">80G</p>
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Tax Exemption</p>
             </div>
           </div>
         </section>

@@ -3,13 +3,16 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Ornament from "@/components/Ornament";
+import type { CampaignConfig } from "@/lib/campaignConfig";
+import { SQFT_CAMPAIGN } from "@/lib/campaignConfig";
 
 interface AboutSectionProps {
   aboutImage: string;
   scrollToDonate: () => void;
+  config?: CampaignConfig;
 }
 
-export default function AboutSection({ aboutImage, scrollToDonate }: AboutSectionProps) {
+export default function AboutSection({ aboutImage, scrollToDonate, config = SQFT_CAMPAIGN }: AboutSectionProps) {
   return (
     <section className="bg-white py-12 md:py-16">
       <div className="container mx-auto max-w-5xl px-4">
@@ -52,7 +55,7 @@ export default function AboutSection({ aboutImage, scrollToDonate }: AboutSectio
               onClick={scrollToDonate}
               className="rounded-full bg-gradient-gold px-8 py-3 text-sm font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)] transition-all hover:scale-105 hover:shadow-[0_12px_32px_hsl(42,92%,46%,0.4)]"
             >
-              Sponsor a Square Foot
+              Sponsor a {config.unitName}
             </button>
           </div>
         </motion.div>

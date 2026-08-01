@@ -1,15 +1,19 @@
 "use client";
 
+import type { CampaignConfig } from "@/lib/campaignConfig";
+import { SQFT_CAMPAIGN } from "@/lib/campaignConfig";
+
 interface FinalCtaSectionProps {
   scrollToDonate: () => void;
+  config?: CampaignConfig;
 }
 
-export default function FinalCtaSection({ scrollToDonate }: FinalCtaSectionProps) {
+export default function FinalCtaSection({ scrollToDonate, config = SQFT_CAMPAIGN }: FinalCtaSectionProps) {
   return (
     <section className="bg-[hsl(220,90%,12%)] py-16 text-center md:py-24">
       <div className="container mx-auto max-w-3xl px-4">
         <h2 className="mb-6 font-heading text-2xl font-bold text-white md:text-4xl">
-          Every square foot you offer becomes part of the Lord&apos;s eternal home.
+          Every {config.unitName} you offer becomes part of the Lord&apos;s eternal home.
         </h2>
         <button
           onClick={scrollToDonate}

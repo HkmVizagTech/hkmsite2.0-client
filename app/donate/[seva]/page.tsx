@@ -99,6 +99,7 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
   const [useCustom, setUseCustom] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", mobile: "", panNumber: "", sevakName: "", dob: "" });
   const [want80G, setWant80G] = useState(false);
+  const [monthly, setMonthly] = useState(false);
   const [wantsMahaPrasadam, setWantsMahaPrasadam] = useState(false);
   const [address, setAddress] = useState<PrasadamAddress>({ street: "", city: "", state: "", pincode: "", country: "India" });
   const [submitting, setSubmitting] = useState(false);
@@ -157,6 +158,8 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
 
   const finalAmount = useCustom ? Number(customAmount) || 0 : seva.tiers[tierIndex]?.amount || 0;
   const customImpact = useCustom ? unitImpact(finalAmount, seva.unit) : null;
+  // Bare per-unit impact (e.g. "3 Gitas") for the monthly-donation label.
+  const monthlyImpact = seva.unit ? unitImpact(finalAmount, seva.unit, true) : null;
 
   useEffect(() => {
     if (finalAmount <= 999) {
@@ -200,47 +203,62 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
     try {
       const metaEventId = newEventId();
       const metaBrowser = getMetaBrowserData();
-      const orderRes = await fetch(`${apiBase()}/payments/order`, {
+
+      // Shared donor/seva fields for both one-time and monthly flows.
+      const baseBody = {
+        account: seva.account,
+        sourcePage: `/donate/${seva.slug}`,
+        utm: attribution.payload().utm,
+        type: seva.category,
+        sevaName: seva.title,
+        name: form.name.trim(),
+        email: form.email.trim().toLowerCase(),
+        mobile: form.mobile.trim(),
+        amount: finalAmount,
+        sevakName: form.sevakName.trim() || undefined,
+        dob: form.dob || undefined,
+        certificate: want80G,
+        panNumber: want80G ? form.panNumber.trim() : undefined,
+      };
+
+      // Monthly autopay → Razorpay Subscription; one-time → Razorpay Order.
+      const endpoint = monthly ? "/payments/subscription" : "/payments/order";
+      const createRes = await fetch(`${apiBase()}${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          account: seva.account,
-          sourcePage: `/donate/${seva.slug}`,
-          utm: attribution.payload().utm,
-          type: seva.category,
-          sevaName: seva.title,
-          name: form.name.trim(),
-          email: form.email.trim().toLowerCase(),
-          mobile: form.mobile.trim(),
-          amount: finalAmount,
-          sevakName: form.sevakName.trim() || undefined,
-          dob: form.dob || undefined,
-          certificate: want80G,
-          panNumber: want80G ? form.panNumber.trim() : undefined,
-          mahaprasadam: wantsMahaPrasadam,
-          prasadamAddress: wantsMahaPrasadam
-            ? { street: address.street.trim(), city: address.city.trim(), state: address.state.trim(), pincode: address.pincode.trim(), country: "India" }
-            : undefined,
-          metaEventId,
-          metaFbp: metaBrowser.fbp,
-          metaFbc: metaBrowser.fbc,
-        }),
+        body: JSON.stringify(
+          monthly
+            ? { ...baseBody, sevaUnitLabel: monthlyImpact || undefined }
+            : {
+                ...baseBody,
+                mahaprasadam: wantsMahaPrasadam,
+                prasadamAddress: wantsMahaPrasadam
+                  ? { street: address.street.trim(), city: address.city.trim(), state: address.state.trim(), pincode: address.pincode.trim(), country: "India" }
+                  : undefined,
+                metaEventId,
+                metaFbp: metaBrowser.fbp,
+                metaFbc: metaBrowser.fbc,
+              }
+        ),
       });
 
-      if (!orderRes.ok) throw new Error("Unable to create payment order. Please try again.");
-      const order = await orderRes.json();
+      if (!createRes.ok) {
+        throw new Error(
+          monthly
+            ? "Unable to start the monthly donation. Please try again."
+            : "Unable to create payment order. Please try again."
+        );
+      }
+      const created = await createRes.json();
 
       await loadRazorpay();
       const win = window as unknown as { Razorpay?: RazorpayConstructor };
       if (!win.Razorpay) throw new Error("Razorpay checkout is unavailable.");
 
-      new win.Razorpay({
-        key: order.key,
-        amount: Math.round(finalAmount * 100),
-        currency: "INR",
+      const checkoutOptions: Record<string, unknown> = {
+        key: created.key,
         name: "Hare Krishna Movement Vizag",
-        description: seva.title,
-        order_id: order.orderId,
+        description: monthly ? `${seva.title} — Monthly` : seva.title,
         prefill: { name: form.name, email: form.email, contact: form.mobile },
         notes: { sourcePage: `/donate/${seva.slug}`, sevaName: seva.title, sevaType: seva.category },
         handler: async (response: Record<string, string>) => {
@@ -249,15 +267,16 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                donationId: order.donationId,
+                donationId: created.donationId,
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
+                razorpay_subscription_id: response.razorpay_subscription_id,
               }),
             });
             if (!verifyRes.ok) throw new Error("Payment verification failed.");
             trackPurchase({ value: finalAmount, eventId: metaEventId, content_name: seva.title });
-            router.push(`/payment/thank-you?type=donation&seva=${encodeURIComponent(seva.title)}&amount=${finalAmount}&source=${encodeURIComponent("our seva programmes")}`);
+            router.push(`/payment/thank-you?type=donation&seva=${encodeURIComponent(seva.title)}&amount=${finalAmount}&source=${encodeURIComponent("our seva programmes")}${monthly ? "&recurring=1" : ""}`);
             setDonors((d) => [{ name: `${form.name.split(" ")[0]} ${form.name.split(" ").slice(-1)[0].charAt(0)}.`, amount: finalAmount, time: "just now" }, ...d]);
           } catch (err) {
             setStatus({
@@ -270,7 +289,18 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
         },
         modal: { ondismiss: () => setSubmitting(false) },
         theme: { color: "#D69E2E" },
-      }).open();
+      };
+      // Subscriptions authorise via subscription_id (no amount/order_id);
+      // one-time payments pass the order and amount.
+      if (monthly) {
+        checkoutOptions.subscription_id = created.subscriptionId;
+      } else {
+        checkoutOptions.amount = Math.round(finalAmount * 100);
+        checkoutOptions.currency = "INR";
+        checkoutOptions.order_id = created.orderId;
+      }
+
+      new win.Razorpay(checkoutOptions).open();
     } catch (err) {
       setStatus({ type: "error", message: err instanceof Error ? err.message : "Something went wrong." });
       setSubmitting(false);
@@ -505,13 +535,49 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
 
                 <div className="rounded-2xl bg-gradient-gold p-[2px] shadow-gold">
                   <div className="rounded-[calc(1rem-2px)] bg-card p-4 text-center">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">You are donating</p>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      {monthly ? "You are donating monthly" : "You are donating"}
+                    </p>
                     <p className="font-heading text-4xl font-extrabold text-gold drop-shadow-sm">
                       ₹{finalAmount ? finalAmount.toLocaleString("en-IN") : "0"}
+                      {monthly && <span className="text-xl font-bold">/mo</span>}
                     </p>
                     <p className="text-xs font-semibold text-muted-foreground">{seva.title}</p>
                   </div>
                 </div>
+
+                {/* Monthly autopay toggle */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMonthly((m) => {
+                      const next = !m;
+                      if (next) setWantsMahaPrasadam(false);
+                      return next;
+                    });
+                  }}
+                  className={`flex w-full items-center gap-3 rounded-xl border-[1.5px] px-4 py-3 text-left transition-all ${
+                    monthly
+                      ? "border-[hsl(var(--gold-deep))] bg-[hsl(42,92%,56%,0.12)]"
+                      : "border-border hover:border-[hsl(var(--gold-deep))]"
+                  }`}
+                >
+                  <span
+                    className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border ${
+                      monthly ? "border-gold bg-gold text-white" : "border-border"
+                    }`}
+                  >
+                    {monthly && <Check className="h-3.5 w-3.5" />}
+                  </span>
+                  <span className="flex-1">
+                    <span className="block text-sm font-bold text-primary">🔁 Make it a monthly donation</span>
+                    <span className="block text-xs text-muted-foreground">
+                      {monthly && finalAmount
+                        ? `Auto-pay ₹${finalAmount.toLocaleString("en-IN")}${monthlyImpact ? ` (${monthlyImpact})` : ""} every month. Cancel anytime.`
+                        : "Give this amount automatically every month."}
+                    </span>
+                  </span>
+                </button>
 
                 {useCustom && (
                   <div>
@@ -600,7 +666,7 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
                 </>
                 )}
 
-                {finalAmount > 999 && (
+                {finalAmount > 999 && !monthly && (
                   <div className="rounded-lg border border-border bg-background/60 px-3 py-2">
                     <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-foreground">
                       <input
@@ -626,6 +692,8 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
                 >
                   {submitting ? (
                     <><Loader2 className="h-4 w-4 animate-spin" /> Processing…</>
+                  ) : monthly ? (
+                    <>🔁 Donate ₹{finalAmount ? finalAmount.toLocaleString("en-IN") : "0"} / month</>
                   ) : (
                     <>🪔 Donate ₹{finalAmount ? finalAmount.toLocaleString("en-IN") : "0"} Now</>
                   )}

@@ -4,23 +4,25 @@ import { useRef } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
 import Ornament from "@/components/Ornament";
+import type { CampaignConfig } from "@/lib/campaignConfig";
+import { SQFT_CAMPAIGN } from "@/lib/campaignConfig";
 
-const TESTIMONIALS = [
+const TESTIMONIALS = (config: CampaignConfig) => [
   {
     quote:
-      "Building this temple is like building a bridge between the material and the spiritual. Every square foot we sponsor here is an investment in our eternal future. I feel blessed to have contributed to this divine project.",
+      `Building this temple is like building a bridge between the material and the spiritual. Every ${config.unitName} we sponsor here is an investment in our eternal future. I feel blessed to have contributed to this divine project.`,
     name: "Amit Sharma",
     role: "Devotee, Visakhapatnam",
   },
   {
     quote:
-      "Hare Krishna! When I first heard about the Square Foot Seva, I knew I had to participate. The temple will be a beacon of spiritual light for generations to come. My entire family feels connected to the Lord through this service.",
+      `Hare Krishna! When I first heard about the ${config.pageTitle}, I knew I had to participate. The temple will be a beacon of spiritual light for generations to come. My entire family feels connected to the Lord through this service.`,
     name: "Priya Patel",
     role: "Regular Donor, Hyderabad",
   },
   {
     quote:
-      "I sponsored a square foot in my mother's name. She always wanted to see a grand Krishna temple in Vizag. This seva gives me immense peace — knowing that her name will forever be part of the Lord's home.",
+      `I sponsored a ${config.unitName} in my mother's name. She always wanted to see a grand Krishna temple in Vizag. This seva gives me immense peace — knowing that her name will forever be part of the Lord's home.`,
     name: "Ravi Kumar",
     role: "Well-wisher, Bengaluru",
   },
@@ -32,37 +34,37 @@ const TESTIMONIALS = [
   },
   {
     quote:
-      "I have been associated with Hare Krishna Movement for over a decade. Contributing to the temple construction through Square Foot Seva was the most meaningful thing I have done. It feels like I am serving the Lord directly.",
+      `I have been associated with Hare Krishna Movement for over a decade. Contributing to the temple construction through ${config.pageTitle} was the most meaningful thing I have done. It feels like I am serving the Lord directly.`,
     name: "Venkatesh Rao",
     role: "Devotee, Vijayawada",
   },
   {
     quote:
-      "When our family visited the temple construction site, we were moved to see the progress. We immediately decided to sponsor multiple square feet. This is the greatest seva one can do in this lifetime.",
+      `When our family visited the temple construction site, we were moved to see the progress. We immediately decided to sponsor multiple ${config.unitNamePlural}. This is the greatest seva one can do in this lifetime.`,
     name: "Meera Iyer",
     role: "Donor, Chennai",
   },
   {
     quote:
-      "As a young professional, I wanted to do something meaningful with my earnings. Sponsoring a square foot felt like the right step — a small offering that will stand for eternity in the Lord's abode.",
+      `As a young professional, I wanted to do something meaningful with my earnings. Sponsoring a ${config.unitName} felt like the right step — a small offering that will stand for eternity in the Lord's abode.`,
     name: "Arjun Nair",
     role: "IT Professional, Pune",
   },
   {
     quote:
-      "Our family pooled together and sponsored 11 square feet. It was a collective offering of love and devotion. We are grateful to HKM Vizag for giving us this opportunity to serve Sri Krishna.",
+      `Our family pooled together and sponsored 11 ${config.unitNamePlural}. It was a collective offering of love and devotion. We are grateful to HKM Vizag for giving us this opportunity to serve Sri Krishna.`,
     name: "Lakshmi Devi",
     role: "Family Group Donation, Delhi",
   },
   {
     quote:
-      "I have always believed that seva is the highest form of worship. This temple will serve generations of devotees. It is a privilege to be a part of its construction through Square Foot Seva.",
+      `I have always believed that seva is the highest form of worship. This temple will serve generations of devotees. It is a privilege to be a part of its construction through ${config.pageTitle}.`,
     name: "Suresh Babu",
     role: "Lifetime Donor, Visakhapatnam",
   },
 ];
 
-export default function TestimonialsSection() {
+export default function TestimonialsSection({ config = SQFT_CAMPAIGN }: { config?: CampaignConfig }) {
   const scrollerRef = useRef<HTMLDivElement>(null);
 
   const scrollBy = (dir: 1 | -1) => {
@@ -110,7 +112,7 @@ export default function TestimonialsSection() {
           ref={scrollerRef}
           className="flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
-          {TESTIMONIALS.map((t) => (
+          {TESTIMONIALS(config).map((t) => (
             <div
               key={t.name}
               className="w-80 shrink-0 snap-start rounded-2xl border border-border bg-card p-6 shadow-sm transition-shadow hover:shadow-md sm:w-96"

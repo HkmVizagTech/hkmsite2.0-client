@@ -185,14 +185,14 @@ const SEVA_CARDS = [
     title: "Anna Daan Seva",
     description: "Feed devotees and the underprivileged with sanctified prasadam on Ekadashi — the highest form of charity.",
     image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677363792-1783677363601-462395264797134589073566144398536696847591n.jpg",
-    href: "/donate/anna-daan-seva",
+    href: "/anna-daan-seva",
     icon: UtensilsCrossed,
   },
   {
     title: "Gau Seva",
     description: "Serve the sacred cows with fodder, care, and shelter — an act Lord Krishna Himself cherishes.",
     image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783676646237-1783676645536-ChatGPTImageJul102026031357PM.png",
-    href: "/donate/gau-seva",
+    href: "/gau-seva",
     icon: Heart,
   },
   {

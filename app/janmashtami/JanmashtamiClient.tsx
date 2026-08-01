@@ -7,7 +7,6 @@ import { ArrowLeft, ArrowRight, Clock, Facebook, FileCheck2, Heart, Instagram, M
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
-import Ornament from "@/components/Ornament";
 import { useAttribution } from "@/lib/useAttribution";
 
 type SevaOption = {
@@ -63,6 +62,11 @@ const banners = [
     alt: "Offer sevas for Sri Krishna Janmashtami at HKM Vizag",
   },
 ];
+
+const DECOR_GARLAND =
+  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785481873117-1785481872052-garland-removebg-preview.png";
+const DECOR_MATKA =
+  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785481873515-1785481872176-matka-removebg-preview.png";
 
 const sevas: Seva[] = [
   {
@@ -563,119 +567,58 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
       `}</style>
 
       <section id="offer-seva" className="relative overflow-hidden px-4 py-12 md:py-16">
-        {/* Floral decorative background */}
+        {/* Krishna peacock-feather decorative background */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-          {/* Base gradient */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#fffaf1] via-[#fff5e1] to-[#ffefd0]" />
+          {/* Base warm gradient */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#fffaf2] via-[#fdf5e8] to-[#f7ecd7]" />
 
-          {/* Repeating floral tile pattern */}
-          <svg className="absolute inset-0 h-full w-full opacity-[0.035]" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="floralTile" x="0" y="0" width="160" height="160" patternUnits="userSpaceOnUse">
-                {/* Central lotus */}
-                <g transform="translate(80,80)">
-                  <ellipse cx="0" cy="-22" rx="8" ry="22" fill="#92400e" />
-                  <ellipse cx="0" cy="-22" rx="8" ry="22" fill="#92400e" transform="rotate(45)" />
-                  <ellipse cx="0" cy="-22" rx="8" ry="22" fill="#92400e" transform="rotate(90)" />
-                  <ellipse cx="0" cy="-22" rx="8" ry="22" fill="#92400e" transform="rotate(135)" />
-                  <ellipse cx="0" cy="-22" rx="8" ry="22" fill="#92400e" transform="rotate(180)" />
-                  <ellipse cx="0" cy="-22" rx="8" ry="22" fill="#92400e" transform="rotate(225)" />
-                  <ellipse cx="0" cy="-22" rx="8" ry="22" fill="#92400e" transform="rotate(270)" />
-                  <ellipse cx="0" cy="-22" rx="8" ry="22" fill="#92400e" transform="rotate(315)" />
-                  <circle cx="0" cy="0" r="10" fill="#b45309" />
-                  <circle cx="0" cy="0" r="5" fill="#d97706" />
-                </g>
-                {/* Corner buds */}
-                <g transform="translate(0,0)">
-                  <ellipse cx="0" cy="-10" rx="4" ry="10" fill="#b45309" />
-                  <ellipse cx="0" cy="-10" rx="4" ry="10" fill="#b45309" transform="rotate(90)" />
-                  <circle cx="0" cy="0" r="4" fill="#d97706" />
-                </g>
-                <g transform="translate(160,0)">
-                  <ellipse cx="0" cy="-10" rx="4" ry="10" fill="#b45309" />
-                  <ellipse cx="0" cy="-10" rx="4" ry="10" fill="#b45309" transform="rotate(90)" />
-                  <circle cx="0" cy="0" r="4" fill="#d97706" />
-                </g>
-                <g transform="translate(0,160)">
-                  <ellipse cx="0" cy="-10" rx="4" ry="10" fill="#b45309" />
-                  <ellipse cx="0" cy="-10" rx="4" ry="10" fill="#b45309" transform="rotate(90)" />
-                  <circle cx="0" cy="0" r="4" fill="#d97706" />
-                </g>
-                <g transform="translate(160,160)">
-                  <ellipse cx="0" cy="-10" rx="4" ry="10" fill="#b45309" />
-                  <ellipse cx="0" cy="-10" rx="4" ry="10" fill="#b45309" transform="rotate(90)" />
-                  <circle cx="0" cy="0" r="4" fill="#d97706" />
-                </g>
-                {/* Vine curves between lotuses */}
-                <path d="M80 8 Q100 40 80 80" stroke="#b45309" strokeWidth="0.8" fill="none" />
-                <path d="M80 80 Q60 120 80 152" stroke="#b45309" strokeWidth="0.8" fill="none" />
-                <path d="M8 80 Q40 60 80 80" stroke="#b45309" strokeWidth="0.8" fill="none" />
-                <path d="M80 80 Q120 100 152 80" stroke="#b45309" strokeWidth="0.8" fill="none" />
-                {/* Tiny leaf accents */}
-                <ellipse cx="40" cy="40" rx="5" ry="3" fill="#92400e" transform="rotate(-30 40 40)" />
-                <ellipse cx="120" cy="40" rx="5" ry="3" fill="#92400e" transform="rotate(30 120 40)" />
-                <ellipse cx="40" cy="120" rx="5" ry="3" fill="#92400e" transform="rotate(30 40 120)" />
-                <ellipse cx="120" cy="120" rx="5" ry="3" fill="#92400e" transform="rotate(-30 120 120)" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#floralTile)" />
-          </svg>
+          {/* Toran garlands hanging down from the top corners */}
+          <Image
+            src={DECOR_GARLAND}
+            alt=""
+            unoptimized
+            width={145}
+            height={350}
+            draggable={false}
+            className="absolute left-0 top-0 h-[150px] w-auto opacity-40 md:h-[230px] md:opacity-50 lg:h-[310px] lg:opacity-60"
+          />
+          <Image
+            src={DECOR_GARLAND}
+            alt=""
+            unoptimized
+            width={145}
+            height={350}
+            draggable={false}
+            className="absolute right-0 top-0 h-[150px] w-auto -scale-x-100 opacity-40 md:h-[230px] md:opacity-50 lg:h-[310px] lg:opacity-60"
+          />
 
-          {/* Large corner lotus – top-left */}
-          <svg className="absolute -left-24 -top-24 h-[480px] w-[480px] opacity-[0.09] md:h-[560px] md:w-[560px]" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <g transform="translate(100,100)">
-              {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((angle) => (
-                <path
-                  key={angle}
-                  d="M0,-8 C15,-40 15,-75 0,-90 C-15,-75 -15,-40 0,-8Z"
-                  fill="#92400e"
-                  transform={`rotate(${angle})`}
-                />
-              ))}
-              <circle r="28" fill="#b45309" />
-              <circle r="18" fill="#d97706" />
-              <circle r="9" fill="#f59e0b" />
-            </g>
-          </svg>
+          {/* Matka pots resting at the bottom corners */}
+          <Image
+            src={DECOR_MATKA}
+            alt=""
+            unoptimized
+            width={500}
+            height={500}
+            draggable={false}
+            className="absolute bottom-0 left-0 h-[110px] w-auto opacity-40 md:h-[180px] md:opacity-50 lg:h-[240px] lg:opacity-60"
+          />
+          <Image
+            src={DECOR_MATKA}
+            alt=""
+            unoptimized
+            width={500}
+            height={500}
+            draggable={false}
+            className="absolute bottom-0 right-0 h-[110px] w-auto opacity-40 md:h-[180px] md:opacity-50 lg:h-[240px] lg:opacity-60"
+          />
 
-          {/* Large corner lotus – bottom-right */}
-          <svg className="absolute -bottom-28 -right-28 h-[440px] w-[440px] opacity-[0.08] md:h-[520px] md:w-[520px]" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <g transform="translate(100,100)">
-              {[0, 36, 72, 108, 144, 180, 216, 252, 288, 324].map((angle) => (
-                <path
-                  key={angle}
-                  d="M0,-10 C18,-38 18,-68 0,-85 C-18,-68 -18,-38 0,-10Z"
-                  fill="#78350f"
-                  transform={`rotate(${angle})`}
-                />
-              ))}
-              <circle r="24" fill="#92400e" />
-              <circle r="15" fill="#b45309" />
-              <circle r="7" fill="#f59e0b" />
-            </g>
-          </svg>
-
-          {/* Scattered individual petals */}
-          {[
-            { x: '8%', y: '15%', size: 28, rot: 20, opacity: 0.07 },
-            { x: '88%', y: '8%', size: 20, rot: -35, opacity: 0.06 },
-            { x: '5%', y: '70%', size: 24, rot: 60, opacity: 0.05 },
-            { x: '92%', y: '65%', size: 22, rot: -15, opacity: 0.06 },
-            { x: '45%', y: '5%', size: 18, rot: 45, opacity: 0.04 },
-            { x: '55%', y: '88%', size: 20, rot: -50, opacity: 0.05 },
-          ].map((p, i) => (
-            <svg key={i} className="absolute" style={{ left: p.x, top: p.y, width: p.size, height: p.size, opacity: p.opacity, transform: `rotate(${p.rot}deg)` }} viewBox="0 0 40 40" fill="none">
-              <path d="M20 2 C26 10 28 20 20 38 C12 20 14 10 20 2Z" fill="#92400e" />
-              <path d="M20 2 C26 10 28 20 20 38 C12 20 14 10 20 2Z" fill="#92400e" transform="rotate(72 20 20)" />
-              <path d="M20 2 C26 10 28 20 20 38 C12 20 14 10 20 2Z" fill="#92400e" transform="rotate(144 20 20)" />
-              <circle cx="20" cy="20" r="4" fill="#d97706" />
-            </svg>
-          ))}
-
+          {/* Soft color glows echoing the peacock hues */}
+          <div className="absolute -left-20 top-1/3 h-72 w-72 rounded-full bg-teal-500/[0.05] blur-[90px]" />
+          <div className="absolute -right-16 top-10 h-64 w-64 rounded-full bg-amber-400/[0.06] blur-[80px]" />
 
           {/* Top & bottom decorative borders */}
-          <div className="absolute left-0 top-0 h-px w-full bg-gradient-to-r from-transparent via-amber-500/20 to-transparent" />
-          <div className="absolute bottom-0 left-0 h-px w-full bg-gradient-to-r from-transparent via-amber-500/20 to-transparent" />
+          <div className="absolute left-0 top-0 h-px w-full bg-gradient-to-r from-transparent via-amber-500/25 to-transparent" />
+          <div className="absolute bottom-0 left-0 h-px w-full bg-gradient-to-r from-transparent via-teal-500/20 to-transparent" />
         </div>
 
         <div className="relative mx-auto max-w-6xl">
@@ -732,12 +675,13 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="object-cover transition-transform duration-700 group-hover:scale-105"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/35 to-transparent" />
                   <h3 className="absolute bottom-3 left-4 right-4 text-lg font-bold tracking-wide text-white drop-shadow-md md:text-xl">{seva.title}</h3>
                 </div>
 
                 {/* Card body */}
                 <div className="p-4 pt-3">
-                  <p className="min-h-[52px] text-[12.5px] leading-relaxed text-slate-500 md:text-[13px]">{seva.description}</p>
+                  <p className="min-h-[52px] text-[13px] leading-relaxed text-slate-700 md:text-sm">{seva.description}</p>
 
                   {/* Elegant price buttons */}
                   <div className="mt-4 grid grid-cols-2 gap-x-2 gap-y-2">
@@ -830,39 +774,10 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
         {/* Subtle radial glow */}
         <div className="pointer-events-none absolute -top-32 left-1/2 h-64 w-[600px] -translate-x-1/2 rounded-full bg-[#ffd96f]/[0.04] blur-[100px]" aria-hidden />
 
-        {/* Ornamental lotus watermarks */}
-        <svg className="pointer-events-none absolute -left-20 top-10 h-64 w-64 opacity-[0.04]" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-          <g transform="translate(100,100)">
-            {[0, 45, 90, 135, 180, 225, 270, 315].map((angle) => (
-              <path key={angle} d="M0,-8 C15,-40 15,-75 0,-90 C-15,-75 -15,-40 0,-8Z" fill="#ffd96f" transform={`rotate(${angle})`} />
-            ))}
-            <circle r="20" fill="#ffd96f" />
-          </g>
-        </svg>
-        <svg className="pointer-events-none absolute -right-16 bottom-20 h-52 w-52 opacity-[0.04]" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-          <g transform="translate(100,100)">
-            {[0, 36, 72, 108, 144, 180, 216, 252, 288, 324].map((angle) => (
-              <path key={angle} d="M0,-10 C18,-38 18,-68 0,-85 C-18,-68 -18,-38 0,-10Z" fill="#ffd96f" transform={`rotate(${angle})`} />
-            ))}
-            <circle r="16" fill="#ffd96f" />
-          </g>
-        </svg>
-
         <div className="relative mx-auto max-w-6xl px-6 pt-16 pb-8">
           {/* Top devotional strip */}
           <div className="mb-14 text-center">
-            <div className="mx-auto mb-4 flex items-center justify-center gap-4">
-              <span className="h-px w-12 bg-gradient-to-r from-transparent to-[#ffd96f]/50 sm:w-20" />
-              <svg className="h-5 w-5 text-[#ffd96f]/70" viewBox="0 0 40 40" fill="currentColor" aria-hidden>
-                <path d="M20 2 C24 8 26 14 20 20 C14 14 16 8 20 2Z" />
-                <path d="M20 2 C24 8 26 14 20 20 C14 14 16 8 20 2Z" transform="rotate(72 20 20)" />
-                <path d="M20 2 C24 8 26 14 20 20 C14 14 16 8 20 2Z" transform="rotate(144 20 20)" />
-                <path d="M20 2 C24 8 26 14 20 20 C14 14 16 8 20 2Z" transform="rotate(216 20 20)" />
-                <path d="M20 2 C24 8 26 14 20 20 C14 14 16 8 20 2Z" transform="rotate(288 20 20)" />
-                <circle cx="20" cy="20" r="4" />
-              </svg>
-              <span className="h-px w-12 bg-gradient-to-l from-transparent to-[#ffd96f]/50 sm:w-20" />
-            </div>
+            <div className="mx-auto mb-4 h-px w-24 bg-gradient-to-r from-transparent via-[#ffd96f]/50 to-transparent sm:w-48" />
             <p className="font-heading text-lg italic leading-relaxed text-[#ffd96f]/90 md:text-xl">
               &ldquo;Hare Krishna Hare Krishna, Krishna Krishna Hare Hare&rdquo;
             </p>

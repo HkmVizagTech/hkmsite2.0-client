@@ -11,7 +11,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Copy, Check, Link2, RotateCcw } from "lucide-react";
-import { sevas } from "@/lib/sevaConfig";
+import { sevas, getSevaHref } from "@/lib/sevaConfig";
 
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL || "https://harekrishnavizag.org").replace(/\/+$/, "");
 
@@ -26,7 +26,7 @@ const KNOWN_PAGES: { label: string; path: string }[] = [
   { label: "Shayani Ekadashi", path: "/shayani-ekadashi" },
   { label: "Vastra & Alankara Seva", path: "/alankara-vastra-seva" },
   // Per-seva donate pages, pulled live from sevaConfig
-  ...sevas.map((s) => ({ label: `Donate — ${s.title}`, path: `/donate/${s.slug}` })),
+  ...sevas.map((s) => ({ label: `Donate — ${s.title}`, path: getSevaHref(s) })),
 ];
 
 // Common presets to keep source/medium consistent across the team.

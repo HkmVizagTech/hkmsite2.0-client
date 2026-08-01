@@ -64,10 +64,10 @@ export const sevas: Seva[] = [
     description:
       "Every square foot you sponsor becomes a permanent part of the Hare Krishna Vaikuntham Temple's foundation — an eternal offering inscribed into the ground Their Lordships will bless with Their presence.",
     tiers: [
-      { label: "Rs. 6,000 / sq ft", amount: 6000 },
-      { label: "Rs. 12,000 / 2 sq ft", amount: 12000 },
-      { label: "Rs. 18,000 / 3 sq ft", amount: 18000 },
-      { label: "Rs. 24,000 / 4 sq ft", amount: 24000 },
+      { label: "Rs. 2,100 / 1 sq ft", amount: 2100 },
+      { label: "Rs. 6,300 / 3 sq ft", amount: 6300 },
+      { label: "Rs. 23,100 / 11 sq ft", amount: 23100 },
+      { label: "Rs. 2,26,800 / 108 sq ft", amount: 226800 },
     ],
     category: "SQFT",
     account: "default",
@@ -110,6 +110,7 @@ export const sevas: Seva[] = [
     category: "ANNADAAN",
     account: "default",
     icon: "🍛",
+    externalHref: "/anna-daan-seva",
   },
   {
     slug: "gau-seva",
@@ -130,6 +131,7 @@ export const sevas: Seva[] = [
     category: "GO SEVA",
     account: "default",
     icon: "🐄",
+    externalHref: "/gau-seva",
   },
   {
     slug: "gita-daan-seva",
@@ -149,6 +151,7 @@ export const sevas: Seva[] = [
     account: "default",
     icon: "📖",
     unit: { price: 300, singular: "Gita", plural: "Gitas" },
+    externalHref: "/gita-daan-seva",
   },
   {
     slug: "vastra-seva",

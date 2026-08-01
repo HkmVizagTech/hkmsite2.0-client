@@ -29,6 +29,8 @@ interface DonationFormSectionProps {
   customAmount: string;
   form: DonorForm;
   want80G: boolean;
+  monthly: boolean;
+  setMonthly: Dispatch<SetStateAction<boolean>>;
   wantsMahaPrasadam: boolean;
   mahaPrasadamEligible: boolean;
   addonsEligible: boolean;
@@ -72,6 +74,8 @@ export default function DonationFormSection({
   customAmount,
   form,
   want80G,
+  monthly,
+  setMonthly,
   wantsMahaPrasadam,
   mahaPrasadamEligible,
   addonsEligible,
@@ -184,6 +188,7 @@ export default function DonationFormSection({
             </div>
             <p className="text-2xl font-extrabold text-[hsl(220,90%,12%)] sm:text-3xl">
               ₹{finalAmount > 0 ? finalAmount.toLocaleString("en-IN") : "0"}
+              {monthly && <span className="text-base font-bold">/mo</span>}
             </p>
           </div>
 
@@ -384,8 +389,8 @@ export default function DonationFormSection({
                 onDobChange={(v) => setForm({ ...form, dob: v })}
               />
 
-              {/* Maha Prasadam */}
-              {mahaPrasadamEligible && (
+              {/* Maha Prasadam (one-time donations only) */}
+              {mahaPrasadamEligible && !monthly && (
                 <div className={addonBoxClass}>
                   <label className="flex cursor-pointer items-center gap-2 text-xs font-medium text-foreground">
                     <input
@@ -482,6 +487,37 @@ className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs 
               </div>
               )}
 
+              {/* Monthly autopay toggle */}
+              <button
+                type="button"
+                onClick={() => {
+                  setMonthly((m) => {
+                    const next = !m;
+                    if (next) setWantsMahaPrasadam(false);
+                    return next;
+                  });
+                }}
+                className={`flex w-full items-center gap-3 rounded-lg border px-3 py-2.5 text-left transition-colors ${
+                  monthly ? "border-gold bg-gold/10" : "border-slate-300 bg-white hover:border-gold/60"
+                }`}
+              >
+                <span
+                  className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border ${
+                    monthly ? "border-gold bg-gold text-white" : "border-slate-300"
+                  }`}
+                >
+                  {monthly && <Check className="h-3.5 w-3.5" />}
+                </span>
+                <span className="flex-1">
+                  <span className="block text-sm font-bold text-primary">🔁 Make it a monthly seva</span>
+                  <span className="block text-[11px] leading-snug text-muted-foreground">
+                    {monthly && finalAmount > 0
+                      ? `Auto-pay ₹${finalAmount.toLocaleString("en-IN")}${!useCustom ? ` (${sqftCount} ${sqftCount === 1 ? config.unitName : config.unitNamePlural})` : ""} every month. Cancel anytime.`
+                      : `Sponsor ${config.unitNamePlural} automatically every month.`}
+                  </span>
+                </span>
+              </button>
+
               {status && (
                 <p
                   className={`rounded-lg px-3 py-2 text-xs font-medium ${
@@ -503,6 +539,8 @@ className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs 
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" /> Processing…
                   </>
+                ) : monthly ? (
+                  <>🔁 Donate ₹{finalAmount > 0 ? finalAmount.toLocaleString("en-IN") : "—"} / month</>
                 ) : (
                   <>Donate ₹{finalAmount > 0 ? finalAmount.toLocaleString("en-IN") : "—"}</>
                 )}

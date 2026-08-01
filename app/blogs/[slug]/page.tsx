@@ -336,13 +336,13 @@ export default async function BlogPostPage({
               <div className="space-y-3">
                 {[
                   {
-                    href: `/donate/anna-daan-seva?utm_source=blog&utm_medium=sidebar&utm_campaign=${blog.slug}`,
+                    href: `/anna-daan-seva?utm_source=blog&utm_medium=sidebar&utm_campaign=${blog.slug}`,
                     title: "Anna Daan Seva",
                     sub: "Feed thousands of devotees",
                     image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677363792-1783677363601-462395264797134589073566144398536696847591n.jpg",
                   },
                   {
-                    href: `/donate/gau-seva?utm_source=blog&utm_medium=sidebar&utm_campaign=${blog.slug}`,
+                    href: `/gau-seva?utm_source=blog&utm_medium=sidebar&utm_campaign=${blog.slug}`,
                     title: "Gau Seva",
                     sub: "Protect indigenous cows",
                     image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783676646237-1783676645536-ChatGPTImageJul102026031357PM.png",
@@ -354,7 +354,7 @@ export default async function BlogPostPage({
                     image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677157979-1783677157883-Screenshot2026-07-10152227.png",
                   },
                   {
-                    href: `/donate/gita-daan-seva?utm_source=blog&utm_medium=sidebar&utm_campaign=${blog.slug}`,
+                    href: `/gita-daan-seva?utm_source=blog&utm_medium=sidebar&utm_campaign=${blog.slug}`,
                     title: "Gita Daan Seva",
                     sub: "Spread the wisdom of Krishna",
                     image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783672760162-1783672758959-ChatGPTImageJul92026043444PM.png",
