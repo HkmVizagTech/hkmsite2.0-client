@@ -317,7 +317,7 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
         // Dedicated, fully-designed banner (title/CTA baked into the image
         // itself) — shown plain and clear, no dark overlay or duplicate
         // heading on top, since that would fight the banner's own text.
-        <section className="relative overflow-hidden pt-20">
+        <section className="relative overflow-hidden pt-[88px] md:pt-[104px] rounded-b-3xl">
           <h1 className="sr-only">{seva.title}</h1>
           <nav className="flex items-center gap-1.5 bg-card px-4 py-2.5 text-xs text-muted-foreground">
             <Link href="/" className="hover:text-primary">Home</Link>
@@ -338,7 +338,7 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
           </button>
         </section>
       ) : (
-        <section className="relative overflow-hidden pt-20">
+        <section className="relative overflow-hidden pt-[88px] md:pt-[104px] rounded-b-3xl">
           <div className="relative aspect-[16/7] w-full md:aspect-[21/7]">
             <Image src={seva.image} alt={seva.title} fill priority sizes="100vw" className="object-cover" />
             {/* Lightened from the previous 35%/85% dark gradient so the

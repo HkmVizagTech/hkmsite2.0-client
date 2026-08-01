@@ -299,18 +299,18 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
     <PageLayout>
       <main className="bg-white">
         {/* ── Hero Banner (plain banner image — no content overlay) ── */}
-        <section className="bg-white pt-[72px] md:pt-[92px]">
+        <section className="bg-white pt-[88px] md:pt-[104px]">
           <button
             type="button"
             onClick={scrollToDonate}
             aria-label="Donate — go to the donation form"
-            className="block w-full cursor-pointer"
+            className="block w-full cursor-pointer overflow-hidden rounded-b-3xl"
           >
             <Image
               src={config.bannerImageMobile || config.bannerImage || config.heroImage}
               alt={`${config.pageTitle} — ${config.heroHeading1} ${config.heroHeading2}`}
-              width={941}
-              height={1672}
+              width={config.bannerMobileWidth ?? 941}
+              height={config.bannerMobileHeight ?? 1672}
               priority
               sizes="100vw"
               className="block h-auto w-full md:hidden"
@@ -318,8 +318,8 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
             <Image
               src={config.bannerImage || config.heroImage}
               alt={`${config.pageTitle} — ${config.heroHeading1} ${config.heroHeading2}`}
-              width={1672}
-              height={941}
+              width={config.bannerWidth ?? 1672}
+              height={config.bannerHeight ?? 941}
               priority
               sizes="100vw"
               className="hidden h-auto w-full md:block"

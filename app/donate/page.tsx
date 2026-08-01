@@ -58,7 +58,7 @@ export default function DonateHubPage() {
     <PageLayout>
       <main className="bg-white">
         {/* ══ HERO — common to all donations, no seva-specific numbers ══ */}
-        <section className="relative overflow-hidden pt-20">
+        <section className="relative overflow-hidden pt-[88px] md:pt-[104px] rounded-b-3xl">
           <div className="relative aspect-[16/9] w-full md:aspect-[21/8]">
             <Image
               src="/assets/home-banner-daily-darshan.webp"

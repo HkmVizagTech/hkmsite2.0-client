@@ -67,8 +67,8 @@ const VASTRA_CONFIG: CampaignConfig = {
   phoneHref: "tel:+918977761187",
   email: "social@hkmvizag.org",
   heroImage: "https://res.cloudinary.com/ddmzeqpkc/image/upload/v1784790674/vastra_bg.webp",
-  bannerImage: "https://res.cloudinary.com/ddmzeqpkc/image/upload/v1784790674/vastra_bg.webp",
-  bannerImageMobile: "https://res.cloudinary.com/ddmzeqpkc/image/upload/v1784790992/vastra_mobile_bg.png",
+  bannerImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785573838202-1785573837372-ChatGPTImageAug12026021301PM.webp",
+  bannerImageMobile: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785580143643-1785580142535-vastraheromob.webp",
   aboutImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677419371-1783677418690-DietyPhotos.jpeg",
   heroTagline: "A seva initiative of Hare Krishna Movement Visakhapatnam",
   heroHeading1: "Vastra & Alankara",
@@ -348,18 +348,18 @@ export default function AlankaraVastraClient() {
       <main className="bg-white">
         {/* ── Hero Banner ── */}
         {config.bannerImage ? (
-          <section className="bg-white pt-[72px] md:pt-[92px]">
+          <section className="bg-white pt-[88px] md:pt-[104px]">
             <button
               type="button"
               onClick={scrollToDonate}
               aria-label="Donate — go to the donation form"
-              className="block w-full cursor-pointer"
+              className="block w-full cursor-pointer overflow-hidden rounded-b-3xl"
             >
               <Image
                 src={config.bannerImageMobile || config.bannerImage}
                 alt={`${config.pageTitle} — ${config.heroHeading1} ${config.heroHeading2}`}
-                width={941}
-                height={1672}
+                width={960}
+                height={1639}
                 priority
                 sizes="100vw"
                 className="block h-auto w-full md:hidden"
@@ -367,8 +367,8 @@ export default function AlankaraVastraClient() {
               <Image
                 src={config.bannerImage}
                 alt={`${config.pageTitle} — ${config.heroHeading1} ${config.heroHeading2}`}
-                width={1672}
-                height={941}
+                width={1920}
+                height={730}
                 priority
                 sizes="100vw"
                 className="hidden h-auto w-full md:block"

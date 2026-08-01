@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Phone, Mail, Sun, Moon, Clock, Heart } from "lucide-react";
+import { Menu, X, Phone, Mail, Sun, Moon, Clock, Heart, Home, User, Utensils, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ISKLogo from "@/assets/ISKCONGambheeramLogo.jpeg";
 import HKVTLogo from "@/assets/HKVTLogo.png";
@@ -10,6 +10,13 @@ import HKVTLogoIcon from "@/assets/HKVTLogoIcon.png";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
+
+const bottomNavItems = [
+  { label: "Home",       href: "/",            icon: Home },
+  { label: "Founder",    href: "/founder",     icon: User },
+  { label: "Subhojanam", href: "/subhojanam",  icon: Utensils },
+  { label: "About Us",   href: "/about",       icon: Info },
+];
 
 const navItems = [
   { label: "Home", href: "/" },
@@ -238,22 +245,19 @@ const Navbar = () => {
             </Button>
           </div>
 
-          {
-}
-          <div className="lg:hidden flex items-center gap-2">
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              className="w-11 h-11 rounded-full border border-border flex items-center justify-center text-muted-foreground"
-              aria-label="Toggle dark mode"
+          {/* Mobile: Donate Now button — menu handled by bottom nav More button */}
+          <div className="lg:hidden flex items-center">
+            <Button
+              variant="default"
+              size="sm"
+              className="rounded-full h-[30px] px-3 text-[11px] bg-gradient-ocean text-primary-foreground border-0 hover:opacity-90"
+              asChild
             >
-              {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-            </button>
-            <button
-              className="p-2 text-foreground"
-              onClick={() => setMobileOpen(!mobileOpen)}
-            >
-              {mobileOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
+              <Link href="/donate">
+                <Heart className="w-3 h-3 mr-1 fill-current" />
+                Donate Now
+              </Link>
+            </Button>
           </div>
         </div>
 
@@ -297,6 +301,45 @@ const Navbar = () => {
           )}
         </AnimatePresence>
       </motion.nav>
+
+      {/* ── Fixed bottom navigation bar — mobile only ── */}
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-border shadow-[0_-2px_12px_rgba(0,0,0,0.08)]">
+        <div className="flex items-stretch">
+          {bottomNavItems.map((item) => {
+            const Icon = item.icon;
+            const active = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`relative flex flex-1 flex-col items-center justify-center gap-0.5 py-2.5 text-[10px] font-medium transition-colors ${
+                  active ? "text-primary" : "text-muted-foreground"
+                }`}
+              >
+                <Icon className={`w-5 h-5 ${active ? "stroke-[2.5px]" : "stroke-[1.75px]"}`} />
+                {item.label}
+                {active && (
+                  <motion.span
+                    layoutId="bottom-nav-active"
+                    className="absolute top-0 h-0.5 w-8 rounded-full bg-primary"
+                    transition={{ type: "spring", bounce: 0.25, duration: 0.4 }}
+                  />
+                )}
+              </Link>
+            );
+          })}
+          {/* More — opens/closes the hamburger menu */}
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className={`flex flex-1 flex-col items-center justify-center gap-0.5 py-2.5 text-[10px] font-medium transition-colors ${
+              mobileOpen ? "text-primary" : "text-muted-foreground"
+            }`}
+          >
+            {mobileOpen ? <X className="w-5 h-5 stroke-[2.5px]" /> : <Menu className="w-5 h-5 stroke-[1.75px]" />}
+            More
+          </button>
+        </div>
+      </nav>
     </>
   );
 };

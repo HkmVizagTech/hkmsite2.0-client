@@ -480,12 +480,12 @@ export default function ShayaniEkadashiClient() {
     <PageLayout>
       <main className="bg-white">
         {/* ── Hero Banner ── */}
-        <section className="bg-white pt-[72px] md:pt-[92px]">
+        <section className="bg-white pt-[88px] md:pt-[104px]">
           <button
             type="button"
             onClick={scrollToDonate}
             aria-label="Donate — go to the donation form"
-            className="block w-full cursor-pointer"
+            className="block w-full cursor-pointer overflow-hidden rounded-b-3xl"
           >
             <picture>
               <source

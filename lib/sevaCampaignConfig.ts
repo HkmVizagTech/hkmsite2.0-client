@@ -47,6 +47,12 @@ export interface SevaCampaignConfig {
   /** Optional pre-designed banner (text baked in). When set, replaces the hero. */
   bannerImage?: string;
   bannerImageMobile?: string;
+  /** Natural dimensions of bannerImage (desktop) so it renders at its true aspect ratio. */
+  bannerWidth?: number;
+  bannerHeight?: number;
+  /** Natural dimensions of bannerImageMobile (portrait). */
+  bannerMobileWidth?: number;
+  bannerMobileHeight?: number;
 
   minCustomAmount: number;
   pricePerUnit: number;
@@ -108,8 +114,12 @@ export const GAU_CAMPAIGN: SevaCampaignConfig = {
   heroDesc:
     "Cows hold a sacred place in Vedic culture. Your Gau Seva donation supports fodder, medical care and shelter for the cows in our care — an act of compassion Lord Krishna Himself cherishes.",
   heroImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783676646237-1783676645536-ChatGPTImageJul102026031357PM.png",
-  bannerImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1784305732825-1784305730000-ChatGPTImageJul172026095835PM.png",
-  bannerImageMobile: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1784305706071-1784305696382-ChatGPTImageJul172026095421PM.png",
+  bannerImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785586948250-1785586945893-Gau-banner-desk.webp",
+  bannerImageMobile: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785586947654-1785586945558-Gau-banner-mob.webp",
+  bannerWidth: 2032,
+  bannerHeight: 774,
+  bannerMobileWidth: 962,
+  bannerMobileHeight: 1635,
 
   minCustomAmount: 101,
   pricePerUnit: 1500,
@@ -253,6 +263,12 @@ export const ANNA_DAAN_CAMPAIGN: SevaCampaignConfig = {
   heroDesc:
     "Feed the hungry with sanctified prasadam. The scriptures glorify Anna Daan — the donation of food — as the highest of all charities, for it sustains life itself.",
   heroImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677363792-1783677363601-462395264797134589073566144398536696847591n.jpg",
+  bannerImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785586501452-1785586500800-annadan-banner-desk.webp",
+  bannerImageMobile: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785584926984-1785584925444-annadan-hero-mob.webp",
+  bannerWidth: 1920,
+  bannerHeight: 730,
+  bannerMobileWidth: 960,
+  bannerMobileHeight: 1638,
 
   minCustomAmount: 51,
   pricePerUnit: 25,
@@ -398,6 +414,12 @@ export const GITA_DAAN_CAMPAIGN: SevaCampaignConfig = {
   heroDesc:
     "There is no greater gift than transcendental knowledge. Sponsor copies of Bhagavad-Gita As It Is for distribution to students, prisoners and spiritual seekers — planting a seed that can transform a life forever.",
   heroImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783672760162-1783672758959-ChatGPTImageJul92026043444PM.png",
+  bannerImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785578235628-1785578235168-ChatGPTImageAug12026023314PM.webp",
+  bannerImageMobile: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785578443691-1785578442854-ChatGPTImageAug12026032944PM.webp",
+  bannerWidth: 2032,
+  bannerHeight: 774,
+  bannerMobileWidth: 962,
+  bannerMobileHeight: 1635,
 
   minCustomAmount: 101,
   pricePerUnit: 250,

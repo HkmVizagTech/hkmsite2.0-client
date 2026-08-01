@@ -43,7 +43,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
   return (
     <PageLayout>
-    <main className="min-h-screen bg-background pt-20">
+    <main className="min-h-screen bg-background pt-[88px] md:pt-[104px]">
   <HeroBanner config={config} />
 
       <div className="container mx-auto px-4 py-12 grid gap-8 lg:grid-cols-5">

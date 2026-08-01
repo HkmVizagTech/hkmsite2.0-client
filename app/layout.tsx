@@ -118,7 +118,7 @@ export default function RootLayout({
           `}
         </Script>
       </head>
-      <body className={`${poppins.className} min-h-full flex flex-col overflow-x-hidden`}>
+      <body className={`${poppins.className} min-h-full flex flex-col overflow-x-hidden pb-[60px] lg:pb-0`}>
         <MetaPixel />
         <script
           type="application/ld+json"

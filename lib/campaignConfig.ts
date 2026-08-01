@@ -49,6 +49,12 @@ export interface CampaignConfig {
   // this full-bleed image instead of the background + overlaid HTML text.
   bannerImage?: string;
   bannerImageMobile?: string;
+  /** Natural dimensions of bannerImage (desktop) so it renders at its true aspect ratio. */
+  bannerWidth?: number;
+  bannerHeight?: number;
+  /** Natural dimensions of bannerImageMobile (portrait). */
+  bannerMobileWidth?: number;
+  bannerMobileHeight?: number;
   aboutImage: string;
   heroTagline: string;
   heroHeading1: string;
@@ -82,8 +88,12 @@ export const SQFT_CAMPAIGN: CampaignConfig = {
   email: "social@hkmvizag.org",
   heroImage:
     "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783672822355-1783672821116-ChatGPTImageJul92026043238PM.png",
-  bannerImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785414429381-1785414428494-ChatGPTImageJul302026055512PM.webp",
-  bannerImageMobile: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785414429381-1785414428494-ChatGPTImageJul302026055512PM.webp",
+  bannerImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785579870156-1785579868902-sftbanner.webp",
+  bannerImageMobile: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785579869625-1785579868485-sft-seva-mob.webp",
+  bannerWidth: 2032,
+  bannerHeight: 774,
+  bannerMobileWidth: 962,
+  bannerMobileHeight: 1635,
   aboutImage: "https://res.cloudinary.com/ddmzeqpkc/image/upload/f_auto,q_auto/phase_1",
   heroTagline: "A fundraising initiative of Hare Krishna Movement Visakhapatnam",
   heroHeading1: "Hare Krishna",
@@ -129,6 +139,12 @@ export const BRICK_CAMPAIGN: CampaignConfig = {
   email: "social@hkmvizag.org",
   heroImage:
     "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677097861-1783677097620-Screenshot2026-07-10152116.png",
+  bannerImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785588189215-1785588187426-brick-hero-desk.webp",
+  bannerImageMobile: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785588190376-1785588188370-brick-hero-mob.webp",
+  bannerWidth: 2032,
+  bannerHeight: 774,
+  bannerMobileWidth: 961,
+  bannerMobileHeight: 1636,
   aboutImage: "/assets/vizag-temple-1.jpeg",
   heroTagline: "A fundraising initiative of Hare Krishna Movement Visakhapatnam",
   heroHeading1: "Hare Krishna",

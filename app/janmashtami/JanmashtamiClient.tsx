@@ -439,7 +439,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
             ))}
           </div>
         )}
-        <div className="relative">
+        <div className="relative overflow-hidden rounded-b-3xl">
           {banners.map((banner, index) => (
             <a
               key={banner.desktop}

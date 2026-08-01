@@ -12,7 +12,7 @@ type Config = {
 
 export default function HeroBanner({ config, onDonateClick }: { config: Config; onDonateClick?: () => void }) {
   return (
-    <section className="relative w-full min-h-[60vh] md:min-h-[70vh] flex items-center justify-center overflow-hidden">
+    <section className="relative w-full min-h-[60vh] md:min-h-[70vh] flex items-center justify-center overflow-hidden rounded-b-3xl">
       {
 }
       {config.bannerImage ? (
