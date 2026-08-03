@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
-  IndianRupee, Search, Download, Eye, TrendingUp, Users, Calendar, CreditCard, Smartphone, Banknote, X, Loader2,
+  IndianRupee, Search, Download, Eye, TrendingUp, Users, Calendar, CreditCard, Smartphone, Banknote, X, Loader2, AlertTriangle,
 } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend,
@@ -39,6 +39,7 @@ interface Stats {
   totalCompletedCount: number;
   totalTransactions: number;
   totalDonors: number;
+  needsAttentionCount: number;
   thisMonth: { value: number; changePct: number | null; label: string };
   monthly: { month: string; amount: number; count: number }[];
   sevaWise: { name: string; value: number; count: number }[];
@@ -151,15 +152,16 @@ export default function AdminDonations() {
         </div>
       ) : stats ? (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             {[
               { label: "Total Collected", value: `₹${stats.totalCollected.toLocaleString("en-IN")}`, icon: IndianRupee, sub: `${stats.totalCompletedCount} completed`, color: "text-green-600" },
               { label: "This Month", value: `₹${stats.thisMonth.value.toLocaleString("en-IN")}`, icon: TrendingUp, sub: stats.thisMonth.changePct !== null ? `${stats.thisMonth.changePct >= 0 ? "+" : ""}${stats.thisMonth.changePct}% vs last month` : stats.thisMonth.label, color: "text-primary" },
               { label: "Total Donors", value: stats.totalDonors.toLocaleString("en-IN"), icon: Users, sub: "Unique donors", color: "text-blue-500" },
               { label: "Transactions", value: stats.totalTransactions.toLocaleString("en-IN"), icon: Calendar, sub: "All records", color: "text-purple-500" },
+              { label: "Needs Attention", value: String(stats.needsAttentionCount || 0), icon: AlertTriangle, sub: "Receipt / WhatsApp issues", color: stats.needsAttentionCount > 0 ? "text-red-500" : "text-green-600", onClick: stats.needsAttentionCount > 0 ? () => { setStatusFilter("needs_attention"); setPage(1); } : undefined },
             ].map((stat, i) => (
               <motion.div key={stat.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
-                <Card>
+                <Card className={stat.onClick ? "cursor-pointer hover:ring-2 hover:ring-primary/30 transition-shadow" : ""} onClick={stat.onClick}>
                   <CardContent className="p-5">
                     <div className="flex items-start justify-between">
                       <div>
@@ -254,6 +256,7 @@ export default function AdminDonations() {
           <option value="completed">Completed</option>
           <option value="pending">Pending</option>
           <option value="failed">Failed</option>
+          <option value="needs_attention">Needs Attention</option>
         </select>
       </div>
 

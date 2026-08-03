@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { authFetch } from "@/lib/authClient";
 import { Card, CardContent } from "@/components/ui/card";
-import { IndianRupee, Users, TrendingUp, CalendarDays, Loader2 } from "lucide-react";
+import { IndianRupee, Users, TrendingUp, CalendarDays, Loader2, AlertTriangle } from "lucide-react";
 
 const apiUrl = () => (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 
@@ -12,6 +12,7 @@ interface DashboardStats {
   totalDonors: { value: number };
   thisMonth: { value: number; changePct: number | null };
   today: { value: number };
+  needsAttentionCount: number;
 }
 
 const fmtRupees = (n: number) => `₹${n.toLocaleString("en-IN")}`;
@@ -72,16 +73,23 @@ export default function DashboardTab() {
       sub: "received today",
       icon: CalendarDays,
     },
+    {
+      label: "Needs Attention",
+      value: String(stats.needsAttentionCount || 0),
+      sub: "Receipt / WhatsApp issues",
+      icon: AlertTriangle,
+      highlight: (stats.needsAttentionCount || 0) > 0,
+    },
   ];
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
       {cards.map((c) => (
         <Card key={c.label}>
           <CardContent className="p-5">
             <div className="mb-3 flex items-center justify-between">
               <span className="text-sm font-semibold text-muted-foreground">{c.label}</span>
-              <c.icon className="h-4 w-4 text-amber-500" />
+              <c.icon className={`h-4 w-4 ${c.highlight ? "text-red-500" : "text-amber-500"}`} />
             </div>
             <p className="text-2xl font-bold text-foreground">{c.value}</p>
             <p className="mt-1 text-xs text-muted-foreground">{c.sub}</p>

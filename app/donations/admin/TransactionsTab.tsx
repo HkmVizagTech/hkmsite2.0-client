@@ -121,6 +121,7 @@ export default function TransactionsTab() {
               <SelectItem value="completed">Completed</SelectItem>
               <SelectItem value="pending">Pending</SelectItem>
               <SelectItem value="failed">Failed</SelectItem>
+              <SelectItem value="needs_attention">Needs Attention</SelectItem>
             </SelectContent>
           </Select>
           <Button variant="outline" onClick={exportCsv}>
