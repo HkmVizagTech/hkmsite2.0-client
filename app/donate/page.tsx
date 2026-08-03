@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import Ornament from "@/components/Ornament";
+import TempleCarousel from "@/components/TempleCarousel";
 import { sevas, getSevaHref } from "@/lib/sevaConfig";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
@@ -21,15 +22,6 @@ interface OverviewStats {
   donors: { name: string; amount: number; seva: string; time: string }[];
 }
 
-interface SqftStats {
-  pricePerSqft: number;
-  goalSqft: number;
-  sqftRaised: number;
-  totalAmount: number;
-  donorCount: number;
-  percent: number;
-}
-
 const PRIVILEGES = [
   { icon: Gift, title: "Prasadam at Home", desc: "Receive blessed prasadam delivered every month" },
   { icon: Sparkles, title: "Sankalpam Puja", desc: "Your name chanted in the temple's daily worship" },
@@ -39,17 +31,12 @@ const PRIVILEGES = [
 
 export default function DonateHubPage() {
   const [overview, setOverview] = useState<OverviewStats | null>(null);
-  const [sqft, setSqft] = useState<SqftStats | null>(null);
 
   useEffect(() => {
     (async () => {
       try {
-        const [ovRes, sqftRes] = await Promise.all([
-          fetch(`${API_URL}/seva-stats/overview`),
-          fetch(`${API_URL}/seva-stats/sqft-campaign`),
-        ]);
-        if (ovRes.ok) setOverview(await ovRes.json());
-        if (sqftRes.ok) setSqft(await sqftRes.json());
+        const res = await fetch(`${API_URL}/seva-stats/overview`);
+        if (res.ok) setOverview(await res.json());
       } catch {}
     })();
   }, []);
@@ -59,18 +46,11 @@ export default function DonateHubPage() {
       <main className="bg-white">
         {/* ══ HERO — common to all donations, no seva-specific numbers ══ */}
         <section className="relative overflow-hidden pt-[88px] md:pt-[104px] rounded-b-3xl">
-          <div className="relative aspect-[16/9] w-full md:aspect-[21/8]">
-            <Image
-              src="/assets/home-banner-daily-darshan.webp"
-              alt="Support Hare Krishna Vaikuntham"
-              fill
-              priority
-              sizes="100vw"
-              className="object-cover"
-            />
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,hsl(220,85%,8%,0.55)_0%,hsl(220,85%,7%,0.92)_100%)]" />
+          <div className="relative w-full">
+            <TempleCarousel />
+            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,hsl(220,85%,8%,0.55)_0%,hsl(220,85%,7%,0.92)_100%)]" />
           </div>
-          <div className="absolute inset-0 flex flex-col items-center justify-end px-4 pb-10 text-center md:pb-14">
+          <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-end px-4 pb-10 text-center md:pb-14">
             <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-background/25 bg-background/10 px-4 py-1.5 text-xs font-semibold tracking-wide text-background backdrop-blur-md">
               🪔 Seva &amp; Devotion
             </span>
@@ -81,7 +61,7 @@ export default function DonateHubPage() {
               Every offering — a brick, a plate of prasadam, a Bhagavad Gita placed in someone&apos;s
               hands — is an act of devotion that sustains this mission.
             </p>
-            <div className="flex flex-wrap items-center justify-center gap-3">
+            <div className="pointer-events-auto flex flex-wrap items-center justify-center gap-3">
               <a
                 href="#sevas"
                 className="inline-flex items-center gap-2 rounded-full bg-gradient-gold px-8 py-3.5 text-sm font-bold text-[hsl(220,60%,12%)] shadow-gold transition-transform hover:-translate-y-0.5 md:text-base"
@@ -187,24 +167,6 @@ export default function DonateHubPage() {
                   foot you sponsor becomes a permanent, eternal offering laid into the foundation of the
                   Lord&apos;s home.
                 </p>
-
-                {sqft && sqft.totalAmount > 0 && (
-                  <div className="mb-6">
-                    <div className="mb-1.5 flex items-center justify-between text-xs text-muted-foreground">
-                      <span>{sqft.sqftRaised.toLocaleString("en-IN")} / {sqft.goalSqft.toLocaleString("en-IN")} sq ft funded</span>
-                      <span className="font-bold text-gold">{sqft.percent}%</span>
-                    </div>
-                    <div className="h-2.5 overflow-hidden rounded-full bg-muted">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        whileInView={{ width: `${sqft.percent}%` }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 1, ease: "easeOut" }}
-                        className="h-full rounded-full bg-gradient-gold"
-                      />
-                    </div>
-                  </div>
-                )}
 
                 <div className="flex flex-wrap items-center gap-3">
                   <Link

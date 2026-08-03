@@ -19,7 +19,6 @@ import AboutSection from "@/components/sqft-campaign/AboutSection";
 import ImportanceSection from "@/components/sqft-campaign/ImportanceSection";
 import ConstructionStatusSection from "@/components/sqft-campaign/ConstructionStatusSection";
 import TempleFeaturesSection from "@/components/sqft-campaign/TempleFeaturesSection";
-import ProgressSection from "@/components/sqft-campaign/ProgressSection";
 import GallerySection from "@/components/sqft-campaign/GallerySection";
 import FounderSection from "@/components/sqft-campaign/FounderSection";
 import FaqSection from "@/components/sqft-campaign/FaqSection";
@@ -188,10 +187,6 @@ export default function SqftCampaignClient({
   useEffect(() => {
     if (!addonsEligible && want80G) setWant80G(false);
   }, [addonsEligible, want80G]);
-  const sqftRaised = stats ? Math.floor(stats.totalAmount / price) : 0;
-  const percent = stats && stats.goalSqft > 0
-    ? Math.min(100, Math.round((stats.totalAmount / (stats.goalSqft * price)) * 10000) / 100)
-    : 0;
   const campaignerSqftRaised = campaigner ? Math.floor(campaigner.raisedAmount / price) : 0;
 
   const BANK_DETAILS = {
@@ -454,6 +449,15 @@ export default function SqftCampaignClient({
         {/* Testimonials — new */}
         <TestimonialsSection config={config} />
 
+        {/* Donor wall */}
+        <DonorWallSection
+          stats={stats}
+          wallTab={wallTab}
+          setWallTab={setWallTab}
+          price={price}
+          config={config}
+        />
+
         {/* About / inspiration */}
         <AboutSection
           aboutImage={config.aboutImage}
@@ -466,15 +470,6 @@ export default function SqftCampaignClient({
 
         {/* Temple features */}
         <TempleFeaturesSection config={config} />
-
-        {/* Live progress — foundation grid */}
-        <ProgressSection
-          sqftRaised={sqftRaised}
-          percent={percent}
-          goalSqft={stats?.goalSqft ?? 67000}
-          donorCount={stats?.donorCount ?? 0}
-          config={config}
-        />
 
         {/* Photo + video proof of ongoing construction */}
         <ConstructionStatusSection scrollToDonate={scrollToDonate} />
@@ -493,15 +488,6 @@ export default function SqftCampaignClient({
 
         {/* FAQ */}
         <FaqSection faqs={FAQS(config)} />
-
-        {/* Donor wall */}
-        <DonorWallSection
-          stats={stats}
-          wallTab={wallTab}
-          setWallTab={setWallTab}
-          price={price}
-          config={config}
-        />
 
         {/* Sticky mobile donate bar */}
         <StickyMobileBar scrollToDonate={scrollToDonate} visible={showSticky} />

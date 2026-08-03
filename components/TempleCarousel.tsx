@@ -9,14 +9,6 @@ const FALLBACK_IMG_MOBILE = "/assets/home-banner-chaitanya-bhavan-mobile.webp";
 
 const defaultSlides = [
   {
-    src: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785567432283-1785567431856-5-billion.webp",
-    // Dedicated portrait crop — the desktop file is 2.63:1, so reusing it here
-    // let object-cover chop off the "5 Billion" headline and the CTA on phones.
-    mobileSrc: "/assets/home-banner-5-billion-mobile.webp",
-    title: "5 Billion",
-    linkUrl: "",
-  },
-  {
     src: "/assets/home-banner-chaitanya-bhavan.webp",
     mobileSrc: "/assets/home-banner-chaitanya-bhavan-mobile.webp",
     title: "Chaitanya Bhavan",

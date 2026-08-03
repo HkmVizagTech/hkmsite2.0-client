@@ -7,7 +7,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import {
   Loader2, ShieldCheck, User, Phone, Mail, Check, Copy,
-  ChevronDown, ChevronLeft, ChevronRight, Quote, TrendingUp,
+  ChevronDown, ChevronLeft, ChevronRight, Quote,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import Ornament from "@/components/Ornament";
@@ -636,76 +636,6 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
           </div>
         </section>
 
-        {/* ── Live stats + donor wall ── */}
-        {stats && stats.donors.length > 0 && (
-          <section className="bg-white pb-4 md:pb-8">
-            <div className="container mx-auto max-w-5xl px-4">
-              <div className="grid gap-4 sm:grid-cols-2">
-                {stats.totalAmount > 0 && (
-                  <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-card px-5 py-4">
-                    <TrendingUp className="h-7 w-7 shrink-0 text-gold" />
-                    <div>
-                      <p className="text-xl font-extrabold text-primary">
-                        ₹{stats.totalAmount.toLocaleString("en-IN")}
-                      </p>
-                      <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-                        raised for {config.pageTitle} so far
-                      </p>
-                    </div>
-                  </div>
-                )}
-                <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-card px-5 py-4">
-                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-green-500/15 text-[11px] font-bold text-green-600">
-                    ●
-                  </div>
-                  <div>
-                    <p className="text-xl font-extrabold text-primary">
-                      {stats.donorCount.toLocaleString("en-IN")} devotees
-                    </p>
-                    <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-                      recently supported this seva
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-8">
-                <div className="mb-4 flex items-center gap-2">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-green-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-green-600">
-                    <span className="relative flex h-2 w-2">
-                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-75" />
-                      <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
-                    </span>
-                    Live
-                  </span>
-                  <h3 className="text-sm font-bold uppercase tracking-wide text-muted-foreground">
-                    Recent Devotees Supporting This Seva
-                  </h3>
-                </div>
-                <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
-                  {stats.donors.map((d, i) => (
-                    <motion.div
-                      key={`${d.name}-${i}`}
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.05 }}
-                      className="flex items-center gap-3 rounded-xl border border-slate-200 bg-card px-3.5 py-2.5"
-                    >
-                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[hsl(42,92%,56%,0.15)] text-xs font-bold text-gold">
-                        {d.name.charAt(0)}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-semibold">{d.name}</p>
-                        <p className="text-[11px] text-muted-foreground">Donated ₹{d.amount.toLocaleString("en-IN")} · {d.time}</p>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </section>
-        )}
-
         {/* ── About ── */}
         <section className="bg-white py-12 md:py-16">
           <div className="container mx-auto max-w-5xl px-4">
@@ -926,6 +856,46 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
             </motion.div>
           </div>
         </section>
+
+        {/* ── Recent devotees supporting this seva ── */}
+        {stats && stats.donors.length > 0 && (
+          <section className="bg-white py-12 md:py-16">
+            <div className="container mx-auto max-w-5xl px-4">
+              <Ornament className="mb-6" />
+              <div className="mb-8 flex flex-col items-center justify-center gap-2 text-center">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-green-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-green-600">
+                  <span className="relative flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-75" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
+                  </span>
+                  Live
+                </span>
+                <h2 className="font-heading text-xl font-bold text-primary">
+                  Recent Devotees Supporting This Seva
+                </h2>
+              </div>
+              <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+                {stats.donors.map((d, i) => (
+                  <motion.div
+                    key={`${d.name}-${i}`}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.05 }}
+                    className="flex items-center gap-3 rounded-xl border border-slate-200 bg-card px-3.5 py-2.5"
+                  >
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[hsl(42,92%,56%,0.15)] text-xs font-bold text-gold">
+                      {d.name.charAt(0)}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-semibold">{d.name}</p>
+                      <p className="text-[11px] text-muted-foreground">Donated ₹{d.amount.toLocaleString("en-IN")} · {d.time}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* ── Gallery ── */}
         {config.gallery.photos.length > 0 && (
