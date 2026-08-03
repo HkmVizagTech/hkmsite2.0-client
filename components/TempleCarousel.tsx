@@ -7,7 +7,21 @@ import Image from "next/image";
 const FALLBACK_IMG = "/assets/home-banner-chaitanya-bhavan.webp";
 const FALLBACK_IMG_MOBILE = "/assets/home-banner-chaitanya-bhavan-mobile.webp";
 
-const defaultSlides = [
+export interface TempleCarouselSlide {
+  src: string;
+  mobileSrc: string;
+  title: string;
+  linkUrl: string;
+}
+
+interface TempleCarouselProps {
+  /** Override the default home slides with a custom banner set. */
+  slides?: TempleCarouselSlide[];
+  /** Set false to skip loading live banners from /hero-banners. */
+  fetchApiBanners?: boolean;
+}
+
+const defaultSlides: TempleCarouselSlide[] = [
   {
     src: "/assets/home-banner-chaitanya-bhavan.webp",
     mobileSrc: "/assets/home-banner-chaitanya-bhavan-mobile.webp",
@@ -42,14 +56,15 @@ const defaultSlides = [
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 
-const TempleCarousel = () => {
-  const [slides, setSlides] = useState(defaultSlides);
+const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true }: TempleCarouselProps = {}) => {
+  const [slides, setSlides] = useState<TempleCarouselSlide[]>(propSlides || defaultSlides);
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(1);
   const [imgErrors, setImgErrors] = useState<Record<string, boolean>>({});
   const [dragging, setDragging] = useState(false);
 
   useEffect(() => {
+    if (!fetchApiBanners) return;
     (async () => {
       try {
         const res = await fetch(`${API_URL}/hero-banners`);
@@ -68,7 +83,7 @@ const TempleCarousel = () => {
         }
       } catch {}
     })();
-  }, []);
+  }, [fetchApiBanners]);
 
   const next = useCallback(() => {
     setDirection(1);

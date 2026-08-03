@@ -29,6 +29,48 @@ const PRIVILEGES = [
   { icon: Crown, title: "Priority Access", desc: "VIP entry to special festivals and donor events" },
 ];
 
+// The donation hub carousel shows each seva's own designed banner (same ones
+// used at the top of the seva pages), linking through to the seva itself —
+// instead of the home page hero banners.
+const SEVA_SLIDES = [
+  {
+    src: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785586948250-1785586945893-Gau-banner-desk.webp",
+    mobileSrc: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785586947654-1785586945558-Gau-banner-mob.webp",
+    title: "Gau Seva",
+    linkUrl: "/gau-seva",
+  },
+  {
+    src: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785586501452-1785586500800-annadan-banner-desk.webp",
+    mobileSrc: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785584926984-1785584925444-annadan-hero-mob.webp",
+    title: "Anna Daan Seva",
+    linkUrl: "/anna-daan-seva",
+  },
+  {
+    src: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785578235628-1785578235168-ChatGPTImageAug12026023314PM.webp",
+    mobileSrc: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785578443691-1785578442854-ChatGPTImageAug12026032944PM.webp",
+    title: "Gita Daan Seva",
+    linkUrl: "/gita-daan-seva",
+  },
+  {
+    src: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785573838202-1785573837372-ChatGPTImageAug12026021301PM.webp",
+    mobileSrc: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785580143643-1785580142535-vastraheromob.webp",
+    title: "Vastra & Alankara Seva",
+    linkUrl: "/alankara-vastra-seva",
+  },
+  {
+    src: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785579870156-1785579868902-sftbanner.webp",
+    mobileSrc: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785579869625-1785579868485-sft-seva-mob.webp",
+    title: "Square Foot Seva",
+    linkUrl: "/sqft-seva-campaign",
+  },
+  {
+    src: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785588189215-1785588187426-brick-hero-desk.webp",
+    mobileSrc: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785588190376-1785588188370-brick-hero-mob.webp",
+    title: "Brick Seva",
+    linkUrl: "/brick-seva-campaign",
+  },
+];
+
 export default function DonateHubPage() {
   const [overview, setOverview] = useState<OverviewStats | null>(null);
 
@@ -47,7 +89,7 @@ export default function DonateHubPage() {
         {/* ══ HERO — common to all donations, no seva-specific numbers ══ */}
         <section className="relative overflow-hidden pt-[88px] md:pt-[104px] rounded-b-3xl">
           <div className="relative w-full">
-            <TempleCarousel />
+            <TempleCarousel slides={SEVA_SLIDES} fetchApiBanners={false} />
             <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,hsl(220,85%,8%,0.55)_0%,hsl(220,85%,7%,0.92)_100%)]" />
           </div>
           <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-end px-4 pb-10 text-center md:pb-14">
