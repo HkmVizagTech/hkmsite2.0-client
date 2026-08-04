@@ -87,37 +87,8 @@ export default function DonateHubPage() {
     <PageLayout>
       <main className="bg-white">
         {/* ══ HERO — common to all donations, no seva-specific numbers ══ */}
-        <section className="relative overflow-hidden pt-[88px] md:pt-[104px] rounded-b-3xl">
-          <div className="relative w-full">
-            <TempleCarousel slides={SEVA_SLIDES} fetchApiBanners={false} />
-            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,hsl(220,85%,8%,0.55)_0%,hsl(220,85%,7%,0.92)_100%)]" />
-          </div>
-          <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-end px-4 pb-10 text-center md:pb-14">
-            <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-background/25 bg-background/10 px-4 py-1.5 text-xs font-semibold tracking-wide text-background backdrop-blur-md">
-              🪔 Seva &amp; Devotion
-            </span>
-            <h1 className="mb-3 font-heading text-3xl font-bold leading-tight text-background md:text-5xl">
-              Support Hare Krishna Vaikuntham
-            </h1>
-            <p className="mb-7 max-w-xl text-sm text-background/85 md:text-base">
-              Every offering — a brick, a plate of prasadam, a Bhagavad Gita placed in someone&apos;s
-              hands — is an act of devotion that sustains this mission.
-            </p>
-            <div className="pointer-events-auto flex flex-wrap items-center justify-center gap-3">
-              <a
-                href="#sevas"
-                className="inline-flex items-center gap-2 rounded-full bg-gradient-gold px-8 py-3.5 text-sm font-bold text-[hsl(220,60%,12%)] shadow-gold transition-transform hover:-translate-y-0.5 md:text-base"
-              >
-                🪔 Choose a Seva
-              </a>
-              <Link
-                href="/contact"
-                className="inline-flex items-center gap-2 rounded-full border border-background/40 bg-background/10 px-8 py-3.5 text-sm font-semibold text-background backdrop-blur-md transition-colors hover:bg-background/20 md:text-base"
-              >
-                Talk to Us
-              </Link>
-            </div>
-          </div>
+        <section className="overflow-hidden pt-[88px] md:pt-[104px]">
+          <TempleCarousel slides={SEVA_SLIDES} fetchApiBanners={false} />
         </section>
 
         {/* ══ OTHER SEVAS GRID ══ */}
