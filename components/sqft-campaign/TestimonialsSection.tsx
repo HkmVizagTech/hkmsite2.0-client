@@ -72,7 +72,7 @@ export default function TestimonialsSection({ config = SQFT_CAMPAIGN }: { config
   };
 
   return (
-    <section className="bg-white py-12 md:py-16">
+    <section className="bg-white dark:bg-background py-12 md:py-16">
       <div className="container mx-auto max-w-7xl px-4">
         <Ornament className="mb-6" />
         <div className="mb-10 flex items-end justify-between gap-4">

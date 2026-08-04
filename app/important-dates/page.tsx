@@ -55,7 +55,7 @@ export default function ImportantDatesPage() {
         breadcrumb="Important Dates"
       />
 
-      <section className="py-12 md:py-16 bg-white">
+      <section className="py-12 md:py-16 bg-white dark:bg-background">
         <div className="container mx-auto px-4 max-w-5xl">
           {next && (
             <motion.div

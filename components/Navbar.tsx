@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Phone, Mail, Sun, Moon, Clock, Heart, Home, User, Utensils, Info } from "lucide-react";
+import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import ISKLogo from "@/assets/ISKCONGambheeramLogo.jpeg";
 import HKVTLogo from "@/assets/HKVTLogo.png";
@@ -77,16 +78,12 @@ const Navbar = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Persist theme choice — previously the toggle reset to light on every
-  // navigation because this state remounts per page (colour "inversion" bug).
-  const [darkMode, setDarkMode] = useState(false);
-
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem("hkm-theme");
-      if (stored === "dark") setDarkMode(true);
-    } catch {}
-  }, []);
+  // Theme handled by next-themes (ThemeProvider in the root layout) — it
+  // persists to localStorage ("hkm-theme"), follows the system preference
+  // until overridden, and applies the `dark` class before first paint so the
+  // page never flashes the wrong theme.
+  const { resolvedTheme, setTheme } = useTheme();
+  const darkMode = resolvedTheme === "dark";
   const pathname = usePathname();
 
   useEffect(() => {
@@ -100,12 +97,7 @@ const Navbar = () => {
     window.scrollTo(0, 0);
   }, [pathname]);
 
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", darkMode);
-    try {
-      localStorage.setItem("hkm-theme", darkMode ? "dark" : "light");
-    } catch {}
-  }, [darkMode]);
+  const toggleTheme = () => setTheme(darkMode ? "light" : "dark");
 
   return (
     <>
@@ -118,7 +110,7 @@ const Navbar = () => {
             animate={{ y: 0 }}
             exit={{ y: -40, opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed top-0 left-0 right-0 z-[60] bg-gradient-navy text-primary-foreground"
+            className="fixed top-0 left-0 right-0 z-[60] bg-gradient-navy text-white"
           >
             <div className="container mx-auto flex h-8 items-center justify-between px-3 text-[10px] md:h-10 md:px-4 md:text-xs">
               <div className="flex items-center gap-4">
@@ -154,8 +146,8 @@ const Navbar = () => {
         animate={{ y: 0 }}
         className={`fixed left-0 right-0 z-50 transition-all duration-500 ${
           scrolled
-            ? "top-2 mx-2 md:mx-8 rounded-2xl bg-white shadow-elevated border border-border/50"
-            : "top-8 md:top-10 bg-white border-b border-border/40"
+            ? "top-2 mx-2 md:mx-8 rounded-2xl bg-white dark:bg-card shadow-elevated border border-border/50"
+            : "top-8 md:top-10 bg-white dark:bg-card border-b border-border/40"
         }`}
       >
         <div className={`container mx-auto flex items-center justify-between ${
@@ -227,7 +219,7 @@ const Navbar = () => {
 
           <div className="hidden lg:flex items-center gap-1.5">
             <button
-              onClick={() => setDarkMode(!darkMode)}
+              onClick={toggleTheme}
               className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition-all"
               aria-label="Toggle dark mode"
             >
@@ -235,7 +227,7 @@ const Navbar = () => {
             </button>
             <Button
               variant="default"
-              className="rounded-full px-4 bg-gradient-ocean text-primary-foreground border-0 hover:opacity-90"
+              className="rounded-full px-4 bg-gradient-ocean text-white border-0 hover:opacity-90"
               asChild
             >
               <Link href="/donate">
@@ -245,12 +237,19 @@ const Navbar = () => {
             </Button>
           </div>
 
-          {/* Mobile: Donate Now button — menu handled by bottom nav More button */}
-          <div className="lg:hidden flex items-center">
+          {/* Mobile: Donate Now button + theme toggle — menu handled by bottom nav More button */}
+          <div className="lg:hidden flex items-center gap-1.5">
+            <button
+              onClick={toggleTheme}
+              className="flex h-[30px] w-[30px] items-center justify-center rounded-full border border-border text-muted-foreground hover:text-primary hover:border-primary transition-all"
+              aria-label="Toggle dark mode"
+            >
+              {darkMode ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
+            </button>
             <Button
               variant="default"
               size="sm"
-              className="rounded-full h-[30px] px-3 text-[11px] bg-gradient-ocean text-primary-foreground border-0 hover:opacity-90"
+              className="rounded-full h-[30px] px-3 text-[11px] bg-gradient-ocean text-white border-0 hover:opacity-90"
               asChild
             >
               <Link href="/donate">
@@ -270,7 +269,7 @@ const Navbar = () => {
               animate={{ height: "auto" }}
               exit={{ height: 0 }}
               transition={{ duration: 0.25, ease: "easeInOut" }}
-              className="lg:hidden bg-white backdrop-blur-md border-t border-border overflow-hidden rounded-b-2xl"
+              className="lg:hidden bg-white dark:bg-card backdrop-blur-md border-t border-border overflow-hidden rounded-b-2xl"
             >
               <div className="container mx-auto px-4 py-4 flex flex-col gap-1">
                 {navItems.map((item) => (
@@ -286,9 +285,16 @@ const Navbar = () => {
                     {item.label}
                   </Link>
                 ))}
+                <button
+                  onClick={toggleTheme}
+                  className="mt-2 flex items-center justify-center gap-2 rounded-full border border-border px-4 py-3 font-medium text-foreground transition-colors hover:text-primary hover:border-primary"
+                >
+                  {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                  {darkMode ? "Light Mode" : "Dark Mode"}
+                </button>
                 <Button
                   variant="default"
-                  className="mt-2 rounded-full bg-gradient-ocean text-primary-foreground border-0"
+                  className="mt-2 rounded-full bg-gradient-ocean text-white border-0"
                   asChild
                 >
                   <Link href="/donate">
@@ -303,7 +309,7 @@ const Navbar = () => {
       </motion.nav>
 
       {/* ── Fixed bottom navigation bar — mobile only ── */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-border shadow-[0_-2px_12px_rgba(0,0,0,0.08)]">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-card border-t border-border shadow-[0_-2px_12px_rgba(0,0,0,0.08)]">
         <div className="flex items-stretch">
           {bottomNavItems.map((item) => {
             const Icon = item.icon;

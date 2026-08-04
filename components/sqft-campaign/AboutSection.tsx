@@ -14,7 +14,7 @@ interface AboutSectionProps {
 
 export default function AboutSection({ aboutImage, scrollToDonate, config = SQFT_CAMPAIGN }: AboutSectionProps) {
   return (
-    <section className="bg-white py-12 md:py-16">
+    <section className="bg-white dark:bg-background py-12 md:py-16">
       <div className="container mx-auto max-w-5xl px-4">
         <Ornament className="mb-6" />
         <motion.div

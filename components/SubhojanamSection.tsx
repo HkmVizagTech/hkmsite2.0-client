@@ -45,12 +45,12 @@ const SubhojanamSection = () => {
             <p className="mb-4 text-sm font-medium uppercase tracking-[0.2em] text-[hsl(var(--gold))]">
               Subhojanam · Anna Daan
             </p>
-            <h2 className="mb-5 font-heading text-3xl font-bold leading-[1.15] text-background md:text-5xl">
+            <h2 className="mb-5 font-heading text-3xl font-bold leading-[1.15] text-white md:text-5xl">
               No One Should Go{" "}
               <em className="font-serif-display italic text-[hsl(var(--gold))]">Hungry</em>{" "}
               Within Our Reach
             </h2>
-            <p className="mb-8 max-w-xl leading-relaxed text-background/85">
+            <p className="mb-8 max-w-xl leading-relaxed text-white/85">
               Through Subhojanam, we serve fresh, sanctified mid-day meals to school children and
               the underprivileged across Visakhapatnam — every single day. Your monthly support
               sustains this uninterrupted seva.
@@ -66,7 +66,7 @@ const SubhojanamSection = () => {
             {impact.map((s) => (
               <div key={s.label}>
                 <b className="block text-3xl font-bold leading-none text-[hsl(var(--gold))] md:text-4xl">{s.value}</b>
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-background/70">{s.label}</span>
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-white/70">{s.label}</span>
               </div>
             ))}
           </motion.div>
@@ -82,7 +82,7 @@ const SubhojanamSection = () => {
                 <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[hsl(42,92%,56%,0.25)]">
                   <Check className="h-3 w-3 text-[hsl(var(--gold))]" />
                 </span>
-                <span className="text-xs text-background/85 md:text-sm">{b}</span>
+                <span className="text-xs text-white/85 md:text-sm">{b}</span>
               </div>
             ))}
           </motion.div>

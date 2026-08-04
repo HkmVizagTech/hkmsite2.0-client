@@ -57,11 +57,11 @@ interface DonationFormSectionProps {
 }
 
 const inputWrapClass =
-  "relative flex items-center rounded-lg border border-slate-300 bg-white focus-within:border-gold transition-colors";
+  "relative flex items-center rounded-lg border border-slate-300 bg-white dark:bg-card focus-within:border-gold transition-colors";
 const inputClass =
   "h-10 w-full bg-transparent pl-9 pr-3 text-sm text-foreground outline-none placeholder:text-muted-foreground";
 const labelClass = "mb-1 block text-[11px] font-medium text-muted-foreground";
-const addonBoxClass = "rounded-lg border border-slate-200 bg-white px-3 py-2";
+const addonBoxClass = "rounded-lg border border-slate-200 bg-white dark:bg-card px-3 py-2";
 
 // Preset quantities: row 1 = small (1–4), row 2 = bulk (11, 21, 51, 108).
 const UNIT_PRESETS = [1, 2, 3, 4, 11, 21, 51, 108];
@@ -154,7 +154,7 @@ export default function DonationFormSection({
   };
 
   return (
-    <section id="donate" className="scroll-mt-24 bg-white py-10 md:py-16">
+    <section id="donate" className="scroll-mt-24 bg-white dark:bg-background py-10 md:py-16">
       <div className="container mx-auto max-w-4xl px-4">
         <Ornament className="mb-4" />
         <div className="mb-6 text-center">
@@ -174,7 +174,7 @@ export default function DonationFormSection({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-elevated"
+          className="overflow-hidden rounded-[28px] border border-slate-200 bg-white dark:bg-card shadow-elevated"
         >
           {/* Amount summary strip */}
           <div className="flex items-center justify-between gap-3 bg-gradient-gold px-6 py-4 sm:px-8">
@@ -207,7 +207,7 @@ export default function DonationFormSection({
                     className={`rounded-lg border px-2 py-2 text-center transition-colors ${
                       !useCustom && !isCustomSqft && sqftCount === n
                         ? "border-gold bg-gold/10"
-                        : "border-slate-300 bg-white hover:border-gold/60"
+                        : "border-slate-300 bg-white dark:bg-card hover:border-gold/60"
                     }`}
                   >
                     <span className="block text-base font-bold text-primary sm:text-lg">{n}</span>
@@ -224,7 +224,7 @@ export default function DonationFormSection({
               {/* Other quantity — type any number of units */}
               <div
                 className={`flex items-center gap-2 rounded-lg border px-3 transition-colors ${
-                  isCustomSqft ? "border-gold bg-gold/5" : "border-dashed border-slate-300 bg-white focus-within:border-gold"
+                  isCustomSqft ? "border-gold bg-gold/5" : "border-dashed border-slate-300 bg-white dark:bg-card focus-within:border-gold"
                 }`}
               >
                 <label htmlFor="custom-sqft" className="shrink-0 text-xs font-medium text-muted-foreground">
@@ -257,7 +257,7 @@ export default function DonationFormSection({
               {/* Other rupee amount */}
               <div
                 className={`flex items-center gap-3 rounded-lg border px-3 transition-colors ${
-                  useCustom ? "border-gold bg-gold/5" : "border-dashed border-slate-300 bg-white focus-within:border-gold"
+                  useCustom ? "border-gold bg-gold/5" : "border-dashed border-slate-300 bg-white dark:bg-card focus-within:border-gold"
                 }`}
               >
                 <label htmlFor="custom-amount" className="shrink-0 text-xs font-medium text-muted-foreground">
@@ -412,7 +412,7 @@ export default function DonationFormSection({
                         required
                         value={form.addressLine}
                         onChange={(e) => setForm({ ...form, addressLine: e.target.value })}
-className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs outline-none focus:border-gold"
+className="w-full rounded-lg border border-slate-300 bg-white dark:bg-card px-3 py-2 text-xs outline-none focus:border-gold"
                           placeholder="Door / flat no. & area, street *"
                       />
                       <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
@@ -426,7 +426,7 @@ className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs 
                             onChange={(e) =>
                               setForm({ ...form, pincode: e.target.value.replace(/[^\d]/g, "").slice(0, 6) })
                             }
-                            className="h-9 w-full rounded-lg border border-slate-300 bg-white px-3 pr-8 text-xs outline-none focus:border-gold"
+                            className="h-9 w-full rounded-lg border border-slate-300 bg-white dark:bg-card px-3 pr-8 text-xs outline-none focus:border-gold"
                             placeholder="PIN code *"
                           />
                           {pinLoading && (
@@ -438,7 +438,7 @@ className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs 
                           required
                           value={form.city}
                           onChange={(e) => setForm({ ...form, city: e.target.value })}
-                          className="h-9 w-full rounded-lg border border-slate-300 bg-white px-3 text-xs outline-none focus:border-gold"
+                          className="h-9 w-full rounded-lg border border-slate-300 bg-white dark:bg-card px-3 text-xs outline-none focus:border-gold"
                           placeholder="City *"
                         />
                         <input
@@ -446,7 +446,7 @@ className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs 
                           required
                           value={form.state}
                           onChange={(e) => setForm({ ...form, state: e.target.value })}
-                          className="h-9 w-full rounded-lg border border-slate-300 bg-white px-3 text-xs outline-none focus:border-gold"
+                          className="h-9 w-full rounded-lg border border-slate-300 bg-white dark:bg-card px-3 text-xs outline-none focus:border-gold"
                           placeholder="State *"
                         />
                       </div>
@@ -481,7 +481,7 @@ className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs 
                     placeholder="PAN number *"
                     value={form.panNumber}
                     onChange={(e) => setForm({ ...form, panNumber: e.target.value.toUpperCase() })}
-                    className="mt-2 h-9 w-full rounded-lg border border-slate-300 bg-white px-3 text-xs uppercase outline-none focus:border-gold"
+                    className="mt-2 h-9 w-full rounded-lg border border-slate-300 bg-white dark:bg-card px-3 text-xs uppercase outline-none focus:border-gold"
                   />
                 )}
               </div>
@@ -498,7 +498,7 @@ className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs 
                   });
                 }}
                 className={`flex w-full items-center gap-3 rounded-lg border px-3 py-2.5 text-left transition-colors ${
-                  monthly ? "border-gold bg-gold/10" : "border-slate-300 bg-white hover:border-gold/60"
+                  monthly ? "border-gold bg-gold/10" : "border-slate-300 bg-white dark:bg-card hover:border-gold/60"
                 }`}
               >
                 <span

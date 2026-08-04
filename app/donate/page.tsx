@@ -85,7 +85,7 @@ export default function DonateHubPage() {
 
   return (
     <PageLayout>
-      <main className="bg-white">
+      <main className="bg-white dark:bg-background">
         {/* ══ HERO — common to all donations, no seva-specific numbers ══ */}
         <section className="overflow-hidden pt-[88px] md:pt-[104px]">
           <TempleCarousel slides={SEVA_SLIDES} fetchApiBanners={false} />
@@ -122,7 +122,7 @@ export default function DonateHubPage() {
                         className="object-cover transition-transform duration-700 group-hover:scale-[1.06]"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[hsl(220,85%,10%,0.78)] via-transparent to-transparent" />
-                      <h3 className="absolute bottom-4 left-5 font-heading text-xl font-bold text-background">
+                      <h3 className="absolute bottom-4 left-5 font-heading text-xl font-bold text-white">
                         {seva.icon} {seva.title}
                       </h3>
                     </div>
@@ -202,7 +202,7 @@ export default function DonateHubPage() {
 
         {/* ══ LIVE DONOR WALL — real, cross-seva ══ */}
         {overview && overview.donors.length > 0 && (
-          <section className="border-t border-border bg-white py-16">
+          <section className="border-t border-border bg-white dark:bg-background py-16">
             <div className="container mx-auto px-4">
               <div className="mb-10 flex items-center justify-center gap-2">
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-green-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-green-600">
@@ -269,10 +269,10 @@ export default function DonateHubPage() {
         {/* ══ BOTTOM CTA ══ */}
         <section className="relative overflow-hidden bg-gradient-ocean py-16 text-center md:py-20">
           <div className="container mx-auto px-4">
-            <h2 className="mb-3 font-heading text-2xl font-bold text-primary-foreground md:text-4xl">
+            <h2 className="mb-3 font-heading text-2xl font-bold text-white md:text-4xl">
               Be Part of Building Vizag&apos;s Grandest Temple
             </h2>
-            <p className="mx-auto mb-8 max-w-xl text-primary-foreground/85">
+            <p className="mx-auto mb-8 max-w-xl text-white/85">
               Every contribution — big or small — brings us closer to completing this divine vision for Lord Krishna.
             </p>
             <Link
@@ -281,7 +281,7 @@ export default function DonateHubPage() {
             >
               <Heart className="h-4 w-4 fill-current" /> Donate Now
             </Link>
-            <p className="mt-4 flex items-center justify-center gap-1.5 text-xs text-primary-foreground/70">
+            <p className="mt-4 flex items-center justify-center gap-1.5 text-xs text-white/70">
               <ShieldCheck className="h-3.5 w-3.5" /> Secured by Razorpay · 80G Tax Exempt
             </p>
           </div>

@@ -263,7 +263,7 @@ export default function SpecialOccasionClient() {
 
   return (
     <PageLayout>
-      <main className="bg-white">
+      <main className="bg-white dark:bg-background">
         {/* ---------- Hero — fully-designed banners, native aspect ratio ---------- */}
         <section className="relative overflow-hidden pt-20">
           <button onClick={scrollToForm} className="relative block w-full text-left" aria-label="Sponsor a seva for your special occasion">
@@ -310,7 +310,7 @@ export default function SpecialOccasionClient() {
         </section>
 
         {/* ---------- Occasion picker ---------- */}
-        <section className="relative bg-white py-12 md:py-16" style={{ backgroundImage: "radial-gradient(ellipse 70% 50% at 50% 0%, hsl(42 92% 56% / 0.06), transparent)" }}>
+        <section className="relative bg-white dark:bg-background py-12 md:py-16" style={{ backgroundImage: "radial-gradient(ellipse 70% 50% at 50% 0%, hsl(42 92% 56% / 0.06), transparent)" }}>
           <div className="container mx-auto max-w-4xl px-4 text-center">
             <Reveal>
               <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.3em] text-gold">Step One</p>
@@ -345,7 +345,7 @@ export default function SpecialOccasionClient() {
         </section>
 
         {/* ---------- Why celebrate with seva ---------- */}
-        <section className="relative overflow-hidden bg-white py-12 md:py-16">
+        <section className="relative overflow-hidden bg-white dark:bg-background py-12 md:py-16">
           <div aria-hidden className="absolute inset-0" style={{ backgroundImage: "radial-gradient(circle at 0% 30%, hsl(42 92% 56% / 0.05), transparent 35%), radial-gradient(circle at 100% 70%, hsl(220 90% 20% / 0.05), transparent 35%)" }} />
           <div className="container relative mx-auto max-w-4xl px-4 text-center">
             <Reveal>
@@ -439,7 +439,7 @@ export default function SpecialOccasionClient() {
         </section>
 
         {/* ---------- Donation form — gold-framed offering panel ---------- */}
-        <section id="occasion-form" className="relative scroll-mt-20 overflow-hidden bg-white py-12 md:py-16" style={{ backgroundImage: "radial-gradient(ellipse 60% 50% at 50% 100%, hsl(42 92% 56% / 0.07), transparent)" }}>
+        <section id="occasion-form" className="relative scroll-mt-20 overflow-hidden bg-white dark:bg-background py-12 md:py-16" style={{ backgroundImage: "radial-gradient(ellipse 60% 50% at 50% 100%, hsl(42 92% 56% / 0.07), transparent)" }}>
           <div className="container mx-auto max-w-2xl px-4">
             <Reveal>
               <div className="mb-10 text-center">
@@ -553,7 +553,7 @@ export default function SpecialOccasionClient() {
         </section>
 
         {/* ---------- FAQ ---------- */}
-        <section className="bg-white py-12 md:py-16">
+        <section className="bg-white dark:bg-background py-12 md:py-16">
           <div className="container mx-auto max-w-3xl px-4">
             <Reveal>
               <div className="mb-8 text-center">

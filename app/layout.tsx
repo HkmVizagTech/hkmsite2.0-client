@@ -6,6 +6,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { Toaster } from "@/components/ui/toaster";
 import ReduxProvider from "@/components/ReduxProvider";
 import MetaPixel from "@/components/MetaPixel";
+import ThemeProvider from "@/components/ThemeProvider";
 
 
 const poppins = Poppins({
@@ -129,10 +130,12 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
         />
         <ReduxProvider>
-          <AuthProvider>
-            {children}
-            <Toaster />
-          </AuthProvider>
+          <ThemeProvider>
+            <AuthProvider>
+              {children}
+              <Toaster />
+            </AuthProvider>
+          </ThemeProvider>
         </ReduxProvider>
       </body>
     </html>

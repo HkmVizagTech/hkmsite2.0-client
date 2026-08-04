@@ -63,11 +63,11 @@ interface SevaStats {
 }
 
 const inputWrapClass =
-  "relative flex items-center rounded-lg border border-slate-300 bg-white focus-within:border-gold transition-colors";
+  "relative flex items-center rounded-lg border border-slate-300 bg-white dark:bg-card focus-within:border-gold transition-colors";
 const inputClass =
   "h-10 w-full bg-transparent pl-9 pr-3 text-sm text-foreground outline-none placeholder:text-muted-foreground";
 const labelClass = "mb-1 block text-[11px] font-medium text-muted-foreground";
-const addonBoxClass = "rounded-lg border border-slate-200 bg-white px-3 py-2";
+const addonBoxClass = "rounded-lg border border-slate-200 bg-white dark:bg-card px-3 py-2";
 
 function unitImpact(amount: number, config: SevaCampaignConfig): string | null {
   const unit = config.unit;
@@ -297,9 +297,9 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
 
   return (
     <PageLayout>
-      <main className="bg-white">
+      <main className="bg-white dark:bg-background">
         {/* ── Hero Banner (plain banner image — no content overlay) ── */}
-        <section className="bg-white pt-[88px] md:pt-[104px]">
+        <section className="bg-white dark:bg-background pt-[88px] md:pt-[104px]">
           <button
             type="button"
             onClick={scrollToDonate}
@@ -328,7 +328,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
         </section>
 
         {/* ── Donation Form ── */}
-        <section id="donate" ref={formRef} className="scroll-mt-24 bg-white py-8 md:py-12">
+        <section id="donate" ref={formRef} className="scroll-mt-24 bg-white dark:bg-background py-8 md:py-12">
           <div className="container mx-auto max-w-4xl px-4">
             <Ornament className="mb-4" />
             <div className="mb-6 text-center">
@@ -348,7 +348,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-elevated"
+              className="overflow-hidden rounded-[28px] border border-slate-200 bg-white dark:bg-card shadow-elevated"
             >
               {/* Amount summary strip */}
               <div className="flex items-center justify-between gap-3 bg-gradient-gold px-6 py-4 sm:px-8">
@@ -383,7 +383,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                         className={`rounded-lg border px-3 py-3 text-left transition-colors ${
                           !useCustom && tierIndex === i
                             ? "border-gold bg-gold/10"
-                            : "border-slate-300 bg-white hover:border-gold/60"
+                            : "border-slate-300 bg-white dark:bg-card hover:border-gold/60"
                         }`}
                       >
                         <span className="mb-1 block text-sm font-bold text-primary">{tier.label}</span>
@@ -400,7 +400,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                   {/* Custom amount */}
                   <div
                     className={`flex items-center gap-3 rounded-lg border px-3 transition-colors ${
-                      useCustom ? "border-gold bg-gold/5" : "border-dashed border-slate-300 bg-white focus-within:border-gold"
+                      useCustom ? "border-gold bg-gold/5" : "border-dashed border-slate-300 bg-white dark:bg-card focus-within:border-gold"
                     }`}
                   >
                     <label htmlFor="custom-amount" className="shrink-0 text-xs font-medium text-muted-foreground">
@@ -546,7 +546,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                           placeholder="PAN number *"
                           value={form.panNumber}
                           onChange={(e) => setForm({ ...form, panNumber: e.target.value.toUpperCase() })}
-                          className="mt-2 h-9 w-full rounded-lg border border-slate-300 bg-white px-3 text-xs uppercase outline-none focus:border-gold"
+                          className="mt-2 h-9 w-full rounded-lg border border-slate-300 bg-white dark:bg-card px-3 text-xs uppercase outline-none focus:border-gold"
                         />
                       )}
                     </div>
@@ -579,7 +579,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                       });
                     }}
                     className={`flex w-full items-center gap-3 rounded-lg border px-3 py-2.5 text-left transition-colors ${
-                      monthly ? "border-gold bg-gold/10" : "border-slate-300 bg-white hover:border-gold/60"
+                      monthly ? "border-gold bg-gold/10" : "border-slate-300 bg-white dark:bg-card hover:border-gold/60"
                     }`}
                   >
                     <span
@@ -637,7 +637,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
         </section>
 
         {/* ── About ── */}
-        <section className="bg-white py-12 md:py-16">
+        <section className="bg-white dark:bg-background py-12 md:py-16">
           <div className="container mx-auto max-w-5xl px-4">
             <Ornament className="mb-6" />
             <motion.div
@@ -681,7 +681,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
         </section>
 
         {/* ── Impact ── */}
-        <section className="bg-[radial-gradient(circle_at_top,_rgba(255,221,91,0.1),_transparent_45%)] bg-white py-12 md:py-16">
+        <section className="bg-[radial-gradient(circle_at_top,_rgba(255,221,91,0.1),_transparent_45%)] bg-white dark:bg-background py-12 md:py-16">
           <div className="container mx-auto max-w-6xl px-4">
             <Ornament className="mb-6" />
             <div className="mx-auto mb-10 max-w-2xl text-center">
@@ -714,7 +714,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
         </section>
 
         {/* ── What your donation does ── */}
-        <section className="bg-white py-12 md:py-16">
+        <section className="bg-white dark:bg-background py-12 md:py-16">
           <div className="container mx-auto max-w-5xl px-4">
             <Ornament className="mb-6" />
             <div className="mx-auto mb-10 max-w-2xl text-center">
@@ -790,7 +790,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
         </section>
 
         {/* ── Testimonials ── */}
-        <section className="bg-white py-12 md:py-16">
+        <section className="bg-white dark:bg-background py-12 md:py-16">
           <div className="container mx-auto max-w-7xl px-4">
             <Ornament className="mb-6" />
             <div className="mb-10 flex items-end justify-between gap-4">
@@ -859,7 +859,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
 
         {/* ── Recent devotees supporting this seva ── */}
         {stats && stats.donors.length > 0 && (
-          <section className="bg-white py-12 md:py-16">
+          <section className="bg-white dark:bg-background py-12 md:py-16">
             <div className="container mx-auto max-w-5xl px-4">
               <Ornament className="mb-6" />
               <div className="mb-8 flex flex-col items-center justify-center gap-2 text-center">
@@ -899,7 +899,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
 
         {/* ── Gallery ── */}
         {config.gallery.photos.length > 0 && (
-          <section className="bg-white py-12 md:py-16">
+          <section className="bg-white dark:bg-background py-12 md:py-16">
             <div className="container mx-auto max-w-6xl px-4">
               <Ornament className="mb-6" />
               <div className="mb-8 flex items-end justify-between gap-4">
