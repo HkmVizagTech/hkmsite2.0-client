@@ -391,7 +391,7 @@ export default function SqftCampaignClient({
 
   return (
     <PageLayout>
-      <main className="bg-white">
+      <main className="bg-white dark:bg-background">
         {/* Hero section — full‑width banner */}
         <HeroSection
           scrollToDonate={scrollToDonate}

@@ -14,7 +14,7 @@ export default function TempleFeaturesSection({ config = SQFT_CAMPAIGN }: { conf
   useInViewVideo(sectionRef);
 
   return (
-    <section ref={sectionRef} className="bg-white py-12 md:py-16">
+    <section ref={sectionRef} className="bg-white dark:bg-background py-12 md:py-16">
       <div className="container mx-auto max-w-5xl px-4">
         <Ornament className="mb-6" />
         <div className="mb-10 text-center">

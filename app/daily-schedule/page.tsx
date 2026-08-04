@@ -58,7 +58,7 @@ export default function DailySchedulePage() {
         breadcrumb="Daily Schedule"
         backgroundImage="/assets/gallery-aarti.jpg"
       />
-      <section className="py-12 md:py-16 bg-white" ref={ref}>
+      <section className="py-12 md:py-16 bg-white dark:bg-background" ref={ref}>
         <div className="container mx-auto px-4">
           <div className="text-center mb-14">
             <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">Temple Timings</p>
@@ -102,7 +102,7 @@ export default function DailySchedulePage() {
           </div>
         </div>
       </section>
-      <section className="py-12 md:py-16 bg-white">
+      <section className="py-12 md:py-16 bg-white dark:bg-background">
         <div className="container mx-auto px-4">
           <div className="text-center mb-14">
             <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">Weekly Programs</p>
@@ -143,7 +143,7 @@ export default function DailySchedulePage() {
           </div>
         </div>
       </section>
-      <section className="py-12 md:py-16 bg-white">
+      <section className="py-12 md:py-16 bg-white dark:bg-background">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-10">
             <div>
@@ -193,14 +193,14 @@ export default function DailySchedulePage() {
             viewport={{ once: true }}
             transition={{ duration: 1 }}
           >
-            <p className="text-primary-foreground/70 text-sm tracking-[0.2em] uppercase mb-6">The Maha Mantra</p>
-            <h2 className="font-heading text-3xl md:text-5xl font-bold text-primary-foreground mb-6 leading-snug">
+            <p className="text-white/70 text-sm tracking-[0.2em] uppercase mb-6">The Maha Mantra</p>
+            <h2 className="font-heading text-3xl md:text-5xl font-bold text-white mb-6 leading-snug">
               Hare Krishna Hare Krishna<br />
               Krishna Krishna Hare Hare<br />
               Hare Rama Hare Rama<br />
               Rama Rama Hare Hare
             </h2>
-            <p className="text-primary-foreground/80 text-lg leading-relaxed">
+            <p className="text-white/80 text-lg leading-relaxed">
               &quot;Simply by chanting the Holy Name of the Lord, one can attain the highest perfection of life.&quot;
               <br />
               <span className="text-accent text-sm mt-2 inline-block">— Srila Prabhupada</span>

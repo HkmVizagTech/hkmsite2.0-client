@@ -10,7 +10,7 @@ const FounderSection = () => {
   const inView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="founder" className="py-12 md:py-16 bg-white">
+    <section id="founder" className="py-12 md:py-16 bg-white dark:bg-background">
       <div className="container mx-auto px-4" ref={ref}>
         <motion.div
           initial={{ opacity: 0, y: 30 }}

@@ -88,7 +88,8 @@ export default function EventsPage() {
     });
     fetch(`${(process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080"}/important-dates`, { credentials: 'include' })
       .then((res) => res.json())
-      .then((data) => setImportantDates(Array.isArray(data) ? data : data.dates || []));
+      .then((data) => setImportantDates(Array.isArray(data) ? data : data.dates || []))
+      .catch(() => {});
   }, []);
 
   const nextEvent = events[0];
@@ -107,7 +108,7 @@ export default function EventsPage() {
       {
 }
       {!loading && nextEvent && (
-        <section className="py-12 md:py-16 bg-white">
+        <section className="py-12 md:py-16 bg-white dark:bg-background">
           <div className="container mx-auto px-4">
             <div className="max-w-5xl mx-auto">
               <EventCard event={nextEvent} href={`/events/${nextEvent._id || nextEvent.title}`} />
@@ -121,7 +122,7 @@ export default function EventsPage() {
 
       {
 }
-      <section className="py-12 bg-white">
+      <section className="py-12 bg-white dark:bg-background">
         <div className="container mx-auto px-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
             <div>
@@ -146,7 +147,7 @@ export default function EventsPage() {
 
       {
 }
-      <section className="py-12 md:py-16 bg-white">
+      <section className="py-12 md:py-16 bg-white dark:bg-background">
         <div className="container mx-auto px-4">
           <div className="text-center mb-14">
             <p className="text-primary text-sm tracking-[0.2em] uppercase mb-4 font-medium">Vaishnava Calendar</p>
@@ -196,7 +197,7 @@ export default function EventsPage() {
 
       {
 }
-      <section className="py-12 md:py-16 bg-white">
+      <section className="py-12 md:py-16 bg-white dark:bg-background">
         <div className="container mx-auto px-4 text-center max-w-2xl">
           <Bell className="w-12 h-12 text-primary mx-auto mb-6" />
           <h2 className="font-heading text-3xl font-bold text-foreground mb-4">

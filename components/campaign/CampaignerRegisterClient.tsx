@@ -132,7 +132,7 @@ export default function CampaignerRegisterClient({ campaignType }: { campaignTyp
 
   return (
     <PageLayout>
-      <main className="bg-white pt-20">
+      <main className="bg-white dark:bg-background pt-20">
         <section className="bg-[hsl(220,90%,12%)] py-12 text-center md:py-16">
           <div className="container mx-auto max-w-2xl px-4">
             <Megaphone className="mx-auto mb-3 h-10 w-10 text-gold" />

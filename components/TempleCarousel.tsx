@@ -207,7 +207,7 @@ const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true }: TempleCa
   );
 
   return (
-    <section className="w-full bg-white select-none">
+    <section className="w-full bg-white dark:bg-background select-none">
       <div
         ref={carouselRef}
         onDragStart={(e) => e.preventDefault()}

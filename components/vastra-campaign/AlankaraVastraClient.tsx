@@ -345,10 +345,10 @@ export default function AlankaraVastraClient() {
 
   return (
     <PageLayout>
-      <main className="bg-white">
+      <main className="bg-white dark:bg-background">
         {/* ── Hero Banner ── */}
         {config.bannerImage ? (
-          <section className="bg-white pt-[88px] md:pt-[104px]">
+          <section className="bg-white dark:bg-background pt-[88px] md:pt-[104px]">
             <button
               type="button"
               onClick={scrollToDonate}
@@ -426,7 +426,7 @@ export default function AlankaraVastraClient() {
         )}
 
         {/* ── Donation Form ── */}
-        <section id="donate" ref={formRef} className="scroll-mt-24 bg-white py-8 md:py-12">
+        <section id="donate" ref={formRef} className="scroll-mt-24 bg-white dark:bg-background py-8 md:py-12">
           <div className="container mx-auto max-w-4xl px-4">
             <Ornament className="mb-4" />
             <div className="mb-6 text-center">
@@ -446,7 +446,7 @@ export default function AlankaraVastraClient() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="overflow-hidden rounded-[28px] border border-border bg-white shadow-elevated"
+              className="overflow-hidden rounded-[28px] border border-border bg-white dark:bg-card shadow-elevated"
             >
               {/* Amount summary strip */}
               <div className="flex items-center justify-between gap-3 bg-gradient-gold px-6 py-4 sm:px-8">
@@ -730,7 +730,7 @@ export default function AlankaraVastraClient() {
         <DonorPrivilegesSection scrollToDonate={scrollToDonate} config={config} />
 
         {/* ── Deity Alankara Photos ── */}
-        <section className="bg-white py-12 md:py-16">
+        <section className="bg-white dark:bg-background py-12 md:py-16">
           <div className="container mx-auto max-w-6xl px-4">
             <Ornament className="mb-6" />
             <div className="mb-8 flex items-end justify-between gap-4">

@@ -14,7 +14,7 @@ export default function HeroSection({ scrollToDonate, config }: HeroSectionProps
   const mobileSrc = config.bannerImageMobile || config.bannerImage || config.heroImage;
 
   return (
-    <section className="bg-white pt-[88px] md:pt-[104px]">
+    <section className="bg-white dark:bg-background pt-[88px] md:pt-[104px]">
       {/* Whole banner is clickable — glides to the donation form */}
       <button
         type="button"

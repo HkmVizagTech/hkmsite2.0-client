@@ -25,7 +25,7 @@ const SevasSection = () => {
   };
 
   return (
-    <section id="sevas" className="bg-white py-12 md:py-16">
+    <section id="sevas" className="bg-white dark:bg-background py-12 md:py-16">
       <div className="container mx-auto px-4" ref={ref}>
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -62,7 +62,7 @@ const SevasSection = () => {
                   className="object-cover transition-transform duration-700 group-hover:scale-[1.06]"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[hsl(220,85%,10%,0.78)] via-transparent to-transparent" />
-                <h3 className="absolute bottom-4 left-5 font-heading text-xl font-bold text-background">
+                <h3 className="absolute bottom-4 left-5 font-heading text-xl font-bold text-white">
                   {seva.icon} {seva.title}
                 </h3>
               </div>

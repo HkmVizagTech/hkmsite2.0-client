@@ -22,7 +22,7 @@ const GalleryPreview = () => {
   const inView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section className="bg-white py-12 md:py-16" ref={ref}>
+    <section className="bg-white dark:bg-background py-12 md:py-16" ref={ref}>
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -57,7 +57,7 @@ const GalleryPreview = () => {
                 className="object-cover transition-transform duration-700 group-hover:scale-[1.07]"
               />
               <div className="absolute inset-0 flex items-end bg-gradient-to-t from-[hsl(220,85%,10%,0.72)] via-transparent to-transparent p-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                <p className="font-heading text-sm font-semibold text-background">{img.title}</p>
+                <p className="font-heading text-sm font-semibold text-white">{img.title}</p>
               </div>
             </motion.div>
           ))}

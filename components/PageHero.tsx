@@ -19,7 +19,7 @@ const PageHero = ({ title, subtitle, breadcrumb, backgroundImage }: PageHeroProp
       {backgroundImage && (
         <div className="absolute inset-0">
           <Image src={backgroundImage} alt="" fill sizes="100vw" className="object-cover" />
-          <div className="absolute inset-0 bg-foreground/70" />
+          <div className="absolute inset-0 bg-[hsl(220,60%,10%,0.7)]" />
         </div>
       )}
       {!backgroundImage && (
@@ -32,7 +32,7 @@ const PageHero = ({ title, subtitle, breadcrumb, backgroundImage }: PageHeroProp
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center justify-center gap-2 text-sm text-primary-foreground/70 mb-6"
+          className="flex items-center justify-center gap-2 text-sm text-white/70 mb-6"
         >
           <Link href="/" className="hover:text-accent transition-colors">Home</Link>
           <ChevronRight className="w-4 h-4" />
@@ -51,7 +51,7 @@ const PageHero = ({ title, subtitle, breadcrumb, backgroundImage }: PageHeroProp
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="font-heading text-4xl md:text-6xl font-bold text-primary-foreground mb-4"
+          className="font-heading text-4xl md:text-6xl font-bold text-white mb-4"
         >
           {title}
         </motion.h1>
@@ -61,7 +61,7 @@ const PageHero = ({ title, subtitle, breadcrumb, backgroundImage }: PageHeroProp
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.8 }}
-            className="text-primary-foreground/80 text-lg md:text-xl max-w-2xl mx-auto"
+            className="text-white/80 text-lg md:text-xl max-w-2xl mx-auto"
           >
             {subtitle}
           </motion.p>

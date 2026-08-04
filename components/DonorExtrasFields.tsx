@@ -14,7 +14,7 @@ export default function DonorExtrasFields({ sevakName, dob, onSevakNameChange, o
   const isAmber = variant === "amber";
   const wrapperCls = isAmber
     ? "relative flex items-center rounded-lg border border-amber-300 bg-white/90 shadow-sm focus-within:border-amber-500 transition-colors"
-    : "relative flex items-center rounded-lg border border-border bg-white focus-within:border-gold transition-colors";
+    : "relative flex items-center rounded-lg border border-border bg-white dark:bg-card focus-within:border-gold transition-colors";
   const labelCls = isAmber
     ? "mb-1 block text-[11px] font-semibold text-amber-900"
     : "mb-1 block text-[11px] font-medium text-muted-foreground";

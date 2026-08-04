@@ -100,7 +100,7 @@ export default function FounderPage() {
       />
 
      
-      <section className="py-12 md:py-16 bg-white">
+      <section className="py-12 md:py-16 bg-white dark:bg-background">
         <div className="container mx-auto px-4">
           <AnimatedSection>
             <div className="max-w-6xl mx-auto grid md:grid-cols-5 gap-12 items-start">
@@ -154,9 +154,9 @@ export default function FounderPage() {
             {achievements.map((a) => (
               <AnimatedSection key={a.label}>
                 <div className="text-center">
-                  <a.icon className="w-8 h-8 text-primary-foreground/70 mx-auto mb-3" />
-                  <div className="text-3xl font-bold text-primary-foreground mb-1">{a.value}</div>
-                  <p className="text-xs text-primary-foreground/70">{a.label}</p>
+                  <a.icon className="w-8 h-8 text-white/70 mx-auto mb-3" />
+                  <div className="text-3xl font-bold text-white mb-1">{a.value}</div>
+                  <p className="text-xs text-white/70">{a.label}</p>
                 </div>
               </AnimatedSection>
             ))}
@@ -165,7 +165,7 @@ export default function FounderPage() {
       </section>
 
      
-      <section className="py-12 md:py-16 bg-white">
+      <section className="py-12 md:py-16 bg-white dark:bg-background">
         <div className="container mx-auto px-4">
           <AnimatedSection>
             <SectionHeader label="Divine Qualities" title="The Qualities of a Pure Devotee" />
@@ -187,7 +187,7 @@ export default function FounderPage() {
       </section>
 
      
-      <section className="py-12 md:py-16 bg-white">
+      <section className="py-12 md:py-16 bg-white dark:bg-background">
         <div className="container mx-auto px-4">
           <AnimatedSection>
             <SectionHeader label="Milestone Timeline" title="A Life of Extraordinary Devotion" />
@@ -219,7 +219,7 @@ export default function FounderPage() {
       </section>
 
       
-      <section className="py-12 md:py-16 bg-white">
+      <section className="py-12 md:py-16 bg-white dark:bg-background">
         <div className="container mx-auto px-4">
           <AnimatedSection>
             <SectionHeader label="Amazing Facts" title="Facts About Srila Prabhupada" />
@@ -240,7 +240,7 @@ export default function FounderPage() {
       </section>
 
      
-      <section className="py-12 md:py-16 bg-white">
+      <section className="py-12 md:py-16 bg-white dark:bg-background">
         <div className="container mx-auto px-4">
           <AnimatedSection>
             <SectionHeader label="Sacred Literature" title="Timeless Teachings" />
@@ -265,11 +265,11 @@ export default function FounderPage() {
       <section className="py-24 bg-primary">
         <div className="container mx-auto px-4 text-center max-w-3xl">
           <AnimatedSection>
-            <p className="text-primary-foreground/60 text-sm tracking-[0.2em] uppercase mb-6">His Words</p>
-            <blockquote className="text-2xl md:text-3xl font-bold text-primary-foreground leading-relaxed mb-6">
+            <p className="text-white/60 text-sm tracking-[0.2em] uppercase mb-6">His Words</p>
+            <blockquote className="text-2xl md:text-3xl font-bold text-white leading-relaxed mb-6">
               &quot;I am not this body. I am a spirit soul, part and parcel of the Supreme Lord. My real business is to serve Him with love and devotion.&quot;
             </blockquote>
-            <p className="text-primary-foreground/70 font-medium">— Srila Prabhupada</p>
+            <p className="text-white/70 font-medium">— Srila Prabhupada</p>
           </AnimatedSection>
         </div>
       </section>

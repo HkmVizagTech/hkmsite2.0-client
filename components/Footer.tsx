@@ -41,10 +41,10 @@ const Footer = () => {
       <div className="bg-gradient-navy py-10">
         <div className="container mx-auto flex flex-col items-center justify-between gap-6 px-4 md:flex-row">
           <div>
-            <h3 className="text-2xl font-bold text-primary-foreground md:text-3xl">
+            <h3 className="text-2xl font-bold text-white md:text-3xl">
               Support the Temple Mission
             </h3>
-            <p className="mt-1 max-w-lg text-primary-foreground/80">
+            <p className="mt-1 max-w-lg text-white/80">
               Your generous contribution helps us serve prasadam, conduct festivals, and spread devotion.
             </p>
           </div>
@@ -64,18 +64,18 @@ const Footer = () => {
           sizes="100vw"
           className="object-cover object-center"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[hsl(220,90%,12%,0.25)] via-transparent to-foreground" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[hsl(220,90%,12%,0.25)] via-transparent to-[hsl(220,60%,10%)]" />
       </div>
 
-      <div className="bg-foreground pb-8 pt-16">
+      <div className="bg-[hsl(220,60%,10%)] pb-8 pt-16">
         <div className="container mx-auto px-4">
           <div className="mb-12 grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
             <div className="sm:col-span-2 lg:col-span-1">
               <div className="mb-5">
-                <span className="block text-xl font-bold leading-tight text-background">Hare Krishna Movement</span>
-                <span className="text-xs uppercase tracking-widest text-background/60">Visakhapatnam</span>
+                <span className="block text-xl font-bold leading-tight text-[hsl(210,30%,97%)]">Hare Krishna Movement</span>
+                <span className="text-xs uppercase tracking-widest text-[hsl(210,30%,97%)]/60">Visakhapatnam</span>
               </div>
-              <p className="mb-4 text-sm leading-relaxed text-background/50">
+              <p className="mb-4 text-sm leading-relaxed text-[hsl(210,30%,97%)]/50">
                 Chaitanya Bhavan, Hare Krishna Vaikuntam Cultural Centre,
                 <br />
                 IIM Rd, opp. Akshaya Patra Foundation, Gambhiram,
@@ -94,7 +94,7 @@ const Footer = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={social.label}
-                    className="flex h-10 w-10 items-center justify-center rounded-full bg-background/10 text-background/60 transition-all duration-300 hover:bg-primary hover:text-primary-foreground"
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-[hsl(210,30%,97%)]/60 transition-all duration-300 hover:bg-primary hover:text-primary-foreground"
                   >
                     <social.icon className="h-4 w-4" />
                   </a>
@@ -103,13 +103,13 @@ const Footer = () => {
             </div>
 
             <div>
-              <h4 className="relative mb-5 text-lg font-semibold text-background">
+              <h4 className="relative mb-5 text-lg font-semibold text-[hsl(210,30%,97%)]">
                 Daily Schedule
                 <span className="absolute -bottom-2 left-0 h-0.5 w-8 rounded-full bg-primary" />
               </h4>
               <div className="mt-4 space-y-2">
                 {scheduleItems.map((item) => (
-                  <div key={item} className="flex items-center gap-2 text-sm text-background/50">
+                  <div key={item} className="flex items-center gap-2 text-sm text-[hsl(210,30%,97%)]/50">
                     <Clock className="h-3 w-3 shrink-0" />
                     <span>{item}</span>
                   </div>
@@ -118,7 +118,7 @@ const Footer = () => {
             </div>
 
             <div>
-              <h4 className="relative mb-5 text-lg font-semibold text-background">
+              <h4 className="relative mb-5 text-lg font-semibold text-[hsl(210,30%,97%)]">
                 Quick Links
                 <span className="absolute -bottom-2 left-0 h-0.5 w-8 rounded-full bg-primary" />
               </h4>
@@ -127,7 +127,7 @@ const Footer = () => {
                   <Link
                     key={link.label}
                     href={link.href}
-                    className="block text-sm text-background/50 transition-all duration-200 hover:translate-x-1 hover:text-primary"
+                    className="block text-sm text-[hsl(210,30%,97%)]/50 transition-all duration-200 hover:translate-x-1 hover:text-primary"
                   >
                     {link.label}
                   </Link>
@@ -136,7 +136,7 @@ const Footer = () => {
             </div>
 
             <div>
-              <h4 className="relative mb-5 text-lg font-semibold text-background">
+              <h4 className="relative mb-5 text-lg font-semibold text-[hsl(210,30%,97%)]">
                 Get in Touch
                 <span className="absolute -bottom-2 left-0 h-0.5 w-8 rounded-full bg-primary" />
               </h4>
@@ -145,21 +145,21 @@ const Footer = () => {
                   <Link
                     key={link.label}
                     href={link.href}
-                    className="block text-sm text-background/50 transition-all duration-200 hover:translate-x-1 hover:text-primary"
+                    className="block text-sm text-[hsl(210,30%,97%)]/50 transition-all duration-200 hover:translate-x-1 hover:text-primary"
                   >
                     {link.label}
                   </Link>
                 ))}
                 <a
                   href="tel:+918977761187"
-                  className="group mt-4 flex items-start gap-3 text-sm text-background/50 transition-colors hover:text-primary"
+                  className="group mt-4 flex items-start gap-3 text-sm text-[hsl(210,30%,97%)]/50 transition-colors hover:text-primary"
                 >
                   <Phone className="mt-0.5 h-4 w-4 shrink-0 group-hover:text-primary" />
                   <span>+91 89777 61187</span>
                 </a>
                 <a
                   href="mailto:social@hkmvizag.org"
-                  className="group flex items-start gap-3 text-sm text-background/50 transition-colors hover:text-primary"
+                  className="group flex items-start gap-3 text-sm text-[hsl(210,30%,97%)]/50 transition-colors hover:text-primary"
                 >
                   <Mail className="mt-0.5 h-4 w-4 shrink-0 group-hover:text-primary" />
                   <span>social@hkmvizag.org</span>
@@ -168,21 +168,21 @@ const Footer = () => {
             </div>
           </div>
 
-          <div className="flex flex-col items-center justify-between gap-4 border-t border-background/10 pt-6 md:flex-row">
-            <p className="flex items-center gap-1 text-sm text-background/40">
+          <div className="flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 md:flex-row">
+            <p className="flex items-center gap-1 text-sm text-[hsl(210,30%,97%)]/40">
               Copyright {new Date().getFullYear()} Hare Krishna Movement India, Visakhapatnam. Made with
               <Heart className="h-3.5 w-3.5 fill-primary text-primary" /> for devotion.
             </p>
-            <div className="flex items-center gap-4 text-xs text-background/40">
+            <div className="flex items-center gap-4 text-xs text-[hsl(210,30%,97%)]/40">
               <Link href="/privacy-policy" className="transition-colors hover:text-primary">Privacy Policy</Link>
-              <span className="text-background/20">·</span>
+              <span className="text-[hsl(210,30%,97%)]/20">·</span>
               <Link href="/terms-and-conditions" className="transition-colors hover:text-primary">Terms</Link>
-              <span className="text-background/20">·</span>
+              <span className="text-[hsl(210,30%,97%)]/20">·</span>
               <Link href="/refund-policy" className="transition-colors hover:text-primary">Refunds</Link>
             </div>
             <button
               onClick={scrollToTop}
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-background/10 text-background/60 transition-all duration-300 hover:bg-primary hover:text-primary-foreground"
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-[hsl(210,30%,97%)]/60 transition-all duration-300 hover:bg-primary hover:text-primary-foreground"
               aria-label="Back to top"
             >
               <ArrowUp className="h-4 w-4" />

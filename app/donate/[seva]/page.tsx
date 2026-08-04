@@ -311,7 +311,7 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
 
   return (
     <PageLayout>
-    <main className="bg-white">
+    <main className="bg-white dark:bg-background">
       {/* Hero */}
       {seva.heroImageDesktop && seva.heroImageMobile ? (
         // Dedicated, fully-designed banner (title/CTA baked into the image
@@ -700,7 +700,7 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
       </div>
 
       {/* Donor privileges — moved below the payment form */}
-      <section className="border-t border-border bg-white">
+      <section className="border-t border-border bg-white dark:bg-background">
         <div className="container mx-auto grid grid-cols-2 gap-4 px-4 py-8 lg:grid-cols-4">
           {SEVA_PRIVILEGES.map((p) => (
             <div key={p.title} className="flex items-start gap-3">
