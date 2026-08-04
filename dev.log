@@ -1529,3 +1529,1039 @@ Error [TimeoutError]: The operation was aborted due to timeout
 ✓ Compiled in 406ms
  GET /daily-schedule 200 in 864ms (next.js: 366ms, application-code: 499ms)
  GET /donate 200 in 394ms (next.js: 269ms, application-code: 125ms)
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[browser] Image with src "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785578443691-1785578442854-ChatGPTImageAug12026032944PM.webp" has "fill" prop and "sizes" prop of "100vw", but image is not rendered at full viewport width. Please adjust "sizes" to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785580143643-1785580142535-vastraheromob.webp" has "fill" prop and "sizes" prop of "100vw", but image is not rendered at full viewport width. Please adjust "sizes" to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785579869625-1785579868485-sft-seva-mob.webp" has "fill" prop and "sizes" prop of "100vw", but image is not rendered at full viewport width. Please adjust "sizes" to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785588190376-1785588188370-brick-hero-mob.webp" has "fill" prop and "sizes" prop of "100vw", but image is not rendered at full viewport width. Please adjust "sizes" to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+✓ Compiled in 7.4s
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ GET /daily-schedule 500 in 1269ms (next.js: 770ms, application-code: 500ms)
+ GET /donate 500 in 1247ms (next.js: 1220ms, application-code: 27ms)
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ GET /daily-schedule 500 in 72ms (next.js: 24ms, application-code: 48ms)
+ GET /donate 500 in 69ms (next.js: 38ms, application-code: 31ms)
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ GET /daily-schedule 500 in 90ms (next.js: 41ms, application-code: 49ms)
+ GET /donate 500 in 82ms (next.js: 46ms, application-code: 36ms)
+ GET /daily-schedule 500 in 74ms (next.js: 52ms, application-code: 22ms)
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ GET /donate 500 in 96ms (next.js: 51ms, application-code: 46ms)
+ GET /donate 500 in 94ms (next.js: 61ms, application-code: 33ms)
+⨯ ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+  [90m 7 |[0m [36mimport[0m [33mReduxProvider[0m [36mfrom[0m [32m"@/components/ReduxProvider"[0m;
+  [90m 8 |[0m [36mimport[0m [33mMetaPixel[0m [36mfrom[0m [32m"@/components/MetaPixel"[0m;
+[31m[1m>[0m [90m 9 |[0m [36mimport[0m [33mThemeProvider[0m [36mfrom[0m [32m"@/components/ThemeProvider"[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m10 |[0m
+  [90m11 |[0m
+  [90m12 |[0m [36mconst[0m poppins = [33mPoppins[0m({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[browser] Uncaught Error: ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+   7 | import ReduxProvider from "@/components/ReduxProvider";
+   8 | import MetaPixel from "@/components/MetaPixel";
+>  9 | import ThemeProvider from "@/components/ThemeProvider";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  10 |
+  11 |
+  12 | const poppins = Poppins({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+    at <unknown> (Error: ./app/layout.tsx:9:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (Error: (./app/layout.tsx:9:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+[browser] Uncaught Error: ./app/layout.tsx:9:1
+Module not found: Can't resolve '@/components/ThemeProvider'
+   7 | import ReduxProvider from "@/components/ReduxProvider";
+   8 | import MetaPixel from "@/components/MetaPixel";
+>  9 | import ThemeProvider from "@/components/ThemeProvider";
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  10 |
+  11 |
+  12 | const poppins = Poppins({
+
+Import map: aliased to relative './components/ThemeProvider' inside of [project]/
+
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+    at <unknown> (Error: ./app/layout.tsx:9:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (Error: (./app/layout.tsx:9:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+ GET /donate 200 in 10.3s (next.js: 2.5s, application-code: 7.8s)
+ GET /daily-schedule 200 in 10.4s (next.js: 1000ms, application-code: 9.4s)
+ GET /donate 200 in 1614ms (next.js: 616ms, application-code: 997ms)
+ GET /daily-schedule 200 in 1621ms (next.js: 753ms, application-code: 868ms)
+ GET /users/profile 404 in 660ms (next.js: 95ms, application-code: 565ms)
+ GET /users/profile 404 in 216ms (next.js: 15ms, application-code: 202ms)
