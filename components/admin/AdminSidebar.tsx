@@ -18,6 +18,7 @@ import {
   Megaphone,
   FolderOpen,
   Trash2,
+  HandHeart,
 } from "lucide-react";
 import NextImage from "next/image";
 import Link from "next/link";
@@ -61,6 +62,7 @@ const systemItems = [
   { title: "Messages", url: "/admin/messages", icon: MessageSquare },
   { title: "Notifications", url: "/admin/notifications", icon: Bell },
   { title: "Devotees", url: "/admin/devotees", icon: Users },
+  { title: "Volunteers", url: "/admin/volunteers", icon: HandHeart },
   { title: "Settings", url: "/admin/settings", icon: Settings },
 ];
 

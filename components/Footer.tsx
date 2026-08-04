@@ -15,7 +15,7 @@ const quickLinks = [
 ];
 
 const sevaLinks = [
-  { label: "Sevas", href: "/sevas" },
+  { label: "Volunteer", href: "/volunteer" },
   { label: "Subhojanam", href: "/subhojanam" },
   { label: "Anna-Daan Seva", href: "/anna-daan-seva" },
   { label: "Daily Schedule", href: "/daily-schedule" },

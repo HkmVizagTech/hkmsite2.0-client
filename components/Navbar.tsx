@@ -23,7 +23,7 @@ const navItems = [
   { label: "Home", href: "/" },
   { label: "About Us", href: "/about" },
   { label: "Founder", href: "/founder" },
-  { label: "Seva's", href: "/sevas" },
+  { label: "Volunteer", href: "/volunteer" },
   { label: "Gallery", href: "/gallery" },
   { label: "Events", href: "/events" },
   { label: "Blog", href: "/blogs" },
