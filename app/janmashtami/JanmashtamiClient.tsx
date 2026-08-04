@@ -13,6 +13,7 @@ type SevaOption = {
   legacySevaId: number;
   label: string;
   amount: number | null;
+  subtitle?: string;
 };
 
 type Seva = {
@@ -69,6 +70,7 @@ const DECOR_MATKA =
   "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785481873515-1785481872176-matka-removebg-preview.png";
 
 const sevas: Seva[] = [
+  // ── Row 1 ──
   {
     slug: "annadana",
     title: "Annadana Seva",
@@ -78,6 +80,7 @@ const sevas: Seva[] = [
       { legacySevaId: 186, label: "Donate Rs. 15,001", amount: 15001 },
       { legacySevaId: 187, label: "Donate Rs. 9,001", amount: 9001 },
       { legacySevaId: 188, label: "Donate Rs. 6,001", amount: 6001 },
+      { legacySevaId: 300, label: "Donate Rs. 4,501", amount: 4501 },
       { legacySevaId: 189, label: "Donate Rs. 3,001", amount: 3001 },
       { legacySevaId: 190, label: "Donate Rs. 1,501", amount: 1501 },
       { legacySevaId: 191, label: "Donate Any Other Amount", amount: null },
@@ -92,6 +95,7 @@ const sevas: Seva[] = [
       { legacySevaId: 198, label: "Donate Rs. 9,001", amount: 9001 },
       { legacySevaId: 199, label: "Donate Rs. 5,001", amount: 5001 },
       { legacySevaId: 200, label: "Donate Rs. 3,501", amount: 3501 },
+      { legacySevaId: 301, label: "Donate Rs. 3,001", amount: 3001 },
       { legacySevaId: 201, label: "Donate Rs. 2,501", amount: 2501 },
       { legacySevaId: 202, label: "Donate Rs. 1,501", amount: 1501 },
       { legacySevaId: 203, label: "Donate Any Other Amount", amount: null },
@@ -106,37 +110,41 @@ const sevas: Seva[] = [
       { legacySevaId: 216, label: "Donate Rs. 10,008", amount: 10008 },
       { legacySevaId: 217, label: "Donate Rs. 7,501", amount: 7501 },
       { legacySevaId: 218, label: "Donate Rs. 5,001", amount: 5001 },
+      { legacySevaId: 302, label: "Donate Rs. 3,501", amount: 3501 },
       { legacySevaId: 219, label: "Donate Rs. 2,501", amount: 2501 },
       { legacySevaId: 220, label: "Donate Rs. 1,008", amount: 1008 },
       { legacySevaId: 221, label: "Donate Any Other Amount", amount: null },
     ],
   },
+  // ── Row 2 — Abhisheka & Naivedhya moved up ──
   {
     slug: "abhisheka",
     title: "Abhisheka Seva",
-    description: "Sponsor for a grand abhishekam for Radha Krishna on this auspicious day to welcome the Supreme Lord.",
+    description: "Sponsor the sacred Abhishekam of Sri Sri Radha Madan Mohan — morning and Kalash bathing ceremonies on Janmashtami.",
     image: "/assets/janmashtami-sk3.webp",
     options: [
-      { legacySevaId: 204, label: "Donate Rs. 10,008", amount: 10008 },
-      { legacySevaId: 205, label: "Donate Rs. 7,501", amount: 7501 },
-      { legacySevaId: 206, label: "Donate Rs. 5,001", amount: 5001 },
-      { legacySevaId: 207, label: "Donate Rs. 2,501", amount: 2501 },
-      { legacySevaId: 208, label: "Donate Rs. 1,008", amount: 1008 },
-      { legacySevaId: 209, label: "Donate Any Other Amount", amount: null },
+      { legacySevaId: 234, label: "Donate Rs. 25,555", amount: 25555, subtitle: "Pratah Abhishekam" },
+      { legacySevaId: 240, label: "Donate Rs. 15,555", amount: 15555, subtitle: "Kalash Abhishekam" },
+      { legacySevaId: 236, label: "Donate Rs. 10,008", amount: 10008 },
+      { legacySevaId: 303, label: "Donate Rs. 7,501", amount: 7501 },
+      { legacySevaId: 237, label: "Donate Rs. 5,001", amount: 5001 },
+      { legacySevaId: 238, label: "Donate Rs. 2,501", amount: 2501 },
+      { legacySevaId: 239, label: "Donate Any Other Amount", amount: null },
     ],
   },
   {
-    slug: "makhan-mishri",
-    title: "Makhan Mishri Seva",
-    description: "Receive the special blessings of Makhan Lal by sponsoring His very favourite Makhan Mishri.",
-    image: "/assets/janmashtami-sk5.webp",
+    slug: "naivedhya",
+    title: "Naivedhya Seva",
+    description: "Sponsor the sacred food offering to Lord Krishna — Naivedhya is the devotional offering of prepared dishes to the Lord.",
+    image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785833545819-1785833545717-naivedya.jpeg",
     options: [
-      { legacySevaId: 192, label: "Donate Rs. 10,008", amount: 10008 },
-      { legacySevaId: 193, label: "Donate Rs. 5,001", amount: 5001 },
-      { legacySevaId: 194, label: "Donate Rs. 2,501", amount: 2501 },
-      { legacySevaId: 195, label: "Donate Rs. 1,008", amount: 1008 },
-      { legacySevaId: 196, label: "Donate Rs. 501", amount: 501 },
-      { legacySevaId: 197, label: "Donate Any Other Amount", amount: null },
+      { legacySevaId: 246, label: "Donate Rs. 11,111", amount: 11111 },
+      { legacySevaId: 247, label: "Donate Rs. 7,501", amount: 7501 },
+      { legacySevaId: 248, label: "Donate Rs. 5,001", amount: 5001 },
+      { legacySevaId: 304, label: "Donate Rs. 4,001", amount: 4001 },
+      { legacySevaId: 249, label: "Donate Rs. 3,001", amount: 3001 },
+      { legacySevaId: 250, label: "Donate Rs. 1,501", amount: 1501 },
+      { legacySevaId: 251, label: "Donate Any Other Amount", amount: null },
     ],
   },
   {
@@ -148,9 +156,86 @@ const sevas: Seva[] = [
       { legacySevaId: 210, label: "Donate Rs. 10,008", amount: 10008 },
       { legacySevaId: 211, label: "Donate Rs. 7,501", amount: 7501 },
       { legacySevaId: 212, label: "Donate Rs. 5,001", amount: 5001 },
+      { legacySevaId: 305, label: "Donate Rs. 3,501", amount: 3501 },
       { legacySevaId: 213, label: "Donate Rs. 2,501", amount: 2501 },
       { legacySevaId: 214, label: "Donate Rs. 1,008", amount: 1008 },
       { legacySevaId: 215, label: "Donate Any Other Amount", amount: null },
+    ],
+  },
+  // ── Remaining sevas ──
+  {
+    slug: "makhan-mishri",
+    title: "Makhan Mishri Seva",
+    description: "Receive the special blessings of Makhan Lal by sponsoring His very favourite Makhan Mishri.",
+    image: "/assets/janmashtami-sk5.webp",
+    options: [
+      { legacySevaId: 192, label: "Donate Rs. 10,008", amount: 10008 },
+      { legacySevaId: 193, label: "Donate Rs. 5,001", amount: 5001 },
+      { legacySevaId: 306, label: "Donate Rs. 3,501", amount: 3501 },
+      { legacySevaId: 194, label: "Donate Rs. 2,501", amount: 2501 },
+      { legacySevaId: 195, label: "Donate Rs. 1,008", amount: 1008 },
+      { legacySevaId: 196, label: "Donate Rs. 501", amount: 501 },
+      { legacySevaId: 197, label: "Donate Any Other Amount", amount: null },
+    ],
+  },
+  {
+    slug: "vastrabharana",
+    title: "Vastrabharana Seva",
+    description: "Sponsor exquisite garments and divine ornaments for Sri Sri Radha Madan Mohan on Janmashtami.",
+    image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677419371-1783677418690-DietyPhotos.jpeg",
+    options: [
+      { legacySevaId: 258, label: "Donate Rs. 1,50,000", amount: 150000 },
+      { legacySevaId: 259, label: "Donate Rs. 1,00,008", amount: 100008 },
+      { legacySevaId: 260, label: "Donate Rs. 75,001", amount: 75001 },
+      { legacySevaId: 307, label: "Donate Rs. 60,001", amount: 60001 },
+      { legacySevaId: 261, label: "Donate Rs. 51,001", amount: 51001 },
+      { legacySevaId: 262, label: "Donate Rs. 25,001", amount: 25001 },
+      { legacySevaId: 263, label: "Donate Any Other Amount", amount: null },
+    ],
+  },
+  {
+    slug: "chappan-bhog",
+    title: "Chappan Bhog Seva",
+    description: "Sponsor the grand offering of 56 dishes to Lord Krishna — a magnificent feast of devotion on His appearance day.",
+    image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785833232608-1785833231421-chapan-bhog.webp",
+    options: [
+      { legacySevaId: 222, label: "Donate Rs. 75,555", amount: 75555 },
+      { legacySevaId: 223, label: "Donate Rs. 51,001", amount: 51001 },
+      { legacySevaId: 224, label: "Donate Rs. 35,001", amount: 35001 },
+      { legacySevaId: 308, label: "Donate Rs. 25,001", amount: 25001 },
+      { legacySevaId: 225, label: "Donate Rs. 21,001", amount: 21001 },
+      { legacySevaId: 226, label: "Donate Rs. 11,001", amount: 11001 },
+      { legacySevaId: 227, label: "Donate Any Other Amount", amount: null },
+    ],
+  },
+  {
+    slug: "mandapa",
+    title: "Mandapa Seva",
+    description: "Sponsor the sacred Mandapa decoration for the grand Janmashtami celebrations at HKM Vizag.",
+    image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785833231776-1785833231103-ChatGPTImageAug42026021053PM.webp",
+    options: [
+      { legacySevaId: 228, label: "Donate Rs. 55,555", amount: 55555 },
+      { legacySevaId: 229, label: "Donate Rs. 35,001", amount: 35001 },
+      { legacySevaId: 230, label: "Donate Rs. 25,001", amount: 25001 },
+      { legacySevaId: 309, label: "Donate Rs. 21,001", amount: 21001 },
+      { legacySevaId: 231, label: "Donate Rs. 15,001", amount: 15001 },
+      { legacySevaId: 232, label: "Donate Rs. 7,501", amount: 7501 },
+      { legacySevaId: 233, label: "Donate Any Other Amount", amount: null },
+    ],
+  },
+  {
+    slug: "japa-yagna",
+    title: "Japa Yagna Seva",
+    description: "Sponsor the Japa Yagna — a collective chanting of the holy names of Lord Krishna on His divine appearance day.",
+    image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785833232341-1785833231402-ChatGPTImageAug42026020855PM.webp",
+    options: [
+      { legacySevaId: 252, label: "Donate Rs. 7,777", amount: 7777 },
+      { legacySevaId: 253, label: "Donate Rs. 5,001", amount: 5001 },
+      { legacySevaId: 254, label: "Donate Rs. 3,001", amount: 3001 },
+      { legacySevaId: 310, label: "Donate Rs. 2,501", amount: 2501 },
+      { legacySevaId: 255, label: "Donate Rs. 2,001", amount: 2001 },
+      { legacySevaId: 256, label: "Donate Rs. 1,008", amount: 1008 },
+      { legacySevaId: 257, label: "Donate Any Other Amount", amount: null },
     ],
   },
 ];
@@ -688,27 +773,29 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
                     {seva.options.map((option, optIdx) => {
                       const isTopTier = optIdx === 0;
                       const isCustom = !option.amount;
+                      const hasSubtitle = !!option.subtitle;
                       return (
                         <button
-                          key={option.legacySevaId}
+                          key={`${seva.slug}-${optIdx}`}
                           type="button"
                           onClick={() => openCheckout(seva, option)}
                           className={`
-                            relative overflow-hidden rounded-xl border px-3 py-3 text-center transition-all duration-300
+                            relative overflow-hidden rounded-xl border text-center transition-all duration-300
+                            ${hasSubtitle ? 'flex flex-col items-center justify-center gap-1 px-3 pb-2 pt-2.5' : 'px-3 py-3'}
                             ${isCustom
                               ? 'col-span-2 border-amber-500/70 bg-gradient-to-r from-amber-200 via-amber-200 to-orange-200 text-[13px] font-bold text-[#5c2e06] hover:border-amber-500 hover:from-amber-300 hover:to-orange-200 hover:shadow-[0_4px_16px_rgba(217,119,6,0.25)]'
                               : isTopTier
-                                ? 'border-amber-400/80 bg-gradient-to-br from-amber-200 via-amber-100 to-orange-200 text-[12px] font-bold text-[#5c2e06] shadow-[0_2px_6px_rgba(217,119,6,0.15)] hover:border-amber-500 hover:shadow-[0_4px_16px_rgba(217,119,6,0.25)]'
+                                ? 'border-amber-500/80 bg-gradient-to-br from-amber-400 via-amber-300 to-orange-300 text-[12px] font-bold text-[#3b1605] shadow-[0_2px_6px_rgba(217,119,6,0.2)] hover:border-amber-600 hover:shadow-[0_4px_16px_rgba(217,119,6,0.3)]'
                                 : 'border-amber-300/70 bg-gradient-to-b from-amber-100 to-[#fef0d4] text-[12px] font-bold text-[#5c2e06] hover:border-amber-400 hover:from-amber-200 hover:to-amber-100 hover:shadow-[0_3px_12px_rgba(217,119,6,0.18)]'
                             }
                           `}
                         >
-                          {isTopTier && (
+                          {isTopTier && !hasSubtitle && (
                             <span className="absolute left-1.5 top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-orange-400">
                               <svg className="h-2.5 w-2.5 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7L12 16.4 5.7 21l2.3-7L2 9.4h7.6z"/></svg>
                             </span>
                           )}
-                          <span className={`block ${isTopTier ? 'mt-1' : ''}`}>
+                          <span className={`block ${isTopTier && !hasSubtitle ? 'mt-1' : ''}`}>
                             {option.amount ? (
                               <span className="block leading-tight">
                                 <span className="text-[11px] font-normal text-amber-800/80">₹</span>{' '}
@@ -721,6 +808,11 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
                               </span>
                             )}
                           </span>
+                          {hasSubtitle && (
+                            <span className="inline-block rounded-full bg-gradient-to-r from-[#5c1a0b] to-[#7a2e0f] px-3 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-100 shadow-sm">
+                              {option.subtitle}
+                            </span>
+                          )}
                         </button>
                       );
                     })}
