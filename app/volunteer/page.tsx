@@ -25,6 +25,15 @@ const API_URL =
   (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") ||
   "http://localhost:8080";
 
+interface FormField {
+  id: string;
+  type: string;
+  label: string;
+  placeholder: string;
+  required: boolean;
+  options: string[];
+}
+
 interface VolunteerEvent {
   _id: string;
   title: string;
@@ -38,6 +47,7 @@ interface VolunteerEvent {
   category: string;
   requirements: string;
   status: string;
+  formFields: FormField[];
 }
 
 const CATEGORY_LABELS: Record<string, { label: string; color: string }> = {
@@ -74,7 +84,7 @@ export default function VolunteerPage() {
   const [events, setEvents] = useState<VolunteerEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedEvent, setSelectedEvent] = useState<VolunteerEvent | null>(null);
-  const [form, setForm] = useState({ name: "", email: "", phone: "", message: "" });
+  const [responses, setResponses] = useState<Record<string, any>>({});
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -85,10 +95,29 @@ export default function VolunteerPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  const openRegistration = (event: VolunteerEvent) => {
+    setSelectedEvent(event);
+    const initial: Record<string, any> = {};
+    for (const field of event.formFields || []) {
+      initial[field.id] = field.type === "checkbox" ? false : "";
+    }
+    setResponses(initial);
+  };
+
   const handleRegister = async () => {
     if (!selectedEvent) return;
-    if (!form.name.trim() || !form.email.trim() || !form.phone.trim()) {
-      toast({ title: "Please fill all required fields", variant: "destructive" });
+    const missing = (selectedEvent.formFields || [])
+      .filter((f) => f.required)
+      .filter((f) => {
+        const val = responses[f.id];
+        return val === undefined || val === null || val === "";
+      });
+    if (missing.length > 0) {
+      toast({
+        title: "Please fill all required fields",
+        description: missing.map((f) => f.label).join(", "),
+        variant: "destructive",
+      });
       return;
     }
     setSubmitting(true);
@@ -96,13 +125,13 @@ export default function VolunteerPage() {
       const res = await fetch(`${API_URL}/volunteers/${selectedEvent._id}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ responses }),
       });
       const data = await res.json();
       if (res.ok) {
         toast({ title: "Registration Successful!", description: "We'll contact you with further details. Hare Krishna!" });
         setSelectedEvent(null);
-        setForm({ name: "", email: "", phone: "", message: "" });
+        setResponses({});
         setEvents((prev) =>
           prev.map((e) =>
             e._id === selectedEvent._id ? { ...e, filledSlots: e.filledSlots + 1 } : e
@@ -115,6 +144,57 @@ export default function VolunteerPage() {
       toast({ title: "Network error", description: "Please check your connection", variant: "destructive" });
     }
     setSubmitting(false);
+  };
+
+  const renderFormField = (field: FormField) => {
+    const value = responses[field.id];
+    const onChange = (val: any) => setResponses({ ...responses, [field.id]: val });
+
+    switch (field.type) {
+      case "textarea":
+        return (
+          <Textarea
+            placeholder={field.placeholder || field.label}
+            rows={3}
+            value={value || ""}
+            onChange={(e) => onChange(e.target.value)}
+          />
+        );
+      case "select":
+        return (
+          <select
+            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+            value={value || ""}
+            onChange={(e) => onChange(e.target.value)}
+          >
+            <option value="">{field.placeholder || `Select ${field.label}`}</option>
+            {field.options.map((opt) => (
+              <option key={opt} value={opt}>{opt}</option>
+            ))}
+          </select>
+        );
+      case "checkbox":
+        return (
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={!!value}
+              onChange={(e) => onChange(e.target.checked)}
+              className="rounded"
+            />
+            <span className="text-sm text-foreground">{field.placeholder || field.label}</span>
+          </label>
+        );
+      default:
+        return (
+          <Input
+            type={field.type === "tel" ? "tel" : field.type === "email" ? "email" : field.type === "number" ? "number" : field.type === "date" ? "date" : "text"}
+            placeholder={field.placeholder || field.label}
+            value={value || ""}
+            onChange={(e) => onChange(e.target.value)}
+          />
+        );
+    }
   };
 
   const formatDate = (d: string) =>
@@ -258,10 +338,7 @@ export default function VolunteerPage() {
                     <Button
                       className="w-full rounded-full"
                       disabled={isFull}
-                      onClick={() => {
-                        setSelectedEvent(event);
-                        setForm({ name: "", email: "", phone: "", message: "" });
-                      }}
+                      onClick={() => openRegistration(event)}
                     >
                       {isFull ? "Slots Filled" : "Register to Volunteer"}
                       {!isFull && <ArrowRight className="ml-2 h-4 w-4" />}
@@ -295,7 +372,7 @@ export default function VolunteerPage() {
         </div>
       </section>
 
-      {/* Registration Modal */}
+      {/* Registration Modal — dynamic fields */}
       <AnimatePresence>
         {selectedEvent && (
           <motion.div
@@ -309,7 +386,7 @@ export default function VolunteerPage() {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="w-full max-w-lg rounded-2xl bg-background p-6 shadow-elevated"
+              className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl bg-background p-6 shadow-elevated"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="mb-4 flex items-center justify-between">
@@ -329,37 +406,33 @@ export default function VolunteerPage() {
               )}
 
               <div className="space-y-3">
-                <Input
-                  placeholder="Full Name *"
-                  value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                />
-                <Input
-                  placeholder="Email Address *"
-                  type="email"
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                />
-                <Input
-                  placeholder="Phone Number *"
-                  type="tel"
-                  value={form.phone}
-                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                />
-                <Textarea
-                  placeholder="Any message or special skills you'd like to share (optional)"
-                  rows={3}
-                  value={form.message}
-                  onChange={(e) => setForm({ ...form, message: e.target.value })}
-                />
-                <div className="flex gap-3 pt-1">
-                  <Button className="flex-1" onClick={handleRegister} disabled={submitting}>
-                    {submitting ? "Registering..." : "Submit Registration"}
-                  </Button>
-                  <Button variant="outline" onClick={() => setSelectedEvent(null)} disabled={submitting}>
-                    Cancel
-                  </Button>
-                </div>
+                {(selectedEvent.formFields || []).map((field) => (
+                  <div key={field.id}>
+                    {field.type !== "checkbox" && (
+                      <label className="mb-1 block text-xs font-medium text-muted-foreground">
+                        {field.label}{field.required ? " *" : ""}
+                      </label>
+                    )}
+                    {renderFormField(field)}
+                  </div>
+                ))}
+
+                {(!selectedEvent.formFields || selectedEvent.formFields.length === 0) && (
+                  <p className="py-4 text-center text-sm text-muted-foreground">
+                    No registration form configured for this event.
+                  </p>
+                )}
+
+                {selectedEvent.formFields && selectedEvent.formFields.length > 0 && (
+                  <div className="flex gap-3 pt-1">
+                    <Button className="flex-1" onClick={handleRegister} disabled={submitting}>
+                      {submitting ? "Registering..." : "Submit Registration"}
+                    </Button>
+                    <Button variant="outline" onClick={() => setSelectedEvent(null)} disabled={submitting}>
+                      Cancel
+                    </Button>
+                  </div>
+                )}
               </div>
             </motion.div>
           </motion.div>
