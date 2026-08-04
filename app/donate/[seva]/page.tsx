@@ -339,22 +339,14 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
         </section>
       ) : (
         <section className="relative overflow-hidden pt-[88px] md:pt-[104px] rounded-b-3xl">
+          <h1 className="sr-only">{seva.title}</h1>
+          <nav className="flex items-center gap-1.5 bg-card px-4 py-2.5 text-xs text-muted-foreground">
+            <Link href="/" className="hover:text-primary">Home</Link>
+            <ChevronRight className="h-3 w-3" />
+            <span className="text-foreground">{seva.title}</span>
+          </nav>
           <div className="relative aspect-[16/7] w-full md:aspect-[21/7]">
             <Image src={seva.image} alt={seva.title} fill priority sizes="100vw" className="object-cover" />
-            {/* Lightened from the previous 35%/85% dark gradient so the
-                banner photo itself reads clearly, while keeping just
-                enough contrast for the white heading text at the bottom. */}
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,hsl(220,85%,10%,0.08)_0%,hsl(220,85%,8%,0.55)_100%)]" />
-          </div>
-          <div className="absolute inset-0 flex flex-col items-center justify-end px-4 pb-10 text-center md:pb-14">
-            <nav className="mb-4 flex items-center gap-1.5 text-xs text-background/70">
-              <Link href="/" className="hover:text-background">Home</Link>
-              <ChevronRight className="h-3 w-3" />
-              <span className="text-background">{seva.title}</span>
-            </nav>
-            <span className="mb-3 text-3xl">{seva.icon}</span>
-            <h1 className="mb-2 font-heading text-3xl font-bold text-background md:text-5xl">{seva.title}</h1>
-            <p className="max-w-xl text-sm text-background/85 md:text-base">{seva.tagline}</p>
           </div>
         </section>
       )}
