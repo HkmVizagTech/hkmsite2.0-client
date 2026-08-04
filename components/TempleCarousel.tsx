@@ -104,7 +104,7 @@ const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true }: TempleCa
     setCurrent(0);
   }, [slides.length]);
 
-  const carouselRef = useRef<HTMLElement>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
   const pointerStartX = useRef(0);
   const isDragging = useRef(false);
 
@@ -207,26 +207,28 @@ const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true }: TempleCa
   );
 
   return (
-    <section
-      ref={carouselRef}
-      onDragStart={(e) => e.preventDefault()}
-      className="relative w-full select-none overflow-hidden bg-foreground aspect-[1080/1350] md:aspect-[1920/700]"
-      style={{ cursor: dragging ? "grabbing" : "grab", touchAction: "pan-y" }}
-    >
-      <AnimatePresence custom={direction} mode="popLayout">
-        <motion.div
-          key={current}
-          custom={direction}
-          variants={variants}
-          initial="enter"
-          animate="center"
-          exit="exit"
-          transition={{ duration: 0.7, ease: [0.25, 0.8, 0.25, 1] }}
-          className="absolute inset-0"
-        >
-          {slideImages}
-        </motion.div>
-      </AnimatePresence>
+    <section className="w-full bg-white select-none">
+      <div
+        ref={carouselRef}
+        onDragStart={(e) => e.preventDefault()}
+        className="relative w-full overflow-hidden rounded-b-3xl bg-foreground aspect-[962/1635] md:aspect-[1920/730]"
+        style={{ cursor: dragging ? "grabbing" : "grab", touchAction: "pan-y" }}
+      >
+        <AnimatePresence custom={direction} mode="popLayout">
+          <motion.div
+            key={current}
+            custom={direction}
+            variants={variants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.7, ease: [0.25, 0.8, 0.25, 1] }}
+            className="absolute inset-0"
+          >
+            {slideImages}
+          </motion.div>
+        </AnimatePresence>
+      </div>
     </section>
   );
 };

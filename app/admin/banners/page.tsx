@@ -205,11 +205,11 @@ export default function AdminBanners() {
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
                 <label className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  <Monitor className="h-3.5 w-3.5" /> Desktop Image (16:6 landscape)
+                  <Monitor className="h-3.5 w-3.5" /> Desktop Image (1920×730 landscape)
                 </label>
                 <div
                   onClick={() => desktopInputRef.current?.click()}
-                  className="flex aspect-[16/6] cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-border bg-muted/30 hover:border-primary/50"
+                  className="flex aspect-[1920/730] cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-border bg-muted/30 hover:border-primary/50"
                 >
                   {desktopPreview ? (
                     <img src={desktopPreview} alt="" className="h-full w-full object-cover" />
@@ -234,11 +234,11 @@ export default function AdminBanners() {
 
               <div>
                 <label className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  <Smartphone className="h-3.5 w-3.5" /> Mobile Image (4:5 portrait)
+                  <Smartphone className="h-3.5 w-3.5" /> Mobile Image (962×1635 portrait)
                 </label>
                 <div
                   onClick={() => mobileInputRef.current?.click()}
-                  className="mx-auto flex aspect-[4/5] max-w-[200px] cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-border bg-muted/30 hover:border-primary/50"
+                  className="mx-auto flex aspect-[962/1635] max-w-[200px] cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 border-dashed border-border bg-muted/30 hover:border-primary/50"
                 >
                   {mobilePreview ? (
                     <img src={mobilePreview} alt="" className="h-full w-full object-cover" />
