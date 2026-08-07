@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Phone, Mail, Sun, Moon, Clock, Heart, Home, User, Utensils, Info } from "lucide-react";
+import { Menu, X, Phone, Mail, Sun, Moon, Clock, Heart, Home, User, Utensils, Info, ChevronDown } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import ISKLogo from "@/assets/ISKCONGambheeramLogo.jpeg";
@@ -70,6 +70,8 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [darshanStatus, setDarshanStatus] = useState(getDarshanStatus());
+  const [menuCanScroll, setMenuCanScroll] = useState(false);
+  const menuScrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Recompute every minute so the indicator flips live at 1:00 PM,
@@ -96,6 +98,30 @@ const Navbar = () => {
     setMobileOpen(false);
     window.scrollTo(0, 0);
   }, [pathname]);
+
+  // Detect when the mobile menu content overflows so we can show a scroll hint.
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const el = menuScrollRef.current;
+    if (!el) return;
+
+    const update = () => {
+      setMenuCanScroll(
+        el.scrollHeight > el.clientHeight + 1 &&
+          el.scrollTop + el.clientHeight < el.scrollHeight - 8
+      );
+    };
+
+    // Wait for the height animation (0.25s) to settle before measuring.
+    const timer = setTimeout(update, 320);
+    el.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      clearTimeout(timer);
+      el.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, [mobileOpen]);
 
   const toggleTheme = () => setTheme(darkMode ? "light" : "dark");
 
@@ -277,14 +303,17 @@ const Navbar = () => {
               animate={{ height: "auto" }}
               exit={{ height: 0 }}
               transition={{ duration: 0.25, ease: "easeInOut" }}
-              className="lg:hidden bg-white dark:bg-card backdrop-blur-md border-t border-border overflow-hidden rounded-b-2xl"
+              className="relative lg:hidden bg-white dark:bg-card backdrop-blur-md border-t border-border overflow-hidden rounded-b-2xl"
             >
-              <div className="container mx-auto px-4 py-4 flex flex-col gap-1 max-h-[calc(100dvh-9rem)] overflow-y-auto">
+              <div
+                ref={menuScrollRef}
+                className="container mx-auto px-4 py-3 flex flex-col gap-0.5 max-h-[calc(100dvh-9rem)] overflow-y-auto"
+              >
                 {navItems.map((item) => (
                   <Link
                     key={item.label}
                     href={item.href}
-                    className={`text-left px-4 py-3 rounded-lg font-medium transition-colors ${
+                    className={`text-left px-4 py-2.5 text-[15px] rounded-lg font-medium transition-colors ${
                       pathname === item.href
                         ? "text-primary bg-primary/10"
                         : "text-foreground hover:text-primary hover:bg-primary/10"
@@ -295,14 +324,15 @@ const Navbar = () => {
                 ))}
                 <button
                   onClick={toggleTheme}
-                  className="mt-2 flex items-center justify-center gap-2 rounded-full border border-border px-4 py-3 font-medium text-foreground transition-colors hover:text-primary hover:border-primary"
+                  className="mt-1.5 flex items-center justify-center gap-2 rounded-full border border-border px-4 py-2.5 text-[15px] font-medium text-foreground transition-colors hover:text-primary hover:border-primary"
                 >
                   {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
                   {darkMode ? "Light Mode" : "Dark Mode"}
                 </button>
                 <Button
                   variant="default"
-                  className="mt-2 rounded-full bg-gradient-ocean text-white border-0"
+                  size="sm"
+                  className="mt-1.5 rounded-full bg-gradient-ocean text-white border-0 text-[15px]"
                   asChild
                 >
                   <Link href="/donate">
@@ -312,12 +342,19 @@ const Navbar = () => {
                 </Button>
                 <button
                   onClick={() => setMobileOpen(false)}
-                  className="mt-2 flex items-center justify-center gap-2 rounded-full border border-border px-4 py-3 font-medium text-foreground transition-colors hover:text-primary hover:border-primary"
+                  className="mt-1.5 flex items-center justify-center gap-2 rounded-full border border-border px-4 py-2.5 text-[15px] font-medium text-foreground transition-colors hover:text-primary hover:border-primary"
                 >
                   <X className="w-4 h-4" />
                   Close Menu
                 </button>
               </div>
+
+              {/* Scroll hint — fades in at the bottom only when more items are hidden */}
+              {menuCanScroll && (
+                <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-10 flex h-10 items-end justify-center bg-gradient-to-t from-white dark:from-card via-white/80 dark:via-card/80 to-transparent pb-1">
+                  <ChevronDown className="h-4 w-4 animate-bounce text-muted-foreground" />
+                </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
