@@ -353,11 +353,10 @@ export const ANNA_DAAN_CAMPAIGN: SevaCampaignConfig = {
       "Glimpses of prasadam being prepared, offered to the Lord, and served to devotees and the needy across Visakhapatnam.",
     photos: [
       { src: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677363792-1783677363601-462395264797134589073566144398536696847591n.jpg", caption: "Sanctified prasadam" },
-      { src: "/assets/donations-annadana-real.jpg", caption: "Meal distribution" },
-      { src: "/assets/gallery-annadaan-1.jpg", caption: "Serving the community" },
-      { src: "/assets/home-gallery-annadana.webp", caption: "Prasadam distribution" },
-      { src: "/assets/donations-service-activity-1.png", caption: "Devotees at service" },
-      { src: "/assets/donations-service-activity-2.png", caption: "Preparing the offering" },
+      { src: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1786100757954-1786100756855-annadan2.jpg", caption: "Meal distribution" },
+      { src: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1786100757653-1786100756788-annadan3.jpg", caption: "Serving the community" },
+      { src: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1786100757417-1786100756787-annadan4.jpg", caption: "Prasadam distribution" },
+      { src: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1786100757016-1786100756575-annadan45.jpg", caption: "Devotees at service" },
     ],
   },
 
