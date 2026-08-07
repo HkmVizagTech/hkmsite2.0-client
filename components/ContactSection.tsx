@@ -6,6 +6,7 @@ import { Phone, Mail, MapPin, Clock, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import Ornament from "@/components/Ornament";
 
@@ -25,6 +26,7 @@ const ContactSection = () => {
   const { toast } = useToast();
   const [formData, setFormData] = useState({ name: "", email: "", phone: "", message: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [authorization, setAuthorization] = useState(false);
   const [contact, setContact] = useState(DEFAULT_CONTACT);
 
   useEffect(() => {
@@ -50,6 +52,14 @@ const ContactSection = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!authorization) {
+      toast({
+        title: "Authorization required",
+        description: "Please authorize us to send you SMS / promotional / informational messages.",
+        variant: "destructive",
+      });
+      return;
+    }
     setIsSubmitting(true);
     try {
       const res = await fetch(`${API_URL}/contact-messages`, {
@@ -61,11 +71,13 @@ const ContactSection = () => {
           phone: formData.phone,
           subject: "Homepage Contact Form",
           message: formData.message,
+          authorization,
         }),
       });
       if (!res.ok) throw new Error("Failed to send");
       toast({ title: "Message Sent!", description: "Hare Krishna! We'll respond soon." });
       setFormData({ name: "", email: "", phone: "", message: "" });
+      setAuthorization(false);
     } catch {
       toast({
         title: "Couldn't send message",
@@ -165,6 +177,18 @@ const ContactSection = () => {
                   className="bg-background resize-none"
                 />
               </div>
+
+              <label className="flex items-start gap-2.5 text-sm text-muted-foreground cursor-pointer select-none">
+                <Checkbox
+                  checked={authorization}
+                  onCheckedChange={(v) => setAuthorization(!!v)}
+                  className="mt-0.5"
+                  required
+                />
+                <span>
+                  I hereby authorize to send the notifications on SMS / Messages / Promotional / Informational Messages
+                </span>
+              </label>
 
               <Button
                 type="submit"

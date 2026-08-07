@@ -25,6 +25,7 @@ interface ContactMessage {
   phone?: string;
   subject: string;
   message: string;
+  authorization?: boolean;
   status: "new" | "read" | "responded";
   createdAt: string;
 }
@@ -224,6 +225,13 @@ export default function AdminMessages() {
 
                 <p className="mb-6 whitespace-pre-wrap leading-relaxed text-foreground/90">
                   {selected.message}
+                </p>
+
+                <p className={`mb-6 flex items-center gap-2 rounded-lg border px-3 py-2 text-xs ${selected.authorization ? "border-green-600/40 bg-green-50 text-green-700 dark:bg-green-950/20 dark:text-green-400" : "border-border bg-muted/40 text-muted-foreground"}`}>
+                  {selected.authorization ? "✓" : "✗"}{" "}
+                  {selected.authorization
+                    ? "SMS / Promotional message authorization granted"
+                    : "No SMS / promotional message authorization"}
                 </p>
 
                 <div className="flex flex-wrap items-center gap-2 border-t pt-4">

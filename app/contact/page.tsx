@@ -9,6 +9,7 @@ import { MapPin, Phone, Mail, Clock, Send, Facebook, Instagram, Youtube, Buildin
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 
 const contactInfo = [
@@ -37,23 +38,33 @@ export default function ContactPage() {
   const { toast } = useToast();
   const [sending, setSending] = useState(false);
   const [form, setForm] = useState({ name: "", phone: "", email: "", subject: "", message: "" });
+  const [authorization, setAuthorization] = useState(false);
 
   const handleChange = (field: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm((f) => ({ ...f, [field]: e.target.value }));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!authorization) {
+      toast({
+        title: "Authorization required",
+        description: "Please authorize us to send you SMS / promotional / informational messages.",
+        variant: "destructive",
+      });
+      return;
+    }
     setSending(true);
     try {
       const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
       const res = await fetch(`${apiUrl}/contact-messages`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, authorization }),
       });
       if (!res.ok) throw new Error("Failed to send");
       toast({ title: "Message Sent!", description: "Hare Krishna! We'll respond soon." });
       setForm({ name: "", phone: "", email: "", subject: "", message: "" });
+      setAuthorization(false);
     } catch (err) {
       toast({
         title: "Couldn't send message",
@@ -120,6 +131,17 @@ export default function ContactPage() {
               <Input placeholder="Email Address" type="email" required value={form.email} onChange={handleChange("email")} className="bg-background" />
               <Input placeholder="Subject" required value={form.subject} onChange={handleChange("subject")} className="bg-background" />
               <Textarea placeholder="Your Message" rows={5} required value={form.message} onChange={handleChange("message")} className="bg-background resize-none" />
+              <label className="flex items-start gap-2.5 text-sm text-muted-foreground cursor-pointer select-none">
+                <Checkbox
+                  checked={authorization}
+                  onCheckedChange={(v) => setAuthorization(!!v)}
+                  className="mt-0.5"
+                  required
+                />
+                <span>
+                  I hereby authorize to send the notifications on SMS / Messages / Promotional / Informational Messages
+                </span>
+              </label>
               <Button type="submit" className="w-full" disabled={sending}>
                 <Send className="w-4 h-4 mr-2" />
                 {sending ? "Sending..." : "Send Message"}

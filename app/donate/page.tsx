@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -12,15 +11,6 @@ import PageLayout from "@/components/PageLayout";
 import Ornament from "@/components/Ornament";
 import TempleCarousel from "@/components/TempleCarousel";
 import { sevas, getSevaHref } from "@/lib/sevaConfig";
-
-const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
-
-interface OverviewStats {
-  totalAmount: number;
-  donorCount: number;
-  bySeva: Record<string, { totalAmount: number; donorCount: number }>;
-  donors: { name: string; amount: number; seva: string; time: string }[];
-}
 
 const PRIVILEGES = [
   { icon: Gift, title: "Prasadam at Home", desc: "Receive blessed prasadam delivered every month" },
@@ -72,17 +62,6 @@ const SEVA_SLIDES = [
 ];
 
 export default function DonateHubPage() {
-  const [overview, setOverview] = useState<OverviewStats | null>(null);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const res = await fetch(`${API_URL}/seva-stats/overview`);
-        if (res.ok) setOverview(await res.json());
-      } catch {}
-    })();
-  }, []);
-
   return (
     <PageLayout>
       <main className="bg-white dark:bg-background">
@@ -199,47 +178,6 @@ export default function DonateHubPage() {
             </div>
           </div>
         </section>
-
-        {/* ══ LIVE DONOR WALL — real, cross-seva ══ */}
-        {overview && overview.donors.length > 0 && (
-          <section className="border-t border-border bg-white dark:bg-background py-16">
-            <div className="container mx-auto px-4">
-              <div className="mb-10 flex items-center justify-center gap-2">
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-green-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-green-600">
-                  <span className="relative flex h-2 w-2">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-75" />
-                    <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
-                  </span>
-                  Live
-                </span>
-                <h2 className="font-heading text-xl font-bold text-foreground">
-                  Generous Souls Supporting the Temple
-                </h2>
-              </div>
-              <div className="mx-auto grid max-w-5xl grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {overview.donors.map((d, i) => (
-                  <motion.div
-                    key={`${d.name}-${i}`}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.04 }}
-                    className="flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3"
-                  >
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[hsl(42,92%,56%,0.15)] text-sm font-bold text-gold">
-                      {d.name.charAt(0)}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold">{d.name}</p>
-                      <p className="truncate text-[11px] text-muted-foreground">
-                        ₹{d.amount.toLocaleString("en-IN")} · {d.seva} · {d.time}
-                      </p>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
 
         {/* ══ DONOR PRIVILEGES ══ */}
         <section className="py-12 md:py-16">

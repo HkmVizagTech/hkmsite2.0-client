@@ -377,7 +377,7 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
                 </h3>
               </div>
               <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-                {donors.map((d, i) => (
+                {donors.slice(0, 6).map((d, i) => (
                   <motion.div
                     key={`${d.name}-${i}`}
                     initial={{ opacity: 0, y: 8 }}

@@ -875,7 +875,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                 </h2>
               </div>
               <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
-                {stats.donors.map((d, i) => (
+                {stats.donors.slice(0, 6).map((d, i) => (
                   <motion.div
                     key={`${d.name}-${i}`}
                     initial={{ opacity: 0, y: 8 }}
