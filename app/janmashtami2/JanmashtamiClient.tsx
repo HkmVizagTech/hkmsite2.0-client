@@ -3,7 +3,7 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
-import { ArrowLeft, ArrowRight, Clock, Facebook, FileCheck2, Heart, Instagram, Mail, MapPin, MessageCircle, Phone, ShieldCheck, Youtube, UtensilsCrossed, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Clock, Facebook, FileCheck2, Heart, Instagram, Mail, MapPin, MessageCircle, Phone, ShieldCheck, Youtube, UtensilsCrossed } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
@@ -46,7 +46,6 @@ type CheckoutForm = {
 
 type SelectedOffering = {
   seva: Seva;
-  option: SevaOption;
 };
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
@@ -254,6 +253,8 @@ const TRUST_BADGES = [
   { icon: ShieldCheck, label: "Secure Razorpay Checkout" },
 ];
 
+const AMOUNT_PRESETS = [1100, 1501, 2100, 5100, 11000] as const;
+
 const initialForm: CheckoutForm = {
   donorName: "",
   donorMobile: "",
@@ -307,22 +308,30 @@ export interface JanmashtamiCampaigner {
 
 export default function JanmashtamiClient({ campaigner }: { campaigner?: JanmashtamiCampaigner } = {}) {
   const reduce = useReducedMotion();
-  const attribution = useAttribution(campaigner ? `/janmashtami/c/${campaigner.slug}` : "janmashtami");
+  const attribution = useAttribution(campaigner ? `/janmashtami2/c/${campaigner.slug}` : "janmashtami2");
   const [activeSlide, setActiveSlide] = useState(0);
   const [selected, setSelected] = useState<SelectedOffering | null>(null);
+  const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
   const [form, setForm] = useState<CheckoutForm>(initialForm);
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<{ type: "success" | "error" | "idle"; message: string }>({ type: "idle", message: "" });
 
-  const finalAmount = selected?.option.amount ?? Number(form.customAmount || 0);
+  const finalAmount = selectedAmount ?? Number(form.customAmount || 0);
   const showTaxField = finalAmount >= 500;
   const showPrasadamField = finalAmount >= 1000;
   const needsAddress = form.want80G || form.wantPrasadam;
 
+  const canSubmit = !!selected && !!finalAmount && finalAmount >= 100;
+  const submitLabel = !selected
+    ? "Select a seva"
+    : !finalAmount
+      ? "Select an amount"
+      : `Donate Rs. ${formatAmount(finalAmount)}`;
+
   const selectedSummary = useMemo(() => {
     if (!selected) return "";
-    return `${selected.seva.title} - ${selected.option.label}`;
-  }, [selected]);
+    return `${selected.seva.title} - ${finalAmount ? `Rs. ${formatAmount(finalAmount)}` : "Select an amount"}`;
+  }, [selected, finalAmount]);
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -335,14 +344,29 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
     setForm((current) => ({ ...current, ...patch }));
   };
 
-  const openCheckout = (seva: Seva, option: SevaOption) => {
-    setSelected({ seva, option });
-    setForm(initialForm);
+  const selectSeva = (seva: Seva) => {
+    setSelected((current) => {
+      if (current?.seva.slug === seva.slug) return current;
+      return { seva };
+    });
+    setSelectedAmount(null);
+    updateForm({ customAmount: "" });
+    setStatus({ type: "idle", message: "" });
+    document.getElementById("checkout-form")?.scrollIntoView({
+      behavior: reduce ? "auto" : "smooth",
+      block: "start",
+    });
+  };
+
+  const selectPreset = (amount: number) => {
+    setSelectedAmount(amount);
+    updateForm({ customAmount: "" });
     setStatus({ type: "idle", message: "" });
   };
 
-  const closeCheckout = () => {
-    if (!submitting) setSelected(null);
+  const onSevaChange = (slug: string) => {
+    const seva = sevas.find((s) => s.slug === slug);
+    if (seva) selectSeva(seva);
   };
 
   const validate = () => {
@@ -370,6 +394,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
     }
 
     if (!selected) return;
+    const genericSevaId = selected.seva.options.find((o) => o.amount == null)?.legacySevaId;
     setSubmitting(true);
     setStatus({ type: "idle", message: "" });
 
@@ -378,13 +403,13 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          sourcePage: campaigner ? `/janmashtami/c/${campaigner.slug}` : "janmashtami",
+          sourcePage: campaigner ? `/janmashtami2/c/${campaigner.slug}` : "janmashtami2",
           campaignerSlug: campaigner?.slug || undefined,
           utm: attribution.payload().utm,
           festivalSlug: "janmashtami",
           type: "Sri Krishna Janmashtami",
           sevaName: selected.seva.title,
-          legacySevaId: selected.option.legacySevaId,
+          legacySevaId: genericSevaId,
           name: form.donorName.trim(),
           email: form.donorEmail.trim().toLowerCase(),
           mobile: form.donorMobile,
@@ -429,11 +454,11 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
           contact: form.donorMobile,
         },
         notes: {
-          sourcePage: "janmashtami",
+          sourcePage: "janmashtami2",
           festivalSlug: "janmashtami",
-          legacySevaId: selected.option.legacySevaId,
+          legacySevaId: genericSevaId,
           sevaName: selected.seva.title,
-          sevaOption: selected.option.label,
+          sevaOption: `Rs. ${formatAmount(finalAmount)}`,
           nationality: form.nationality,
         },
         handler: async (response: Record<string, string>) => {
@@ -631,26 +656,6 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
         </div>
       </motion.section>
 
-      <style>{`
-        .form-scroll::-webkit-scrollbar {
-          width: 6px;
-        }
-        .form-scroll::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .form-scroll::-webkit-scrollbar-thumb {
-          background: #c98a1a;
-          border-radius: 9999px;
-        }
-        .form-scroll::-webkit-scrollbar-thumb:hover {
-          background: #a16c12;
-        }
-        .form-scroll {
-          scrollbar-width: thin;
-          scrollbar-color: #c98a1a transparent;
-        }
-      `}</style>
-
       <section id="offer-seva" className="relative overflow-hidden px-4 py-12 md:py-16">
         {/* Krishna peacock-feather decorative background */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
@@ -740,7 +745,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4, staggerChildren: reduce ? 0 : 0.08 }}
-            className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+            className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
           >
             {sevas.map((seva, idx) => (
               <motion.article
@@ -752,7 +757,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
                 className="group overflow-hidden rounded-2xl border border-amber-300/70 bg-white shadow-[0_2px_20px_rgba(120,60,10,0.1)] transition-all duration-500 hover:-translate-y-1 hover:border-amber-400 hover:shadow-[0_16px_48px_rgba(120,60,10,0.18)]"
               >
                 {/* Image with gradient overlay + title */}
-                <div className="relative h-48 overflow-hidden shadow-[inset_0_-12px_12px_-8px_rgba(0,0,0,0.12)] md:h-56">
+                <div className="relative h-40 overflow-hidden shadow-[inset_0_-12px_12px_-8px_rgba(0,0,0,0.12)] md:h-48">
                   <Image
                     src={seva.image}
                     alt={seva.title}
@@ -766,60 +771,213 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
 
                 {/* Card body */}
                 <div className="p-4 pt-3">
-                  <p className="min-h-[52px] text-[13px] leading-relaxed text-slate-700 md:text-sm">{seva.description}</p>
-
-                  {/* Elegant price buttons */}
-                  <div className="mt-4 grid grid-cols-2 gap-x-2 gap-y-2">
-                    {seva.options.map((option, optIdx) => {
-                      const isTopTier = optIdx === 0;
-                      const isCustom = !option.amount;
-                      const hasSubtitle = !!option.subtitle;
-                      return (
-                        <button
-                          key={`${seva.slug}-${optIdx}`}
-                          type="button"
-                          onClick={() => openCheckout(seva, option)}
-                          className={`
-                            relative overflow-hidden rounded-xl border text-center transition-all duration-300
-                            ${hasSubtitle ? 'flex flex-col items-center justify-center gap-1 px-3 pb-2 pt-2.5' : 'px-3 py-3'}
-                            ${isCustom
-                              ? 'col-span-2 border-amber-500/70 bg-gradient-to-r from-amber-200 via-amber-200 to-orange-200 text-[13px] font-bold text-[#5c2e06] hover:border-amber-500 hover:from-amber-300 hover:to-orange-200 hover:shadow-[0_4px_16px_rgba(217,119,6,0.25)]'
-                              : isTopTier
-                                ? 'border-amber-500/80 bg-gradient-to-br from-amber-400 via-amber-300 to-orange-300 text-[12px] font-bold text-[#3b1605] shadow-[0_2px_6px_rgba(217,119,6,0.2)] hover:border-amber-600 hover:shadow-[0_4px_16px_rgba(217,119,6,0.3)]'
-                                : 'border-amber-300/70 bg-gradient-to-b from-amber-100 to-[#fef0d4] text-[12px] font-bold text-[#5c2e06] hover:border-amber-400 hover:from-amber-200 hover:to-amber-100 hover:shadow-[0_3px_12px_rgba(217,119,6,0.18)]'
-                            }
-                          `}
-                        >
-                          {isTopTier && !hasSubtitle && (
-                            <span className="absolute left-1.5 top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-orange-400">
-                              <svg className="h-2.5 w-2.5 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7L12 16.4 5.7 21l2.3-7L2 9.4h7.6z"/></svg>
-                            </span>
-                          )}
-                          <span className={`block ${isTopTier && !hasSubtitle ? 'mt-1' : ''}`}>
-                            {option.amount ? (
-                              <span className="block leading-tight">
-                                <span className="text-[11px] font-normal text-amber-800/80">₹</span>{' '}
-                                <span className="text-[14px] md:text-[15px]">{formatAmount(option.amount)}</span>
-                              </span>
-                            ) : (
-                              <span className="flex items-center justify-center gap-1.5">
-                                <svg className="h-3 w-3 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                                <span className="text-[12px]">Donate Other Amount</span>
-                              </span>
-                            )}
-                          </span>
-                          {hasSubtitle && (
-                            <span className="inline-block rounded-full bg-gradient-to-r from-[#5c1a0b] to-[#7a2e0f] px-3 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-100 shadow-sm">
-                              {option.subtitle}
-                            </span>
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
+                  <p className="text-[13px] leading-relaxed text-slate-700 md:text-sm">{seva.description}</p>
+                  <button
+                    type="button"
+                    onClick={() => selectSeva(seva)}
+                    className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-orange-400 px-4 py-3 text-sm font-bold text-[#3b1605] shadow-[0_2px_8px_rgba(217,119,6,0.2)] transition-all duration-300 hover:from-amber-300 hover:to-orange-300 hover:shadow-[0_4px_16px_rgba(217,119,6,0.35)]"
+                  >
+                    <Heart className="h-4 w-4 fill-current" />
+                    Offer Seva
+                  </button>
                 </div>
               </motion.article>
             ))}
+          </motion.div>
+
+          {/* ---------- Inline checkout form ---------- */}
+          <motion.div
+            id="checkout-form"
+            initial={reduce ? undefined : { opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="relative mx-auto mt-14 max-w-3xl scroll-mt-6"
+          >
+            <div className="overflow-hidden rounded-2xl border border-amber-300/70 bg-white shadow-[0_14px_35px_rgba(120,60,10,0.14)]">
+              <div className="border-b border-amber-200/60 bg-gradient-to-r from-amber-50 via-[#fff7e6] to-amber-50 px-6 py-5">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-amber-700/70">Janmashtami Checkout</p>
+                <h2 className="mt-1 text-xl font-bold text-[#331447]">Complete Your Seva</h2>
+                <p className="mt-1 text-sm text-amber-800/60">
+                  Select a seva above (or choose one here), then pick the amount you wish to offer.
+                </p>
+              </div>
+
+              <form onSubmit={submitDonation} className="space-y-5 p-6">
+                {/* Seva selector */}
+                <div>
+                  <label htmlFor="seva-select" className="mb-1 block text-sm font-semibold text-[#331447]">
+                    Selected Seva <span className="font-normal text-amber-700/70">(auto-filled by the seva you pick)</span>
+                  </label>
+                  <select
+                    id="seva-select"
+                    value={selected?.seva.slug ?? ""}
+                    onChange={(event) => onSevaChange(event.target.value)}
+                    className="h-11 w-full rounded-lg border border-amber-300 bg-white px-3 text-sm text-[#331447] outline-none transition-colors focus:border-amber-500 focus:ring-2 focus:ring-amber-400/40"
+                  >
+                    <option value="" disabled>Select a seva</option>
+                    {sevas.map((s) => (
+                      <option key={s.slug} value={s.slug}>{s.title}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Amount presets */}
+                <div>
+                  <span className="mb-2 block text-sm font-semibold text-[#331447]">Offer Amount *</span>
+                  {selected ? (
+                    <div className="grid grid-cols-5 gap-2">
+                      {AMOUNT_PRESETS.map((amount) => {
+                        const isActive = selectedAmount === amount;
+                        return (
+                          <button
+                            key={amount}
+                            type="button"
+                            onClick={() => selectPreset(amount)}
+                            aria-pressed={isActive}
+                            className={`rounded-xl border px-1 py-3 text-center transition-all duration-300 ${
+                              isActive
+                                ? "border-amber-600 bg-gradient-to-br from-amber-400 to-orange-300 text-[#3b1605] shadow-[0_4px_14px_rgba(217,119,6,0.35)]"
+                                : "border-amber-300/70 bg-gradient-to-b from-amber-50 to-[#fef4dd] text-[#5c2e06] hover:border-amber-400 hover:from-amber-100"
+                            }`}
+                          >
+                            <span className="block text-[11px] font-bold md:text-[13px]">
+                              <span className="text-[9px] font-normal text-amber-800/80">₹</span> {formatAmount(amount)}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <p className="rounded-lg border border-amber-200/60 bg-white/40 px-3 py-2.5 text-sm text-amber-700/70">
+                      Select a seva above to choose an amount.
+                    </p>
+                  )}
+
+                  {/* Other amount input card */}
+                  <label className="mt-2 block rounded-xl border border-amber-300/70 bg-white p-3">
+                    <span className="mb-1 block text-sm font-semibold text-[#331447]">Other Amount</span>
+                    <Input
+                      type="number"
+                      min={100}
+                      value={form.customAmount}
+                      onChange={(event) => {
+                        setSelectedAmount(null);
+                        updateForm({ customAmount: event.target.value, want80G: false, wantPrasadam: false });
+                      }}
+                      placeholder="Enter any other amount"
+                      className="border-amber-200 focus-visible:ring-amber-400"
+                    />
+                    <span className="mt-1 block text-xs text-amber-700/60">Amount must be at least Rs.100.</span>
+                  </label>
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  <label className="block">
+                    <span className="text-sm font-semibold text-[#331447]">Donor Name *</span>
+                    <Input value={form.donorName} maxLength={39} onChange={(event) => updateForm({ donorName: event.target.value.replace(/[^a-zA-Z ]/g, "") })} placeholder="Your Name" className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
+                  </label>
+                  <label className="block">
+                    <span className="text-sm font-semibold text-[#331447]">Mobile Number *</span>
+                    <Input value={form.donorMobile} maxLength={10} onChange={(event) => updateForm({ donorMobile: event.target.value.replace(/\D/g, "") })} placeholder="Your Mobile Number" className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
+                  </label>
+                  <label className="block md:col-span-2">
+                    <span className="text-sm font-semibold text-[#331447]">E-Mail ID *</span>
+                    <Input type="email" value={form.donorEmail} onChange={(event) => updateForm({ donorEmail: event.target.value.toLowerCase() })} placeholder="Your Email" className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
+                  </label>
+                </div>
+
+                <DonorExtrasFields
+                  sevakName={form.sevakName}
+                  dob={form.dob}
+                  onSevakNameChange={(v) => updateForm({ sevakName: v })}
+                  onDobChange={(v) => updateForm({ dob: v })}
+                  variant="amber"
+                />
+
+                <fieldset className="rounded-lg border border-amber-200/60 bg-white/40 p-4">
+                  <legend className="px-2 text-sm font-semibold text-[#331447]">Payment Option *</legend>
+                  <div className="mt-2 flex flex-wrap gap-4">
+                    {(["Indian Citizen", "Foreign Citizen"] as const).map((value) => (
+                      <label key={value} className="flex items-center gap-2 text-sm text-[#331447]">
+                        <input type="radio" checked={form.nationality === value} onChange={() => updateForm({ nationality: value })} className="accent-amber-600" />
+                        {value}
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
+
+                <div className="space-y-3">
+                  {showPrasadamField && (
+                    <label className="flex items-start gap-3 rounded-lg border border-amber-200/60 bg-white/40 p-4 text-sm text-[#331447]">
+                      <input type="checkbox" checked={form.wantPrasadam} onChange={(event) => updateForm({ wantPrasadam: event.target.checked })} className="mt-1 accent-amber-600" />
+                      I would like to receive Maha Prasadam (Only within India)
+                    </label>
+                  )}
+                  {showTaxField && (
+                    <label className="flex items-start gap-3 rounded-lg border border-amber-200/60 bg-white/40 p-4 text-sm text-[#331447]">
+                      <input type="checkbox" checked={form.want80G} onChange={(event) => updateForm({ want80G: event.target.checked })} className="mt-1 accent-amber-600" />
+                      <span>
+                        I wish to receive 80G Tax Exemption
+                        <span className="mt-1 block text-xs text-amber-700/60">PAN and address are mandatory when 80G is selected.</span>
+                      </span>
+                    </label>
+                  )}
+                </div>
+
+                {form.want80G && (
+                  <label className="block">
+                    <span className="text-sm font-semibold text-[#331447]">PAN Number *</span>
+                    <Input value={form.panNumber} maxLength={10} onChange={(event) => updateForm({ panNumber: event.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "") })} placeholder="Eg: ABCDE1234F" className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
+                  </label>
+                )}
+
+                {needsAddress && (
+                  <div className="grid gap-4 rounded-lg border border-amber-200/60 bg-white/40 p-4 md:grid-cols-2">
+                    <label className="block">
+                      <span className="text-sm font-semibold text-[#331447]">House No/Door No</span>
+                      <Input value={form.doorNo} maxLength={39} onChange={(event) => updateForm({ doorNo: event.target.value })} className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
+                    </label>
+                    <label className="block">
+                      <span className="text-sm font-semibold text-[#331447]">House/Apartment/Building Name</span>
+                      <Input value={form.building} maxLength={39} onChange={(event) => updateForm({ building: event.target.value })} className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
+                    </label>
+                    <label className="block">
+                      <span className="text-sm font-semibold text-[#331447]">Street Name</span>
+                      <Input value={form.street} maxLength={39} onChange={(event) => updateForm({ street: event.target.value })} className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
+                    </label>
+                    <label className="block">
+                      <span className="text-sm font-semibold text-[#331447]">Location/Area *</span>
+                      <Input value={form.area} maxLength={39} onChange={(event) => updateForm({ area: event.target.value })} className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
+                    </label>
+                    <label className="block">
+                      <span className="text-sm font-semibold text-[#331447]">PIN Code *</span>
+                      <Input value={form.pincode} maxLength={6} onChange={(event) => updateForm({ pincode: event.target.value.replace(/\D/g, "") })} className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
+                    </label>
+                    <label className="block">
+                      <span className="text-sm font-semibold text-[#331447]">City *</span>
+                      <Input value={form.city} maxLength={30} onChange={(event) => updateForm({ city: event.target.value.toUpperCase().replace(/[^A-Z ]/g, "") })} className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
+                    </label>
+                    <label className="block md:col-span-2">
+                      <span className="text-sm font-semibold text-[#331447]">State *</span>
+                      <Input value={form.state} maxLength={30} onChange={(event) => updateForm({ state: event.target.value.toUpperCase().replace(/[^A-Z ]/g, "") })} className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
+                    </label>
+                  </div>
+                )}
+
+                {status.type === "error" && <p className="rounded-lg bg-red-100 px-4 py-3 text-sm font-semibold text-red-700">{status.message}</p>}
+
+                <motion.div
+                  animate={submitting || reduce ? undefined : { scale: [1, 1.02, 1] }}
+                  transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <Button type="submit" disabled={submitting || !canSubmit} className="w-full bg-[#ffc928] py-6 text-base font-bold text-[#3a1905] hover:bg-[#ffdb68] disabled:cursor-not-allowed disabled:opacity-60">
+                    <Heart className="mr-2 h-5 w-5 fill-current" />
+                    {submitting ? "Opening Checkout..." : submitLabel}
+                  </Button>
+                </motion.div>
+              </form>
+            </div>
           </motion.div>
         </div>
       </section>
@@ -997,176 +1155,6 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
         <svg className="h-7 w-7" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
       </a>
 
-      {status.message && !selected && (
-        <div className={`fixed bottom-6 left-1/2 z-[120] -translate-x-1/2 rounded-lg px-5 py-3 text-sm font-semibold shadow-lg ${
-          status.type === "success" ? "bg-green-700 text-white" : "bg-red-700 text-white"
-        }`}>
-          {status.message}
-        </div>
-      )}
-
-      {selected && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/75 p-4 backdrop-blur-sm">
-          <div
-            className="form-scroll relative max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-xl border border-amber-200/50 shadow-2xl"
-            style={{
-              background: `
-                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cg transform='translate(60,60)'%3E%3Cpath d='M0,-6 C6,-16 6,-28 0,-34 C-6,-28 -6,-16 0,-6Z' fill='%2392400e'/%3E%3Cpath d='M0,-6 C6,-16 6,-28 0,-34 C-6,-28 -6,-16 0,-6Z' fill='%2392400e' transform='rotate(45)'/%3E%3Cpath d='M0,-6 C6,-16 6,-28 0,-34 C-6,-28 -6,-16 0,-6Z' fill='%2392400e' transform='rotate(90)'/%3E%3Cpath d='M0,-6 C6,-16 6,-28 0,-34 C-6,-28 -6,-16 0,-6Z' fill='%2392400e' transform='rotate(135)'/%3E%3Cpath d='M0,-6 C6,-16 6,-28 0,-34 C-6,-28 -6,-16 0,-6Z' fill='%2392400e' transform='rotate(180)'/%3E%3Cpath d='M0,-6 C6,-16 6,-28 0,-34 C-6,-28 -6,-16 0,-6Z' fill='%2392400e' transform='rotate(225)'/%3E%3Cpath d='M0,-6 C6,-16 6,-28 0,-34 C-6,-28 -6,-16 0,-6Z' fill='%2392400e' transform='rotate(270)'/%3E%3Cpath d='M0,-6 C6,-16 6,-28 0,-34 C-6,-28 -6,-16 0,-6Z' fill='%2392400e' transform='rotate(315)'/%3E%3Ccircle r='8' fill='%23b45309'/%3E%3Ccircle r='4' fill='%23d97706'/%3E%3C/g%3E%3Cg transform='translate(0,0)'%3E%3Cellipse cx='0' cy='-5' rx='3' ry='6' fill='%23b45309'/%3E%3Cellipse cx='0' cy='-5' rx='3' ry='6' fill='%23b45309' transform='rotate(90)'/%3E%3Ccircle r='3' fill='%23d97706'/%3E%3C/g%3E%3Cg transform='translate(120,0)'%3E%3Cellipse cx='0' cy='-5' rx='3' ry='6' fill='%23b45309'/%3E%3Cellipse cx='0' cy='-5' rx='3' ry='6' fill='%23b45309' transform='rotate(90)'/%3E%3Ccircle r='3' fill='%23d97706'/%3E%3C/g%3E%3Cg transform='translate(0,120)'%3E%3Cellipse cx='0' cy='-5' rx='3' ry='6' fill='%23b45309'/%3E%3Cellipse cx='0' cy='-5' rx='3' ry='6' fill='%23b45309' transform='rotate(90)'/%3E%3Ccircle r='3' fill='%23d97706'/%3E%3C/g%3E%3Cg transform='translate(120,120)'%3E%3Cellipse cx='0' cy='-5' rx='3' ry='6' fill='%23b45309'/%3E%3Cellipse cx='0' cy='-5' rx='3' ry='6' fill='%23b45309' transform='rotate(90)'/%3E%3Ccircle r='3' fill='%23d97706'/%3E%3C/g%3E%3Cpath d='M60 6 Q72 30 60 60' stroke='%23b45309' stroke-width='0.6' fill='none'/%3E%3Cpath d='M60 60 Q48 90 60 114' stroke='%23b45309' stroke-width='0.6' fill='none'/%3E%3Cpath d='M6 60 Q30 48 60 60' stroke='%23b45309' stroke-width='0.6' fill='none'/%3E%3Cpath d='M60 60 Q90 72 114 60' stroke='%23b45309' stroke-width='0.6' fill='none'/%3E%3C/svg%3E") repeat,
-                linear-gradient(to bottom, #fefaf1, #fff5e6 50%, #ffefd0)
-              `,
-              backgroundBlendMode: 'overlay',
-            }}
-          >
-            {/* Form content */}
-            <div className="relative z-10">
-              <div className="sticky top-0 z-10 flex items-center justify-between border-b border-amber-200/50 bg-[#fefaf1]/90 px-6 py-4 backdrop-blur">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-amber-700/70">Janmashtami Checkout</p>
-                  <h2 className="text-xl font-bold text-[#331447]">{selected.seva.title}</h2>
-                </div>
-                <button type="button" onClick={closeCheckout} className="rounded-full border border-amber-300/60 bg-white/60 p-2 text-amber-700/60 transition hover:border-amber-400 hover:bg-white hover:text-amber-900" aria-label="Close checkout">
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
-
-            <form onSubmit={submitDonation} className="space-y-5 p-6">
-              <div className="grid gap-4 rounded-lg border border-amber-200/40 bg-white/60 p-4 md:grid-cols-2">
-                <div>
-                  <p className="text-xs font-semibold text-amber-700/60">Seva Name</p>
-                  <p className="mt-1 font-bold text-[#331447]">{selected.seva.title}</p>
-                </div>
-                <div>
-                  <p className="text-xs font-semibold text-amber-700/60">Seva Amount</p>
-                  <p className="mt-1 font-bold text-[#331447]">
-                    {selected.option.amount ? `₹${formatAmount(selected.option.amount)}` : "Enter amount below"}
-                  </p>
-                </div>
-              </div>
-
-              {!selected.option.amount && (
-                <label className="block">
-                  <span className="text-sm font-semibold text-[#331447]">Enter Seva Amount *</span>
-                  <Input
-                    type="number"
-                    min={100}
-                    value={form.customAmount}
-                    onChange={(event) => updateForm({ customAmount: event.target.value, want80G: false, wantPrasadam: false })}
-                    placeholder="Enter amount"
-                    className="mt-2 border-amber-200 focus-visible:ring-amber-400"
-                  />
-                  <span className="mt-1 block text-xs text-amber-700/60">Amount must be at least Rs.100.</span>
-                </label>
-              )}
-
-              <div className="grid gap-4 md:grid-cols-2">
-                <label className="block">
-                  <span className="text-sm font-semibold text-[#331447]">Donor Name *</span>
-                  <Input value={form.donorName} maxLength={39} onChange={(event) => updateForm({ donorName: event.target.value.replace(/[^a-zA-Z ]/g, "") })} placeholder="Your Name" className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
-                </label>
-                <label className="block">
-                  <span className="text-sm font-semibold text-[#331447]">Mobile Number *</span>
-                  <Input value={form.donorMobile} maxLength={10} onChange={(event) => updateForm({ donorMobile: event.target.value.replace(/\D/g, "") })} placeholder="Your Mobile Number" className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
-                </label>
-                <label className="block md:col-span-2">
-                  <span className="text-sm font-semibold text-[#331447]">E-Mail ID *</span>
-                  <Input type="email" value={form.donorEmail} onChange={(event) => updateForm({ donorEmail: event.target.value.toLowerCase() })} placeholder="Your Email" className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
-                </label>
-              </div>
-
-              <DonorExtrasFields
-                sevakName={form.sevakName}
-                dob={form.dob}
-                onSevakNameChange={(v) => updateForm({ sevakName: v })}
-                onDobChange={(v) => updateForm({ dob: v })}
-                variant="amber"
-              />
-
-              <fieldset className="rounded-lg border border-amber-200/60 bg-white/40 p-4">
-                <legend className="px-2 text-sm font-semibold text-[#331447]">Payment Option *</legend>
-                <div className="mt-2 flex flex-wrap gap-4">
-                  {(["Indian Citizen", "Foreign Citizen"] as const).map((value) => (
-                    <label key={value} className="flex items-center gap-2 text-sm text-[#331447]">
-                      <input type="radio" checked={form.nationality === value} onChange={() => updateForm({ nationality: value })} className="accent-amber-600" />
-                      {value}
-                    </label>
-                  ))}
-                </div>
-              </fieldset>
-
-              <div className="space-y-3">
-                {showPrasadamField && (
-                  <label className="flex items-start gap-3 rounded-lg border border-amber-200/60 bg-white/40 p-4 text-sm text-[#331447]">
-                    <input type="checkbox" checked={form.wantPrasadam} onChange={(event) => updateForm({ wantPrasadam: event.target.checked })} className="mt-1 accent-amber-600" />
-                    I would like to receive Maha Prasadam (Only within India)
-                  </label>
-                )}
-                {showTaxField && (
-                  <label className="flex items-start gap-3 rounded-lg border border-amber-200/60 bg-white/40 p-4 text-sm text-[#331447]">
-                    <input type="checkbox" checked={form.want80G} onChange={(event) => updateForm({ want80G: event.target.checked })} className="mt-1 accent-amber-600" />
-                    <span>
-                      I wish to receive 80G Tax Exemption
-                      <span className="mt-1 block text-xs text-amber-700/60">PAN and address are mandatory when 80G is selected.</span>
-                    </span>
-                  </label>
-                )}
-              </div>
-
-              {form.want80G && (
-                <label className="block">
-                  <span className="text-sm font-semibold text-[#331447]">PAN Number *</span>
-                  <Input value={form.panNumber} maxLength={10} onChange={(event) => updateForm({ panNumber: event.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "") })} placeholder="Eg: ABCDE1234F" className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
-                </label>
-              )}
-
-              {needsAddress && (
-                <div className="grid gap-4 rounded-lg border border-amber-200/60 bg-white/40 p-4 md:grid-cols-2">
-                  <label className="block">
-                    <span className="text-sm font-semibold text-[#331447]">House No/Door No</span>
-                    <Input value={form.doorNo} maxLength={39} onChange={(event) => updateForm({ doorNo: event.target.value })} className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
-                  </label>
-                  <label className="block">
-                    <span className="text-sm font-semibold text-[#331447]">House/Apartment/Building Name</span>
-                    <Input value={form.building} maxLength={39} onChange={(event) => updateForm({ building: event.target.value })} className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
-                  </label>
-                  <label className="block">
-                    <span className="text-sm font-semibold text-[#331447]">Street Name</span>
-                    <Input value={form.street} maxLength={39} onChange={(event) => updateForm({ street: event.target.value })} className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
-                  </label>
-                  <label className="block">
-                    <span className="text-sm font-semibold text-[#331447]">Location/Area *</span>
-                    <Input value={form.area} maxLength={39} onChange={(event) => updateForm({ area: event.target.value })} className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
-                  </label>
-                  <label className="block">
-                    <span className="text-sm font-semibold text-[#331447]">PIN Code *</span>
-                    <Input value={form.pincode} maxLength={6} onChange={(event) => updateForm({ pincode: event.target.value.replace(/\D/g, "") })} className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
-                  </label>
-                  <label className="block">
-                    <span className="text-sm font-semibold text-[#331447]">City *</span>
-                    <Input value={form.city} maxLength={30} onChange={(event) => updateForm({ city: event.target.value.toUpperCase().replace(/[^A-Z ]/g, "") })} className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
-                  </label>
-                  <label className="block md:col-span-2">
-                    <span className="text-sm font-semibold text-[#331447]">State *</span>
-                    <Input value={form.state} maxLength={30} onChange={(event) => updateForm({ state: event.target.value.toUpperCase().replace(/[^A-Z ]/g, "") })} className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
-                  </label>
-                </div>
-              )}
-
-              {status.type === "error" && <p className="rounded-lg bg-red-100 px-4 py-3 text-sm font-semibold text-red-700">{status.message}</p>}
-
-              <motion.div
-                animate={submitting || reduce ? undefined : { scale: [1, 1.02, 1] }}
-                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-              >
-                <Button type="submit" disabled={submitting} className="w-full bg-[#ffc928] py-6 text-base font-bold text-[#3a1905] hover:bg-[#ffdb68]">
-                  <Heart className="mr-2 h-5 w-5 fill-current" />
-                  {submitting ? "Opening Checkout..." : `Donate Rs. ${formatAmount(finalAmount || 0)}`}
-                </Button>
-              </motion.div>
-            </form>
-            </div>
-          </div>
-        </div>
-      )}
     </main>
   );
 }
