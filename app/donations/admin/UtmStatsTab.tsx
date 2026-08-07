@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { authFetch } from "@/lib/authClient";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Loader2, Eye, Megaphone } from "lucide-react";
+import { Loader2, Eye, Megaphone, CalendarRange } from "lucide-react";
 
 const apiUrl = () => (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 
@@ -31,13 +32,23 @@ export default function UtmStatsTab() {
   const [modalRow, setModalRow] = useState<UtmRow | null>(null);
   const [modalTxns, setModalTxns] = useState<UtmTransaction[]>([]);
   const [modalLoading, setModalLoading] = useState(false);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
-  useEffect(() => {
-    authFetch(`${apiUrl()}/donations-admin/utm-stats`, { credentials: "include" })
+  const fetchStats = useCallback(() => {
+    setLoading(true);
+    const params = new URLSearchParams();
+    if (startDate) params.set("startDate", startDate);
+    if (endDate) params.set("endDate", endDate);
+    authFetch(`${apiUrl()}/donations-admin/utm-stats?${params.toString()}`, { credentials: "include" })
       .then((res) => res.json())
       .then((data) => { if (data.success) setStats(data.stats); })
       .finally(() => setLoading(false));
-  }, []);
+  }, [startDate, endDate]);
+
+  useEffect(() => {
+    fetchStats();
+  }, [fetchStats]);
 
   const openCampaign = async (row: UtmRow) => {
     setModalRow(row);
@@ -48,6 +59,8 @@ export default function UtmStatsTab() {
       if (row._id.campaign) params.set("campaign", row._id.campaign);
       if (row._id.source) params.set("source", row._id.source);
       if (row._id.medium) params.set("medium", row._id.medium);
+      if (startDate) params.set("startDate", startDate);
+      if (endDate) params.set("endDate", endDate);
       const res = await authFetch(`${apiUrl()}/donations-admin/utm-transactions?${params.toString()}`, { credentials: "include" });
       const data = await res.json();
       if (data.success) setModalTxns(data.transactions);
@@ -59,20 +72,53 @@ export default function UtmStatsTab() {
   const totalAmount = stats.reduce((sum, r) => sum + r.totalAmount, 0);
   const totalCount = stats.reduce((sum, r) => sum + r.count, 0);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-16 text-muted-foreground">
-        <Loader2 className="mr-2 h-5 w-5 animate-spin" /> Loading campaign stats...
-      </div>
-    );
-  }
+  const applyPreset = (days: number) => {
+    const today = new Date();
+    const toStr = today.toISOString().slice(0, 10);
+    let fromStr = toStr;
+    if (days === -1) {
+      fromStr = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().slice(0, 10);
+    } else if (days > 0) {
+      const d = new Date(today);
+      d.setDate(d.getDate() - days);
+      fromStr = d.toISOString().slice(0, 10);
+    }
+    setStartDate(fromStr);
+    setEndDate(toStr);
+  };
 
   return (
     <div className="space-y-4">
+      {/* Date range filter */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="flex items-center gap-2">
+          <label className="flex items-center gap-1.5 text-sm text-muted-foreground">
+            <CalendarRange className="h-4 w-4" /> From
+          </label>
+          <Input type="date" value={startDate} max={endDate || undefined} onChange={(e) => setStartDate(e.target.value)} className="w-auto" />
+          <label className="text-sm text-muted-foreground">To</label>
+          <Input type="date" value={endDate} min={startDate || undefined} onChange={(e) => setEndDate(e.target.value)} className="w-auto" />
+          {(startDate || endDate) && (
+            <Button size="sm" variant="outline" onClick={() => { setStartDate(""); setEndDate(""); }}>Clear</Button>
+          )}
+        </div>
+        <div className="flex flex-wrap gap-1.5">
+          {[{ label: "Today", days: 0 }, { label: "Last 7 days", days: 7 }, { label: "Last 30 days", days: 30 }, { label: "This month", days: -1 }].map((p) => (
+            <Button key={p.label} size="sm" variant="outline" onClick={() => applyPreset(p.days)}>{p.label}</Button>
+          ))}
+        </div>
+      </div>
+
+      {loading ? (
+        <div className="flex items-center justify-center py-16 text-muted-foreground">
+          <Loader2 className="mr-2 h-5 w-5 animate-spin" /> Loading campaign stats...
+        </div>
+      ) : (
+      <>
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
         <Card><CardContent className="p-4 text-center">
           <p className="text-2xl font-bold">₹{totalAmount.toLocaleString("en-IN")}</p>
-          <p className="text-xs text-muted-foreground">Total raised (all campaigns)</p>
+          <p className="text-xs text-muted-foreground">Total raised{startDate || endDate ? " (selected range)" : " (all campaigns)"}</p>
         </CardContent></Card>
         <Card><CardContent className="p-4 text-center">
           <p className="text-2xl font-bold">{totalCount}</p>
@@ -85,7 +131,7 @@ export default function UtmStatsTab() {
       </div>
 
       {stats.length === 0 ? (
-        <Card><CardContent className="py-12 text-center text-muted-foreground">No donation data yet.</CardContent></Card>
+        <Card><CardContent className="py-12 text-center text-muted-foreground">No donation data {startDate || endDate ? "in this range." : "yet."}</CardContent></Card>
       ) : (
         <div className="space-y-2">
           {stats.map((row, i) => (
@@ -110,6 +156,8 @@ export default function UtmStatsTab() {
             </Card>
           ))}
         </div>
+      )}
+      </>
       )}
 
       <Dialog open={!!modalRow} onOpenChange={(open) => !open && setModalRow(null)}>
