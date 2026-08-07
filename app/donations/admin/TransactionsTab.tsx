@@ -12,7 +12,7 @@ import {
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { Search, Loader2, ChevronLeft, ChevronRight, Tag, Download } from "lucide-react";
+import { Search, Loader2, ChevronLeft, ChevronRight, Tag, Download, CalendarRange } from "lucide-react";
 
 const apiUrl = () => (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 
@@ -58,12 +58,16 @@ export default function TransactionsTab() {
   const [totalPages, setTotalPages] = useState(1);
   const [totalAmount, setTotalAmount] = useState(0);
   const [selected, setSelected] = useState<Transaction | null>(null);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
 
   const fetchTransactions = useCallback(() => {
     setLoading(true);
     const params = new URLSearchParams({ page: String(page), limit: "20" });
     if (search) params.set("search", search);
     if (status !== "all") params.set("status", status);
+    if (startDate) params.set("startDate", startDate);
+    if (endDate) params.set("endDate", endDate);
 
     authFetch(`${apiUrl()}/donations-admin/transactions?${params.toString()}`, { credentials: "include" })
       .then((res) => res.json())
@@ -75,7 +79,7 @@ export default function TransactionsTab() {
         }
       })
       .finally(() => setLoading(false));
-  }, [page, search, status]);
+  }, [page, search, status, startDate, endDate]);
 
   useEffect(() => {
     const t = setTimeout(fetchTransactions, 300); // debounce search
@@ -85,6 +89,8 @@ export default function TransactionsTab() {
   const exportCsv = () => {
     const params = new URLSearchParams();
     if (status !== "all") params.set("status", status);
+    if (startDate) params.set("startDate", startDate);
+    if (endDate) params.set("endDate", endDate);
     // authFetch attaches the Bearer token; window.open wouldn't include it,
     // so fetch the CSV as a blob and trigger the download manually.
     authFetch(`${apiUrl()}/donations-admin/export?${params.toString()}`, { credentials: "include" })
@@ -130,6 +136,51 @@ export default function TransactionsTab() {
         </div>
       </div>
 
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+        <div className="flex items-center gap-2">
+          <label className="flex items-center gap-1.5 text-sm text-muted-foreground">
+            <CalendarRange className="h-4 w-4" /> From
+          </label>
+          <Input type="date" value={startDate} max={endDate || undefined} onChange={(e) => { setPage(1); setStartDate(e.target.value); }} className="w-auto" />
+          <label className="text-sm text-muted-foreground">To</label>
+          <Input type="date" value={endDate} min={startDate || undefined} onChange={(e) => { setPage(1); setEndDate(e.target.value); }} className="w-auto" />
+          {(startDate || endDate) && (
+            <Button variant="outline" size="sm" onClick={() => { setPage(1); setStartDate(""); setEndDate(""); }}>Clear</Button>
+          )}
+        </div>
+        <div className="flex flex-wrap gap-1.5">
+          {[
+            { label: "Today", days: 0 },
+            { label: "Last 7 days", days: 7 },
+            { label: "Last 30 days", days: 30 },
+            { label: "This month", days: -1 },
+          ].map((preset) => (
+            <Button
+              key={preset.label}
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                const today = new Date();
+                const toStr = today.toISOString().slice(0, 10);
+                let fromStr = toStr;
+                if (preset.days === -1) {
+                  fromStr = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().slice(0, 10);
+                } else if (preset.days > 0) {
+                  const d = new Date(today);
+                  d.setDate(d.getDate() - preset.days);
+                  fromStr = d.toISOString().slice(0, 10);
+                }
+                setPage(1);
+                setStartDate(fromStr);
+                setEndDate(toStr);
+              }}
+            >
+              {preset.label}
+            </Button>
+          ))}
+        </div>
+      </div>
+
       <p className="text-sm text-muted-foreground">
         <span className="font-semibold text-foreground">₹{totalAmount.toLocaleString("en-IN")}</span>{" "}
         {status === "completed"
@@ -137,6 +188,9 @@ export default function TransactionsTab() {
           : status === "all"
             ? "across all statuses — includes pending/failed, not confirmed revenue"
             : `across matching "${status}" transactions — not confirmed revenue`}
+        {(startDate || endDate) && (
+          <> · {startDate && endDate ? `${startDate} to ${endDate}` : startDate ? `from ${startDate}` : `up to ${endDate}`}</>
+        )}
       </p>
 
       {loading ? (

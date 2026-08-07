@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
-  IndianRupee, Search, Download, Eye, TrendingUp, Users, Calendar, CreditCard, Smartphone, Banknote, X, Loader2, AlertTriangle,
+  IndianRupee, Search, Download, Eye, TrendingUp, Users, Calendar, CreditCard, Smartphone, Banknote, X, Loader2, AlertTriangle, CalendarRange,
 } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend,
@@ -57,6 +57,9 @@ export default function AdminDonations() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [statsLoading, setStatsLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState("all");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
+  const [rangeTotalAmount, setRangeTotalAmount] = useState(0);
 
   // Fetch real aggregated stats from the server
   useEffect(() => {
@@ -75,16 +78,19 @@ export default function AdminDonations() {
       if (search) params.set("q", search);
       if (statusFilter !== "all") params.set("status", statusFilter);
       if (sevaFilter !== "all") params.set("type", sevaFilter);
+      if (dateFrom) params.set("from", dateFrom);
+      if (dateTo) params.set("to", dateTo);
       const res = await authFetch(`${apiUrl}/donations?${params.toString()}`, { credentials: "include" });
       if (!res.ok) return;
       const data = await res.json();
       setDonations(data.donations || []);
       setTotal(data.total || 0);
+      setRangeTotalAmount(data.totalAmount || 0);
     } catch (err) {
       console.error(err);
     }
     setLoading(false);
-  }, [page, limit, search, statusFilter, sevaFilter]);
+  }, [page, limit, search, statusFilter, sevaFilter, dateFrom, dateTo]);
 
   useEffect(() => {
     const t = setTimeout(fetchDonations, 300);
@@ -96,6 +102,8 @@ export default function AdminDonations() {
     if (statusFilter !== "all") params.set("status", statusFilter);
     if (sevaFilter !== "all") params.set("type", sevaFilter);
     if (search) params.set("q", search);
+    if (dateFrom) params.set("from", dateFrom);
+    if (dateTo) params.set("to", dateTo);
     authFetch(`${apiUrl}/donations?${params.toString()}&limit=10000`, { credentials: "include" })
       .then((res) => res.json())
       .then((data) => {
@@ -259,6 +267,77 @@ export default function AdminDonations() {
           <option value="needs_attention">Needs Attention</option>
         </select>
       </div>
+
+      {/* Date range filter */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="flex items-center gap-2">
+          <label className="flex items-center gap-1.5 text-sm text-muted-foreground">
+            <CalendarRange className="h-4 w-4" /> From
+          </label>
+          <Input
+            type="date"
+            value={dateFrom}
+            max={dateTo || undefined}
+            onChange={(e) => { setDateFrom(e.target.value); setPage(1); }}
+            className="w-auto"
+          />
+          <label className="text-sm text-muted-foreground">To</label>
+          <Input
+            type="date"
+            value={dateTo}
+            min={dateFrom || undefined}
+            onChange={(e) => { setDateTo(e.target.value); setPage(1); }}
+            className="w-auto"
+          />
+          {(dateFrom || dateTo) && (
+            <Button
+              className="h-9 px-2 text-xs bg-transparent border border-border text-foreground hover:bg-muted"
+              onClick={() => { setDateFrom(""); setDateTo(""); setPage(1); }}
+            >
+              Clear
+            </Button>
+          )}
+        </div>
+        <div className="flex flex-wrap gap-1.5">
+          {[
+            { label: "Today", days: 0 },
+            { label: "Last 7 days", days: 7 },
+            { label: "Last 30 days", days: 30 },
+            { label: "This month", days: -1 },
+          ].map((preset) => (
+            <Button
+              key={preset.label}
+              className="h-8 px-3 text-xs bg-transparent border border-border text-foreground hover:bg-muted"
+              onClick={() => {
+                const today = new Date();
+                const toStr = today.toISOString().slice(0, 10);
+                let fromStr = toStr;
+                if (preset.days === -1) {
+                  fromStr = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().slice(0, 10);
+                } else if (preset.days > 0) {
+                  const d = new Date(today);
+                  d.setDate(d.getDate() - preset.days);
+                  fromStr = d.toISOString().slice(0, 10);
+                }
+                setDateFrom(fromStr);
+                setDateTo(toStr);
+                setPage(1);
+              }}
+            >
+              {preset.label}
+            </Button>
+          ))}
+        </div>
+      </div>
+
+      {(dateFrom || dateTo) && !loading && (
+        <p className="text-sm text-muted-foreground">
+          <span className="font-semibold text-foreground">{total}</span> record{total === 1 ? "" : "s"} · {" "}
+          <span className="font-semibold text-foreground">₹{rangeTotalAmount.toLocaleString("en-IN")}</span> total
+          {statusFilter === "all" ? " across all statuses (includes pending/failed)" : ` (${statusFilter})`}
+          {dateFrom && dateTo ? ` between ${dateFrom} and ${dateTo}` : dateFrom ? ` from ${dateFrom} onward` : ` up to ${dateTo}`}
+        </p>
+      )}
 
       {/* Transactions Table */}
       <Card>
