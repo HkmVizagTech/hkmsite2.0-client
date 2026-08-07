@@ -331,7 +331,6 @@ const Navbar = () => {
                 </button>
                 <Button
                   variant="default"
-                  size="sm"
                   className="mt-1.5 rounded-full bg-gradient-ocean text-white border-0 text-[15px]"
                   asChild
                 >
