@@ -14,7 +14,7 @@ import {
   X,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
-import PageHero from "@/components/PageHero";
+import TempleCarousel from "@/components/TempleCarousel";
 import Ornament from "@/components/Ornament";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -202,12 +202,10 @@ export default function VolunteerPage() {
 
   return (
     <PageLayout>
-      <PageHero
-        title="Volunteer With Us"
-        subtitle="Serve the Lord and community through selfless volunteer work at Hare Krishna Movement Vizag"
-        breadcrumb="Volunteer"
-        backgroundImage="https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783675995608-1783675986681-SAV01474.JPG.jpg"
-      />
+      {/* HERO — same banner carousel as the home page */}
+      <section className="overflow-hidden pt-[88px] md:pt-[104px]">
+        <TempleCarousel />
+      </section>
 
       {/* Why Volunteer */}
       <section className="py-12 md:py-16 bg-white dark:bg-background">
