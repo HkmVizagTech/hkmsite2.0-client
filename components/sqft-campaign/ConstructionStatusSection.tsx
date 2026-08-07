@@ -15,7 +15,7 @@ const CONSTRUCTION_PHOTOS = [
   { src: "/assets/construction-update-5.jpg", caption: "Building Elevation" },
 ];
 
-const CONSTRUCTION_VIDEO_ID = "RRifRjrlc5s";
+const CONSTRUCTION_VIDEO_ID = "mPAt0gb__Hw";
 
 export default function ConstructionStatusSection({ scrollToDonate }: { scrollToDonate?: () => void }) {
   const scrollerRef = useRef<HTMLDivElement>(null);
