@@ -16,6 +16,7 @@ import { useAttribution } from "@/lib/useAttribution";
 import Ornament from "@/components/Ornament";
 import PageLayout from "@/components/PageLayout";
 import AddressForm from "@/components/AddressForm";
+import UpiQrCard from "@/components/UpiQrCard";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
 import type { PrasadamAddress } from "@/components/AddressForm";
 
@@ -413,8 +414,10 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
             ))}
           </div>
 
-          {/* Bank transfer alternative */}
-          <div className="mb-12 rounded-2xl border border-border bg-card p-6">
+          {/* Offline payment options: UPI QR + Bank transfer */}
+          <div className="mb-12 grid gap-4 md:grid-cols-2">
+            <UpiQrCard />
+            <div className="rounded-2xl border border-border bg-card p-6">
             <h3 className="mb-4 flex items-center gap-2 font-heading text-lg font-bold">
               <Building2 className="h-5 w-5 text-primary" /> Prefer a Direct Bank Transfer?
             </h3>
@@ -445,6 +448,7 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
                   </button>
                 </div>
               ))}
+            </div>
             </div>
           </div>
 
