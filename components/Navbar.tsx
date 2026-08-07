@@ -141,6 +141,21 @@ const Navbar = () => {
 
       {
 }
+      {/* Mobile menu backdrop — tap outside to close */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={() => setMobileOpen(false)}
+            className="fixed inset-0 z-40 bg-black/40 lg:hidden"
+            aria-hidden
+          />
+        )}
+      </AnimatePresence>
+
       <motion.nav
         initial={{ y: -100 }}
         animate={{ y: 0 }}
@@ -237,15 +252,8 @@ const Navbar = () => {
             </Button>
           </div>
 
-          {/* Mobile: Donate Now button + theme toggle — menu handled by bottom nav More button */}
+          {/* Mobile: Donate Now button — theme toggle moved into the More menu */}
           <div className="lg:hidden flex items-center gap-1.5">
-            <button
-              onClick={toggleTheme}
-              className="flex h-[30px] w-[30px] items-center justify-center rounded-full border border-border text-muted-foreground hover:text-primary hover:border-primary transition-all"
-              aria-label="Toggle dark mode"
-            >
-              {darkMode ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
-            </button>
             <Button
               variant="default"
               size="sm"
@@ -271,7 +279,7 @@ const Navbar = () => {
               transition={{ duration: 0.25, ease: "easeInOut" }}
               className="lg:hidden bg-white dark:bg-card backdrop-blur-md border-t border-border overflow-hidden rounded-b-2xl"
             >
-              <div className="container mx-auto px-4 py-4 flex flex-col gap-1">
+              <div className="container mx-auto px-4 py-4 flex flex-col gap-1 max-h-[calc(100dvh-9rem)] overflow-y-auto">
                 {navItems.map((item) => (
                   <Link
                     key={item.label}
@@ -302,50 +310,67 @@ const Navbar = () => {
                     Donate Now
                   </Link>
                 </Button>
+                <button
+                  onClick={() => setMobileOpen(false)}
+                  className="mt-2 flex items-center justify-center gap-2 rounded-full border border-border px-4 py-3 font-medium text-foreground transition-colors hover:text-primary hover:border-primary"
+                >
+                  <X className="w-4 h-4" />
+                  Close Menu
+                </button>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
       </motion.nav>
 
-      {/* ── Fixed bottom navigation bar — mobile only ── */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-card border-t border-border shadow-[0_-2px_12px_rgba(0,0,0,0.08)]">
-        <div className="flex items-stretch">
-          {bottomNavItems.map((item) => {
-            const Icon = item.icon;
-            const active = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`relative flex flex-1 flex-col items-center justify-center gap-0.5 py-2.5 text-[10px] font-medium transition-colors ${
-                  active ? "text-primary" : "text-muted-foreground"
+      {/* ── Fixed bottom navigation bar — mobile only; hidden while the More menu is open ── */}
+      <AnimatePresence>
+        {!mobileOpen && (
+          <motion.nav
+            initial={false}
+            animate={{ y: 0 }}
+            exit={{ y: 100 }}
+            transition={{ duration: 0.25, ease: "easeInOut" }}
+            className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-card border-t border-border shadow-[0_-2px_12px_rgba(0,0,0,0.08)]"
+          >
+            <div className="flex items-stretch">
+              {bottomNavItems.map((item) => {
+                const Icon = item.icon;
+                const active = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`relative flex flex-1 flex-col items-center justify-center gap-0.5 py-2.5 text-[10px] font-medium transition-colors ${
+                      active ? "text-primary" : "text-muted-foreground"
+                    }`}
+                  >
+                    <Icon className={`w-5 h-5 ${active ? "stroke-[2.5px]" : "stroke-[1.75px]"}`} />
+                    {item.label}
+                    {active && (
+                      <motion.span
+                        layoutId="bottom-nav-active"
+                        className="absolute top-0 h-0.5 w-8 rounded-full bg-primary"
+                        transition={{ type: "spring", bounce: 0.25, duration: 0.4 }}
+                      />
+                    )}
+                  </Link>
+                );
+              })}
+              {/* More — opens/closes the hamburger menu */}
+              <button
+                onClick={() => setMobileOpen(!mobileOpen)}
+                className={`flex flex-1 flex-col items-center justify-center gap-0.5 py-2.5 text-[10px] font-medium transition-colors ${
+                  mobileOpen ? "text-primary" : "text-muted-foreground"
                 }`}
               >
-                <Icon className={`w-5 h-5 ${active ? "stroke-[2.5px]" : "stroke-[1.75px]"}`} />
-                {item.label}
-                {active && (
-                  <motion.span
-                    layoutId="bottom-nav-active"
-                    className="absolute top-0 h-0.5 w-8 rounded-full bg-primary"
-                    transition={{ type: "spring", bounce: 0.25, duration: 0.4 }}
-                  />
-                )}
-              </Link>
-            );
-          })}
-          {/* More — opens/closes the hamburger menu */}
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className={`flex flex-1 flex-col items-center justify-center gap-0.5 py-2.5 text-[10px] font-medium transition-colors ${
-              mobileOpen ? "text-primary" : "text-muted-foreground"
-            }`}
-          >
-            {mobileOpen ? <X className="w-5 h-5 stroke-[2.5px]" /> : <Menu className="w-5 h-5 stroke-[1.75px]" />}
-            More
-          </button>
-        </div>
-      </nav>
+                {mobileOpen ? <X className="w-5 h-5 stroke-[2.5px]" /> : <Menu className="w-5 h-5 stroke-[1.75px]" />}
+                More
+              </button>
+            </div>
+          </motion.nav>
+        )}
+      </AnimatePresence>
     </>
   );
 };
