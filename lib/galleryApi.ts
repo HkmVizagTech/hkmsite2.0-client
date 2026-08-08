@@ -2,8 +2,11 @@ import axios from "axios";
 
 const API_BASE = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:5000/api";
 
-export const getGalleryImages = async () => {
-  const url = `${API_BASE}/gallery`;
+export const getGalleryImages = async (params?: { type?: string; status?: string; category?: string; date?: string }) => {
+  const search = params
+    ? "?" + Object.entries(params).filter(([, v]) => v).map(([k, v]) => `${k}=${encodeURIComponent(v as string)}`).join("&")
+    : "";
+  const url = `${API_BASE}/gallery${search}`;
   try {
     const res = await axios.get(url);
     return res?.data?.items ?? [];

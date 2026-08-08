@@ -51,7 +51,7 @@ export default function GalleryPage() {
   }
 
   useEffect(() => {
-    getGalleryImages().then((items) => {
+    getGalleryImages({ status: "active" }).then((items) => {
       setGalleryImages(items);
 
       if (items && items.length > 0) {

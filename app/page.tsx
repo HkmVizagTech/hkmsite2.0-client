@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import TempleCarousel from "@/components/TempleCarousel";
+import TodaysDarshan from "@/components/TodaysDarshan";
 import AboutSection from "@/components/AboutSection";
 import FounderSection from "@/components/FounderSection";
 import SevasSection from "@/components/SevasSection";
@@ -14,6 +15,7 @@ export default function Home() {
     <div className="min-h-screen bg-white dark:bg-background pt-[88px] md:pt-[104px]">
       <Navbar />
       <TempleCarousel />
+      <TodaysDarshan />
       <AboutSection />
       <FounderSection />
       <SevasSection />
