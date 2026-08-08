@@ -277,10 +277,10 @@ export const ANNA_DAAN_CAMPAIGN: SevaCampaignConfig = {
   unit: { price: 25, singular: "meal", plural: "meals" },
 
   tiers: [
-    { label: "Feed 10 People", amount: 250, description: "Ten wholesome, sanctified plates of prasadam" },
     { label: "Feed 20 People", amount: 500, description: "Twenty meals for devotees and the needy" },
     { label: "Feed 40 People", amount: 1000, description: "A community table of forty prasadam plates" },
     { label: "Feed 100 People", amount: 2500, description: "One hundred sacred meals served with love" },
+    { label: "Feed 200 People", amount: 5000, description: "Two hundred meals shared in the Lord's service" },
   ],
 
   formHeading: "Offer Your Anna Daan",
@@ -367,7 +367,7 @@ export const ANNA_DAAN_CAMPAIGN: SevaCampaignConfig = {
     },
     {
       q: "How many meals will my donation provide?",
-      a: "Each meal costs ₹25. A donation of ₹250 feeds 10 people, ₹500 feeds 20, ₹1,000 feeds 40 and ₹2,500 feeds 100. Any custom amount provides a proportional number of meals.",
+      a: "Each meal costs ₹25. A donation of ₹500 feeds 20 people, ₹1,000 feeds 40, ₹2,500 feeds 100 and ₹5,000 feeds 200. Any custom amount provides a proportional number of meals.",
     },
     {
       q: "How is the prasadam prepared?",
