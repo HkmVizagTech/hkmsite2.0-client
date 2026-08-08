@@ -14,6 +14,7 @@ import Ornament from "@/components/Ornament";
 import HeroSection from "@/components/sqft-campaign/HeroSection";
 import DonationFormSection from "@/components/sqft-campaign/DonationFormSection";
 import DonorPrivilegesSection from "@/components/sqft-campaign/DonorPrivilegesSection";
+import FiveLakhSevaSection from "@/components/sqft-campaign/FiveLakhSevaSection";
 import TestimonialsSection from "@/components/sqft-campaign/TestimonialsSection";
 import AboutSection from "@/components/sqft-campaign/AboutSection";
 import ImportanceSection from "@/components/sqft-campaign/ImportanceSection";
@@ -214,6 +215,13 @@ export default function SqftCampaignClient({
 
   const scrollToDonate = () => {
     document.getElementById("donate")?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const scrollToDonateWith5Lakh = () => {
+    setUseCustom(true);
+    setCustomAmount("500000");
+    setSqftCount(0);
+    scrollToDonate();
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -442,6 +450,11 @@ export default function SqftCampaignClient({
           handleCopy={handleCopy}
           config={config}
         />
+
+        {/* ₹5 Lakh Seva — Square Foot campaign only (right below the donation form) */}
+        {campaignType === "SQFT" && (
+          <FiveLakhSevaSection scrollToDonate={scrollToDonateWith5Lakh} config={config} />
+        )}
 
         {/* Donor privileges */}
         <DonorPrivilegesSection scrollToDonate={scrollToDonate} config={config} />
