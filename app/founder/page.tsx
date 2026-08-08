@@ -54,7 +54,7 @@ const timeline = [
   { year: "1970", title: "GBC Formed", desc: "Established the Governing Body Commission (GBC) to manage the worldwide affairs of ISKCON, ensuring the movement's continuity.", icon: Users },
   { year: "1972", title: "Bhagavad-gita As It Is", desc: "Published the complete edition of Bhagavad-gita As It Is through Macmillan Publishers. It became the most widely read edition of the Gita in the world.", icon: BookOpen },
   { year: "1975", title: "World Tours", desc: "Continued extensive world tours, opening temples in major cities across Africa, South America, and Asia. Over 100 centers operating worldwide.", icon: Globe },
-  { year: "1977", title: "Departure", desc: "On November 14th, at the Radha-Damodara temple in Vrindavan, Srila Prabhupada departed this world, leaving behind a legacy that continues to transform millions of lives.", icon: Star },
+  { year: "1977", title: "Departure", desc: "On November 14th, at the Krishna-Balarama Mandir in Vrindavan, Srila Prabhupada departed this world, leaving behind a legacy that continues to transform millions of lives.", icon: Star },
 ];
 
 const teachings = [
