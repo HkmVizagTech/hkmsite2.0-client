@@ -413,8 +413,8 @@ export const GITA_DAAN_CAMPAIGN: SevaCampaignConfig = {
   heroDesc:
     "There is no greater gift than transcendental knowledge. Sponsor copies of Bhagavad-Gita As It Is for distribution to students, prisoners and spiritual seekers — planting a seed that can transform a life forever.",
   heroImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783672760162-1783672758959-ChatGPTImageJul92026043444PM.png",
-  bannerImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785578235628-1785578235168-ChatGPTImageAug12026023314PM.webp",
-  bannerImageMobile: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785578443691-1785578442854-ChatGPTImageAug12026032944PM.webp",
+  bannerImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1786195248602-1786195247509-gita-hero-desk.webp",
+  bannerImageMobile: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1786195247954-1786195247200-gita-hero-mob.webp",
   bannerWidth: 2032,
   bannerHeight: 774,
   bannerMobileWidth: 962,
