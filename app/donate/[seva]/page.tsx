@@ -17,6 +17,7 @@ import Ornament from "@/components/Ornament";
 import PageLayout from "@/components/PageLayout";
 import AddressForm from "@/components/AddressForm";
 import UpiQrCard from "@/components/UpiQrCard";
+import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
 import type { PrasadamAddress } from "@/components/AddressForm";
 
@@ -187,8 +188,12 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
       setStatus({ type: "error", message: "Please enter a valid amount." });
       return;
     }
-    if (!form.name.trim() || !form.email.trim() || !form.mobile.trim()) {
-      setStatus({ type: "error", message: "Please fill in your name, email, and phone number." });
+    if (!form.name.trim() || !form.mobile.trim()) {
+      setStatus({ type: "error", message: "Please fill in your name and phone number." });
+      return;
+    }
+    if (form.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
+      setStatus({ type: "error", message: "Please enter a valid email address, or leave it blank." });
       return;
     }
     if (want80G && !form.panNumber.trim()) {
@@ -312,6 +317,7 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
 
   return (
     <PageLayout>
+      <WhatsAppFloatButton />
     <main className="bg-white dark:bg-background">
       {/* Hero */}
       {seva.heroImageDesktop && seva.heroImageMobile ? (
@@ -606,10 +612,9 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-xs font-semibold text-muted-foreground">Email</label>
+                  <label className="mb-1 block text-xs font-semibold text-muted-foreground">Email (optional)</label>
                   <input
                     type="email"
-                    required
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
                     className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus:border-primary"
@@ -633,6 +638,7 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
                   dob={form.dob}
                   onSevakNameChange={(v) => setForm({ ...form, sevakName: v })}
                   onDobChange={(v) => setForm({ ...form, dob: v })}
+                  collapsible
                 />
 
                 {finalAmount > 999 && (

@@ -7,6 +7,7 @@ import { ArrowLeft, ArrowRight, Clock, Facebook, FileCheck2, Heart, Instagram, M
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
+import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
 import { useAttribution } from "@/lib/useAttribution";
 
 type SevaOption = {
@@ -509,6 +510,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
 
   return (
     <main className="min-h-screen bg-[#fefaf0] text-slate-950">
+      <WhatsAppFloatButton />
       {campaigner && (
         <div className="bg-gradient-to-r from-amber-600 to-amber-500 px-4 py-3 text-center text-white">
           <p className="text-sm md:text-base">
@@ -893,6 +895,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
                   onSevakNameChange={(v) => updateForm({ sevakName: v })}
                   onDobChange={(v) => updateForm({ dob: v })}
                   variant="amber"
+                  collapsible
                 />
 
                 <fieldset className="rounded-lg border border-amber-200/60 bg-white/40 p-4">

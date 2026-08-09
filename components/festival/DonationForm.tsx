@@ -37,8 +37,13 @@ export default function DonationForm({ config, setToast }: any) {
       setTimeout(() => setToast({}), 3000);
       return;
     }
-    if (!formData.name || !formData.email || !formData.mobile) {
-      setToast({ message: "Please fill in all required fields", type: "error" });
+    if (!formData.name || !formData.mobile) {
+      setToast({ message: "Please fill in your name and phone number", type: "error" });
+      setTimeout(() => setToast({}), 3000);
+      return;
+    }
+    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      setToast({ message: "Please enter a valid email address, or leave it blank", type: "error" });
       setTimeout(() => setToast({}), 3000);
       return;
     }
@@ -254,7 +259,7 @@ export default function DonationForm({ config, setToast }: any) {
 
         <div className="space-y-3">
           <input type="text" placeholder="Donor Name *" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className={inputCls} />
-          <input type="email" placeholder="Email ID *" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className={inputCls} />
+          <input type="email" placeholder="Email ID (optional)" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className={inputCls} />
           <input type="tel" placeholder="Mobile Number *" value={formData.mobile} onChange={(e) => setFormData({ ...formData, mobile: e.target.value })} className={inputCls} />
 
           <DonorExtrasFields
@@ -262,6 +267,7 @@ export default function DonationForm({ config, setToast }: any) {
             dob={formData.dob}
             onSevakNameChange={(v) => setFormData({ ...formData, sevakName: v })}
             onDobChange={(v) => setFormData({ ...formData, dob: v })}
+            collapsible
           />
 
           <label className="flex items-start gap-2 cursor-pointer py-1">

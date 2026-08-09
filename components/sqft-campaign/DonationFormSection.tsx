@@ -366,14 +366,13 @@ export default function DonationFormSection({
 
               <div>
                 <label htmlFor="donor-email" className={labelClass}>
-                  Email address
+                  Email address (optional)
                 </label>
                 <div className={inputWrapClass}>
                   <Mail className="pointer-events-none absolute left-3 h-4 w-4 text-muted-foreground" />
                   <input
                     id="donor-email"
                     type="email"
-                    required
                     placeholder="you@example.com"
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
@@ -387,6 +386,7 @@ export default function DonationFormSection({
                 dob={form.dob}
                 onSevakNameChange={(v) => setForm({ ...form, sevakName: v })}
                 onDobChange={(v) => setForm({ ...form, dob: v })}
+                collapsible
               />
 
               {/* Maha Prasadam (one-time donations only) */}

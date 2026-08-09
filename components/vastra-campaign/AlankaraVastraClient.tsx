@@ -18,6 +18,7 @@ import FounderSection from "@/components/sqft-campaign/FounderSection";
 import AddressForm from "@/components/AddressForm";
 import type { PrasadamAddress } from "@/components/AddressForm";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
+import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
 import { type CampaignConfig } from "@/lib/campaignConfig";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
@@ -231,8 +232,12 @@ export default function AlankaraVastraClient() {
       setStatus({ type: "error", message: "Please select a valid amount." });
       return;
     }
-    if (!form.name.trim() || !form.email.trim() || !form.mobile.trim()) {
-      setStatus({ type: "error", message: "Please fill in your name, email, and phone number." });
+    if (!form.name.trim() || !form.mobile.trim()) {
+      setStatus({ type: "error", message: "Please fill in your name and phone number." });
+      return;
+    }
+    if (form.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
+      setStatus({ type: "error", message: "Please enter a valid email address, or leave it blank." });
       return;
     }
     if (want80G && !form.panNumber.trim()) {
@@ -345,6 +350,7 @@ export default function AlankaraVastraClient() {
 
   return (
     <PageLayout>
+      <WhatsAppFloatButton />
       <main className="bg-white dark:bg-background">
         {/* ── Hero Banner ── */}
         {config.bannerImage ? (
@@ -595,13 +601,12 @@ export default function AlankaraVastraClient() {
                   </div>
 
                   <div>
-                    <label htmlFor="donor-email" className={labelClass}>Email address</label>
+                    <label htmlFor="donor-email" className={labelClass}>Email address (optional)</label>
                     <div className={inputWrapClass}>
                       <Mail className="pointer-events-none absolute left-3 h-4 w-4 text-muted-foreground" />
                       <input
                         id="donor-email"
                         type="email"
-                        required
                         placeholder="you@example.com"
                         value={form.email}
                         onChange={(e) => setForm({ ...form, email: e.target.value })}
@@ -615,6 +620,7 @@ export default function AlankaraVastraClient() {
                     dob={form.dob}
                     onSevakNameChange={(v) => setForm({ ...form, sevakName: v })}
                     onDobChange={(v) => setForm({ ...form, dob: v })}
+                    collapsible
                   />
 
                   {/* 80G */}

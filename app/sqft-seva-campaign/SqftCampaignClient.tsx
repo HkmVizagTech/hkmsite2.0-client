@@ -10,6 +10,7 @@ import {
   User, Phone, Mail, Minus, Plus,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
+import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
 import Ornament from "@/components/Ornament";
 import HeroSection from "@/components/sqft-campaign/HeroSection";
 import DonationFormSection from "@/components/sqft-campaign/DonationFormSection";
@@ -232,8 +233,12 @@ export default function SqftCampaignClient({
       setStatus({ type: "error", message: `Minimum donation is ₹${config.minCustomAmount}.` });
       return;
     }
-    if (!form.name.trim() || !form.email.trim() || !form.mobile.trim()) {
-      setStatus({ type: "error", message: "Please fill in your name, email, and phone number." });
+    if (!form.name.trim() || !form.mobile.trim()) {
+      setStatus({ type: "error", message: "Please fill in your name and phone number." });
+      return;
+    }
+    if (form.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
+      setStatus({ type: "error", message: "Please enter a valid email address, or leave it blank." });
       return;
     }
     if (want80G && !form.panNumber.trim()) {
@@ -399,6 +404,7 @@ export default function SqftCampaignClient({
 
   return (
     <PageLayout>
+      <WhatsAppFloatButton />
       <main className="bg-white dark:bg-background">
         {/* Hero section — full‑width banner */}
         <HeroSection

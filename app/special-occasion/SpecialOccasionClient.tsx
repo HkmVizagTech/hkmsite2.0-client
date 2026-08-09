@@ -24,6 +24,7 @@ import Ornament from "@/components/Ornament";
 import { sevas, getSevaHref, type Seva } from "@/lib/sevaConfig";
 import { useAttribution } from "@/lib/useAttribution";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
+import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 
@@ -185,8 +186,12 @@ export default function SpecialOccasionClient() {
       setStatus({ type: "error", message: "Minimum contribution is ₹100." });
       return;
     }
-    if (!form.name.trim() || !form.email.trim() || !form.mobile.trim()) {
-      setStatus({ type: "error", message: "Please fill in your name, email, and phone number." });
+    if (!form.name.trim() || !form.mobile.trim()) {
+      setStatus({ type: "error", message: "Please fill in your name and phone number." });
+      return;
+    }
+    if (form.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
+      setStatus({ type: "error", message: "Please enter a valid email address, or leave it blank." });
       return;
     }
     if (want80G && !panNumber.trim()) {
@@ -263,6 +268,7 @@ export default function SpecialOccasionClient() {
 
   return (
     <PageLayout>
+      <WhatsAppFloatButton />
       <main className="bg-white dark:bg-background">
         {/* ---------- Hero — fully-designed banners, native aspect ratio ---------- */}
         <section className="relative overflow-hidden pt-20">
@@ -510,7 +516,7 @@ export default function SpecialOccasionClient() {
               <div className="mb-4 grid gap-3 sm:grid-cols-2">
                 <input type="text" required placeholder="Full name *" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none focus:border-gold" />
                 <input type="tel" required placeholder="Mobile number *" value={form.mobile} onChange={(e) => setForm({ ...form, mobile: e.target.value })} className="rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none focus:border-gold" />
-                <input type="email" required placeholder="Email address *" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none focus:border-gold sm:col-span-2" />
+                <input type="email" placeholder="Email address (optional)" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none focus:border-gold sm:col-span-2" />
                 <input type="text" placeholder="Dedicate to / occasion note (optional)" value={dedication} onChange={(e) => setDedication(e.target.value)} className="rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none focus:border-gold sm:col-span-2" />
               </div>
 
@@ -519,6 +525,7 @@ export default function SpecialOccasionClient() {
                 dob={dob}
                 onSevakNameChange={setSevakName}
                 onDobChange={setDob}
+                collapsible
               />
 
               <label className="mb-3 flex cursor-pointer items-center gap-2 text-sm text-foreground">

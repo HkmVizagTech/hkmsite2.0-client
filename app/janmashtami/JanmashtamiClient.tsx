@@ -7,6 +7,7 @@ import { ArrowLeft, ArrowRight, Clock, Facebook, FileCheck2, Heart, Instagram, M
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
+import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
 import { useAttribution } from "@/lib/useAttribution";
 
 type SevaOption = {
@@ -350,7 +351,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
     if (!finalAmount || finalAmount < 100) return "Amount must be at least Rs.100.";
     if (!form.donorName.trim()) return "Donor name is required.";
     if (!/^[6-9]\d{9}$/.test(form.donorMobile)) return "Please enter a valid 10 digit mobile number.";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.donorEmail)) return "Please enter a valid email address.";
+    if (form.donorEmail.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.donorEmail.trim())) return "Please enter a valid email address, or leave it blank.";
     if (form.want80G && !/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(form.panNumber)) return "Please enter a valid PAN number.";
     if (needsAddress) {
       if (!form.area.trim() || !form.pincode.trim() || !form.city.trim() || !form.state.trim()) {
@@ -484,6 +485,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
 
   return (
     <main className="min-h-screen bg-[#fefaf0] text-slate-950">
+      <WhatsAppFloatButton />
       {campaigner && (
         <div className="bg-gradient-to-r from-amber-600 to-amber-500 px-4 py-3 text-center text-white">
           <p className="text-sm md:text-base">
@@ -1068,7 +1070,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
                   <Input value={form.donorMobile} maxLength={10} onChange={(event) => updateForm({ donorMobile: event.target.value.replace(/\D/g, "") })} placeholder="Your Mobile Number" className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
                 </label>
                 <label className="block md:col-span-2">
-                  <span className="text-sm font-semibold text-[#331447]">E-Mail ID *</span>
+                  <span className="text-sm font-semibold text-[#331447]">E-Mail ID (optional)</span>
                   <Input type="email" value={form.donorEmail} onChange={(event) => updateForm({ donorEmail: event.target.value.toLowerCase() })} placeholder="Your Email" className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
                 </label>
               </div>
@@ -1079,6 +1081,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
                 onSevakNameChange={(v) => updateForm({ sevakName: v })}
                 onDobChange={(v) => updateForm({ dob: v })}
                 variant="amber"
+                collapsible
               />
 
               <fieldset className="rounded-lg border border-amber-200/60 bg-white/40 p-4">

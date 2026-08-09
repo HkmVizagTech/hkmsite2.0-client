@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { User, Calendar } from "lucide-react";
 
 interface Props {
@@ -8,10 +9,25 @@ interface Props {
   onSevakNameChange: (v: string) => void;
   onDobChange: (v: string) => void;
   variant?: "default" | "amber";
+  // Opt-in only. When true, the Sevak Name + DOB inputs are hidden behind a
+  // "This donation is in the memory/honor of someone..." checkbox instead of
+  // always showing — many donors don't have this info and the extra fields
+  // were adding friction. Defaults to false so any existing caller that
+  // doesn't pass this prop keeps its exact current behavior unchanged.
+  collapsible?: boolean;
 }
 
-export default function DonorExtrasFields({ sevakName, dob, onSevakNameChange, onDobChange, variant = "default" }: Props) {
+export default function DonorExtrasFields({
+  sevakName,
+  dob,
+  onSevakNameChange,
+  onDobChange,
+  variant = "default",
+  collapsible = false,
+}: Props) {
+  const [expanded, setExpanded] = useState(!collapsible || Boolean(sevakName || dob));
   const isAmber = variant === "amber";
+
   const wrapperCls = isAmber
     ? "relative flex items-center rounded-lg border border-amber-300 bg-white/90 shadow-sm focus-within:border-amber-500 transition-colors"
     : "relative flex items-center rounded-lg border border-border bg-white dark:bg-card focus-within:border-gold transition-colors";
@@ -24,8 +40,11 @@ export default function DonorExtrasFields({ sevakName, dob, onSevakNameChange, o
   const inputCls = isAmber
     ? "h-10 w-full bg-transparent pl-9 pr-3 text-sm text-foreground outline-none placeholder:text-amber-800/50"
     : "h-10 w-full bg-transparent pl-9 pr-3 text-sm text-foreground outline-none placeholder:text-muted-foreground";
+  const checkboxLabelCls = isAmber
+    ? "flex cursor-pointer items-start gap-2.5 text-sm text-amber-900"
+    : "flex cursor-pointer items-start gap-2.5 text-sm text-foreground";
 
-  return (
+  const fields = (
     <div className="grid gap-3 sm:grid-cols-2">
       <div>
         <label className={labelCls}>
@@ -56,6 +75,31 @@ export default function DonorExtrasFields({ sevakName, dob, onSevakNameChange, o
           />
         </div>
       </div>
+    </div>
+  );
+
+  if (!collapsible) return fields;
+
+  return (
+    <div className="space-y-3">
+      <label className={checkboxLabelCls}>
+        <input
+          type="checkbox"
+          checked={expanded}
+          onChange={(e) => {
+            const checked = e.target.checked;
+            setExpanded(checked);
+            if (!checked) {
+              // Clear so an unchecked box never silently submits stale values.
+              onSevakNameChange("");
+              onDobChange("");
+            }
+          }}
+          className="mt-0.5 h-4 w-4 shrink-0 rounded border-border text-primary focus:ring-primary"
+        />
+        <span>This Donation is in the memory/honor of someone or performed on a specific occasion</span>
+      </label>
+      {expanded && fields}
     </div>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import PageLayout from "@/components/PageLayout";
+import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
 import Ornament from "@/components/Ornament";
 import { motion, useInView } from "framer-motion";
 import { useRef, useState } from "react";
@@ -90,8 +91,11 @@ export default function SubhojanamPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); setStatus(null);
     if (!checkoutTier) return;
-    if (!form.name.trim() || !form.email.trim() || !form.mobile.trim()) {
-      setStatus({ type: "error", message: "Please fill in your name, email, and phone number." }); return;
+    if (!form.name.trim() || !form.mobile.trim()) {
+      setStatus({ type: "error", message: "Please fill in your name and phone number." }); return;
+    }
+    if (form.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
+      setStatus({ type: "error", message: "Please enter a valid email address, or leave it blank." }); return;
     }
     setSubmitting(true);
     try {
@@ -130,6 +134,7 @@ export default function SubhojanamPage() {
 
   return (
     <PageLayout>
+      <WhatsAppFloatButton />
 
       {/* ── HERO ─────────────────────────────────────────────────── */}
       <section className="relative min-h-[92vh] flex flex-col justify-end overflow-hidden pt-20">
@@ -461,7 +466,7 @@ export default function SubhojanamPage() {
                 </div>
                 <div className="grid grid-cols-1 gap-3">
                   <input type="text" required value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm" placeholder="Full Name" />
-                  <input type="email" required value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm" placeholder="Email Address" />
+                  <input type="email" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm" placeholder="Email Address (optional)" />
                   <input type="tel" required value={form.mobile} onChange={(e) => setForm((f) => ({ ...f, mobile: e.target.value }))} className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm" placeholder="10-digit Mobile Number" />
                 </div>
                 {status?.type === "error" && <p className="text-sm text-destructive">{status.message}</p>}

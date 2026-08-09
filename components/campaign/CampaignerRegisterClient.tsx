@@ -12,6 +12,7 @@ import {
   Megaphone, Loader2, Check, Copy, Share2, ExternalLink, Target, ShieldCheck, Clock, UserRound,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
+import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
 
 const apiBase = () =>
   (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(/\/+$/, "");
@@ -132,6 +133,7 @@ export default function CampaignerRegisterClient({ campaignType }: { campaignTyp
 
   return (
     <PageLayout>
+      <WhatsAppFloatButton />
       <main className="bg-white dark:bg-background pt-20">
         <section className="bg-[hsl(220,90%,12%)] py-12 text-center md:py-16">
           <div className="container mx-auto max-w-2xl px-4">

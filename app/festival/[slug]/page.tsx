@@ -4,6 +4,7 @@ import HeroBanner from '@/components/festival/HeroBanner';
 import ContentSection from '@/components/festival/ContentSection';
 import DonationFormWrapper from '@/components/festival/DonationFormWrapper';
 import PageLayout from "@/components/PageLayout";
+import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
 
 async function getFestivalDonation(slug: string) {
   const base = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080"; // server runs on 8080 in this workspace
@@ -43,6 +44,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
   return (
     <PageLayout>
+    <WhatsAppFloatButton />
     <main className="min-h-screen bg-background pt-[88px] md:pt-[104px]">
   <HeroBanner config={config} />
 

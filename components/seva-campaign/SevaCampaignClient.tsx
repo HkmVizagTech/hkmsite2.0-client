@@ -10,6 +10,7 @@ import {
   ChevronDown, ChevronLeft, ChevronRight, Quote,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
+import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
 import Ornament from "@/components/Ornament";
 import ImportanceSection from "@/components/sqft-campaign/ImportanceSection";
 import FaqSection from "@/components/sqft-campaign/FaqSection";
@@ -297,6 +298,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
 
   return (
     <PageLayout>
+      <WhatsAppFloatButton />
       <main className="bg-white dark:bg-background">
         {/* ── Hero Banner (plain banner image — no content overlay) ── */}
         <section className="bg-white dark:bg-background pt-[88px] md:pt-[104px]">
@@ -525,6 +527,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                     dob={form.dob}
                     onSevakNameChange={(v) => setForm({ ...form, sevakName: v })}
                     onDobChange={(v) => setForm({ ...form, dob: v })}
+                    collapsible
                   />
 
                   {/* 80G */}
