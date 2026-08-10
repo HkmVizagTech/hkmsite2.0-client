@@ -457,13 +457,13 @@ export default function SqftCampaignClient({
           config={config}
         />
 
-        {/* ₹5 Lakh Seva — Square Foot campaign only (right below the donation form) */}
+        {/* Donor privileges */}
+        <DonorPrivilegesSection scrollToDonate={scrollToDonate} config={config} />
+
+        {/* ₹5 Lakh Seva — Square Foot campaign only (beneath the donor privileges) */}
         {campaignType === "SQFT" && (
           <FiveLakhSevaSection scrollToDonate={scrollToDonateWith5Lakh} config={config} />
         )}
-
-        {/* Donor privileges */}
-        <DonorPrivilegesSection scrollToDonate={scrollToDonate} config={config} />
 
         {/* Testimonials — new */}
         <TestimonialsSection config={config} />
