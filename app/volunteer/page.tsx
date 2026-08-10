@@ -58,7 +58,13 @@ interface VccEvent {
   eventStart: string;
   eventEnd: string;
   status: string;
+  availabilitySlots?: string[];
   customFields?: CustomField[];
+}
+
+interface ServiceAvailabilityEntry {
+  date: string;
+  timeSlot: string;
 }
 
 const SKILLS = [
@@ -108,6 +114,7 @@ const emptyForm = {
   locality: "",
   occupation: "",
   skills: [] as string[],
+  serviceAvailability: [] as ServiceAvailabilityEntry[],
   notes: "",
   customAnswers: {} as Record<string, unknown>,
 };
@@ -202,6 +209,7 @@ export default function VolunteerPage() {
           locality: form.locality || undefined,
           occupation: form.occupation || undefined,
           skills: form.skills,
+          serviceAvailability: form.serviceAvailability,
           customAnswers: form.customAnswers,
           notes: form.notes || undefined,
         }),
@@ -369,6 +377,30 @@ export default function VolunteerPage() {
       month: "short",
       year: "numeric",
     });
+
+  function eachDay(startIso: string, endIso: string) {
+    const days: { iso: string; label: string }[] = [];
+    const start = new Date(startIso);
+    const end = new Date(endIso);
+    if (isNaN(start.getTime()) || isNaN(end.getTime())) return days;
+    const cursor = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+    const last = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+    while (cursor <= last) {
+      const yyyy = cursor.getFullYear();
+      const mm = String(cursor.getMonth() + 1).padStart(2, "0");
+      const dd = String(cursor.getDate()).padStart(2, "0");
+      days.push({
+        iso: `${yyyy}-${mm}-${dd}`,
+        label: cursor.toLocaleDateString("en-IN", {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+        }),
+      });
+      cursor.setDate(cursor.getDate() + 1);
+    }
+    return days;
+  }
 
   return (
     <PageLayout>
@@ -724,6 +756,62 @@ export default function VolunteerPage() {
                       })}
                     </div>
                   </div>
+
+                  {selectedEvent.availabilitySlots &&
+                    selectedEvent.availabilitySlots.length > 0 && (
+                      <div className="space-y-2 border-t pt-3">
+                        <label className="block text-xs font-medium text-muted-foreground">
+                          Availability
+                        </label>
+                        <p className="text-xs text-muted-foreground">
+                          Select the time slot you are available for each day.
+                        </p>
+                        {eachDay(selectedEvent.eventStart, selectedEvent.eventEnd).map(
+                          (day) => {
+                            const key = day.iso;
+                            const selected =
+                              form.serviceAvailability.find((e) => e.date === key)
+                                ?.timeSlot || "";
+                            return (
+                              <div key={key} className="rounded-md border p-3">
+                                <p className="mb-2 text-sm font-medium">
+                                  {day.label}
+                                </p>
+                                <div className="flex flex-wrap gap-2">
+                                  {selectedEvent.availabilitySlots!.map((slot) => {
+                                    const active = selected === slot;
+                                    return (
+                                      <button
+                                        key={slot}
+                                        type="button"
+                                        onClick={() => {
+                                          const next =
+                                            form.serviceAvailability.filter(
+                                              (e) => e.date !== key
+                                            );
+                                          next.push({ date: key, timeSlot: slot });
+                                          setForm({
+                                            ...form,
+                                            serviceAvailability: next,
+                                          });
+                                        }}
+                                        className={`rounded-md border px-2.5 py-1 text-xs font-medium transition-colors ${
+                                          active
+                                            ? "border-primary bg-primary text-primary-foreground"
+                                            : "border-input bg-transparent text-muted-foreground hover:bg-accent"
+                                        }`}
+                                      >
+                                        {slot}
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            );
+                          }
+                        )}
+                      </div>
+                    )}
 
                   {selectedEvent.customFields &&
                     selectedEvent.customFields.length > 0 && (
