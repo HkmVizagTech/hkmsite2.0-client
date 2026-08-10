@@ -1,17 +1,19 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Users,
   Calendar,
   MapPin,
   Heart,
-  CheckCircle,
   HandHeart,
   Sparkles,
   ArrowRight,
   X,
+  CheckCircle2,
+  Loader2,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import TempleCarousel from "@/components/TempleCarousel";
@@ -21,41 +23,59 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 
-const API_URL =
-  (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") ||
-  "http://localhost:8080";
+const VCC_API =
+  (process.env.NEXT_PUBLIC_VCC_API_URL || "").replace(/\/+$/, "") ||
+  "https://vcc-client.vercel.app";
 
-interface FormField {
+type CustomFieldType =
+  | "short_text"
+  | "long_text"
+  | "number"
+  | "email"
+  | "phone"
+  | "select"
+  | "radio"
+  | "checkbox"
+  | "date";
+
+interface CustomField {
   id: string;
-  type: string;
   label: string;
-  placeholder: string;
+  type: CustomFieldType;
   required: boolean;
-  options: string[];
+  options?: string[];
+  placeholder?: string;
+  helpText?: string;
 }
 
-interface VolunteerEvent {
+interface VccEvent {
   _id: string;
-  title: string;
-  description: string;
-  date: string;
-  endDate?: string;
-  location: string;
-  image: string;
-  slots: number;
-  filledSlots: number;
-  category: string;
-  requirements: string;
+  name: string;
+  slug: string;
+  description?: string;
+  venue?: string;
+  bannerImage?: string;
+  eventStart: string;
+  eventEnd: string;
   status: string;
-  formFields: FormField[];
+  customFields?: CustomField[];
 }
 
-const CATEGORY_LABELS: Record<string, { label: string; color: string }> = {
-  festival: { label: "Festival", color: "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300" },
-  weekly: { label: "Weekly", color: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300" },
-  special: { label: "Special", color: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300" },
-  outreach: { label: "Outreach", color: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300" },
-};
+const SKILLS = [
+  { key: "medical", label: "Medical" },
+  { key: "photography", label: "Photography" },
+  { key: "videography", label: "Videography" },
+  { key: "driving", label: "Driving" },
+  { key: "electrical", label: "Electrical" },
+  { key: "sound", label: "Sound" },
+  { key: "it", label: "IT / Tech" },
+  { key: "graphic_design", label: "Graphic Design" },
+  { key: "cooking", label: "Cooking" },
+  { key: "crowd_management", label: "Crowd Management" },
+  { key: "other", label: "Other" },
+];
+
+const GENDERS = ["male", "female", "other"];
 
 const WHY_VOLUNTEER = [
   {
@@ -80,129 +100,279 @@ const WHY_VOLUNTEER = [
   },
 ];
 
+const emptyForm = {
+  name: "",
+  phone: "",
+  age: "",
+  gender: "",
+  locality: "",
+  occupation: "",
+  skills: [] as string[],
+  notes: "",
+  customAnswers: {} as Record<string, unknown>,
+};
+
+interface SuccessInfo {
+  name: string;
+  volunteerNumber: string;
+  sevaToken: string;
+  eventName: string;
+}
+
 export default function VolunteerPage() {
-  const [events, setEvents] = useState<VolunteerEvent[]>([]);
+  const searchParams = useSearchParams();
+  const eventSlugParam = searchParams.get("event");
+
+  const [events, setEvents] = useState<VccEvent[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedEvent, setSelectedEvent] = useState<VolunteerEvent | null>(null);
-  const [responses, setResponses] = useState<Record<string, any>>({});
+  const [selectedEvent, setSelectedEvent] = useState<VccEvent | null>(null);
+  const [form, setForm] = useState(emptyForm);
   const [submitting, setSubmitting] = useState(false);
+  const [success, setSuccess] = useState<SuccessInfo | null>(null);
 
   useEffect(() => {
-    fetch(`${API_URL}/volunteers`)
+    fetch(`${VCC_API}/api/events/public`)
       .then((res) => res.json())
       .then((data) => setEvents(data.events || []))
-      .catch(() => {})
+      .catch(() => setEvents([]))
       .finally(() => setLoading(false));
   }, []);
 
-  const openRegistration = (event: VolunteerEvent) => {
-    setSelectedEvent(event);
-    const initial: Record<string, any> = {};
-    for (const field of event.formFields || []) {
-      initial[field.id] = field.type === "checkbox" ? false : "";
+  useEffect(() => {
+    if (!eventSlugParam || events.length === 0) return;
+    const match = events.find((e) => e.slug === eventSlugParam);
+    if (match && match.status === "registration_open" && !selectedEvent) {
+      setSelectedEvent(match);
+      setForm(emptyForm);
+      setSuccess(null);
     }
-    setResponses(initial);
+  }, [eventSlugParam, events, selectedEvent]);
+
+  const openRegistration = (event: VccEvent) => {
+    setSelectedEvent(event);
+    setForm(emptyForm);
+    setSuccess(null);
+  };
+
+  const closeModal = () => {
+    setSelectedEvent(null);
+    setForm(emptyForm);
+    setSuccess(null);
+  };
+
+  const toggleSkill = (skill: string) => {
+    setForm((prev) => ({
+      ...prev,
+      skills: prev.skills.includes(skill)
+        ? prev.skills.filter((s) => s !== skill)
+        : [...prev.skills, skill],
+    }));
+  };
+
+  const setCustomAnswer = (fieldId: string, value: unknown) => {
+    setForm((prev) => ({
+      ...prev,
+      customAnswers: { ...prev.customAnswers, [fieldId]: value },
+    }));
   };
 
   const handleRegister = async () => {
     if (!selectedEvent) return;
-    const missing = (selectedEvent.formFields || [])
-      .filter((f) => f.required)
-      .filter((f) => {
-        const val = responses[f.id];
-        return val === undefined || val === null || val === "";
-      });
-    if (missing.length > 0) {
+    if (!form.name.trim() || !form.phone.trim()) {
       toast({
-        title: "Please fill all required fields",
-        description: missing.map((f) => f.label).join(", "),
+        title: "Missing details",
+        description: "Please enter your name and phone number.",
         variant: "destructive",
       });
       return;
     }
+
     setSubmitting(true);
     try {
-      const res = await fetch(`${API_URL}/volunteers/${selectedEvent._id}/register`, {
+      const res = await fetch(`${VCC_API}/api/registrations`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ responses }),
+        body: JSON.stringify({
+          eventId: selectedEvent._id,
+          name: form.name.trim(),
+          phone: form.phone.trim(),
+          whatsappNumber: form.phone.trim(),
+          age: form.age ? Number(form.age) : undefined,
+          gender: form.gender || undefined,
+          locality: form.locality || undefined,
+          occupation: form.occupation || undefined,
+          skills: form.skills,
+          customAnswers: form.customAnswers,
+          notes: form.notes || undefined,
+        }),
       });
       const data = await res.json();
       if (res.ok) {
-        toast({ title: "Registration Successful!", description: "We'll contact you with further details. Hare Krishna!" });
-        setSelectedEvent(null);
-        setResponses({});
-        setEvents((prev) =>
-          prev.map((e) =>
-            e._id === selectedEvent._id ? { ...e, filledSlots: e.filledSlots + 1 } : e
-          )
-        );
+        setSuccess({
+          name: data.volunteer?.name || form.name,
+          volunteerNumber: data.volunteer?.volunteerNumber || "",
+          sevaToken: data.volunteer?.sevaToken || "",
+          eventName: selectedEvent.name,
+        });
+      } else if (res.status === 409) {
+        toast({
+          title: "Already registered",
+          description:
+            "You are already registered for this event. Look out for a message from us with your seva assignment.",
+        });
+        closeModal();
       } else {
-        toast({ title: "Registration Failed", description: data.message || "Please try again", variant: "destructive" });
+        toast({
+          title: "Registration failed",
+          description: data.message || "Please try again.",
+          variant: "destructive",
+        });
       }
     } catch {
-      toast({ title: "Network error", description: "Please check your connection", variant: "destructive" });
+      toast({
+        title: "Network error",
+        description: "Please check your internet connection and try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setSubmitting(false);
     }
-    setSubmitting(false);
   };
 
-  const renderFormField = (field: FormField) => {
-    const value = responses[field.id];
-    const onChange = (val: any) => setResponses({ ...responses, [field.id]: val });
+  const renderCustomField = (field: CustomField) => {
+    const value = form.customAnswers[field.id];
+    const setVal = (v: unknown) => setCustomAnswer(field.id, v);
 
     switch (field.type) {
-      case "textarea":
+      case "long_text":
         return (
           <Textarea
-            placeholder={field.placeholder || field.label}
+            placeholder={field.placeholder}
             rows={3}
-            value={value || ""}
-            onChange={(e) => onChange(e.target.value)}
+            value={(value as string) || ""}
+            onChange={(e) => setVal(e.target.value)}
           />
         );
       case "select":
         return (
           <select
             className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-            value={value || ""}
-            onChange={(e) => onChange(e.target.value)}
+            value={(value as string) || ""}
+            onChange={(e) => setVal(e.target.value)}
           >
-            <option value="">{field.placeholder || `Select ${field.label}`}</option>
-            {field.options.map((opt) => (
-              <option key={opt} value={opt}>{opt}</option>
+            <option value="">Select an option</option>
+            {(field.options || []).map((opt) => (
+              <option key={opt} value={opt}>
+                {opt}
+              </option>
             ))}
           </select>
         );
+      case "radio":
+        return (
+          <div className="flex flex-col gap-1.5">
+            {(field.options || []).map((opt) => (
+              <label
+                key={opt}
+                className="flex items-center gap-2 text-sm cursor-pointer"
+              >
+                <input
+                  type="radio"
+                  name={field.id}
+                  value={opt}
+                  checked={value === opt}
+                  onChange={() => setVal(opt)}
+                  className="h-4 w-4"
+                />
+                {opt}
+              </label>
+            ))}
+          </div>
+        );
       case "checkbox":
         return (
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={!!value}
-              onChange={(e) => onChange(e.target.checked)}
-              className="rounded"
-            />
-            <span className="text-sm text-foreground">{field.placeholder || field.label}</span>
-          </label>
+          <div className="flex flex-col gap-1.5">
+            {(field.options || []).map((opt) => {
+              const arr = Array.isArray(value) ? (value as string[]) : [];
+              return (
+                <label
+                  key={opt}
+                  className="flex items-center gap-2 text-sm cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    checked={arr.includes(opt)}
+                    onChange={(e) => {
+                      const next = e.target.checked
+                        ? [...arr, opt]
+                        : arr.filter((x) => x !== opt);
+                      setVal(next);
+                    }}
+                    className="rounded"
+                  />
+                  {opt}
+                </label>
+              );
+            })}
+          </div>
+        );
+      case "number":
+        return (
+          <Input
+            type="number"
+            placeholder={field.placeholder}
+            value={value === undefined ? "" : String(value)}
+            onChange={(e) => setVal(e.target.value)}
+          />
+        );
+      case "email":
+        return (
+          <Input
+            type="email"
+            placeholder={field.placeholder}
+            value={(value as string) || ""}
+            onChange={(e) => setVal(e.target.value)}
+          />
+        );
+      case "phone":
+        return (
+          <Input
+            type="tel"
+            placeholder={field.placeholder}
+            value={(value as string) || ""}
+            onChange={(e) => setVal(e.target.value)}
+          />
+        );
+      case "date":
+        return (
+          <Input
+            type="date"
+            value={(value as string) || ""}
+            onChange={(e) => setVal(e.target.value)}
+          />
         );
       default:
         return (
           <Input
-            type={field.type === "tel" ? "tel" : field.type === "email" ? "email" : field.type === "number" ? "number" : field.type === "date" ? "date" : "text"}
-            placeholder={field.placeholder || field.label}
-            value={value || ""}
-            onChange={(e) => onChange(e.target.value)}
+            type="text"
+            placeholder={field.placeholder}
+            value={(value as string) || ""}
+            onChange={(e) => setVal(e.target.value)}
           />
         );
     }
   };
 
   const formatDate = (d: string) =>
-    new Date(d).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+    new Date(d).toLocaleDateString("en-IN", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
 
   return (
     <PageLayout>
-      {/* HERO — same banner carousel as the home page */}
+      {/* HERO */}
       <section className="overflow-hidden pt-[88px] md:pt-[104px]">
         <TempleCarousel />
       </section>
@@ -211,7 +381,9 @@ export default function VolunteerPage() {
       <section className="py-12 md:py-16 bg-white dark:bg-background">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <p className="text-primary text-sm tracking-[0.2em] uppercase mb-3 font-medium">Why Volunteer</p>
+            <p className="text-primary text-sm tracking-[0.2em] uppercase mb-3 font-medium">
+              Why Volunteer
+            </p>
             <Ornament className="mb-5" />
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground">
               The Joy of Selfless Service
@@ -230,15 +402,19 @@ export default function VolunteerPage() {
                 <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
                   <item.icon className="h-6 w-6" />
                 </div>
-                <h3 className="mb-2 text-sm font-semibold text-foreground">{item.title}</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed">{item.desc}</p>
+                <h3 className="mb-2 text-sm font-semibold text-foreground">
+                  {item.title}
+                </h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  {item.desc}
+                </p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Volunteer Opportunities */}
+      {/* Events */}
       <section className="py-12 md:py-16 bg-white dark:bg-background border-t border-border">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
@@ -250,31 +426,34 @@ export default function VolunteerPage() {
               Volunteer Events
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-muted-foreground">
-              Choose an event that resonates with you and register to serve. New opportunities are added regularly.
+              Choose an event that resonates with you and register to serve.
+              New opportunities are added regularly.
             </p>
           </div>
 
           {loading && (
-            <div className="text-center text-muted-foreground py-16">Loading events...</div>
+            <div className="text-center text-muted-foreground py-16">
+              <Loader2 className="mx-auto h-6 w-6 animate-spin mb-2" />
+              Loading events...
+            </div>
           )}
 
           {!loading && events.length === 0 && (
             <div className="mx-auto max-w-md rounded-2xl border border-border bg-card p-10 text-center">
               <Calendar className="mx-auto mb-4 h-12 w-12 text-muted-foreground/40" />
-              <h3 className="mb-2 text-lg font-semibold text-foreground">No Events Right Now</h3>
+              <h3 className="mb-2 text-lg font-semibold text-foreground">
+                No Events Right Now
+              </h3>
               <p className="text-sm text-muted-foreground">
-                Check back soon — we regularly add volunteer opportunities for upcoming festivals and temple activities.
+                Check back soon — we regularly add volunteer opportunities for
+                upcoming festivals and temple activities.
               </p>
             </div>
           )}
 
-          <div className="mx-auto grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {events.map((event, i) => {
-              const cat = CATEGORY_LABELS[event.category] || CATEGORY_LABELS.festival;
-              const slotsLeft = event.slots > 0 ? event.slots - event.filledSlots : null;
-              const isFull = event.slots > 0 && event.filledSlots >= event.slots;
-
-              return (
+          {!loading && events.length > 0 && (
+            <div className="mx-auto grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {events.map((event, i) => (
                 <motion.div
                   key={event._id}
                   initial={{ opacity: 0, y: 20 }}
@@ -283,69 +462,61 @@ export default function VolunteerPage() {
                   transition={{ delay: i * 0.08, duration: 0.5 }}
                   className="group overflow-hidden rounded-2xl border border-border bg-card shadow-warm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-elevated"
                 >
-                  {event.image && (
+                  {event.bannerImage ? (
                     <div className="relative aspect-[16/9] overflow-hidden">
                       <img
-                        src={event.image}
-                        alt={event.title}
+                        src={event.bannerImage}
+                        alt={event.name}
                         className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[hsl(220,85%,10%,0.6)] via-transparent to-transparent" />
-                      <span className={`absolute top-3 right-3 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase ${cat.color}`}>
-                        {cat.label}
-                      </span>
                     </div>
-                  )}
-                  {!event.image && (
-                    <div className="flex items-center justify-between bg-primary/5 px-5 py-3">
-                      <span className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase ${cat.color}`}>
-                        {cat.label}
-                      </span>
+                  ) : (
+                    <div className="flex aspect-[16/9] items-center justify-center bg-primary/5">
+                      <Calendar className="h-14 w-14 text-primary/30" />
                     </div>
                   )}
 
                   <div className="p-5">
                     <h3 className="mb-2 font-heading text-lg font-bold text-foreground leading-tight">
-                      {event.title}
+                      {event.name}
                     </h3>
-                    <p className="mb-4 text-xs text-muted-foreground line-clamp-3">{event.description}</p>
+                    {event.description && (
+                      <p className="mb-4 text-xs text-muted-foreground line-clamp-3">
+                        {event.description}
+                      </p>
+                    )}
 
                     <div className="mb-4 space-y-1.5 text-xs text-muted-foreground">
                       <div className="flex items-center gap-2">
                         <Calendar className="h-3.5 w-3.5 text-primary" />
-                        <span>{formatDate(event.date)}{event.endDate ? ` – ${formatDate(event.endDate)}` : ""}</span>
+                        <span>{formatDate(event.eventStart)}</span>
                       </div>
-                      {event.location && (
+                      {event.venue && (
                         <div className="flex items-center gap-2">
                           <MapPin className="h-3.5 w-3.5 text-primary" />
-                          <span>{event.location}</span>
-                        </div>
-                      )}
-                      {event.slots > 0 && (
-                        <div className="flex items-center gap-2">
-                          <Users className="h-3.5 w-3.5 text-primary" />
-                          <span>
-                            {isFull
-                              ? "All slots filled"
-                              : `${slotsLeft} of ${event.slots} slots remaining`}
-                          </span>
+                          <span>{event.venue}</span>
                         </div>
                       )}
                     </div>
 
                     <Button
                       className="w-full rounded-full"
-                      disabled={isFull}
+                      disabled={event.status !== "registration_open"}
                       onClick={() => openRegistration(event)}
                     >
-                      {isFull ? "Slots Filled" : "Register to Volunteer"}
-                      {!isFull && <ArrowRight className="ml-2 h-4 w-4" />}
+                      {event.status === "registration_open"
+                        ? "Register to Volunteer"
+                        : "Registration Closed"}
+                      {event.status === "registration_open" && (
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      )}
                     </Button>
                   </div>
                 </motion.div>
-              );
-            })}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -356,7 +527,8 @@ export default function VolunteerPage() {
             Can&apos;t Find a Suitable Event?
           </h2>
           <p className="mx-auto mb-8 max-w-xl text-white/85">
-            We&apos;re always looking for helping hands. Reach out to us and we&apos;ll find the perfect way for you to serve.
+            We&apos;re always looking for helping hands. Reach out to us and
+            we&apos;ll find the perfect way for you to serve.
           </p>
           <a
             href="https://wa.me/918977761187?text=Hare%20Krishna!%20I%20would%20like%20to%20volunteer%20at%20HKM%20Vizag."
@@ -364,13 +536,15 @@ export default function VolunteerPage() {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded-full bg-gradient-gold px-8 py-3.5 text-sm font-bold text-[hsl(220,60%,12%)] shadow-gold transition-transform hover:-translate-y-0.5 md:text-base"
           >
-            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+            </svg>
             Chat With Us on WhatsApp
           </a>
         </div>
       </section>
 
-      {/* Registration Modal — dynamic fields */}
+      {/* Registration Modal */}
       <AnimatePresence>
         {selectedEvent && (
           <motion.div
@@ -378,7 +552,7 @@ export default function VolunteerPage() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/50 p-4"
-            onClick={() => setSelectedEvent(null)}
+            onClick={closeModal}
           >
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
@@ -389,49 +563,231 @@ export default function VolunteerPage() {
             >
               <div className="mb-4 flex items-center justify-between">
                 <div>
-                  <h2 className="text-xl font-bold text-foreground">Register to Volunteer</h2>
-                  <p className="text-sm text-muted-foreground">{selectedEvent.title}</p>
+                  <h2 className="text-xl font-bold text-foreground">
+                    {success ? "Registration Confirmed" : "Register to Volunteer"}
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    {selectedEvent.name}
+                  </p>
                 </div>
-                <button onClick={() => setSelectedEvent(null)}>
+                <button onClick={closeModal} type="button" aria-label="Close">
                   <X className="h-5 w-5 text-muted-foreground" />
                 </button>
               </div>
 
-              {selectedEvent.requirements && (
-                <div className="mb-4 rounded-xl bg-primary/5 p-3 text-xs text-muted-foreground">
-                  <span className="font-semibold text-foreground">Requirements:</span> {selectedEvent.requirements}
-                </div>
-              )}
-
-              <div className="space-y-3">
-                {(selectedEvent.formFields || []).map((field) => (
-                  <div key={field.id}>
-                    {field.type !== "checkbox" && (
-                      <label className="mb-1 block text-xs font-medium text-muted-foreground">
-                        {field.label}{field.required ? " *" : ""}
-                      </label>
-                    )}
-                    {renderFormField(field)}
+              {success ? (
+                <div className="space-y-5 py-2">
+                  <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                    <CheckCircle2 className="h-8 w-8" />
                   </div>
-                ))}
-
-                {(!selectedEvent.formFields || selectedEvent.formFields.length === 0) && (
-                  <p className="py-4 text-center text-sm text-muted-foreground">
-                    No registration form configured for this event.
+                  <div className="text-center">
+                    <p className="text-lg font-semibold text-foreground">
+                      Hare Krishna, {success.name}!
+                    </p>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      You are registered for {success.eventName}.
+                    </p>
+                  </div>
+                  {success.volunteerNumber && (
+                    <div className="mx-auto max-w-xs space-y-2 rounded-xl bg-primary/5 p-4 text-center">
+                      <div className="text-xs uppercase tracking-wide text-muted-foreground">
+                        Volunteer Number
+                      </div>
+                      <div className="font-mono text-lg font-bold text-primary">
+                        {success.volunteerNumber}
+                      </div>
+                    </div>
+                  )}
+                  <p className="text-center text-xs text-muted-foreground">
+                    Save your volunteer number — the coordinator will contact
+                    you with your seva assignment.
                   </p>
-                )}
+                  <Button className="w-full" onClick={closeModal}>
+                    Done
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div>
+                      <label className="mb-1 block text-xs font-medium text-muted-foreground">
+                        Full Name *
+                      </label>
+                      <Input
+                        value={form.name}
+                        onChange={(e) =>
+                          setForm({ ...form, name: e.target.value })
+                        }
+                        placeholder="Your name"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-1 block text-xs font-medium text-muted-foreground">
+                        WhatsApp Number *
+                      </label>
+                      <Input
+                        type="tel"
+                        value={form.phone}
+                        onChange={(e) =>
+                          setForm({ ...form, phone: e.target.value })
+                        }
+                        placeholder="+91 98765 43210"
+                      />
+                    </div>
+                  </div>
 
-                {selectedEvent.formFields && selectedEvent.formFields.length > 0 && (
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div>
+                      <label className="mb-1 block text-xs font-medium text-muted-foreground">
+                        Age
+                      </label>
+                      <Input
+                        type="number"
+                        min={13}
+                        max={100}
+                        value={form.age}
+                        onChange={(e) =>
+                          setForm({ ...form, age: e.target.value })
+                        }
+                        placeholder="e.g. 25"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-1 block text-xs font-medium text-muted-foreground">
+                        Gender
+                      </label>
+                      <select
+                        className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                        value={form.gender}
+                        onChange={(e) =>
+                          setForm({ ...form, gender: e.target.value })
+                        }
+                      >
+                        <option value="">Select</option>
+                        {GENDERS.map((g) => (
+                          <option key={g} value={g}>
+                            {g.charAt(0).toUpperCase() + g.slice(1)}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div>
+                      <label className="mb-1 block text-xs font-medium text-muted-foreground">
+                        Locality / Area
+                      </label>
+                      <Input
+                        value={form.locality}
+                        onChange={(e) =>
+                          setForm({ ...form, locality: e.target.value })
+                        }
+                        placeholder="e.g. MVP Colony"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-1 block text-xs font-medium text-muted-foreground">
+                        Occupation
+                      </label>
+                      <Input
+                        value={form.occupation}
+                        onChange={(e) =>
+                          setForm({ ...form, occupation: e.target.value })
+                        }
+                        placeholder="e.g. Student"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="mb-1 block text-xs font-medium text-muted-foreground">
+                      Skills you can offer
+                    </label>
+                    <div className="flex flex-wrap gap-1.5">
+                      {SKILLS.map((skill) => {
+                        const active = form.skills.includes(skill.key);
+                        return (
+                          <button
+                            key={skill.key}
+                            type="button"
+                            onClick={() => toggleSkill(skill.key)}
+                            className={`rounded-full border px-2.5 py-1 text-xs font-medium transition-colors ${
+                              active
+                                ? "border-primary bg-primary text-primary-foreground"
+                                : "border-input bg-transparent text-muted-foreground hover:bg-accent"
+                            }`}
+                          >
+                            {skill.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {selectedEvent.customFields &&
+                    selectedEvent.customFields.length > 0 && (
+                      <div className="space-y-3 border-t pt-3">
+                        {selectedEvent.customFields.map((field) => (
+                          <div key={field.id}>
+                            <label className="mb-1 block text-xs font-medium text-muted-foreground">
+                              {field.label}
+                              {field.required && (
+                                <span className="ml-0.5 text-destructive">
+                                  *
+                                </span>
+                              )}
+                            </label>
+                            {renderCustomField(field)}
+                            {field.helpText && (
+                              <p className="mt-1 text-xs text-muted-foreground">
+                                {field.helpText}
+                              </p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                  <div>
+                    <label className="mb-1 block text-xs font-medium text-muted-foreground">
+                      Anything else?
+                    </label>
+                    <Textarea
+                      rows={2}
+                      value={form.notes}
+                      onChange={(e) =>
+                        setForm({ ...form, notes: e.target.value })
+                      }
+                      placeholder="Allergies, dietary preferences, or other notes"
+                    />
+                  </div>
+
                   <div className="flex gap-3 pt-1">
-                    <Button className="flex-1" onClick={handleRegister} disabled={submitting}>
-                      {submitting ? "Registering..." : "Submit Registration"}
+                    <Button
+                      className="flex-1"
+                      onClick={handleRegister}
+                      disabled={submitting}
+                    >
+                      {submitting ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Registering...
+                        </>
+                      ) : (
+                        "Submit Registration"
+                      )}
                     </Button>
-                    <Button variant="outline" onClick={() => setSelectedEvent(null)} disabled={submitting}>
+                    <Button
+                      variant="outline"
+                      onClick={closeModal}
+                      disabled={submitting}
+                    >
                       Cancel
                     </Button>
                   </div>
-                )}
-              </div>
+                </div>
+              )}
             </motion.div>
           </motion.div>
         )}
