@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { getSevaBySlug, sevas, getSevaHref, unitImpact } from "@/lib/sevaConfig";
 import { useAttribution } from "@/lib/useAttribution";
+import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
 import Ornament from "@/components/Ornament";
 import PageLayout from "@/components/PageLayout";
 import AddressForm from "@/components/AddressForm";
@@ -25,25 +26,6 @@ type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () 
 
 const apiBase = () =>
   (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(/\/+$/, "");
-
-const loadRazorpay = () =>
-  new Promise<void>((resolve, reject) => {
-    const win = window as unknown as { Razorpay?: RazorpayConstructor };
-    if (win.Razorpay) return resolve();
-    const existing = document.querySelector<HTMLScriptElement>(
-      'script[src="https://checkout.razorpay.com/v1/checkout.js"]'
-    );
-    if (existing) {
-      existing.addEventListener("load", () => resolve());
-      existing.addEventListener("error", () => reject(new Error("Unable to load Razorpay")));
-      return;
-    }
-    const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error("Unable to load Razorpay"));
-    document.body.appendChild(script);
-  });
 
 interface Donor {
   name: string;
@@ -95,6 +77,7 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
   const searchParams = useSearchParams();
   const router = useRouter();
   const attribution = useAttribution(`/donate/${slug}`);
+  const razorpayReady = useRazorpayPreload();
 
   const [tierIndex, setTierIndex] = useState(0);
   const [customAmount, setCustomAmount] = useState("");
@@ -257,7 +240,7 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
       }
       const created = await createRes.json();
 
-      await loadRazorpay();
+      await razorpayReady();
       const win = window as unknown as { Razorpay?: RazorpayConstructor };
       if (!win.Razorpay) throw new Error("Razorpay checkout is unavailable.");
 

@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
+import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
 import Ornament from "@/components/Ornament";
 import HeroSection from "@/components/sqft-campaign/HeroSection";
 import DonationFormSection from "@/components/sqft-campaign/DonationFormSection";
@@ -38,25 +39,6 @@ const ADDONS_MIN_AMOUNT = 999;
 
 const apiBase = () =>
   (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(/\/+$/, "");
-
-const loadRazorpay = () =>
-  new Promise<void>((resolve, reject) => {
-    const win = window as unknown as { Razorpay?: RazorpayConstructor };
-    if (win.Razorpay) return resolve();
-    const existing = document.querySelector<HTMLScriptElement>(
-      'script[src="https://checkout.razorpay.com/v1/checkout.js"]'
-    );
-    if (existing) {
-      existing.addEventListener("load", () => resolve());
-      existing.addEventListener("error", () => reject(new Error("Unable to load Razorpay")));
-      return;
-    }
-    const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error("Unable to load Razorpay"));
-    document.body.appendChild(script);
-  });
 
 /* ------------------------------------------------------------------ */
 /* Shared data (same for both campaigns)                               */
@@ -125,6 +107,7 @@ export default function SqftCampaignClient({
       ? `/sqft-seva-campaign/c/${campaigner.slug}`
       : `/${campaignType === "BRICK" ? "brick-seva-campaign" : "sqft-seva-campaign"}`
   );
+  const razorpayReady = useRazorpayPreload();
   const [copiedShare, setCopiedShare] = useState(false);
   const [stats, setStats] = useState<CampaignStats | null>(null);
   const [wallTab, setWallTab] = useState<"latest" | "largest">("latest");
@@ -319,7 +302,7 @@ export default function SqftCampaignClient({
       }
       const created = await createRes.json();
 
-      await loadRazorpay();
+      await razorpayReady();
       const win = window as unknown as { Razorpay?: RazorpayConstructor };
       if (!win.Razorpay) throw new Error("Razorpay checkout is unavailable.");
 

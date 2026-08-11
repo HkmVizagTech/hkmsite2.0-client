@@ -25,30 +25,12 @@ import { sevas, getSevaHref, type Seva } from "@/lib/sevaConfig";
 import { useAttribution } from "@/lib/useAttribution";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
 import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
+import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 
 const apiBase = () =>
   (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(/\/+$/, "");
-
-const loadRazorpay = () =>
-  new Promise<void>((resolve, reject) => {
-    const win = window as unknown as { Razorpay?: RazorpayConstructor };
-    if (win.Razorpay) return resolve();
-    const existing = document.querySelector<HTMLScriptElement>(
-      'script[src="https://checkout.razorpay.com/v1/checkout.js"]'
-    );
-    if (existing) {
-      existing.addEventListener("load", () => resolve());
-      existing.addEventListener("error", () => reject(new Error("Unable to load Razorpay")));
-      return;
-    }
-    const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error("Unable to load Razorpay"));
-    document.body.appendChild(script);
-  });
 
 const OCCASIONS = [
   { label: "Birthday", icon: Cake },
@@ -149,6 +131,7 @@ const TRUST_BADGES = [
 export default function SpecialOccasionClient() {
   const reduce = useReducedMotion();
   const attribution = useAttribution("/special-occasion");
+  const razorpayReady = useRazorpayPreload();
 
   const [occasion, setOccasion] = useState<string>("Birthday");
   const [selectedSeva, setSelectedSeva] = useState<Seva>(sevas[2]); // Anna Daan Seva default
@@ -224,7 +207,7 @@ export default function SpecialOccasionClient() {
       if (!orderRes.ok) throw new Error("Unable to create payment order. Please try again.");
       const order = await orderRes.json();
 
-      await loadRazorpay();
+      await razorpayReady();
       const win = window as unknown as { Razorpay?: RazorpayConstructor };
       if (!win.Razorpay) throw new Error("Razorpay checkout is unavailable.");
 

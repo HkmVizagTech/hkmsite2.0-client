@@ -19,31 +19,13 @@ import AddressForm from "@/components/AddressForm";
 import type { PrasadamAddress } from "@/components/AddressForm";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
 import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
+import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
 import { type CampaignConfig } from "@/lib/campaignConfig";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 
 const apiBase = () =>
   (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(/\/+$/, "");
-
-const loadRazorpay = () =>
-  new Promise<void>((resolve, reject) => {
-    const win = window as unknown as { Razorpay?: RazorpayConstructor };
-    if (win.Razorpay) return resolve();
-    const existing = document.querySelector<HTMLScriptElement>(
-      'script[src="https://checkout.razorpay.com/v1/checkout.js"]'
-    );
-    if (existing) {
-      existing.addEventListener("load", () => resolve());
-      existing.addEventListener("error", () => reject(new Error("Unable to load Razorpay")));
-      return;
-    }
-    const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error("Unable to load Razorpay"));
-    document.body.appendChild(script);
-  });
 
 /* ------------------------------------------------------------------ */
 /* Config                                                              */
@@ -159,6 +141,7 @@ const labelClass = "mb-1 block text-[11px] font-medium text-muted-foreground";
 
 export default function AlankaraVastraClient() {
   const attribution = useAttribution("/alankara-vastra-seva");
+  const razorpayReady = useRazorpayPreload();
   const [tierIndex, setTierIndex] = useState(0);
   const [customAmount, setCustomAmount] = useState("");
   const [useCustom, setUseCustom] = useState(false);
@@ -294,7 +277,7 @@ export default function AlankaraVastraClient() {
       }
       const created = await createRes.json();
 
-      await loadRazorpay();
+      await razorpayReady();
       const win = window as unknown as { Razorpay?: RazorpayConstructor };
       if (!win.Razorpay) throw new Error("Razorpay checkout is unavailable.");
 

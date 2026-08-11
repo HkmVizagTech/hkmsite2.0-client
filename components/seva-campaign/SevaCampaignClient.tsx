@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
+import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
 import Ornament from "@/components/Ornament";
 import ImportanceSection from "@/components/sqft-campaign/ImportanceSection";
 import FaqSection from "@/components/sqft-campaign/FaqSection";
@@ -24,25 +25,6 @@ type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () 
 
 const apiBase = () =>
   (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(/\/+$/, "");
-
-const loadRazorpay = () =>
-  new Promise<void>((resolve, reject) => {
-    const win = window as unknown as { Razorpay?: RazorpayConstructor };
-    if (win.Razorpay) return resolve();
-    const existing = document.querySelector<HTMLScriptElement>(
-      'script[src="https://checkout.razorpay.com/v1/checkout.js"]'
-    );
-    if (existing) {
-      existing.addEventListener("load", () => resolve());
-      existing.addEventListener("error", () => reject(new Error("Unable to load Razorpay")));
-      return;
-    }
-    const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error("Unable to load Razorpay"));
-    document.body.appendChild(script);
-  });
 
 const BANK_DETAILS = {
   beneficiaryName: "HARE KRISHNA MOVEMENT INDIA",
@@ -81,6 +63,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
   const config: SevaCampaignConfig = getSevaCampaignConfig(slug) ?? GAU_CAMPAIGN;
   const searchParams = useSearchParams();
   const attribution = useAttribution(config.path);
+  const razorpayReady = useRazorpayPreload();
 
   const [tierIndex, setTierIndex] = useState(0);
   const [customAmount, setCustomAmount] = useState("");
@@ -242,7 +225,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
       }
       const created = await createRes.json();
 
-      await loadRazorpay();
+      await razorpayReady();
       const win = window as unknown as { Razorpay?: RazorpayConstructor };
       if (!win.Razorpay) throw new Error("Razorpay checkout is unavailable.");
 

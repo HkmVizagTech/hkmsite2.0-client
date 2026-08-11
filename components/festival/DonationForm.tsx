@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useAttribution } from "@/lib/useAttribution";
+import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
 
 const fmt = (n: number) => Number(n).toLocaleString("en-IN");
@@ -16,6 +17,7 @@ const DEFAULT_SEVA_OPTIONS = [
 
 export default function DonationForm({ config, setToast }: any) {
   const attribution = useAttribution(config?.slug ? `/festival/${config.slug}` : "/festival");
+  const razorpayReady = useRazorpayPreload();
   const [selectedSevas, setSelectedSevas] = useState<any>({});
   const [expandedSeva, setExpandedSeva] = useState<string | null>(null);
   const [formData, setFormData] = useState({ name: "", email: "", mobile: "", dob: "", sevakName: "", panNumber: "", want80G: false, wantPrasadam: false,
@@ -148,19 +150,9 @@ export default function DonationForm({ config, setToast }: any) {
         }
       };
 
-      if (!(window as any).Razorpay) {
-        const s = document.createElement('script');
-        s.src = 'https://checkout.razorpay.com/v1/checkout.js';
-        s.async = true;
-        document.body.appendChild(s);
-        s.onload = () => {
-          console.log('Razorpay script loaded, opening checkout with', { orderId: orderId || (order && order.id), key: key });
-          new (window as any).Razorpay(rzpOptions).open();
-        };
-      } else {
-        console.log('Opening Razorpay checkout with', { orderId: orderId || (order && order.id), key: key });
-        new (window as any).Razorpay(rzpOptions).open();
-      }
+      await razorpayReady();
+      console.log('Opening Razorpay checkout with', { orderId: orderId || (order && order.id), key: key });
+      new (window as any).Razorpay(rzpOptions).open();
 
     } catch (err) {
       console.error(err);

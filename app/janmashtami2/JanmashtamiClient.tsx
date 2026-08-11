@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
 import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
+import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
 import { useAttribution } from "@/lib/useAttribution";
 
 type SevaOption = {
@@ -279,26 +280,6 @@ const initialForm: CheckoutForm = {
 const apiBase = () => (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(/\/+$/, "");
 const formatAmount = (amount: number) => amount.toLocaleString("en-IN");
 
-const loadRazorpay = () =>
-  new Promise<void>((resolve, reject) => {
-    const win = window as unknown as { Razorpay?: RazorpayConstructor };
-    if (win.Razorpay) return resolve();
-
-    const existingScript = document.querySelector<HTMLScriptElement>('script[src="https://checkout.razorpay.com/v1/checkout.js"]');
-    if (existingScript) {
-      existingScript.addEventListener("load", () => resolve());
-      existingScript.addEventListener("error", () => reject(new Error("Unable to load Razorpay")));
-      return;
-    }
-
-    const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.async = true;
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error("Unable to load Razorpay"));
-    document.body.appendChild(script);
-  });
-
 export interface JanmashtamiCampaigner {
   name: string;
   slug: string;
@@ -310,6 +291,7 @@ export interface JanmashtamiCampaigner {
 export default function JanmashtamiClient({ campaigner }: { campaigner?: JanmashtamiCampaigner } = {}) {
   const reduce = useReducedMotion();
   const attribution = useAttribution(campaigner ? `/janmashtami2/c/${campaigner.slug}` : "janmashtami2");
+  const razorpayReady = useRazorpayPreload();
   const [activeSlide, setActiveSlide] = useState(0);
   const [selected, setSelected] = useState<SelectedOffering | null>(null);
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
@@ -437,7 +419,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
 
       if (!orderResponse.ok) throw new Error("Unable to create payment order.");
       const order = await orderResponse.json();
-      await loadRazorpay();
+      await razorpayReady();
 
       const win = window as unknown as { Razorpay?: RazorpayConstructor };
       if (!win.Razorpay) throw new Error("Razorpay checkout is unavailable.");

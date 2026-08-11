@@ -16,6 +16,7 @@ import Ornament from "@/components/Ornament";
 import AddressForm from "@/components/AddressForm";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
 import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
+import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
 import type { PrasadamAddress } from "@/components/AddressForm";
 import FaqSection from "@/components/sqft-campaign/FaqSection";
 import FounderSection from "@/components/sqft-campaign/FounderSection";
@@ -26,25 +27,6 @@ type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () 
 
 const apiBase = () =>
   (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(/\/+$/, "");
-
-const loadRazorpay = () =>
-  new Promise<void>((resolve, reject) => {
-    const win = window as unknown as { Razorpay?: RazorpayConstructor };
-    if (win.Razorpay) return resolve();
-    const existing = document.querySelector<HTMLScriptElement>(
-      'script[src="https://checkout.razorpay.com/v1/checkout.js"]'
-    );
-    if (existing) {
-      existing.addEventListener("load", () => resolve());
-      existing.addEventListener("error", () => reject(new Error("Unable to load Razorpay")));
-      return;
-    }
-    const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error("Unable to load Razorpay"));
-    document.body.appendChild(script);
-  });
 
 /* ------------------------------------------------------------------ */
 /* Config                                                              */
@@ -303,6 +285,7 @@ const defaultTierIndex = (seva: EkadashiSeva) => {
 export default function ShayaniEkadashiClient() {
   const router = useRouter();
   const attribution = useAttribution("/shayani-ekadashi");
+  const razorpayReady = useRazorpayPreload();
   const [sevaIndex, setSevaIndex] = useState(0);
   const [tierIndex, setTierIndex] = useState(() => defaultTierIndex(EKADASHI_SEVAS[0]));
   const [customAmount, setCustomAmount] = useState("");
@@ -436,7 +419,7 @@ export default function ShayaniEkadashiClient() {
       if (!orderRes.ok) throw new Error("Unable to create payment order. Please try again.");
       const order = await orderRes.json();
 
-      await loadRazorpay();
+      await razorpayReady();
       const win = window as unknown as { Razorpay?: RazorpayConstructor };
       if (!win.Razorpay) throw new Error("Razorpay checkout is unavailable.");
 

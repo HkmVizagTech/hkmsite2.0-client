@@ -2,6 +2,7 @@
 
 import PageLayout from "@/components/PageLayout";
 import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
+import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
 import Ornament from "@/components/Ornament";
 import { motion, useInView } from "framer-motion";
 import { useRef, useState } from "react";
@@ -18,16 +19,6 @@ import { useAttribution } from "@/lib/useAttribution";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 const apiBase = () => (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(/\/+$/, "");
-const loadRazorpay = () =>
-  new Promise<void>((resolve, reject) => {
-    const win = window as unknown as { Razorpay?: RazorpayConstructor };
-    if (win.Razorpay) return resolve();
-    const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error("Unable to load Razorpay"));
-    document.body.appendChild(script);
-  });
 
 const stats = [
   { icon: Utensils, value: "3,000+", label: "Meals Served Daily", sub: "Hot, nutritious, hygienic" },
@@ -85,6 +76,7 @@ export default function SubhojanamPage() {
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
   const attribution = useAttribution("/subhojanam");
+  const razorpayReady = useRazorpayPreload();
 
   const closeCheckout = () => { if (!submitting) { setCheckoutTier(null); setStatus(null); setForm({ name: "", email: "", mobile: "" }); } };
 
@@ -107,7 +99,7 @@ export default function SubhojanamPage() {
       });
       if (!orderRes.ok) { const body = await orderRes.json().catch(() => ({})); throw new Error(body.message || "Unable to create payment order."); }
       const order = await orderRes.json();
-      await loadRazorpay();
+      await razorpayReady();
       const win = window as unknown as { Razorpay?: RazorpayConstructor };
       if (!win.Razorpay) throw new Error("Razorpay checkout is unavailable.");
       new win.Razorpay({
