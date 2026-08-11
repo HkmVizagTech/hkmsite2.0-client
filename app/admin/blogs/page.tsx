@@ -18,7 +18,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import {
   Plus, Pencil, Trash2, X, Eye, Search, Calendar, Clock,
-  FileText, Upload, Star, User,
+  FileText, Upload, Star, User, Loader2,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useAdminLoader } from "@/contexts/AdminLoaderContext";
@@ -140,27 +140,46 @@ export default function AdminBlogs() {
     setShowForm(true);
   };
 
-  const openEdit = (blog: Blog) => {
+  const [loadingEditId, setLoadingEditId] = useState<string | null>(null);
+
+  const openEdit = async (blog: Blog) => {
+    // The list endpoint (GET /blogs) deliberately strips `content` for
+    // payload size — that's why Edit was showing an empty editor. Fetch
+    // the single post (which DOES include content) before opening the
+    // form, so the editor always loads with the real, current content.
+    setLoadingEditId(blog._id);
+    let full: Blog = blog;
+    try {
+      const res = await authFetch(`${API_URL}/blogs/${blog._id}?preview=1`, { credentials: "include" });
+      const json = await res.json();
+      if (res.ok && json.blog) full = json.blog;
+      else toast({ title: "Couldn't refresh full content", description: "Showing cached data — please verify before publishing.", variant: "destructive" });
+    } catch {
+      toast({ title: "Network error loading post", description: "Showing cached data — please verify before publishing.", variant: "destructive" });
+    } finally {
+      setLoadingEditId(null);
+    }
+
     setForm({
-      title: blog.title,
-      slug: blog.slug,
-      excerpt: blog.excerpt || "",
-      content: blog.content || "",
-      coverImage: blog.coverImage || "",
-      category: blog.category || "Spiritual Knowledge",
-      tags: (blog.tags || []).join(", "),
-      authorName: blog.author?.name || "Admin",
-      authorAvatar: blog.author?.avatar || "",
-      authorBio: blog.author?.bio || "",
-      authorSlug: blog.author?.slug || "",
-      status: blog.status,
-      featured: blog.featured || false,
-      metaTitle: blog.metaTitle || "",
-      metaDescription: blog.metaDescription || "",
+      title: full.title,
+      slug: full.slug,
+      excerpt: full.excerpt || "",
+      content: full.content || "",
+      coverImage: full.coverImage || "",
+      category: full.category || "Spiritual Knowledge",
+      tags: (full.tags || []).join(", "),
+      authorName: full.author?.name || "Admin",
+      authorAvatar: full.author?.avatar || "",
+      authorBio: full.author?.bio || "",
+      authorSlug: full.author?.slug || "",
+      status: full.status,
+      featured: full.featured || false,
+      metaTitle: full.metaTitle || "",
+      metaDescription: full.metaDescription || "",
     });
     coverFileRef.current = null;
     authorAvatarFileRef.current = null;
-    setEditing(blog);
+    setEditing(full);
     setShowForm(true);
   };
 
@@ -397,9 +416,15 @@ export default function AdminBlogs() {
                     size="sm"
                     variant="outline"
                     className="h-8 flex-1"
+                    disabled={loadingEditId === blog._id}
                     onClick={() => openEdit(blog)}
                   >
-                    <Pencil className="w-3.5 h-3.5 mr-1.5" /> Edit
+                    {loadingEditId === blog._id ? (
+                      <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" />
+                    ) : (
+                      <Pencil className="w-3.5 h-3.5 mr-1.5" />
+                    )}
+                    Edit
                   </Button>
                   <Button
                     size="sm"
