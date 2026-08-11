@@ -155,20 +155,7 @@ export default function VolunteerEventPage() {
                         : "Registration Not Open"}
                   </span>
                 </div>
-                {event.availabilitySlots &&
-                  event.availabilitySlots.length > 0 && (
-                    <div className="mt-4 flex max-w-2xl flex-wrap items-center justify-center gap-1.5">
-                      {event.availabilitySlots.map((slot) => (
-                        <span
-                          key={slot}
-                          className="inline-flex items-center gap-1 rounded-full border border-amber-300/30 bg-amber-400/10 px-2.5 py-1 text-[11px] font-medium text-amber-100"
-                        >
-                          <Clock className="h-3 w-3 text-amber-300" />
-                          {slot}
-                        </span>
-                      ))}
-                    </div>
-                  )}
+
               </>
             )}
           </div>
