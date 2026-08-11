@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import SqftCampaignClient from "./SqftCampaignClient";
 
 export const metadata = {
@@ -14,5 +15,9 @@ export const metadata = {
 };
 
 export default function SqftSevaCampaignPage() {
-  return <SqftCampaignClient />;
+  return (
+    <Suspense fallback={null}>
+      <SqftCampaignClient />
+    </Suspense>
+  );
 }

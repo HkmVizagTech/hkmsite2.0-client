@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import SevaCampaignClient from "@/components/seva-campaign/SevaCampaignClient";
 import { GAU_CAMPAIGN } from "@/lib/sevaCampaignConfig";
 
@@ -13,5 +14,9 @@ export const metadata = {
 };
 
 export default function GauSevaPage() {
-  return <SevaCampaignClient slug={GAU_CAMPAIGN.slug} />;
+  return (
+    <Suspense fallback={null}>
+      <SevaCampaignClient slug={GAU_CAMPAIGN.slug} />
+    </Suspense>
+  );
 }

@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import SqftCampaignClient from "../../SqftCampaignClient";
 import type { CampaignerData } from "@/lib/campaignConfig";
 
@@ -42,5 +43,9 @@ export default async function CampaignerPage({ params }: { params: Promise<{ slu
   const { slug } = await params;
   const campaigner = await fetchCampaigner(slug);
   if (!campaigner) notFound();
-  return <SqftCampaignClient campaigner={campaigner} />;
+  return (
+    <Suspense fallback={null}>
+      <SqftCampaignClient campaigner={campaigner} />
+    </Suspense>
+  );
 }

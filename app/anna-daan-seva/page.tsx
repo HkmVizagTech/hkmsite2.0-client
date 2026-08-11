@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import SevaCampaignClient from "@/components/seva-campaign/SevaCampaignClient";
 import { ANNA_DAAN_CAMPAIGN } from "@/lib/sevaCampaignConfig";
 
@@ -13,5 +14,9 @@ export const metadata = {
 };
 
 export default function AnnaDaanSevaPage() {
-  return <SevaCampaignClient slug={ANNA_DAAN_CAMPAIGN.slug} />;
+  return (
+    <Suspense fallback={null}>
+      <SevaCampaignClient slug={ANNA_DAAN_CAMPAIGN.slug} />
+    </Suspense>
+  );
 }

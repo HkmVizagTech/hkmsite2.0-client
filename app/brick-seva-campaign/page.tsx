@@ -1,9 +1,11 @@
+import { Suspense } from "react";
 import SqftCampaignClient from "../sqft-seva-campaign/SqftCampaignClient";
 import { BRICK_CAMPAIGN } from "@/lib/campaignConfig";
 
 export const metadata = {
   title: BRICK_CAMPAIGN.metaTitle,
   description: BRICK_CAMPAIGN.metaDesc,
+  alternates: { canonical: "/brick-seva-campaign" },
   openGraph: {
     title: BRICK_CAMPAIGN.ogTitle,
     description: BRICK_CAMPAIGN.ogDesc,
@@ -12,5 +14,9 @@ export const metadata = {
 };
 
 export default function BrickSevaCampaignPage() {
-  return <SqftCampaignClient campaignType="BRICK" />;
+  return (
+    <Suspense fallback={null}>
+      <SqftCampaignClient campaignType="BRICK" />
+    </Suspense>
+  );
 }

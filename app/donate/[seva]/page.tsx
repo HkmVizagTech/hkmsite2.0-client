@@ -22,6 +22,8 @@ import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
 import type { PrasadamAddress } from "@/components/AddressForm";
 
+import { Suspense } from "react";
+
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 
 const apiBase = () =>
@@ -71,7 +73,7 @@ const FAQS = [
   },
 ];
 
-export default function DonateSevaPage({ params }: { params: Promise<{ seva: string }> }) {
+function DonateSevaPageInner({ params }: { params: Promise<{ seva: string }> }) {
   const { seva: slug } = use(params);
   const seva = getSevaBySlug(slug);
   const searchParams = useSearchParams();
@@ -726,5 +728,13 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
       )}
     </main>
     </PageLayout>
+  );
+}
+
+export default function DonateSevaPage({ params }: { params: Promise<{ seva: string }> }) {
+  return (
+    <Suspense fallback={null}>
+      <DonateSevaPageInner params={params} />
+    </Suspense>
   );
 }
