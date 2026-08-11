@@ -316,6 +316,16 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
           </button>
         </section>
 
+        {/* A real, visible H1 — the banner above is a pure image (no
+            selectable/crawlable text), so without this the page has no
+            text-based top-level heading at all, which hurts both SEO and
+            accessibility (screen readers, images-disabled browsing). */}
+        <div className="bg-white px-4 pb-2 pt-5 text-center dark:bg-background md:pt-6">
+          <h1 className="font-heading text-2xl font-bold text-primary md:text-3xl">
+            {config.heroHeading1} <span className="text-gold">— {config.heroHeading2}</span>
+          </h1>
+        </div>
+
         {/* ── Donation Form ── */}
         <section id="donate" ref={formRef} className="scroll-mt-24 bg-white dark:bg-background py-8 md:py-12">
           <div className="container mx-auto max-w-4xl px-4">

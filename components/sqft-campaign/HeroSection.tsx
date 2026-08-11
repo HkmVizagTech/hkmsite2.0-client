@@ -45,6 +45,19 @@ export default function HeroSection({ scrollToDonate, config }: HeroSectionProps
           />
         </div>
       </button>
+
+      {/* A real, visible H1 — the banner above is a pure image (no
+          selectable/crawlable text), so without this the page has no
+          text-based top-level heading at all, which hurts both SEO and
+          accessibility (screen readers, images-disabled browsing).
+          Uses pageTitle (e.g. "Square Foot Seva") rather than the generic
+          heroHeading1/2 branding text, since that's the actual keyword
+          this page needs to rank for. */}
+      <div className="bg-white px-4 pb-2 pt-5 text-center dark:bg-background md:pt-6">
+        <h1 className="font-heading text-2xl font-bold text-primary md:text-3xl">
+          {config.pageTitle}
+        </h1>
+      </div>
     </section>
   );
 }

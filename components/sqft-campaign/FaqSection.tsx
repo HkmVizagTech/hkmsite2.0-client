@@ -16,8 +16,25 @@ interface FaqSectionProps {
 export default function FaqSection({ faqs }: FaqSectionProps) {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
+  // FAQPage structured data — lets Google show these Q&As directly in
+  // search results (the "People also ask"-style rich snippet), which
+  // meaningfully improves click-through even without a ranking change.
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  };
+
   return (
     <section className="bg-white dark:bg-background py-12 md:py-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       <div className="container mx-auto max-w-3xl px-4">
         <Ornament className="mb-6" />
         <h2 className="mb-8 text-center font-heading text-2xl font-bold text-primary md:text-3xl">

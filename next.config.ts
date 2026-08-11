@@ -45,6 +45,24 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ["lucide-react", "recharts"],
   },
+  // SEO: these 6 sevas now have dedicated, purpose-built pages (richer
+  // content, proper metadata/H1/structured data) that fully replace their
+  // old generic /donate/[slug] listing. Leaving both URLs live for the same
+  // content splits search authority between two competing pages instead of
+  // consolidating it onto one (keyword cannibalization) — a real-world
+  // ranking penalty for exactly the queries we want these pages to win.
+  // 301s here merge any existing backlinks/index signal from the old URL
+  // into the new page and stop Google indexing both.
+  async redirects() {
+    return [
+      { source: "/donate/gau-seva", destination: "/gau-seva", permanent: true },
+      { source: "/donate/anna-daan-seva", destination: "/anna-daan-seva", permanent: true },
+      { source: "/donate/square-foot-seva", destination: "/sqft-seva-campaign", permanent: true },
+      { source: "/donate/brick-seva", destination: "/brick-seva-campaign", permanent: true },
+      { source: "/donate/gita-daan-seva", destination: "/gita-daan-seva", permanent: true },
+      { source: "/donate/vastra-seva", destination: "/alankara-vastra-seva", permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;

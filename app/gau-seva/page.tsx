@@ -4,6 +4,7 @@ import { GAU_CAMPAIGN } from "@/lib/sevaCampaignConfig";
 export const metadata = {
   title: GAU_CAMPAIGN.metaTitle,
   description: GAU_CAMPAIGN.metaDesc,
+  alternates: { canonical: "/gau-seva" },
   openGraph: {
     title: GAU_CAMPAIGN.ogTitle,
     description: GAU_CAMPAIGN.ogDesc,

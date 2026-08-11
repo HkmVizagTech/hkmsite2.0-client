@@ -31,7 +31,14 @@ export const metadata: Metadata = {
   },
   description: "ISKCON Gambheeram Visakhapatnam (Hare Krishna Movement, Gambheeram) — spreading the timeless message of Lord Krishna through devotion, service, and community since 2008. Daily darshan, prasadam, festivals, and spiritual programs in Vizag.",
   keywords: ["ISKCON Gambheeram Visakhapatnam", "ISKCON Vizag", "ISKCON Gambheeram", "Hare Krishna Vizag", "Hare Krishna Movement Visakhapatnam", "Hare Krishna", "ISKCON", "Visakhapatnam", "Temple", "Spiritual", "Krishna", "Prabhupada", "Vaikuntham", "Vizag temple"],
-  alternates: { canonical: "/" },
+  // NOTE: no sitewide `alternates.canonical` here on purpose. It was
+  // previously set to "/" at this root level, which Next.js's metadata
+  // merging then applied to EVERY page that didn't explicitly override
+  // it — meaning every subpage on the site was telling Google "the
+  // homepage is the canonical version of this content," actively
+  // suppressing them from ranking independently. Confirmed live across
+  // multiple pages before this fix. Canonical is now set per-page
+  // instead (see app/page.tsx for the homepage's own).
   openGraph: {
     title: "ISKCON Gambheeram Visakhapatnam | Hare Krishna Movement Vizag",
     description: "ISKCON Gambheeram Visakhapatnam (Hare Krishna Movement, Gambheeram) — daily darshan, prasadam, festivals, and spiritual programs in Vizag since 2008.",
