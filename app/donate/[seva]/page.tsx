@@ -171,8 +171,12 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
       setStatus({ type: "error", message: "Please enter a valid amount." });
       return;
     }
-    if (!form.name.trim() || !form.mobile.trim()) {
+    if (!form.name.trim()) {
       setStatus({ type: "error", message: "Please fill in your name and phone number." });
+      return;
+    }
+    if (!/^[6-9]\d{9}$/.test(form.mobile.trim())) {
+      setStatus({ type: "error", message: "Please enter a valid 10-digit mobile number." });
       return;
     }
     if (form.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
@@ -609,8 +613,10 @@ export default function DonateSevaPage({ params }: { params: Promise<{ seva: str
                   <input
                     type="tel"
                     required
+                    maxLength={10}
+                    inputMode="numeric"
                     value={form.mobile}
-                    onChange={(e) => setForm({ ...form, mobile: e.target.value })}
+                    onChange={(e) => setForm({ ...form, mobile: e.target.value.replace(/[^\d]/g, "").slice(0, 10) })}
                     className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus:border-primary"
                     placeholder="10-digit mobile number"
                   />

@@ -215,8 +215,12 @@ export default function AlankaraVastraClient() {
       setStatus({ type: "error", message: "Please select a valid amount." });
       return;
     }
-    if (!form.name.trim() || !form.mobile.trim()) {
+    if (!form.name.trim()) {
       setStatus({ type: "error", message: "Please fill in your name and phone number." });
+      return;
+    }
+    if (!/^[6-9]\d{9}$/.test(form.mobile.trim())) {
+      setStatus({ type: "error", message: "Please enter a valid 10-digit mobile number." });
       return;
     }
     if (form.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
@@ -574,9 +578,11 @@ export default function AlankaraVastraClient() {
                           id="donor-mobile"
                           type="tel"
                           required
+                          maxLength={10}
+                          inputMode="numeric"
                           placeholder="10-digit mobile"
                           value={form.mobile}
-                          onChange={(e) => setForm({ ...form, mobile: e.target.value })}
+                          onChange={(e) => setForm({ ...form, mobile: e.target.value.replace(/[^\d]/g, "").slice(0, 10) })}
                           className={inputClass}
                         />
                       </div>

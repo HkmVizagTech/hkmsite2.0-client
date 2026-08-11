@@ -236,7 +236,7 @@ export default function DonationFormSection({
                   inputMode="numeric"
                   min={1}
                   max={100000}
-                  placeholder="Enter number"
+                  placeholder={`Enter number of ${config.unitNamePlural}`}
                   value={customSqftText}
                   onFocus={() => setUseCustom(false)}
                   onChange={(e) => {
@@ -355,9 +355,11 @@ export default function DonationFormSection({
                       id="donor-mobile"
                       type="tel"
                       required
+                      maxLength={10}
+                      inputMode="numeric"
                       placeholder="10-digit mobile"
                       value={form.mobile}
-                      onChange={(e) => setForm({ ...form, mobile: e.target.value })}
+                      onChange={(e) => setForm({ ...form, mobile: e.target.value.replace(/[^\d]/g, "").slice(0, 10) })}
                       className={inputClass}
                     />
                   </div>

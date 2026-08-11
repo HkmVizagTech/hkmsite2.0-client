@@ -44,6 +44,11 @@ export default function DonationForm({ config, setToast }: any) {
       setTimeout(() => setToast({}), 3000);
       return;
     }
+    if (!/^[6-9]\d{9}$/.test(formData.mobile)) {
+      setToast({ message: "Please enter a valid 10-digit mobile number", type: "error" });
+      setTimeout(() => setToast({}), 3000);
+      return;
+    }
     if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       setToast({ message: "Please enter a valid email address, or leave it blank", type: "error" });
       setTimeout(() => setToast({}), 3000);
@@ -252,7 +257,7 @@ export default function DonationForm({ config, setToast }: any) {
         <div className="space-y-3">
           <input type="text" placeholder="Donor Name *" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className={inputCls} />
           <input type="email" placeholder="Email ID (optional)" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className={inputCls} />
-          <input type="tel" placeholder="Mobile Number *" value={formData.mobile} onChange={(e) => setFormData({ ...formData, mobile: e.target.value })} className={inputCls} />
+          <input type="tel" maxLength={10} inputMode="numeric" placeholder="Mobile Number *" value={formData.mobile} onChange={(e) => setFormData({ ...formData, mobile: e.target.value.replace(/[^\d]/g, "").slice(0, 10) })} className={inputCls} />
 
           <DonorExtrasFields
             sevakName={formData.sevakName}

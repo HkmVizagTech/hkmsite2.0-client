@@ -216,8 +216,12 @@ export default function SqftCampaignClient({
       setStatus({ type: "error", message: `Minimum donation is ₹${config.minCustomAmount}.` });
       return;
     }
-    if (!form.name.trim() || !form.mobile.trim()) {
+    if (!form.name.trim()) {
       setStatus({ type: "error", message: "Please fill in your name and phone number." });
+      return;
+    }
+    if (!/^[6-9]\d{9}$/.test(form.mobile.trim())) {
+      setStatus({ type: "error", message: "Please enter a valid 10-digit mobile number." });
       return;
     }
     if (form.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {

@@ -166,8 +166,12 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
       setStatus({ type: "error", message: "Please select a valid amount." });
       return;
     }
-    if (!form.name.trim() || !form.email.trim() || !form.mobile.trim()) {
+    if (!form.name.trim() || !form.email.trim()) {
       setStatus({ type: "error", message: "Please fill in your name, email, and phone number." });
+      return;
+    }
+    if (!/^[6-9]\d{9}$/.test(form.mobile.trim())) {
+      setStatus({ type: "error", message: "Please enter a valid 10-digit mobile number." });
       return;
     }
     if (want80G && !form.panNumber.trim()) {
@@ -480,9 +484,11 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                           id="donor-mobile"
                           type="tel"
                           required
+                          maxLength={10}
+                          inputMode="numeric"
                           placeholder="10-digit mobile"
                           value={form.mobile}
-                          onChange={(e) => setForm({ ...form, mobile: e.target.value })}
+                          onChange={(e) => setForm({ ...form, mobile: e.target.value.replace(/[^\d]/g, "").slice(0, 10) })}
                           className={inputClass}
                         />
                       </div>

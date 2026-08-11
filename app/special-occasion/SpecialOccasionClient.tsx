@@ -169,8 +169,12 @@ export default function SpecialOccasionClient() {
       setStatus({ type: "error", message: "Minimum contribution is ₹100." });
       return;
     }
-    if (!form.name.trim() || !form.mobile.trim()) {
+    if (!form.name.trim()) {
       setStatus({ type: "error", message: "Please fill in your name and phone number." });
+      return;
+    }
+    if (!/^[6-9]\d{9}$/.test(form.mobile.trim())) {
+      setStatus({ type: "error", message: "Please enter a valid 10-digit mobile number." });
       return;
     }
     if (form.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
@@ -498,7 +502,7 @@ export default function SpecialOccasionClient() {
 
               <div className="mb-4 grid gap-3 sm:grid-cols-2">
                 <input type="text" required placeholder="Full name *" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none focus:border-gold" />
-                <input type="tel" required placeholder="Mobile number *" value={form.mobile} onChange={(e) => setForm({ ...form, mobile: e.target.value })} className="rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none focus:border-gold" />
+                <input type="tel" required maxLength={10} inputMode="numeric" placeholder="Mobile number *" value={form.mobile} onChange={(e) => setForm({ ...form, mobile: e.target.value.replace(/[^\d]/g, "").slice(0, 10) })} className="rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none focus:border-gold" />
                 <input type="email" placeholder="Email address (optional)" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none focus:border-gold sm:col-span-2" />
                 <input type="text" placeholder="Dedicate to / occasion note (optional)" value={dedication} onChange={(e) => setDedication(e.target.value)} className="rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none focus:border-gold sm:col-span-2" />
               </div>
