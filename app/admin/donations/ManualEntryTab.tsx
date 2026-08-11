@@ -29,10 +29,32 @@ const PAYMENT_MODES = [
   { value: "cheque", label: "Cheque" },
 ];
 
+// Every distinct seva/offering name actually used across the site's
+// donation flows (donate/[seva], sevaCampaignConfig, campaignConfig,
+// Janmashtami, Shayani Ekadashi, festival programs, Subhojanam) —
+// compiled from each source rather than guessed, so admin can match
+// what a donor says they paid for. "Other" reveals a free-text field,
+// so a seva added to the site later never blocks manual entry.
 const SEVA_OPTIONS = [
-  "General Seva", "Anna Daan Seva", "Gau Seva", "Gita Daan Seva",
-  "Square Foot Seva", "Brick Seva", "Vastra & Alankara Seva",
-  "Subhojanam", "Janmashtami Seva", "Other",
+  "General Seva",
+  "Anna Daan Seva",
+  "Gau Seva",
+  "Gita Daan Seva",
+  "Square Foot Seva",
+  "Brick Seva",
+  "Vastra & Alankara Seva",
+  "Pushpalankara Seva",
+  "Abhisheka Seva",
+  "Tulasi Archana Seva",
+  "Makhan Mishri Seva",
+  "Naivedhya Seva",
+  "Sadhu Bhojan Seva",
+  "Rama Taraka Yajna",
+  "Panaka Kosambari Seva",
+  "Subhojanam",
+  "Janmashtami Seva",
+  "Donations (General)",
+  "Other",
 ];
 
 const emptyAddress: PrasadamAddress = { street: "", city: "", state: "", pincode: "", country: "India" };
@@ -66,6 +88,7 @@ export default function ManualEntryTab() {
   const [donorMobile, setDonorMobile] = useState("");
   const [amount, setAmount] = useState("");
   const [sevaName, setSevaName] = useState(SEVA_OPTIONS[0]);
+  const [otherSevaName, setOtherSevaName] = useState("");
   const [paymentDate, setPaymentDate] = useState(() => new Date().toISOString().slice(0, 10));
   const [panNumber, setPanNumber] = useState("");
   const [want80G, setWant80G] = useState(false);
@@ -88,7 +111,7 @@ export default function ManualEntryTab() {
 
   const resetNewForm = () => {
     setDonorName(""); setDonorEmail(""); setDonorMobile(""); setAmount("");
-    setSevaName(SEVA_OPTIONS[0]); setPaymentDate(new Date().toISOString().slice(0, 10));
+    setSevaName(SEVA_OPTIONS[0]); setOtherSevaName(""); setPaymentDate(new Date().toISOString().slice(0, 10));
     setPanNumber(""); setWant80G(false); setWantPrasadam(false); setAddress(emptyAddress);
     setSevakName(""); setDob("");
     resetPaymentFields();
@@ -117,12 +140,14 @@ export default function ManualEntryTab() {
     setResult(null);
 
     if (!donorName.trim()) return setError("Please enter the donor's name.");
+    if (sevaName === "Other" && !otherSevaName.trim()) return setError("Please specify the seva/purpose.");
     if (!amount || Number(amount) <= 0) return setError("Please enter a valid amount.");
     if (!utrNumber.trim()) return setError("Please enter the UTR / reference number.");
     if (!donorEmail.trim() && !donorMobile.trim()) return setError("Please provide at least an email or mobile number.");
 
     setSubmitting(true);
     try {
+      const resolvedSevaName = sevaName === "Other" ? otherSevaName.trim() : sevaName;
       const res = await authFetch(`${API_URL}/donations/manual`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -132,8 +157,8 @@ export default function ManualEntryTab() {
           donorEmail: donorEmail.trim() || undefined,
           donorMobile: donorMobile.trim() || undefined,
           amount: Number(amount),
-          sevaName,
-          type: sevaName,
+          sevaName: resolvedSevaName,
+          type: resolvedSevaName,
           utrNumber: utrNumber.trim(),
           manualPaymentMode: paymentMode,
           paymentDate,
@@ -277,6 +302,14 @@ export default function ManualEntryTab() {
                   >
                     {SEVA_OPTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
                   </select>
+                  {sevaName === "Other" && (
+                    <Input
+                      className="mt-2"
+                      value={otherSevaName}
+                      onChange={(e) => setOtherSevaName(e.target.value)}
+                      placeholder="Specify the seva or purpose"
+                    />
+                  )}
                 </div>
                 <div>
                   <label className="text-sm font-medium">Payment Date</label>
