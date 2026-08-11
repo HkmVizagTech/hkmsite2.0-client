@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -14,6 +14,9 @@ import {
   X,
   CheckCircle2,
   Loader2,
+  Camera,
+  Upload,
+  Star,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import TempleCarousel from "@/components/TempleCarousel";
@@ -36,22 +39,29 @@ type CustomFieldType =
   | "select"
   | "radio"
   | "checkbox"
-  | "date";
+  | "date"
+  | "devotee_select";
 
 interface CustomField {
   id: string;
   label: string;
   type: CustomFieldType;
   required: boolean;
+  important?: boolean;
   options?: string[];
   placeholder?: string;
   helpText?: string;
 }
 
+interface Devotee {
+  _id: string;
+  name: string;
+}
+
 interface VccEvent {
   _id: string;
   name: string;
-  slug: string;
+  eventId?: string;
   description?: string;
   venue?: string;
   bannerImage?: string;
@@ -60,6 +70,7 @@ interface VccEvent {
   status: string;
   availabilitySlots?: string[];
   customFields?: CustomField[];
+  photoRequired?: boolean;
 }
 
 interface ServiceAvailabilityEntry {
@@ -114,6 +125,7 @@ const emptyForm = {
   locality: "",
   occupation: "",
   skills: [] as string[],
+  photoKey: null as string | null,
   serviceAvailability: [] as ServiceAvailabilityEntry[],
   notes: "",
   customAnswers: {} as Record<string, unknown>,
@@ -121,14 +133,42 @@ const emptyForm = {
 
 interface SuccessInfo {
   name: string;
-  volunteerNumber: string;
-  sevaToken: string;
+  phone: string;
   eventName: string;
+}
+
+async function compressImage(file: File, maxBytes = 950_000): Promise<Blob> {
+  const bmp = await createImageBitmap(file);
+  const max = 1200;
+  let w = bmp.width;
+  let h = bmp.height;
+  if (w > max || h > max) {
+    const r = Math.min(max / w, max / h);
+    w = Math.round(w * r);
+    h = Math.round(h * r);
+  }
+  const canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext("2d")!;
+  ctx.drawImage(bmp, 0, 0, w, h);
+  bmp.close();
+
+  let quality = 0.88;
+  let blob: Blob | null = null;
+  while (quality >= 0.1) {
+    blob = await new Promise<Blob | null>((res) =>
+      canvas.toBlob(res, "image/jpeg", quality)
+    );
+    if (blob && blob.size <= maxBytes) return blob;
+    quality -= 0.08;
+  }
+  return blob || new Blob();
 }
 
 export default function VolunteerPage() {
   const searchParams = useSearchParams();
-  const eventSlugParam = searchParams.get("event");
+  const eventParam = searchParams.get("event");
 
   const [events, setEvents] = useState<VccEvent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -136,6 +176,17 @@ export default function VolunteerPage() {
   const [form, setForm] = useState(emptyForm);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState<SuccessInfo | null>(null);
+
+  const [photoStatus, setPhotoStatus] = useState<
+    "idle" | "compressing" | "uploading" | "done" | "error"
+  >("idle");
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [photoError, setPhotoError] = useState("");
+  const cameraRef = useRef<HTMLInputElement>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const [devotees, setDevotees] = useState<Devotee[]>([]);
+  const [devoteeSearch, setDevoteeSearch] = useState<Record<string, string>>({});
 
   useEffect(() => {
     fetch(`${VCC_API}/api/events/public`)
@@ -146,25 +197,46 @@ export default function VolunteerPage() {
   }, []);
 
   useEffect(() => {
-    if (!eventSlugParam || events.length === 0) return;
-    const match = events.find((e) => e.slug === eventSlugParam);
+    if (!eventParam || events.length === 0) return;
+    const match = events.find(
+      (e) => e.eventId === eventParam || e._id === eventParam
+    );
     if (match && match.status === "registration_open" && !selectedEvent) {
       setSelectedEvent(match);
       setForm(emptyForm);
       setSuccess(null);
     }
-  }, [eventSlugParam, events, selectedEvent]);
+  }, [eventParam, events, selectedEvent]);
+
+  const hasDevoteeField = selectedEvent?.customFields?.some(
+    (f) => f.type === "devotee_select"
+  );
+
+  useEffect(() => {
+    if (!hasDevoteeField) return;
+    fetch(`${VCC_API}/api/devotees`)
+      .then((r) => (r.ok ? r.json() : { devotees: [] }))
+      .then((d) => setDevotees(d.devotees || []))
+      .catch(() => {});
+  }, [hasDevoteeField]);
 
   const openRegistration = (event: VccEvent) => {
     setSelectedEvent(event);
     setForm(emptyForm);
     setSuccess(null);
+    setPhotoStatus("idle");
+    setPhotoPreview(null);
+    setPhotoError("");
+    setDevoteeSearch({});
   };
 
   const closeModal = () => {
     setSelectedEvent(null);
     setForm(emptyForm);
     setSuccess(null);
+    setPhotoStatus("idle");
+    setPhotoPreview(null);
+    setPhotoError("");
   };
 
   const toggleSkill = (skill: string) => {
@@ -183,12 +255,60 @@ export default function VolunteerPage() {
     }));
   };
 
+  const handlePhotoFile = useCallback(
+    async (file: File | undefined) => {
+      if (!file) return;
+      setPhotoError("");
+      try {
+        setPhotoStatus("compressing");
+        const compressed = await compressImage(file, 950_000);
+        setPhotoPreview(URL.createObjectURL(compressed));
+
+        setPhotoStatus("uploading");
+        const fd = new FormData();
+        fd.append("photo", compressed, "photo.jpg");
+        const res = await fetch(`${VCC_API}/api/upload/photo`, {
+          method: "POST",
+          body: fd,
+        });
+        if (!res.ok) throw new Error("Upload failed");
+        const data = await res.json();
+        setForm((prev) => ({ ...prev, photoKey: data.key }));
+        setPhotoStatus("done");
+      } catch {
+        setPhotoStatus("error");
+        setPhotoError("Photo upload failed. Please try again.");
+      }
+    },
+    []
+  );
+
+  const removePhoto = () => {
+    setForm((prev) => ({ ...prev, photoKey: null }));
+    setPhotoPreview(null);
+    setPhotoStatus("idle");
+    setPhotoError("");
+  };
+
   const handleRegister = async () => {
     if (!selectedEvent) return;
-    if (!form.name.trim() || !form.phone.trim()) {
+
+    const cleaned = form.phone.replace(/\D/g, "");
+    if (!form.name.trim() || cleaned.length !== 10) {
       toast({
         title: "Missing details",
-        description: "Please enter your name and phone number.",
+        description: cleaned.length !== 10
+          ? "Please enter a valid 10-digit phone number."
+          : "Please enter your name.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (selectedEvent.photoRequired && !form.photoKey) {
+      toast({
+        title: "Photo required",
+        description: "Please upload your photo to register for this event.",
         variant: "destructive",
       });
       return;
@@ -202,13 +322,13 @@ export default function VolunteerPage() {
         body: JSON.stringify({
           eventId: selectedEvent._id,
           name: form.name.trim(),
-          phone: form.phone.trim(),
-          whatsappNumber: form.phone.trim(),
+          phone: cleaned,
           age: form.age ? Number(form.age) : undefined,
           gender: form.gender || undefined,
           locality: form.locality || undefined,
           occupation: form.occupation || undefined,
           skills: form.skills,
+          photoKey: form.photoKey || undefined,
           serviceAvailability: form.serviceAvailability,
           customAnswers: form.customAnswers,
           notes: form.notes || undefined,
@@ -218,8 +338,7 @@ export default function VolunteerPage() {
       if (res.ok) {
         setSuccess({
           name: data.volunteer?.name || form.name,
-          volunteerNumber: data.volunteer?.volunteerNumber || "",
-          sevaToken: data.volunteer?.sevaToken || "",
+          phone: data.volunteer?.phone || cleaned,
           eventName: selectedEvent.name,
         });
       } else if (res.status === 409) {
@@ -250,6 +369,7 @@ export default function VolunteerPage() {
   const renderCustomField = (field: CustomField) => {
     const value = form.customAnswers[field.id];
     const setVal = (v: unknown) => setCustomAnswer(field.id, v);
+    const isImportant = field.important;
 
     switch (field.type) {
       case "long_text":
@@ -359,6 +479,64 @@ export default function VolunteerPage() {
             onChange={(e) => setVal(e.target.value)}
           />
         );
+      case "devotee_select": {
+        const selected = Array.isArray(value) ? (value as string[]) : [];
+        const searchQ = devoteeSearch[field.id] || "";
+        const filtered = devotees.filter((d) =>
+          d.name.toLowerCase().includes(searchQ.toLowerCase())
+        );
+        const toggle = (name: string) => {
+          const next = selected.includes(name)
+            ? selected.filter((n) => n !== name)
+            : [...selected, name];
+          setVal(next);
+        };
+        return (
+          <div className="space-y-2">
+            <Input
+              placeholder="Search devotees..."
+              value={searchQ}
+              onChange={(e) =>
+                setDevoteeSearch((prev) => ({
+                  ...prev,
+                  [field.id]: e.target.value,
+                }))
+              }
+            />
+            <div className="max-h-40 overflow-y-auto rounded-md border bg-background">
+              {devotees.length === 0 ? (
+                <p className="p-3 text-sm text-muted-foreground">
+                  Loading devotees...
+                </p>
+              ) : filtered.length === 0 ? (
+                <p className="p-3 text-sm text-muted-foreground">
+                  No devotees found.
+                </p>
+              ) : (
+                filtered.map((d) => (
+                  <label
+                    key={d._id}
+                    className="flex cursor-pointer items-center gap-2.5 border-b px-3 py-2 text-sm last:border-0 hover:bg-accent"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selected.includes(d.name)}
+                      onChange={() => toggle(d.name)}
+                      className="rounded"
+                    />
+                    {d.name}
+                  </label>
+                ))
+              )}
+            </div>
+            {selected.length > 0 && (
+              <p className="text-xs text-muted-foreground">
+                Selected: {selected.join(", ")}
+              </p>
+            )}
+          </div>
+        );
+      }
       default:
         return (
           <Input
@@ -620,19 +798,17 @@ export default function VolunteerPage() {
                       You are registered for {success.eventName}.
                     </p>
                   </div>
-                  {success.volunteerNumber && (
-                    <div className="mx-auto max-w-xs space-y-2 rounded-xl bg-primary/5 p-4 text-center">
-                      <div className="text-xs uppercase tracking-wide text-muted-foreground">
-                        Volunteer Number
-                      </div>
-                      <div className="font-mono text-lg font-bold text-primary">
-                        {success.volunteerNumber}
-                      </div>
+                  <div className="mx-auto max-w-xs space-y-2 rounded-xl bg-primary/5 p-4 text-center">
+                    <div className="text-xs uppercase tracking-wide text-muted-foreground">
+                      Registered Phone
                     </div>
-                  )}
+                    <div className="font-mono text-lg font-bold text-primary">
+                      +91 {success.phone}
+                    </div>
+                  </div>
                   <p className="text-center text-xs text-muted-foreground">
-                    Save your volunteer number — the coordinator will contact
-                    you with your seva assignment.
+                    Use your phone number to look up your seva assignments.
+                    The coordinator will contact you soon.
                   </p>
                   <Button className="w-full" onClick={closeModal}>
                     Done
@@ -655,17 +831,122 @@ export default function VolunteerPage() {
                     </div>
                     <div>
                       <label className="mb-1 block text-xs font-medium text-muted-foreground">
-                        WhatsApp Number *
+                        Phone Number *
                       </label>
-                      <Input
-                        type="tel"
-                        value={form.phone}
-                        onChange={(e) =>
-                          setForm({ ...form, phone: e.target.value })
-                        }
-                        placeholder="+91 98765 43210"
-                      />
+                      <div className="flex items-center gap-2">
+                        <span className="flex h-9 items-center rounded-md border bg-muted px-2 text-sm text-muted-foreground">
+                          +91
+                        </span>
+                        <Input
+                          type="tel"
+                          inputMode="numeric"
+                          maxLength={10}
+                          value={form.phone}
+                          onChange={(e) =>
+                            setForm({
+                              ...form,
+                              phone: e.target.value.replace(/\D/g, ""),
+                            })
+                          }
+                          placeholder="10-digit number"
+                        />
+                      </div>
                     </div>
+                  </div>
+
+                  {/* Photo upload */}
+                  <div>
+                    <label className="mb-1 flex items-center gap-1 text-xs font-medium text-muted-foreground">
+                      Photo
+                      {selectedEvent.photoRequired && (
+                        <span className="text-destructive">*</span>
+                      )}
+                    </label>
+                    {photoPreview || form.photoKey ? (
+                      <div className="relative inline-block">
+                        <img
+                          src={
+                            photoPreview ||
+                            `${VCC_API}/api/upload/photo?key=${encodeURIComponent(form.photoKey!)}`
+                          }
+                          alt="Photo"
+                          className="h-20 w-20 rounded-lg border object-cover"
+                        />
+                        <button
+                          type="button"
+                          onClick={removePhoto}
+                          className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-white text-xs"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                        {photoStatus === "done" && (
+                          <p className="mt-1 text-xs text-green-600">
+                            Photo uploaded
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="flex gap-2">
+                        <input
+                          ref={cameraRef}
+                          type="file"
+                          accept="image/*"
+                          capture="environment"
+                          className="hidden"
+                          onChange={(e) =>
+                            handlePhotoFile(e.target.files?.[0])
+                          }
+                        />
+                        <input
+                          ref={fileRef}
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) =>
+                            handlePhotoFile(e.target.files?.[0])
+                          }
+                        />
+                        <button
+                          type="button"
+                          onClick={() => cameraRef.current?.click()}
+                          disabled={
+                            photoStatus === "compressing" ||
+                            photoStatus === "uploading"
+                          }
+                          className="flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-accent disabled:opacity-50"
+                        >
+                          <Camera className="h-3.5 w-3.5" />
+                          Take photo
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => fileRef.current?.click()}
+                          disabled={
+                            photoStatus === "compressing" ||
+                            photoStatus === "uploading"
+                          }
+                          className="flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-accent disabled:opacity-50"
+                        >
+                          <Upload className="h-3.5 w-3.5" />
+                          Upload file
+                        </button>
+                      </div>
+                    )}
+                    {photoStatus === "compressing" && (
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        Compressing...
+                      </p>
+                    )}
+                    {photoStatus === "uploading" && (
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        Uploading...
+                      </p>
+                    )}
+                    {photoError && (
+                      <p className="mt-1 text-xs text-destructive">
+                        {photoError}
+                      </p>
+                    )}
                   </div>
 
                   <div className="grid gap-3 sm:grid-cols-2">
@@ -758,82 +1039,152 @@ export default function VolunteerPage() {
                   </div>
 
                   {selectedEvent.availabilitySlots &&
-                    selectedEvent.availabilitySlots.length > 0 && (
-                      <div className="space-y-2 border-t pt-3">
-                        <label className="block text-xs font-medium text-muted-foreground">
-                          Availability
-                        </label>
-                        <p className="text-xs text-muted-foreground">
-                          Select the time slot you are available for each day.
-                        </p>
-                        {eachDay(selectedEvent.eventStart, selectedEvent.eventEnd).map(
-                          (day) => {
-                            const key = day.iso;
-                            const selected =
-                              form.serviceAvailability.find((e) => e.date === key)
-                                ?.timeSlot || "";
-                            return (
-                              <div key={key} className="rounded-md border p-3">
-                                <p className="mb-2 text-sm font-medium">
-                                  {day.label}
-                                </p>
-                                <div className="flex flex-wrap gap-2">
-                                  {selectedEvent.availabilitySlots!.map((slot) => {
-                                    const active = selected === slot;
-                                    return (
-                                      <button
-                                        key={slot}
-                                        type="button"
-                                        onClick={() => {
-                                          const next =
-                                            form.serviceAvailability.filter(
-                                              (e) => e.date !== key
-                                            );
-                                          next.push({ date: key, timeSlot: slot });
-                                          setForm({
-                                            ...form,
-                                            serviceAvailability: next,
-                                          });
-                                        }}
-                                        className={`rounded-md border px-2.5 py-1 text-xs font-medium transition-colors ${
-                                          active
-                                            ? "border-primary bg-primary text-primary-foreground"
-                                            : "border-input bg-transparent text-muted-foreground hover:bg-accent"
-                                        }`}
-                                      >
-                                        {slot}
-                                      </button>
-                                    );
-                                  })}
+                    selectedEvent.availabilitySlots.length > 0 && (() => {
+                      const MONTH_RE = /\b(january|february|march|april|may|june|july|august|september|october|november|december)\b/i;
+                      const ORDINAL_RE = /\b\d{1,2}(st|nd|rd|th)\b/i;
+                      const dateSpecific = selectedEvent.availabilitySlots.some(
+                        (s) => MONTH_RE.test(s) || ORDINAL_RE.test(s)
+                      );
+
+                      if (dateSpecific) {
+                        return (
+                          <div className="space-y-2 border-t pt-3">
+                            <label className="block text-xs font-medium text-muted-foreground">
+                              Availability
+                            </label>
+                            <p className="text-xs text-muted-foreground">
+                              Select the slots you are available for.
+                            </p>
+                            <div className="flex flex-wrap gap-2">
+                              {selectedEvent.availabilitySlots.map((slot) => {
+                                const active = form.serviceAvailability.some(
+                                  (e) => e.timeSlot === slot
+                                );
+                                return (
+                                  <button
+                                    key={slot}
+                                    type="button"
+                                    onClick={() => {
+                                      const exists = form.serviceAvailability.some(
+                                        (e) => e.timeSlot === slot
+                                      );
+                                      const next = exists
+                                        ? form.serviceAvailability.filter(
+                                            (e) => e.timeSlot !== slot
+                                          )
+                                        : [
+                                            ...form.serviceAvailability,
+                                            { date: "", timeSlot: slot },
+                                          ];
+                                      setForm({
+                                        ...form,
+                                        serviceAvailability: next,
+                                      });
+                                    }}
+                                    className={`rounded-md border px-2.5 py-1 text-xs font-medium transition-colors ${
+                                      active
+                                        ? "border-primary bg-primary text-primary-foreground"
+                                        : "border-input bg-transparent text-muted-foreground hover:bg-accent"
+                                    }`}
+                                  >
+                                    {slot}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        );
+                      }
+
+                      return (
+                        <div className="space-y-2 border-t pt-3">
+                          <label className="block text-xs font-medium text-muted-foreground">
+                            Availability
+                          </label>
+                          <p className="text-xs text-muted-foreground">
+                            Select the time slot you are available for each day.
+                          </p>
+                          {eachDay(selectedEvent.eventStart, selectedEvent.eventEnd).map(
+                            (day) => {
+                              const key = day.iso;
+                              const selected =
+                                form.serviceAvailability.find((e) => e.date === key)
+                                  ?.timeSlot || "";
+                              return (
+                                <div key={key} className="rounded-md border p-3">
+                                  <p className="mb-2 text-sm font-medium">
+                                    {day.label}
+                                  </p>
+                                  <div className="flex flex-wrap gap-2">
+                                    {selectedEvent.availabilitySlots!.map((slot) => {
+                                      const active = selected === slot;
+                                      return (
+                                        <button
+                                          key={slot}
+                                          type="button"
+                                          onClick={() => {
+                                            const next =
+                                              form.serviceAvailability.filter(
+                                                (e) => e.date !== key
+                                              );
+                                            next.push({ date: key, timeSlot: slot });
+                                            setForm({
+                                              ...form,
+                                              serviceAvailability: next,
+                                            });
+                                          }}
+                                          className={`rounded-md border px-2.5 py-1 text-xs font-medium transition-colors ${
+                                            active
+                                              ? "border-primary bg-primary text-primary-foreground"
+                                              : "border-input bg-transparent text-muted-foreground hover:bg-accent"
+                                          }`}
+                                        >
+                                          {slot}
+                                        </button>
+                                      );
+                                    })}
+                                  </div>
                                 </div>
-                              </div>
-                            );
-                          }
-                        )}
-                      </div>
-                    )}
+                              );
+                            }
+                          )}
+                        </div>
+                      );
+                    })()}
 
                   {selectedEvent.customFields &&
                     selectedEvent.customFields.length > 0 && (
                       <div className="space-y-3 border-t pt-3">
-                        {selectedEvent.customFields.map((field) => (
-                          <div key={field.id}>
-                            <label className="mb-1 block text-xs font-medium text-muted-foreground">
-                              {field.label}
-                              {field.required && (
-                                <span className="ml-0.5 text-destructive">
-                                  *
-                                </span>
+                        {selectedEvent.customFields.map((field) => {
+                          const isImportant = field.important;
+                          const effectiveRequired = field.required || isImportant;
+                          return (
+                            <div
+                              key={field.id}
+                              className={
+                                isImportant
+                                  ? "rounded-md border border-amber-400/50 bg-amber-50/30 dark:bg-amber-950/10 p-3"
+                                  : ""
+                              }
+                            >
+                              <label className="mb-1 flex items-center gap-1 text-xs font-medium text-muted-foreground">
+                                {isImportant && (
+                                  <Star className="h-3 w-3 fill-amber-400 text-amber-400 shrink-0" />
+                                )}
+                                {field.label}
+                                {effectiveRequired && (
+                                  <span className="ml-0.5 text-destructive">*</span>
+                                )}
+                              </label>
+                              {renderCustomField(field)}
+                              {field.helpText && (
+                                <p className="mt-1 text-xs text-muted-foreground">
+                                  {field.helpText}
+                                </p>
                               )}
-                            </label>
-                            {renderCustomField(field)}
-                            {field.helpText && (
-                              <p className="mt-1 text-xs text-muted-foreground">
-                                {field.helpText}
-                              </p>
-                            )}
-                          </div>
-                        ))}
+                            </div>
+                          );
+                        })}
                       </div>
                     )}
 
