@@ -289,7 +289,7 @@ export interface JanmashtamiCampaigner {
 
 export default function JanmashtamiClient({ campaigner }: { campaigner?: JanmashtamiCampaigner } = {}) {
   const reduce = useReducedMotion();
-  const attribution = useAttribution(campaigner ? `/janmashtami2/c/${campaigner.slug}` : "janmashtami2");
+  const attribution = useAttribution(campaigner ? `/janmashtami3/c/${campaigner.slug}` : "janmashtami3");
   const razorpayReady = useRazorpayPreload();
   const [activeSlide, setActiveSlide] = useState(0);
   const [selected, setSelected] = useState<SelectedOffering | null>(null);
@@ -361,7 +361,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          sourcePage: campaigner ? `/janmashtami2/c/${campaigner.slug}` : "janmashtami2",
+          sourcePage: campaigner ? `/janmashtami3/c/${campaigner.slug}` : "janmashtami3",
           campaignerSlug: campaigner?.slug || undefined,
           utm: attribution.payload().utm,
           festivalSlug: "janmashtami",
@@ -412,7 +412,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
           contact: form.donorMobile,
         },
         notes: {
-          sourcePage: "janmashtami2",
+          sourcePage: "janmashtami3",
           festivalSlug: "janmashtami",
           legacySevaId: selected.option.legacySevaId,
           sevaName: selected.seva.title,
