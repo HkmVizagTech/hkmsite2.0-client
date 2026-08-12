@@ -350,18 +350,20 @@ export default function AdminDonations() {
                 <tr>
                   <th className="px-4 py-3 text-left font-medium">TXN / Order</th>
                   <th className="px-4 py-3 text-left font-medium">Donor</th>
+                  <th className="px-4 py-3 text-left font-medium">Phone</th>
+                  <th className="px-4 py-3 text-left font-medium">Seva</th>
                   <th className="px-4 py-3 text-left font-medium">Amount</th>
                   <th className="px-4 py-3 text-left font-medium">Method</th>
                   <th className="px-4 py-3 text-left font-medium">Status</th>
-                  <th className="px-4 py-3 text-left font-medium">Date</th>
+                  <th className="px-4 py-3 text-left font-medium">Date &amp; Time</th>
                   <th className="px-4 py-3 text-left font-medium">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
-                  <tr><td colSpan={7} className="text-center py-8 text-muted-foreground"><Loader2 className="inline mr-2 h-4 w-4 animate-spin" />Loading...</td></tr>
+                  <tr><td colSpan={9} className="text-center py-8 text-muted-foreground"><Loader2 className="inline mr-2 h-4 w-4 animate-spin" />Loading...</td></tr>
                 ) : donations.length === 0 ? (
-                  <tr><td colSpan={7} className="text-center py-6 text-muted-foreground">No donations found.</td></tr>
+                  <tr><td colSpan={9} className="text-center py-6 text-muted-foreground">No donations found.</td></tr>
                 ) : donations.map((d, i) => {
                   const MethodIcon = methodIcons[d.method] || IndianRupee;
                   const rowKey = d._id || d.id || d.transactionId || d.razorpayOrderId || `don-${i}`;
@@ -372,6 +374,8 @@ export default function AdminDonations() {
                         <div className="font-medium">{d.donorName || "Anonymous"}</div>
                         <div className="text-xs text-muted-foreground">{d.donorEmail || "-"}</div>
                       </td>
+                      <td className="px-4 py-3 whitespace-nowrap">{d.donorMobile || "-"}</td>
+                      <td className="px-4 py-3">{d.sevaName || d.type || "-"}</td>
                       <td className="px-4 py-3 font-semibold">₹{(d.amount || 0).toLocaleString("en-IN")}</td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-1.5">
@@ -384,7 +388,13 @@ export default function AdminDonations() {
                           {d.status}
                         </Badge>
                       </td>
-                      <td className="px-4 py-3">{new Date(d.date || d.createdAt).toLocaleDateString("en-IN")}</td>
+                      <td className="px-4 py-3 whitespace-nowrap text-xs">
+                        {new Date(d.createdAt || d.date).toLocaleString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
+                        <br />
+                        <span className="text-muted-foreground">
+                          {new Date(d.createdAt || d.date).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
+                        </span>
+                      </td>
                       <td className="px-4 py-3 flex gap-2">
                         <Button className="p-2 h-auto bg-transparent border border-border text-foreground hover:bg-muted" onClick={() => setSelectedDonation(d)}>
                           <Eye className="w-4 h-4" />
