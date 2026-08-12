@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { useSearchParams } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { motion } from "framer-motion";
 import {
-  Users,
   Calendar,
   MapPin,
   Heart,
@@ -17,9 +16,7 @@ import PageLayout from "@/components/PageLayout";
 import TempleCarousel from "@/components/TempleCarousel";
 import Ornament from "@/components/Ornament";
 import { Button } from "@/components/ui/button";
-import VolunteerRegistrationForm, {
-  type VolunteerEvent,
-} from "@/components/VolunteerRegistrationForm";
+import { type VolunteerEvent } from "@/components/VolunteerRegistrationForm";
 
 const VCC_API =
   (process.env.NEXT_PUBLIC_VCC_API_URL || "").replace(/\/+$/, "") ||
@@ -57,15 +54,8 @@ function formatDate(d: string) {
 }
 
 export default function VolunteerPage() {
-  const searchParams = useSearchParams();
-  const eventParam = searchParams.get("event");
-
   const [events, setEvents] = useState<VolunteerEvent[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedEvent, setSelectedEvent] = useState<VolunteerEvent | null>(
-    null
-  );
-  const eventsSectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetch(`${VCC_API}/api/events/public`)
@@ -74,28 +64,6 @@ export default function VolunteerPage() {
       .catch(() => setEvents([]))
       .finally(() => setLoading(false));
   }, []);
-
-  useEffect(() => {
-    if (!eventParam || events.length === 0) return;
-    const match = events.find(
-      (e) => e.eventId === eventParam || e._id === eventParam
-    );
-    if (match && match.status === "registration_open" && !selectedEvent) {
-      setTimeout(() => {
-        eventsSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 100);
-      setSelectedEvent(match);
-      setLoading(false);
-    }
-  }, [eventParam, events, selectedEvent]);
-
-  const openRegistration = (event: VolunteerEvent) => {
-    setSelectedEvent(event);
-  };
-
-  const closeModal = () => {
-    setSelectedEvent(null);
-  };
 
   return (
     <PageLayout>
@@ -142,7 +110,7 @@ export default function VolunteerPage() {
       </section>
 
       {/* Events */}
-      <section ref={eventsSectionRef} className="py-12 md:py-16 bg-white dark:bg-background border-t border-border">
+      <section className="py-12 md:py-16 bg-white dark:bg-background border-t border-border">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <p className="text-primary text-sm tracking-[0.2em] uppercase mb-3 font-medium">
@@ -227,18 +195,19 @@ export default function VolunteerPage() {
                       )}
                     </div>
 
-                    <Button
-                      className="w-full rounded-full"
-                      disabled={event.status !== "registration_open"}
-                      onClick={() => openRegistration(event)}
-                    >
-                      {event.status === "registration_open"
-                        ? "Register to Volunteer"
-                        : "Registration Closed"}
-                      {event.status === "registration_open" && (
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      )}
-                    </Button>
+                    <Link href={`/volunteer/${event.eventId || event._id}`}>
+                      <Button
+                        className="w-full rounded-full"
+                        disabled={event.status !== "registration_open"}
+                      >
+                        {event.status === "registration_open"
+                          ? "Register to Volunteer"
+                          : "Registration Closed"}
+                        {event.status === "registration_open" && (
+                          <ArrowRight className="ml-2 h-4 w-4" />
+                        )}
+                      </Button>
+                    </Link>
                   </div>
                 </motion.div>
               ))}
@@ -271,34 +240,6 @@ export default function VolunteerPage() {
         </div>
       </section>
 
-      {/* Registration Modal */}
-      <AnimatePresence>
-        {selectedEvent && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/50 p-4"
-            onClick={closeModal}
-          >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl bg-background p-6 shadow-elevated"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <VolunteerRegistrationForm
-                key={selectedEvent._id}
-                event={selectedEvent}
-                vccApi={VCC_API}
-                variant="modal"
-                onClose={closeModal}
-              />
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </PageLayout>
   );
 }
