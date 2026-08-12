@@ -570,7 +570,7 @@ export default function ChaturmasClient() {
             >
               <div className="absolute -inset-3 rounded-[2rem] bg-gradient-to-br from-[#e8b54a]/20 via-[#1a8caa]/10 to-transparent -rotate-2" />
               <Image
-                src="/assets/chaturmas-main-visual.jpg"
+                src="https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1786540947761-1786540947567-chaturmas-2026-start-and-end-date.jpg"
                 alt="Chaturmas 2026 start and end dates"
                 width={600}
                 height={440}
@@ -921,7 +921,7 @@ export default function ChaturmasClient() {
               className="space-y-6"
             >
               <Image
-                src="/assets/chaturmas-benefits.webp"
+                src="https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1786540909689-1786540908653-benefits-of-chaturmas-vrat.webp"
                 alt="Benefits of Chaturmas Vrat"
                 width={600}
                 height={460}
