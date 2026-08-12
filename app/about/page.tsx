@@ -1,6 +1,7 @@
 "use client";
 
 import PageLayout from "@/components/PageLayout";
+import WhatsAppCommunityCTA from "@/components/WhatsAppCommunityCTA";
 import PageHero from "@/components/PageHero";
 import Ornament from "@/components/Ornament";
 import { motion, useInView } from "framer-motion";
@@ -258,6 +259,7 @@ export default function AboutPage() {
           </motion.p>
         </div>
       </section>
+      <WhatsAppCommunityCTA />
     </PageLayout>
   );
 }

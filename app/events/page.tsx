@@ -5,6 +5,7 @@ import { motion, useInView } from "framer-motion";
 import { Bell } from "lucide-react";
 import EventCard from "@/components/EventCard";
 import PageLayout from "@/components/PageLayout";
+import WhatsAppCommunityCTA from "@/components/WhatsAppCommunityCTA";
 import PageHero from "@/components/PageHero";
 type ImportantDate = {
   _id: string;
@@ -227,6 +228,7 @@ export default function EventsPage() {
           </div>
         </div>
       </section>
+      <WhatsAppCommunityCTA />
     </PageLayout>
   );
 }

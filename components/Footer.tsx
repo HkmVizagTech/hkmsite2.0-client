@@ -1,6 +1,6 @@
 "use client";
 
-import { Facebook, Instagram, Youtube, Phone, Mail, Heart, ArrowUp, ExternalLink, Clock } from "lucide-react";
+import { Facebook, Instagram, Youtube, Phone, Mail, Heart, ArrowUp, ExternalLink, Clock, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
@@ -82,6 +82,15 @@ const Footer = () => {
                 <br />
                 Visakhapatnam, Andhra Pradesh 531163
               </p>
+              <a
+                href="https://chat.whatsapp.com/D7HPe7vGmh8Ia0aHLJlne6"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mb-4 inline-flex items-center gap-2 rounded-full bg-[#25D366]/15 px-4 py-2 text-xs font-semibold text-[#25D366] transition-all hover:bg-[#25D366]/25"
+              >
+                <MessageCircle className="h-3.5 w-3.5" />
+                Join WhatsApp Community
+              </a>
               <div className="mb-4 flex gap-3">
                 {[
                   { icon: Youtube, href: "https://youtube.com", label: "YouTube" },

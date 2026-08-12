@@ -8,6 +8,7 @@ import GalleryPreview from "@/components/GalleryPreview";
 import BlogPreview from "@/components/BlogPreview";
 import SubhojanamSection from "@/components/SubhojanamSection";
 import ContactSection from "@/components/ContactSection";
+import WhatsAppCommunityCTA from "@/components/WhatsAppCommunityCTA";
 import Footer from "@/components/Footer";
 import type { Metadata } from "next";
 
@@ -34,6 +35,7 @@ export default function Home() {
       <BlogPreview />
       <SubhojanamSection />
       <ContactSection />
+      <WhatsAppCommunityCTA />
       <Footer />
     </div>
   );

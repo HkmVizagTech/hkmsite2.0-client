@@ -2,6 +2,7 @@
 
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import WhatsAppCommunityBanner from "@/components/WhatsAppCommunityBanner";
 import { ReactNode } from "react";
 
 const PageLayout = ({ children }: { children: ReactNode }) => {
@@ -10,6 +11,7 @@ const PageLayout = ({ children }: { children: ReactNode }) => {
       <Navbar />
       {children}
       <Footer />
+      <WhatsAppCommunityBanner />
     </div>
   );
 };
