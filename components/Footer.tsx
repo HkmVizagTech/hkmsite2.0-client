@@ -1,9 +1,9 @@
 "use client";
 
-import { Facebook, Instagram, Youtube, Phone, Mail, Heart, ArrowUp, ExternalLink, Clock, MessageCircle } from "lucide-react";
+import { Facebook, Instagram, Youtube, Phone, Mail, Heart, ArrowUp, ExternalLink, Clock, Navigation } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
+import WhatsAppIcon from "@/components/WhatsAppIcon";
 
 const quickLinks = [
   { label: "Home", href: "/" },
@@ -33,12 +33,21 @@ const scheduleItems = [
   "Shayan Aarti - 8:15 PM",
 ];
 
+// Hare Krishna Vaikuntham Temple — Google Maps embed (no API key needed via
+// the classic output=embed URL) and an official "Google Maps URLs" directions
+// link, so visitors can navigate straight to the temple.
+const MAPS_EMBED_URL =
+  "https://maps.google.com/maps?q=Hare%20Krishna%20Vaikuntham%20Temple%2C%20IIM%20Road%2C%20Gambhiram%2C%20Visakhapatnam%2C%20Andhra%20Pradesh%20531163&z=14&output=embed";
+
+const MAPS_DIRECTIONS_URL =
+  "https://www.google.com/maps/dir/?api=1&destination=Hare+Krishna+Vaikuntham+Temple,+IIM+Road,+Gambhiram,+Visakhapatnam,+Andhra+Pradesh+531163";
+
 const Footer = () => {
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
   return (
     <footer className="relative">
-      <div className="bg-gradient-navy py-10">
+      <div className="bg-gradient-navy py-8">
         <div className="container mx-auto flex flex-col items-center justify-between gap-6 px-4 md:flex-row">
           <div>
             <h3 className="text-2xl font-bold text-white md:text-3xl">
@@ -56,41 +65,50 @@ const Footer = () => {
         </div>
       </div>
 
-      <div className="relative h-[300px] w-full overflow-hidden md:h-[400px]">
-        <Image
-          src="https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783676580620-1783676579037-03.jpg"
-          alt="Hare Krishna Vaikuntham Temple Vizag"
-          fill
-          sizes="100vw"
-          className="object-cover object-center"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-[hsl(220,90%,12%,0.25)] via-transparent to-[hsl(220,60%,10%)]" />
-      </div>
-
-      <div className="bg-[hsl(220,60%,10%)] pb-8 pt-16">
+      <div className="bg-[hsl(220,60%,10%)] pb-6 pt-10">
         <div className="container mx-auto px-4">
-          <div className="mb-12 grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="sm:col-span-2 lg:col-span-1">
-              <div className="mb-5">
+          <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-[auto_1fr] lg:gap-10">
+            <div>
+              <div className="mb-4">
                 <span className="block text-xl font-bold leading-tight text-[hsl(210,30%,97%)]">Hare Krishna Movement</span>
                 <span className="text-xs uppercase tracking-widest text-[hsl(210,30%,97%)]/60">Visakhapatnam</span>
               </div>
-              <p className="mb-4 text-sm leading-relaxed text-[hsl(210,30%,97%)]/50">
-                Chaitanya Bhavan, Hare Krishna Vaikuntam Cultural Centre,
-                <br />
-                IIM Rd, opp. Akshaya Patra Foundation, Gambhiram,
-                <br />
-                Visakhapatnam, Andhra Pradesh 531163
-              </p>
-              <a
-                href="https://chat.whatsapp.com/D7HPe7vGmh8Ia0aHLJlne6"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mb-4 inline-flex items-center gap-2 rounded-full bg-[#25D366]/15 px-4 py-2 text-xs font-semibold text-[#25D366] transition-all hover:bg-[#25D366]/25"
-              >
-                <MessageCircle className="h-3.5 w-3.5" />
-                Join WhatsApp Community
-              </a>
+              {/* Map beside the address — keeps the card compact instead of
+                  stacking everything vertically and stretching the footer */}
+              <div className="mb-4 flex items-start gap-3">
+                <div className="relative h-48 w-48 shrink-0 overflow-hidden rounded-xl border border-white/10 shadow-lg">
+                  <iframe
+                    src={MAPS_EMBED_URL}
+                    title="Hare Krishna Vaikuntham Temple location on Google Maps"
+                    className="absolute inset-0 h-full w-full border-0"
+                    loading="lazy"
+                    allowFullScreen
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
+                </div>
+                <div className="flex min-w-0 flex-col gap-3">
+                  <address className="max-w-[220px] text-sm leading-relaxed text-[hsl(210,30%,97%)]/60 not-italic">
+                    Chaitanya Bhavan,
+                    <br />
+                    Hare Krishna Vaikuntham Cultural Centre,
+                    <br />
+                    IIM Rd, opp. Akshaya Patra Foundation, Gambhiram,
+                    <br />
+                    Visakhapatnam,
+                    <br />
+                    Andhra Pradesh 531163
+                  </address>
+                  <a
+                    href={MAPS_DIRECTIONS_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex w-fit items-center gap-1.5 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:brightness-110"
+                  >
+                    <Navigation className="h-4 w-4" />
+                    Get Directions
+                  </a>
+                </div>
+              </div>
               <div className="mb-4 flex gap-3">
                 {[
                   { icon: Youtube, href: "https://youtube.com", label: "YouTube" },
@@ -108,15 +126,27 @@ const Footer = () => {
                     <social.icon className="h-4 w-4" />
                   </a>
                 ))}
+                <a
+                  key="whatsapp"
+                  href="https://chat.whatsapp.com/D7HPe7vGmh8Ia0aHLJlne6"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Join Community on WhatsApp"
+                  className="flex h-10 items-center gap-1.5 rounded-full bg-white/10 px-3 text-[hsl(210,30%,97%)]/60 transition-all duration-300 hover:bg-[#25D366] hover:text-white"
+                >
+                  <WhatsAppIcon className="h-4 w-4 fill-current" />
+                  <span className="text-xs font-semibold">Join Community</span>
+                </a>
               </div>
             </div>
 
-            <div>
-              <h4 className="relative mb-5 text-lg font-semibold text-[hsl(210,30%,97%)]">
-                Daily Schedule
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-3">
+              <div>
+                <h4 className="relative mb-4 text-lg font-semibold text-[hsl(210,30%,97%)]">
+                  Daily Schedule
                 <span className="absolute -bottom-2 left-0 h-0.5 w-8 rounded-full bg-primary" />
               </h4>
-              <div className="mt-4 space-y-2">
+              <div className="mt-3 space-y-1.5">
                 {scheduleItems.map((item) => (
                   <div key={item} className="flex items-center gap-2 text-sm text-[hsl(210,30%,97%)]/50">
                     <Clock className="h-3 w-3 shrink-0" />
@@ -127,11 +157,11 @@ const Footer = () => {
             </div>
 
             <div>
-              <h4 className="relative mb-5 text-lg font-semibold text-[hsl(210,30%,97%)]">
+              <h4 className="relative mb-4 text-lg font-semibold text-[hsl(210,30%,97%)]">
                 Quick Links
                 <span className="absolute -bottom-2 left-0 h-0.5 w-8 rounded-full bg-primary" />
               </h4>
-              <div className="mt-4 space-y-3">
+              <div className="mt-3 space-y-2">
                 {quickLinks.map((link) => (
                   <Link
                     key={link.label}
@@ -145,11 +175,11 @@ const Footer = () => {
             </div>
 
             <div>
-              <h4 className="relative mb-5 text-lg font-semibold text-[hsl(210,30%,97%)]">
+              <h4 className="relative mb-4 text-lg font-semibold text-[hsl(210,30%,97%)]">
                 Get in Touch
                 <span className="absolute -bottom-2 left-0 h-0.5 w-8 rounded-full bg-primary" />
               </h4>
-              <div className="mt-4 space-y-4">
+              <div className="mt-3 space-y-2.5">
                 {sevaLinks.map((link) => (
                   <Link
                     key={link.label}
@@ -174,10 +204,11 @@ const Footer = () => {
                   <span>social@hkmvizag.org</span>
                 </a>
               </div>
+              </div>
             </div>
           </div>
 
-          <div className="flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 md:flex-row">
+          <div className="flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-5 md:flex-row">
             <p className="flex items-center gap-1 text-sm text-[hsl(210,30%,97%)]/40">
               Copyright {new Date().getFullYear()} Hare Krishna Movement India, Visakhapatnam. Made with
               <Heart className="h-3.5 w-3.5 fill-primary text-primary" /> for devotion.
