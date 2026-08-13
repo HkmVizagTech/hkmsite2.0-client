@@ -10,7 +10,7 @@ export const metadata = {
     title: "Square Foot Seva — Hare Krishna Vaikuntham Temple",
     description:
       "Sponsor the sacred ground of the rising temple. Every square foot becomes a permanent part of the Lord's abode.",
-    images: ["/assets/home-temple-construction-banner.webp"],
+    images: ["https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1786528614525-1786528613759-ChatGPTImageAug122026022735PM.webp"],
   },
 };
 

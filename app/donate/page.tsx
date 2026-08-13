@@ -48,8 +48,8 @@ const SEVA_SLIDES = [
     linkUrl: "/alankara-vastra-seva",
   },
   {
-    src: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785579870156-1785579868902-sftbanner.webp",
-    mobileSrc: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785579869625-1785579868485-sft-seva-mob.webp",
+    src: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1786528614525-1786528613759-ChatGPTImageAug122026022735PM.webp",
+    mobileSrc: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1786528614019-1786528613497-ChatGPTImageAug122026032403PM.webp",
     title: "Square Foot Seva",
     linkUrl: "/sqft-seva-campaign",
   },
