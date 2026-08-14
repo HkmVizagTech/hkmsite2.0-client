@@ -30,6 +30,7 @@ type GalleryGroup = {
   title?: string;
   date?: string;
   category?: string;
+  type?: string;
   images?: string[];
 };
 
@@ -39,6 +40,7 @@ type LightboxState = { images: string[]; index: number; group?: GalleryGroup } |
 export default function AdminGallery() {
   const [images, setImages] = useState<any[]>([]);
   const [filter, setFilter] = useState("All");
+  const [sectionFilter, setSectionFilter] = useState("all");
   const [showUpload, setShowUpload] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
   const [uploadForm, setUploadForm] = useState({
@@ -80,7 +82,10 @@ export default function AdminGallery() {
     return Array.from(map.values());
   }
 
-  const filtered = filter === "All" ? images : images.filter((img) => img.category === filter);
+  const filteredByCategory = filter === "All" ? images : images.filter((img) => img.category === filter);
+  const filtered = filteredByCategory.filter((img) =>
+    sectionFilter === "all" ? true : sectionFilter === "darshan" ? img.type === "darshan" : img.type !== "darshan"
+  );
   const grouped = groupImages(filtered);
 
   const flatImages = [];
@@ -173,6 +178,20 @@ export default function AdminGallery() {
             onClick={() => setFilter(cat)}
           >
             {cat}
+          </Button>
+        ))}
+      </div>
+
+      <div className="flex gap-2 flex-wrap">
+        <span className="inline-flex items-center text-sm text-muted-foreground">Show in:</span>
+        {(["all", "darshan", "temple"] as const).map((s) => (
+          <Button
+            key={s}
+            size="sm"
+            className={sectionFilter === s ? "" : "bg-transparent border border-border text-foreground hover:bg-muted"}
+            onClick={() => setSectionFilter(s)}
+          >
+            {s === "all" ? "All sections" : s === "darshan" ? "Today's Darshan" : "Temple Gallery"}
           </Button>
         ))}
       </div>
@@ -314,7 +333,12 @@ export default function AdminGallery() {
             <CardContent className="p-3">
               <p className="font-medium text-sm truncate">{group.title}</p>
               <div className="flex items-center justify-between mt-1">
-                <Badge className="text-xs px-2 py-0.5">{group.category}</Badge>
+                <div className="flex flex-wrap items-center gap-1">
+                  <Badge className="text-xs px-2 py-0.5">{group.category}</Badge>
+                  <Badge variant="outline" className="text-xs px-2 py-0.5">
+                    {group.type === "darshan" ? "Today's Darshan" : "Temple Gallery"}
+                  </Badge>
+                </div>
                 <span className="text-xs text-muted-foreground">{(group.date || '').slice(0,10)}</span>
               </div>
             </CardContent>

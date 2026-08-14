@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
-import { useRef, useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Image as ImageIcon } from "lucide-react";
@@ -14,38 +14,28 @@ interface GalleryTile {
   span: string;
 }
 
-// Static fallback shown until (or unless) live gallery data loads, so the
-// section is never empty and the scroll-trigger ref is attached immediately.
-const fallbackTiles: GalleryTile[] = [
-  { src: "/assets/home-gallery-radha-krishna.webp", title: "Sri Sri Radha Madan Mohan", span: "col-span-2 row-span-2" },
-  { src: "/assets/home-gallery-aarti.webp", title: "Sandhya Aarti", span: "row-span-2" },
-  { src: "/assets/home-gallery-srinivasa-govinda.webp", title: "Srinivasa Govinda Darshan", span: "" },
-  { src: "/assets/home-gallery-annadana.webp", title: "Annadana Seva", span: "" },
-  { src: "/assets/home-banner-jagannatha-rath-yatra.webp", title: "Jagannatha Rath Yatra", span: "" },
-  { src: "/assets/home-banner-chaitanya-bhavan.webp", title: "Chaitanya Bhavan", span: "" },
-];
-
 // Asymmetric editorial grid — one hero tile, one tall tile, four standard
 const SPANS = ["col-span-2 row-span-2", "row-span-2", "", "", "", ""];
 
 const MAX_TILES = 6;
 
 const GalleryPreview = () => {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-100px" });
-  const [tiles, setTiles] = useState<GalleryTile[]>(fallbackTiles);
-  const [hasMore, setHasMore] = useState(true);
+  const [tiles, setTiles] = useState<GalleryTile[] | null>(null);
+  const [hasMore, setHasMore] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     getGalleryImages({ status: "active" })
       .then((items: any[]) => {
-        if (cancelled || !items || items.length === 0) return;
+        if (cancelled || !items) return;
 
-        // Only show images the admin marked for the Temple Gallery section.
-        // Today's Darshan owns type "darshan" so the two never overlap.
+        // Only images the admin marked for the Temple Gallery section
+        // (Today's Darshan owns type "darshan", so they never overlap).
         const galleryItems = items.filter((it) => it.type !== "darshan");
-        if (galleryItems.length === 0) return;
+        if (galleryItems.length === 0) {
+          setTiles([]);
+          return;
+        }
 
         const flat: GalleryTile[] = [];
         for (const item of galleryItems) {
@@ -55,7 +45,10 @@ const GalleryPreview = () => {
           }
           if (flat.length >= MAX_TILES) break;
         }
-        if (flat.length === 0) return;
+        if (flat.length === 0) {
+          setTiles([]);
+          return;
+        }
 
         // With fewer than 3 images the hero/tall spans leave holes, so use a
         // uniform grid there and keep the editorial spans otherwise.
@@ -65,18 +58,24 @@ const GalleryPreview = () => {
         const total = galleryItems.reduce((n, item) => n + (item.images || []).length, 0);
         setHasMore(total > MAX_TILES);
       })
-      .catch(() => {});
+      .catch(() => {
+        if (!cancelled) setTiles([]);
+      });
     return () => {
       cancelled = true;
     };
   }, []);
 
+  // Hidden while loading and when the admin hasn't uploaded Temple Gallery
+  // images yet, so no stale/static content and no lonely empty heading.
+  if (!tiles || tiles.length === 0) return null;
+
   return (
-    <section className="bg-white dark:bg-background py-12 md:py-16" ref={ref}>
+    <section className="bg-white dark:bg-background py-12 md:py-16">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           className="mb-14 text-center"
         >
