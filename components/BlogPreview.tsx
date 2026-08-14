@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
-import { useRef, useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Ornament from "@/components/Ornament";
 import { ArrowRight, Clock, Calendar } from "lucide-react";
@@ -20,8 +20,6 @@ interface Blog {
 }
 
 const BlogPreview = () => {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-100px" });
   const [blogs, setBlogs] = useState<Blog[]>([]);
 
   useEffect(() => {
@@ -52,12 +50,12 @@ const BlogPreview = () => {
 
   return (
     <section className="py-12 md:py-16 bg-white dark:bg-background">
-      <div className="container mx-auto px-4" ref={ref}>
+      <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-16"
+          className="text-center mb-10"
         >
           <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">
             Blog
