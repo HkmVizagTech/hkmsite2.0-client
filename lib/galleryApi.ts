@@ -2,6 +2,13 @@ import axios from "axios";
 
 const API_BASE = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:5000/api";
 
+// Category options shown on the /gallery page filters.
+export const GALLERY_CATEGORIES = ["Daily Darshan", "Temple", "Deities", "Festivals", "Seva", "Events", "Community"];
+
+// Categories that make sense for the homepage Temple Gallery section
+// (daily darshan uploads live in Today's Darshan instead).
+export const TEMPLE_GALLERY_CATEGORIES = ["Temple", "Deities", "Festivals", "Seva", "Events", "Community"];
+
 export const getGalleryImages = async (params?: { type?: string; status?: string; category?: string; date?: string }) => {
   const search = params
     ? "?" + Object.entries(params).filter(([, v]) => v).map(([k, v]) => `${k}=${encodeURIComponent(v as string)}`).join("&")

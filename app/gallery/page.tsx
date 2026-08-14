@@ -8,7 +8,7 @@ import PageLayout from "@/components/PageLayout";
 import PageHero from "@/components/PageHero";
 import Ornament from "@/components/Ornament";
 import DailyDarshanGallery from "@/components/DailyDarshanGallery";
-import { getGalleryImages } from "@/lib/galleryApi";
+import { getGalleryImages, GALLERY_CATEGORIES } from "@/lib/galleryApi";
 
 type GalleryImage = {
   title: string;
@@ -21,7 +21,7 @@ type GalleryImage = {
 type GroupModalState = { group: GalleryImage } | null;
 type LightboxState = { images: string[]; index: number; group: GalleryImage } | null;
 
-const categories = ["All", "Daily Darshan", "Festivals", "Seva", "Community"];
+const categories = ["All", ...GALLERY_CATEGORIES];
 
 export default function GalleryPage() {
   const [activeCategory, setActiveCategory] = useState<string>("All");

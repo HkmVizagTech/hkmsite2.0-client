@@ -16,14 +16,14 @@ import { Plus, Trash2, X, Upload, Eye } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 
-import { getGalleryImages, createGalleryImage, deleteGalleryImage } from "@/lib/galleryApi";
+import { getGalleryImages, createGalleryImage, deleteGalleryImage, GALLERY_CATEGORIES, TEMPLE_GALLERY_CATEGORIES } from "@/lib/galleryApi";
 import { getToken } from "@/lib/authClient";
 
 const apiBase = () =>
   (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(/\/+$/, "");
 import { useAdminLoader } from "@/contexts/AdminLoaderContext";
 
-const categories = ["All", "Daily Darshan", "Festivals", "Seva", "Community"];
+const categories = ["All", ...GALLERY_CATEGORIES];
 
 type GalleryGroup = {
   _id?: string;
@@ -263,7 +263,10 @@ export default function AdminGallery() {
                       setUploadForm((f) => ({
                         ...f,
                         displayIn,
-                        category: displayIn === "temple" ? "Festivals" : "Daily Darshan",
+                        category:
+                          displayIn === "temple"
+                            ? TEMPLE_GALLERY_CATEGORIES[0]
+                            : "Daily Darshan",
                       }));
                     }}
                   >
@@ -271,15 +274,22 @@ export default function AdminGallery() {
                     <option value="temple">Temple Gallery (homepage gallery strip)</option>
                   </select>
                 </div>
-                <select
-                  className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                  value={uploadForm.category}
-                  onChange={(e) => setUploadForm({ ...uploadForm, category: e.target.value })}
-                >
-                  {categories.filter(c => c !== "All").map((cat) => (
-                    <option key={cat} value={cat}>{cat}</option>
-                  ))}
-                </select>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Category</label>
+                  {uploadForm.displayIn === "temple" ? (
+                    <select
+                      className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                      value={uploadForm.category}
+                      onChange={(e) => setUploadForm({ ...uploadForm, category: e.target.value })}
+                    >
+                      {TEMPLE_GALLERY_CATEGORIES.map((cat) => (
+                        <option key={cat} value={cat}>{cat}</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <Input value="Daily Darshan" disabled />
+                  )}
+                </div>
                 <Input type="date" value={uploadForm.date} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setUploadForm({ ...uploadForm, date: e.target.value })} />
                 {formErrors.general && (
                   <div className="p-3 bg-destructive/10 text-destructive rounded-md text-sm mb-2">{formErrors.general}</div>
