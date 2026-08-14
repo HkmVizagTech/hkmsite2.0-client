@@ -475,7 +475,7 @@ export default function SqftCampaignClient({
         <ImportanceSection />
 
         {/* Temple features */}
-        <TempleFeaturesSection config={config} />
+        <TempleFeaturesSection />
 
         {/* Photo + video proof of ongoing construction */}
         <ConstructionStatusSection scrollToDonate={scrollToDonate} />

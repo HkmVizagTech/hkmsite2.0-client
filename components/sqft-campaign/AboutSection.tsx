@@ -38,13 +38,18 @@ export default function AboutSection({ aboutImage, scrollToDonate, config = SQFT
               Inspiration &amp; Aspiration
             </p>
             <h2 className="mb-4 font-heading text-2xl font-bold text-primary md:text-3xl">
-              A spiritual landmark rising in Visakhapatnam
+              Hare Krishna Vaikuntam — a sacred sanctuary in the making
             </h2>
             <p className="mb-4 text-sm leading-relaxed text-muted-foreground md:text-base">
-              The Hare Krishna Vaikuntham Temple at Gambheeram is destined to become a beacon of
-              devotion, culture and compassion for the City of Destiny — with grand temple halls for
-              Their Lordships, an Annadana hall serving free sanctified meals, and centres for Vedic
-              education and outreach.
+              Nestled amidst the serene landscapes of Gambheeram in Visakhapatnam, the Hare Krishna
+              Vaikuntham Cultural Centre (Chaitanya Bhavan) is envisioned as a magnificent sanctuary
+              to preserve and propagate India&apos;s timeless spiritual and cultural heritage.
+            </p>
+            <p className="mb-4 text-sm leading-relaxed text-muted-foreground md:text-base">
+              Beautifully blending modern utility with traditional Vedic architectural grace, the
+              multi-storey complex will feature divine altars, a vibrant kirtan hall, and dedicated
+              spaces for youth empowerment and spiritual education — serving devotion, peace and
+              heritage for generations to come.
             </p>
             <p className="mb-6 text-sm leading-relaxed text-muted-foreground md:text-base">
               Inspired by the vision of Srila Prabhupada, Founder-Acharya of the worldwide Hare

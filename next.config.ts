@@ -32,6 +32,12 @@ const nextConfig: NextConfig = {
         hostname: "pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev",
         pathname: "/**",
       },
+      // Cloudflare R2 — Temple Images bucket (campaigner pages)
+      {
+        protocol: "https",
+        hostname: "pub-f62a54aab54448388c9e16334109aea9.r2.dev",
+        pathname: "/**",
+      },
       // Gupt Vrindavan Dham — donor privilege images
       {
         protocol: "https",
