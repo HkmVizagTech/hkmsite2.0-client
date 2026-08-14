@@ -285,6 +285,29 @@ export default function ChaturmasClient() {
   const [sevaPickerOpen, setSevaPickerOpen] = useState(false);
   const [selectedSeva, setSelectedSeva] = useState<Seva | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const pickerRef = useRef<HTMLDivElement>(null);
+  const formRef = useRef<HTMLDivElement>(null);
+
+  // When the picker opens, wait for the height animation to settle, then
+  // bring the step flow into view so it never appears far below the fold.
+  useEffect(() => {
+    if (!sevaPickerOpen) return;
+    const t = window.setTimeout(() => {
+      pickerRef.current?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+    }, 450);
+    return () => window.clearTimeout(t);
+  }, [sevaPickerOpen, reduce]);
+
+  // Once a seva is chosen, the donation form is much taller than the seva
+  // list — scroll its top into view so the user lands on the top of the form
+  // instead of being stuck mid/bottom of it.
+  useEffect(() => {
+    if (!selectedSeva) return;
+    const t = window.setTimeout(() => {
+      formRef.current?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+    }, 250);
+    return () => window.clearTimeout(t);
+  }, [selectedSeva, reduce]);
 
   const fade = (delay = 0) =>
     reduce ? {} : { initial: { opacity: 0, y: 24 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.7, delay } };
@@ -459,7 +482,8 @@ export default function ChaturmasClient() {
         className="relative overflow-hidden bg-white py-14 md:py-20 dark:bg-background"
         ref={ref6}
       >
-        <div className="pointer-events-none absolute -top-32 left-1/2 h-80 w-[640px] -translate-x-1/2 rounded-full bg-[#e8b54a]/5 blur-[120px]" aria-hidden />
+        <div className="pointer-events-none absolute -top-32 left-1/2 h-80 w-[640px] -translate-x-1/2 rounded-full bg-[#e8b54a]/8 blur-[120px]" aria-hidden />
+        <div className="pointer-events-none absolute bottom-0 left-1/2 h-64 w-[480px] -translate-x-1/2 rounded-full bg-[#1a8caa]/5 blur-[120px]" aria-hidden />
         <div className="relative container mx-auto px-4">
           <motion.div
             initial={reduce ? undefined : { opacity: 0, y: 30 }}
@@ -482,53 +506,45 @@ export default function ChaturmasClient() {
             </p>
           </motion.div>
 
-          {/* Trust badges */}
+          {/* Donate card — highlighted CTA panel: button on top, trust badges below */}
           <motion.div
-            initial={reduce ? undefined : { opacity: 0 }}
-            animate={inView6 ? { opacity: 1 } : {}}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="mx-auto mb-10 flex max-w-3xl flex-wrap items-center justify-center gap-x-8 gap-y-3"
-          >
-            {trustBadges.map((b) => (
-              <span key={b.label} className="flex items-center gap-2.5 text-xs font-medium tracking-wide text-muted-foreground md:text-sm">
-                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[hsl(42,92%,56%,0.12)] text-gold">
-                  <b.icon className="h-3.5 w-3.5" />
-                </span>
-                {b.label}
-              </span>
-            ))}
-          </motion.div>
-
-          {/* Donate Now CTA — opens the two-step seva picker */}
-          <motion.div
-            initial={reduce ? undefined : { opacity: 0, y: 20 }}
+            initial={reduce ? undefined : { opacity: 0, y: 24 }}
             animate={inView6 ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.15 }}
-            className="text-center"
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="mx-auto max-w-3xl"
           >
-            <button
-              onClick={() => setSevaPickerOpen((o) => !o)}
-              className="group relative inline-flex items-center gap-2.5 rounded-full bg-gradient-gold px-9 py-4 text-base font-bold text-[hsl(220,60%,12%)] shadow-gold transition-all hover:-translate-y-0.5 hover:shadow-elevated"
-            >
-              <Sparkles className="h-5 w-5" />
-              {selectedSeva ? "Choose Another Seva" : "Donate Now"}
-              <ChevronDown className={`h-5 w-5 transition-transform duration-300 ${sevaPickerOpen ? "rotate-180" : ""}`} />
-            </button>
-            <p className="mt-3 text-sm text-muted-foreground">
-              {selectedSeva
-                ? "Pick another seva below — or keep your current selection."
-                : "Choose a seva below, then pick your offering amount."}
-            </p>
+            <div className="relative overflow-hidden rounded-[2rem] border border-gold/25 bg-white/85 p-8 shadow-[0_28px_90px_hsl(42,92%,46%,0.14)] backdrop-blur-sm sm:p-10 dark:bg-background/85">
+              <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-[hsl(42,92%,56%,0.12)] blur-3xl" aria-hidden />
+
+              {/* CTA button — the hero of the section */}
+              <div className="relative text-center">
+                <button
+                  onClick={() => setSevaPickerOpen((o) => !o)}
+                  className="group relative inline-flex items-center gap-3 rounded-full bg-gradient-gold px-10 py-4 text-lg font-bold text-[hsl(220,60%,12%)] shadow-[0_10px_32px_hsl(42,92%,46%,0.45)] transition-all duration-300 hover:-translate-y-1 hover:scale-[1.03] hover:shadow-[0_16px_44px_hsl(42,92%,46%,0.55)] active:scale-95 md:px-12 md:py-5"
+                >
+                  <span className="pointer-events-none absolute -inset-2 -z-10 animate-pulse rounded-full bg-[hsl(42,92%,56%,0.4)] blur-xl" aria-hidden />
+                  <Sparkles className="h-5 w-5 md:h-6 md:w-6" />
+                  {selectedSeva ? "Choose Another Seva" : "Donate Now"}
+                  <ChevronDown className={`h-5 w-5 transition-transform duration-300 ${sevaPickerOpen ? "rotate-180" : ""}`} />
+                </button>
+                <p className="mt-4 text-sm text-muted-foreground">
+                  {selectedSeva
+                    ? "Pick another seva below — or keep your current selection."
+                    : "Choose a seva below, then pick your offering amount."}
+                </p>
+              </div>
+            </div>
           </motion.div>
 
           <AnimatePresence>
             {sevaPickerOpen && (
               <motion.div
+                ref={pickerRef}
                 initial={reduce ? undefined : { opacity: 0, height: 0, y: -8 }}
                 animate={reduce ? undefined : { opacity: 1, height: "auto", y: 0 }}
                 exit={reduce ? undefined : { opacity: 0, height: 0, y: -8 }}
                 transition={{ duration: 0.5, ease: "easeInOut" }}
-                className="overflow-hidden"
+                className="scroll-mt-28 overflow-hidden"
               >
                 <div className="mx-auto mt-10 max-w-6xl">
                   {/* Step indicator */}
@@ -611,7 +627,7 @@ export default function ChaturmasClient() {
                       </div>
 
                       {/* Compact two-column form — same style as the Square Foot campaign */}
-                      <div className="mx-auto w-full max-w-4xl">
+                      <div ref={formRef} className="mx-auto w-full max-w-4xl scroll-mt-28">
                         <DonationForm
                           seva={selectedSeva}
                           sourcePage="chaturmas"
@@ -628,6 +644,35 @@ export default function ChaturmasClient() {
               </motion.div>
             )}
           </AnimatePresence>
+
+          {/* Trust badges — reassurance below the seva options */}
+          <motion.div
+            initial={reduce ? undefined : { opacity: 0, y: 20 }}
+            animate={inView6 ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="mx-auto mt-12 max-w-3xl"
+          >
+            <div className="flex items-center gap-4" aria-hidden>
+              <span className="h-px flex-1 bg-gold/25" />
+              <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-gold/70">
+                Payment made safe &amp; simple
+              </span>
+              <span className="h-px flex-1 bg-gold/25" />
+            </div>
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+              {trustBadges.map((b) => (
+                <span
+                  key={b.label}
+                  className="inline-flex items-center gap-2 rounded-full border border-gold/25 bg-[hsl(42,92%,56%,0.08)] px-4 py-2 text-xs font-semibold text-primary transition-colors hover:bg-[hsl(42,92%,56%,0.15)] md:text-sm"
+                >
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gold/15 text-gold">
+                    <b.icon className="h-3.5 w-3.5" />
+                  </span>
+                  {b.label}
+                </span>
+              ))}
+            </div>
+          </motion.div>
 
           <p className="mt-10 text-center text-xs text-muted-foreground">
             80G Tax Exemption available · Secured by Razorpay · Donations go to Hare Krishna Movement India, Visakhapatnam
