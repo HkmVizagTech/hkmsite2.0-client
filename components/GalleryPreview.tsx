@@ -1,14 +1,22 @@
 "use client";
 
 import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Image as ImageIcon } from "lucide-react";
 import Ornament from "@/components/Ornament";
+import { getGalleryImages } from "@/lib/galleryApi";
 
-// Asymmetric editorial grid — one hero tile, one tall tile, four standard
-const tiles = [
+interface GalleryTile {
+  src: string;
+  title: string;
+  span: string;
+}
+
+// Static fallback shown until (or unless) live gallery data loads, so the
+// section is never empty and the scroll-trigger ref is attached immediately.
+const fallbackTiles: GalleryTile[] = [
   { src: "/assets/home-gallery-radha-krishna.webp", title: "Sri Sri Radha Madan Mohan", span: "col-span-2 row-span-2" },
   { src: "/assets/home-gallery-aarti.webp", title: "Sandhya Aarti", span: "row-span-2" },
   { src: "/assets/home-gallery-srinivasa-govinda.webp", title: "Srinivasa Govinda Darshan", span: "" },
@@ -17,9 +25,46 @@ const tiles = [
   { src: "/assets/home-banner-chaitanya-bhavan.webp", title: "Chaitanya Bhavan", span: "" },
 ];
 
+// Asymmetric editorial grid — one hero tile, one tall tile, four standard
+const SPANS = ["col-span-2 row-span-2", "row-span-2", "", "", "", ""];
+
+const MAX_TILES = 6;
+
 const GalleryPreview = () => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
+  const [tiles, setTiles] = useState<GalleryTile[]>(fallbackTiles);
+  const [hasMore, setHasMore] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    getGalleryImages({ status: "active" })
+      .then((items: any[]) => {
+        if (cancelled || !items || items.length === 0) return;
+
+        const flat: GalleryTile[] = [];
+        for (const item of items) {
+          for (const src of item.images || []) {
+            if (flat.length >= MAX_TILES) break;
+            flat.push({ src, title: item.title || "Darshan", span: "" });
+          }
+          if (flat.length >= MAX_TILES) break;
+        }
+        if (flat.length === 0) return;
+
+        // With fewer than 3 images the hero/tall spans leave holes, so use a
+        // uniform grid there and keep the editorial spans otherwise.
+        const spans = flat.length < 3 ? Array(flat.length).fill("") : SPANS;
+        setTiles(flat.map((t, i) => ({ ...t, span: spans[i] || "" })));
+
+        const total = items.reduce((n, item) => n + (item.images || []).length, 0);
+        setHasMore(total > MAX_TILES);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <section className="bg-white dark:bg-background py-12 md:py-16" ref={ref}>
@@ -43,9 +88,9 @@ const GalleryPreview = () => {
         <div className="mx-auto mb-10 grid max-w-5xl auto-rows-[140px] grid-cols-2 gap-3.5 md:auto-rows-[150px] md:grid-cols-4 md:gap-4">
           {tiles.map((img, i) => (
             <motion.div
-              key={img.title}
+              key={img.src}
               initial={{ opacity: 0, scale: 0.94 }}
-              animate={inView ? { opacity: 1, scale: 1 } : {}}
+              animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5, delay: 0.15 + i * 0.08 }}
               className={`group relative overflow-hidden rounded-2xl shadow-warm ${img.span}`}
             >
@@ -63,16 +108,18 @@ const GalleryPreview = () => {
           ))}
         </div>
 
-        <div className="text-center">
-          <Link
-            href="/gallery"
-            className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:opacity-90"
-          >
-            <ImageIcon className="h-4 w-4" />
-            View Full Gallery
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
+        {hasMore && (
+          <div className="text-center">
+            <Link
+              href="/gallery"
+              className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 font-semibold text-primary-foreground transition-all hover:-translate-y-0.5 hover:opacity-90"
+            >
+              <ImageIcon className="h-4 w-4" />
+              View Full Gallery
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        )}
       </div>
     </section>
   );
