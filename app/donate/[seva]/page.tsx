@@ -1,30 +1,23 @@
 "use client";
 
 import { useState, useEffect, use } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { notFound, redirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { newEventId, getMetaBrowserData, trackPurchase } from "@/lib/metaPixel";
 import { motion } from "framer-motion";
 import {
-  ChevronRight, CheckCircle2, Loader2, ShieldCheck,
+  ChevronRight,
   ChevronDown, Copy, Check, Building2, UtensilsCrossed, FileCheck2, Landmark, Sparkles,
 } from "lucide-react";
-import { getSevaBySlug, sevas, getSevaHref, unitImpact } from "@/lib/sevaConfig";
-import { useAttribution } from "@/lib/useAttribution";
-import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
+import { getSevaBySlug, sevas, getSevaHref } from "@/lib/sevaConfig";
 import Ornament from "@/components/Ornament";
 import PageLayout from "@/components/PageLayout";
-import AddressForm from "@/components/AddressForm";
 import UpiQrCard from "@/components/UpiQrCard";
 import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
-import DonorExtrasFields from "@/components/DonorExtrasFields";
-import type { PrasadamAddress } from "@/components/AddressForm";
+import DonationForm from "@/components/DonationForm";
 
 import { Suspense } from "react";
-
-type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 
 const apiBase = () =>
   (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(/\/+$/, "");
@@ -77,20 +70,6 @@ function DonateSevaPageInner({ params }: { params: Promise<{ seva: string }> }) 
   const { seva: slug } = use(params);
   const seva = getSevaBySlug(slug);
   const searchParams = useSearchParams();
-  const router = useRouter();
-  const attribution = useAttribution(`/donate/${slug}`);
-  const razorpayReady = useRazorpayPreload();
-
-  const [tierIndex, setTierIndex] = useState(0);
-  const [customAmount, setCustomAmount] = useState("");
-  const [useCustom, setUseCustom] = useState(false);
-  const [form, setForm] = useState({ name: "", email: "", mobile: "", panNumber: "", sevakName: "", dob: "" });
-  const [want80G, setWant80G] = useState(false);
-  const [monthly, setMonthly] = useState(false);
-  const [wantsMahaPrasadam, setWantsMahaPrasadam] = useState(false);
-  const [address, setAddress] = useState<PrasadamAddress>({ street: "", city: "", state: "", pincode: "", country: "India" });
-  const [submitting, setSubmitting] = useState(false);
-  const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
   const [donors, setDonors] = useState<Donor[]>([]);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -108,18 +87,7 @@ function DonateSevaPageInner({ params }: { params: Promise<{ seva: string }> }) 
     return () => observer.disconnect();
   }, []);
 
-  useEffect(() => {
-    if (!seva) return;
-    const amountParam = searchParams.get("amount");
-    if (amountParam) {
-      const idx = seva.tiers.findIndex((t) => t.amount === Number(amountParam));
-      if (idx >= 0) setTierIndex(idx);
-      else {
-        setUseCustom(true);
-        setCustomAmount(amountParam);
-      }
-    }
-  }, [seva, searchParams]);
+  const amountParam = searchParams.get("amount");
 
   useEffect(() => {
     if (!seva) return;
@@ -143,163 +111,11 @@ function DonateSevaPageInner({ params }: { params: Promise<{ seva: string }> }) 
     redirect(seva.externalHref);
   }
 
-  const finalAmount = useCustom ? Number(customAmount) || 0 : seva.tiers[tierIndex]?.amount || 0;
-  const customImpact = useCustom ? unitImpact(finalAmount, seva.unit) : null;
-  // Bare per-unit impact (e.g. "3 Gitas") for the monthly-donation label.
-  const monthlyImpact = seva.unit ? unitImpact(finalAmount, seva.unit, true) : null;
-
-  useEffect(() => {
-    if (finalAmount <= 999) {
-      if (want80G) setWant80G(false);
-      if (wantsMahaPrasadam) {
-        setWantsMahaPrasadam(false);
-        setAddress({ street: "", city: "", state: "", pincode: "", country: "India" });
-      }
-    }
-  }, [finalAmount, want80G, wantsMahaPrasadam]);
-
   const handleCopy = (field: string, value: string) => {
     navigator.clipboard.writeText(value).then(() => {
       setCopiedField(field);
       setTimeout(() => setCopiedField(null), 2000);
     });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setStatus(null);
-
-    if (finalAmount < 1) {
-      setStatus({ type: "error", message: "Please enter a valid amount." });
-      return;
-    }
-    if (!form.name.trim()) {
-      setStatus({ type: "error", message: "Please fill in your name and phone number." });
-      return;
-    }
-    if (!/^[6-9]\d{9}$/.test(form.mobile.trim())) {
-      setStatus({ type: "error", message: "Please enter a valid 10-digit mobile number." });
-      return;
-    }
-    if (form.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
-      setStatus({ type: "error", message: "Please enter a valid email address, or leave it blank." });
-      return;
-    }
-    if (want80G && !form.panNumber.trim()) {
-      setStatus({ type: "error", message: "PAN number is required for an 80G receipt." });
-      return;
-    }
-    if (wantsMahaPrasadam && (!address.street.trim() || !address.city.trim() || !address.state.trim() || !/^\d{6}$/.test(address.pincode.trim()))) {
-      setStatus({ type: "error", message: "Please complete the delivery address (door no./area, city, state and a valid 6-digit PIN code) for Maha Prasadam." });
-      return;
-    }
-
-    setSubmitting(true);
-    try {
-      const metaEventId = newEventId();
-      const metaBrowser = getMetaBrowserData();
-
-      // Shared donor/seva fields for both one-time and monthly flows.
-      const baseBody = {
-        account: seva.account,
-        sourcePage: `/donate/${seva.slug}`,
-        utm: attribution.payload().utm,
-        type: seva.category,
-        sevaName: seva.title,
-        name: form.name.trim(),
-        email: form.email.trim().toLowerCase(),
-        mobile: form.mobile.trim(),
-        amount: finalAmount,
-        sevakName: form.sevakName.trim() || undefined,
-        dob: form.dob || undefined,
-        certificate: want80G,
-        panNumber: want80G ? form.panNumber.trim() : undefined,
-      };
-
-      // Monthly autopay → Razorpay Subscription; one-time → Razorpay Order.
-      const endpoint = monthly ? "/payments/subscription" : "/payments/order";
-      const createRes = await fetch(`${apiBase()}${endpoint}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(
-          monthly
-            ? { ...baseBody, sevaUnitLabel: monthlyImpact || undefined }
-            : {
-                ...baseBody,
-                mahaprasadam: wantsMahaPrasadam,
-                prasadamAddress: wantsMahaPrasadam
-                  ? { street: address.street.trim(), city: address.city.trim(), state: address.state.trim(), pincode: address.pincode.trim(), country: "India" }
-                  : undefined,
-                metaEventId,
-                metaFbp: metaBrowser.fbp,
-                metaFbc: metaBrowser.fbc,
-              }
-        ),
-      });
-
-      if (!createRes.ok) {
-        throw new Error(
-          monthly
-            ? "Unable to start the monthly donation. Please try again."
-            : "Unable to create payment order. Please try again."
-        );
-      }
-      const created = await createRes.json();
-
-      await razorpayReady();
-      const win = window as unknown as { Razorpay?: RazorpayConstructor };
-      if (!win.Razorpay) throw new Error("Razorpay checkout is unavailable.");
-
-      const checkoutOptions: Record<string, unknown> = {
-        key: created.key,
-        name: "Hare Krishna Movement Vizag",
-        description: monthly ? `${seva.title} — Monthly` : seva.title,
-        prefill: { name: form.name, email: form.email, contact: form.mobile },
-        notes: { sourcePage: `/donate/${seva.slug}`, sevaName: seva.title, sevaType: seva.category },
-        handler: async (response: Record<string, string>) => {
-          try {
-            const verifyRes = await fetch(`${apiBase()}/payments/verify`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                donationId: created.donationId,
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-                razorpay_subscription_id: response.razorpay_subscription_id,
-              }),
-            });
-            if (!verifyRes.ok) throw new Error("Payment verification failed.");
-            trackPurchase({ value: finalAmount, eventId: metaEventId, content_name: seva.title });
-            router.push(`/payment/thank-you?type=donation&seva=${encodeURIComponent(seva.title)}&amount=${finalAmount}&source=${encodeURIComponent("our seva programmes")}${monthly ? "&recurring=1" : ""}`);
-            setDonors((d) => [{ name: `${form.name.split(" ")[0]} ${form.name.split(" ").slice(-1)[0].charAt(0)}.`, amount: finalAmount, time: "just now" }, ...d]);
-          } catch (err) {
-            setStatus({
-              type: "error",
-              message: err instanceof Error ? err.message : "Payment verification failed.",
-            });
-          } finally {
-            setSubmitting(false);
-          }
-        },
-        modal: { ondismiss: () => setSubmitting(false) },
-        theme: { color: "#D69E2E" },
-      };
-      // Subscriptions authorise via subscription_id (no amount/order_id);
-      // one-time payments pass the order and amount.
-      if (monthly) {
-        checkoutOptions.subscription_id = created.subscriptionId;
-      } else {
-        checkoutOptions.amount = Math.round(finalAmount * 100);
-        checkoutOptions.currency = "INR";
-        checkoutOptions.order_id = created.orderId;
-      }
-
-      new win.Razorpay(checkoutOptions).open();
-    } catch (err) {
-      setStatus({ type: "error", message: err instanceof Error ? err.message : "Something went wrong." });
-      setSubmitting(false);
-    }
   };
 
   const otherSevas = sevas.filter((s) => s.slug !== seva.slug);
@@ -476,227 +292,12 @@ function DonateSevaPageInner({ params }: { params: Promise<{ seva: string }> }) 
             amount tiers below) appears right after the hero, not after the
             long description/donor-wall/FAQ content in the left column. */}
         <div id="donation-form" className="order-1 scroll-mt-24 lg:order-2 lg:sticky lg:top-24 lg:self-start">
-          <div className="rounded-3xl border border-border bg-card p-6 shadow-elevated">
-            {status?.type === "success" ? (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="flex flex-col items-center py-6 text-center"
-              >
-                <CheckCircle2 className="mb-3 h-12 w-12 text-green-500" />
-                <h3 className="mb-2 font-heading text-lg font-bold">Thank You!</h3>
-                <p className="mb-6 text-sm text-muted-foreground">{status.message}</p>
-                <button
-                  onClick={() => { setStatus(null); router.push("/"); }}
-                  className="rounded-full bg-gradient-gold px-6 py-2.5 text-sm font-bold text-[hsl(220,60%,12%)]"
-                >
-                  Back to Home
-                </button>
-              </motion.div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <h3 className="text-sm font-bold uppercase tracking-wide text-muted-foreground">
-                  Choose an Amount
-                </h3>
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                  {seva.tiers.map((tier, i) => (
-                    <button
-                      key={tier.label}
-                      type="button"
-                      onClick={() => { setTierIndex(i); setUseCustom(false); }}
-                      className={`rounded-xl border-[1.5px] px-3 py-3 text-center text-sm font-semibold transition-all ${
-                        !useCustom && tierIndex === i
-                          ? "border-[hsl(var(--gold-deep))] bg-[hsl(42,92%,56%,0.12)] text-gold"
-                          : "border-border hover:border-[hsl(var(--gold-deep))]"
-                      }`}
-                    >
-                      {tier.label}
-                    </button>
-                  ))}
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setUseCustom(true)}
-                  className={`w-full rounded-xl border-[1.5px] px-3 py-3 text-sm font-semibold transition-all ${
-                    useCustom ? "border-[hsl(var(--gold-deep))] bg-[hsl(42,92%,56%,0.12)] text-gold" : "border-border hover:border-[hsl(var(--gold-deep))]"
-                  }`}
-                >
-                  Enter a custom amount
-                </button>
-
-                <div className="rounded-2xl bg-gradient-gold p-[2px] shadow-gold">
-                  <div className="rounded-[calc(1rem-2px)] bg-card p-4 text-center">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                      {monthly ? "You are donating monthly" : "You are donating"}
-                    </p>
-                    <p className="font-heading text-4xl font-extrabold text-gold drop-shadow-sm">
-                      ₹{finalAmount ? finalAmount.toLocaleString("en-IN") : "0"}
-                      {monthly && <span className="text-xl font-bold">/mo</span>}
-                    </p>
-                    <p className="text-xs font-semibold text-muted-foreground">{seva.title}</p>
-                  </div>
-                </div>
-
-                {/* Monthly autopay toggle */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMonthly((m) => {
-                      const next = !m;
-                      if (next) setWantsMahaPrasadam(false);
-                      return next;
-                    });
-                  }}
-                  className={`flex w-full items-center gap-3 rounded-xl border-[1.5px] px-4 py-3 text-left transition-all ${
-                    monthly
-                      ? "border-[hsl(var(--gold-deep))] bg-[hsl(42,92%,56%,0.12)]"
-                      : "border-border hover:border-[hsl(var(--gold-deep))]"
-                  }`}
-                >
-                  <span
-                    className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border ${
-                      monthly ? "border-gold bg-gold text-white" : "border-border"
-                    }`}
-                  >
-                    {monthly && <Check className="h-3.5 w-3.5" />}
-                  </span>
-                  <span className="flex-1">
-                    <span className="block text-sm font-bold text-primary">🔁 Make it a monthly donation</span>
-                    <span className="block text-xs text-muted-foreground">
-                      {monthly && finalAmount
-                        ? `Auto-pay ₹${finalAmount.toLocaleString("en-IN")}${monthlyImpact ? ` (${monthlyImpact})` : ""} every month. Cancel anytime.`
-                        : "Give this amount automatically every month."}
-                    </span>
-                  </span>
-                </button>
-
-                {useCustom && (
-                  <div>
-                    <label className="mb-1 block text-xs font-semibold text-muted-foreground">Amount (₹)</label>
-                    <input
-                      type="number"
-                      min={1}
-                      required
-                      value={customAmount}
-                      onChange={(e) => setCustomAmount(e.target.value)}
-                      className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus:border-primary"
-                      placeholder="Enter amount"
-                    />
-                    {customImpact && (
-                      <p className="mt-1.5 text-xs font-semibold text-gold">
-                        🙏 {customImpact}
-                      </p>
-                    )}
-                  </div>
-                )}
-
-                <div>
-                  <label className="mb-1 block text-xs font-semibold text-muted-foreground">Full Name</label>
-                  <input
-                    required
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus:border-primary"
-                    placeholder="Your name"
-                  />
-                </div>
-                <div>
-                  <label className="mb-1 block text-xs font-semibold text-muted-foreground">Email (optional)</label>
-                  <input
-                    type="email"
-                    value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus:border-primary"
-                    placeholder="you@example.com"
-                  />
-                </div>
-                <div>
-                  <label className="mb-1 block text-xs font-semibold text-muted-foreground">Phone Number</label>
-                  <input
-                    type="tel"
-                    required
-                    maxLength={10}
-                    inputMode="numeric"
-                    value={form.mobile}
-                    onChange={(e) => setForm({ ...form, mobile: e.target.value.replace(/[^\d]/g, "").slice(0, 10) })}
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus:border-primary"
-                    placeholder="10-digit mobile number"
-                  />
-                </div>
-
-                <DonorExtrasFields
-                  sevakName={form.sevakName}
-                  dob={form.dob}
-                  onSevakNameChange={(v) => setForm({ ...form, sevakName: v })}
-                  onDobChange={(v) => setForm({ ...form, dob: v })}
-                  collapsible
-                />
-
-                {finalAmount > 999 && (
-                <>
-                <label className="flex items-center gap-2 text-sm">
-                  <input
-                    type="checkbox"
-                    checked={want80G}
-                    onChange={(e) => setWant80G(e.target.checked)}
-                    className="rounded"
-                  />
-                  I want an 80G tax exemption receipt
-                </label>
-                {want80G && (
-                  <div>
-                    <label className="mb-1 block text-xs font-semibold text-muted-foreground">PAN Number</label>
-                    <input
-                      required
-                      value={form.panNumber}
-                      onChange={(e) => setForm({ ...form, panNumber: e.target.value.toUpperCase() })}
-                      className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm uppercase outline-none focus:border-primary"
-                      placeholder="ABCDE1234F"
-                      maxLength={10}
-                    />
-                  </div>
-                )}
-                </>
-                )}
-
-                {finalAmount > 999 && !monthly && (
-                  <div className="rounded-lg border border-border bg-background/60 px-3 py-2">
-                    <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-foreground">
-                      <input
-                        type="checkbox"
-                        checked={wantsMahaPrasadam}
-                        onChange={(e) => setWantsMahaPrasadam(e.target.checked)}
-                        className="h-4 w-4 shrink-0 rounded accent-[hsl(42,92%,46%)]"
-                      />
-                      🙏 I&apos;d like Maha Prasadam delivered
-                    </label>
-                    {wantsMahaPrasadam && <AddressForm address={address} setAddress={setAddress} />}
-                  </div>
-                )}
-
-                {status?.type === "error" && (
-                  <p className="rounded-lg bg-red-50 px-3 py-2 text-xs text-red-600">{status.message}</p>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-gold py-3.5 text-[15px] font-bold text-[hsl(220,60%,12%)] shadow-gold transition-transform hover:scale-[1.02] disabled:opacity-60"
-                >
-                  {submitting ? (
-                    <><Loader2 className="h-4 w-4 animate-spin" /> Processing…</>
-                  ) : monthly ? (
-                    <>🔁 Donate ₹{finalAmount ? finalAmount.toLocaleString("en-IN") : "0"} / month</>
-                  ) : (
-                    <>🪔 Donate ₹{finalAmount ? finalAmount.toLocaleString("en-IN") : "0"} Now</>
-                  )}
-                </button>
-                <p className="flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground">
-                  <ShieldCheck className="h-3.5 w-3.5" /> Secured by Razorpay
-                </p>
-              </form>
-            )}
-          </div>
+          <DonationForm
+            seva={seva}
+            sourcePage={`/donate/${seva.slug}`}
+            initialAmount={amountParam ? Number(amountParam) : undefined}
+            onSuccess={(donor) => setDonors((d) => [donor, ...d])}
+          />
         </div>
       </div>
 

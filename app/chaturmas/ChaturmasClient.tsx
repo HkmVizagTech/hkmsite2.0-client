@@ -3,46 +3,44 @@
 import PageLayout from "@/components/PageLayout";
 import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
 import Ornament from "@/components/Ornament";
-import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
-import { useAttribution } from "@/lib/useAttribution";
-import { newEventId, getMetaBrowserData, trackInitiateCheckout, trackPurchase } from "@/lib/metaPixel";
+import DonationForm from "@/components/DonationForm";
 import { motion, useInView, useReducedMotion, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import {
   ArrowLeft,
   ArrowRight,
   CalendarDays,
+  Check,
   CheckCircle2,
   Clock,
   FileCheck2,
-  Flower2,
   Heart,
   Leaf,
   Lock,
   Moon,
-  PawPrint,
   ShieldCheck,
   X,
-  Loader2,
   Quote,
   Sun,
   Sparkles,
   BookOpen,
   Utensils,
-  UtensilsCrossed,
   Phone,
   ScrollText,
   ChevronDown,
   MessageCircle,
   Users,
+  Navigation,
 } from "lucide-react";
+import { sevas, type Seva } from "@/lib/sevaConfig";
 
-type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 const apiBase = () => (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(/\/+$/, "");
 
 const WA_COMMUNITY = "https://chat.whatsapp.com/D7HPe7vGmh8Ia0aHLJlne6";
+
+const MAPS_DIRECTIONS_URL =
+  "https://maps.app.goo.gl/Yg2imkSEDxuY5u2K9?g_st=aw";
 
 type BannerSlide = {
   desktop: string;
@@ -210,31 +208,12 @@ const faqs = [
   },
 ];
 
-const donationTiers = [
-  { label: "Naivedhya Seva", desc: "Support the daily offerings to Sri Sri Radha Madan Mohan", amount: 1100, icon: Utensils },
-  { label: "Annadana Seva", desc: "Feed devotees and visitors one day during Chaturmas", amount: 5100, icon: UtensilsCrossed, popular: true },
-  { label: "Gau Seva", desc: "Nourish the cows of our goshala for a month", amount: 2100, icon: PawPrint },
-  { label: "Tulasi Archana", desc: "Sponsor daily archana to Tulasi Devi", amount: 3500, icon: Flower2 },
-];
-
 const trustBadges = [
   { icon: FileCheck2, label: "80G Tax Exemption" },
   { icon: Clock, label: "Instant Confirmation" },
   { icon: ShieldCheck, label: "Secure Razorpay" },
   { icon: Lock, label: "100% Goes to Seva" },
 ];
-
-function LotusDecor({ className = "" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 120 40" className={`h-8 w-24 ${className}`} fill="none" aria-hidden>
-      <path d="M60 4C52 4 46 14 46 20s6 16 14 16c8 0 14-6 14-16S68 4 60 4Z" fill="currentColor" opacity="0.08" />
-      <path d="M60 8c-5 0-9 5-9 12s4 12 9 12 9-5 9-12-4-12-9-12Z" fill="currentColor" opacity="0.12" />
-      <path d="M40 18c-4-6-12-8-16-4s0 14 8 14c4 0 8-4 8-10Z" fill="currentColor" opacity="0.06" />
-      <path d="M80 18c4-6 12-8 16-4s0 14-8 14c-4 0-8-4-8-10Z" fill="currentColor" opacity="0.06" />
-      <ellipse cx="60" cy="20" rx="3" ry="3" fill="currentColor" opacity="0.25" />
-    </svg>
-  );
-}
 
 function SectionDivider({ flip = false }: { flip?: boolean }) {
   return (
@@ -303,120 +282,9 @@ export default function ChaturmasClient() {
     setActiveSlide((c) => (c + d + banners.length) % banners.length);
   };
 
-  const [checkoutTier, setCheckoutTier] = useState<{ label: string; amount: number } | null>(null);
-  const [customAmount, setCustomAmount] = useState("");
-  const [form, setForm] = useState({ name: "", email: "", mobile: "" });
-  const [submitting, setSubmitting] = useState(false);
-  const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [sevaPickerOpen, setSevaPickerOpen] = useState(false);
+  const [selectedSeva, setSelectedSeva] = useState<Seva | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
-
-  const attribution = useAttribution("/chaturmas");
-  const razorpayReady = useRazorpayPreload();
-
-  const closeCheckout = () => {
-    if (!submitting) {
-      setCheckoutTier(null);
-      setStatus(null);
-      setCustomAmount("");
-      setForm({ name: "", email: "", mobile: "" });
-    }
-  };
-
-  const effectiveAmount =
-    checkoutTier && checkoutTier.amount > 0 ? checkoutTier.amount : Number(customAmount || 0);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setStatus(null);
-    if (!checkoutTier) return;
-    if (!form.name.trim()) {
-      setStatus({ type: "error", message: "Please fill in your name." });
-      return;
-    }
-    if (!/^[6-9]\d{9}$/.test(form.mobile.trim())) {
-      setStatus({ type: "error", message: "Please enter a valid 10-digit mobile number." });
-      return;
-    }
-    if (form.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
-      setStatus({ type: "error", message: "Please enter a valid email address, or leave it blank." });
-      return;
-    }
-    const amount = effectiveAmount;
-    if (!amount || amount < 100) {
-      setStatus({ type: "error", message: "Amount must be at least Rs. 100." });
-      return;
-    }
-    setSubmitting(true);
-    try {
-      const metaEventId = newEventId();
-      const metaBrowser = getMetaBrowserData();
-      const orderRes = await fetch(`${apiBase()}/payments/order`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          account: "default",
-          sourcePage: "chaturmas",
-          festivalSlug: "chaturmas",
-          type: "Chaturmas",
-          sevaName: checkoutTier.label,
-          name: form.name.trim(),
-          email: form.email.trim().toLowerCase(),
-          mobile: form.mobile.trim(),
-          amount,
-          utm: attribution.payload().utm,
-          metaEventId,
-          metaFbp: metaBrowser.fbp,
-          metaFbc: metaBrowser.fbc,
-        }),
-      });
-      if (!orderRes.ok) {
-        const body = await orderRes.json().catch(() => ({}));
-        throw new Error(body.message || "Unable to create payment order.");
-      }
-      const order = await orderRes.json();
-      await razorpayReady();
-      const win = window as unknown as { Razorpay?: RazorpayConstructor };
-      if (!win.Razorpay) throw new Error("Razorpay checkout is unavailable.");
-      new win.Razorpay({
-        key: order.key,
-        amount: Math.round(amount * 100),
-        currency: "INR",
-        name: "Hare Krishna Movement Vizag",
-        description: `Chaturmas — ${checkoutTier.label}`,
-        order_id: order.orderId,
-        prefill: { name: form.name, email: form.email, contact: form.mobile },
-        notes: { sourcePage: "chaturmas", festivalSlug: "chaturmas", sevaName: checkoutTier.label },
-        handler: async (response: Record<string, string>) => {
-          try {
-            const verifyRes = await fetch(`${apiBase()}/payments/verify`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                donationId: order.donationId,
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-              }),
-            });
-            if (!verifyRes.ok) throw new Error("Payment verification failed.");
-            trackPurchase({ value: amount, eventId: metaEventId, content_name: "Chaturmas" });
-            window.location.assign(
-              `/payment/thank-you?type=seva&seva=${encodeURIComponent(checkoutTier.label)}&amount=${amount}&source=${encodeURIComponent("the Chaturmas seva programme")}`
-            );
-          } catch (err) {
-            setStatus({ type: "error", message: err instanceof Error ? err.message : "Payment verification failed." });
-          } finally {
-            setSubmitting(false);
-          }
-        },
-        modal: { ondismiss: () => setSubmitting(false) },
-        theme: { color: "#8d4412" },
-      }).open();
-    } catch (err) {
-      setStatus({ type: "error", message: err instanceof Error ? err.message : "Something went wrong." });
-      setSubmitting(false);
-    }
-  };
 
   const fade = (delay = 0) =>
     reduce ? {} : { initial: { opacity: 0, y: 24 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.7, delay } };
@@ -582,6 +450,188 @@ export default function ChaturmasClient() {
               </div>
             </motion.div>
           </div>
+        </div>
+      </section>
+
+      {/* ── DONATE ───────────────────────────────────────────────── */}
+      <section
+        id="donate-section"
+        className="relative overflow-hidden bg-white py-14 md:py-20 dark:bg-background"
+        ref={ref6}
+      >
+        <div className="pointer-events-none absolute -top-32 left-1/2 h-80 w-[640px] -translate-x-1/2 rounded-full bg-[#e8b54a]/5 blur-[120px]" aria-hidden />
+        <div className="relative container mx-auto px-4">
+          <motion.div
+            initial={reduce ? undefined : { opacity: 0, y: 30 }}
+            animate={inView6 ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-10"
+          >
+            <div className="mb-4 flex items-center justify-center gap-3">
+              <span className="h-px w-8 bg-[#c4903a]/40" />
+              <span className="text-xs font-semibold uppercase tracking-[0.25em] text-gold">Support the Temple</span>
+              <span className="h-px w-8 bg-[#c4903a]/40" />
+            </div>
+            <Ornament className="mx-auto mb-5" />
+            <h2 className="font-heading text-3xl font-bold text-primary md:text-4xl mb-4">
+              Offer a Seva During Chaturmas
+            </h2>
+            <p className="mx-auto max-w-xl text-base text-muted-foreground">
+              Every charity performed in these holy months yields manifold benefits. Support the ongoing worship,
+              prasadam distribution and cow protection at HKM Vizag.
+            </p>
+          </motion.div>
+
+          {/* Trust badges */}
+          <motion.div
+            initial={reduce ? undefined : { opacity: 0 }}
+            animate={inView6 ? { opacity: 1 } : {}}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="mx-auto mb-10 flex max-w-3xl flex-wrap items-center justify-center gap-x-8 gap-y-3"
+          >
+            {trustBadges.map((b) => (
+              <span key={b.label} className="flex items-center gap-2.5 text-xs font-medium tracking-wide text-muted-foreground md:text-sm">
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[hsl(42,92%,56%,0.12)] text-gold">
+                  <b.icon className="h-3.5 w-3.5" />
+                </span>
+                {b.label}
+              </span>
+            ))}
+          </motion.div>
+
+          {/* Donate Now CTA — opens the two-step seva picker */}
+          <motion.div
+            initial={reduce ? undefined : { opacity: 0, y: 20 }}
+            animate={inView6 ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className="text-center"
+          >
+            <button
+              onClick={() => setSevaPickerOpen((o) => !o)}
+              className="group relative inline-flex items-center gap-2.5 rounded-full bg-gradient-gold px-9 py-4 text-base font-bold text-[hsl(220,60%,12%)] shadow-gold transition-all hover:-translate-y-0.5 hover:shadow-elevated"
+            >
+              <Sparkles className="h-5 w-5" />
+              {selectedSeva ? "Choose Another Seva" : "Donate Now"}
+              <ChevronDown className={`h-5 w-5 transition-transform duration-300 ${sevaPickerOpen ? "rotate-180" : ""}`} />
+            </button>
+            <p className="mt-3 text-sm text-muted-foreground">
+              {selectedSeva
+                ? "Pick another seva below — or keep your current selection."
+                : "Choose a seva below, then pick your offering amount."}
+            </p>
+          </motion.div>
+
+          <AnimatePresence>
+            {sevaPickerOpen && (
+              <motion.div
+                initial={reduce ? undefined : { opacity: 0, height: 0, y: -8 }}
+                animate={reduce ? undefined : { opacity: 1, height: "auto", y: 0 }}
+                exit={reduce ? undefined : { opacity: 0, height: 0, y: -8 }}
+                transition={{ duration: 0.5, ease: "easeInOut" }}
+                className="overflow-hidden"
+              >
+                <div className="mx-auto mt-10 max-w-6xl">
+                  {/* Step indicator */}
+                  <div className="mb-8 flex items-center justify-center gap-3 sm:gap-5">
+                    {[
+                      { n: 1, label: "Choose Seva" },
+                      { n: 2, label: "Choose Amount" },
+                    ].map((s, idx) => {
+                      const active = selectedSeva ? 2 : 1;
+                      const done = active > s.n;
+                      const current = active === s.n;
+                      return (
+                        <div key={s.n} className="flex items-center gap-3">
+                          {idx > 0 && (
+                            <span className={`h-px w-8 sm:w-14 ${current ? "bg-gold/60" : "bg-border"}`} />
+                          )}
+                          <div className="flex items-center gap-2.5">
+                            <span
+                              className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition-all duration-300 ${
+                                done || current
+                                  ? "bg-gradient-gold text-[hsl(220,90%,12%)] shadow-gold"
+                                  : "border border-border text-muted-foreground"
+                              } ${current ? "ring-4 ring-gold/15" : ""}`}
+                            >
+                              {done ? <Check className="h-4 w-4" /> : s.n}
+                            </span>
+                            <span
+                              className={`hidden text-[11px] font-semibold uppercase tracking-[0.18em] sm:block ${
+                                current ? "text-gold" : done ? "text-primary" : "text-muted-foreground/60"
+                              }`}
+                            >
+                              {s.label}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {!selectedSeva ? (
+                    /* ── Step 1 · choose a seva ── */
+                    <>
+                      <div className="mb-7 text-center">
+                        <h3 className="font-heading text-2xl font-bold text-primary md:text-3xl">Choose Your Seva</h3>
+                        <p className="mx-auto mt-2 max-w-xl text-sm text-muted-foreground">
+                          Every seva performed during Chaturmas yields manifold blessings — pick one below and complete
+                          your offering.
+                        </p>
+                      </div>
+                      <div className="flex flex-wrap items-center justify-center gap-3">
+                        {sevas.map((seva, i) => (
+                          <motion.button
+                            key={seva.slug}
+                            onClick={() => setSelectedSeva(seva)}
+                            initial={reduce ? undefined : { opacity: 0, y: 12 }}
+                            animate={reduce ? undefined : { opacity: 1, y: 0 }}
+                            transition={{ duration: 0.4, delay: 0.05 * i }}
+                            whileHover={{ y: -2 }}
+                            whileTap={{ scale: 0.97 }}
+                            className="group inline-flex items-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-sm font-semibold text-primary shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-gold/60 hover:bg-[hsl(42,92%,56%,0.08)] hover:text-gold hover:shadow-warm"
+                          >
+                            <span className="text-base leading-none">{seva.icon}</span>
+                            {seva.shortTitle}
+                            <ArrowRight className="h-3.5 w-3.5 text-gold opacity-0 transition-all duration-300 group-hover:translate-x-0.5 group-hover:opacity-100" />
+                          </motion.button>
+                        ))}
+                      </div>
+                    </>
+                  ) : (
+                    /* ── Step 2 · compact campaign-style donation form ── */
+                    <>
+                      <div className="mb-5 text-center">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedSeva(null)}
+                          className="inline-flex items-center gap-1.5 rounded-full border border-border px-4 py-2 text-xs font-semibold text-muted-foreground transition-all hover:border-gold hover:text-gold"
+                        >
+                          <ArrowLeft className="h-3.5 w-3.5" /> Change Seva
+                        </button>
+                      </div>
+
+                      {/* Compact two-column form — same style as the Square Foot campaign */}
+                      <div className="mx-auto w-full max-w-4xl">
+                        <DonationForm
+                          seva={selectedSeva}
+                          sourcePage="chaturmas"
+                          festivalSlug="chaturmas"
+                          thankYouType="seva"
+                          thankYouSource="the Chaturmas seva programme"
+                          trackContentName="Chaturmas"
+                          variant="grid"
+                        />
+                      </div>
+                    </>
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <p className="mt-10 text-center text-xs text-muted-foreground">
+            80G Tax Exemption available · Secured by Razorpay · Donations go to Hare Krishna Movement India, Visakhapatnam
+          </p>
         </div>
       </section>
 
@@ -1024,128 +1074,6 @@ export default function ChaturmasClient() {
         </div>
       </section>
 
-      {/* ── DONATE ───────────────────────────────────────────────── */}
-      <section
-        id="donate-section"
-        className="relative overflow-hidden py-20 md:py-28"
-        style={{ background: "linear-gradient(135deg, hsl(220,70%,12%) 0%, hsl(220,60%,18%) 40%, hsl(200,55%,22%) 100%)" }}
-        ref={ref6}
-      >
-        <div className="pointer-events-none absolute -top-32 left-1/2 h-80 w-[640px] -translate-x-1/2 rounded-full bg-[#e8b54a]/5 blur-[120px]" aria-hidden />
-        <div className="relative container mx-auto px-4">
-          <motion.div
-            initial={reduce ? undefined : { opacity: 0, y: 30 }}
-            animate={inView6 ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-14"
-          >
-            <div className="mb-6 flex items-center justify-center gap-3">
-              <span className="h-px w-8 bg-[#e8b54a]/50" />
-              <span className="text-xs font-semibold uppercase tracking-[0.25em] text-[#e8b54a]/80">Support the Temple</span>
-              <span className="h-px w-8 bg-[#e8b54a]/50" />
-            </div>
-            <h2 className="font-serif-display text-4xl font-bold text-white md:text-5xl mb-5">
-              Offer a Seva During Chaturmas
-            </h2>
-            <p className="mx-auto max-w-xl text-base text-white/55">
-              Every charity performed in these holy months yields manifold benefits. Support the ongoing worship,
-              prasadam distribution and cow protection at HKM Vizag.
-            </p>
-          </motion.div>
-
-          {/* Trust badges */}
-          <motion.div
-            initial={reduce ? undefined : { opacity: 0 }}
-            animate={inView6 ? { opacity: 1 } : {}}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="mx-auto mb-14 flex max-w-3xl flex-wrap items-center justify-center gap-x-8 gap-y-3"
-          >
-            {trustBadges.map((b) => (
-              <span key={b.label} className="flex items-center gap-2.5 text-xs font-medium tracking-wide text-white/70 md:text-sm">
-                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#e8b54a]/10 ring-1 ring-[#e8b54a]/15">
-                  <b.icon className="h-3.5 w-3.5 text-[#e8b54a]" />
-                </span>
-                {b.label}
-              </span>
-            ))}
-          </motion.div>
-
-          {/* Seva cards */}
-          <div className="mx-auto grid max-w-5xl gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {donationTiers.map((tier, i) => (
-              <motion.button
-                key={tier.label}
-                onClick={() => {
-                  setCheckoutTier({ label: tier.label, amount: tier.amount });
-                  setCustomAmount("");
-                  trackInitiateCheckout({ value: tier.amount, content_name: "Chaturmas" });
-                }}
-                initial={reduce ? undefined : { opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.08 * i }}
-                whileHover={{ scale: 1.03, y: -4 }}
-                whileTap={{ scale: 0.97 }}
-                className={`group relative flex flex-col rounded-2xl p-7 text-left transition-all duration-300 ${
-                  tier.popular
-                    ? "bg-gradient-to-br from-[#e8b54a] to-[#c4903a] border border-transparent shadow-[0_8px_32px_rgba(232,181,74,0.3)] text-[#3b1605]"
-                    : "border border-white/[0.08] bg-white/[0.04] text-white hover:border-[#e8b54a]/25 hover:bg-white/[0.08]"
-                }`}
-              >
-                {tier.popular && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[#0f1d35] px-4 py-1 text-[10px] font-bold uppercase tracking-wider text-[#e8b54a] whitespace-nowrap shadow-lg">
-                    Most Popular
-                  </span>
-                )}
-                <div
-                  className={`mb-5 flex h-13 w-13 items-center justify-center rounded-xl ${
-                    tier.popular
-                      ? "bg-[#3b1605]/10 ring-1 ring-[#3b1605]/15"
-                      : "bg-[#e8b54a]/10 ring-1 ring-[#e8b54a]/15 transition-colors group-hover:bg-[#e8b54a]/20"
-                  }`}
-                >
-                  <tier.icon className={`h-6 w-6 ${tier.popular ? "text-[#3b1605]" : "text-[#e8b54a]"}`} />
-                </div>
-                <h3 className={`font-serif-display text-sm font-bold ${tier.popular ? "" : "text-white"}`}>{tier.label}</h3>
-                <p className={`mt-2 text-xs leading-relaxed flex-1 ${tier.popular ? "opacity-70" : "text-white/45"}`}>
-                  {tier.desc}
-                </p>
-                <div className="mt-5 flex items-end justify-between">
-                  <p className={`font-serif-display text-2xl font-bold ${tier.popular ? "" : "text-[#e8b54a]"}`}>
-                    ₹{tier.amount.toLocaleString("en-IN")}
-                  </p>
-                  <span
-                    className={`rounded-full px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-wider ${
-                      tier.popular
-                        ? "bg-[#3b1605] text-[#e8b54a]"
-                        : "bg-[#e8b54a]/10 text-[#e8b54a] transition-colors group-hover:bg-[#e8b54a]/20"
-                    }`}
-                  >
-                    Donate
-                  </span>
-                </div>
-              </motion.button>
-            ))}
-          </div>
-
-          <div className="mt-12 text-center">
-            <button
-              onClick={() => {
-                setCheckoutTier({ label: "Chaturmas Seva", amount: 0 });
-                trackInitiateCheckout({ value: 0, content_name: "Chaturmas" });
-              }}
-              className="inline-flex items-center gap-2 rounded-full border border-[#e8b54a]/25 bg-[#e8b54a]/5 px-8 py-4 text-sm font-semibold text-[#e8b54a] transition-all hover:-translate-y-0.5 hover:bg-[#e8b54a]/10 hover:border-[#e8b54a]/40"
-            >
-              <Heart className="h-4 w-4 fill-current" />
-              Donate Any Other Amount
-            </button>
-          </div>
-          <p className="mt-8 text-center text-xs text-white/35">
-            80G Tax Exemption available · Secured by Razorpay · Donations go to Hare Krishna Movement India, Visakhapatnam
-          </p>
-        </div>
-      </section>
-
       {/* ── FAQ ──────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden bg-[#f5f7fa] py-20 md:py-28">
         <div className="container mx-auto px-4">
@@ -1256,138 +1184,20 @@ export default function ChaturmasClient() {
                 <MessageCircle className="h-4 w-4" />
                 Join WhatsApp Community
               </a>
-              <Link
-                href="/daily-schedule"
+              <a
+                href={MAPS_DIRECTIONS_URL}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-8 py-4 text-sm font-semibold text-white backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:bg-white/10"
               >
+                <Navigation className="h-4 w-4" />
                 Visit the Temple
-              </Link>
+              </a>
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* ── CHECKOUT MODAL ───────────────────────────────────────── */}
-      <AnimatePresence>
-        {checkoutTier && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
-            onClick={closeCheckout}
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ duration: 0.25 }}
-              className="w-full max-w-md rounded-3xl border border-[#e8b54a]/20 bg-white p-7 shadow-2xl max-h-[90vh] overflow-y-auto"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="mb-5 flex items-center justify-between">
-                <div>
-                  <h3 className="font-serif-display text-lg font-bold text-[#0f1d35]">Offer {checkoutTier.label}</h3>
-                  <p className="text-xs text-[#3d4f6a]/60 mt-0.5">Hare Krishna Movement · Chaturmas 2026</p>
-                </div>
-                <button onClick={closeCheckout} className="flex h-8 w-8 items-center justify-center rounded-full bg-[#f5f7fa] transition-colors hover:bg-[#e8b54a]/10" aria-label="Close">
-                  <X className="h-4 w-4 text-[#3d4f6a]" />
-                </button>
-              </div>
-
-              {checkoutTier.amount === 0 ? (
-                <div className="mb-5">
-                  <label className="mb-2 block text-sm font-semibold text-[#0f1d35]">
-                    Enter Amount (Rs.) <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="number"
-                    min={100}
-                    value={customAmount}
-                    onChange={(e) => setCustomAmount(e.target.value.replace(/[^\d]/g, ""))}
-                    placeholder="e.g. 1001"
-                    className="w-full rounded-xl border border-[#e8b54a]/30 bg-[#f5f7fa] px-4 py-3 text-sm text-[#0f1d35] focus:outline-none focus:ring-2 focus:ring-[#c4903a]/30 focus:border-[#c4903a]"
-                  />
-                  <p className="mt-1.5 text-xs text-[#3d4f6a]/50">Amount must be at least Rs. 100.</p>
-                </div>
-              ) : (
-                <div className="mb-5 rounded-2xl bg-gradient-to-r from-[#e8b54a] to-[#c4903a] p-[2px] shadow-[0_4px_16px_rgba(232,181,74,0.2)]">
-                  <div className="rounded-[calc(1rem-2px)] bg-white px-5 py-4 text-center">
-                    <p className="text-xs font-semibold uppercase tracking-wider text-[#3d4f6a]/50">You are donating</p>
-                    <p className="font-serif-display text-3xl font-extrabold text-[#c4903a] mt-1">
-                      ₹{checkoutTier.amount.toLocaleString("en-IN")}
-                    </p>
-                    <p className="text-xs text-[#3d4f6a]/50 mt-0.5">for {checkoutTier.label}</p>
-                  </div>
-                </div>
-              )}
-
-              {status?.type === "success" ? (
-                <div className="flex flex-col items-center py-8 text-center">
-                  <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-50">
-                    <Sparkles className="h-8 w-8 text-green-500" />
-                  </div>
-                  <h4 className="font-serif-display text-lg font-bold text-[#0f1d35] mb-1">Hare Krishna!</h4>
-                  <p className="text-sm text-[#3d4f6a]/70 mb-6">{status.message}</p>
-                  <button
-                    onClick={closeCheckout}
-                    className="rounded-full bg-gradient-to-r from-[#e8b54a] to-[#c4903a] px-7 py-3 text-sm font-bold text-[#3b1605]"
-                  >
-                    Close
-                  </button>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="space-y-3">
-                    <input
-                      type="text"
-                      required
-                      value={form.name}
-                      onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                      className="w-full rounded-xl border border-[#e8b54a]/30 bg-[#f5f7fa] px-4 py-3 text-sm text-[#0f1d35] focus:outline-none focus:ring-2 focus:ring-[#c4903a]/30 focus:border-[#c4903a] placeholder:text-[#3d4f6a]/35"
-                      placeholder="Full Name"
-                    />
-                    <input
-                      type="email"
-                      value={form.email}
-                      onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-                      className="w-full rounded-xl border border-[#e8b54a]/30 bg-[#f5f7fa] px-4 py-3 text-sm text-[#0f1d35] focus:outline-none focus:ring-2 focus:ring-[#c4903a]/30 focus:border-[#c4903a] placeholder:text-[#3d4f6a]/35"
-                      placeholder="Email Address (optional)"
-                    />
-                    <input
-                      type="tel"
-                      required
-                      maxLength={10}
-                      inputMode="numeric"
-                      value={form.mobile}
-                      onChange={(e) => setForm((f) => ({ ...f, mobile: e.target.value.replace(/[^\d]/g, "").slice(0, 10) }))}
-                      className="w-full rounded-xl border border-[#e8b54a]/30 bg-[#f5f7fa] px-4 py-3 text-sm text-[#0f1d35] focus:outline-none focus:ring-2 focus:ring-[#c4903a]/30 focus:border-[#c4903a] placeholder:text-[#3d4f6a]/35"
-                      placeholder="10-digit Mobile Number"
-                    />
-                  </div>
-                  {status?.type === "error" && (
-                    <p className="rounded-lg bg-red-50 px-4 py-2.5 text-sm text-red-600">{status.message}</p>
-                  )}
-                  <button
-                    type="submit"
-                    disabled={submitting}
-                    className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#e8b54a] to-[#c4903a] py-4 text-sm font-bold text-[#3b1605] shadow-[0_4px_16px_rgba(232,181,74,0.3)] disabled:opacity-60 transition-all hover:shadow-[0_6px_20px_rgba(232,181,74,0.4)]"
-                  >
-                    {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-                    {submitting
-                      ? "Processing..."
-                      : `Donate ₹${(effectiveAmount || 0).toLocaleString("en-IN")} Now`}
-                  </button>
-                  <div className="flex items-center justify-center gap-2 text-center text-xs text-[#3d4f6a]/40">
-                    <ShieldCheck className="h-3.5 w-3.5 text-green-500" />
-                    <span>Secured by Razorpay · Hare Krishna Movement India</span>
-                  </div>
-                </form>
-              )}
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </PageLayout>
   );
 }

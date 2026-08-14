@@ -33,14 +33,14 @@ const scheduleItems = [
   "Shayan Aarti - 8:15 PM",
 ];
 
-// Hare Krishna Vaikuntham Temple — Google Maps embed (no API key needed via
-// the classic output=embed URL) and an official "Google Maps URLs" directions
-// link, so visitors can navigate straight to the temple.
+// Srila Prabhupada's ISKCON Visakhapatnam — Google Maps embed (no API key
+// needed via the classic output=embed URL) and a directions link (the short
+// link resolves to the same listing), so visitors can navigate straight there.
 const MAPS_EMBED_URL =
-  "https://maps.google.com/maps?q=Hare%20Krishna%20Vaikuntham%20Temple%2C%20IIM%20Road%2C%20Gambhiram%2C%20Visakhapatnam%2C%20Andhra%20Pradesh%20531163&z=14&output=embed";
+  "https://maps.google.com/maps?q=Srila%20Prabhupada%27s%20ISKCON%20Visakhapatnam%2C%20Gambhiram&z=15&output=embed";
 
 const MAPS_DIRECTIONS_URL =
-  "https://www.google.com/maps/dir/?api=1&destination=Hare+Krishna+Vaikuntham+Temple,+IIM+Road,+Gambhiram,+Visakhapatnam,+Andhra+Pradesh+531163";
+  "https://maps.app.goo.gl/Yg2imkSEDxuY5u2K9?g_st=aw";
 
 const Footer = () => {
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
