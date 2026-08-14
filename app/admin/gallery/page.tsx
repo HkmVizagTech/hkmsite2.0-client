@@ -44,6 +44,7 @@ export default function AdminGallery() {
   const [uploadForm, setUploadForm] = useState({
     title: "",
     category: "Daily Darshan",
+    displayIn: "darshan",
     date: "",
     files: [] as File[],
     previews: [] as string[],
@@ -141,10 +142,11 @@ export default function AdminGallery() {
         images: urls,
         date: uploadForm.date || new Date().toISOString().split("T")[0],
         category: uploadForm.category,
+        type: uploadForm.displayIn === "temple" ? "festival" : "darshan",
       }, getToken() || undefined);
       setImages((prev) => [...prev, newItem]);
       setShowUpload(false);
-      setUploadForm({ title: "", category: "Daily Darshan", date: "", files: [], previews: [] });
+      setUploadForm({ title: "", category: "Daily Darshan", displayIn: "darshan", date: "", files: [], previews: [] });
     } catch (err) {
       console.error("Gallery upload error", err);
       setFormErrors({ general: err instanceof Error ? err.message : "Gallery upload failed. See console for details." });
@@ -232,6 +234,24 @@ export default function AdminGallery() {
                 {formErrors.title && (
                   <p className="text-destructive text-sm mt-1">{formErrors.title}</p>
                 )}
+                <div>
+                  <label className="block text-sm font-medium mb-1">Show in section</label>
+                  <select
+                    className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                    value={uploadForm.displayIn}
+                    onChange={(e) => {
+                      const displayIn = e.target.value;
+                      setUploadForm((f) => ({
+                        ...f,
+                        displayIn,
+                        category: displayIn === "temple" ? "Festivals" : "Daily Darshan",
+                      }));
+                    }}
+                  >
+                    <option value="darshan">Today&apos;s Darshan (homepage, below hero)</option>
+                    <option value="temple">Temple Gallery (homepage gallery strip)</option>
+                  </select>
+                </div>
                 <select
                   className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                   value={uploadForm.category}

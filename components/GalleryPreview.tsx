@@ -42,8 +42,13 @@ const GalleryPreview = () => {
       .then((items: any[]) => {
         if (cancelled || !items || items.length === 0) return;
 
+        // Only show images the admin marked for the Temple Gallery section.
+        // Today's Darshan owns type "darshan" so the two never overlap.
+        const galleryItems = items.filter((it) => it.type !== "darshan");
+        if (galleryItems.length === 0) return;
+
         const flat: GalleryTile[] = [];
-        for (const item of items) {
+        for (const item of galleryItems) {
           for (const src of item.images || []) {
             if (flat.length >= MAX_TILES) break;
             flat.push({ src, title: item.title || "Darshan", span: "" });
@@ -57,7 +62,7 @@ const GalleryPreview = () => {
         const spans = flat.length < 3 ? Array(flat.length).fill("") : SPANS;
         setTiles(flat.map((t, i) => ({ ...t, span: spans[i] || "" })));
 
-        const total = items.reduce((n, item) => n + (item.images || []).length, 0);
+        const total = galleryItems.reduce((n, item) => n + (item.images || []).length, 0);
         setHasMore(total > MAX_TILES);
       })
       .catch(() => {});
