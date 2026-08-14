@@ -89,7 +89,7 @@ const GalleryPreview = () => {
           </p>
         </motion.div>
 
-        <div className="mx-auto mb-10 grid max-w-6xl auto-rows-[180px] grid-cols-2 gap-3.5 md:auto-rows-[220px] md:grid-cols-4 md:gap-4">
+        <div className="mx-auto mb-10 grid max-w-7xl auto-rows-[220px] grid-cols-2 gap-3.5 md:auto-rows-[320px] md:grid-cols-4 md:gap-4">
           {tiles.map((img, i) => (
             <motion.div
               key={img.src}
