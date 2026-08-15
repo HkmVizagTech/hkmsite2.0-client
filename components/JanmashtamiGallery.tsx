@@ -5,6 +5,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, X, ZoomIn } from "lucide-react";
 import Image from "next/image";
 import { getGalleryImages } from "@/lib/galleryApi";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+  type CarouselApi,
+} from "@/components/ui/carousel";
 
 interface GalleryImage {
   src: string;
@@ -20,6 +28,8 @@ const JanmashtamiGallery = () => {
   const [yearGroups, setYearGroups] = useState<YearGroup[] | null>(null);
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [carouselApi, setCarouselApi] = useState<CarouselApi>();
+  const [currentSlide, setCurrentSlide] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -55,6 +65,14 @@ const JanmashtamiGallery = () => {
     return () => { cancelled = true; };
   }, []);
 
+  useEffect(() => {
+    if (!carouselApi) return;
+    const onSelect = () => setCurrentSlide(carouselApi.selectedScrollSnap());
+    carouselApi.on("select", onSelect);
+    onSelect();
+    return () => { carouselApi.off("select", onSelect); };
+  }, [carouselApi]);
+
   const currentImages = yearGroups?.find((g) => g.year === selectedYear)?.images || [];
 
   const handleKeyDown = useCallback(
@@ -83,35 +101,65 @@ const JanmashtamiGallery = () => {
   const showYearTabs = yearGroups.length > 1;
 
   return (
-    <section className="px-4 py-12 md:py-16">
-      <div className="mx-auto max-w-6xl">
-        <div className="mb-10 text-center">
-          <p className="mb-2 text-sm font-semibold uppercase tracking-[0.18em] text-[#b48811]">
+    <section className="relative overflow-hidden bg-gradient-to-b from-[#1a0a2e] via-[#130922] to-[#1a0a2e] px-4 py-14 md:py-20">
+      {/* Decorative background elements */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute left-1/2 top-0 h-[500px] w-[800px] -translate-x-1/2 rounded-full bg-[#ffd96f]/[0.03] blur-[120px]" />
+        <div className="absolute bottom-0 left-0 h-[300px] w-[400px] rounded-full bg-purple-500/[0.04] blur-[100px]" />
+        <div className="absolute bottom-0 right-0 h-[300px] w-[400px] rounded-full bg-amber-500/[0.04] blur-[100px]" />
+      </div>
+
+      <div className="relative mx-auto max-w-6xl">
+        {/* Header */}
+        <div className="mb-12 text-center">
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mb-3 text-xs font-semibold uppercase tracking-[0.25em] text-[#ffd96f]/80"
+          >
             Glimpses of Celebration
-          </p>
-          <div className="mx-auto mb-4 flex items-center justify-center gap-3">
-            <span className="h-px w-12 bg-gradient-to-r from-transparent to-[#d4a843]/60" />
-            <span className="text-[#d4a843]">&#10041;</span>
-            <span className="h-px w-12 bg-gradient-to-l from-transparent to-[#d4a843]/60" />
+          </motion.p>
+          <div className="mx-auto mb-5 flex items-center justify-center gap-4">
+            <span className="h-px w-16 bg-gradient-to-r from-transparent to-[#ffd96f]/40" />
+            <span className="text-lg text-[#ffd96f]/60">&#10041;</span>
+            <span className="h-px w-16 bg-gradient-to-l from-transparent to-[#ffd96f]/40" />
           </div>
-          <h2 className="mb-3 text-2xl font-bold text-[#331447] md:text-3xl">
+          <motion.h2
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="mb-3 text-2xl font-bold text-white md:text-4xl"
+          >
             Previous Year Celebrations
-          </h2>
-          <p className="mx-auto max-w-xl text-sm text-slate-600 md:text-base">
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="mx-auto max-w-xl text-sm text-white/50 md:text-base"
+          >
             Relive the divine moments from past Sri Krishna Janmashtami celebrations at Hare Krishna Vaikuntham.
-          </p>
+          </motion.p>
         </div>
 
+        {/* Year tabs */}
         {showYearTabs && (
-          <div className="mb-8 flex flex-wrap items-center justify-center gap-3">
+          <div className="mb-10 flex flex-wrap items-center justify-center gap-3">
             {yearGroups.map(({ year }) => (
               <button
                 key={year}
-                onClick={() => setSelectedYear(year)}
-                className={`rounded-full px-5 py-2 text-sm font-semibold transition-all ${
+                onClick={() => {
+                  setSelectedYear(year);
+                  setCurrentSlide(0);
+                  carouselApi?.scrollTo(0);
+                }}
+                className={`rounded-full px-6 py-2.5 text-sm font-semibold transition-all duration-300 ${
                   selectedYear === year
-                    ? "bg-[#331447] text-white shadow-lg"
-                    : "border border-[#331447]/20 text-[#331447] hover:border-[#331447]/50 hover:bg-[#331447]/5"
+                    ? "bg-gradient-to-r from-[#ffd96f] to-[#e8b830] text-[#1a0a2e] shadow-[0_0_20px_rgba(255,217,111,0.3)]"
+                    : "border border-white/15 text-white/60 hover:border-[#ffd96f]/40 hover:text-white"
                 }`}
               >
                 {year}
@@ -120,107 +168,174 @@ const JanmashtamiGallery = () => {
           </div>
         )}
 
+        {/* Main carousel */}
         <AnimatePresence mode="wait">
           <motion.div
             key={selectedYear}
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -16 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4"
           >
-            {currentImages.map((img, i) => (
-              <motion.div
-                key={img.src + i}
-                initial={{ opacity: 0, scale: 0.92 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.4, delay: i * 0.05 }}
-                className="group relative cursor-pointer overflow-hidden rounded-xl aspect-square"
-                onClick={() => setLightboxIndex(i)}
-              >
-                <Image
-                  src={img.src}
-                  alt={img.title}
-                  fill
-                  loading="lazy"
-                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                  className="object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                <div className="absolute bottom-0 left-0 right-0 translate-y-full p-3 transition-transform duration-300 group-hover:translate-y-0">
-                  <p className="text-sm font-semibold text-white">{img.title}</p>
-                </div>
-                <div className="absolute right-3 top-3 opacity-0 transition-opacity group-hover:opacity-100">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
-                    <ZoomIn className="h-4 w-4 text-white" />
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </AnimatePresence>
-
-        <AnimatePresence>
-          {lightboxIndex !== null && currentImages[lightboxIndex] && (
+            {/* Featured hero image */}
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4"
-              onClick={() => setLightboxIndex(null)}
+              className="group relative mx-auto mb-6 cursor-pointer overflow-hidden rounded-2xl"
+              style={{ aspectRatio: "16/9", maxHeight: "480px" }}
+              onClick={() => setLightboxIndex(currentSlide)}
+              whileHover={{ scale: 1.005 }}
+              transition={{ duration: 0.4 }}
             >
-              <button
-                className="absolute right-6 top-6 text-white/80 hover:text-white"
-                onClick={() => setLightboxIndex(null)}
-              >
-                <X className="h-8 w-8" />
-              </button>
-
-              {lightboxIndex > 0 && (
-                <button
-                  className="absolute left-4 text-white/70 hover:text-white md:left-8"
-                  onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex - 1); }}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentImages[currentSlide]?.src}
+                  initial={{ opacity: 0, scale: 1.05 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="absolute inset-0"
                 >
-                  <ChevronLeft className="h-10 w-10" />
-                </button>
-              )}
-              {lightboxIndex < currentImages.length - 1 && (
-                <button
-                  className="absolute right-4 text-white/70 hover:text-white md:right-8"
-                  onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex + 1); }}
-                >
-                  <ChevronRight className="h-10 w-10" />
-                </button>
-              )}
-
-              <motion.div
-                key={lightboxIndex}
-                initial={{ scale: 0.85, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.85, opacity: 0 }}
-                className="relative h-[80vh] w-[90vw] max-w-full"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <Image
-                  src={currentImages[lightboxIndex].src}
-                  alt={currentImages[lightboxIndex].title}
-                  fill
-                  sizes="90vw"
-                  className="rounded-xl object-contain"
-                />
-              </motion.div>
-              <div className="absolute bottom-8 text-center">
-                <p className="text-lg font-semibold text-white">
-                  {currentImages[lightboxIndex].title}
+                  {currentImages[currentSlide] && (
+                    <Image
+                      src={currentImages[currentSlide].src}
+                      alt={currentImages[currentSlide].title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 1152px"
+                      className="object-cover"
+                      priority
+                    />
+                  )}
+                </motion.div>
+              </AnimatePresence>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+              <div className="absolute bottom-0 left-0 right-0 flex items-end justify-between p-5 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                <p className="text-lg font-semibold text-white drop-shadow-lg">
+                  {currentImages[currentSlide]?.title}
                 </p>
-                <p className="mt-1 text-sm text-white/50">
-                  {lightboxIndex + 1} / {currentImages.length}
-                </p>
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
+                  <ZoomIn className="h-5 w-5 text-white" />
+                </div>
+              </div>
+              {/* Image counter */}
+              <div className="absolute right-4 top-4 rounded-full bg-black/40 px-3 py-1 text-xs font-medium text-white/80 backdrop-blur-sm">
+                {currentSlide + 1} / {currentImages.length}
               </div>
             </motion.div>
-          )}
+
+            {/* Thumbnail carousel strip */}
+            {currentImages.length > 1 && (
+              <div className="relative px-10">
+                <Carousel
+                  setApi={setCarouselApi}
+                  opts={{
+                    align: "start",
+                    loop: false,
+                    slidesToScroll: 1,
+                  }}
+                  className="w-full"
+                >
+                  <CarouselContent className="-ml-2 md:-ml-3">
+                    {currentImages.map((img, i) => (
+                      <CarouselItem
+                        key={img.src + i}
+                        className="basis-1/4 pl-2 sm:basis-1/5 md:basis-1/6 md:pl-3 lg:basis-[14.28%]"
+                      >
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: i * 0.03, duration: 0.3 }}
+                          className={`group/thumb relative cursor-pointer overflow-hidden rounded-lg transition-all duration-300 aspect-square ${
+                            currentSlide === i
+                              ? "ring-2 ring-[#ffd96f] ring-offset-2 ring-offset-[#130922]"
+                              : "opacity-50 hover:opacity-80"
+                          }`}
+                          onClick={() => {
+                            setCurrentSlide(i);
+                            carouselApi?.scrollTo(Math.max(0, i - 2));
+                          }}
+                        >
+                          <Image
+                            src={img.src}
+                            alt={img.title}
+                            fill
+                            loading="lazy"
+                            sizes="(max-width: 640px) 25vw, (max-width: 1024px) 16vw, 14vw"
+                            className="object-cover transition-transform duration-300 group-hover/thumb:scale-110"
+                          />
+                        </motion.div>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious className="-left-2 h-9 w-9 border-white/20 bg-[#1a0a2e]/80 text-white/70 backdrop-blur-sm hover:bg-[#ffd96f]/20 hover:text-white md:-left-4" />
+                  <CarouselNext className="-right-2 h-9 w-9 border-white/20 bg-[#1a0a2e]/80 text-white/70 backdrop-blur-sm hover:bg-[#ffd96f]/20 hover:text-white md:-right-4" />
+                </Carousel>
+              </div>
+            )}
+          </motion.div>
         </AnimatePresence>
       </div>
+
+      {/* Lightbox */}
+      <AnimatePresence>
+        {lightboxIndex !== null && currentImages[lightboxIndex] && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4"
+            onClick={() => setLightboxIndex(null)}
+          >
+            <button
+              className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white/80 backdrop-blur-sm transition-colors hover:bg-white/20 hover:text-white md:right-6 md:top-6"
+              onClick={() => setLightboxIndex(null)}
+            >
+              <X className="h-5 w-5" />
+            </button>
+
+            {lightboxIndex > 0 && (
+              <button
+                className="absolute left-2 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white/70 backdrop-blur-sm transition-colors hover:bg-white/20 hover:text-white md:left-6"
+                onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex - 1); }}
+              >
+                <ChevronLeft className="h-7 w-7" />
+              </button>
+            )}
+            {lightboxIndex < currentImages.length - 1 && (
+              <button
+                className="absolute right-2 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white/70 backdrop-blur-sm transition-colors hover:bg-white/20 hover:text-white md:right-6"
+                onClick={(e) => { e.stopPropagation(); setLightboxIndex(lightboxIndex + 1); }}
+              >
+                <ChevronRight className="h-7 w-7" />
+              </button>
+            )}
+
+            <motion.div
+              key={lightboxIndex}
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="relative h-[80vh] w-[90vw] max-w-full"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Image
+                src={currentImages[lightboxIndex].src}
+                alt={currentImages[lightboxIndex].title}
+                fill
+                sizes="90vw"
+                className="rounded-xl object-contain"
+              />
+            </motion.div>
+            <div className="absolute bottom-6 left-0 right-0 text-center">
+              <p className="text-base font-semibold text-white md:text-lg">
+                {currentImages[lightboxIndex].title}
+              </p>
+              <p className="mt-1 text-sm text-white/40">
+                {lightboxIndex + 1} / {currentImages.length}
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };
