@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, X, ZoomIn } from "lucide-react";
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import Image from "next/image";
 import { getGalleryImages } from "@/lib/galleryApi";
+import useEmblaCarousel from "embla-carousel-react";
 
 interface GalleryImage {
   src: string;
@@ -16,26 +17,18 @@ interface YearGroup {
   images: GalleryImage[];
 }
 
-const MASONRY_SPANS = [
-  "md:col-span-2 md:row-span-2",
-  "",
-  "",
-  "",
-  "md:col-span-2",
-  "",
-  "",
-  "md:col-span-2",
-  "",
-  "",
-  "md:col-span-2 md:row-span-2",
-  "",
-];
-
 const JanmashtamiGallery = () => {
   const [yearGroups, setYearGroups] = useState<YearGroup[] | null>(null);
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    align: "center",
+    loop: true,
+    skipSnaps: false,
+    containScroll: false,
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -71,7 +64,25 @@ const JanmashtamiGallery = () => {
     return () => { cancelled = true; };
   }, []);
 
+  useEffect(() => {
+    if (!emblaApi) return;
+    const onSelect = () => setActiveIndex(emblaApi.selectedScrollSnap());
+    emblaApi.on("select", onSelect);
+    onSelect();
+    return () => { emblaApi.off("select", onSelect); };
+  }, [emblaApi]);
+
+  useEffect(() => {
+    if (emblaApi) {
+      emblaApi.reInit();
+      setActiveIndex(0);
+    }
+  }, [selectedYear, emblaApi]);
+
   const currentImages = yearGroups?.find((g) => g.year === selectedYear)?.images || [];
+
+  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
+  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -94,25 +105,17 @@ const JanmashtamiGallery = () => {
     }
   }, [lightboxIndex, handleKeyDown]);
 
-  const scrollStrip = (dir: "left" | "right") => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const amount = el.clientWidth * 0.75;
-    el.scrollBy({ left: dir === "left" ? -amount : amount, behavior: "smooth" });
-  };
-
   if (!yearGroups || yearGroups.length === 0) return null;
 
   const showYearTabs = yearGroups.length > 1;
 
   return (
-    <section className="relative px-4 py-14 md:py-20">
-      {/* Subtle background to blend with the page */}
+    <section className="relative py-14 md:py-20 overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-[#fefaf0] via-[#fdf5e8] to-[#fefaf0]" />
 
-      <div className="relative mx-auto max-w-6xl">
+      <div className="relative">
         {/* Section header */}
-        <div className="mb-10 text-center md:mb-14">
+        <div className="mx-auto max-w-6xl px-4 mb-10 text-center md:mb-14">
           <motion.p
             initial={{ opacity: 0, y: 8 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -148,7 +151,7 @@ const JanmashtamiGallery = () => {
 
         {/* Year tabs */}
         {showYearTabs && (
-          <div className="mb-8 flex flex-wrap items-center justify-center gap-2.5 md:mb-10">
+          <div className="mx-auto max-w-6xl px-4 mb-8 flex flex-wrap items-center justify-center gap-2.5 md:mb-10">
             {yearGroups.map(({ year }) => (
               <button
                 key={year}
@@ -165,112 +168,98 @@ const JanmashtamiGallery = () => {
           </div>
         )}
 
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={selectedYear}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
+        {/* Center-focused carousel with peek */}
+        <div className="relative">
+          {/* Navigation arrows */}
+          <button
+            onClick={scrollPrev}
+            className="absolute left-2 top-1/2 z-10 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-[#331447] shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl md:left-6 md:h-12 md:w-12"
           >
-            {/* ── Desktop: Masonry grid ── */}
-            <div className="hidden md:grid md:auto-rows-[200px] md:grid-cols-4 md:gap-3 lg:auto-rows-[220px] lg:gap-4">
+            <ChevronLeft className="h-5 w-5 md:h-6 md:w-6" />
+          </button>
+          <button
+            onClick={scrollNext}
+            className="absolute right-2 top-1/2 z-10 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-[#331447] shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl md:right-6 md:h-12 md:w-12"
+          >
+            <ChevronRight className="h-5 w-5 md:h-6 md:w-6" />
+          </button>
+
+          {/* Embla carousel */}
+          <div ref={emblaRef} className="overflow-hidden">
+            <div className="flex">
               {currentImages.map((img, i) => {
-                const span = MASONRY_SPANS[i % MASONRY_SPANS.length];
+                const isActive = i === activeIndex;
                 return (
-                  <motion.div
+                  <div
                     key={img.src + i}
-                    initial={{ opacity: 0, y: 16 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.35, delay: Math.min(i * 0.04, 0.4) }}
-                    className={`group relative cursor-pointer overflow-hidden rounded-2xl shadow-[0_4px_20px_rgba(51,20,71,0.08)] ${span}`}
-                    onClick={() => setLightboxIndex(i)}
+                    className="relative shrink-0 px-2 md:px-3"
+                    style={{ flex: "0 0 80%", maxWidth: "80%" }}
                   >
-                    <Image
-                      src={img.src}
-                      alt={img.title}
-                      fill
-                      loading="lazy"
-                      sizes={span.includes("col-span-2") ? "50vw" : "25vw"}
-                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#331447]/70 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                    <div className="absolute bottom-0 left-0 right-0 flex items-end justify-between p-4 opacity-0 transition-all duration-300 group-hover:opacity-100">
-                      <p className="text-sm font-semibold text-white drop-shadow">{img.title}</p>
-                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
-                        <ZoomIn className="h-3.5 w-3.5 text-white" />
+                    <div
+                      className={`group relative cursor-pointer overflow-hidden rounded-2xl transition-all duration-500 md:rounded-3xl ${
+                        isActive
+                          ? "opacity-100 shadow-[0_8px_40px_rgba(51,20,71,0.15)]"
+                          : "opacity-40 scale-[0.92]"
+                      }`}
+                      onClick={() => isActive && setLightboxIndex(i)}
+                    >
+                      <div className="relative w-full" style={{ aspectRatio: "4/3" }}>
+                        <Image
+                          src={img.src}
+                          alt={img.title}
+                          fill
+                          loading={i < 3 ? "eager" : "lazy"}
+                          sizes="80vw"
+                          className="object-contain bg-[#f5ead4]/50"
+                        />
                       </div>
+
+                      {/* Hover overlay — only on active slide */}
+                      {isActive && (
+                        <div className="absolute inset-0 flex items-end bg-gradient-to-t from-[#331447]/50 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                          <div className="flex w-full items-end justify-between p-5 md:p-7">
+                            <p className="text-sm font-semibold text-white drop-shadow-lg md:text-base">
+                              {img.title}
+                            </p>
+                            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm">
+                              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
+                              </svg>
+                            </span>
+                          </div>
+                        </div>
+                      )}
                     </div>
-                  </motion.div>
+                  </div>
                 );
               })}
             </div>
+          </div>
 
-            {/* ── Mobile: Horizontal scroll strip ── */}
-            <div className="relative md:hidden">
-              {/* Scroll arrows */}
-              <button
-                onClick={() => scrollStrip("left")}
-                className="absolute -left-1 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-[#331447] shadow-md backdrop-blur-sm"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => scrollStrip("right")}
-                className="absolute -right-1 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-[#331447] shadow-md backdrop-blur-sm"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </button>
+          {/* Counter */}
+          <div className="mt-6 flex items-center justify-center gap-4">
+            <span className="text-xs font-medium text-[#331447]/40">
+              {activeIndex + 1} / {currentImages.length}
+            </span>
+          </div>
 
-              <div
-                ref={scrollRef}
-                className="scrollbar-hide flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth px-1 pb-4"
-                style={{ WebkitOverflowScrolling: "touch" }}
-              >
-                {currentImages.map((img, i) => (
-                  <motion.div
-                    key={img.src + i}
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.3, delay: Math.min(i * 0.04, 0.3) }}
-                    className="group relative w-[72vw] shrink-0 snap-center cursor-pointer overflow-hidden rounded-2xl shadow-[0_4px_20px_rgba(51,20,71,0.1)]"
-                    style={{ aspectRatio: "3/4" }}
-                    onClick={() => setLightboxIndex(i)}
-                  >
-                    <Image
-                      src={img.src}
-                      alt={img.title}
-                      fill
-                      loading="lazy"
-                      sizes="72vw"
-                      className="object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#331447]/60 via-transparent to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 flex items-end justify-between p-4">
-                      <p className="text-sm font-semibold text-white drop-shadow">{img.title}</p>
-                      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/25 backdrop-blur-sm">
-                        <ZoomIn className="h-3 w-3 text-white" />
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Scroll indicator dots */}
-              <div className="mt-4 flex justify-center gap-1.5">
-                {currentImages.slice(0, Math.min(currentImages.length, 8)).map((_, i) => (
-                  <span
-                    key={i}
-                    className="h-1.5 w-1.5 rounded-full bg-[#331447]/20"
-                  />
-                ))}
-                {currentImages.length > 8 && (
-                  <span className="text-xs text-[#331447]/30">+{currentImages.length - 8}</span>
-                )}
-              </div>
+          {/* Dot indicators */}
+          {currentImages.length > 1 && (
+            <div className="mt-3 flex items-center justify-center gap-1.5">
+              {currentImages.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => emblaApi?.scrollTo(i)}
+                  className={`rounded-full transition-all duration-300 ${
+                    i === activeIndex
+                      ? "h-2 w-6 bg-[#331447]"
+                      : "h-2 w-2 bg-[#331447]/15 hover:bg-[#331447]/30"
+                  }`}
+                />
+              ))}
             </div>
-          </motion.div>
-        </AnimatePresence>
+          )}
+        </div>
       </div>
 
       {/* Lightbox */}
