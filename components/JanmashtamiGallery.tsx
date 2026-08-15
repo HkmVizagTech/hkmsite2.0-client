@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, X, ZoomIn } from "lucide-react";
 import Image from "next/image";
@@ -28,7 +28,10 @@ const JanmashtamiGallery = () => {
     loop: true,
     skipSnaps: false,
     slidesToScroll: 1,
+    dragFree: false,
   });
+  const autoplayRef = useRef<ReturnType<typeof setInterval>>();
+  const pauseRef = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -79,10 +82,39 @@ const JanmashtamiGallery = () => {
     }
   }, [selectedYear, emblaApi]);
 
+  // Auto-scroll every 3.5s, pause on user interaction for 6s
+  useEffect(() => {
+    if (!emblaApi) return;
+
+    const startAutoplay = () => {
+      clearInterval(autoplayRef.current);
+      autoplayRef.current = setInterval(() => {
+        if (!pauseRef.current) emblaApi.scrollNext();
+      }, 3500);
+    };
+
+    const onPointerDown = () => {
+      pauseRef.current = true;
+      setTimeout(() => { pauseRef.current = false; }, 6000);
+    };
+
+    emblaApi.on("pointerDown", onPointerDown);
+    startAutoplay();
+
+    return () => {
+      clearInterval(autoplayRef.current);
+      emblaApi.off("pointerDown", onPointerDown);
+    };
+  }, [emblaApi]);
+
   const currentImages = yearGroups?.find((g) => g.year === selectedYear)?.images || [];
 
-  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
-  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
+  const pauseAutoplay = useCallback(() => {
+    pauseRef.current = true;
+    setTimeout(() => { pauseRef.current = false; }, 6000);
+  }, []);
+  const scrollPrev = useCallback(() => { pauseAutoplay(); emblaApi?.scrollPrev(); }, [emblaApi, pauseAutoplay]);
+  const scrollNext = useCallback(() => { pauseAutoplay(); emblaApi?.scrollNext(); }, [emblaApi, pauseAutoplay]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
