@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
 import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
+import JanmashtamiGallery from "@/components/JanmashtamiGallery";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
 import { useAttribution } from "@/lib/useAttribution";
 
@@ -827,6 +828,8 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
           </p>
         </div>
       </section>
+
+      <JanmashtamiGallery />
 
       <section className="px-4 pb-16">
         <div className="mx-auto grid max-w-6xl gap-4 md:grid-cols-2">
