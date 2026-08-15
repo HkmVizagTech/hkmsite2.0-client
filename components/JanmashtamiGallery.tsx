@@ -30,7 +30,7 @@ const JanmashtamiGallery = () => {
     slidesToScroll: 1,
     dragFree: false,
   });
-  const autoplayRef = useRef<ReturnType<typeof setInterval>>();
+  const autoplayRef = useRef<ReturnType<typeof setInterval>>(undefined);
   const pauseRef = useRef(false);
 
   useEffect(() => {
