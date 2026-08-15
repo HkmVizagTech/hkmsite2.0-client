@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, X, ZoomIn } from "lucide-react";
 import Image from "next/image";
 import { getGalleryImages } from "@/lib/galleryApi";
 import useEmblaCarousel from "embla-carousel-react";
@@ -24,10 +24,10 @@ const JanmashtamiGallery = () => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
-    align: "center",
+    align: "start",
     loop: true,
     skipSnaps: false,
-    containScroll: false,
+    slidesToScroll: 1,
   });
 
   useEffect(() => {
@@ -110,12 +110,12 @@ const JanmashtamiGallery = () => {
   const showYearTabs = yearGroups.length > 1;
 
   return (
-    <section className="relative py-14 md:py-20 overflow-hidden">
+    <section className="relative overflow-hidden py-14 md:py-20">
       <div className="absolute inset-0 bg-gradient-to-b from-[#fefaf0] via-[#fdf5e8] to-[#fefaf0]" />
 
-      <div className="relative">
-        {/* Section header */}
-        <div className="mx-auto max-w-6xl px-4 mb-10 text-center md:mb-14">
+      <div className="relative mx-auto max-w-6xl px-4">
+        {/* Header */}
+        <div className="mb-10 text-center md:mb-12">
           <motion.p
             initial={{ opacity: 0, y: 8 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -151,7 +151,7 @@ const JanmashtamiGallery = () => {
 
         {/* Year tabs */}
         {showYearTabs && (
-          <div className="mx-auto max-w-6xl px-4 mb-8 flex flex-wrap items-center justify-center gap-2.5 md:mb-10">
+          <div className="mb-8 flex flex-wrap items-center justify-center gap-2.5">
             {yearGroups.map(({ year }) => (
               <button
                 key={year}
@@ -168,97 +168,71 @@ const JanmashtamiGallery = () => {
           </div>
         )}
 
-        {/* Center-focused carousel with peek */}
+        {/* Carousel */}
         <div className="relative">
-          {/* Navigation arrows */}
+          {/* Arrows */}
           <button
             onClick={scrollPrev}
-            className="absolute left-2 top-1/2 z-10 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-[#331447] shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl md:left-6 md:h-12 md:w-12"
+            className="absolute -left-3 top-1/2 z-10 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full border border-amber-200 bg-white text-[#331447]/70 shadow-sm transition-all hover:bg-[#331447] hover:text-white hover:shadow-md md:-left-5 md:h-10 md:w-10"
           >
-            <ChevronLeft className="h-5 w-5 md:h-6 md:w-6" />
+            <ChevronLeft className="h-4 w-4 md:h-5 md:w-5" />
           </button>
           <button
             onClick={scrollNext}
-            className="absolute right-2 top-1/2 z-10 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-[#331447] shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:shadow-xl md:right-6 md:h-12 md:w-12"
+            className="absolute -right-3 top-1/2 z-10 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full border border-amber-200 bg-white text-[#331447]/70 shadow-sm transition-all hover:bg-[#331447] hover:text-white hover:shadow-md md:-right-5 md:h-10 md:w-10"
           >
-            <ChevronRight className="h-5 w-5 md:h-6 md:w-6" />
+            <ChevronRight className="h-4 w-4 md:h-5 md:w-5" />
           </button>
 
-          {/* Embla carousel */}
-          <div ref={emblaRef} className="overflow-hidden">
+          <div ref={emblaRef} className="overflow-hidden rounded-2xl">
             <div className="flex">
-              {currentImages.map((img, i) => {
-                const isActive = i === activeIndex;
-                return (
+              {currentImages.map((img, i) => (
+                <div
+                  key={img.src + i}
+                  className="min-w-0 shrink-0 grow-0 pl-3 first:pl-0"
+                  style={{ flex: "0 0 48%" }}
+                >
                   <div
-                    key={img.src + i}
-                    className="relative shrink-0 px-2 md:px-3"
-                    style={{ flex: "0 0 80%", maxWidth: "80%" }}
+                    className="group relative cursor-pointer overflow-hidden rounded-xl bg-white shadow-sm transition-shadow duration-300 hover:shadow-lg"
+                    onClick={() => setLightboxIndex(i)}
                   >
-                    <div
-                      className={`group relative cursor-pointer overflow-hidden rounded-2xl transition-all duration-500 md:rounded-3xl ${
-                        isActive
-                          ? "opacity-100 shadow-[0_8px_40px_rgba(51,20,71,0.15)]"
-                          : "opacity-40 scale-[0.92]"
-                      }`}
-                      onClick={() => isActive && setLightboxIndex(i)}
-                    >
-                      <div className="relative w-full" style={{ aspectRatio: "4/3" }}>
-                        <Image
-                          src={img.src}
-                          alt={img.title}
-                          fill
-                          loading={i < 3 ? "eager" : "lazy"}
-                          sizes="80vw"
-                          className="object-contain bg-[#f5ead4]/50"
-                        />
+                    <div className="relative aspect-[4/3]">
+                      <Image
+                        src={img.src}
+                        alt={img.title}
+                        fill
+                        loading={i < 4 ? "eager" : "lazy"}
+                        sizes="(max-width: 768px) 48vw, 550px"
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    </div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#331447]/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                    <div className="absolute bottom-0 left-0 right-0 flex items-end justify-between p-3 translate-y-2 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 md:p-4">
+                      <p className="text-xs font-medium text-white drop-shadow md:text-sm">{img.title}</p>
+                      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
+                        <ZoomIn className="h-3 w-3 text-white" />
                       </div>
-
-                      {/* Hover overlay — only on active slide */}
-                      {isActive && (
-                        <div className="absolute inset-0 flex items-end bg-gradient-to-t from-[#331447]/50 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                          <div className="flex w-full items-end justify-between p-5 md:p-7">
-                            <p className="text-sm font-semibold text-white drop-shadow-lg md:text-base">
-                              {img.title}
-                            </p>
-                            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-sm">
-                              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
-                              </svg>
-                            </span>
-                          </div>
-                        </div>
-                      )}
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Counter */}
-          <div className="mt-6 flex items-center justify-center gap-4">
-            <span className="text-xs font-medium text-[#331447]/40">
-              {activeIndex + 1} / {currentImages.length}
-            </span>
-          </div>
-
-          {/* Dot indicators */}
-          {currentImages.length > 1 && (
-            <div className="mt-3 flex items-center justify-center gap-1.5">
-              {currentImages.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => emblaApi?.scrollTo(i)}
-                  className={`rounded-full transition-all duration-300 ${
-                    i === activeIndex
-                      ? "h-2 w-6 bg-[#331447]"
-                      : "h-2 w-2 bg-[#331447]/15 hover:bg-[#331447]/30"
-                  }`}
-                />
+                </div>
               ))}
             </div>
-          )}
+          </div>
+
+          {/* Dots */}
+          <div className="mt-6 flex items-center justify-center gap-1.5">
+            {currentImages.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => emblaApi?.scrollTo(i)}
+                className={`rounded-full transition-all duration-300 ${
+                  i === activeIndex
+                    ? "h-2 w-5 bg-[#331447]"
+                    : "h-1.5 w-1.5 bg-[#331447]/15 hover:bg-[#331447]/30"
+                }`}
+              />
+            ))}
+          </div>
         </div>
       </div>
 
