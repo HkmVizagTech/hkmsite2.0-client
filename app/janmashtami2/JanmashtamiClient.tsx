@@ -31,7 +31,6 @@ type CheckoutForm = {
   donorName: string;
   donorMobile: string;
   donorEmail: string;
-  nationality: "Indian Citizen" | "Foreign Citizen";
   customAmount: string;
   wantPrasadam: boolean;
   want80G: boolean;
@@ -56,12 +55,12 @@ type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () 
 
 const banners = [
   {
-    desktop: "/assets/janmashtami-skj26_1.webp",
+    desktop: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1787055655171-1787055654678-janmashtami2banner.webp",
     mobile: "/assets/janmashtami-skj26_m1.webp",
     alt: "Sri Krishna Janmashtami celebrations at Hare Krishna Movement Vizag",
   },
   {
-    desktop: "/assets/janmashtami-skj26_2.webp",
+    desktop: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1787055656278-1787055654943-janmashtami2banner2.webp",
     mobile: "/assets/janmashtami-skj26_m2.webp",
     alt: "Offer sevas for Sri Krishna Janmashtami at HKM Vizag",
   },
@@ -261,7 +260,6 @@ const initialForm: CheckoutForm = {
   donorName: "",
   donorMobile: "",
   donorEmail: "",
-  nationality: "Indian Citizen",
   customAmount: "",
   wantPrasadam: false,
   want80G: false,
@@ -418,7 +416,6 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
           legacySevaId: selected.option.legacySevaId,
           sevaName: selected.seva.title,
           sevaOption: selected.option.label,
-          nationality: form.nationality,
         },
         handler: async (response: Record<string, string>) => {
           try {
@@ -564,7 +561,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
         )}
         <div className="mx-auto grid max-w-6xl gap-8 md:grid-cols-[1.35fr_0.65fr] md:items-center">
           <div>
-            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.22em] text-[#ffd96f]">Hare Krishna Movement Vizag</p>
+            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.22em] text-[#ffd96f]">Hare Krishna Movement</p>
             <h1 className="text-3xl font-bold leading-tight text-[#ffdb68] md:text-5xl" style={{ textShadow: "0 0 40px hsl(42,92%,56%,0.3), 0 0 80px hsl(42,92%,56%,0.15)" }}>Sri Krishna Janmashtami</h1>
             <p className="mt-5 max-w-4xl text-base leading-8 text-white/92 md:text-lg">
               This Janmashtami, on the 4th & 5th of September, join the grand celebrations at HKM Vizag.
@@ -922,44 +919,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
               </ul>
             </div>
 
-            {/* Contact */}
-            <div className="md:col-span-5">
-              <h3 className="mb-5 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.24em] text-[#ffd96f]">
-                <span className="h-px w-4 bg-[#ffd96f]/60" />
-                Visit &amp; Reach Us
-              </h3>
 
-              <div className="rounded-2xl border border-[#ffd96f]/15 bg-white/[0.03] p-5 backdrop-blur">
-                <div className="flex items-start gap-3">
-                  <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#ffd96f]" />
-                  <div className="text-sm leading-6 text-white/75">
-                    <p className="font-semibold text-white">Hare Krishna Movement</p>
-                    <p className="mt-1 text-white/65">
-                      Chaitanya Bhavan, Hare Krishna Vaikuntam Cultural Centre,<br />
-                      SIIM Rd, opp. Akshaya Patra Foundation, Gambhiram,<br />
-                      Visakhapatnam, Andhra Pradesh 531163
-                    </p>
-                  </div>
-                </div>
-
-                <div className="my-4 h-px bg-gradient-to-r from-transparent via-[#ffd96f]/15 to-transparent" />
-
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <a href="tel:+918977761187" className="group flex items-center gap-2.5 text-sm text-white/75 transition-colors hover:text-[#ffd96f]">
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#ffd96f]/10 ring-1 ring-[#ffd96f]/20 transition-all group-hover:bg-[#ffd96f]/20">
-                      <Phone className="h-3.5 w-3.5 text-[#ffd96f]" />
-                    </span>
-                    <span className="font-medium">+91 89777 61187</span>
-                  </a>
-                  <a href="mailto:social@hkmvizag.org" className="group flex items-center gap-2.5 text-sm text-white/75 transition-colors hover:text-[#ffd96f]">
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#ffd96f]/10 ring-1 ring-[#ffd96f]/20 transition-all group-hover:bg-[#ffd96f]/20">
-                      <Mail className="h-3.5 w-3.5 text-[#ffd96f]" />
-                    </span>
-                    <span className="font-medium">social@hkmvizag.org</span>
-                  </a>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Bottom bar */}
@@ -1058,18 +1018,6 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
                 variant="amber"
                 collapsible
               />
-
-              <fieldset className="rounded-lg border border-amber-200/60 bg-white/40 p-4">
-                <legend className="px-2 text-sm font-semibold text-[#331447]">Payment Option *</legend>
-                <div className="mt-2 flex flex-wrap gap-4">
-                  {(["Indian Citizen", "Foreign Citizen"] as const).map((value) => (
-                    <label key={value} className="flex items-center gap-2 text-sm text-[#331447]">
-                      <input type="radio" checked={form.nationality === value} onChange={() => updateForm({ nationality: value })} className="accent-amber-600" />
-                      {value}
-                    </label>
-                  ))}
-                </div>
-              </fieldset>
 
               <div className="space-y-3">
                 {showPrasadamField && (
