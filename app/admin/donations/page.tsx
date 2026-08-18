@@ -348,6 +348,7 @@ export default function AdminDonations() {
             <table className="w-full text-sm">
               <thead className="border-b bg-muted/50">
                 <tr>
+                  <th className="px-4 py-3 text-left font-medium">S.No</th>
                   <th className="px-4 py-3 text-left font-medium">TXN / Order</th>
                   <th className="px-4 py-3 text-left font-medium">Donor</th>
                   <th className="px-4 py-3 text-left font-medium">Phone</th>
@@ -361,14 +362,15 @@ export default function AdminDonations() {
               </thead>
               <tbody>
                 {loading ? (
-                  <tr><td colSpan={9} className="text-center py-8 text-muted-foreground"><Loader2 className="inline mr-2 h-4 w-4 animate-spin" />Loading...</td></tr>
+                  <tr><td colSpan={10} className="text-center py-8 text-muted-foreground"><Loader2 className="inline mr-2 h-4 w-4 animate-spin" />Loading...</td></tr>
                 ) : donations.length === 0 ? (
-                  <tr><td colSpan={9} className="text-center py-6 text-muted-foreground">No donations found.</td></tr>
+                  <tr><td colSpan={10} className="text-center py-6 text-muted-foreground">No donations found.</td></tr>
                 ) : donations.map((d, i) => {
                   const MethodIcon = methodIcons[d.method] || IndianRupee;
                   const rowKey = d._id || d.id || d.transactionId || d.razorpayOrderId || `don-${i}`;
                   return (
                     <tr key={rowKey} className="border-b hover:bg-muted/30">
+                      <td className="px-4 py-3 text-muted-foreground">{(page - 1) * limit + i + 1}</td>
                       <td className="px-4 py-3 font-mono text-xs">{d.razorpayPaymentId || d.razorpayOrderId || d._id}</td>
                       <td className="px-4 py-3">
                         <div className="font-medium">{d.donorName || "Anonymous"}</div>
