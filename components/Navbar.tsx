@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Phone, Mail, Sun, Moon, Clock, Heart, ChevronDown } from "lucide-react";
+import { Menu, X, Phone, Mail, Sun, Moon, Clock, Heart, ChevronDown, Home, User, Utensils, Info } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import ISKLogo from "@/assets/ISKCONGambheeramLogo.jpeg";
@@ -18,14 +18,23 @@ import {
   NavigationMenuContent,
   NavigationMenuLink,
 } from "@/components/ui/navigation-menu";
-import {
-  Accordion,
-  AccordionItem,
-  AccordionTrigger,
-  AccordionContent,
-} from "@/components/ui/accordion";
-import { navEntries, bottomBarItems, allNavHrefs, isGroupActive } from "@/lib/navConfig";
+import { navEntries, isGroupActive } from "@/lib/navConfig";
 import { NavListItem } from "@/components/NavListItem";
+
+// ── Mobile: flat link list derived from navConfig ──────────────────
+const mobileLinks = navEntries.flatMap((e) =>
+  e.kind === "link"
+    ? [{ label: e.label, href: e.href }]
+    : e.group.items.map((i) => ({ label: i.label, href: i.href }))
+);
+
+// ── Mobile bottom bar (simple direct links, like the old one) ──────
+const bottomNavItems = [
+  { label: "Home", href: "/", icon: Home },
+  { label: "Prabhupada", href: "/founder", icon: User },
+  { label: "Subhojanam", href: "/subhojanam", icon: Utensils },
+  { label: "About", href: "/about", icon: Info },
+];
 
 // ── Real temple darshan windows ──────────────────────────────────────
 const DARSHAN_WINDOWS = [
@@ -59,7 +68,6 @@ const isActive = (href: string, pathname: string) =>
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeGroup, setActiveGroup] = useState<string | undefined>(undefined);
   const [darshanStatus, setDarshanStatus] = useState(getDarshanStatus);
   const [menuCanScroll, setMenuCanScroll] = useState(false);
   const menuScrollRef = useRef<HTMLDivElement>(null);
@@ -84,7 +92,6 @@ const Navbar = () => {
   // ── Close mobile menu on navigation ───────────────────────────────
   useEffect(() => {
     setMobileOpen(false);
-    setActiveGroup(undefined);
     window.scrollTo(0, 0);
   }, [pathname]);
 
@@ -109,21 +116,7 @@ const Navbar = () => {
   }, [mobileOpen]);
 
   // ── Toggle mobile menu ────────────────────────────────────────────
-  const toggleMobile = () => {
-    setMobileOpen((v) => !v);
-    setActiveGroup(undefined);
-  };
-
-  /** Open overlay with a specific group pre-expanded, or close if same group tapped again */
-  const openMobileGroup = (groupLabel: string) => {
-    if (mobileOpen && activeGroup === groupLabel) {
-      setMobileOpen(false);
-      setActiveGroup(undefined);
-    } else {
-      setMobileOpen(true);
-      setActiveGroup(groupLabel);
-    }
-  };
+  const toggleMobile = () => setMobileOpen((v) => !v);
 
   const toggleTheme = () => setTheme(darkMode ? "light" : "dark");
 
@@ -181,10 +174,7 @@ const Navbar = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            onClick={() => {
-              setMobileOpen(false);
-              setActiveGroup(undefined);
-            }}
+            onClick={() => setMobileOpen(false)}
             className="fixed inset-0 z-40 bg-black/40 lg:hidden"
             aria-hidden
           />
@@ -327,7 +317,7 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* ── Mobile overlay menu (Accordion) ──────────────────────── */}
+        {/* ── Mobile overlay menu (flat link list) ────────────────── */}
         <AnimatePresence>
           {mobileOpen && (
             <motion.div
@@ -341,81 +331,19 @@ const Navbar = () => {
                 ref={menuScrollRef}
                 className="container mx-auto px-4 py-3 flex flex-col gap-0.5 max-h-[calc(100dvh-9rem)] overflow-y-auto"
               >
-                <Accordion
-                  type="single"
-                  collapsible
-                  value={activeGroup}
-                  onValueChange={(v) => setActiveGroup(v || undefined)}
-                >
-                  {navEntries
-                    .filter((e) => e.kind === "group")
-                    .map((entry) => {
-                      const group = entry.group;
-                      return (
-                        <AccordionItem
-                          key={group.label}
-                          value={group.label}
-                          className="border-b border-border/50"
-                        >
-                          <AccordionTrigger className="py-3 text-[15px] font-medium hover:no-underline hover:text-primary">
-                            <div className="flex items-center gap-2.5">
-                              {group.icon && <group.icon className="w-4 h-4" />}
-                              {group.label}
-                            </div>
-                          </AccordionTrigger>
-                          <AccordionContent className="pb-2 pt-0">
-                            {group.items.map((item) => {
-                              const Icon = item.icon;
-                              return (
-                                <Link
-                                  key={item.href}
-                                  href={item.href}
-                                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
-                                    isActive(item.href, pathname)
-                                      ? "text-primary bg-primary/10"
-                                      : "text-foreground hover:text-primary hover:bg-primary/10"
-                                  }`}
-                                >
-                                  {Icon && (
-                                    <Icon className="w-4 h-4 shrink-0 text-muted-foreground" />
-                                  )}
-                                  <div>
-                                    <div className="text-[14px] font-medium leading-none">
-                                      {item.label}
-                                    </div>
-                                    {item.description && (
-                                      <p className="mt-1 text-[12px] leading-snug text-muted-foreground">
-                                        {item.description}
-                                      </p>
-                                    )}
-                                  </div>
-                                </Link>
-                              );
-                            })}
-                          </AccordionContent>
-                        </AccordionItem>
-                      );
-                    })}
-                </Accordion>
-
-                {/* Non-group links shown as flat items above accordion */}
-                {navEntries
-                  .filter((e) => e.kind === "link")
-                  .map((entry) => (
-                    <Link
-                      key={entry.href}
-                      href={entry.href}
-                      className={`text-left px-4 py-2.5 text-[15px] rounded-lg font-medium transition-colors ${
-                        pathname === entry.href
-                          ? "text-primary bg-primary/10"
-                          : "text-foreground hover:text-primary hover:bg-primary/10"
-                      }`}
-                    >
-                      {entry.label}
-                    </Link>
-                  ))}
-
-                {/* Theme toggle */}
+                {mobileLinks.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`text-left px-4 py-2.5 text-[15px] rounded-lg font-medium transition-colors ${
+                      pathname === item.href
+                        ? "text-primary bg-primary/10"
+                        : "text-foreground hover:text-primary hover:bg-primary/10"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
                 <button
                   onClick={toggleTheme}
                   className="mt-1.5 flex items-center justify-center gap-2 rounded-full border border-border px-4 py-2.5 text-[15px] font-medium text-foreground transition-colors hover:text-primary hover:border-primary"
@@ -423,8 +351,6 @@ const Navbar = () => {
                   {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
                   {darkMode ? "Light Mode" : "Dark Mode"}
                 </button>
-
-                {/* Donate */}
                 <Button
                   variant="default"
                   className="mt-1.5 rounded-full bg-gradient-ocean text-white border-0 text-[15px]"
@@ -435,21 +361,14 @@ const Navbar = () => {
                     Donate Now
                   </Link>
                 </Button>
-
-                {/* Close */}
                 <button
-                  onClick={() => {
-                    setMobileOpen(false);
-                    setActiveGroup(undefined);
-                  }}
+                  onClick={() => setMobileOpen(false)}
                   className="mt-1.5 flex items-center justify-center gap-2 rounded-full border border-border px-4 py-2.5 text-[15px] font-medium text-foreground transition-colors hover:text-primary hover:border-primary"
                 >
                   <X className="w-4 h-4" />
                   Close Menu
                 </button>
               </div>
-
-              {/* Scroll hint */}
               {menuCanScroll && (
                 <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-10 flex h-10 items-end justify-center bg-gradient-to-t from-white dark:from-card via-white/80 dark:via-card/80 to-transparent pb-1">
                   <ChevronDown className="h-4 w-4 animate-bounce text-muted-foreground" />
@@ -471,63 +390,28 @@ const Navbar = () => {
             className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-card border-t border-border shadow-[0_-2px_12px_rgba(0,0,0,0.08)]"
           >
             <div className="flex items-stretch">
-              {bottomBarItems.map((item) => {
+              {bottomNavItems.map((item) => {
                 const Icon = item.icon;
-
-                // Direct link items
-                if (item.href) {
-                  const active = isActive(item.href, pathname);
-                  return (
-                    <Link
-                      key={item.label}
-                      href={item.href}
-                      className={`relative flex flex-1 flex-col items-center justify-center gap-0.5 py-2.5 text-[10px] font-medium transition-colors ${
-                        active ? "text-primary" : "text-muted-foreground"
-                      }`}
-                    >
-                      <Icon className={`w-5 h-5 ${active ? "stroke-[2.5px]" : "stroke-[1.75px]"}`} />
-                      {item.label}
-                      {active && (
-                        <motion.span
-                          layoutId="bottom-nav-active"
-                          className="absolute top-0 h-0.5 w-8 rounded-full bg-primary"
-                          transition={{ type: "spring", bounce: 0.25, duration: 0.4 }}
-                        />
-                      )}
-                    </Link>
-                  );
-                }
-
-                // Group button items (Temple, Seva)
-                if (item.groupLabel) {
-                  const groupActive =
-                    mobileOpen && activeGroup === item.groupLabel;
-                  return (
-                    <button
-                      key={item.label}
-                      onClick={() => openMobileGroup(item.groupLabel!)}
-                      className={`relative flex flex-1 flex-col items-center justify-center gap-0.5 py-2.5 text-[10px] font-medium transition-colors ${
-                        groupActive ? "text-primary" : "text-muted-foreground"
-                      }`}
-                    >
-                      <Icon
-                        className={`w-5 h-5 ${
-                          groupActive ? "stroke-[2.5px]" : "stroke-[1.75px]"
-                        }`}
+                const active = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`relative flex flex-1 flex-col items-center justify-center gap-0.5 py-2.5 text-[10px] font-medium transition-colors ${
+                      active ? "text-primary" : "text-muted-foreground"
+                    }`}
+                  >
+                    <Icon className={`w-5 h-5 ${active ? "stroke-[2.5px]" : "stroke-[1.75px]"}`} />
+                    {item.label}
+                    {active && (
+                      <motion.span
+                        layoutId="bottom-nav-active"
+                        className="absolute top-0 h-0.5 w-8 rounded-full bg-primary"
+                        transition={{ type: "spring", bounce: 0.25, duration: 0.4 }}
                       />
-                      {item.label}
-                      {groupActive && (
-                        <motion.span
-                          layoutId="bottom-nav-active"
-                          className="absolute top-0 h-0.5 w-8 rounded-full bg-primary"
-                          transition={{ type: "spring", bounce: 0.25, duration: 0.4 }}
-                        />
-                      )}
-                    </button>
-                  );
-                }
-
-                return null;
+                    )}
+                  </Link>
+                );
               })}
 
               {/* More — opens/closes the hamburger menu */}
