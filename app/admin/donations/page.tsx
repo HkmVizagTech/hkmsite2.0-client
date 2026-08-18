@@ -370,7 +370,7 @@ export default function AdminDonations() {
                   const rowKey = d._id || d.id || d.transactionId || d.razorpayOrderId || `don-${i}`;
                   return (
                     <tr key={rowKey} className="border-b hover:bg-muted/30">
-                      <td className="px-4 py-3 text-muted-foreground">{(page - 1) * limit + i + 1}</td>
+                      <td className="px-4 py-3 text-muted-foreground">{total - ((page - 1) * limit + i)}</td>
                       <td className="px-4 py-3 font-mono text-xs">{d.razorpayPaymentId || d.razorpayOrderId || d._id}</td>
                       <td className="px-4 py-3">
                         <div className="font-medium">{d.donorName || "Anonymous"}</div>

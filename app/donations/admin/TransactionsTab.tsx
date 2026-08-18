@@ -56,6 +56,7 @@ export default function TransactionsTab() {
   const [status, setStatus] = useState("all");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   const [totalAmount, setTotalAmount] = useState(0);
   const [selected, setSelected] = useState<Transaction | null>(null);
   const [startDate, setStartDate] = useState("");
@@ -75,6 +76,7 @@ export default function TransactionsTab() {
         if (data.success) {
           setTransactions(data.transactions);
           setTotalPages(data.pagination.totalPages);
+          setTotalCount(data.pagination.totalTransactions || 0);
           setTotalAmount(data.pagination.totalAmount);
         }
       })
@@ -206,7 +208,7 @@ export default function TransactionsTab() {
               <CardContent className="flex flex-wrap items-center justify-between gap-3 p-4">
                 <div className="flex min-w-0 items-start gap-3">
                   <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-muted-foreground">
-                    {(page - 1) * 20 + i + 1}
+                    {totalCount - (page - 1) * 20 - i}
                   </span>
                   <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
