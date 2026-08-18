@@ -128,14 +128,14 @@ const Footer = () => {
                 ))}
                 <a
                   key="whatsapp"
-                  href="https://chat.whatsapp.com/D7HPe7vGmh8Ia0aHLJlne6"
+                  href="https://whatsapp.com/channel/0029VaZDEG67T8bWHjibTy2u"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="Join Community on WhatsApp"
+                  aria-label="Join Channel on WhatsApp"
                   className="flex h-10 items-center gap-1.5 rounded-full bg-white/10 px-3 text-[hsl(210,30%,97%)]/60 transition-all duration-300 hover:bg-[#25D366] hover:text-white"
                 >
                   <WhatsAppIcon className="h-4 w-4 fill-current" />
-                  <span className="text-xs font-semibold">Join Community</span>
+                  <span className="text-xs font-semibold">Join Channel</span>
                 </a>
               </div>
             </div>
