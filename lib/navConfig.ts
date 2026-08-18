@@ -25,6 +25,8 @@ export type NavEntry =
 
 export const navEntries: NavEntry[] = [
   { kind: "link", label: "Home", href: "/", icon: Home },
+  { kind: "link", label: "Srila Prabhupada", href: "/founder", icon: User },
+  { kind: "link", label: "Subhojanam", href: "/subhojanam", icon: Utensils },
   {
     kind: "group",
     group: {
@@ -32,7 +34,6 @@ export const navEntries: NavEntry[] = [
       icon: Info,
       items: [
         { label: "About Us", href: "/about", description: "Our mission, history & values", icon: Info },
-        { label: "Srila Prabhupada", href: "/founder", description: "Founder-Acharya of ISKCON", icon: User },
         { label: "Contact Us", href: "/contact", description: "Visit, call, or write to us", icon: Phone },
       ],
     },
@@ -56,7 +57,6 @@ export const navEntries: NavEntry[] = [
       label: "Seva",
       icon: Heart,
       items: [
-        { label: "Subhojanam", href: "/subhojanam", description: "Daily prasadam at hospitals", icon: Utensils },
         { label: "Anna Daan", href: "/anna-daan-seva", description: "Feed the hungry", icon: Utensils },
         { label: "Gau Seva", href: "/gau-seva", description: "Cow care & protection", icon: Beef },
         { label: "Gita Daan", href: "/gita-daan-seva", description: "Distribute Bhagavad Gita", icon: BookOpen },
@@ -94,9 +94,9 @@ export const bottomBarItems: {
   groupLabel?: string;
 }[] = [
   { label: "Home", href: "/", icon: Home },
+  { label: "Subhojanam", href: "/subhojanam", icon: Utensils },
   { label: "Temple", icon: Clock, groupLabel: "Temple" },
   { label: "Seva", icon: Heart, groupLabel: "Seva" },
-  { label: "Events", href: "/events", icon: CalendarDays },
   // "More" is handled specially in the component, not in this array
 ];
 
