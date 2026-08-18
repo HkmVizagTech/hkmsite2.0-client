@@ -21,19 +21,27 @@ import {
 import { navEntries, isGroupActive } from "@/lib/navConfig";
 import { NavListItem } from "@/components/NavListItem";
 
-// ── Mobile: flat link list derived from navConfig ──────────────────
-const mobileLinks = navEntries.flatMap((e) =>
-  e.kind === "link"
-    ? [{ label: e.label, href: e.href }]
-    : e.group.items.map((i) => ({ label: i.label, href: i.href }))
-);
+// ── Mobile: exact original flat link list (matches production site) ─
+const mobileNavItems = [
+  { label: "Home", href: "/" },
+  { label: "About Us", href: "/about" },
+  { label: "Founder", href: "/founder" },
+  { label: "Volunteer", href: "/volunteer" },
+  { label: "Gallery", href: "/gallery" },
+  { label: "Events", href: "/events" },
+  { label: "Blog", href: "/blogs" },
+  { label: "Schedule", href: "/daily-schedule" },
+  { label: "Subhojanam", href: "/subhojanam" },
+  { label: "Anna-Daan", href: "/anna-daan-seva" },
+  { label: "Contact", href: "/contact" },
+];
 
-// ── Mobile bottom bar (simple direct links, like the old one) ──────
+// ── Mobile bottom bar (matches production site) ────────────────────
 const bottomNavItems = [
   { label: "Home", href: "/", icon: Home },
-  { label: "Prabhupada", href: "/founder", icon: User },
+  { label: "Founder", href: "/founder", icon: User },
   { label: "Subhojanam", href: "/subhojanam", icon: Utensils },
-  { label: "About", href: "/about", icon: Info },
+  { label: "About Us", href: "/about", icon: Info },
 ];
 
 // ── Real temple darshan windows ──────────────────────────────────────
@@ -331,7 +339,7 @@ const Navbar = () => {
                 ref={menuScrollRef}
                 className="container mx-auto px-4 py-3 flex flex-col gap-0.5 max-h-[calc(100dvh-9rem)] overflow-y-auto"
               >
-                {mobileLinks.map((item) => (
+                {mobileNavItems.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
