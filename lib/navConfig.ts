@@ -25,7 +25,7 @@ export type NavEntry =
 
 export const navEntries: NavEntry[] = [
   { kind: "link", label: "Home", href: "/", icon: Home },
-  { kind: "link", label: "Srila Prabhupada", href: "/founder", icon: User },
+  { kind: "link", label: "Founder", href: "/founder", icon: User },
   { kind: "link", label: "Subhojanam", href: "/subhojanam", icon: Utensils },
   {
     kind: "group",
