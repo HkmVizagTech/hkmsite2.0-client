@@ -489,7 +489,13 @@ export default function AdminDonations() {
                   try {
                     const r = await authFetch(`${apiUrl}/donations/${selectedDonation._id}/resend-receipt`, { method: "POST", credentials: "include" });
                     const j = await r.json().catch(() => ({}));
-                    alert(j.message || (r.ok ? "Receipt resync triggered" : "Failed to resend receipt"));
+                    if (r.ok) {
+                      alert(j.message || "Receipt resync triggered");
+                    } else {
+                      // Show the actual DCC error so admin knows why it failed
+                      const detail = j.error ? `\n\nDCC said: "${j.error}"` : "";
+                      alert(`${j.message || "Failed to resend receipt"}${detail}`);
+                    }
                   } catch (err) { console.error(err); alert("Failed"); }
                 }}>Resend Receipt</Button>
                 <Button variant="outline" onClick={async () => {
@@ -501,6 +507,35 @@ export default function AdminDonations() {
                 }}>Resend WhatsApp</Button>
                 <Button variant="outline" onClick={() => { navigator.clipboard.writeText(JSON.stringify(selectedDonation, null, 2)); alert("Copied"); }}>Copy JSON</Button>
               </div>
+              {(selectedDonation.dccSyncStatus === "failed" || (!selectedDonation.receiptNumber && selectedDonation.status === "completed")) && (
+                <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50 p-3">
+                  <p className="mb-2 text-xs font-medium text-amber-800">
+                    If DCC already has this transaction, find the receipt number in DCC and enter it here:
+                  </p>
+                  <div className="flex gap-2">
+                    <input
+                      id="manual-receipt-input"
+                      type="text"
+                      placeholder="e.g. HKMI|2026|D/VSP|5413"
+                      className="flex-1 rounded-md border border-border bg-background px-3 py-1.5 text-sm outline-none focus:border-primary"
+                    />
+                    <Button size="sm" onClick={async () => {
+                      const input = document.getElementById("manual-receipt-input") as HTMLInputElement;
+                      const val = input?.value?.trim();
+                      if (!val) { alert("Please enter the receipt number first."); return; }
+                      try {
+                        const r = await authFetch(`${apiUrl}/donations/${selectedDonation._id}/receipt-number`, {
+                          method: "PUT", headers: { "Content-Type": "application/json" }, credentials: "include",
+                          body: JSON.stringify({ receiptNumber: val }),
+                        });
+                        const j = await r.json().catch(() => ({}));
+                        alert(j.message || (r.ok ? "Receipt number saved" : "Failed to save"));
+                        if (r.ok) setSelectedDonation({ ...selectedDonation, receiptNumber: val, dccSyncStatus: "synced" });
+                      } catch (err) { console.error(err); alert("Failed"); }
+                    }}>Save</Button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
