@@ -31,7 +31,6 @@ type CheckoutForm = {
   donorName: string;
   donorMobile: string;
   donorEmail: string;
-  nationality: "Indian Citizen" | "Foreign Citizen";
   customAmount: string;
   wantPrasadam: boolean;
   want80G: boolean;
@@ -261,7 +260,6 @@ const initialForm: CheckoutForm = {
   donorName: "",
   donorMobile: "",
   donorEmail: "",
-  nationality: "Indian Citizen",
   customAmount: "",
   wantPrasadam: false,
   want80G: false,
@@ -418,7 +416,6 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
           legacySevaId: selected.option.legacySevaId,
           sevaName: selected.seva.title,
           sevaOption: selected.option.label,
-          nationality: form.nationality,
         },
         handler: async (response: Record<string, string>) => {
           try {
@@ -1058,18 +1055,6 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
                 variant="amber"
                 collapsible
               />
-
-              <fieldset className="rounded-lg border border-amber-200/60 bg-white/40 p-4">
-                <legend className="px-2 text-sm font-semibold text-[#331447]">Payment Option *</legend>
-                <div className="mt-2 flex flex-wrap gap-4">
-                  {(["Indian Citizen", "Foreign Citizen"] as const).map((value) => (
-                    <label key={value} className="flex items-center gap-2 text-sm text-[#331447]">
-                      <input type="radio" checked={form.nationality === value} onChange={() => updateForm({ nationality: value })} className="accent-amber-600" />
-                      {value}
-                    </label>
-                  ))}
-                </div>
-              </fieldset>
 
               <div className="space-y-3">
                 {showPrasadamField && (

@@ -2,7 +2,7 @@
 
 import { MessageCircle, ArrowRight } from "lucide-react";
 
-const WA_COMMUNITY_LINK = "https://chat.whatsapp.com/D7HPe7vGmh8Ia0aHLJlne6";
+const WA_CHANNEL_LINK = "https://whatsapp.com/channel/0029VaZDEG67T8bWHjibTy2u";
 
 export default function WhatsAppCommunityCTA() {
   return (
@@ -14,7 +14,7 @@ export default function WhatsAppCommunityCTA() {
           </div>
           <div>
             <h3 className="text-lg font-semibold text-white md:text-xl">
-              Join Our WhatsApp Community
+              Join Our WhatsApp Channel
             </h3>
             <p className="text-sm text-white/75">
               Get festival updates, daily spiritual wisdom & connect with devotees
@@ -22,7 +22,7 @@ export default function WhatsAppCommunityCTA() {
           </div>
         </div>
         <a
-          href={WA_COMMUNITY_LINK}
+          href={WA_CHANNEL_LINK}
           target="_blank"
           rel="noopener noreferrer"
           className="group inline-flex shrink-0 items-center gap-2 rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-[#128c7e] shadow-md transition-all duration-300 hover:scale-[1.03] hover:shadow-lg active:scale-[0.98]"

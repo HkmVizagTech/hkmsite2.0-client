@@ -37,7 +37,7 @@ import { sevas, type Seva } from "@/lib/sevaConfig";
 
 const apiBase = () => (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(/\/+$/, "");
 
-const WA_COMMUNITY = "https://chat.whatsapp.com/D7HPe7vGmh8Ia0aHLJlne6";
+const WA_CHANNEL = "https://whatsapp.com/channel/0029VaZDEG67T8bWHjibTy2u";
 
 const MAPS_DIRECTIONS_URL =
   "https://maps.app.goo.gl/Yg2imkSEDxuY5u2K9?g_st=aw";
@@ -1085,7 +1085,7 @@ export default function ChaturmasClient() {
         </div>
       </section>
 
-      {/* ── JOIN WHATSAPP COMMUNITY ─────────────────────────────── */}
+      {/* ── JOIN WHATSAPP CHANNEL ─────────────────────────────── */}
       <section className="relative overflow-hidden bg-[#f5f7fa] py-16 md:py-20">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-4xl">
@@ -1099,19 +1099,19 @@ export default function ChaturmasClient() {
                   </svg>
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-xl font-bold text-white md:text-2xl">Join Our WhatsApp Community</h3>
+                  <h3 className="text-xl font-bold text-white md:text-2xl">Join Our WhatsApp Channel</h3>
                   <p className="mt-2 text-sm text-white/75 md:text-base">
                     Get daily spiritual updates, Chaturmas reminders, festival schedules, and connect with fellow devotees.
                   </p>
                 </div>
                 <a
-                  href={WA_COMMUNITY}
+                  href={WA_CHANNEL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-bold text-[#075e54] shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl"
                 >
                   <Users className="h-4 w-4" />
-                  Join Community
+                  Join Channel
                 </a>
               </div>
             </div>
@@ -1221,13 +1221,13 @@ export default function ChaturmasClient() {
                 Call the Temple
               </a>
               <a
-                href={WA_COMMUNITY}
+                href={WA_CHANNEL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-full border border-[#25D366]/40 bg-[#25D366]/10 px-8 py-4 text-sm font-semibold text-[#25D366] transition-all hover:-translate-y-0.5 hover:bg-[#25D366]/20"
               >
                 <MessageCircle className="h-4 w-4" />
-                Join WhatsApp Community
+                Join WhatsApp Channel
               </a>
               <a
                 href={MAPS_DIRECTIONS_URL}
