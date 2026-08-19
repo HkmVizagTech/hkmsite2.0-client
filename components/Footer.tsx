@@ -111,9 +111,9 @@ const Footer = () => {
               </div>
               <div className="mb-4 flex gap-3">
                 {[
-                  { icon: Youtube, href: "https://youtube.com", label: "YouTube" },
-                  { icon: Instagram, href: "https://instagram.com", label: "Instagram" },
-                  { icon: Facebook, href: "https://facebook.com", label: "Facebook" },
+                  { icon: Youtube, href: "https://www.youtube.com/user/harekrishnavizag", label: "YouTube" },
+                  { icon: Instagram, href: "https://www.instagram.com/harekrishnavizag/", label: "Instagram" },
+                  { icon: Facebook, href: "https://www.facebook.com/hkm.vizag/", label: "Facebook" },
                 ].map((social) => (
                   <a
                     key={social.label}
