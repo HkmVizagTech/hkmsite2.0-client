@@ -10,14 +10,7 @@ import HKVTLogo from "@/assets/HKVTLogo.png";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import {
-  NavigationMenu,
-  NavigationMenuList,
-  NavigationMenuItem,
-  NavigationMenuTrigger,
-  NavigationMenuContent,
-  NavigationMenuLink,
-} from "@/components/ui/navigation-menu";
+
 import { navEntries, isGroupActive } from "@/lib/navConfig";
 import { NavListItem } from "@/components/NavListItem";
 
@@ -227,65 +220,59 @@ const Navbar = () => {
             </div>
           </Link>
 
-          {/* ── Desktop NavigationMenu (hidden below lg) ──────────── */}
-          <div className="hidden lg:block">
-            <NavigationMenu>
-              <NavigationMenuList>
-                {navEntries.map((entry) => {
-                  if (entry.kind === "link") {
-                    return (
-                      <NavigationMenuItem key={entry.href}>
-                        <NavigationMenuLink
-                          asChild
-                          className={`whitespace-nowrap px-2.5 py-2 text-[13px] font-medium transition-all rounded-lg ${
-                            pathname === entry.href
-                              ? "text-primary"
-                              : "text-muted-foreground hover:text-primary"
-                          }`}
-                        >
-                          <Link href={entry.href}>
-                            {entry.label}
-                          </Link>
-                        </NavigationMenuLink>
-                      </NavigationMenuItem>
-                    );
-                  }
+          {/* ── Desktop nav with CSS hover dropdowns (hidden below lg) ── */}
+          <div className="hidden lg:flex items-center gap-1">
+            {navEntries.map((entry) => {
+              if (entry.kind === "link") {
+                return (
+                  <Link
+                    key={entry.href}
+                    href={entry.href}
+                    className={`whitespace-nowrap px-2.5 py-2 text-[13px] font-medium transition-all rounded-lg ${
+                      pathname === entry.href
+                        ? "text-primary"
+                        : "text-muted-foreground hover:text-primary"
+                    }`}
+                  >
+                    {entry.label}
+                  </Link>
+                );
+              }
 
-                  // Dropdown group
-                  const group = entry.group;
-                  const groupActive = isGroupActive(group, pathname);
-                  const colCount =
-                    group.items.length > 4 ? "md:w-[500px] md:grid-cols-2" : "md:w-[400px]";
+              const group = entry.group;
+              const groupActive = isGroupActive(group, pathname);
+              const colCount =
+                group.items.length > 4 ? "md:w-[500px] md:grid-cols-2" : "md:w-[400px]";
 
-                  return (
-                    <NavigationMenuItem key={group.label}>
-                      <NavigationMenuTrigger
-                        className={`text-[13px] ${
-                          groupActive
-                            ? "text-primary data-[state=open]:text-primary"
-                            : ""
-                        }`}
-                      >
-                        {group.label}
-                      </NavigationMenuTrigger>
-                      <NavigationMenuContent>
-                        <ul className={`grid gap-3 p-4 ${colCount}`}>
-                          {group.items.map((item) => (
-                            <NavListItem
-                              key={item.href}
-                              href={item.href}
-                              title={item.label}
-                              description={item.description}
-                              icon={item.icon}
-                            />
-                          ))}
-                        </ul>
-                      </NavigationMenuContent>
-                    </NavigationMenuItem>
-                  );
-                })}
-              </NavigationMenuList>
-            </NavigationMenu>
+              return (
+                <div key={group.label} className="relative group/dropdown">
+                  <button
+                    className={`flex items-center whitespace-nowrap px-2.5 py-2 text-[13px] font-medium transition-all rounded-lg ${
+                      groupActive
+                        ? "text-primary"
+                        : "text-muted-foreground hover:text-primary"
+                    }`}
+                  >
+                    {group.label}
+                    <ChevronDown className="relative top-[1px] ml-1 h-3 w-3 transition duration-200 group-hover/dropdown:rotate-180" />
+                  </button>
+                  {/* Dropdown — absolutely positioned under this trigger */}
+                  <div className="invisible opacity-0 group-hover/dropdown:visible group-hover/dropdown:opacity-100 transition-all duration-200 absolute left-1/2 -translate-x-1/2 top-full pt-2 z-50">
+                    <ul className={`grid gap-3 p-4 rounded-xl border bg-popover shadow-lg ${colCount}`}>
+                      {group.items.map((item) => (
+                        <NavListItem
+                          key={item.href}
+                          href={item.href}
+                          title={item.label}
+                          description={item.description}
+                          icon={item.icon}
+                        />
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
           {/* ── Desktop right actions (theme toggle + Donate) ─────── */}

@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import {
   Heart, ShieldCheck, Sparkles,
@@ -10,7 +11,7 @@ import {
 import PageLayout from "@/components/PageLayout";
 import Ornament from "@/components/Ornament";
 import TempleCarousel from "@/components/TempleCarousel";
-import { sevas, getSevaHref } from "@/lib/sevaConfig";
+import { sevas, getSevaHref, type Seva } from "@/lib/sevaConfig";
 
 const PRIVILEGES = [
   { icon: Gift, title: "Prasadam at Home", desc: "Receive blessed prasadam delivered every month" },
@@ -62,6 +63,43 @@ const SEVA_SLIDES = [
 ];
 
 export default function DonateHubPage() {
+  const [visibleSeva, setVisibleSeva] = useState<Seva | null>(null);
+  const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+
+  useEffect(() => {
+    // Only run scroll detection on mobile — desktop uses hover
+    const isMobile = () => window.innerWidth < 768;
+    if (!isMobile()) return;
+
+    const handleScroll = () => {
+      if (!isMobile()) return;
+      const viewportCenter = window.innerHeight / 2;
+      let closestSlug: string | null = null;
+      let closestDist = Infinity;
+
+      cardRefs.current.forEach((el, slug) => {
+        const rect = el.getBoundingClientRect();
+        const cardCenter = rect.top + rect.height / 2;
+        const dist = Math.abs(cardCenter - viewportCenter);
+        if (rect.bottom > 0 && rect.top < window.innerHeight && dist < closestDist) {
+          closestDist = dist;
+          closestSlug = slug;
+        }
+      });
+
+      if (closestSlug && closestDist < window.innerHeight * 0.35) {
+        const seva = sevas.find((s) => s.slug === closestSlug);
+        setVisibleSeva(seva || null);
+      } else {
+        setVisibleSeva(null);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <PageLayout>
       <main className="bg-white dark:bg-background">
@@ -85,33 +123,57 @@ export default function DonateHubPage() {
             </div>
 
             <div className="mx-auto grid max-w-6xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {sevas.map((seva) => {
+              {sevas.map((seva, index) => {
                 return (
-                  <Link
+                  <motion.div
                     key={seva.slug}
-                    href={getSevaHref(seva)}
-                    className="group overflow-hidden rounded-3xl border border-border bg-card shadow-warm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-elevated"
+                    ref={(el) => { if (el) cardRefs.current.set(seva.slug, el); }}
+                    data-seva-slug={seva.slug}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-50px" }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
                   >
-                    <div className="relative aspect-[16/9] overflow-hidden">
-                      <Image
-                        src={seva.image}
-                        alt={seva.title}
-                        fill
-                        sizes="(min-width: 1024px) 380px, (min-width: 640px) 50vw, 92vw"
-                        className="object-cover transition-transform duration-700 group-hover:scale-[1.06]"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[hsl(220,85%,10%,0.78)] via-transparent to-transparent" />
-                      <h3 className="absolute bottom-4 left-5 font-heading text-xl font-bold text-white">
-                        {seva.icon} {seva.title}
+                  <Link
+                    href={getSevaHref(seva)}
+                    className="group relative block aspect-[3/2] overflow-hidden rounded-3xl border border-border shadow-warm transition-all duration-300 hover:-translate-y-2 hover:shadow-elevated"
+                  >
+                    {/* Poster fills entire card */}
+                    <Image
+                      src={seva.image}
+                      alt={seva.title}
+                      fill
+                      sizes="(min-width: 1024px) 380px, (min-width: 640px) 50vw, 92vw"
+                      className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                    {/* Gradient overlay at bottom for text readability */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                    
+                    {/* Seva name at bottom */}
+                    <div className="absolute bottom-0 left-0 right-0 p-6">
+                      <h3 className="font-heading text-2xl font-bold text-white drop-shadow-lg">
+                        {seva.title}
                       </h3>
+                      <p className="mt-1 text-sm text-white/80">
+                        {seva.tagline}
+                      </p>
                     </div>
-                    <div className="p-6">
-                      <p className="mb-5 text-xs text-muted-foreground">{seva.tagline}</p>
-                      <span className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-gold py-3.5 text-[15px] font-bold text-[hsl(220,60%,12%)] shadow-gold">
-                        🪔 Sponsor {seva.shortTitle} <ArrowRight className="h-4 w-4" />
+
+                    {/* Mobile: Donate button appears when card is in center of screen */}
+                    <div className={`absolute inset-0 flex items-center justify-center bg-black/30 transition-opacity duration-500 md:hidden ${visibleSeva?.slug === seva.slug ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+                      <span className="flex items-center gap-2 rounded-full bg-gradient-gold px-8 py-3.5 text-sm font-bold text-[hsl(220,60%,12%)] shadow-gold">
+                        🪔 Donate Now <ArrowRight className="h-4 w-4" />
+                      </span>
+                    </div>
+
+                    {/* Desktop: Donate button on hover */}
+                    <div className="absolute inset-0 hidden items-center justify-center bg-black/30 opacity-0 transition-opacity duration-300 group-hover:opacity-100 md:flex">
+                      <span className="flex items-center gap-2 rounded-full bg-gradient-gold px-8 py-3.5 text-sm font-bold text-[hsl(220,60%,12%)] shadow-gold">
+                        🪔 Donate Now <ArrowRight className="h-4 w-4" />
                       </span>
                     </div>
                   </Link>
+                  </motion.div>
                 );
               })}
             </div>
