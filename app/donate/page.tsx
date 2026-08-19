@@ -149,12 +149,24 @@ export default function DonateHubPage() {
                     {/* Gradient overlay at bottom for text readability */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                     
-                    {/* Seva name at bottom */}
-                    <div className="absolute bottom-0 left-0 right-0 p-6">
-                      <h3 className="font-heading text-2xl font-bold text-white drop-shadow-lg">
+                    {/* Seva name at bottom — shifts down and shrinks when donate button appears on mobile */}
+                    <div className={`absolute left-0 right-0 transition-all duration-500 md:bottom-0 md:p-6 ${
+                      visibleSeva?.slug === seva.slug
+                        ? "bottom-2 px-6 pb-3 md:!bottom-0 md:!p-6"
+                        : "bottom-0 p-6"
+                    }`}>
+                      <h3 className={`font-heading font-bold text-white drop-shadow-lg transition-all duration-500 md:text-2xl ${
+                        visibleSeva?.slug === seva.slug
+                          ? "text-lg md:!text-2xl"
+                          : "text-2xl"
+                      }`}>
                         {seva.title}
                       </h3>
-                      <p className="mt-1 text-sm text-white/80">
+                      <p className={`text-white/80 transition-all duration-500 md:text-sm ${
+                        visibleSeva?.slug === seva.slug
+                          ? "mt-0.5 text-xs md:!text-sm"
+                          : "mt-1 text-sm"
+                      }`}>
                         {seva.tagline}
                       </p>
                     </div>
