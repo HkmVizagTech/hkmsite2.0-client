@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import JanmashtamiClient from "./JanmashtamiClient";
 
 export const metadata = {
@@ -7,5 +8,9 @@ export const metadata = {
 };
 
 export default function JanmashtamiPage() {
-  return <JanmashtamiClient />;
+  return (
+    <Suspense fallback={null}>
+      <JanmashtamiClient />
+    </Suspense>
+  );
 }

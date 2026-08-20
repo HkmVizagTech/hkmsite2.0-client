@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import { ArrowLeft, ArrowRight, Check, Clock, Copy, Facebook, FileCheck2, Heart, Instagram, Mail, MapPin, MessageCircle, Phone, ShieldCheck, Youtube, UtensilsCrossed } from "lucide-react";
@@ -407,6 +408,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
   const reduce = useReducedMotion();
   const attribution = useAttribution(campaigner ? `/janmashtami/c/${campaigner.slug}` : "janmashtami");
   const razorpayReady = useRazorpayPreload();
+  const searchParams = useSearchParams();
   const [activeSlide, setActiveSlide] = useState(0);
   const [selected, setSelected] = useState<SelectedOffering | null>(null);
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
@@ -467,6 +469,15 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
     const seva = sevas.find((s) => s.slug === slug);
     if (seva) selectSeva(seva);
   };
+
+  // Ad CTA deep-linking: ?seva=abhisheka scrolls to and opens that seva's
+  // checkout panel automatically, so a Janmashtami ad for a specific seva
+  // lands the donor exactly where they clicked for, not the top of the page.
+  useEffect(() => {
+    const sevaParam = searchParams.get("seva");
+    if (sevaParam) onSevaChange(sevaParam);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   const validate = () => {
     if (!selected) return "Please select a seva.";
