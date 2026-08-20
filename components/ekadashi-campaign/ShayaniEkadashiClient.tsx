@@ -17,6 +17,7 @@ import AddressForm from "@/components/AddressForm";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
 import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
+import { newEventId, getMetaBrowserData, trackPurchase } from "@/lib/metaPixel";
 import type { PrasadamAddress } from "@/components/AddressForm";
 import FaqSection from "@/components/sqft-campaign/FaqSection";
 import FounderSection from "@/components/sqft-campaign/FounderSection";
@@ -396,6 +397,8 @@ export default function ShayaniEkadashiClient() {
 
     setSubmitting(true);
     try {
+      const metaEventId = newEventId();
+      const metaBrowser = getMetaBrowserData();
       const orderRes = await fetch(`${apiBase()}/payments/order`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -417,6 +420,9 @@ export default function ShayaniEkadashiClient() {
           prasadamAddress: wantsMahaPrasadam
             ? { street: address.street.trim(), city: address.city.trim(), state: address.state.trim(), pincode: address.pincode.trim(), country: "India" }
             : undefined,
+          metaEventId,
+          metaFbp: metaBrowser.fbp,
+          metaFbc: metaBrowser.fbc,
         }),
       });
 
@@ -449,6 +455,7 @@ export default function ShayaniEkadashiClient() {
               }),
             });
             if (!verifyRes.ok) throw new Error("Payment verification failed.");
+            trackPurchase({ value: finalAmount, eventId: metaEventId, content_name: selectedSeva.sevaName });
             router.push(`/shayani-ekadashi/thank-you?seva=${encodeURIComponent(selectedSeva.sevaName)}&amount=${finalAmount}`);
           } catch (err) {
             setStatus({

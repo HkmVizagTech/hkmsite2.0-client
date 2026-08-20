@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useAttribution } from "@/lib/useAttribution";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
+import { newEventId, getMetaBrowserData, trackPurchase } from "@/lib/metaPixel";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
 
 const fmt = (n: number) => Number(n).toLocaleString("en-IN");
@@ -67,6 +68,8 @@ export default function DonationForm({ config, setToast }: any) {
     }
   const apiBase = ((process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || 'http://localhost:8080').replace(/\/+$/, '');
     try {
+  const metaEventId = newEventId();
+  const metaBrowser = getMetaBrowserData();
   const orderRes = await fetch(`${apiBase}/payments/order`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -92,7 +95,10 @@ export default function DonationForm({ config, setToast }: any) {
           } : null,
           festivalSlug: config?.slug || config?.title || undefined,
           sourcePage: attribution.sourcePage,
-          utm: attribution.payload().utm
+          utm: attribution.payload().utm,
+          metaEventId,
+          metaFbp: metaBrowser.fbp,
+          metaFbc: metaBrowser.fbc,
         })
       });
       if (!orderRes.ok) throw new Error('Failed to create payment order');
@@ -146,6 +152,7 @@ export default function DonationForm({ config, setToast }: any) {
             body: JSON.stringify(payload)
       ,      credentials: 'include' });
           if (!donateRes.ok) throw new Error('Failed to record donation after payment');
+          trackPurchase({ value: totalAmount, eventId: metaEventId, content_name: config?.title || 'Festival Seva' });
           window.location.assign(`/payment/thank-you?type=seva&seva=${encodeURIComponent(config?.title || 'Festival seva')}&amount=${totalAmount}&source=${encodeURIComponent(config?.title || 'our festival seva programmes')}`);
         },
         prefill: {

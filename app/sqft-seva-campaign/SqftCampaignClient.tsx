@@ -12,6 +12,7 @@ import {
 import PageLayout from "@/components/PageLayout";
 import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
+import { newEventId, getMetaBrowserData, trackPurchase } from "@/lib/metaPixel";
 import Ornament from "@/components/Ornament";
 import HeroSection from "@/components/sqft-campaign/HeroSection";
 import DonationFormSection from "@/components/sqft-campaign/DonationFormSection";
@@ -249,6 +250,8 @@ export default function SqftCampaignClient({
 
     setSubmitting(true);
     try {
+      const metaEventId = newEventId();
+      const metaBrowser = getMetaBrowserData();
       const sourcePage = campaigner ? `/sqft-seva-campaign/c/${campaigner.slug}` : `/${campaignType === "BRICK" ? "brick-seva-campaign" : "sqft-seva-campaign"}`;
       const units = price > 0 ? Math.floor(finalAmount / price) : 0;
       const unitLabel = `${units} ${units === 1 ? config.unitName : config.unitNamePlural}`;
@@ -268,6 +271,9 @@ export default function SqftCampaignClient({
         certificate: want80G,
         panNumber: want80G ? form.panNumber.trim() : undefined,
         campaignerSlug: campaigner?.slug || undefined,
+        metaEventId,
+        metaFbp: metaBrowser.fbp,
+        metaFbc: metaBrowser.fbc,
       };
 
       // Monthly autopay → Razorpay Subscription; one-time → Razorpay Order.
@@ -338,6 +344,7 @@ export default function SqftCampaignClient({
               }),
             });
             if (!verifyRes.ok) throw new Error("Payment verification failed.");
+            trackPurchase({ value: finalAmount, eventId: metaEventId, content_name: config.pageTitle });
             // Send the donor to the thank-you page with their offering details.
             const params = new URLSearchParams({
               amount: String(finalAmount),

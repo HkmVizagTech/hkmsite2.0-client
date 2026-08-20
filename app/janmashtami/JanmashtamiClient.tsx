@@ -13,6 +13,7 @@ import JanmashtamiGallery from "@/components/JanmashtamiGallery";
 import JanmashtamiImportanceSection from "@/components/janmashtami/JanmashtamiImportanceSection";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
 import { useAttribution } from "@/lib/useAttribution";
+import { newEventId, getMetaBrowserData, trackInitiateCheckout, trackPurchase } from "@/lib/metaPixel";
 
 type SevaOption = {
   legacySevaId: number;
@@ -453,6 +454,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
     setSelectedAmount(null);
     updateForm({ customAmount: "" });
     setStatus({ type: "idle", message: "" });
+    trackInitiateCheckout({ content_name: seva.title });
     document.getElementById("checkout-form")?.scrollIntoView({
       behavior: reduce ? "auto" : "smooth",
       block: "start",
@@ -509,6 +511,8 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
     setStatus({ type: "idle", message: "" });
 
     try {
+      const metaEventId = newEventId();
+      const metaBrowser = getMetaBrowserData();
       const orderResponse = await fetch(`${apiBase()}/payments/order`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -529,6 +533,9 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
           certificate: form.want80G,
           panNumber: form.want80G ? form.panNumber : undefined,
           mahaprasadam: form.wantPrasadam,
+          metaEventId,
+          metaFbp: metaBrowser.fbp,
+          metaFbc: metaBrowser.fbc,
           prasadamAddress: needsAddress
             ? {
                 doorNo: form.doorNo,
@@ -584,6 +591,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
             });
 
             if (!verifyResponse.ok) throw new Error("Payment verification failed.");
+            trackPurchase({ value: finalAmount, eventId: metaEventId, content_name: selected?.seva.title || "Janmashtami Seva" });
             window.location.assign(`/payment/thank-you?type=seva&seva=${encodeURIComponent(selected?.seva.title || "Janmashtami seva")}&amount=${finalAmount}&source=${encodeURIComponent("the Janmashtami seva programme")}`);
             setSelected(null);
           } catch (verifyError) {

@@ -26,6 +26,7 @@ import { useAttribution } from "@/lib/useAttribution";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
 import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
+import { newEventId, getMetaBrowserData, trackInitiateCheckout, trackPurchase } from "@/lib/metaPixel";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 
@@ -188,6 +189,8 @@ export default function SpecialOccasionClient() {
 
     setSubmitting(true);
     try {
+      const metaEventId = newEventId();
+      const metaBrowser = getMetaBrowserData();
       const orderRes = await fetch(`${apiBase()}/payments/order`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -205,6 +208,9 @@ export default function SpecialOccasionClient() {
           sevakName: sevakName.trim() || undefined,
           dob: dob || undefined,
           utm: attribution.payload().utm,
+          metaEventId,
+          metaFbp: metaBrowser.fbp,
+          metaFbc: metaBrowser.fbc,
         }),
       });
 
@@ -237,6 +243,7 @@ export default function SpecialOccasionClient() {
               }),
             });
             if (!verifyRes.ok) throw new Error("Payment verification failed.");
+            trackPurchase({ value: finalAmount, eventId: metaEventId, content_name: selectedSeva.title });
             window.location.assign(`/payment/thank-you?type=seva&seva=${encodeURIComponent(selectedSeva.title)}&amount=${finalAmount}&source=${encodeURIComponent(`the ${occasion.toLowerCase()} celebration seva programme`)}`);
           } catch (err) {
             setStatus({ type: "error", message: err instanceof Error ? err.message : "Payment verification failed." });
