@@ -3,12 +3,13 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
-import { ArrowLeft, ArrowRight, Clock, Facebook, FileCheck2, Heart, Instagram, Mail, MapPin, MessageCircle, Phone, ShieldCheck, Youtube, UtensilsCrossed, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Clock, Copy, Facebook, FileCheck2, Heart, Instagram, Mail, MapPin, MessageCircle, Phone, ShieldCheck, Youtube, UtensilsCrossed, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
 import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
 import JanmashtamiGallery from "@/components/JanmashtamiGallery";
+import JanmashtamiImportanceSection from "@/components/janmashtami/JanmashtamiImportanceSection";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
 import { useAttribution } from "@/lib/useAttribution";
 
@@ -295,6 +296,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
   const [form, setForm] = useState<CheckoutForm>(initialForm);
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<{ type: "success" | "error" | "idle"; message: string }>({ type: "idle", message: "" });
+  const [copiedField, setCopiedField] = useState<string | null>(null);
 
   const finalAmount = selected?.option.amount ?? Number(form.customAmount || 0);
   const showTaxField = finalAmount >= 500;
@@ -814,15 +816,36 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
         </div>
       </section>
 
+      <JanmashtamiImportanceSection />
+
       <section className="px-4 py-12 md:py-16">
         <div className="mx-auto max-w-6xl rounded-lg border border-amber-900/15 bg-white p-6 shadow-[0_14px_35px_rgba(68,31,17,0.12)]">
           <h2 className="text-xl font-bold text-[#331447]">Donation Through Bank (NEFT/ RTGS)</h2>
-          <p className="mt-4 leading-8 text-slate-700">
-            Beneficiary Name : HARE KRISHNA MOVEMENT INDIA<br />
-            Bank Name: IDFC FIRST BANK LTD<br />
-            A/c No: 10091415313<br />
-            IFSC code: IDFB0080412
-          </p>
+          <div className="mt-4 space-y-3 text-slate-700">
+            {[
+              { label: "Beneficiary Name", value: "HARE KRISHNA MOVEMENT INDIA" },
+              { label: "Bank Name", value: "IDFC FIRST BANK LTD" },
+              { label: "A/c No", value: "10091415313" },
+              { label: "IFSC Code", value: "IDFB0080412" },
+            ].map(({ label, value }) => (
+              <div key={label} className="flex items-center gap-3">
+                <span className="font-medium">{label}:</span>
+                <span className="select-all">{value}</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(value);
+                    setCopiedField(label);
+                    setTimeout(() => setCopiedField(null), 1500);
+                  }}
+                  className="ml-1 inline-flex items-center rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
+                  title={`Copy ${label}`}
+                >
+                  {copiedField === label ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
