@@ -23,6 +23,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import UtmBuilderTab from "@/app/donations/admin/UtmBuilderTab";
 import SiteUtmAnalyticsTab from "./SiteUtmAnalyticsTab";
 import ManualEntryTab from "./ManualEntryTab";
+import ReportsTab from "./ReportsTab";
 
 const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:3003";
 
@@ -148,6 +149,7 @@ export default function AdminDonations() {
       <Tabs defaultValue="overview">
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="reports">Reports</TabsTrigger>
           <TabsTrigger value="manual-entry">Manual Entry</TabsTrigger>
           <TabsTrigger value="utm-analytics">UTM Analytics</TabsTrigger>
           <TabsTrigger value="utm-builder">UTM Builder</TabsTrigger>
@@ -430,6 +432,10 @@ export default function AdminDonations() {
         </div>
       </div>
 
+        </TabsContent>
+
+        <TabsContent value="reports" className="mt-6">
+          <ReportsTab />
         </TabsContent>
 
         <TabsContent value="manual-entry" className="mt-6">
