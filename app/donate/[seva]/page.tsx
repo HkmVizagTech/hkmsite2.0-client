@@ -94,7 +94,7 @@ function DonateSevaPageInner({ params }: { params: Promise<{ seva: string }> }) 
     (async () => {
       try {
         const res = await fetch(
-          `${apiBase()}/seva-stats?sevaName=${encodeURIComponent(seva.title)}&category=${encodeURIComponent(seva.category)}&limit=10`
+          `${apiBase()}/seva-stats?sevaName=${encodeURIComponent(seva.title)}&category=${encodeURIComponent(seva.category)}&limit=5`
         );
         if (res.ok) {
           const data = await res.json();
@@ -188,7 +188,7 @@ function DonateSevaPageInner({ params }: { params: Promise<{ seva: string }> }) 
                 </h3>
               </div>
               <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-                {donors.slice(0, 6).map((d, i) => (
+                {donors.slice(0, 5).map((d, i) => (
                   <motion.div
                     key={`${d.name}-${i}`}
                     initial={{ opacity: 0, y: 8 }}

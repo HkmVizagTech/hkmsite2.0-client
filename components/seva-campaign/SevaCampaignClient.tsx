@@ -116,7 +116,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
     (async () => {
       try {
         const res = await fetch(
-          `${apiBase()}/seva-stats?sevaName=${encodeURIComponent(config.pageTitle)}&category=${encodeURIComponent(config.category)}&limit=10`
+          `${apiBase()}/seva-stats?sevaName=${encodeURIComponent(config.pageTitle)}&category=${encodeURIComponent(config.category)}&limit=5`
         );
         if (res.ok) setStats(await res.json());
       } catch {}
@@ -877,7 +877,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                 </h2>
               </div>
               <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
-                {stats.donors.slice(0, 6).map((d, i) => (
+                {stats.donors.slice(0, 5).map((d, i) => (
                   <motion.div
                     key={`${d.name}-${i}`}
                     initial={{ opacity: 0, y: 8 }}
