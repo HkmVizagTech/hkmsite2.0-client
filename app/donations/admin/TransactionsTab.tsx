@@ -56,6 +56,7 @@ export default function TransactionsTab() {
   const [status, setStatus] = useState("all");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   const [totalAmount, setTotalAmount] = useState(0);
   const [selected, setSelected] = useState<Transaction | null>(null);
   const [startDate, setStartDate] = useState("");
@@ -75,6 +76,7 @@ export default function TransactionsTab() {
         if (data.success) {
           setTransactions(data.transactions);
           setTotalPages(data.pagination.totalPages);
+          setTotalCount(data.pagination.totalTransactions || 0);
           setTotalAmount(data.pagination.totalAmount);
         }
       })
@@ -201,10 +203,14 @@ export default function TransactionsTab() {
         <Card><CardContent className="py-12 text-center text-muted-foreground">No transactions match these filters.</CardContent></Card>
       ) : (
         <div className="space-y-2">
-          {transactions.map((txn) => (
+          {transactions.map((txn, i) => (
             <Card key={txn._id} className="cursor-pointer transition-shadow hover:shadow-md" onClick={() => setSelected(txn)}>
               <CardContent className="flex flex-wrap items-center justify-between gap-3 p-4">
-                <div className="min-w-0">
+                <div className="flex min-w-0 items-start gap-3">
+                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-muted-foreground">
+                    {totalCount - (page - 1) * 20 - i}
+                  </span>
+                  <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     <p className="font-semibold text-foreground">{txn.donorName || "Anonymous"}</p>
                     <Badge className={statusColor[txn.status] || ""}>{txn.status}</Badge>
@@ -219,6 +225,7 @@ export default function TransactionsTab() {
                     {txn.sevaName && " · "}
                     {txn.donorEmail} · {txn.donorMobile} · {new Date(txn.date).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
                   </p>
+                  </div>
                 </div>
                 <p className="shrink-0 text-lg font-bold text-primary">₹{txn.amount.toLocaleString("en-IN")}</p>
               </CardContent>

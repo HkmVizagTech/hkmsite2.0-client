@@ -142,7 +142,8 @@ export default function AdminRegister() {
             </Button>
           </form>
           <p className="text-xs text-center mt-4 text-muted-foreground">
-            Need a full admin account instead? That has to be set up separately — this form only creates Standard or Donations Admin accounts.
+            Need a full admin account instead? Use the{" "}
+            <a href="/admin/register-admin" className="underline">separate full-admin form</a> — kept distinct on purpose.
           </p>
         </div>
       </motion.div>

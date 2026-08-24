@@ -2,8 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Phone, Mail, Sun, Moon, Clock, Heart, ChevronDown, Home, User, Utensils, Info } from "lucide-react";
-import { useTheme } from "next-themes";
+import { Menu, X, Phone, Mail, Clock, Heart, ChevronDown, Home, User, Utensils, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ISKLogo from "@/assets/ISKCONGambheeramLogo.jpeg";
 import HKVTLogo from "@/assets/HKVTLogo.png";
@@ -73,8 +72,7 @@ const Navbar = () => {
   const [menuCanScroll, setMenuCanScroll] = useState(false);
   const menuScrollRef = useRef<HTMLDivElement>(null);
 
-  const { resolvedTheme, setTheme } = useTheme();
-  const darkMode = resolvedTheme === "dark";
+  // Dark mode removed sitewide — theme is forced to light in ThemeProvider.
   const pathname = usePathname();
 
   // ── Darshan interval ──────────────────────────────────────────────
@@ -119,7 +117,6 @@ const Navbar = () => {
   // ── Toggle mobile menu ────────────────────────────────────────────
   const toggleMobile = () => setMobileOpen((v) => !v);
 
-  const toggleTheme = () => setTheme(darkMode ? "light" : "dark");
 
   // ── Render ────────────────────────────────────────────────────────
   return (
@@ -275,15 +272,8 @@ const Navbar = () => {
             })}
           </div>
 
-          {/* ── Desktop right actions (theme toggle + Donate) ─────── */}
+          {/* ── Desktop right actions (Donate) ─────── */}
           <div className="hidden lg:flex items-center gap-1.5">
-            <button
-              onClick={toggleTheme}
-              className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition-all"
-              aria-label="Toggle dark mode"
-            >
-              {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-            </button>
             <Button
               variant="default"
               className="rounded-full px-4 bg-gradient-ocean text-white border-0 hover:opacity-90"
@@ -339,13 +329,6 @@ const Navbar = () => {
                     {item.label}
                   </Link>
                 ))}
-                <button
-                  onClick={toggleTheme}
-                  className="mt-1.5 flex items-center justify-center gap-2 rounded-full border border-border px-4 py-2.5 text-[15px] font-medium text-foreground transition-colors hover:text-primary hover:border-primary"
-                >
-                  {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-                  {darkMode ? "Light Mode" : "Dark Mode"}
-                </button>
                 <Button
                   variant="default"
                   className="mt-1.5 rounded-full bg-gradient-ocean text-white border-0 text-[15px]"

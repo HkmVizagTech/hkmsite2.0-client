@@ -77,9 +77,29 @@ const organizationJsonLd = {
     postalCode: "531163",
     addressCountry: "IN",
   },
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: 17.8791762,
+    longitude: 83.372373,
+  },
   telephone: "+91 89777 61187",
   email: "social@hkmvizag.org",
-  openingHours: "Mo-Su 04:30-20:30",
+  // Real opening pattern (three blocks — the deities rest midday), not a
+  // single continuous window. Matches /daily-schedule exactly.
+  openingHoursSpecification: [
+    { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], opens: "04:30", closes: "05:00" },
+    { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], opens: "07:15", closes: "12:20" },
+    { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], opens: "16:15", closes: "20:15" },
+  ],
+  // Links Google's Knowledge Graph entity to our real, active social
+  // profiles — a genuine local-SEO signal, distinct from (and in support
+  // of) claiming/verifying the actual Google Business Profile listing.
+  sameAs: [
+    "https://www.facebook.com/hkm.vizag/",
+    "https://www.instagram.com/harekrishnavizag/",
+    "https://www.youtube.com/user/harekrishnavizag",
+    "https://x.com/hkm_vizag",
+  ],
 };
 
 const faqJsonLd = {

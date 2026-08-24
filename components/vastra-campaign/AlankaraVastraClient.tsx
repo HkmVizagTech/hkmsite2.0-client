@@ -20,6 +20,7 @@ import type { PrasadamAddress } from "@/components/AddressForm";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
 import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
+import { newEventId, getMetaBrowserData, trackPurchase } from "@/lib/metaPixel";
 import { type CampaignConfig } from "@/lib/campaignConfig";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
@@ -238,6 +239,8 @@ export default function AlankaraVastraClient() {
 
     setSubmitting(true);
     try {
+      const metaEventId = newEventId();
+      const metaBrowser = getMetaBrowserData();
       const baseBody = {
         account: "default",
         sourcePage: "/alankara-vastra-seva",
@@ -252,6 +255,9 @@ export default function AlankaraVastraClient() {
         dob: form.dob || undefined,
         certificate: want80G,
         panNumber: want80G ? form.panNumber.trim() : undefined,
+        metaEventId,
+        metaFbp: metaBrowser.fbp,
+        metaFbc: metaBrowser.fbc,
       };
 
       // Monthly autopay → Razorpay Subscription; one-time → Razorpay Order.
@@ -305,6 +311,7 @@ export default function AlankaraVastraClient() {
               }),
             });
             if (!verifyRes.ok) throw new Error("Payment verification failed.");
+            trackPurchase({ value: finalAmount, eventId: metaEventId, content_name: config.pageTitle });
             window.location.assign(`/payment/thank-you?type=seva&seva=${encodeURIComponent(config.pageTitle)}&amount=${finalAmount}&source=${encodeURIComponent("the vastra and alankara seva programme")}${monthly ? "&recurring=1" : ""}`);
           } catch (err) {
             setStatus({

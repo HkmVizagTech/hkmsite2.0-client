@@ -22,6 +22,15 @@ export default function AdminRootLayout({
     }
   }, [isAuthenticated, router, pathname]);
 
+  // Force a password change before letting an admin-created account reach
+  // anywhere else in the admin panel — they're logging in with a password
+  // an admin chose for them.
+  useEffect(() => {
+    if (isAuthenticated && user?.mustChangePassword && pathname !== "/admin/change-password") {
+      router.push("/admin/change-password");
+    }
+  }, [isAuthenticated, user, pathname, router]);
+
   if (pathname === "/admin/login") {
     return <>{children}</>;
   }
@@ -41,6 +50,14 @@ export default function AdminRootLayout({
 
   if (!isAuthenticated) {
     return null;
+  }
+
+  // Change-password itself needs auth (checked above) but must be reachable
+  // by every role and must skip the role-scoped gates below — a
+  // donations_admin or blogs_admin forced to change their password still
+  // needs to reach this page, not get bounced to their scoped area.
+  if (pathname === "/admin/change-password") {
+    return <>{children}</>;
   }
 
   // A donations_admin account is scoped to /donations/admin only — it must

@@ -12,6 +12,7 @@ import {
 import PageLayout from "@/components/PageLayout";
 import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
+import { newEventId, getMetaBrowserData, trackPurchase } from "@/lib/metaPixel";
 import Ornament from "@/components/Ornament";
 import ImportanceSection from "@/components/sqft-campaign/ImportanceSection";
 import FaqSection from "@/components/sqft-campaign/FaqSection";
@@ -185,6 +186,8 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
 
     setSubmitting(true);
     try {
+      const metaEventId = newEventId();
+      const metaBrowser = getMetaBrowserData();
       // Shared donor/seva fields for both one-time and monthly flows.
       const baseBody = {
         account: config.account,
@@ -200,6 +203,9 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
         dob: form.dob || undefined,
         certificate: want80G,
         panNumber: want80G ? form.panNumber.trim() : undefined,
+        metaEventId,
+        metaFbp: metaBrowser.fbp,
+        metaFbc: metaBrowser.fbc,
       };
 
       // Monthly autopay → Razorpay Subscription; one-time → Razorpay Order.
@@ -253,6 +259,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
               }),
             });
             if (!verifyRes.ok) throw new Error("Payment verification failed.");
+            trackPurchase({ value: finalAmount, eventId: metaEventId, content_name: config.pageTitle });
             window.location.assign(`/payment/thank-you?type=seva&seva=${encodeURIComponent(config.pageTitle)}&amount=${finalAmount}&source=${encodeURIComponent("the " + config.pageTitle.toLowerCase() + " programme")}${monthly ? "&recurring=1" : ""}`);
           } catch (err) {
             setStatus({

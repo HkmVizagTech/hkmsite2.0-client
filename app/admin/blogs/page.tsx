@@ -243,6 +243,18 @@ export default function AdminBlogs() {
       const url = editing ? `${API_URL}/blogs/${editing._id}` : `${API_URL}/blogs`;
       const method = editing ? "PUT" : "POST";
       const res = await authFetch(url, { method, body: fd, credentials: "include" });
+
+      const contentType = res.headers.get("content-type") || "";
+      if (!contentType.includes("application/json")) {
+        // Server (or a proxy in front of it) returned something other than
+        // JSON — a gateway timeout/error page, not an app-level failure.
+        toast({
+          title: "Unexpected server response",
+          description: `The server didn't return the expected data (HTTP ${res.status}). This is usually a brief connectivity issue — please try again in a moment.`,
+          variant: "destructive",
+        });
+        return;
+      }
       const json = await res.json();
 
       if (res.ok) {
