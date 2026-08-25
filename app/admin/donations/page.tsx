@@ -25,6 +25,7 @@ import SiteUtmAnalyticsTab from "./SiteUtmAnalyticsTab";
 import ManualEntryTab from "./ManualEntryTab";
 import ReportsTab from "./ReportsTab";
 import NeedsManualReceiptTab from "./NeedsManualReceiptTab";
+import NeedsWhatsAppTab from "./NeedsWhatsAppTab";
 
 const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:3003";
 
@@ -153,6 +154,7 @@ export default function AdminDonations() {
           <TabsTrigger value="reports">Reports</TabsTrigger>
           <TabsTrigger value="manual-entry">Manual Entry</TabsTrigger>
           <TabsTrigger value="needs-receipt">Needs Manual Receipt</TabsTrigger>
+          <TabsTrigger value="needs-whatsapp">Needs WhatsApp</TabsTrigger>
           <TabsTrigger value="utm-analytics">UTM Analytics</TabsTrigger>
           <TabsTrigger value="utm-builder">UTM Builder</TabsTrigger>
         </TabsList>
@@ -446,6 +448,10 @@ export default function AdminDonations() {
 
         <TabsContent value="needs-receipt" className="mt-6">
           <NeedsManualReceiptTab />
+        </TabsContent>
+
+        <TabsContent value="needs-whatsapp" className="mt-6">
+          <NeedsWhatsAppTab />
         </TabsContent>
 
         <TabsContent value="utm-analytics" className="mt-6">
