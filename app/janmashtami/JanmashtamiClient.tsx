@@ -14,6 +14,8 @@ import JanmashtamiImportanceSection from "@/components/janmashtami/JanmashtamiIm
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
 import { useAttribution } from "@/lib/useAttribution";
 import { newEventId, getMetaBrowserData, trackInitiateCheckout, trackPurchase } from "@/lib/metaPixel";
+import { usePaymentStatusPoller } from "@/lib/usePaymentStatusPoller";
+import { useScrollToDonate } from "@/lib/useScrollToDonate";
 
 type SevaOption = {
   legacySevaId: number;
@@ -410,6 +412,18 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
   const attribution = useAttribution(campaigner ? `/janmashtami/c/${campaigner.slug}` : "janmashtami");
   const razorpayReady = useRazorpayPreload();
   const searchParams = useSearchParams();
+
+  // Polls the backend until the webhook confirms the donation completed —
+  // catches donors who pay in their UPI app and go back before Razorpay's
+  // success callback fires on the frontend.
+  const { startPolling, stopPolling } = usePaymentStatusPoller({
+    onCompleted: (result) => {
+      window.location.assign(
+        `/payment/thank-you?type=seva&seva=${encodeURIComponent(result.sevaName || "Janmashtami Seva")}&amount=${result.amount}&source=${encodeURIComponent("the Janmashtami seva programme")}`
+      );
+    },
+  });
+  useScrollToDonate("checkout-form");
   const [activeSlide, setActiveSlide] = useState(0);
   const [selected, setSelected] = useState<SelectedOffering | null>(null);
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
@@ -578,6 +592,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
           sevaOption: `Rs. ${formatAmount(finalAmount)}`,
         },
         handler: async (response: Record<string, string>) => {
+          stopPolling(); // frontend caught it — poller not needed
           try {
             const verifyResponse = await fetch(`${apiBase()}/payments/verify`, {
               method: "POST",
@@ -604,12 +619,29 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
           }
         },
         modal: {
-          ondismiss: () => setSubmitting(false),
+          ondismiss: () => {
+            // Donor closed the checkout widget — could mean they:
+            // (a) cancelled deliberately, or
+            // (b) paid in their UPI app and went back before the success
+            //     screen returned to the browser.
+            // Keep the poller running — if (b), the webhook will fire
+            // on the backend and the poller will redirect them automatically.
+            // setSubmitting stays true while the poller is active so the
+            // Donate button remains disabled (prevents a second order).
+            setStatus({
+              type: "idle",
+              message: "If you completed the payment, your receipt will be sent to your WhatsApp shortly.",
+            });
+          },
         },
         theme: {
           color: "#772036",
         },
       }).open();
+
+      // Start polling immediately after Razorpay opens, so we catch the
+      // webhook-triggered completion even if the frontend handler never fires.
+      startPolling(order.orderId);
     } catch (err) {
       setStatus({
         type: "error",

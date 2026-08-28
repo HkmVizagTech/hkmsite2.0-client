@@ -12,6 +12,7 @@ import {
 import PageLayout from "@/components/PageLayout";
 import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
+import { useScrollToDonate } from "@/lib/useScrollToDonate";
 import { newEventId, getMetaBrowserData, trackPurchase } from "@/lib/metaPixel";
 import Ornament from "@/components/Ornament";
 import HeroSection from "@/components/sqft-campaign/HeroSection";
@@ -109,6 +110,7 @@ export default function SqftCampaignClient({
       : `/${campaignType === "BRICK" ? "brick-seva-campaign" : "sqft-seva-campaign"}`
   );
   const razorpayReady = useRazorpayPreload();
+  useScrollToDonate();
   const [copiedShare, setCopiedShare] = useState(false);
   const [stats, setStats] = useState<CampaignStats | null>(null);
   const [wallTab, setWallTab] = useState<"latest" | "largest">("latest");
@@ -421,6 +423,7 @@ export default function SqftCampaignClient({
         )}
 
         {/* Donation form — the core interactive section */}
+        <div id="donate" className="scroll-mt-20">
         <DonationFormSection
           price={price}
           minCustomAmount={config.minCustomAmount}
@@ -450,6 +453,7 @@ export default function SqftCampaignClient({
           handleCopy={handleCopy}
           config={config}
         />
+        </div>
 
         {/* Donor privileges */}
         <DonorPrivilegesSection scrollToDonate={scrollToDonate} config={config} />

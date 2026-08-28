@@ -12,6 +12,7 @@ import {
 import PageLayout from "@/components/PageLayout";
 import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
+import { useScrollToDonate } from "@/lib/useScrollToDonate";
 import { newEventId, getMetaBrowserData, trackPurchase } from "@/lib/metaPixel";
 import Ornament from "@/components/Ornament";
 import ImportanceSection from "@/components/sqft-campaign/ImportanceSection";
@@ -65,6 +66,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
   const searchParams = useSearchParams();
   const attribution = useAttribution(config.path);
   const razorpayReady = useRazorpayPreload();
+  useScrollToDonate();
 
   const [tierIndex, setTierIndex] = useState(0);
   const [customAmount, setCustomAmount] = useState("");

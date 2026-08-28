@@ -26,6 +26,7 @@ import { useAttribution } from "@/lib/useAttribution";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
 import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
+import { useScrollToDonate } from "@/lib/useScrollToDonate";
 import { newEventId, getMetaBrowserData, trackInitiateCheckout, trackPurchase } from "@/lib/metaPixel";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
@@ -133,6 +134,7 @@ export default function SpecialOccasionClient() {
   const reduce = useReducedMotion();
   const attribution = useAttribution("/special-occasion");
   const razorpayReady = useRazorpayPreload();
+  useScrollToDonate("occasion-form");
 
   const [occasion, setOccasion] = useState<string>("Birthday");
   const [selectedSeva, setSelectedSeva] = useState<Seva>(sevas[2]); // Anna Daan Seva default

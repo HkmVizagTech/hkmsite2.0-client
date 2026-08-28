@@ -20,6 +20,7 @@ import type { PrasadamAddress } from "@/components/AddressForm";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
 import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
+import { useScrollToDonate } from "@/lib/useScrollToDonate";
 import { newEventId, getMetaBrowserData, trackPurchase } from "@/lib/metaPixel";
 import { type CampaignConfig } from "@/lib/campaignConfig";
 
@@ -143,6 +144,7 @@ const labelClass = "mb-1 block text-[11px] font-medium text-muted-foreground";
 export default function AlankaraVastraClient() {
   const attribution = useAttribution("/alankara-vastra-seva");
   const razorpayReady = useRazorpayPreload();
+  useScrollToDonate();
   const [tierIndex, setTierIndex] = useState(0);
   const [customAmount, setCustomAmount] = useState("");
   const [useCustom, setUseCustom] = useState(false);

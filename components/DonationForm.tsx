@@ -7,6 +7,7 @@ import { type Seva, unitImpact } from "@/lib/sevaConfig";
 import { newEventId, getMetaBrowserData, trackPurchase } from "@/lib/metaPixel";
 import { useAttribution } from "@/lib/useAttribution";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
+import { usePaymentStatusPoller } from "@/lib/usePaymentStatusPoller";
 import AddressForm from "@/components/AddressForm";
 import type { PrasadamAddress } from "@/components/AddressForm";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
@@ -71,6 +72,11 @@ export default function DonationForm({
   const router = useRouter();
   const attribution = useAttribution(sourcePage);
   const razorpayReady = useRazorpayPreload();
+  const { startPolling, stopPolling } = usePaymentStatusPoller({
+    onCompleted: (result) => {
+      router.push(`/payment/thank-you?type=${thankYouType}&seva=${encodeURIComponent(result.sevaName || seva.title)}&amount=${result.amount}&source=${encodeURIComponent(thankYouSource)}`);
+    },
+  });
 
   const [tierIndex, setTierIndex] = useState(0);
   const [customAmount, setCustomAmount] = useState("");
@@ -205,6 +211,7 @@ export default function DonationForm({
         prefill: { name: form.name, email: form.email, contact: form.mobile },
         notes: { sourcePage, sevaName: seva.title, sevaType: seva.category },
         handler: async (response: Record<string, string>) => {
+          stopPolling(); // frontend caught it — poller not needed
           try {
             const verifyRes = await fetch(`${apiBase()}/payments/verify`, {
               method: "POST",
@@ -232,7 +239,14 @@ export default function DonationForm({
             setSubmitting(false);
           }
         },
-        modal: { ondismiss: () => setSubmitting(false) },
+        modal: {
+          ondismiss: () => {
+            // Keep submitting=true while the poller is active so Donate button
+            // stays disabled — the donor may have paid in their UPI app.
+            // Clearing status shows a gentle message instead of a spinner.
+            setStatus({ type: "error", message: "If you completed the payment in your UPI app, your receipt will arrive on WhatsApp shortly." });
+          },
+        },
         theme: { color: "#D69E2E" },
       };
       // Subscriptions authorise via subscription_id (no amount/order_id);
@@ -246,6 +260,12 @@ export default function DonationForm({
       }
 
       new win.Razorpay(checkoutOptions).open();
+
+      // Start polling after Razorpay opens (one-time payments only — subscriptions
+      // don't have an orderId to poll against).
+      if (!monthly && created.orderId) {
+        startPolling(created.orderId);
+      }
     } catch (err) {
       setStatus({ type: "error", message: err instanceof Error ? err.message : "Something went wrong." });
       setSubmitting(false);
@@ -486,8 +506,18 @@ export default function DonationForm({
     );
   }
 
+  useEffect(() => {
+    // Auto-scroll to the form on page load so donors arriving via an ad CTA or
+    // WhatsApp broadcast link land directly at the payment form instead of
+    // the top of the page.
+    const timer = setTimeout(() => {
+      document.getElementById("donate")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 400);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <div className="rounded-3xl border border-border bg-card p-6 shadow-elevated">
+    <div id="donate" className="scroll-mt-20 rounded-3xl border border-border bg-card p-6 shadow-elevated">
       {status?.type === "success" ? (
         <div className="flex flex-col items-center py-6 text-center">
           <CheckCircle2 className="mb-3 h-12 w-12 text-green-500" />

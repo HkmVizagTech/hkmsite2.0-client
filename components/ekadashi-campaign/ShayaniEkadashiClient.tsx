@@ -17,6 +17,7 @@ import AddressForm from "@/components/AddressForm";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
 import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
+import { useScrollToDonate } from "@/lib/useScrollToDonate";
 import { newEventId, getMetaBrowserData, trackPurchase } from "@/lib/metaPixel";
 import type { PrasadamAddress } from "@/components/AddressForm";
 import FaqSection from "@/components/sqft-campaign/FaqSection";
@@ -287,6 +288,7 @@ export default function ShayaniEkadashiClient() {
   const router = useRouter();
   const attribution = useAttribution("/shayani-ekadashi");
   const razorpayReady = useRazorpayPreload();
+  useScrollToDonate();
   const [sevaIndex, setSevaIndex] = useState(0);
   const [tierIndex, setTierIndex] = useState(() => defaultTierIndex(EKADASHI_SEVAS[0]));
   const [customAmount, setCustomAmount] = useState("");
