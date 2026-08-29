@@ -13,19 +13,10 @@ import {
 import PageLayout from "@/components/PageLayout";
 import TempleCarousel from "@/components/TempleCarousel";
 import Ornament from "@/components/Ornament";
-
-// ─────────────────────────────────────────────────────────────
-// Vaikuntham app store links.
-//
-// Volunteer registration is handled entirely inside the Vaikuntham
-// app (the VCC volunteer system does not accept sign-ups made from
-// this website), so these two URLs are the only way a devotee can
-// register.
-// ─────────────────────────────────────────────────────────────
-const PLAY_STORE_URL =
-  "https://play.google.com/store/apps/details?id=in.harekrishnavizag";
-const APP_STORE_URL =
-  "https://apps.apple.com/in/app/vaikuntham/id6774589633";
+// Volunteer registration is handled entirely inside the Vaikuntham app (the
+// VCC volunteer system does not accept sign-ups made from this website), so
+// the store links live in one shared place — see VaikunthamAppPromo.
+import { AppStoreButtons } from "@/components/VaikunthamAppPromo";
 
 const WHY_VOLUNTEER = [
   {
@@ -67,22 +58,6 @@ const HOW_IT_WORKS = [
     desc: "Browse upcoming festivals and temple activities in the app and confirm your slot in a tap.",
   },
 ];
-
-function GooglePlayIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
-      <path d="M3.609 1.814L13.792 12 3.61 22.186a1.51 1.51 0 01-.61-1.21V3.024c0-.474.24-.898.61-1.21zm10.89 10.89l2.302 2.302-10.937 6.22 8.635-8.522zm3.7-3.65l2.74 1.559c.83.472.83 1.303 0 1.775l-2.74 1.558-2.58-2.446 2.58-2.446zM4.864 1.15l10.937 6.22-2.302 2.302L4.864 1.15z" />
-    </svg>
-  );
-}
-
-function AppleIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
-      <path d="M17.05 12.536c-.026-2.657 2.17-3.93 2.27-3.993-1.236-1.807-3.16-2.055-3.844-2.083-1.636-.165-3.194.962-4.025.962-.83 0-2.11-.938-3.468-.912-1.785.026-3.43 1.038-4.35 2.636-1.853 3.213-.474 7.968 1.331 10.573.882 1.276 1.934 2.71 3.317 2.658 1.331-.053 1.834-.861 3.443-.861 1.61 0 2.062.861 3.47.835 1.432-.026 2.339-1.301 3.216-2.582 1.014-1.48 1.43-2.914 1.456-2.988-.032-.014-2.792-1.072-2.818-4.245zM14.47 4.5c.735-.89 1.231-2.129 1.096-3.363-1.06.043-2.343.706-3.103 1.596-.681.789-1.278 2.05-1.117 3.26 1.183.092 2.39-.601 3.124-1.493z" />
-    </svg>
-  );
-}
 
 export default function VolunteerPage() {
   return (
@@ -179,7 +154,8 @@ export default function VolunteerPage() {
           </div>
 
           {/* Download buttons */}
-          <div className="mx-auto max-w-3xl rounded-3xl border border-border bg-gradient-ocean p-8 text-center md:p-10">
+          <div className="relative mx-auto max-w-3xl overflow-hidden rounded-3xl bg-gradient-navy p-8 text-center shadow-elevated md:p-10">
+            <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-accent/20 blur-3xl" />
             <h3 className="mb-2 font-heading text-2xl font-bold text-white md:text-3xl">
               Get the Vaikuntham App
             </h3>
@@ -187,37 +163,7 @@ export default function VolunteerPage() {
               Free to download. Registration takes less than two minutes.
             </p>
 
-            <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <a
-                href={PLAY_STORE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-white px-6 py-3.5 text-left transition-transform hover:-translate-y-0.5 sm:w-auto"
-              >
-                <GooglePlayIcon className="h-7 w-7 shrink-0 text-[hsl(220,60%,12%)]" />
-                <span className="leading-tight text-[hsl(220,60%,12%)]">
-                  <span className="block text-[10px] uppercase tracking-wide opacity-70">
-                    Get it on
-                  </span>
-                  <span className="block text-base font-bold">Google Play</span>
-                </span>
-              </a>
-
-              <a
-                href={APP_STORE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-white px-6 py-3.5 text-left transition-transform hover:-translate-y-0.5 sm:w-auto"
-              >
-                <AppleIcon className="h-7 w-7 shrink-0 text-[hsl(220,60%,12%)]" />
-                <span className="leading-tight text-[hsl(220,60%,12%)]">
-                  <span className="block text-[10px] uppercase tracking-wide opacity-70">
-                    Download on the
-                  </span>
-                  <span className="block text-base font-bold">App Store</span>
-                </span>
-              </a>
-            </div>
+            <AppStoreButtons className="justify-center" />
 
             <p className="mt-6 text-xs text-white/70">
               Search for <strong className="text-white">&ldquo;Vaikuntham&rdquo;</strong> if
