@@ -169,8 +169,12 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
       setStatus({ type: "error", message: "Please select a valid amount." });
       return;
     }
-    if (!form.name.trim() || !form.email.trim()) {
-      setStatus({ type: "error", message: "Please fill in your name, email, and phone number." });
+    if (!form.name.trim()) {
+      setStatus({ type: "error", message: "Please fill in your name and phone number." });
+      return;
+    }
+    if (form.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
+      setStatus({ type: "error", message: "Please enter a valid email address, or leave it blank." });
       return;
     }
     if (!/^[6-9]\d{9}$/.test(form.mobile.trim())) {
@@ -515,13 +519,12 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                   </div>
 
                   <div>
-                    <label htmlFor="donor-email" className={labelClass}>Email address</label>
+                    <label htmlFor="donor-email" className={labelClass}>Email address (optional)</label>
                     <div className={inputWrapClass}>
                       <Mail className="pointer-events-none absolute left-3 h-4 w-4 text-muted-foreground" />
                       <input
                         id="donor-email"
                         type="email"
-                        required
                         placeholder="you@example.com"
                         value={form.email}
                         onChange={(e) => setForm({ ...form, email: e.target.value })}
