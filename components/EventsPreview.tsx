@@ -6,73 +6,82 @@ import Link from "next/link";
 import Ornament from "@/components/Ornament";
 import { ArrowRight } from "lucide-react";
 import EventCard from "@/components/EventCard";
-
+import { getFallbackEvents, type FallbackEvent } from "@/lib/eventsFallback";
 
 import { useEffect, useState } from "react";
 
-const futureDate = (daysAhead: number) =>
-  new Date(Date.now() + daysAhead * 24 * 60 * 60 * 1000).toISOString();
+type PreviewEvent = {
+  _id?: string;
+  title: string;
+  date: string;
+  time?: string;
+  location?: string;
+  description?: string;
+  image?: string;
+  href?: string;
+};
 
-const fallbackEvents = [
-  {
-    title: "Janmashtami Celebrations",
-    date: futureDate(45),
-    time: "6:00 AM - 12:00 AM",
-    location: "Temple Premises",
-    description: "Grand celebration of Lord Krishna's appearance day with abhishekam, kirtan, and midnight aarti.",
-    image: "/assets/home-event-janmashtami.webp",
-  },
-  {
-    title: "Radhashtami Festival",
-    date: futureDate(75),
-    time: "6:00 AM - 9:00 PM",
-    location: "Temple Premises",
-    description: "Celebration of Srimati Radharani's appearance with special darshan and offerings.",
-    image: "/assets/home-event-radhashtami.webp",
-  },
-  {
-    title: "Gita Jayanti",
-    date: futureDate(135),
-    time: "5:00 AM - 8:00 PM",
-    location: "Temple Premises",
-    description: "Commemoration of the day when Lord Krishna spoke the Bhagavad Gita to Arjuna.",
-    image: "/assets/home-event-gita-jayanti.webp",
-  },
-];
-
-
+// When the admin hasn't published any events, fall back to the temple's own
+// Vaishnava calendar rather than to invented placeholder dates.
+const calendarEvents = (): PreviewEvent[] =>
+  getFallbackEvents(4).map((e: FallbackEvent) => ({
+    _id: e._id,
+    title: e.title,
+    date: e.date,
+    description: e.description,
+    image: e.image,
+    location: e.location,
+    href: e.href,
+  }));
 
 const EventsPreview = () => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
-  const [events, setEvents] = useState(fallbackEvents);
+  const [events, setEvents] = useState<PreviewEvent[]>([]);
 
   useEffect(() => {
+    let cancelled = false;
+
     async function fetchEvents() {
+      const fallback = calendarEvents();
       try {
-  const res = await fetch(`${(process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:3003"}/events?limit=4`, { credentials: 'include' });
-        if (!res.ok) return;
-        const data = await res.json();
-        if (Array.isArray(data.events) && data.events.length > 0) {
-          const sorted = (data.events as any[])
-            .map((e) => ({
-              ...e,
-              date: e.date ? new Date(e.date) : null,
-              image: (e.images && e.images[0]) || e.image || fallbackEvents[0].image,
-            }))
-            .filter((e) => e.date)
-            .sort((a, b) => (b.date as Date).getTime() - (a.date as Date).getTime())
-            .slice(0, 4)
-            .map((e) => ({
-              ...e,
-              date: (e.date as Date).toLocaleDateString("en-IN", { year: "numeric", month: "long", day: "numeric" })
-            }));
-          setEvents(sorted);
+        const base =
+          (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") ||
+          "http://localhost:3003";
+        const res = await fetch(`${base}/events?limit=8`, { credentials: "include" });
+        if (!res.ok) {
+          if (!cancelled) setEvents(fallback);
+          return;
         }
-      } catch {}
+        const data = await res.json();
+        const startOfToday = new Date();
+        startOfToday.setHours(0, 0, 0, 0);
+
+        const upcoming = (Array.isArray(data.events) ? data.events : [])
+          .filter((e: any) => e.date && new Date(e.date) >= startOfToday)
+          .sort(
+            (a: any, b: any) =>
+              new Date(a.date).getTime() - new Date(b.date).getTime()
+          )
+          .slice(0, 4)
+          .map((e: any) => ({
+            ...e,
+            image: (e.images && e.images[0]) || e.image || undefined,
+          }));
+
+        if (!cancelled) setEvents(upcoming.length > 0 ? upcoming : fallback);
+      } catch {
+        if (!cancelled) setEvents(fallback);
+      }
     }
+
     fetchEvents();
+    return () => {
+      cancelled = true;
+    };
   }, []);
+
+  if (events.length === 0) return null;
 
   return (
     <section className="py-12 md:py-16 bg-white dark:bg-background">
@@ -95,7 +104,11 @@ const EventsPreview = () => {
 
         <div className="max-w-4xl mx-auto space-y-6">
           {events.map((event, index) => (
-            <EventCard key={event.title + index} event={event} href={`/events/${(event as any)._id || event.title}`} />
+            <EventCard
+              key={(event._id || event.title) + index}
+              event={event as any}
+              href={event.href || `/events/${event._id || event.title}`}
+            />
           ))}
         </div>
 
