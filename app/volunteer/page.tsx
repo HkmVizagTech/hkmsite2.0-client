@@ -1,27 +1,31 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  Calendar,
-  MapPin,
   Heart,
   HandHeart,
   Users,
   Sparkles,
-  ArrowRight,
-  Loader2,
+  Smartphone,
+  UserPlus,
+  CalendarCheck,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import TempleCarousel from "@/components/TempleCarousel";
 import Ornament from "@/components/Ornament";
-import { Button } from "@/components/ui/button";
-import { type VolunteerEvent } from "@/components/VolunteerRegistrationForm";
 
-const VCC_API =
-  (process.env.NEXT_PUBLIC_VCC_API_URL || "").replace(/\/+$/, "") ||
-  "https://vcc-client.vercel.app";
+// ─────────────────────────────────────────────────────────────
+// Vaikuntham app store links.
+//
+// Volunteer registration is handled entirely inside the Vaikuntham
+// app (the VCC volunteer system does not accept sign-ups made from
+// this website), so these two URLs are the only way a devotee can
+// register.
+// ─────────────────────────────────────────────────────────────
+const PLAY_STORE_URL =
+  "https://play.google.com/store/apps/details?id=in.harekrishnavizag";
+const APP_STORE_URL =
+  "https://apps.apple.com/in/app/vaikuntham/id6774589633";
 
 const WHY_VOLUNTEER = [
   {
@@ -46,26 +50,41 @@ const WHY_VOLUNTEER = [
   },
 ];
 
-function formatDate(d: string) {
-  return new Date(d).toLocaleDateString("en-IN", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
+const HOW_IT_WORKS = [
+  {
+    icon: Smartphone,
+    title: "Install Vaikuntham",
+    desc: "Download the free Vaikuntham app on Android or iPhone — it is our official volunteer platform.",
+  },
+  {
+    icon: UserPlus,
+    title: "Create Your Profile",
+    desc: "Sign up with your mobile number and tell us the sevas and timings that suit you best.",
+  },
+  {
+    icon: CalendarCheck,
+    title: "Pick Your Seva",
+    desc: "Browse upcoming festivals and temple activities in the app and confirm your slot in a tap.",
+  },
+];
+
+function GooglePlayIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+      <path d="M3.609 1.814L13.792 12 3.61 22.186a1.51 1.51 0 01-.61-1.21V3.024c0-.474.24-.898.61-1.21zm10.89 10.89l2.302 2.302-10.937 6.22 8.635-8.522zm3.7-3.65l2.74 1.559c.83.472.83 1.303 0 1.775l-2.74 1.558-2.58-2.446 2.58-2.446zM4.864 1.15l10.937 6.22-2.302 2.302L4.864 1.15z" />
+    </svg>
+  );
+}
+
+function AppleIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+      <path d="M17.05 12.536c-.026-2.657 2.17-3.93 2.27-3.993-1.236-1.807-3.16-2.055-3.844-2.083-1.636-.165-3.194.962-4.025.962-.83 0-2.11-.938-3.468-.912-1.785.026-3.43 1.038-4.35 2.636-1.853 3.213-.474 7.968 1.331 10.573.882 1.276 1.934 2.71 3.317 2.658 1.331-.053 1.834-.861 3.443-.861 1.61 0 2.062.861 3.47.835 1.432-.026 2.339-1.301 3.216-2.582 1.014-1.48 1.43-2.914 1.456-2.988-.032-.014-2.792-1.072-2.818-4.245zM14.47 4.5c.735-.89 1.231-2.129 1.096-3.363-1.06.043-2.343.706-3.103 1.596-.681.789-1.278 2.05-1.117 3.26 1.183.092 2.39-.601 3.124-1.493z" />
+    </svg>
+  );
 }
 
 export default function VolunteerPage() {
-  const [events, setEvents] = useState<VolunteerEvent[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch(`${VCC_API}/api/events/public`)
-      .then((res) => res.json())
-      .then((data) => setEvents(data.events || []))
-      .catch(() => setEvents([]))
-      .finally(() => setLoading(false));
-  }, []);
-
   return (
     <PageLayout>
       {/* HERO */}
@@ -110,122 +129,113 @@ export default function VolunteerPage() {
         </div>
       </section>
 
-      {/* Events */}
-      <section className="py-12 md:py-16 bg-white dark:bg-background border-t border-border">
+      {/* Register in the Vaikuntham app */}
+      <section
+        id="register"
+        className="py-12 md:py-16 bg-white dark:bg-background border-t border-border"
+      >
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <p className="text-primary text-sm tracking-[0.2em] uppercase mb-3 font-medium">
-              Current Opportunities
+              How To Register
             </p>
             <Ornament className="mb-5" />
             <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground">
-              Volunteer Events
+              Volunteer Through the Vaikuntham App
             </h2>
-            <p className="mx-auto mt-3 max-w-xl text-muted-foreground">
-              Choose an event that resonates with you and register to serve.
-              New opportunities are added regularly.
+            <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">
+              All volunteer sign-ups for Hare Krishna Movement Vizag now happen
+              in our official <strong className="text-foreground">Vaikuntham</strong> app.
+              Install it once to see every upcoming seva opportunity, register in
+              a tap, and receive your duty reminders directly on your phone.
             </p>
           </div>
 
-          {loading && (
-            <div className="text-center text-muted-foreground py-16">
-              <Loader2 className="mx-auto h-6 w-6 animate-spin mb-2" />
-              Loading events...
+          {/* Steps */}
+          <div className="mx-auto mb-12 grid max-w-4xl grid-cols-1 gap-6 sm:grid-cols-3">
+            {HOW_IT_WORKS.map((step, i) => (
+              <motion.div
+                key={step.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ delay: i * 0.1, duration: 0.5 }}
+                className="relative rounded-2xl border border-border bg-card p-6 text-center"
+              >
+                <span className="absolute right-4 top-4 font-heading text-3xl font-bold text-primary/10">
+                  {i + 1}
+                </span>
+                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  <step.icon className="h-6 w-6" />
+                </div>
+                <h3 className="mb-2 text-sm font-semibold text-foreground">
+                  {step.title}
+                </h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  {step.desc}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Download buttons */}
+          <div className="mx-auto max-w-3xl rounded-3xl border border-border bg-gradient-ocean p-8 text-center md:p-10">
+            <h3 className="mb-2 font-heading text-2xl font-bold text-white md:text-3xl">
+              Get the Vaikuntham App
+            </h3>
+            <p className="mx-auto mb-8 max-w-lg text-sm text-white/85 md:text-base">
+              Free to download. Registration takes less than two minutes.
+            </p>
+
+            <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+              <a
+                href={PLAY_STORE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-white px-6 py-3.5 text-left transition-transform hover:-translate-y-0.5 sm:w-auto"
+              >
+                <GooglePlayIcon className="h-7 w-7 shrink-0 text-[hsl(220,60%,12%)]" />
+                <span className="leading-tight text-[hsl(220,60%,12%)]">
+                  <span className="block text-[10px] uppercase tracking-wide opacity-70">
+                    Get it on
+                  </span>
+                  <span className="block text-base font-bold">Google Play</span>
+                </span>
+              </a>
+
+              <a
+                href={APP_STORE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex w-full items-center justify-center gap-3 rounded-2xl bg-white px-6 py-3.5 text-left transition-transform hover:-translate-y-0.5 sm:w-auto"
+              >
+                <AppleIcon className="h-7 w-7 shrink-0 text-[hsl(220,60%,12%)]" />
+                <span className="leading-tight text-[hsl(220,60%,12%)]">
+                  <span className="block text-[10px] uppercase tracking-wide opacity-70">
+                    Download on the
+                  </span>
+                  <span className="block text-base font-bold">App Store</span>
+                </span>
+              </a>
             </div>
-          )}
 
-          {!loading && events.length === 0 && (
-            <div className="mx-auto max-w-md rounded-2xl border border-border bg-card p-10 text-center">
-              <Calendar className="mx-auto mb-4 h-12 w-12 text-muted-foreground/40" />
-              <h3 className="mb-2 text-lg font-semibold text-foreground">
-                No Events Right Now
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                Check back soon — we regularly add volunteer opportunities for
-                upcoming festivals and temple activities.
-              </p>
-            </div>
-          )}
-
-          {!loading && events.length > 0 && (
-            <div className="mx-auto grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {events.map((event, i) => (
-                <motion.div
-                  key={event._id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-40px" }}
-                  transition={{ delay: i * 0.08, duration: 0.5 }}
-                  className="group overflow-hidden rounded-2xl border border-border bg-card shadow-warm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-elevated"
-                >
-                  {event.bannerImage ? (
-                    <div className="relative aspect-[16/9] overflow-hidden">
-                      <img
-                        src={event.bannerImage}
-                        alt={event.name}
-                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[hsl(220,85%,10%,0.6)] via-transparent to-transparent" />
-                    </div>
-                  ) : (
-                    <div className="flex aspect-[16/9] items-center justify-center bg-primary/5">
-                      <Calendar className="h-14 w-14 text-primary/30" />
-                    </div>
-                  )}
-
-                  <div className="p-5">
-                    <h3 className="mb-2 font-heading text-lg font-bold text-foreground leading-tight">
-                      {event.name}
-                    </h3>
-                    {event.description && (
-                      <p className="mb-4 text-xs text-muted-foreground line-clamp-3">
-                        {event.description}
-                      </p>
-                    )}
-
-                    <div className="mb-4 space-y-1.5 text-xs text-muted-foreground">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="h-3.5 w-3.5 text-primary" />
-                        <span>{formatDate(event.eventStart)}</span>
-                      </div>
-                      {event.venue && (
-                        <div className="flex items-center gap-2">
-                          <MapPin className="h-3.5 w-3.5 text-primary" />
-                          <span>{event.venue}</span>
-                        </div>
-                      )}
-                    </div>
-
-                    <Link href={`/volunteer/${event.eventId || event._id}`}>
-                      <Button
-                        className="w-full rounded-full"
-                        disabled={event.status !== "registration_open"}
-                      >
-                        {event.status === "registration_open"
-                          ? "Register to Volunteer"
-                          : "Registration Closed"}
-                        {event.status === "registration_open" && (
-                          <ArrowRight className="ml-2 h-4 w-4" />
-                        )}
-                      </Button>
-                    </Link>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          )}
+            <p className="mt-6 text-xs text-white/70">
+              Search for <strong className="text-white">&ldquo;Vaikuntham&rdquo;</strong> if
+              the link does not open your store automatically.
+            </p>
+          </div>
         </div>
       </section>
 
       {/* Bottom CTA */}
-      <section className="relative overflow-hidden bg-gradient-ocean py-16 text-center md:py-20">
+      <section className="relative overflow-hidden bg-white py-16 text-center dark:bg-background md:py-20 border-t border-border">
         <div className="container mx-auto px-4">
-          <h2 className="mb-3 font-heading text-2xl font-bold text-white md:text-4xl">
-            Can&apos;t Find a Suitable Event?
+          <h2 className="mb-3 font-heading text-2xl font-bold text-foreground md:text-4xl">
+            Need Help Getting Started?
           </h2>
-          <p className="mx-auto mb-8 max-w-xl text-white/85">
-            We&apos;re always looking for helping hands. Reach out to us and
-            we&apos;ll find the perfect way for you to serve.
+          <p className="mx-auto mb-8 max-w-xl text-muted-foreground">
+            Having trouble with the app, or looking for a way to serve that
+            isn&apos;t listed? Message us and a devotee will guide you personally.
           </p>
           <a
             href="https://wa.me/918977761187?text=Hare%20Krishna!%20I%20would%20like%20to%20volunteer%20at%20HKM%20Vizag."
@@ -240,7 +250,6 @@ export default function VolunteerPage() {
           </a>
         </div>
       </section>
-
     </PageLayout>
   );
 }
