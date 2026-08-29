@@ -4,6 +4,7 @@ import { Facebook, Instagram, Youtube, Phone, Mail, Heart, ArrowUp, ExternalLink
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import WhatsAppIcon from "@/components/WhatsAppIcon";
+import VaikunthamAppPromo from "@/components/VaikunthamAppPromo";
 
 const quickLinks = [
   { label: "Home", href: "/" },
@@ -67,6 +68,14 @@ const Footer = () => {
 
       <div className="bg-[hsl(220,60%,10%)] pb-6 pt-10">
         <div className="container mx-auto px-4">
+          {/* Mobile: the app promo leads the footer, where it actually gets
+              seen. On desktop it moves into the empty band beneath the link
+              columns (the lg:flex copy further down) instead of pushing the
+              whole footer taller. */}
+          <div className="mb-8 lg:hidden">
+            <VaikunthamAppPromo />
+          </div>
+
           <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-[auto_1fr] lg:gap-10">
             <div>
               <div className="mb-4">
@@ -140,7 +149,7 @@ const Footer = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-3">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-3 lg:content-between">
               <div>
                 <h4 className="relative mb-4 text-lg font-semibold text-[hsl(210,30%,97%)]">
                   Daily Schedule
@@ -204,6 +213,12 @@ const Footer = () => {
                   <span>social@hkmvizag.org</span>
                 </a>
               </div>
+              </div>
+
+              {/* Desktop only — fills the blank band left under the link
+                  columns by the taller address/map column beside them. */}
+              <div className="hidden lg:col-span-3 lg:block">
+                <VaikunthamAppPromo />
               </div>
             </div>
           </div>
