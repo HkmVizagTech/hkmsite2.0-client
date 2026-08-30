@@ -975,7 +975,9 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
                       placeholder="Enter any other amount"
                       className="border-amber-200 focus-visible:ring-amber-400"
                     />
-                    <span className="mt-1 block text-xs text-amber-700/60">Amount must be at least Rs.100.</span>
+                    {form.customAmount !== "" && Number(form.customAmount) < 100 && (
+                      <span className="mt-1 block text-xs text-red-600">Amount must be at least Rs.100.</span>
+                    )}
                   </label>
                 </div>
 
