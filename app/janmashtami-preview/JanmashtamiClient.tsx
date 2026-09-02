@@ -799,17 +799,19 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
                 <div className="p-4 pt-3">
                   <p className="min-h-[52px] text-[13px] leading-relaxed text-slate-700 md:text-sm">{seva.description}</p>
 
-                  {/* Elegant price buttons — deliberately uniform, no "Most
-                      Popular" badge. Tried highlighting one tier (first
-                      position-based, then value-based at Rs.3,100), but
-                      both looked templated: the same label repeating
-                      across every card since we don't have real per-seva
-                      popularity data to justify singling one out. Left
-                      uniform until genuine donation-pattern data exists
-                      to base a real "Popular" tag on. */}
+                  {/* Elegant price buttons — 2nd tier (optIdx === 1)
+                      highlighted as "Popular". This is a deliberate
+                      anchoring choice: showing a lower first option makes
+                      this one look reasonable by contrast, without being
+                      the cheapest choice. It IS position-based (so it
+                      repeats within each significance group — e.g. all
+                      four "Grand" sevas show Rs.3,100 as Popular), a
+                      known tradeoff accepted per explicit request rather
+                      than an accident like the earlier version. */}
                   <div className="mt-4 grid grid-cols-2 gap-x-2 gap-y-2">
                     {seva.options.map((option, optIdx) => {
                       const isCustom = !option.amount;
+                      const isPopular = optIdx === 1;
                       const hasSubtitle = !!option.subtitle;
                       return (
                         <button
@@ -821,11 +823,18 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
                             ${hasSubtitle ? 'flex flex-col items-center justify-center gap-1 px-3 pb-2 pt-2.5' : 'px-3 py-3'}
                             ${isCustom
                               ? 'col-span-2 border-amber-500/70 bg-gradient-to-r from-amber-200 via-amber-200 to-orange-200 text-[13px] font-bold text-[#5c2e06] hover:border-amber-500 hover:from-amber-300 hover:to-orange-200 hover:shadow-[0_4px_16px_rgba(217,119,6,0.25)]'
-                              : 'border-amber-300/70 bg-gradient-to-b from-amber-100 to-[#fef0d4] text-[12px] font-bold text-[#5c2e06] hover:border-amber-400 hover:from-amber-200 hover:to-amber-100 hover:shadow-[0_3px_12px_rgba(217,119,6,0.18)]'
+                              : isPopular
+                                ? 'border-amber-500/80 bg-gradient-to-br from-amber-400 via-amber-300 to-orange-300 text-[12px] font-bold text-[#3b1605] shadow-[0_2px_6px_rgba(217,119,6,0.2)] hover:border-amber-600 hover:shadow-[0_4px_16px_rgba(217,119,6,0.3)]'
+                                : 'border-amber-300/70 bg-gradient-to-b from-amber-100 to-[#fef0d4] text-[12px] font-bold text-[#5c2e06] hover:border-amber-400 hover:from-amber-200 hover:to-amber-100 hover:shadow-[0_3px_12px_rgba(217,119,6,0.18)]'
                             }
                           `}
                         >
-                          <span className="block">
+                          {isPopular && !hasSubtitle && (
+                            <span className="absolute left-1.5 top-1.5 rounded-full bg-gradient-to-r from-[#5c1a0b] to-[#7a2e0f] px-1.5 py-0.5 text-[7px] font-bold uppercase tracking-wide text-amber-100 shadow-sm">
+                              Popular
+                            </span>
+                          )}
+                          <span className={`block ${isPopular && !hasSubtitle ? 'mt-2.5' : ''}`}>
                             {option.amount ? (
                               <span className="block leading-tight">
                                 <span className="text-[11px] font-normal text-amber-800/80">₹</span>{' '}
