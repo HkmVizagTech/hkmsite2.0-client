@@ -799,10 +799,13 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
                 <div className="p-4 pt-3">
                   <p className="min-h-[52px] text-[13px] leading-relaxed text-slate-700 md:text-sm">{seva.description}</p>
 
-                  {/* Elegant price buttons */}
+                  {/* Elegant price buttons — all 6 presets styled uniformly
+                      now that every seva shares the same amount progression
+                      (a "top tier" gold highlight on index 0 used to vary
+                      by seva when amounts differed; with unified presets it
+                      would highlight the identical amount on every card). */}
                   <div className="mt-4 grid grid-cols-2 gap-x-2 gap-y-2">
                     {seva.options.map((option, optIdx) => {
-                      const isTopTier = optIdx === 0;
                       const isCustom = !option.amount;
                       const hasSubtitle = !!option.subtitle;
                       return (
@@ -815,18 +818,11 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
                             ${hasSubtitle ? 'flex flex-col items-center justify-center gap-1 px-3 pb-2 pt-2.5' : 'px-3 py-3'}
                             ${isCustom
                               ? 'col-span-2 border-amber-500/70 bg-gradient-to-r from-amber-200 via-amber-200 to-orange-200 text-[13px] font-bold text-[#5c2e06] hover:border-amber-500 hover:from-amber-300 hover:to-orange-200 hover:shadow-[0_4px_16px_rgba(217,119,6,0.25)]'
-                              : isTopTier
-                                ? 'border-amber-500/80 bg-gradient-to-br from-amber-400 via-amber-300 to-orange-300 text-[12px] font-bold text-[#3b1605] shadow-[0_2px_6px_rgba(217,119,6,0.2)] hover:border-amber-600 hover:shadow-[0_4px_16px_rgba(217,119,6,0.3)]'
-                                : 'border-amber-300/70 bg-gradient-to-b from-amber-100 to-[#fef0d4] text-[12px] font-bold text-[#5c2e06] hover:border-amber-400 hover:from-amber-200 hover:to-amber-100 hover:shadow-[0_3px_12px_rgba(217,119,6,0.18)]'
+                              : 'border-amber-300/70 bg-gradient-to-b from-amber-100 to-[#fef0d4] text-[12px] font-bold text-[#5c2e06] hover:border-amber-400 hover:from-amber-200 hover:to-amber-100 hover:shadow-[0_3px_12px_rgba(217,119,6,0.18)]'
                             }
                           `}
                         >
-                          {isTopTier && !hasSubtitle && (
-                            <span className="absolute left-1.5 top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-orange-400">
-                              <svg className="h-2.5 w-2.5 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6 4.6 2.3 7L12 16.4 5.7 21l2.3-7L2 9.4h7.6z"/></svg>
-                            </span>
-                          )}
-                          <span className={`block ${isTopTier && !hasSubtitle ? 'mt-1' : ''}`}>
+                          <span className="block">
                             {option.amount ? (
                               <span className="block leading-tight">
                                 <span className="text-[11px] font-normal text-amber-800/80">₹</span>{' '}
