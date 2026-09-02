@@ -115,11 +115,11 @@ const sevas: Seva[] = [
     image: "/assets/janmashtami-sk2.webp",
     options: [
       { legacySevaId: 216, label: "Donate Rs. 1,100", amount: 1100 },
-      { legacySevaId: 217, label: "Donate Rs. 2,100", amount: 2100 },
-      { legacySevaId: 218, label: "Donate Rs. 3,100", amount: 3100 },
-      { legacySevaId: 219, label: "Donate Rs. 5,100", amount: 5100 },
-      { legacySevaId: 220, label: "Donate Rs. 9,000", amount: 9000 },
-      { legacySevaId: 1120, label: "Donate Rs. 11,000", amount: 11000 },
+      { legacySevaId: 217, label: "Donate Rs. 1,500", amount: 1500 },
+      { legacySevaId: 218, label: "Donate Rs. 2,100", amount: 2100 },
+      { legacySevaId: 219, label: "Donate Rs. 3,100", amount: 3100 },
+      { legacySevaId: 220, label: "Donate Rs. 5,100", amount: 5100 },
+      { legacySevaId: 1120, label: "Donate Rs. 9,000", amount: 9000 },
       { legacySevaId: 221, label: "Donate Any Other Amount", amount: null },
     ],
   },
@@ -131,11 +131,11 @@ const sevas: Seva[] = [
     image: "/assets/janmashtami-sk3.webp",
     options: [
       { legacySevaId: 240, label: "Donate Rs. 1,100", amount: 1100 },
-      { legacySevaId: 241, label: "Donate Rs. 2,100", amount: 2100 },
-      { legacySevaId: 242, label: "Donate Rs. 3,100", amount: 3100 },
-      { legacySevaId: 243, label: "Donate Rs. 5,100", amount: 5100 },
-      { legacySevaId: 244, label: "Donate Rs. 9,000", amount: 9000 },
-      { legacySevaId: 1144, label: "Donate Rs. 11,000", amount: 11000 },
+      { legacySevaId: 241, label: "Donate Rs. 3,100", amount: 3100 },
+      { legacySevaId: 242, label: "Donate Rs. 5,100", amount: 5100 },
+      { legacySevaId: 243, label: "Donate Rs. 9,000", amount: 9000 },
+      { legacySevaId: 244, label: "Donate Rs. 15,000", amount: 15000 },
+      { legacySevaId: 1144, label: "Donate Rs. 21,000", amount: 21000 },
       { legacySevaId: 245, label: "Donate Any Other Amount", amount: null },
     ],
   },
@@ -161,11 +161,11 @@ const sevas: Seva[] = [
     image: "/assets/janmashtami-sk6.webp",
     options: [
       { legacySevaId: 210, label: "Donate Rs. 1,100", amount: 1100 },
-      { legacySevaId: 211, label: "Donate Rs. 2,100", amount: 2100 },
-      { legacySevaId: 212, label: "Donate Rs. 3,100", amount: 3100 },
-      { legacySevaId: 213, label: "Donate Rs. 5,100", amount: 5100 },
-      { legacySevaId: 214, label: "Donate Rs. 9,000", amount: 9000 },
-      { legacySevaId: 1114, label: "Donate Rs. 11,000", amount: 11000 },
+      { legacySevaId: 211, label: "Donate Rs. 1,500", amount: 1500 },
+      { legacySevaId: 212, label: "Donate Rs. 2,100", amount: 2100 },
+      { legacySevaId: 213, label: "Donate Rs. 3,100", amount: 3100 },
+      { legacySevaId: 214, label: "Donate Rs. 5,100", amount: 5100 },
+      { legacySevaId: 1114, label: "Donate Rs. 9,000", amount: 9000 },
       { legacySevaId: 215, label: "Donate Any Other Amount", amount: null },
     ],
   },
@@ -177,11 +177,11 @@ const sevas: Seva[] = [
     image: "/assets/janmashtami-sk5.webp",
     options: [
       { legacySevaId: 192, label: "Donate Rs. 1,100", amount: 1100 },
-      { legacySevaId: 193, label: "Donate Rs. 2,100", amount: 2100 },
-      { legacySevaId: 194, label: "Donate Rs. 3,100", amount: 3100 },
-      { legacySevaId: 195, label: "Donate Rs. 5,100", amount: 5100 },
-      { legacySevaId: 196, label: "Donate Rs. 9,000", amount: 9000 },
-      { legacySevaId: 1096, label: "Donate Rs. 11,000", amount: 11000 },
+      { legacySevaId: 193, label: "Donate Rs. 1,500", amount: 1500 },
+      { legacySevaId: 194, label: "Donate Rs. 2,100", amount: 2100 },
+      { legacySevaId: 195, label: "Donate Rs. 3,100", amount: 3100 },
+      { legacySevaId: 196, label: "Donate Rs. 5,100", amount: 5100 },
+      { legacySevaId: 1096, label: "Donate Rs. 9,000", amount: 9000 },
       { legacySevaId: 197, label: "Donate Any Other Amount", amount: null },
     ],
   },
@@ -192,11 +192,11 @@ const sevas: Seva[] = [
     image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677419371-1783677418690-DietyPhotos.jpeg",
     options: [
       { legacySevaId: 258, label: "Donate Rs. 1,100", amount: 1100 },
-      { legacySevaId: 259, label: "Donate Rs. 2,100", amount: 2100 },
-      { legacySevaId: 260, label: "Donate Rs. 3,100", amount: 3100 },
-      { legacySevaId: 307, label: "Donate Rs. 5,100", amount: 5100 },
-      { legacySevaId: 261, label: "Donate Rs. 9,000", amount: 9000 },
-      { legacySevaId: 262, label: "Donate Rs. 11,000", amount: 11000 },
+      { legacySevaId: 259, label: "Donate Rs. 3,100", amount: 3100 },
+      { legacySevaId: 260, label: "Donate Rs. 5,100", amount: 5100 },
+      { legacySevaId: 307, label: "Donate Rs. 9,000", amount: 9000 },
+      { legacySevaId: 261, label: "Donate Rs. 15,000", amount: 15000 },
+      { legacySevaId: 262, label: "Donate Rs. 21,000", amount: 21000 },
       { legacySevaId: 263, label: "Donate Any Other Amount", amount: null },
     ],
   },
@@ -207,11 +207,11 @@ const sevas: Seva[] = [
     image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785833232608-1785833231421-chapan-bhog.webp",
     options: [
       { legacySevaId: 222, label: "Donate Rs. 1,100", amount: 1100 },
-      { legacySevaId: 223, label: "Donate Rs. 2,100", amount: 2100 },
-      { legacySevaId: 224, label: "Donate Rs. 3,100", amount: 3100 },
-      { legacySevaId: 308, label: "Donate Rs. 5,100", amount: 5100 },
-      { legacySevaId: 225, label: "Donate Rs. 9,000", amount: 9000 },
-      { legacySevaId: 226, label: "Donate Rs. 11,000", amount: 11000 },
+      { legacySevaId: 223, label: "Donate Rs. 3,100", amount: 3100 },
+      { legacySevaId: 224, label: "Donate Rs. 5,100", amount: 5100 },
+      { legacySevaId: 308, label: "Donate Rs. 9,000", amount: 9000 },
+      { legacySevaId: 225, label: "Donate Rs. 15,000", amount: 15000 },
+      { legacySevaId: 226, label: "Donate Rs. 21,000", amount: 21000 },
       { legacySevaId: 227, label: "Donate Any Other Amount", amount: null },
     ],
   },
@@ -222,11 +222,11 @@ const sevas: Seva[] = [
     image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785833231776-1785833231103-ChatGPTImageAug42026021053PM.webp",
     options: [
       { legacySevaId: 228, label: "Donate Rs. 1,100", amount: 1100 },
-      { legacySevaId: 229, label: "Donate Rs. 2,100", amount: 2100 },
-      { legacySevaId: 230, label: "Donate Rs. 3,100", amount: 3100 },
-      { legacySevaId: 309, label: "Donate Rs. 5,100", amount: 5100 },
-      { legacySevaId: 231, label: "Donate Rs. 9,000", amount: 9000 },
-      { legacySevaId: 232, label: "Donate Rs. 11,000", amount: 11000 },
+      { legacySevaId: 229, label: "Donate Rs. 3,100", amount: 3100 },
+      { legacySevaId: 230, label: "Donate Rs. 5,100", amount: 5100 },
+      { legacySevaId: 309, label: "Donate Rs. 9,000", amount: 9000 },
+      { legacySevaId: 231, label: "Donate Rs. 15,000", amount: 15000 },
+      { legacySevaId: 232, label: "Donate Rs. 21,000", amount: 21000 },
       { legacySevaId: 233, label: "Donate Any Other Amount", amount: null },
     ],
   },
@@ -803,10 +803,17 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
                       now that every seva shares the same amount progression
                       (a "top tier" gold highlight on index 0 used to vary
                       by seva when amounts differed; with unified presets it
-                      would highlight the identical amount on every card). */}
+                      would highlight the identical amount on every card).
+                      "Most Popular" is now deliberate and value-based
+                      (amount === 3100) rather than position-based — every
+                      seva's options include Rs.3,100 regardless of which
+                      significance group it's in, so this highlight lands
+                      on a genuinely comparable middle-tier amount for
+                      every seva, not an accident of array order. */}
                   <div className="mt-4 grid grid-cols-2 gap-x-2 gap-y-2">
                     {seva.options.map((option, optIdx) => {
                       const isCustom = !option.amount;
+                      const isMostPopular = option.amount === 3100;
                       const hasSubtitle = !!option.subtitle;
                       return (
                         <button
@@ -818,11 +825,18 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
                             ${hasSubtitle ? 'flex flex-col items-center justify-center gap-1 px-3 pb-2 pt-2.5' : 'px-3 py-3'}
                             ${isCustom
                               ? 'col-span-2 border-amber-500/70 bg-gradient-to-r from-amber-200 via-amber-200 to-orange-200 text-[13px] font-bold text-[#5c2e06] hover:border-amber-500 hover:from-amber-300 hover:to-orange-200 hover:shadow-[0_4px_16px_rgba(217,119,6,0.25)]'
-                              : 'border-amber-300/70 bg-gradient-to-b from-amber-100 to-[#fef0d4] text-[12px] font-bold text-[#5c2e06] hover:border-amber-400 hover:from-amber-200 hover:to-amber-100 hover:shadow-[0_3px_12px_rgba(217,119,6,0.18)]'
+                              : isMostPopular
+                                ? 'border-amber-500/80 bg-gradient-to-br from-amber-400 via-amber-300 to-orange-300 text-[12px] font-bold text-[#3b1605] shadow-[0_2px_6px_rgba(217,119,6,0.2)] hover:border-amber-600 hover:shadow-[0_4px_16px_rgba(217,119,6,0.3)]'
+                                : 'border-amber-300/70 bg-gradient-to-b from-amber-100 to-[#fef0d4] text-[12px] font-bold text-[#5c2e06] hover:border-amber-400 hover:from-amber-200 hover:to-amber-100 hover:shadow-[0_3px_12px_rgba(217,119,6,0.18)]'
                             }
                           `}
                         >
-                          <span className="block">
+                          {isMostPopular && !hasSubtitle && (
+                            <span className="absolute left-1.5 top-1.5 rounded-full bg-gradient-to-r from-[#5c1a0b] to-[#7a2e0f] px-1.5 py-0.5 text-[7px] font-bold uppercase tracking-wide text-amber-100 shadow-sm">
+                              Popular
+                            </span>
+                          )}
+                          <span className={`block ${isMostPopular && !hasSubtitle ? 'mt-2.5' : ''}`}>
                             {option.amount ? (
                               <span className="block leading-tight">
                                 <span className="text-[11px] font-normal text-amber-800/80">₹</span>{' '}
