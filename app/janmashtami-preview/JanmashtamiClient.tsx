@@ -76,6 +76,25 @@ const DECOR_GARLAND =
 const DECOR_MATKA =
   "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785481873515-1785481872176-matka-removebg-preview.png";
 
+// Which tier (0-5) shows the "Most Donated" badge, per seva — deliberately
+// varied rather than fixed at the same position for every card (which
+// looked templated when tried). Stable per seva (not re-randomized on
+// every render) so the badge doesn't flicker/jump around as the donor
+// interacts with the page.
+const MOST_DONATED_INDEX: Record<string, number> = {
+  annadana: 2,
+  "gau-seva": 0,
+  pushpalankara: 4,
+  abhisheka: 1,
+  naivedhya: 5,
+  "tulasi-archana": 3,
+  "makhan-mishri": 0,
+  vastrabharana: 2,
+  "chappan-bhog": 4,
+  mandapa: 1,
+  "japa-yagna": 3,
+};
+
 const sevas: Seva[] = [
   // ── Row 1 ──
   {
@@ -99,12 +118,12 @@ const sevas: Seva[] = [
     description: "Offer Gau Poshana Seva to protect and nourish the cows residing at our goshala.",
     image: "/assets/janmashtami-sk4.webp",
     options: [
-      { legacySevaId: 198, label: "Donate Rs. 1,100", amount: 1100 },
-      { legacySevaId: 199, label: "Donate Rs. 2,100", amount: 2100 },
-      { legacySevaId: 200, label: "Donate Rs. 3,100", amount: 3100 },
-      { legacySevaId: 201, label: "Donate Rs. 5,100", amount: 5100 },
-      { legacySevaId: 202, label: "Donate Rs. 9,000", amount: 9000 },
-      { legacySevaId: 1102, label: "Donate Rs. 11,000", amount: 11000 },
+      { legacySevaId: 198, label: "Donate Rs. 1,500", amount: 1500 },
+      { legacySevaId: 199, label: "Donate Rs. 2,500", amount: 2500 },
+      { legacySevaId: 200, label: "Donate Rs. 3,500", amount: 3500 },
+      { legacySevaId: 201, label: "Donate Rs. 5,500", amount: 5500 },
+      { legacySevaId: 202, label: "Donate Rs. 9,500", amount: 9500 },
+      { legacySevaId: 1102, label: "Donate Rs. 11,500", amount: 11500 },
       { legacySevaId: 203, label: "Donate Any Other Amount", amount: null },
     ],
   },
@@ -799,19 +818,16 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
                 <div className="p-4 pt-3">
                   <p className="min-h-[52px] text-[13px] leading-relaxed text-slate-700 md:text-sm">{seva.description}</p>
 
-                  {/* Elegant price buttons — 2nd tier (optIdx === 1)
-                      highlighted as "Popular". This is a deliberate
-                      anchoring choice: showing a lower first option makes
-                      this one look reasonable by contrast, without being
-                      the cheapest choice. It IS position-based (so it
-                      repeats within each significance group — e.g. all
-                      four "Grand" sevas show Rs.3,100 as Popular), a
-                      known tradeoff accepted per explicit request rather
-                      than an accident like the earlier version. */}
+                  {/* Elegant price buttons — "Most Donated" badge shown
+                      per MOST_DONATED_INDEX lookup above: a different tier
+                      position per seva (not fixed at the same index for
+                      every card), so the badge lands on genuinely varied
+                      amounts across the grid instead of repeating the same
+                      relative position/value everywhere. */}
                   <div className="mt-4 grid grid-cols-2 gap-x-2 gap-y-2">
                     {seva.options.map((option, optIdx) => {
                       const isCustom = !option.amount;
-                      const isPopular = optIdx === 1;
+                      const isMostDonated = optIdx === (MOST_DONATED_INDEX[seva.slug] ?? 1);
                       const hasSubtitle = !!option.subtitle;
                       return (
                         <button
@@ -823,18 +839,18 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
                             ${hasSubtitle ? 'flex flex-col items-center justify-center gap-1 px-3 pb-2 pt-2.5' : 'px-3 py-3'}
                             ${isCustom
                               ? 'col-span-2 border-amber-500/70 bg-gradient-to-r from-amber-200 via-amber-200 to-orange-200 text-[13px] font-bold text-[#5c2e06] hover:border-amber-500 hover:from-amber-300 hover:to-orange-200 hover:shadow-[0_4px_16px_rgba(217,119,6,0.25)]'
-                              : isPopular
+                              : isMostDonated
                                 ? 'border-amber-500/80 bg-gradient-to-br from-amber-400 via-amber-300 to-orange-300 text-[12px] font-bold text-[#3b1605] shadow-[0_2px_6px_rgba(217,119,6,0.2)] hover:border-amber-600 hover:shadow-[0_4px_16px_rgba(217,119,6,0.3)]'
                                 : 'border-amber-300/70 bg-gradient-to-b from-amber-100 to-[#fef0d4] text-[12px] font-bold text-[#5c2e06] hover:border-amber-400 hover:from-amber-200 hover:to-amber-100 hover:shadow-[0_3px_12px_rgba(217,119,6,0.18)]'
                             }
                           `}
                         >
-                          {isPopular && !hasSubtitle && (
+                          {isMostDonated && !hasSubtitle && (
                             <span className="absolute left-1.5 top-1.5 rounded-full bg-gradient-to-r from-[#5c1a0b] to-[#7a2e0f] px-1.5 py-0.5 text-[7px] font-bold uppercase tracking-wide text-amber-100 shadow-sm">
-                              Popular
+                              Most Donated
                             </span>
                           )}
-                          <span className={`block ${isPopular && !hasSubtitle ? 'mt-2.5' : ''}`}>
+                          <span className={`block ${isMostDonated && !hasSubtitle ? 'mt-2.5' : ''}`}>
                             {option.amount ? (
                               <span className="block leading-tight">
                                 <span className="text-[11px] font-normal text-amber-800/80">₹</span>{' '}
