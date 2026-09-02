@@ -486,12 +486,40 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
     if (seva) selectSeva(seva);
   };
 
-  // Ad CTA deep-linking: ?seva=abhisheka scrolls to and opens that seva's
-  // checkout panel automatically, so a Janmashtami ad for a specific seva
-  // lands the donor exactly where they clicked for, not the top of the page.
+  // Deep-linking into the checkout, used by two callers:
+  //
+  //   ads      ?seva=abhisheka           — an ad for one seva lands the donor
+  //                                        on that seva, not the page top.
+  //   reminder ?seva=abhisheka&amount=2100
+  //                                      — the pending-payment WhatsApp nudge
+  //                                        links back to the exact seva AND
+  //                                        amount the donor abandoned, so the
+  //                                        only thing left to do is pay.
+  //
+  // An unknown slug is ignored rather than cleared, so a stale ad link still
+  // shows a working page instead of an error.
   useEffect(() => {
     const sevaParam = searchParams.get("seva");
-    if (sevaParam) onSevaChange(sevaParam);
+    if (!sevaParam) return;
+
+    const seva = sevas.find((s) => s.slug === sevaParam);
+    if (!seva) return;
+
+    selectSeva(seva);
+
+    // selectSeva deliberately clears any amount (picking a new seva should not
+    // carry the old one over), so the amount is restored after it. Both run in
+    // the same effect body, so React commits them together — no flicker.
+    const amount = Number(searchParams.get("amount") || 0);
+    if (!Number.isFinite(amount) || amount < 100) return;
+
+    if (seva.options.some((option) => option.amount === amount)) {
+      setSelectedAmount(amount);
+    } else {
+      // Not one of this seva's tiers — an old price, or a custom amount the
+      // donor typed themselves. Put it back in the custom-amount box.
+      updateForm({ customAmount: String(amount) });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
@@ -537,6 +565,9 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
           festivalSlug: "janmashtami",
           type: "Sri Krishna Janmashtami",
           sevaName: selected.seva.title,
+          // Stored on the donation so the pending-payment reminder can link
+          // straight back to this seva (?seva=<slug>) if the donor drops off.
+          sevaSlug: selected.seva.slug,
           legacySevaId: genericSevaId,
           name: form.donorName.trim(),
           email: form.donorEmail.trim().toLowerCase(),

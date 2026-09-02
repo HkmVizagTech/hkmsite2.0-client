@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import { ArrowLeft, ArrowRight, Check, Clock, Copy, Facebook, FileCheck2, Heart, Instagram, Mail, MapPin, MessageCircle, Phone, ShieldCheck, Youtube, UtensilsCrossed, X } from "lucide-react";
@@ -291,6 +292,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
   const reduce = useReducedMotion();
   const attribution = useAttribution(campaigner ? `/janmashtami3/c/${campaigner.slug}` : "janmashtami3");
   const razorpayReady = useRazorpayPreload();
+  const searchParams = useSearchParams();
   const [activeSlide, setActiveSlide] = useState(0);
   const [selected, setSelected] = useState<SelectedOffering | null>(null);
   const [form, setForm] = useState<CheckoutForm>(initialForm);
@@ -328,6 +330,39 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
   const closeCheckout = () => {
     if (!submitting) setSelected(null);
   };
+
+  // Deep-linking into the checkout modal — same contract as /janmashtami:
+  //   ads      ?seva=abhisheka
+  //   reminder ?seva=abhisheka&amount=2100
+  //
+  // This page opens a modal per seva *tier* rather than an inline form, so the
+  // amount picks the matching tier when there is one; otherwise the seva's
+  // open-amount option is opened with the value pre-filled. An unknown slug is
+  // ignored, so a stale ad link still shows a working page.
+  useEffect(() => {
+    const sevaParam = searchParams.get("seva");
+    if (!sevaParam) return;
+
+    const seva = sevas.find((s) => s.slug === sevaParam);
+    if (!seva) return;
+
+    const amount = Number(searchParams.get("amount") || 0);
+    const hasAmount = Number.isFinite(amount) && amount >= 100;
+
+    const tier = hasAmount ? seva.options.find((o) => o.amount === amount) : undefined;
+    const openOption = seva.options.find((o) => o.amount == null);
+    const option = tier || openOption || seva.options[0];
+    if (!option) return;
+
+    openCheckout(seva, option);
+    if (!tier && hasAmount && option.amount == null) {
+      // No tier matches — an old price, or an amount the donor typed. Restore
+      // it into the custom-amount box. openCheckout resets the form first, so
+      // this merge lands on top of a clean initialForm.
+      updateForm({ customAmount: String(amount) });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   const validate = () => {
     if (!selected) return "Please select a seva.";
@@ -368,6 +403,9 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
           festivalSlug: "janmashtami",
           type: "Sri Krishna Janmashtami",
           sevaName: selected.seva.title,
+          // Stored on the donation so the pending-payment reminder can link
+          // straight back to this seva (?seva=<slug>) if the donor drops off.
+          sevaSlug: selected.seva.slug,
           legacySevaId: selected.option.legacySevaId,
           name: form.donorName.trim(),
           email: form.donorEmail.trim().toLowerCase(),

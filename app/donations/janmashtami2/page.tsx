@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import JanmashtamiClient from "./JanmashtamiClient";
 
 export const metadata = {
@@ -7,5 +8,12 @@ export const metadata = {
 };
 
 export default function JanmashtamiPage() {
-  return <JanmashtamiClient />;
+  // Suspense is required: JanmashtamiClient calls useSearchParams() for the
+  // ?seva= / &amount= deep link, and Next refuses to build a page that reads
+  // search params outside a suspense boundary.
+  return (
+    <Suspense fallback={null}>
+      <JanmashtamiClient />
+    </Suspense>
+  );
 }
