@@ -301,20 +301,28 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
       window.location.assign(`/payment/thank-you?type=seva&seva=${encodeURIComponent(result.sevaName || "Janmashtami Seva")}&amount=${result.amount}&source=${encodeURIComponent("the Janmashtami seva programme")}`);
     },
   });
-  useScrollToDonate("offer-seva");
+  useScrollToDonate(searchParams.get("seva") ? "" : "offer-seva");
 
-  // Ad CTA deep-linking: ?seva=abhisheka opens that seva's checkout modal
-  // directly (with its lowest preset pre-selected), so a Janmashtami ad
-  // for a specific seva lands the donor exactly where they clicked for.
+  // Ad CTA deep-linking: ?seva=abhisheka scrolls to and highlights that
+  // seva's card in the grid (where its preset buttons are already visible)
+  // — does NOT auto-open the checkout modal, so the donor still chooses to
+  // click a preset themselves rather than being interrupted by an overlay
+  // the moment the page loads.
   useEffect(() => {
     const sevaSlug = searchParams.get("seva");
     if (!sevaSlug) return;
     const matched = sevas.find((s) => s.slug === sevaSlug);
-    if (matched) openCheckout(matched, matched.options[0]);
+    if (!matched) return;
+    setHighlightedSlug(sevaSlug);
+    const timer = setTimeout(() => {
+      document.getElementById(`seva-card-${sevaSlug}`)?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
+    }, 500);
+    return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
   const [activeSlide, setActiveSlide] = useState(0);
   const [selected, setSelected] = useState<SelectedOffering | null>(null);
+  const [highlightedSlug, setHighlightedSlug] = useState<string | null>(null);
   const [form, setForm] = useState<CheckoutForm>(initialForm);
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<{ type: "success" | "error" | "idle"; message: string }>({ type: "idle", message: "" });
@@ -763,11 +771,16 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
             {sevas.map((seva, idx) => (
               <motion.article
                 key={seva.slug}
+                id={`seva-card-${seva.slug}`}
                 initial={reduce ? undefined : { opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: reduce ? 0 : idx * 0.08 }}
-                className="group overflow-hidden rounded-2xl border border-amber-300/70 bg-white shadow-[0_2px_20px_rgba(120,60,10,0.1)] transition-all duration-500 hover:-translate-y-1 hover:border-amber-400 hover:shadow-[0_16px_48px_rgba(120,60,10,0.18)]"
+                className={`group scroll-mt-24 overflow-hidden rounded-2xl border bg-white shadow-[0_2px_20px_rgba(120,60,10,0.1)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(120,60,10,0.18)] ${
+                  highlightedSlug === seva.slug
+                    ? "border-amber-500 ring-4 ring-amber-400/50 hover:border-amber-500"
+                    : "border-amber-300/70 hover:border-amber-400"
+                }`}
               >
                 {/* Image with gradient overlay + title */}
                 <div className="relative h-48 overflow-hidden shadow-[inset_0_-12px_12px_-8px_rgba(0,0,0,0.12)] md:h-56">
