@@ -1,10 +1,9 @@
 "use client";
 
-import { FormEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
-import { ArrowLeft, ArrowRight, Check, Clock, Copy, Facebook, FileCheck2, Heart, Instagram, Mail, MapPin, MessageCircle, Phone, ShieldCheck, Youtube, UtensilsCrossed } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Clock, Copy, Facebook, FileCheck2, Heart, Instagram, Mail, MapPin, MessageCircle, Phone, ShieldCheck, Youtube, UtensilsCrossed, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
@@ -13,6 +12,7 @@ import JanmashtamiGallery from "@/components/JanmashtamiGallery";
 import JanmashtamiImportanceSection from "@/components/janmashtami/JanmashtamiImportanceSection";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
 import { useAttribution } from "@/lib/useAttribution";
+import { useSearchParams } from "next/navigation";
 import { newEventId, getMetaBrowserData, trackInitiateCheckout, trackPurchase } from "@/lib/metaPixel";
 import { usePaymentStatusPoller } from "@/lib/usePaymentStatusPoller";
 import { useScrollToDonate } from "@/lib/useScrollToDonate";
@@ -53,18 +53,19 @@ type CheckoutForm = {
 
 type SelectedOffering = {
   seva: Seva;
+  option: SevaOption;
 };
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 
 const banners = [
   {
-    desktop: "/assets/janmashtami-skj26_1.webp",
+    desktop: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1787055655171-1787055654678-janmashtami2banner.webp",
     mobile: "/assets/janmashtami-skj26_m1.webp",
     alt: "Sri Krishna Janmashtami celebrations at Hare Krishna Movement Vizag",
   },
   {
-    desktop: "/assets/janmashtami-skj26_2.webp",
+    desktop: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1787055656278-1787055654943-janmashtami2banner2.webp",
     mobile: "/assets/janmashtami-skj26_m2.webp",
     alt: "Offer sevas for Sri Krishna Janmashtami at HKM Vizag",
   },
@@ -75,6 +76,25 @@ const DECOR_GARLAND =
 const DECOR_MATKA =
   "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785481873515-1785481872176-matka-removebg-preview.png";
 
+// Which tier (0-5) shows the "Most Donated" badge, per seva — deliberately
+// varied rather than fixed at the same position for every card (which
+// looked templated when tried). Stable per seva (not re-randomized on
+// every render) so the badge doesn't flicker/jump around as the donor
+// interacts with the page.
+const MOST_DONATED_INDEX: Record<string, number> = {
+  annadana: 2,
+  "gau-seva": 0,
+  pushpalankara: 4,
+  abhisheka: 1,
+  naivedhya: 5,
+  "tulasi-archana": 3,
+  "makhan-mishri": 0,
+  vastrabharana: 2,
+  "chappan-bhog": 4,
+  mandapa: 1,
+  "japa-yagna": 3,
+};
+
 const sevas: Seva[] = [
   // ── Row 1 ──
   {
@@ -83,12 +103,12 @@ const sevas: Seva[] = [
     description: "Sponsor Anna-Daan to all the temple visitors in the name of your family or loved ones.",
     image: "/assets/janmashtami-sk1.webp",
     options: [
-      { legacySevaId: 186, label: "Donate Rs. 15,001", amount: 15001 },
-      { legacySevaId: 187, label: "Donate Rs. 9,001", amount: 9001 },
-      { legacySevaId: 188, label: "Donate Rs. 6,001", amount: 6001 },
-      { legacySevaId: 300, label: "Donate Rs. 4,501", amount: 4501 },
-      { legacySevaId: 189, label: "Donate Rs. 3,001", amount: 3001 },
-      { legacySevaId: 190, label: "Donate Rs. 1,501", amount: 1501 },
+      { legacySevaId: 186, label: "Donate Rs. 1,100", amount: 1100 },
+      { legacySevaId: 187, label: "Donate Rs. 2,100", amount: 2100 },
+      { legacySevaId: 188, label: "Donate Rs. 3,100", amount: 3100 },
+      { legacySevaId: 189, label: "Donate Rs. 5,100", amount: 5100 },
+      { legacySevaId: 190, label: "Donate Rs. 9,000", amount: 9000 },
+      { legacySevaId: 1090, label: "Donate Rs. 11,000", amount: 11000 },
       { legacySevaId: 191, label: "Donate Any Other Amount", amount: null },
     ],
   },
@@ -98,12 +118,12 @@ const sevas: Seva[] = [
     description: "Offer Gau Poshana Seva to protect and nourish the cows residing at our goshala.",
     image: "/assets/janmashtami-sk4.webp",
     options: [
-      { legacySevaId: 198, label: "Donate Rs. 9,001", amount: 9001 },
-      { legacySevaId: 199, label: "Donate Rs. 5,001", amount: 5001 },
-      { legacySevaId: 200, label: "Donate Rs. 3,501", amount: 3501 },
-      { legacySevaId: 301, label: "Donate Rs. 3,001", amount: 3001 },
-      { legacySevaId: 201, label: "Donate Rs. 2,501", amount: 2501 },
-      { legacySevaId: 202, label: "Donate Rs. 1,501", amount: 1501 },
+      { legacySevaId: 198, label: "Donate Rs. 1,500", amount: 1500 },
+      { legacySevaId: 199, label: "Donate Rs. 2,500", amount: 2500 },
+      { legacySevaId: 200, label: "Donate Rs. 3,500", amount: 3500 },
+      { legacySevaId: 201, label: "Donate Rs. 5,500", amount: 5500 },
+      { legacySevaId: 202, label: "Donate Rs. 9,500", amount: 9500 },
+      { legacySevaId: 1102, label: "Donate Rs. 11,500", amount: 11500 },
       { legacySevaId: 203, label: "Donate Any Other Amount", amount: null },
     ],
   },
@@ -113,12 +133,12 @@ const sevas: Seva[] = [
     description: "Sponsor a grand Garland for Radha Krishna on this auspicious day to welcome the Supreme Lord.",
     image: "/assets/janmashtami-sk2.webp",
     options: [
-      { legacySevaId: 216, label: "Donate Rs. 10,008", amount: 10008 },
-      { legacySevaId: 217, label: "Donate Rs. 7,501", amount: 7501 },
-      { legacySevaId: 218, label: "Donate Rs. 5,001", amount: 5001 },
-      { legacySevaId: 302, label: "Donate Rs. 3,501", amount: 3501 },
-      { legacySevaId: 219, label: "Donate Rs. 2,501", amount: 2501 },
-      { legacySevaId: 220, label: "Donate Rs. 1,008", amount: 1008 },
+      { legacySevaId: 216, label: "Donate Rs. 1,100", amount: 1100 },
+      { legacySevaId: 217, label: "Donate Rs. 1,500", amount: 1500 },
+      { legacySevaId: 218, label: "Donate Rs. 2,100", amount: 2100 },
+      { legacySevaId: 219, label: "Donate Rs. 3,100", amount: 3100 },
+      { legacySevaId: 220, label: "Donate Rs. 5,100", amount: 5100 },
+      { legacySevaId: 1120, label: "Donate Rs. 9,000", amount: 9000 },
       { legacySevaId: 221, label: "Donate Any Other Amount", amount: null },
     ],
   },
@@ -129,13 +149,13 @@ const sevas: Seva[] = [
     description: "Sponsor the sacred Abhishekam of Sri Sri Radha Madan Mohan — morning and Kalash bathing ceremonies on Janmashtami.",
     image: "/assets/janmashtami-sk3.webp",
     options: [
-      { legacySevaId: 234, label: "Donate Rs. 25,555", amount: 25555, subtitle: "Pratah Abhishekam" },
-      { legacySevaId: 240, label: "Donate Rs. 15,555", amount: 15555, subtitle: "Kalash Abhishekam" },
-      { legacySevaId: 236, label: "Donate Rs. 10,008", amount: 10008 },
-      { legacySevaId: 303, label: "Donate Rs. 7,501", amount: 7501 },
-      { legacySevaId: 237, label: "Donate Rs. 5,001", amount: 5001 },
-      { legacySevaId: 238, label: "Donate Rs. 2,501", amount: 2501 },
-      { legacySevaId: 239, label: "Donate Any Other Amount", amount: null },
+      { legacySevaId: 240, label: "Donate Rs. 1,100", amount: 1100 },
+      { legacySevaId: 241, label: "Donate Rs. 3,100", amount: 3100 },
+      { legacySevaId: 242, label: "Donate Rs. 5,100", amount: 5100 },
+      { legacySevaId: 243, label: "Donate Rs. 9,000", amount: 9000 },
+      { legacySevaId: 244, label: "Donate Rs. 15,000", amount: 15000 },
+      { legacySevaId: 1144, label: "Donate Rs. 21,000", amount: 21000 },
+      { legacySevaId: 245, label: "Donate Any Other Amount", amount: null },
     ],
   },
   {
@@ -144,12 +164,12 @@ const sevas: Seva[] = [
     description: "Sponsor the sacred food offering to Lord Krishna — Naivedhya is the devotional offering of prepared dishes to the Lord.",
     image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785833545819-1785833545717-naivedya.jpeg",
     options: [
-      { legacySevaId: 246, label: "Donate Rs. 11,111", amount: 11111 },
-      { legacySevaId: 247, label: "Donate Rs. 7,501", amount: 7501 },
-      { legacySevaId: 248, label: "Donate Rs. 5,001", amount: 5001 },
-      { legacySevaId: 304, label: "Donate Rs. 4,001", amount: 4001 },
-      { legacySevaId: 249, label: "Donate Rs. 3,001", amount: 3001 },
-      { legacySevaId: 250, label: "Donate Rs. 1,501", amount: 1501 },
+      { legacySevaId: 246, label: "Donate Rs. 1,100", amount: 1100 },
+      { legacySevaId: 247, label: "Donate Rs. 2,100", amount: 2100 },
+      { legacySevaId: 248, label: "Donate Rs. 3,100", amount: 3100 },
+      { legacySevaId: 304, label: "Donate Rs. 5,100", amount: 5100 },
+      { legacySevaId: 249, label: "Donate Rs. 9,000", amount: 9000 },
+      { legacySevaId: 250, label: "Donate Rs. 11,000", amount: 11000 },
       { legacySevaId: 251, label: "Donate Any Other Amount", amount: null },
     ],
   },
@@ -159,12 +179,12 @@ const sevas: Seva[] = [
     description: "Sponsor a grand Archana for Radha Krishna on this auspicious day to welcome the Supreme Lord.",
     image: "/assets/janmashtami-sk6.webp",
     options: [
-      { legacySevaId: 210, label: "Donate Rs. 10,008", amount: 10008 },
-      { legacySevaId: 211, label: "Donate Rs. 7,501", amount: 7501 },
-      { legacySevaId: 212, label: "Donate Rs. 5,001", amount: 5001 },
-      { legacySevaId: 305, label: "Donate Rs. 3,501", amount: 3501 },
-      { legacySevaId: 213, label: "Donate Rs. 2,501", amount: 2501 },
-      { legacySevaId: 214, label: "Donate Rs. 1,008", amount: 1008 },
+      { legacySevaId: 210, label: "Donate Rs. 1,100", amount: 1100 },
+      { legacySevaId: 211, label: "Donate Rs. 1,500", amount: 1500 },
+      { legacySevaId: 212, label: "Donate Rs. 2,100", amount: 2100 },
+      { legacySevaId: 213, label: "Donate Rs. 3,100", amount: 3100 },
+      { legacySevaId: 214, label: "Donate Rs. 5,100", amount: 5100 },
+      { legacySevaId: 1114, label: "Donate Rs. 9,000", amount: 9000 },
       { legacySevaId: 215, label: "Donate Any Other Amount", amount: null },
     ],
   },
@@ -175,12 +195,12 @@ const sevas: Seva[] = [
     description: "Receive the special blessings of Makhan Lal by sponsoring His very favourite Makhan Mishri.",
     image: "/assets/janmashtami-sk5.webp",
     options: [
-      { legacySevaId: 192, label: "Donate Rs. 10,008", amount: 10008 },
-      { legacySevaId: 193, label: "Donate Rs. 5,001", amount: 5001 },
-      { legacySevaId: 306, label: "Donate Rs. 3,501", amount: 3501 },
-      { legacySevaId: 194, label: "Donate Rs. 2,501", amount: 2501 },
-      { legacySevaId: 195, label: "Donate Rs. 1,008", amount: 1008 },
-      { legacySevaId: 196, label: "Donate Rs. 501", amount: 501 },
+      { legacySevaId: 192, label: "Donate Rs. 1,100", amount: 1100 },
+      { legacySevaId: 193, label: "Donate Rs. 1,500", amount: 1500 },
+      { legacySevaId: 194, label: "Donate Rs. 2,100", amount: 2100 },
+      { legacySevaId: 195, label: "Donate Rs. 3,100", amount: 3100 },
+      { legacySevaId: 196, label: "Donate Rs. 5,100", amount: 5100 },
+      { legacySevaId: 1096, label: "Donate Rs. 9,000", amount: 9000 },
       { legacySevaId: 197, label: "Donate Any Other Amount", amount: null },
     ],
   },
@@ -190,12 +210,12 @@ const sevas: Seva[] = [
     description: "Sponsor exquisite garments and divine ornaments for Sri Sri Radha Madan Mohan on Janmashtami.",
     image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677419371-1783677418690-DietyPhotos.jpeg",
     options: [
-      { legacySevaId: 258, label: "Donate Rs. 1,50,000", amount: 150000 },
-      { legacySevaId: 259, label: "Donate Rs. 1,00,008", amount: 100008 },
-      { legacySevaId: 260, label: "Donate Rs. 75,001", amount: 75001 },
-      { legacySevaId: 307, label: "Donate Rs. 60,001", amount: 60001 },
-      { legacySevaId: 261, label: "Donate Rs. 51,001", amount: 51001 },
-      { legacySevaId: 262, label: "Donate Rs. 25,001", amount: 25001 },
+      { legacySevaId: 258, label: "Donate Rs. 1,100", amount: 1100 },
+      { legacySevaId: 259, label: "Donate Rs. 3,100", amount: 3100 },
+      { legacySevaId: 260, label: "Donate Rs. 5,100", amount: 5100 },
+      { legacySevaId: 307, label: "Donate Rs. 9,000", amount: 9000 },
+      { legacySevaId: 261, label: "Donate Rs. 15,000", amount: 15000 },
+      { legacySevaId: 262, label: "Donate Rs. 21,000", amount: 21000 },
       { legacySevaId: 263, label: "Donate Any Other Amount", amount: null },
     ],
   },
@@ -205,12 +225,12 @@ const sevas: Seva[] = [
     description: "Sponsor the grand offering of 56 dishes to Lord Krishna — a magnificent feast of devotion on His appearance day.",
     image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785833232608-1785833231421-chapan-bhog.webp",
     options: [
-      { legacySevaId: 222, label: "Donate Rs. 75,555", amount: 75555 },
-      { legacySevaId: 223, label: "Donate Rs. 51,001", amount: 51001 },
-      { legacySevaId: 224, label: "Donate Rs. 35,001", amount: 35001 },
-      { legacySevaId: 308, label: "Donate Rs. 25,001", amount: 25001 },
-      { legacySevaId: 225, label: "Donate Rs. 21,001", amount: 21001 },
-      { legacySevaId: 226, label: "Donate Rs. 11,001", amount: 11001 },
+      { legacySevaId: 222, label: "Donate Rs. 1,100", amount: 1100 },
+      { legacySevaId: 223, label: "Donate Rs. 3,100", amount: 3100 },
+      { legacySevaId: 224, label: "Donate Rs. 5,100", amount: 5100 },
+      { legacySevaId: 308, label: "Donate Rs. 9,000", amount: 9000 },
+      { legacySevaId: 225, label: "Donate Rs. 15,000", amount: 15000 },
+      { legacySevaId: 226, label: "Donate Rs. 21,000", amount: 21000 },
       { legacySevaId: 227, label: "Donate Any Other Amount", amount: null },
     ],
   },
@@ -220,12 +240,12 @@ const sevas: Seva[] = [
     description: "Sponsor the sacred Mandapa decoration for the grand Janmashtami celebrations at HKM Vizag.",
     image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785833231776-1785833231103-ChatGPTImageAug42026021053PM.webp",
     options: [
-      { legacySevaId: 228, label: "Donate Rs. 55,555", amount: 55555 },
-      { legacySevaId: 229, label: "Donate Rs. 35,001", amount: 35001 },
-      { legacySevaId: 230, label: "Donate Rs. 25,001", amount: 25001 },
-      { legacySevaId: 309, label: "Donate Rs. 21,001", amount: 21001 },
-      { legacySevaId: 231, label: "Donate Rs. 15,001", amount: 15001 },
-      { legacySevaId: 232, label: "Donate Rs. 7,501", amount: 7501 },
+      { legacySevaId: 228, label: "Donate Rs. 1,100", amount: 1100 },
+      { legacySevaId: 229, label: "Donate Rs. 3,100", amount: 3100 },
+      { legacySevaId: 230, label: "Donate Rs. 5,100", amount: 5100 },
+      { legacySevaId: 309, label: "Donate Rs. 9,000", amount: 9000 },
+      { legacySevaId: 231, label: "Donate Rs. 15,000", amount: 15000 },
+      { legacySevaId: 232, label: "Donate Rs. 21,000", amount: 21000 },
       { legacySevaId: 233, label: "Donate Any Other Amount", amount: null },
     ],
   },
@@ -235,12 +255,12 @@ const sevas: Seva[] = [
     description: "Sponsor the Japa Yagna — a collective chanting of the holy names of Lord Krishna on His divine appearance day.",
     image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785833232341-1785833231402-ChatGPTImageAug42026020855PM.webp",
     options: [
-      { legacySevaId: 252, label: "Donate Rs. 7,777", amount: 7777 },
-      { legacySevaId: 253, label: "Donate Rs. 5,001", amount: 5001 },
-      { legacySevaId: 254, label: "Donate Rs. 3,001", amount: 3001 },
-      { legacySevaId: 310, label: "Donate Rs. 2,501", amount: 2501 },
-      { legacySevaId: 255, label: "Donate Rs. 2,001", amount: 2001 },
-      { legacySevaId: 256, label: "Donate Rs. 1,008", amount: 1008 },
+      { legacySevaId: 252, label: "Donate Rs. 1,100", amount: 1100 },
+      { legacySevaId: 253, label: "Donate Rs. 2,100", amount: 2100 },
+      { legacySevaId: 254, label: "Donate Rs. 3,100", amount: 3100 },
+      { legacySevaId: 310, label: "Donate Rs. 5,100", amount: 5100 },
+      { legacySevaId: 255, label: "Donate Rs. 9,000", amount: 9000 },
+      { legacySevaId: 256, label: "Donate Rs. 11,000", amount: 11000 },
       { legacySevaId: 257, label: "Donate Any Other Amount", amount: null },
     ],
   },
@@ -259,8 +279,6 @@ const TRUST_BADGES = [
   { icon: Clock, label: "Instant Confirmation" },
   { icon: ShieldCheck, label: "Secure Razorpay Checkout" },
 ];
-
-const AMOUNT_PRESETS = [1100, 1501, 2100, 5100, 11000] as const;
 
 const initialForm: CheckoutForm = {
   donorName: "",
@@ -284,121 +302,6 @@ const initialForm: CheckoutForm = {
 const apiBase = () => (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(/\/+$/, "");
 const formatAmount = (amount: number) => amount.toLocaleString("en-IN");
 
-function SevaCarousel({ sevas, onSelect, reduce }: { sevas: Seva[]; onSelect: (seva: Seva) => void; reduce: boolean | null }) {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
-  const pausedRef = useRef(false);
-
-  const checkScroll = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    setCanScrollLeft(el.scrollLeft > 4);
-    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 4);
-  }, []);
-
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    checkScroll();
-    el.addEventListener("scroll", checkScroll, { passive: true });
-    const ro = new ResizeObserver(checkScroll);
-    ro.observe(el);
-    return () => {
-      el.removeEventListener("scroll", checkScroll);
-      ro.disconnect();
-    };
-  }, [checkScroll]);
-
-  const scroll = useCallback((direction: number) => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const cardWidth = el.querySelector("article")?.offsetWidth ?? 300;
-    const gap = 20;
-    const maxScroll = el.scrollWidth - el.clientWidth;
-    const nextPos = el.scrollLeft + direction * (cardWidth + gap);
-    if (nextPos >= maxScroll) {
-      el.scrollTo({ left: 0, behavior: reduce ? "auto" : "smooth" });
-    } else if (nextPos < 0) {
-      el.scrollTo({ left: maxScroll, behavior: reduce ? "auto" : "smooth" });
-    } else {
-      el.scrollBy({ left: direction * (cardWidth + gap), behavior: reduce ? "auto" : "smooth" });
-    }
-  }, [reduce]);
-
-  useEffect(() => {
-    const timer = window.setInterval(() => {
-      if (!pausedRef.current) scroll(1);
-    }, 2500);
-    return () => window.clearInterval(timer);
-  }, [scroll]);
-
-  const onPointerEnter = () => { pausedRef.current = true; };
-  const onPointerLeave = () => { pausedRef.current = false; };
-
-  return (
-    <div className="relative" onPointerEnter={onPointerEnter} onPointerLeave={onPointerLeave}>
-      <div
-        ref={scrollRef}
-        className="scrollbar-hide flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4 lg:snap-none"
-        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-      >
-        <style>{`.scrollbar-hide::-webkit-scrollbar { display: none; }`}</style>
-        {sevas.map((seva, idx) => (
-          <motion.article
-            key={seva.slug}
-            initial={reduce ? undefined : { opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: reduce ? 0 : Math.min(idx * 0.08, 0.4) }}
-            className="group w-[88vw] flex-shrink-0 snap-start overflow-hidden rounded-2xl border border-amber-300/70 bg-white shadow-[0_2px_20px_rgba(120,60,10,0.1)] transition-all duration-500 hover:-translate-y-1 hover:border-amber-400 hover:shadow-[0_16px_48px_rgba(120,60,10,0.18)] sm:w-[46vw] lg:w-[calc((100%-60px)/3)]"
-          >
-            <div className="relative h-48 overflow-hidden shadow-[inset_0_-12px_12px_-8px_rgba(0,0,0,0.12)] sm:h-52 md:h-56">
-              <Image
-                src={seva.image}
-                alt={seva.title}
-                fill
-                sizes="(max-width: 640px) 88vw, (max-width: 1024px) 46vw, 33vw"
-                className="object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/35 to-transparent" />
-              <h3 className="absolute bottom-3 left-4 right-4 text-lg font-bold tracking-wide text-white drop-shadow-md md:text-xl">{seva.title}</h3>
-            </div>
-            <div className="p-5 pt-4">
-              <p className="min-h-[48px] text-sm leading-relaxed text-slate-700 md:text-[15px]">{seva.description}</p>
-              <button
-                type="button"
-                onClick={() => onSelect(seva)}
-                className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-amber-400 to-orange-400 px-5 py-3.5 text-sm font-bold text-[#3b1605] shadow-[0_2px_8px_rgba(217,119,6,0.2)] transition-all duration-300 hover:from-amber-300 hover:to-orange-300 hover:shadow-[0_4px_16px_rgba(217,119,6,0.35)]"
-              >
-                <Heart className="h-4 w-4 fill-current" />
-                Offer Seva
-              </button>
-            </div>
-          </motion.article>
-        ))}
-      </div>
-
-      <button
-        type="button"
-        onClick={() => scroll(-1)}
-        className="absolute -left-3 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-amber-300/60 bg-white/90 text-amber-800 shadow-lg backdrop-blur transition hover:bg-amber-50 hover:shadow-xl lg:flex"
-        aria-label="Scroll sevas left"
-      >
-        <ArrowLeft className="h-5 w-5" />
-      </button>
-      <button
-        type="button"
-        onClick={() => scroll(1)}
-        className="absolute -right-3 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-amber-300/60 bg-white/90 text-amber-800 shadow-lg backdrop-blur transition hover:bg-amber-50 hover:shadow-xl lg:flex"
-        aria-label="Scroll sevas right"
-      >
-        <ArrowRight className="h-5 w-5" />
-      </button>
-    </div>
-  );
-}
-
 export interface JanmashtamiCampaigner {
   name: string;
   slug: string;
@@ -412,42 +315,47 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
   const attribution = useAttribution(campaigner ? `/janmashtami/c/${campaigner.slug}` : "janmashtami");
   const razorpayReady = useRazorpayPreload();
   const searchParams = useSearchParams();
-
-  // Polls the backend until the webhook confirms the donation completed —
-  // catches donors who pay in their UPI app and go back before Razorpay's
-  // success callback fires on the frontend.
   const { startPolling, stopPolling } = usePaymentStatusPoller({
     onCompleted: (result) => {
-      window.location.assign(
-        `/payment/thank-you?type=seva&seva=${encodeURIComponent(result.sevaName || "Janmashtami Seva")}&amount=${result.amount}&source=${encodeURIComponent("the Janmashtami seva programme")}`
-      );
+      window.location.assign(`/payment/thank-you?type=seva&seva=${encodeURIComponent(result.sevaName || "Janmashtami Seva")}&amount=${result.amount}&source=${encodeURIComponent("the Janmashtami seva programme")}`);
     },
   });
-  useScrollToDonate("checkout-form");
+  useScrollToDonate(searchParams.get("seva") ? "" : "offer-seva");
+
+  // Ad CTA deep-linking: ?seva=abhisheka scrolls to and highlights that
+  // seva's card in the grid (where its preset buttons are already visible)
+  // — does NOT auto-open the checkout modal, so the donor still chooses to
+  // click a preset themselves rather than being interrupted by an overlay
+  // the moment the page loads.
+  useEffect(() => {
+    const sevaSlug = searchParams.get("seva");
+    if (!sevaSlug) return;
+    const matched = sevas.find((s) => s.slug === sevaSlug);
+    if (!matched) return;
+    setHighlightedSlug(sevaSlug);
+    const timer = setTimeout(() => {
+      document.getElementById(`seva-card-${sevaSlug}`)?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
+    }, 500);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
   const [activeSlide, setActiveSlide] = useState(0);
   const [selected, setSelected] = useState<SelectedOffering | null>(null);
-  const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
+  const [highlightedSlug, setHighlightedSlug] = useState<string | null>(null);
   const [form, setForm] = useState<CheckoutForm>(initialForm);
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<{ type: "success" | "error" | "idle"; message: string }>({ type: "idle", message: "" });
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
-  const finalAmount = selectedAmount ?? Number(form.customAmount || 0);
+  const finalAmount = selected?.option.amount ?? Number(form.customAmount || 0);
   const showTaxField = finalAmount >= 500;
   const showPrasadamField = finalAmount >= 1000;
   const needsAddress = form.want80G || form.wantPrasadam;
 
-  const canSubmit = !!selected && !!finalAmount && finalAmount >= 100;
-  const submitLabel = !selected
-    ? "Select a seva"
-    : !finalAmount
-      ? "Select an amount"
-      : `Donate Rs. ${formatAmount(finalAmount)}`;
-
   const selectedSummary = useMemo(() => {
     if (!selected) return "";
-    return `${selected.seva.title} - ${finalAmount ? `Rs. ${formatAmount(finalAmount)}` : "Select an amount"}`;
-  }, [selected, finalAmount]);
+    return `${selected.seva.title} - ${selected.option.label}`;
+  }, [selected]);
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -460,68 +368,16 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
     setForm((current) => ({ ...current, ...patch }));
   };
 
-  const selectSeva = (seva: Seva) => {
-    setSelected((current) => {
-      if (current?.seva.slug === seva.slug) return current;
-      return { seva };
-    });
-    setSelectedAmount(null);
-    updateForm({ customAmount: "" });
+  const openCheckout = (seva: Seva, option: SevaOption) => {
+    setSelected({ seva, option });
+    setForm(initialForm);
     setStatus({ type: "idle", message: "" });
     trackInitiateCheckout({ content_name: seva.title });
-    document.getElementById("checkout-form")?.scrollIntoView({
-      behavior: reduce ? "auto" : "smooth",
-      block: "start",
-    });
   };
 
-  const selectPreset = (amount: number) => {
-    setSelectedAmount(amount);
-    updateForm({ customAmount: "" });
-    setStatus({ type: "idle", message: "" });
+  const closeCheckout = () => {
+    if (!submitting) setSelected(null);
   };
-
-  const onSevaChange = (slug: string) => {
-    const seva = sevas.find((s) => s.slug === slug);
-    if (seva) selectSeva(seva);
-  };
-
-  // Deep-linking into the checkout, used by two callers:
-  //
-  //   ads      ?seva=abhisheka           — an ad for one seva lands the donor
-  //                                        on that seva, not the page top.
-  //   reminder ?seva=abhisheka&amount=2100
-  //                                      — the pending-payment WhatsApp nudge
-  //                                        links back to the exact seva AND
-  //                                        amount the donor abandoned, so the
-  //                                        only thing left to do is pay.
-  //
-  // An unknown slug is ignored rather than cleared, so a stale ad link still
-  // shows a working page instead of an error.
-  useEffect(() => {
-    const sevaParam = searchParams.get("seva");
-    if (!sevaParam) return;
-
-    const seva = sevas.find((s) => s.slug === sevaParam);
-    if (!seva) return;
-
-    selectSeva(seva);
-
-    // selectSeva deliberately clears any amount (picking a new seva should not
-    // carry the old one over), so the amount is restored after it. Both run in
-    // the same effect body, so React commits them together — no flicker.
-    const amount = Number(searchParams.get("amount") || 0);
-    if (!Number.isFinite(amount) || amount < 100) return;
-
-    if (seva.options.some((option) => option.amount === amount)) {
-      setSelectedAmount(amount);
-    } else {
-      // Not one of this seva's tiers — an old price, or a custom amount the
-      // donor typed themselves. Put it back in the custom-amount box.
-      updateForm({ customAmount: String(amount) });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
 
   const validate = () => {
     if (!selected) return "Please select a seva.";
@@ -548,7 +404,6 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
     }
 
     if (!selected) return;
-    const genericSevaId = selected.seva.options.find((o) => o.amount == null)?.legacySevaId;
     setSubmitting(true);
     setStatus({ type: "idle", message: "" });
 
@@ -565,10 +420,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
           festivalSlug: "janmashtami",
           type: "Sri Krishna Janmashtami",
           sevaName: selected.seva.title,
-          // Stored on the donation so the pending-payment reminder can link
-          // straight back to this seva (?seva=<slug>) if the donor drops off.
-          sevaSlug: selected.seva.slug,
-          legacySevaId: genericSevaId,
+          legacySevaId: selected.option.legacySevaId,
           name: form.donorName.trim(),
           email: form.donorEmail.trim().toLowerCase(),
           mobile: form.donorMobile,
@@ -578,9 +430,6 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
           certificate: form.want80G,
           panNumber: form.want80G ? form.panNumber : undefined,
           mahaprasadam: form.wantPrasadam,
-          metaEventId,
-          metaFbp: metaBrowser.fbp,
-          metaFbc: metaBrowser.fbc,
           prasadamAddress: needsAddress
             ? {
                 doorNo: form.doorNo,
@@ -593,6 +442,9 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
                 pincode: form.pincode,
               }
             : null,
+          metaEventId,
+          metaFbp: metaBrowser.fbp,
+          metaFbc: metaBrowser.fbc,
         }),
       });
 
@@ -618,12 +470,12 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
         notes: {
           sourcePage: "janmashtami",
           festivalSlug: "janmashtami",
-          legacySevaId: genericSevaId,
+          legacySevaId: selected.option.legacySevaId,
           sevaName: selected.seva.title,
-          sevaOption: `Rs. ${formatAmount(finalAmount)}`,
+          sevaOption: selected.option.label,
         },
         handler: async (response: Record<string, string>) => {
-          stopPolling(); // frontend caught it — poller not needed
+          stopPolling();
           try {
             const verifyResponse = await fetch(`${apiBase()}/payments/verify`, {
               method: "POST",
@@ -651,18 +503,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
         },
         modal: {
           ondismiss: () => {
-            // Donor closed the checkout widget — could mean they:
-            // (a) cancelled deliberately, or
-            // (b) paid in their UPI app and went back before the success
-            //     screen returned to the browser.
-            // Keep the poller running — if (b), the webhook will fire
-            // on the backend and the poller will redirect them automatically.
-            // setSubmitting stays true while the poller is active so the
-            // Donate button remains disabled (prevents a second order).
-            setStatus({
-              type: "idle",
-              message: "If you completed the payment, your receipt will be sent to your WhatsApp shortly.",
-            });
+            setStatus({ type: "idle", message: "If you completed the payment, your receipt will arrive on WhatsApp shortly." });
           },
         },
         theme: {
@@ -670,8 +511,6 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
         },
       }).open();
 
-      // Start polling immediately after Razorpay opens, so we catch the
-      // webhook-triggered completion even if the frontend handler never fires.
       startPolling(order.orderId);
     } catch (err) {
       setStatus({
@@ -785,7 +624,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
         )}
         <div className="mx-auto grid max-w-6xl gap-8 md:grid-cols-[1.35fr_0.65fr] md:items-center">
           <div>
-            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.22em] text-[#ffd96f]">Hare Krishna Movement Vizag</p>
+            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.22em] text-[#ffd96f]">Hare Krishna Movement</p>
             <h1 className="text-3xl font-bold leading-tight text-[#ffdb68] md:text-5xl" style={{ textShadow: "0 0 40px hsl(42,92%,56%,0.3), 0 0 80px hsl(42,92%,56%,0.15)" }}>Sri Krishna Janmashtami</h1>
             <p className="mt-5 max-w-4xl text-base leading-8 text-white/92 md:text-lg">
               This Janmashtami, on the 4th & 5th of September, join the grand celebrations at HKM Vizag.
@@ -836,6 +675,26 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
           ))}
         </div>
       </motion.section>
+
+      <style>{`
+        .form-scroll::-webkit-scrollbar {
+          width: 6px;
+        }
+        .form-scroll::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .form-scroll::-webkit-scrollbar-thumb {
+          background: #c98a1a;
+          border-radius: 9999px;
+        }
+        .form-scroll::-webkit-scrollbar-thumb:hover {
+          background: #a16c12;
+        }
+        .form-scroll {
+          scrollbar-width: thin;
+          scrollbar-color: #c98a1a transparent;
+        }
+      `}</style>
 
       <section id="offer-seva" className="relative overflow-hidden px-4 py-12 md:py-16">
         {/* Krishna peacock-feather decorative background */}
@@ -920,190 +779,102 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
             </p>
           </motion.div>
 
-          {/* Seva cards carousel */}
-          <SevaCarousel sevas={sevas} onSelect={selectSeva} reduce={reduce} />
-
-          {/* ---------- Inline checkout form ---------- */}
+          {/* Seva cards */}
           <motion.div
-            id="checkout-form"
-            initial={reduce ? undefined : { opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={reduce ? undefined : { opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="relative mx-auto mt-14 max-w-3xl scroll-mt-6"
+            transition={{ duration: 0.4, staggerChildren: reduce ? 0 : 0.08 }}
+            className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
           >
-            <div className="overflow-hidden rounded-2xl border border-amber-300/70 bg-white shadow-[0_14px_35px_rgba(120,60,10,0.14)]">
-              <div className="border-b border-amber-200/60 bg-gradient-to-r from-amber-50 via-[#fff7e6] to-amber-50 px-6 py-5">
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-amber-700/70">Janmashtami Checkout</p>
-                <h2 className="mt-1 text-xl font-bold text-[#331447]">Complete Your Seva</h2>
-                <p className="mt-1 text-sm text-amber-800/60">
-                  Select a seva above (or choose one here), then pick the amount you wish to offer.
-                </p>
-              </div>
-
-              <form onSubmit={submitDonation} className="space-y-5 p-6">
-                {/* Seva selector */}
-                <div>
-                  <label htmlFor="seva-select" className="mb-1 block text-sm font-semibold text-[#331447]">
-                    Selected Seva <span className="font-normal text-amber-700/70">(auto-filled by the seva you pick)</span>
-                  </label>
-                  <select
-                    id="seva-select"
-                    value={selected?.seva.slug ?? ""}
-                    onChange={(event) => onSevaChange(event.target.value)}
-                    className="h-11 w-full rounded-lg border border-amber-300 bg-white px-3 text-sm text-[#331447] outline-none transition-colors focus:border-amber-500 focus:ring-2 focus:ring-amber-400/40"
-                  >
-                    <option value="" disabled>Select a seva</option>
-                    {sevas.map((s) => (
-                      <option key={s.slug} value={s.slug}>{s.title}</option>
-                    ))}
-                  </select>
+            {sevas.map((seva, idx) => (
+              <motion.article
+                key={seva.slug}
+                id={`seva-card-${seva.slug}`}
+                initial={reduce ? undefined : { opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: reduce ? 0 : idx * 0.08 }}
+                className={`group scroll-mt-24 overflow-hidden rounded-2xl border bg-white shadow-[0_2px_20px_rgba(120,60,10,0.1)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(120,60,10,0.18)] ${
+                  highlightedSlug === seva.slug
+                    ? "border-amber-500 ring-4 ring-amber-400/50 hover:border-amber-500"
+                    : "border-amber-300/70 hover:border-amber-400"
+                }`}
+              >
+                {/* Image with gradient overlay + title */}
+                <div className="relative h-48 overflow-hidden shadow-[inset_0_-12px_12px_-8px_rgba(0,0,0,0.12)] md:h-56">
+                  <Image
+                    src={seva.image}
+                    alt={seva.title}
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/35 to-transparent" />
+                  <h3 className="absolute bottom-3 left-4 right-4 text-lg font-bold tracking-wide text-white drop-shadow-md md:text-xl">{seva.title}</h3>
                 </div>
 
-                {/* Amount presets */}
-                <div>
-                  <span className="mb-2 block text-sm font-semibold text-[#331447]">Offer Amount *</span>
-                  {selected ? (
-                    <div className="grid grid-cols-5 gap-2">
-                      {AMOUNT_PRESETS.map((amount) => {
-                        const isActive = selectedAmount === amount;
-                        return (
-                          <button
-                            key={amount}
-                            type="button"
-                            onClick={() => selectPreset(amount)}
-                            aria-pressed={isActive}
-                            className={`rounded-xl border px-1 py-3 text-center transition-all duration-300 ${
-                              isActive
-                                ? "border-amber-600 bg-gradient-to-br from-amber-400 to-orange-300 text-[#3b1605] shadow-[0_4px_14px_rgba(217,119,6,0.35)]"
-                                : "border-amber-300/70 bg-gradient-to-b from-amber-50 to-[#fef4dd] text-[#5c2e06] hover:border-amber-400 hover:from-amber-100"
-                            }`}
-                          >
-                            <span className="block text-[11px] font-bold md:text-[13px]">
-                              <span className="text-[9px] font-normal text-amber-800/80">₹</span> {formatAmount(amount)}
+                {/* Card body */}
+                <div className="p-4 pt-3">
+                  <p className="min-h-[52px] text-[13px] leading-relaxed text-slate-700 md:text-sm">{seva.description}</p>
+
+                  {/* Elegant price buttons — "Most Donated" badge shown
+                      per MOST_DONATED_INDEX lookup above: a different tier
+                      position per seva (not fixed at the same index for
+                      every card), so the badge lands on genuinely varied
+                      amounts across the grid instead of repeating the same
+                      relative position/value everywhere. */}
+                  <div className="mt-4 grid grid-cols-2 gap-x-2 gap-y-2">
+                    {seva.options.map((option, optIdx) => {
+                      const isCustom = !option.amount;
+                      const isMostDonated = optIdx === (MOST_DONATED_INDEX[seva.slug] ?? 1);
+                      const hasSubtitle = !!option.subtitle;
+                      return (
+                        <button
+                          key={`${seva.slug}-${optIdx}`}
+                          type="button"
+                          onClick={() => openCheckout(seva, option)}
+                          className={`
+                            relative overflow-hidden rounded-xl border text-center transition-all duration-300
+                            ${hasSubtitle ? 'flex flex-col items-center justify-center gap-1 px-3 pb-2 pt-2.5' : 'px-3 py-3'}
+                            ${isCustom
+                              ? 'col-span-2 border-amber-500/70 bg-gradient-to-r from-amber-200 via-amber-200 to-orange-200 text-[13px] font-bold text-[#5c2e06] hover:border-amber-500 hover:from-amber-300 hover:to-orange-200 hover:shadow-[0_4px_16px_rgba(217,119,6,0.25)]'
+                              : isMostDonated
+                                ? 'border-amber-500/80 bg-gradient-to-br from-amber-400 via-amber-300 to-orange-300 text-[12px] font-bold text-[#3b1605] shadow-[0_2px_6px_rgba(217,119,6,0.2)] hover:border-amber-600 hover:shadow-[0_4px_16px_rgba(217,119,6,0.3)]'
+                                : 'border-amber-300/70 bg-gradient-to-b from-amber-100 to-[#fef0d4] text-[12px] font-bold text-[#5c2e06] hover:border-amber-400 hover:from-amber-200 hover:to-amber-100 hover:shadow-[0_3px_12px_rgba(217,119,6,0.18)]'
+                            }
+                          `}
+                        >
+                          {isMostDonated && !hasSubtitle && (
+                            <span className="absolute left-1.5 top-1.5 rounded-full bg-gradient-to-r from-[#5c1a0b] to-[#7a2e0f] px-1.5 py-0.5 text-[7px] font-bold uppercase tracking-wide text-amber-100 shadow-sm">
+                              Most Donated
                             </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <p className="rounded-lg border border-amber-200/60 bg-white/40 px-3 py-2.5 text-sm text-amber-700/70">
-                      Select a seva above to choose an amount.
-                    </p>
-                  )}
-
-                  {/* Other amount input card */}
-                  <label className="mt-2 block rounded-xl border border-amber-300/70 bg-white p-3">
-                    <span className="mb-1 block text-sm font-semibold text-[#331447]">Other Amount</span>
-                    <Input
-                      type="number"
-                      min={100}
-                      value={form.customAmount}
-                      onChange={(event) => {
-                        setSelectedAmount(null);
-                        updateForm({ customAmount: event.target.value, want80G: false, wantPrasadam: false });
-                      }}
-                      placeholder="Enter any other amount"
-                      className="border-amber-200 focus-visible:ring-amber-400"
-                    />
-                  </label>
-                </div>
-
-                <div className="grid gap-4 md:grid-cols-2">
-                  <label className="block">
-                    <span className="text-sm font-semibold text-[#331447]">Donor Name *</span>
-                    <Input value={form.donorName} maxLength={39} onChange={(event) => updateForm({ donorName: event.target.value.replace(/[^a-zA-Z ]/g, "") })} placeholder="Your Name" className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
-                  </label>
-                  <label className="block">
-                    <span className="text-sm font-semibold text-[#331447]">Mobile Number *</span>
-                    <Input value={form.donorMobile} maxLength={10} onChange={(event) => updateForm({ donorMobile: event.target.value.replace(/\D/g, "") })} placeholder="Your Mobile Number" className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
-                  </label>
-                  <label className="block md:col-span-2">
-                    <span className="text-sm font-semibold text-[#331447]">E-Mail ID (optional)</span>
-                    <Input type="email" value={form.donorEmail} onChange={(event) => updateForm({ donorEmail: event.target.value.toLowerCase() })} placeholder="Your Email" className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
-                  </label>
-                </div>
-
-                <DonorExtrasFields
-                  sevakName={form.sevakName}
-                  dob={form.dob}
-                  onSevakNameChange={(v) => updateForm({ sevakName: v })}
-                  onDobChange={(v) => updateForm({ dob: v })}
-                  variant="amber"
-                  collapsible
-                />
-
-                <div className="space-y-3">
-                  {showPrasadamField && (
-                    <label className="flex items-start gap-3 rounded-lg border border-amber-200/60 bg-white/40 p-4 text-sm text-[#331447]">
-                      <input type="checkbox" checked={form.wantPrasadam} onChange={(event) => updateForm({ wantPrasadam: event.target.checked })} className="mt-1 accent-amber-600" />
-                      I would like to receive Maha Prasadam (Only within India)
-                    </label>
-                  )}
-                  {showTaxField && (
-                    <label className="flex items-start gap-3 rounded-lg border border-amber-200/60 bg-white/40 p-4 text-sm text-[#331447]">
-                      <input type="checkbox" checked={form.want80G} onChange={(event) => updateForm({ want80G: event.target.checked })} className="mt-1 accent-amber-600" />
-                      <span>
-                        I wish to receive 80G Tax Exemption
-                        <span className="mt-1 block text-xs text-amber-700/60">PAN and address are mandatory when 80G is selected.</span>
-                      </span>
-                    </label>
-                  )}
-                </div>
-
-                {form.want80G && (
-                  <label className="block">
-                    <span className="text-sm font-semibold text-[#331447]">PAN Number *</span>
-                    <Input value={form.panNumber} maxLength={10} onChange={(event) => updateForm({ panNumber: event.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "") })} placeholder="Eg: ABCDE1234F" className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
-                  </label>
-                )}
-
-                {needsAddress && (
-                  <div className="grid gap-4 rounded-lg border border-amber-200/60 bg-white/40 p-4 md:grid-cols-2">
-                    <label className="block">
-                      <span className="text-sm font-semibold text-[#331447]">House No/Door No</span>
-                      <Input value={form.doorNo} maxLength={39} onChange={(event) => updateForm({ doorNo: event.target.value })} className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
-                    </label>
-                    <label className="block">
-                      <span className="text-sm font-semibold text-[#331447]">House/Apartment/Building Name</span>
-                      <Input value={form.building} maxLength={39} onChange={(event) => updateForm({ building: event.target.value })} className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
-                    </label>
-                    <label className="block">
-                      <span className="text-sm font-semibold text-[#331447]">Street Name</span>
-                      <Input value={form.street} maxLength={39} onChange={(event) => updateForm({ street: event.target.value })} className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
-                    </label>
-                    <label className="block">
-                      <span className="text-sm font-semibold text-[#331447]">Location/Area *</span>
-                      <Input value={form.area} maxLength={39} onChange={(event) => updateForm({ area: event.target.value })} className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
-                    </label>
-                    <label className="block">
-                      <span className="text-sm font-semibold text-[#331447]">PIN Code *</span>
-                      <Input value={form.pincode} maxLength={6} onChange={(event) => updateForm({ pincode: event.target.value.replace(/\D/g, "") })} className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
-                    </label>
-                    <label className="block">
-                      <span className="text-sm font-semibold text-[#331447]">City *</span>
-                      <Input value={form.city} maxLength={30} onChange={(event) => updateForm({ city: event.target.value.toUpperCase().replace(/[^A-Z ]/g, "") })} className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
-                    </label>
-                    <label className="block md:col-span-2">
-                      <span className="text-sm font-semibold text-[#331447]">State *</span>
-                      <Input value={form.state} maxLength={30} onChange={(event) => updateForm({ state: event.target.value.toUpperCase().replace(/[^A-Z ]/g, "") })} className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
-                    </label>
+                          )}
+                          <span className={`block ${isMostDonated && !hasSubtitle ? 'mt-2.5' : ''}`}>
+                            {option.amount ? (
+                              <span className="block leading-tight">
+                                <span className="text-[11px] font-normal text-amber-800/80">₹</span>{' '}
+                                <span className="text-[14px] md:text-[15px]">{formatAmount(option.amount)}</span>
+                              </span>
+                            ) : (
+                              <span className="flex items-center justify-center gap-1.5">
+                                <svg className="h-3 w-3 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                <span className="text-[12px]">Donate Other Amount</span>
+                              </span>
+                            )}
+                          </span>
+                          {hasSubtitle && (
+                            <span className="inline-block rounded-full bg-gradient-to-r from-[#5c1a0b] to-[#7a2e0f] px-3 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-100 shadow-sm">
+                              {option.subtitle}
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
                   </div>
-                )}
-
-                {status.type === "error" && <p className="rounded-lg bg-red-100 px-4 py-3 text-sm font-semibold text-red-700">{status.message}</p>}
-
-                <motion.div
-                  animate={submitting || reduce ? undefined : { scale: [1, 1.02, 1] }}
-                  transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-                >
-                  <Button type="submit" disabled={submitting || !canSubmit} className="w-full bg-[#ffc928] py-6 text-base font-bold text-[#3a1905] hover:bg-[#ffdb68] disabled:cursor-not-allowed disabled:opacity-60">
-                    <Heart className="mr-2 h-5 w-5 fill-current" />
-                    {submitting ? "Opening Checkout..." : submitLabel}
-                  </Button>
-                </motion.div>
-              </form>
-            </div>
+                </div>
+              </motion.article>
+            ))}
           </motion.div>
         </div>
       </section>
@@ -1242,44 +1013,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
               </ul>
             </div>
 
-            {/* Contact */}
-            <div className="md:col-span-5">
-              <h3 className="mb-5 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.24em] text-[#ffd96f]">
-                <span className="h-px w-4 bg-[#ffd96f]/60" />
-                Visit &amp; Reach Us
-              </h3>
 
-              <div className="rounded-2xl border border-[#ffd96f]/15 bg-white/[0.03] p-5 backdrop-blur">
-                <div className="flex items-start gap-3">
-                  <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#ffd96f]" />
-                  <div className="text-sm leading-6 text-white/75">
-                    <p className="font-semibold text-white">Hare Krishna Movement</p>
-                    <p className="mt-1 text-white/65">
-                      Chaitanya Bhavan, Hare Krishna Vaikuntam Cultural Centre,<br />
-                      SIIM Rd, opp. Akshaya Patra Foundation, Gambhiram,<br />
-                      Visakhapatnam, Andhra Pradesh 531163
-                    </p>
-                  </div>
-                </div>
-
-                <div className="my-4 h-px bg-gradient-to-r from-transparent via-[#ffd96f]/15 to-transparent" />
-
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <a href="tel:+918977761187" className="group flex items-center gap-2.5 text-sm text-white/75 transition-colors hover:text-[#ffd96f]">
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#ffd96f]/10 ring-1 ring-[#ffd96f]/20 transition-all group-hover:bg-[#ffd96f]/20">
-                      <Phone className="h-3.5 w-3.5 text-[#ffd96f]" />
-                    </span>
-                    <span className="font-medium">+91 89777 61187</span>
-                  </a>
-                  <a href="mailto:social@hkmvizag.org" className="group flex items-center gap-2.5 text-sm text-white/75 transition-colors hover:text-[#ffd96f]">
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#ffd96f]/10 ring-1 ring-[#ffd96f]/20 transition-all group-hover:bg-[#ffd96f]/20">
-                      <Mail className="h-3.5 w-3.5 text-[#ffd96f]" />
-                    </span>
-                    <span className="font-medium">social@hkmvizag.org</span>
-                  </a>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Bottom bar */}
@@ -1294,6 +1028,165 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
         </div>
       </footer>
 
+      {status.message && !selected && (
+        <div className={`fixed bottom-6 left-1/2 z-[120] -translate-x-1/2 rounded-lg px-5 py-3 text-sm font-semibold shadow-lg ${
+          status.type === "success" ? "bg-green-700 text-white" : "bg-red-700 text-white"
+        }`}>
+          {status.message}
+        </div>
+      )}
+
+      {selected && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/75 p-4 backdrop-blur-sm">
+          <div
+            className="form-scroll relative max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-xl border border-amber-200/50 shadow-2xl"
+            style={{
+              background: `
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cg transform='translate(60,60)'%3E%3Cpath d='M0,-6 C6,-16 6,-28 0,-34 C-6,-28 -6,-16 0,-6Z' fill='%2392400e'/%3E%3Cpath d='M0,-6 C6,-16 6,-28 0,-34 C-6,-28 -6,-16 0,-6Z' fill='%2392400e' transform='rotate(45)'/%3E%3Cpath d='M0,-6 C6,-16 6,-28 0,-34 C-6,-28 -6,-16 0,-6Z' fill='%2392400e' transform='rotate(90)'/%3E%3Cpath d='M0,-6 C6,-16 6,-28 0,-34 C-6,-28 -6,-16 0,-6Z' fill='%2392400e' transform='rotate(135)'/%3E%3Cpath d='M0,-6 C6,-16 6,-28 0,-34 C-6,-28 -6,-16 0,-6Z' fill='%2392400e' transform='rotate(180)'/%3E%3Cpath d='M0,-6 C6,-16 6,-28 0,-34 C-6,-28 -6,-16 0,-6Z' fill='%2392400e' transform='rotate(225)'/%3E%3Cpath d='M0,-6 C6,-16 6,-28 0,-34 C-6,-28 -6,-16 0,-6Z' fill='%2392400e' transform='rotate(270)'/%3E%3Cpath d='M0,-6 C6,-16 6,-28 0,-34 C-6,-28 -6,-16 0,-6Z' fill='%2392400e' transform='rotate(315)'/%3E%3Ccircle r='8' fill='%23b45309'/%3E%3Ccircle r='4' fill='%23d97706'/%3E%3C/g%3E%3Cg transform='translate(0,0)'%3E%3Cellipse cx='0' cy='-5' rx='3' ry='6' fill='%23b45309'/%3E%3Cellipse cx='0' cy='-5' rx='3' ry='6' fill='%23b45309' transform='rotate(90)'/%3E%3Ccircle r='3' fill='%23d97706'/%3E%3C/g%3E%3Cg transform='translate(120,0)'%3E%3Cellipse cx='0' cy='-5' rx='3' ry='6' fill='%23b45309'/%3E%3Cellipse cx='0' cy='-5' rx='3' ry='6' fill='%23b45309' transform='rotate(90)'/%3E%3Ccircle r='3' fill='%23d97706'/%3E%3C/g%3E%3Cg transform='translate(0,120)'%3E%3Cellipse cx='0' cy='-5' rx='3' ry='6' fill='%23b45309'/%3E%3Cellipse cx='0' cy='-5' rx='3' ry='6' fill='%23b45309' transform='rotate(90)'/%3E%3Ccircle r='3' fill='%23d97706'/%3E%3C/g%3E%3Cg transform='translate(120,120)'%3E%3Cellipse cx='0' cy='-5' rx='3' ry='6' fill='%23b45309'/%3E%3Cellipse cx='0' cy='-5' rx='3' ry='6' fill='%23b45309' transform='rotate(90)'/%3E%3Ccircle r='3' fill='%23d97706'/%3E%3C/g%3E%3Cpath d='M60 6 Q72 30 60 60' stroke='%23b45309' stroke-width='0.6' fill='none'/%3E%3Cpath d='M60 60 Q48 90 60 114' stroke='%23b45309' stroke-width='0.6' fill='none'/%3E%3Cpath d='M6 60 Q30 48 60 60' stroke='%23b45309' stroke-width='0.6' fill='none'/%3E%3Cpath d='M60 60 Q90 72 114 60' stroke='%23b45309' stroke-width='0.6' fill='none'/%3E%3C/svg%3E") repeat,
+                linear-gradient(to bottom, #fefaf1, #fff5e6 50%, #ffefd0)
+              `,
+              backgroundBlendMode: 'overlay',
+            }}
+          >
+            {/* Form content */}
+            <div className="relative z-10">
+              <div className="sticky top-0 z-10 flex items-center justify-between border-b border-amber-200/50 bg-[#fefaf1]/90 px-6 py-4 backdrop-blur">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-amber-700/70">Janmashtami Checkout</p>
+                  <h2 className="text-xl font-bold text-[#331447]">{selected.seva.title}</h2>
+                </div>
+                <button type="button" onClick={closeCheckout} className="rounded-full border border-amber-300/60 bg-white/60 p-2 text-amber-700/60 transition hover:border-amber-400 hover:bg-white hover:text-amber-900" aria-label="Close checkout">
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+            <form onSubmit={submitDonation} className="space-y-5 p-6">
+              <div className="grid gap-4 rounded-lg border border-amber-200/40 bg-white/60 p-4 md:grid-cols-2">
+                <div>
+                  <p className="text-xs font-semibold text-amber-700/60">Seva Name</p>
+                  <p className="mt-1 font-bold text-[#331447]">{selected.seva.title}</p>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-amber-700/60">Seva Amount</p>
+                  <p className="mt-1 font-bold text-[#331447]">
+                    {selected.option.amount ? `₹${formatAmount(selected.option.amount)}` : "Enter amount below"}
+                  </p>
+                </div>
+              </div>
+
+              {!selected.option.amount && (
+                <label className="block">
+                  <span className="text-sm font-semibold text-[#331447]">Enter Seva Amount *</span>
+                  <Input
+                    type="number"
+                    min={100}
+                    value={form.customAmount}
+                    onChange={(event) => updateForm({ customAmount: event.target.value, want80G: false, wantPrasadam: false })}
+                    placeholder="Enter amount"
+                    className="mt-2 border-amber-200 focus-visible:ring-amber-400"
+                  />
+                  <span className="mt-1 block text-xs text-amber-700/60">Amount must be at least Rs.100.</span>
+                </label>
+              )}
+
+              <div className="grid gap-4 md:grid-cols-2">
+                <label className="block">
+                  <span className="text-sm font-semibold text-[#331447]">Donor Name *</span>
+                  <Input value={form.donorName} maxLength={39} onChange={(event) => updateForm({ donorName: event.target.value.replace(/[^a-zA-Z ]/g, "") })} placeholder="Your Name" className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
+                </label>
+                <label className="block">
+                  <span className="text-sm font-semibold text-[#331447]">Mobile Number *</span>
+                  <Input value={form.donorMobile} maxLength={10} onChange={(event) => updateForm({ donorMobile: event.target.value.replace(/\D/g, "") })} placeholder="Your Mobile Number" className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
+                </label>
+                <label className="block md:col-span-2">
+                  <span className="text-sm font-semibold text-[#331447]">E-Mail ID (optional)</span>
+                  <Input type="email" value={form.donorEmail} onChange={(event) => updateForm({ donorEmail: event.target.value.toLowerCase() })} placeholder="Your Email" className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
+                </label>
+              </div>
+
+              <DonorExtrasFields
+                sevakName={form.sevakName}
+                dob={form.dob}
+                onSevakNameChange={(v) => updateForm({ sevakName: v })}
+                onDobChange={(v) => updateForm({ dob: v })}
+                variant="amber"
+                collapsible
+              />
+
+              <div className="space-y-3">
+                {showPrasadamField && (
+                  <label className="flex items-start gap-3 rounded-lg border border-amber-200/60 bg-white/40 p-4 text-sm text-[#331447]">
+                    <input type="checkbox" checked={form.wantPrasadam} onChange={(event) => updateForm({ wantPrasadam: event.target.checked })} className="mt-1 accent-amber-600" />
+                    I would like to receive Maha Prasadam (Only within India)
+                  </label>
+                )}
+                {showTaxField && (
+                  <label className="flex items-start gap-3 rounded-lg border border-amber-200/60 bg-white/40 p-4 text-sm text-[#331447]">
+                    <input type="checkbox" checked={form.want80G} onChange={(event) => updateForm({ want80G: event.target.checked })} className="mt-1 accent-amber-600" />
+                    <span>
+                      I wish to receive 80G Tax Exemption
+                      <span className="mt-1 block text-xs text-amber-700/60">PAN and address are mandatory when 80G is selected.</span>
+                    </span>
+                  </label>
+                )}
+              </div>
+
+              {form.want80G && (
+                <label className="block">
+                  <span className="text-sm font-semibold text-[#331447]">PAN Number *</span>
+                  <Input value={form.panNumber} maxLength={10} onChange={(event) => updateForm({ panNumber: event.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "") })} placeholder="Eg: ABCDE1234F" className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
+                </label>
+              )}
+
+              {needsAddress && (
+                <div className="grid gap-4 rounded-lg border border-amber-200/60 bg-white/40 p-4 md:grid-cols-2">
+                  <label className="block">
+                    <span className="text-sm font-semibold text-[#331447]">House No/Door No</span>
+                    <Input value={form.doorNo} maxLength={39} onChange={(event) => updateForm({ doorNo: event.target.value })} className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
+                  </label>
+                  <label className="block">
+                    <span className="text-sm font-semibold text-[#331447]">House/Apartment/Building Name</span>
+                    <Input value={form.building} maxLength={39} onChange={(event) => updateForm({ building: event.target.value })} className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
+                  </label>
+                  <label className="block">
+                    <span className="text-sm font-semibold text-[#331447]">Street Name</span>
+                    <Input value={form.street} maxLength={39} onChange={(event) => updateForm({ street: event.target.value })} className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
+                  </label>
+                  <label className="block">
+                    <span className="text-sm font-semibold text-[#331447]">Location/Area *</span>
+                    <Input value={form.area} maxLength={39} onChange={(event) => updateForm({ area: event.target.value })} className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
+                  </label>
+                  <label className="block">
+                    <span className="text-sm font-semibold text-[#331447]">PIN Code *</span>
+                    <Input value={form.pincode} maxLength={6} onChange={(event) => updateForm({ pincode: event.target.value.replace(/\D/g, "") })} className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
+                  </label>
+                  <label className="block">
+                    <span className="text-sm font-semibold text-[#331447]">City *</span>
+                    <Input value={form.city} maxLength={30} onChange={(event) => updateForm({ city: event.target.value.toUpperCase().replace(/[^A-Z ]/g, "") })} className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
+                  </label>
+                  <label className="block md:col-span-2">
+                    <span className="text-sm font-semibold text-[#331447]">State *</span>
+                    <Input value={form.state} maxLength={30} onChange={(event) => updateForm({ state: event.target.value.toUpperCase().replace(/[^A-Z ]/g, "") })} className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
+                  </label>
+                </div>
+              )}
+
+              {status.type === "error" && <p className="rounded-lg bg-red-100 px-4 py-3 text-sm font-semibold text-red-700">{status.message}</p>}
+
+              <motion.div
+                animate={submitting || reduce ? undefined : { scale: [1, 1.02, 1] }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <Button type="submit" disabled={submitting} className="w-full bg-[#ffc928] py-6 text-base font-bold text-[#3a1905] hover:bg-[#ffdb68]">
+                  <Heart className="mr-2 h-5 w-5 fill-current" />
+                  {submitting ? "Opening Checkout..." : `Donate Rs. ${formatAmount(finalAmount || 0)}`}
+                </Button>
+              </motion.div>
+            </form>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
