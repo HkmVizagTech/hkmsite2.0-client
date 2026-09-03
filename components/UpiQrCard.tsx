@@ -9,7 +9,7 @@
 // Google Pay, Paytm, BHIM, and any UPI app can scan it.
 
 import { useState } from "react";
-import { QrCode, Copy, Check } from "lucide-react";
+import { QrCode, Copy, Check, Smartphone } from "lucide-react";
 
 // Temple UPI credentials (matches annadan.harekrishnavizag.org)
 const UPI_VPA = "hkmivsp9.08@idfcbank";
@@ -33,9 +33,23 @@ export default function UpiQrCard({ note }: { note?: string }) {
     <div className="rounded-2xl border border-gold/40 bg-gradient-to-b from-[hsl(42,90%,97%)] to-white p-5 text-center shadow-[var(--shadow-gold)] md:p-6">
       <div className="mb-1 flex items-center justify-center gap-2">
         <QrCode className="h-4 w-4 text-gold" />
-        <h3 className="font-heading text-base font-bold text-primary">Pay via UPI QR</h3>
+        <h3 className="font-heading text-base font-bold text-primary">Pay via UPI</h3>
       </div>
-      <p className="mb-4 text-xs text-muted-foreground">Scan &amp; pay with any UPI app</p>
+      <p className="mb-4 text-xs text-muted-foreground">Scan the QR, or open your UPI app directly on this phone</p>
+
+      {/* Open UPI App — on mobile, tapping this launches the installed UPI
+          app (PhonePe, Google Pay, Paytm, BHIM, etc.) directly with the
+          temple's VPA pre-filled, since scanning a QR shown on the same
+          phone you're browsing with isn't possible. Same upi:// intent
+          used to generate the QR below. */}
+      <a
+        href={UPI_STRING}
+        className="mx-auto mb-4 flex w-full max-w-xs items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-[#5f259f] to-[#8a2be2] px-4 py-3 text-sm font-bold text-white shadow-md transition-transform hover:scale-[1.02] active:scale-[0.98]"
+      >
+        <Smartphone className="h-4 w-4" />
+        Open UPI App to Pay
+      </a>
+      <p className="mb-4 text-[11px] text-muted-foreground">or scan below with any UPI app</p>
 
       <div className="mx-auto mb-4 inline-flex rounded-xl border border-gold/30 bg-white p-2.5 shadow-sm">
         {/* eslint-disable-next-line @next/next/no-img-element */}
