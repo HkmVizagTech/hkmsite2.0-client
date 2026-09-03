@@ -603,19 +603,6 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
         </div>
       </section>
 
-      {/* Scan & Pay via UPI — placed right after the banner photos, same
-          QR/VPA pattern as annadan.harekrishnavizag.org, for anyone who
-          wants to pay immediately without scrolling to pick a seva first. */}
-      <section className="bg-[#fef6e4] px-4 py-10 md:py-12">
-        <div className="mx-auto max-w-md">
-          <div className="mb-4 flex items-center justify-center gap-2 text-[#7a4a12]">
-            <QrCode className="h-5 w-5" />
-            <h2 className="font-heading text-lg font-bold">Scan & Pay via UPI</h2>
-          </div>
-          <UpiQrCard note="Please share your name and mobile number to social@hkmvizag.org after paying, so we can send your receipt." />
-        </div>
-      </section>
-
       <motion.section
         initial={reduce ? undefined : { opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -931,6 +918,18 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Scan & Pay via UPI — placed right before "Previous Year
+          Celebrations", same QR/VPA pattern as annadan.harekrishnavizag.org. */}
+      <section className="bg-[#fef6e4] px-4 py-10 md:py-12">
+        <div className="mx-auto max-w-md">
+          <div className="mb-4 flex items-center justify-center gap-2 text-[#7a4a12]">
+            <QrCode className="h-5 w-5" />
+            <h2 className="font-heading text-lg font-bold">Scan & Pay via UPI</h2>
+          </div>
+          <UpiQrCard note="Please share your name and mobile number to social@hkmvizag.org after paying, so we can send your receipt." />
         </div>
       </section>
 
