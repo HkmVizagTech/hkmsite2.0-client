@@ -3,7 +3,8 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
-import { ArrowLeft, ArrowRight, Check, Clock, Copy, Facebook, FileCheck2, Heart, Instagram, Mail, MapPin, MessageCircle, Phone, ShieldCheck, Youtube, UtensilsCrossed, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Clock, Copy, Facebook, FileCheck2, Heart, Instagram, Mail, MapPin, MessageCircle, Phone, ShieldCheck, Youtube, UtensilsCrossed, X, QrCode, ChevronDown } from "lucide-react";
+import UpiQrCard from "@/components/UpiQrCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
@@ -341,6 +342,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
   }, [searchParams]);
   const [activeSlide, setActiveSlide] = useState(0);
   const [selected, setSelected] = useState<SelectedOffering | null>(null);
+  const [showQr, setShowQr] = useState(false);
   const [highlightedSlug, setHighlightedSlug] = useState<string | null>(null);
   const [form, setForm] = useState<CheckoutForm>(initialForm);
   const [submitting, setSubmitting] = useState(false);
@@ -372,6 +374,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
     setSelected({ seva, option });
     setForm(initialForm);
     setStatus({ type: "idle", message: "" });
+    setShowQr(false);
     trackInitiateCheckout({ content_name: seva.title });
   };
 
@@ -1182,6 +1185,25 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
                   {submitting ? "Opening Checkout..." : `Donate Rs. ${formatAmount(finalAmount || 0)}`}
                 </Button>
               </motion.div>
+
+              {/* Scan & Pay via UPI — collapsible so it doesn't clutter the
+                  modal by default; same QR/VPA pattern as annadan.harekrishnavizag.org. */}
+              <div className="pt-1">
+                <button
+                  type="button"
+                  onClick={() => setShowQr((v) => !v)}
+                  className="flex w-full items-center justify-center gap-1.5 py-2 text-xs font-semibold text-[#7a4a12] hover:text-[#5c3a0e]"
+                >
+                  <QrCode className="h-3.5 w-3.5" />
+                  Prefer to scan and pay with PhonePe or any UPI app?
+                  <ChevronDown className={`h-3.5 w-3.5 transition-transform ${showQr ? "rotate-180" : ""}`} />
+                </button>
+                {showQr && (
+                  <div className="mt-2">
+                    <UpiQrCard note="Please share your name and mobile number to social@hkmvizag.org after paying, so we can send your receipt." />
+                  </div>
+                )}
+              </div>
             </form>
             </div>
           </div>
