@@ -21,8 +21,10 @@ const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "
 interface BulkResult {
   dryRun: boolean;
   provider: string;
-  windowHours: number;
+  windowHours: number | null;
   totalMatching: number;
+  allTimeSendable: number;
+  allTimeNoPhone: number;
   candidates: number;
   remaining: number;
   sent: number;
@@ -33,6 +35,7 @@ interface BulkResult {
     donor?: string;
     amount?: number;
     receiptNumber?: string;
+    createdAt?: string;
     ok?: boolean;
     skipped?: boolean;
     reason?: string | null;
@@ -59,8 +62,11 @@ export default function NeedsWhatsAppTab() {
   const [sending, setSending] = useState<string | null>(null);
   const [resultById, setResultById] = useState<Record<string, string>>({});
 
-  // Bulk window resend state.
+  // Bulk window resend state. allTime overrides the hours box — the window is
+  // only for scoping to a known outage, and it filters on when the donation
+  // record was created, which misses offline entries receipted later.
   const [hours, setHours] = useState("9");
+  const [allTime, setAllTime] = useState(false);
   const [bulkBusy, setBulkBusy] = useState<"preview" | "send" | null>(null);
   const [bulk, setBulk] = useState<BulkResult | null>(null);
   const [bulkError, setBulkError] = useState<string | null>(null);
@@ -105,7 +111,11 @@ export default function NeedsWhatsAppTab() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ hours: Number(hours) || 9, limit: 25, send: send ? "true" : "false" }),
+        body: JSON.stringify({
+          hours: allTime ? 0 : Number(hours) || 9,
+          limit: 25,
+          send: send ? "true" : "false",
+        }),
       });
       const j = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -157,12 +167,23 @@ export default function NeedsWhatsAppTab() {
             <input
               type="number"
               min={1}
-              max={720}
+              max={8760}
               value={hours}
+              disabled={allTime}
               onChange={(e: ChangeEvent<HTMLInputElement>) => setHours(e.target.value)}
-              className="h-9 w-20 rounded-md border border-input bg-background px-2 text-sm"
+              className="h-9 w-20 rounded-md border border-input bg-background px-2 text-sm disabled:opacity-50"
             />
             <label className="text-xs text-muted-foreground mr-1">hours</label>
+
+            <label className="flex items-center gap-1.5 text-xs mr-1 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={allTime}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => setAllTime(e.target.checked)}
+                className="h-3.5 w-3.5"
+              />
+              All time (ignore the window)
+            </label>
 
             <Button
               size="sm"
@@ -193,13 +214,29 @@ export default function NeedsWhatsAppTab() {
           {bulk && (
             <div className="text-xs space-y-1">
               {bulk.dryRun ? (
-                <p className="font-medium">
-                  {bulk.candidates === 0
-                    ? `Nothing to resend in the last ${bulk.windowHours} hours.`
-                    : `${bulk.candidates} receipt${bulk.candidates === 1 ? "" : "s"} would be sent via ${bulk.provider}${
-                        bulk.remaining > 0 ? ` (${bulk.remaining} more after this batch)` : ""
-                      }.`}
-                </p>
+                <>
+                  <p className="font-medium">
+                    {bulk.candidates === 0
+                      ? bulk.windowHours
+                        ? `Nothing to resend in the last ${bulk.windowHours} hours.`
+                        : "Nothing to resend."
+                      : `${bulk.candidates} receipt${bulk.candidates === 1 ? "" : "s"} would be sent via ${bulk.provider}${
+                          bulk.remaining > 0 ? ` (${bulk.remaining} more after this batch)` : ""
+                        }.`}
+                  </p>
+                  {/* Explains the gap between this number and the list below:
+                      the time window, and donations with no phone number. */}
+                  <p className="text-muted-foreground">
+                    {bulk.allTimeSendable} donation{bulk.allTimeSendable === 1 ? "" : "s"} in total have a
+                    receipt but no WhatsApp sent
+                    {bulk.windowHours ? ` (${bulk.totalMatching} of them inside this ${bulk.windowHours}h window)` : ""}.
+                    {bulk.allTimeNoPhone > 0 &&
+                      ` A further ${bulk.allTimeNoPhone} have no phone number on file and can't be messaged at all.`}
+                    {bulk.windowHours && bulk.allTimeSendable > bulk.totalMatching
+                      ? " Tick All time to reach the rest — offline donations receipted later than they were recorded fall outside the window."
+                      : ""}
+                  </p>
+                </>
               ) : (
                 <p className="font-medium">
                   Sent {bulk.sent}
@@ -215,6 +252,14 @@ export default function NeedsWhatsAppTab() {
                     <li key={r.id}>
                       {r.donor || r.id}
                       {typeof r.amount === "number" && ` — ₹${r.amount.toLocaleString("en-IN")}`}
+                      {/* Date matters on an All-time run: a months-old
+                          donation may not be one you want to message now. */}
+                      {r.createdAt &&
+                        ` · ${new Date(r.createdAt).toLocaleDateString("en-IN", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })}`}
                       {!bulk.dryRun && (
                         <span className={r.ok ? "text-green-700" : "text-red-600"}>
                           {" · "}
