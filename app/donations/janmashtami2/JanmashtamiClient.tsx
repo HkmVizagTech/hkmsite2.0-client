@@ -391,6 +391,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          account: "donations",
           sourcePage: campaigner ? `/donations/janmashtami2/c/${campaigner.slug}` : "donations/janmashtami2",
           campaignerSlug: campaigner?.slug || undefined,
           utm: attribution.payload().utm,
