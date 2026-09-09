@@ -11,10 +11,12 @@ interface FaqItem {
 
 interface FaqSectionProps {
   faqs: FaqItem[];
+  tone?: "default" | "mint";
 }
 
-export default function FaqSection({ faqs }: FaqSectionProps) {
+export default function FaqSection({ faqs, tone = "default" }: FaqSectionProps) {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const mint = tone === "mint";
 
   // FAQPage structured data — lets Google show these Q&As directly in
   // search results (the "People also ask"-style rich snippet), which
@@ -30,26 +32,48 @@ export default function FaqSection({ faqs }: FaqSectionProps) {
   };
 
   return (
-    <section className="bg-white dark:bg-background py-12 md:py-16">
+    <section
+      className={
+        mint
+          ? "py-12 md:py-16"
+          : "bg-white dark:bg-background py-12 md:py-16"
+      }
+      style={mint ? { background: "#F2FAF7" } : undefined}
+    >
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
       <div className="container mx-auto max-w-3xl px-4">
         <Ornament className="mb-6" />
-        <h2 className="mb-8 text-center font-heading text-2xl font-bold text-primary md:text-3xl">
+        <h2
+          className={`mb-8 text-center font-heading text-2xl font-bold md:text-3xl ${
+            mint ? "text-[#063D35]" : "text-primary"
+          }`}
+        >
           Frequently Asked Questions
         </h2>
         <div className="space-y-3">
           {faqs.map((f, i) => (
-            <div key={f.q} className="overflow-hidden rounded-2xl border border-border bg-card">
+            <div
+              key={f.q}
+              className={`overflow-hidden rounded-2xl border ${
+                mint ? "border-[#AEE4D2] bg-[#C9F3E8]" : "border-border bg-card"
+              }`}
+            >
               <button
                 type="button"
                 onClick={() => setOpenFaq(openFaq === i ? null : i)}
                 aria-expanded={openFaq === i}
                 className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left"
               >
-                <span className="text-sm font-semibold text-foreground md:text-base">{f.q}</span>
+                <span
+                  className={`text-sm font-semibold md:text-base ${
+                    mint ? "text-[#063D35]" : "text-foreground"
+                  }`}
+                >
+                  {f.q}
+                </span>
                 <ChevronDown
                   className={`h-4 w-4 shrink-0 text-gold transition-transform ${
                     openFaq === i ? "rotate-180" : ""
@@ -57,7 +81,13 @@ export default function FaqSection({ faqs }: FaqSectionProps) {
                 />
               </button>
               {openFaq === i && (
-                <p className="border-t border-border px-5 py-4 text-sm leading-relaxed text-muted-foreground">
+                <p
+                  className={`border-t px-5 py-4 text-sm leading-relaxed ${
+                    mint
+                      ? "border-[#AEE4D2] text-[#2C5B4E]"
+                      : "border-border text-muted-foreground"
+                  }`}
+                >
                   {f.a}
                 </p>
               )}

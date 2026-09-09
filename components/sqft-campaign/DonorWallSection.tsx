@@ -68,11 +68,11 @@ export default function DonorWallSection({
         </div>
 
         {wallEntries.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-border bg-background px-5 py-8 text-center text-sm text-muted-foreground">
+          <p className="rounded-xl border border-dashed border-border bg-card px-5 py-8 text-center text-sm text-muted-foreground">
             Be the first devotee to sponsor a {config.unitName} of the temple.
           </p>
         ) : (
-          <ul className="divide-y divide-border rounded-2xl border border-border bg-background">
+          <ul className="divide-y divide-border rounded-2xl border border-border bg-card">
             {wallEntries.map((d, i) => (
               <li
                 key={`${d.name}-${d.time}-${i}`}
