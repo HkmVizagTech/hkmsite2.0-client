@@ -2,11 +2,12 @@
 
 import type { Dispatch, SetStateAction } from "react";
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
-import { ShieldCheck, Loader2, User, Phone, Mail, Check, Copy, ChevronDown, MapPin } from "lucide-react";
+import { ShieldCheck, Loader2, User, Phone, Mail, Check, Copy, ChevronDown, MapPin, Crown, PenLine } from "lucide-react";
 import Ornament from "@/components/Ornament";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
-import type { CampaignConfig } from "@/lib/campaignConfig";
+import type { CampaignConfig, GoldenTierConfig } from "@/lib/campaignConfig";
 
 export interface DonorForm {
   name: string;
@@ -54,6 +55,13 @@ interface DonationFormSectionProps {
   handleSubmit: (e: React.FormEvent) => void;
   handleCopy: (field: string, value: string) => void;
   config: CampaignConfig;
+  /** Limited premium tier, when the campaign has one (Brick Seva). */
+  goldenTier?: GoldenTierConfig;
+  tier: "standard" | "golden";
+  onTierChange: (t: "standard" | "golden") => void;
+  /** Unit wording for the ACTIVE tier — "brick" or "golden brick". */
+  unitName: string;
+  unitNamePlural: string;
 }
 
 const inputWrapClass =
@@ -94,7 +102,21 @@ export default function DonationFormSection({
   handleSubmit,
   handleCopy,
   config,
+  goldenTier,
+  tier,
+  onTierChange,
+  unitName,
+  unitNamePlural,
 }: DonationFormSectionProps) {
+  const isGolden = tier === "golden" && Boolean(goldenTier);
+  // Golden bricks are offered in ones and small multiples, not in 108s.
+  const presets = isGolden && goldenTier ? goldenTier.presets : UNIT_PRESETS;
+  // Brick campaigns only: the "your name goes on the brick" panel beside the
+  // form (below it on mobile). Same laser machine as the golden tier — regular
+  // bricks get the engraving; golden bricks get the engraving plus gilding.
+  const engravingImage = config.engravingImage;
+  const showEngravingPanel = Boolean(engravingImage);
+  const goldenRemaining = goldenTier ? Math.max(0, goldenTier.total - goldenTier.taken) : 0;
   // Raw text for the "Other <unit>" quantity input — kept separate from
   // sqftCount so partially-typed values (e.g. "1" while typing "12") aren't
   // clobbered by preset matching.
@@ -155,7 +177,7 @@ export default function DonationFormSection({
 
   return (
     <section id="donate" className="scroll-mt-24 bg-white dark:bg-background py-10 md:py-16">
-      <div className="container mx-auto max-w-4xl px-4">
+      <div className={`container mx-auto px-4 ${showEngravingPanel ? "max-w-6xl" : "max-w-4xl"}`}>
         <Ornament className="mb-4" />
         <div className="mb-6 text-center">
           <p className="mb-1.5 text-xs font-semibold uppercase tracking-[0.25em] text-gold">
@@ -169,21 +191,24 @@ export default function DonationFormSection({
           </p>
         </div>
 
+        {/* Two-column on desktop (form + engraving panel); stacked on mobile
+            with the panel below the form. */}
+        <div className={`grid gap-8 ${showEngravingPanel ? "xl:grid-cols-[minmax(0,1fr)_300px]" : ""} xl:items-stretch`}>
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="overflow-hidden rounded-[28px] border border-slate-200 bg-white dark:bg-card shadow-elevated"
+          className="mx-auto w-full max-w-4xl overflow-hidden rounded-[28px] border border-slate-200 bg-white dark:bg-card shadow-elevated"
         >
           {/* Amount summary strip */}
           <div className="flex items-center justify-between gap-3 bg-gradient-gold px-6 py-4 sm:px-8">
             <div>
               <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[hsl(220,90%,12%)]/70">
-                You&apos;re offering
+                {isGolden ? "Golden Brick Seva" : "You\u2019re offering"}
               </p>
               <p className="text-lg font-extrabold text-[hsl(220,90%,12%)] sm:text-xl">
-                {useCustom ? "Custom offering" : `${sqftCount} ${sqftCount === 1 ? config.unitName : config.unitNamePlural}`}
+                {useCustom ? "Custom offering" : `${sqftCount} ${sqftCount === 1 ? unitName : unitNamePlural}`}
               </p>
             </div>
             <p className="text-2xl font-extrabold text-[hsl(220,90%,12%)] sm:text-3xl">
@@ -195,11 +220,71 @@ export default function DonationFormSection({
           <form onSubmit={handleSubmit} className="grid gap-6 p-5 sm:p-7 lg:grid-cols-2 lg:gap-8">
             {/* Left: amount selection */}
             <div className="space-y-3">
+              {/* Tier switch — only on campaigns with a limited premium tier.
+                  Switching resets the quantity in the parent, so a "108
+                  bricks" selection can never carry into the ₹11,000 tier. */}
+              {goldenTier && (
+                <div>
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                    Choose Your Seva
+                  </p>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => onTierChange("standard")}
+                      aria-pressed={!isGolden}
+                      className={`rounded-xl border px-3 py-3 text-left transition-colors ${
+                        !isGolden
+                          ? "border-gold bg-gold/10"
+                          : "border-slate-300 bg-white hover:border-gold/60 dark:bg-card"
+                      }`}
+                    >
+                      <span className="block text-sm font-bold text-primary">
+                        {config.pageTitle}
+                      </span>
+                      <span className="mt-0.5 block text-[11px] text-muted-foreground">
+                        ₹{config.pricePerUnit.toLocaleString("en-IN")} per {config.unitName}
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => onTierChange("golden")}
+                      aria-pressed={isGolden}
+                      className={`relative overflow-hidden rounded-xl border px-3 py-3 text-left transition-colors ${
+                        isGolden
+                          ? "border-gold bg-gold/10"
+                          : "border-slate-300 bg-white hover:border-gold/60 dark:bg-card"
+                      }`}
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <Crown className="h-3.5 w-3.5 text-gold" />
+                        <span className="block text-sm font-bold text-primary">
+                          {goldenTier.sevaName.replace(" Seva", "")}
+                        </span>
+                      </span>
+                      <span className="mt-0.5 block text-[11px] text-muted-foreground">
+                        ₹{goldenTier.price.toLocaleString("en-IN")} · {goldenRemaining} of{" "}
+                        {goldenTier.total} left
+                      </span>
+                    </button>
+                  </div>
+
+                  {isGolden && (
+                    <p className="mt-2 rounded-lg border border-gold/40 bg-gold/5 px-3 py-2 text-[11px] leading-relaxed text-muted-foreground">
+                      <span className="font-semibold text-gold">Garbhagudi placement.</span> Your
+                      name is laser-engraved on one of only {goldenTier.total} gilded bricks, laid
+                      in the sanctum sanctorum.
+                    </p>
+                  )}
+                </div>
+              )}
+
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                 Choose Amount
               </p>
               <div className="grid grid-cols-4 gap-2">
-                {UNIT_PRESETS.map((n) => (
+                {presets.map((n) => (
                   <button
                     key={n}
                     type="button"
@@ -212,7 +297,7 @@ export default function DonationFormSection({
                   >
                     <span className="block text-base font-bold text-primary sm:text-lg">{n}</span>
                     <span className="block text-[10px] uppercase tracking-wide text-muted-foreground">
-                      {n === 1 ? config.unitName : config.unitNamePlural}
+                      {n === 1 ? unitName : unitNamePlural}
                     </span>
                     <span className="mt-0.5 block text-[11px] font-semibold text-gold">
                       ₹{(n * price).toLocaleString("en-IN")}
@@ -228,7 +313,7 @@ export default function DonationFormSection({
                 }`}
               >
                 <label htmlFor="custom-sqft" className="shrink-0 text-xs font-medium text-muted-foreground">
-                  Other {config.unitShort}
+                  Other {isGolden ? "bricks" : config.unitShort}
                 </label>
                 <input
                   id="custom-sqft"
@@ -236,7 +321,7 @@ export default function DonationFormSection({
                   inputMode="numeric"
                   min={1}
                   max={100000}
-                  placeholder={`Enter number of ${config.unitNamePlural}`}
+                  placeholder={`Enter number of ${unitNamePlural}`}
                   value={customSqftText}
                   onFocus={() => setUseCustom(false)}
                   onChange={(e) => {
@@ -514,8 +599,8 @@ className="w-full rounded-lg border border-slate-300 bg-white dark:bg-card px-3 
                   <span className="block text-sm font-bold text-primary">🔁 Make it a monthly seva</span>
                   <span className="block text-[11px] leading-snug text-muted-foreground">
                     {monthly && finalAmount > 0
-                      ? `Auto-pay ₹${finalAmount.toLocaleString("en-IN")}${!useCustom ? ` (${sqftCount} ${sqftCount === 1 ? config.unitName : config.unitNamePlural})` : ""} every month. Cancel anytime.`
-                      : `Sponsor ${config.unitNamePlural} automatically every month.`}
+                      ? `Auto-pay ₹${finalAmount.toLocaleString("en-IN")}${!useCustom ? ` (${sqftCount} ${sqftCount === 1 ? unitName : unitNamePlural})` : ""} every month. Cancel anytime.`
+                      : `Sponsor ${unitNamePlural} automatically every month.`}
                   </span>
                 </span>
               </button>
@@ -554,7 +639,67 @@ className="w-full rounded-lg border border-slate-300 bg-white dark:bg-card px-3 
             </div>
           </form>
         </motion.div>
+
+        {showEngravingPanel && engravingImage && (
+          <EngravingPanel
+            image={engravingImage}
+            price={config.pricePerUnit}
+            unitName={config.unitName}
+            isGolden={isGolden}
+          />
+        )}
+        </div>
       </div>
     </section>
+  );
+}
+
+/**
+ * Brick campaigns: shows the temple's laser engraving machine and tells the
+ * donor their name goes on the actual brick — for the regular ₹1,500 seva it
+ * IS the engraving; for the golden tier the same engraving is then gilded.
+ * Sits beside the donation form on desktop, below it on mobile.
+ */
+function EngravingPanel({
+  image,
+  price,
+  unitName,
+  isGolden,
+}: {
+  image: string;
+  price: number;
+  unitName: string;
+  isGolden: boolean;
+}) {
+  return (
+    <aside className="mx-auto flex w-full max-w-md flex-col overflow-hidden rounded-[28px] border border-slate-200 bg-white dark:bg-card shadow-elevated xl:mx-0 xl:h-full">
+      <div className="relative min-h-[200px] flex-1">
+        <Image
+          src={image}
+          alt="The laser engraving machine at the temple that inscribes donor names onto the bricks"
+          fill
+          sizes="(min-width: 1280px) 300px, (min-width: 640px) 448px, 100vw"
+          className="object-cover"
+        />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+      </div>
+      <div className="p-5">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-gold">
+          {isGolden ? "Golden tier · engraving first" : "Included with every brick"}
+        </p>
+        <h3 className="mt-1.5 font-heading text-lg font-bold text-primary">
+          Your name, engraved on your {unitName}
+        </h3>
+        <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">
+          {isGolden
+            ? "Golden bricks are laser-engraved the same way — your name cut into the brick itself before it is gilded and laid in the sanctum sanctorum."
+            : `For every ₹${price.toLocaleString("en-IN")} ${unitName} you sponsor, your name is laser-engraved on that very brick before it is laid in the temple.`}
+        </p>
+        <p className="mt-3 flex items-start gap-1.5 text-[11px] leading-relaxed text-muted-foreground">
+          <PenLine className="mt-0.5 h-3.5 w-3.5 shrink-0 text-gold" />
+          Engraved by laser at the temple — no paint, nothing that fades.
+        </p>
+      </div>
+    </aside>
   );
 }

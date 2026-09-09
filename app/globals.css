@@ -110,6 +110,36 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
+  /* ✓ Slim, themed scrollbar everywhere (page + scrollable containers).
+     Replaces the default bulky browser scrollbar on desktop. */
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(220 30% 72%) hsl(210 30% 95%);
+  }
+
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: hsl(210 30% 95%);
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: hsl(220 30% 72%);
+    border-radius: 9999px;
+    border: 2px solid hsl(210 30% 95%);
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: hsl(42 92% 50%);
+  }
+
+  *::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-body);
     font-weight: 700;

@@ -40,19 +40,23 @@ const OTHER_PRIVILEGES = [
   { src: `${CLOUDINARY_BASE}/4.png`, caption: "Premium Donor Gifts" },
 ];
 
-function PrivilegeCarousel() {
+function PrivilegeCarousel({ extraImage }: { extraImage?: { src: string; caption: string } }) {
   const [index, setIndex] = useState(0);
   const touchStartX = useRef(0);
 
+  // Brick campaigns append the temple's laser engraving machine — the image
+  // that shows how a donor's name ends up on the actual brick.
+  const images = extraImage ? [...CAROUSEL_IMAGES, extraImage] : CAROUSEL_IMAGES;
+
   useEffect(() => {
     const id = setInterval(() => {
-      setIndex((i) => (i + 1) % CAROUSEL_IMAGES.length);
+      setIndex((i) => (i + 1) % images.length);
     }, 4000);
     return () => clearInterval(id);
-  }, []);
+  }, [images.length]);
 
-  const next = () => setIndex((i) => (i + 1) % CAROUSEL_IMAGES.length);
-  const prev = () => setIndex((i) => (i - 1 + CAROUSEL_IMAGES.length) % CAROUSEL_IMAGES.length);
+  const next = () => setIndex((i) => (i + 1) % images.length);
+  const prev = () => setIndex((i) => (i - 1 + images.length) % images.length);
 
   return (
     <div
@@ -63,7 +67,7 @@ function PrivilegeCarousel() {
         if (Math.abs(diff) > 50) diff > 0 ? prev() : next();
       }}
     >
-      {CAROUSEL_IMAGES.map((img, i) => (
+      {images.map((img, i) => (
         <div
           key={img.src}
           className="absolute inset-0 transition-opacity duration-700"
@@ -87,7 +91,7 @@ function PrivilegeCarousel() {
         >
           <ChevronLeft className="h-3 w-3" />
         </button>
-        {CAROUSEL_IMAGES.map((img, i) => (
+        {images.map((img, i) => (
           <button
             key={img.src}
             type="button"
@@ -166,6 +170,23 @@ function OtherPrivilegesGallery({ config = SQFT_CAMPAIGN }: { config?: CampaignC
 }
 
 export default function DonorPrivilegesSection({ scrollToDonate, config = SQFT_CAMPAIGN }: { scrollToDonate?: () => void; config?: CampaignConfig }) {
+  // Brick Seva alone: a donor's name is engraved on the very brick they
+  // sponsor, so lead the privilege list with it and show the machine that
+  // does the engraving in the carousel.
+  const brickEngravingImage =
+    config.type === "BRICK" && config.engravingImage
+      ? { src: config.engravingImage, caption: "Laser Name Engraving" }
+      : undefined;
+  const privileges = brickEngravingImage
+    ? [
+        {
+          lead: "Your Name on a Brick",
+          rest: ` — the ${config.unitName} you sponsor is laser-engraved with your name before it is laid in the temple.`,
+        },
+        ...PRIVILEGES,
+      ]
+    : PRIVILEGES;
+
   return (
     <section className="bg-[radial-gradient(circle_at_top,_rgba(255,221,91,0.14),_transparent_45%)] bg-white dark:bg-background py-12 md:py-16">
       <div className="container mx-auto max-w-6xl px-4">
@@ -182,14 +203,14 @@ export default function DonorPrivilegesSection({ scrollToDonate, config = SQFT_C
           transition={{ duration: 0.6 }}
           className="grid items-center gap-10 lg:grid-cols-2"
         >
-          <PrivilegeCarousel />
+          <PrivilegeCarousel extraImage={brickEngravingImage} />
 
           <div>
             <p className="mb-5 text-sm leading-relaxed text-muted-foreground md:text-base">
               Each of our respected contributors will receive these privileges as our heartfelt gratitude:
             </p>
             <ol className="space-y-4">
-              {PRIVILEGES.map((p, i) => (
+              {privileges.map((p, i) => (
                 <li key={p.lead} className="flex gap-3">
                   <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gold/15 text-xs font-bold text-gold">
                     {i + 1}

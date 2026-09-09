@@ -19,6 +19,7 @@ import HeroSection from "@/components/sqft-campaign/HeroSection";
 import DonationFormSection from "@/components/sqft-campaign/DonationFormSection";
 import DonorPrivilegesSection from "@/components/sqft-campaign/DonorPrivilegesSection";
 import FiveLakhSevaSection from "@/components/sqft-campaign/FiveLakhSevaSection";
+import GoldenBrickSection from "@/components/sqft-campaign/GoldenBrickSection";
 import TestimonialsSection from "@/components/sqft-campaign/TestimonialsSection";
 import AboutSection from "@/components/sqft-campaign/AboutSection";
 import ImportanceSection from "@/components/sqft-campaign/ImportanceSection";
@@ -115,6 +116,13 @@ export default function SqftCampaignClient({
   const [stats, setStats] = useState<CampaignStats | null>(null);
   const [wallTab, setWallTab] = useState<"latest" | "largest">("latest");
 
+  // Which tier the form is currently offering. "golden" only exists on
+  // campaigns that define config.goldenTier (Brick Seva today), and it changes
+  // the unit price, the presets, and the seva the donation is recorded under.
+  const [tier, setTier] = useState<"standard" | "golden">("standard");
+  const goldenTier = config.goldenTier;
+  const isGolden = tier === "golden" && Boolean(goldenTier);
+
   const [sqftCount, setSqftCount] = useState(1);
   const [useCustom, setUseCustom] = useState(false);
   const [customAmount, setCustomAmount] = useState("");
@@ -165,7 +173,15 @@ export default function SqftCampaignClient({
     return () => observer.disconnect();
   }, []);
 
-  const price = config.pricePerUnit;
+  // Everything downstream — presets, the amount strip, the unit labels, the
+  // donor wall maths — reads from these, so switching tier switches the whole
+  // form with one piece of state.
+  const price = isGolden && goldenTier ? goldenTier.price : config.pricePerUnit;
+  const unitName = isGolden && goldenTier ? goldenTier.unitName : config.unitName;
+  const unitNamePlural = isGolden && goldenTier ? goldenTier.unitNamePlural : config.unitNamePlural;
+  const sevaName = isGolden && goldenTier ? goldenTier.sevaName : config.pageTitle;
+  const orderType = isGolden && goldenTier ? goldenTier.orderType : config.orderType;
+
   const finalAmount = useCustom ? Number(customAmount) || 0 : sqftCount * price;
   const addonsEligible = finalAmount > ADDONS_MIN_AMOUNT;
 
@@ -209,6 +225,26 @@ export default function SqftCampaignClient({
     setCustomAmount("500000");
     setSqftCount(0);
     scrollToDonate();
+  };
+
+  // Golden Brick CTA — switch the form into the golden tier, start at one
+  // brick, and bring the donor to it.
+  const offerGoldenBrick = () => {
+    setTier("golden");
+    setUseCustom(false);
+    setCustomAmount("");
+    setSqftCount(1);
+    scrollToDonate();
+  };
+
+  // Guards the tier switch inside the form: quantity is reset so a stale
+  // "108 bricks" can never carry over into the ₹11,000 tier as ₹11.8 lakh.
+  const changeTier = (next: "standard" | "golden") => {
+    if (next === tier) return;
+    setTier(next);
+    setUseCustom(false);
+    setCustomAmount("");
+    setSqftCount(1);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -256,14 +292,18 @@ export default function SqftCampaignClient({
       const metaBrowser = getMetaBrowserData();
       const sourcePage = campaigner ? `/sqft-seva-campaign/c/${campaigner.slug}` : `/${campaignType === "BRICK" ? "brick-seva-campaign" : "sqft-seva-campaign"}`;
       const units = price > 0 ? Math.floor(finalAmount / price) : 0;
-      const unitLabel = `${units} ${units === 1 ? config.unitName : config.unitNamePlural}`;
+      const unitLabel = `${units} ${units === 1 ? unitName : unitNamePlural}`;
 
       const baseBody = {
         account: "default",
         sourcePage,
         utm: attribution.payload().utm,
-        type: config.orderType,
-        sevaName: config.pageTitle,
+        // Tier-aware: a golden offering is recorded as its own seva
+        // ("Golden Brick Seva" / GOLDEN_BRICK) so receipts, reports and the
+        // admin donations list can tell the two tiers apart. The name keeps
+        // the word "brick" so the DCC sync still maps it to MNSO-B.
+        type: orderType,
+        sevaName,
         name: form.name.trim(),
         email: form.email.trim().toLowerCase(),
         mobile: form.mobile.trim(),
@@ -321,12 +361,12 @@ export default function SqftCampaignClient({
       const checkoutOptions: Record<string, unknown> = {
         key: created.key,
         name: "Hare Krishna Movement Vizag",
-        description: `${config.pageTitle}${monthly ? " — Monthly" : ""} — Hare Krishna Vaikuntham Temple`,
+        description: `${sevaName}${monthly ? " — Monthly" : ""} — Hare Krishna Vaikuntham Temple`,
         prefill: { name: form.name, email: form.email, contact: form.mobile },
         notes: {
           sourcePage,
-          sevaName: config.pageTitle,
-          sevaType: config.orderType,
+          sevaName,
+          sevaType: orderType,
           campaignerSlug: campaigner?.slug || "",
           // Flag only — the full courier address is stored on the donation in our
           // DB, so we don't send the donor's home address to Razorpay.
@@ -346,12 +386,13 @@ export default function SqftCampaignClient({
               }),
             });
             if (!verifyRes.ok) throw new Error("Payment verification failed.");
-            trackPurchase({ value: finalAmount, eventId: metaEventId, content_name: config.pageTitle });
+            trackPurchase({ value: finalAmount, eventId: metaEventId, content_name: sevaName });
             // Send the donor to the thank-you page with their offering details.
             const params = new URLSearchParams({
               amount: String(finalAmount),
               units: String(units),
               type: campaignType,
+              ...(isGolden ? { tier: "golden" } : {}),
               ...(monthly ? { recurring: "1" } : {}),
             });
             router.push(`/sqft-seva-campaign/thank-you?${params.toString()}`);
@@ -452,8 +493,18 @@ export default function SqftCampaignClient({
           handleSubmit={handleSubmit}
           handleCopy={handleCopy}
           config={config}
+          goldenTier={goldenTier}
+          tier={tier}
+          onTierChange={changeTier}
+          unitName={unitName}
+          unitNamePlural={unitNamePlural}
         />
         </div>
+
+        {/* Golden Brick Seva — the limited 108-brick tier, directly under the
+            form so it is seen without a long scroll, while still leaving the
+            standard offering as the first call to action. */}
+        {goldenTier && <GoldenBrickSection tier={goldenTier} onOffer={offerGoldenBrick} />}
 
         {/* Donor privileges */}
         <DonorPrivilegesSection scrollToDonate={scrollToDonate} config={config} />

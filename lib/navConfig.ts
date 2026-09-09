@@ -2,7 +2,7 @@ import {
   Home, Info, User, Phone,
   Clock, Image, Calendar, Snowflake,
   Heart, Utensils, Beef, BookOpen, Shirt, Sparkles, Gift,
-  CalendarDays, PartyPopper, HandHeart, FileText,
+  CalendarDays, PartyPopper, HandHeart, FileText, Flower2,
   type LucideIcon,
 } from "lucide-react";
 
@@ -27,6 +27,7 @@ export const navEntries: NavEntry[] = [
   { kind: "link", label: "Home", href: "/", icon: Home },
   { kind: "link", label: "Founder", href: "/founder", icon: User },
   { kind: "link", label: "Subhojanam", href: "/subhojanam", icon: Utensils },
+  { kind: "link", label: "Radhashtami", href: "/radhashtami", icon: Flower2 },
   {
     kind: "group",
     group: {

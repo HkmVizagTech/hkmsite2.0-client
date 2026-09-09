@@ -28,6 +28,37 @@ export interface Privilege {
   text: string;
 }
 
+/**
+ * A limited, higher-value tier that lives inside a campaign — currently the
+ * Golden Brick Seva under Brick Seva: 108 gilded bricks, laid in the
+ * garbhagudi (sanctum sanctorum) itself, each carrying the donor's name.
+ *
+ * `taken` is maintained by hand ON PURPOSE. It is a sacred, finite count that
+ * also moves through offline offerings the website never sees, so a single
+ * edited number is both simpler and safer than a live query that would quietly
+ * under-report. Update the one line below as bricks are offered.
+ */
+export interface GoldenTierConfig {
+  /** Shown to donors, and recorded as the donation's sevaName. Keeping the
+   *  word "brick" in it matters: the DCC sync maps seva names containing
+   *  "brick" to the Mandir Nirman brick code (MNSO-B), which is where these
+   *  offerings belong for accounting. */
+  sevaName: string;
+  orderType: string;
+  unitName: string;
+  unitNamePlural: string;
+  price: number;
+  /** Total bricks that will ever exist in this tier. */
+  total: number;
+  /** How many have been offered so far — edit this as they go. */
+  taken: number;
+  placement: string;
+  presets: number[];
+  /** The gilded brick, engraved and ready for the sanctum. */
+  goldenImage: string;
+  benefits: string[];
+}
+
 export interface CampaignConfig {
   type: "SQFT" | "BRICK";
   pageTitle: string;
@@ -66,6 +97,14 @@ export interface CampaignConfig {
   higherPrivileges: Privilege[];
   statsApiEndpoint: string;
   orderType: string;
+  /** Present only on campaigns that offer a limited premium tier. */
+  goldenTier?: GoldenTierConfig;
+
+  /** Brick campaigns only: the laser engraver at the temple that inscribes
+   *  each donor's name on the regular (₹1,500) bricks. Shown beside the
+   *  donation form and in donor privileges; the golden tier carries its own
+   *  imagery inside GoldenBrickSection. */
+  engravingImage?: string;
 }
 
 export const SQFT_CAMPAIGN: CampaignConfig = {
@@ -168,6 +207,33 @@ export const BRICK_CAMPAIGN: CampaignConfig = {
   ],
   statsApiEndpoint: "/seva-stats/brick-campaign",
   orderType: "BRICK",
+
+  /** The laser engraver at the temple that puts donor names on the bricks. */
+  engravingImage:
+    "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1788937886348-1788937885266-lasermachine.webp",
+
+  goldenTier: {
+    sevaName: "Golden Brick Seva",
+    orderType: "GOLDEN_BRICK",
+    unitName: "golden brick",
+    unitNamePlural: "golden bricks",
+    price: 11000,
+    total: 108,
+    // ── Offered so far. EDIT THIS NUMBER as golden bricks are taken. ──
+    taken: 21,
+    placement: "Garbhagudi — the sanctum sanctorum",
+    presets: [1, 2, 5, 11],
+    goldenImage:
+      "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1788937885719-1788937885020-goldenbricklasermachine.webp",
+    benefits: [
+      "Your name laser-engraved on a gilded brick, one of only 108.",
+      "Laid in the garbhagudi itself — the innermost sanctum, beneath Their Lordships.",
+      "A photograph of your engraved brick, sent to you before it is laid.",
+      "Personal invitation to the Prana Pratistha ceremonies.",
+      "Maha prasadam offered to Their Lordships, sent to your home.",
+      "80G tax exemption on your full offering.",
+    ],
+  },
 };
 
 export const getCampaignConfig = (type: "SQFT" | "BRICK"): CampaignConfig =>

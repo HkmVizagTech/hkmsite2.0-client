@@ -24,6 +24,24 @@ export default {
         body: ['Poppins', 'sans-serif'],
       },
       colors: {
+        // Registers the gold palette with Tailwind so opacity modifiers work.
+        //
+        // WHY: `gold` only ever existed as hand-written utilities in
+        // globals.css (.text-gold / .bg-gold / .border-gold). Those work, but
+        // Tailwind cannot generate a modifier for a colour it doesn't know, so
+        // every `bg-gold/10`, `border-gold/20`, `divide-gold/20`, `text-gold/60`
+        // and `ring-gold/30` across the campaign pages compiled to NOTHING —
+        // all the soft gold tints, hairline borders and dividers were simply
+        // absent on the live site. Registering it here emits those classes.
+        //
+        // The globals.css utilities are deliberately left in place: they sit
+        // after the generated ones in the utilities layer and therefore still
+        // win, so plain `text-gold` keeps its deeper, higher-contrast shade
+        // and nothing that renders today changes appearance.
+        gold: {
+          DEFAULT: "hsl(var(--gold))",
+          deep: "hsl(var(--gold-deep))",
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
