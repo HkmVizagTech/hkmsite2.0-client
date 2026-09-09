@@ -2,11 +2,10 @@
 
 // Golden Brick Seva — the limited tier inside Brick Seva.
 //
-// The whole section is built around one idea: there are only 108, and they go
+// The whole section is built around one idea: there are only 10,008, and they go
 // in the garbhagudi. Scarcity is the argument, so it is shown rather than
-// stated — a grid of 108 bricks with the offered ones lit in gold, and the
-// remaining count called out plainly. Everything else (price, engraving,
-// placement) supports that.
+// stated — the offered-so-far count with the remaining number plainly called
+// out. Everything else (price, engraving, placement) supports that.
 //
 // Visually it deliberately breaks from the white sections around it: deep
 // navy, gold hairlines and a warm glow, so a donor scrolling the brick page
@@ -31,7 +30,7 @@ export default function GoldenBrickSection({ tier, onOffer }: GoldenBrickSection
   const priceLabel = `₹${tier.price.toLocaleString("en-IN")}`;
 
   const steps = [
-    { icon: Crown, title: "Offer a golden brick", text: `${priceLabel} reserves one of the 108.` },
+    { icon: Crown, title: "Offer a golden brick", text: `${priceLabel} reserves one of the ${tier.total.toLocaleString("en-IN")}.` },
     { icon: ScrollText, title: "Your name is engraved", text: "Laser-inscribed onto the gilded brick." },
     { icon: Flame, title: "Laid in the garbhagudi", text: "Placed in the sanctum before Prana Pratistha." },
   ];
@@ -58,7 +57,7 @@ export default function GoldenBrickSection({ tier, onOffer }: GoldenBrickSection
         <div className="mx-auto mb-8 max-w-2xl text-center">
           <span className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.18em] text-gold">
             <Sparkles className="h-3.5 w-3.5" />
-            Only 108 · {tier.placement}
+            Only {tier.total.toLocaleString("en-IN")} · {tier.placement}
           </span>
 
           <h2
@@ -69,7 +68,7 @@ export default function GoldenBrickSection({ tier, onOffer }: GoldenBrickSection
           </h2>
 
           <p className="mt-3 text-sm leading-relaxed text-white/75 md:text-base">
-            One hundred and eight gilded bricks will be laid in the garbhagudi — each carries a
+            Ten thousand and eight gilded bricks will be laid in the garbhagudi — each carries a
             devotee&apos;s name, laser-engraved, sealed into the temple&apos;s foundation for as
             long as it stands.
           </p>
@@ -114,8 +113,8 @@ export default function GoldenBrickSection({ tier, onOffer }: GoldenBrickSection
                 <div className="flex items-center justify-between text-xs">
                   <span className="uppercase tracking-wider text-white/60">Offered so far</span>
                   <span className="font-semibold text-white">
-                    <span className="text-gold">{tier.taken}</span>{" "}
-                    <span className="text-white/50">/ {tier.total}</span>
+                    <span className="text-gold">{tier.taken.toLocaleString("en-IN")}</span>{" "}
+                    <span className="text-white/50">/ {tier.total.toLocaleString("en-IN")}</span>
                   </span>
                 </div>
                 <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-white/10">
@@ -128,7 +127,7 @@ export default function GoldenBrickSection({ tier, onOffer }: GoldenBrickSection
                   />
                 </div>
                 <p className="mt-2 text-[11px] text-white/55">
-                  <span className="font-semibold text-gold">{remaining}</span> still available ·
+                  <span className="font-semibold text-gold">{remaining.toLocaleString("en-IN")}</span> still available ·
                   80G eligible
                 </p>
               </div>

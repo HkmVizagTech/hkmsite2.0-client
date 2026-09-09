@@ -30,7 +30,7 @@ export interface Privilege {
 
 /**
  * A limited, higher-value tier that lives inside a campaign — currently the
- * Golden Brick Seva under Brick Seva: 108 gilded bricks, laid in the
+ * Golden Brick Seva under Brick Seva: 10,008 gilded bricks, laid in the
  * garbhagudi (sanctum sanctorum) itself, each carrying the donor's name.
  *
  * `taken` is maintained by hand ON PURPOSE. It is a sacred, finite count that
@@ -218,15 +218,15 @@ export const BRICK_CAMPAIGN: CampaignConfig = {
     unitName: "golden brick",
     unitNamePlural: "golden bricks",
     price: 11000,
-    total: 108,
-    // ── Offered so far. EDIT THIS NUMBER as golden bricks are taken. ──
-    taken: 21,
+    total: 10008,
+    // ── Offered so far (≈21%, i.e. 2,102 of 10,008). EDIT THIS NUMBER as golden bricks are taken. ──
+    taken: 2102,
     placement: "Garbhagudi — the sanctum sanctorum",
     presets: [1, 2, 5, 11],
     goldenImage:
       "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1788937885719-1788937885020-goldenbricklasermachine.webp",
     benefits: [
-      "Your name laser-engraved on a gilded brick, one of only 108.",
+      "Your name laser-engraved on a gilded brick, one of only 10,008.",
       "Laid in the garbhagudi itself — the innermost sanctum, beneath Their Lordships.",
       "A photograph of your engraved brick, sent to you before it is laid.",
       "Personal invitation to the Prana Pratistha ceremonies.",

@@ -501,10 +501,13 @@ export default function SqftCampaignClient({
         />
         </div>
 
-        {/* Golden Brick Seva — the limited 108-brick tier, directly under the
+        {/* Golden Brick Seva — the limited golden-brick tier, directly under the
             form so it is seen without a long scroll, while still leaving the
             standard offering as the first call to action. */}
         {goldenTier && <GoldenBrickSection tier={goldenTier} onOffer={offerGoldenBrick} />}
+
+        {/* Inside the temple — sacred spaces, above the donor privileges */}
+        <TempleFeaturesSection />
 
         {/* Donor privileges */}
         <DonorPrivilegesSection scrollToDonate={scrollToDonate} config={config} />
@@ -535,9 +538,6 @@ export default function SqftCampaignClient({
 
         {/* Scriptural significance of temple construction */}
         <ImportanceSection />
-
-        {/* Temple features */}
-        <TempleFeaturesSection />
 
         {/* Photo + video proof of ongoing construction */}
         <ConstructionStatusSection scrollToDonate={scrollToDonate} />

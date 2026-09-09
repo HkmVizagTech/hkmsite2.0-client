@@ -79,89 +79,80 @@ const DECOR_GARLAND =
 
 const sevas: Seva[] = [
   {
-    slug: "yajamana",
-    title: "Yajamana Seva",
-    description:
-      "Become the chief sponsor of the grand Radhashtami celebrations. The Yajamana is honoured with special sankalpa, priority darshan and the most sacred blessings of Srimati Radharani.",
-    icon: "🙏",
-    image:
-      "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785833231776-1785833231103-ChatGPTImageAug42026021053PM.webp",
-    options: [
-      { legacySevaId: 3200, label: "Donate Rs. 25,555", amount: 25555 },
-      { legacySevaId: 3201, label: "Donate Rs. 15,555", amount: 15555 },
-      { legacySevaId: 3202, label: "Donate Rs. 11,111", amount: 11111 },
-      { legacySevaId: 3203, label: "Donate Any Other Amount", amount: null },
-    ],
-  },
-  {
     slug: "annadana",
     title: "Annadana Seva",
     description:
-      "Sponsor sanctified prasadam for every devotee visiting the temple on Radhashtami. Anna Daan is the highest charity — feeding the hungry in the Lord's name.",
+      "Sponsor sanctified prasadam for every devotee visiting the temple on the divine day.",
     icon: "🍛",
     image: "/assets/janmashtami-sk1.webp",
     options: [
       { legacySevaId: 3210, label: "Donate Rs. 15,555", amount: 15555 },
-      { legacySevaId: 3211, label: "Donate Rs. 11,111", amount: 11111 },
-      { legacySevaId: 3212, label: "Donate Rs. 5,555", amount: 5555 },
-      { legacySevaId: 3213, label: "Donate Any Other Amount", amount: null },
+      { legacySevaId: 3211, label: "Donate Rs. 1,100", amount: 1100 },
+      { legacySevaId: 3212, label: "Donate Rs. 2,100", amount: 2100 },
+      { legacySevaId: 3213, label: "Donate Rs. 5,555", amount: 5555 },
+      { legacySevaId: 3214, label: "Donate Any Other Amount", amount: null },
     ],
   },
   {
     slug: "abhishekam",
     title: "Abhishekam Seva",
     description:
-      "Sponsor the sacred Abhishekam of Sri Sri Radha Madan Mohan — the bathing ceremony with milk, honey, curd and sacred waters on the divine appearance day of Srimati Radharani.",
+      "Sponsor the sacred Abhishekam — the bathing ceremony of Sri Sri Radha Madan Mohan on the appearance day of Srimati Radharani.",
     icon: "🪷",
-    image: "/assets/janmashtami-sk3.webp",
+    image:
+      "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1788955236457-1788955235882-HighlightsoftheGrandAbhishekamatGadirajuPalacejanmashtamiSriKrishnaJanmashtamiLord.jpg",
     options: [
       { legacySevaId: 3220, label: "Donate Rs. 11,111", amount: 11111 },
-      { legacySevaId: 3221, label: "Donate Rs. 5,555", amount: 5555 },
-      { legacySevaId: 3222, label: "Donate Rs. 2,111", amount: 2111 },
-      { legacySevaId: 3223, label: "Donate Any Other Amount", amount: null },
+      { legacySevaId: 3221, label: "Donate Rs. 1,100", amount: 1100 },
+      { legacySevaId: 3222, label: "Donate Rs. 2,100", amount: 2100 },
+      { legacySevaId: 3223, label: "Donate Rs. 5,555", amount: 5555 },
+      { legacySevaId: 3224, label: "Donate Any Other Amount", amount: null },
     ],
   },
   {
     slug: "pushpalankara",
     title: "Pushpalankara Seva",
     description:
-      "Offer divine flower garlands and floral decorations to Srimati Radharani — the most beautiful alankara that pleases Her transcendental senses on Radhashtami.",
+      "Offer divine flower garlands and floral decorations to Srimati Radharani on Radhashtami.",
     icon: "🌺",
     image: "/assets/janmashtami-sk2.webp",
     options: [
       { legacySevaId: 3230, label: "Donate Rs. 9,999", amount: 9999 },
-      { legacySevaId: 3231, label: "Donate Rs. 5,555", amount: 5555 },
-      { legacySevaId: 3232, label: "Donate Rs. 2,111", amount: 2111 },
-      { legacySevaId: 3233, label: "Donate Any Other Amount", amount: null },
+      { legacySevaId: 3231, label: "Donate Rs. 1,100", amount: 1100 },
+      { legacySevaId: 3232, label: "Donate Rs. 2,100", amount: 2100 },
+      { legacySevaId: 3233, label: "Donate Rs. 5,555", amount: 5555 },
+      { legacySevaId: 3234, label: "Donate Any Other Amount", amount: null },
     ],
   },
   {
     slug: "naivedya",
     title: "Naivedya Seva",
     description:
-      "Sponsor the sacred food offering to the Lordships. Naivedya is the devotional preparation of exquisite dishes offered to Sri Sri Radha Madan Mohan with love.",
+      "Sponsor the sacred food offering — exquisite dishes prepared with love for the Lordships.",
     icon: "🍽️",
     image:
       "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785833545819-1785833545717-naivedya.jpeg",
     options: [
       { legacySevaId: 3240, label: "Donate Rs. 7,777", amount: 7777 },
-      { legacySevaId: 3241, label: "Donate Rs. 5,555", amount: 5555 },
-      { legacySevaId: 3242, label: "Donate Rs. 2,111", amount: 2111 },
-      { legacySevaId: 3243, label: "Donate Any Other Amount", amount: null },
+      { legacySevaId: 3241, label: "Donate Rs. 1,100", amount: 1100 },
+      { legacySevaId: 3242, label: "Donate Rs. 2,100", amount: 2100 },
+      { legacySevaId: 3243, label: "Donate Rs. 5,555", amount: 5555 },
+      { legacySevaId: 3244, label: "Donate Any Other Amount", amount: null },
     ],
   },
   {
     slug: "gau-seva",
     title: "Gau Seva",
     description:
-      "Serve the sacred cows at our goshala with fodder, green grass and medicines on Radhashtami. Lord Krishna, the cowherd boy, is supremely pleased by Gau Seva.",
+      "Serve the sacred cows at our goshala — a seva supremely dear to Lord Krishna.",
     icon: "🐄",
     image: "/assets/janmashtami-sk4.webp",
     options: [
       { legacySevaId: 3250, label: "Donate Rs. 5,555", amount: 5555 },
-      { legacySevaId: 3251, label: "Donate Rs. 3,111", amount: 3111 },
-      { legacySevaId: 3252, label: "Donate Rs. 1,111", amount: 1111 },
-      { legacySevaId: 3253, label: "Donate Any Other Amount", amount: null },
+      { legacySevaId: 3251, label: "Donate Rs. 1,100", amount: 1100 },
+      { legacySevaId: 3252, label: "Donate Rs. 2,100", amount: 2100 },
+      { legacySevaId: 3253, label: "Donate Rs. 4,000", amount: 4000 },
+      { legacySevaId: 3254, label: "Donate Any Other Amount", amount: null },
     ],
   },
 ];
@@ -203,7 +194,7 @@ const FAQS = [
   },
   {
     q: "What sevas can I offer on Radhashtami?",
-    a: "You can offer Yajamana Seva (chief sponsor), Annadana Seva (food distribution), Abhishekam Seva (sacred bathing ceremony), Pushpalankara Seva (flower decorations), Naivedya Seva (food offering to the Deities), and Gau Seva (serving the sacred cows). You may also donate any custom amount.",
+    a: "You can offer Annadana Seva (food distribution), Abhishekam Seva (sacred bathing ceremony), Pushpalankara Seva (flower decorations), Naivedya Seva (food offering to the Deities), and Gau Seva (serving the sacred cows). You may also donate any custom amount.",
   },
   {
     q: "How will my donation be used?",
@@ -636,7 +627,7 @@ export default function RadhashtamiClient() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4 }}
-            className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+            className="flex flex-wrap justify-center gap-6"
           >
             {sevas.map((seva, idx) => (
               <motion.article
@@ -646,7 +637,7 @@ export default function RadhashtamiClient() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: reduce ? 0 : idx * 0.08 }}
-                className="group scroll-mt-24 overflow-hidden rounded-2xl border bg-white transition-all duration-500 hover:-translate-y-1"
+                className="group w-full scroll-mt-24 overflow-hidden rounded-2xl border bg-white transition-all duration-500 hover:-translate-y-1 sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)]"
                 style={{
                   borderColor:
                     highlightedSlug === seva.slug ? C.gold : `${C.teal}40`,
@@ -685,12 +676,19 @@ export default function RadhashtamiClient() {
 
                 {/* Card body */}
                 <div className="p-4 pt-3">
-                  <p className="min-h-[52px] text-[13px] leading-relaxed md:text-sm" style={{ color: C.text }}>
+                  <div
+                    className="mb-3 h-[3px] w-full rounded-full"
+                    style={{
+                      background: `linear-gradient(to right, transparent, ${C.gold} 20%, ${C.softGold} 60%, transparent)`,
+                    }}
+                  />
+                  <p className="min-h-[40px] text-[13px] leading-relaxed md:text-sm" style={{ color: C.text }}>
                     {seva.description}
                   </p>
-                  <div className="mt-4 space-y-2">
+                  <div className="mt-4 space-y-2.5">
                     {(() => {
                       const primary = seva.options[0];
+                      const tiers = seva.options.slice(1, 4);
                       const custom = seva.options.find((o) => !o.amount) || seva.options[seva.options.length - 1];
                       return (
                         <>
@@ -730,6 +728,36 @@ export default function RadhashtamiClient() {
                               <path d="M5 12h14M13 6l6 6-6 6" />
                             </svg>
                           </button>
+
+                          <div className="grid grid-cols-3 gap-2">
+                            {tiers.map((t) => (
+                              <button
+                                key={t.legacySevaId}
+                                type="button"
+                                onClick={() => openCheckout(seva, t)}
+                                className="rounded-xl border px-1 py-2.5 text-center transition-all duration-300"
+                                style={{
+                                  borderColor: `${C.teal}30`,
+                                  background: C.lightMint,
+                                  color: C.deepGreen,
+                                }}
+                                onMouseEnter={(e) => {
+                                  e.currentTarget.style.borderColor = C.gold;
+                                  e.currentTarget.style.background = `linear-gradient(135deg, ${C.mint}, ${C.softGold}40)`;
+                                  e.currentTarget.style.boxShadow = `0 3px 10px ${C.teal}18`;
+                                }}
+                                onMouseLeave={(e) => {
+                                  e.currentTarget.style.borderColor = `${C.teal}30`;
+                                  e.currentTarget.style.background = C.lightMint;
+                                  e.currentTarget.style.boxShadow = "none";
+                                }}
+                              >
+                                <span className="text-sm font-bold leading-none">
+                                  ₹{t.amount != null ? formatAmount(t.amount) : "—"}
+                                </span>
+                              </button>
+                            ))}
+                          </div>
 
                           <button
                             type="button"
