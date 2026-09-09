@@ -22,7 +22,7 @@ const apiBase = () => (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080
 
 const stats = [
   { icon: Utensils, value: "3,000+", label: "Meals Served Daily", sub: "Hot, nutritious, hygienic" },
-  { icon: Hospital, value: "2", label: "Government Hospitals", sub: "KGH Vizag · GGH Kakinada" },
+  { icon: Hospital, value: "3", label: "Government Hospitals", sub: "KGH Vizag · GGH Kakinada · Homi Bhabha Visakhapatnam" },
   { icon: Users, value: "10,95,000+", label: "Annual Beneficiaries", sub: "Patients & attendants" },
   { icon: Clock, value: "365", label: "Days a Year", sub: "No holidays, no breaks" },
 ];
@@ -38,7 +38,7 @@ const donationTiers = [
 const mealProcess = [
   { step: "01", title: "Kitchen Preparation", desc: "Every morning, our trained cooks prepare fresh, hygienic meals in our dedicated kitchen following strict quality standards." },
   { step: "02", title: "Quality Check", desc: "Each batch is inspected for nutrition, hygiene and taste before it is packaged and prepared for distribution." },
-  { step: "03", title: "Hospital Distribution", desc: "Volunteers carry the meals to KGH Visakhapatnam and GGH Kakinada and distribute directly to patients and their families." },
+  { step: "03", title: "Hospital Distribution", desc: "Volunteers carry the meals to KGH Visakhapatnam, GGH Kakinada and Homi Bhabha Cancer Hospital & Research Centre, Visakhapatnam, and distribute directly to patients and their families." },
   { step: "04", title: "Consistent Service", desc: "This cycle runs every single day of the year — 365 days, without exception, rain or shine." },
 ];
 
@@ -161,7 +161,8 @@ export default function SubhojanamPage() {
             </h1>
             <p className="mb-8 max-w-lg text-base leading-relaxed text-white/75">
               Subhojanam provides free, hygienic, and nutritious meals every day to patients
-              and their attendants at government hospitals in Visakhapatnam and Kakinada.
+              and their attendants at government hospitals in Visakhapatnam, Kakinada and at the
+              Homi Bhabha Cancer Hospital &amp; Research Centre, Visakhapatnam.
             </p>
             <div className="flex flex-wrap gap-4">
               <button
@@ -226,6 +227,13 @@ export default function SubhojanamPage() {
                   <div>
                     <p className="text-sm font-semibold text-foreground">GGH Hospital, Kakinada</p>
                     <p className="text-xs text-muted-foreground">Up to 500 meals served daily</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-4">
+                  <Hospital className="h-5 w-5 shrink-0 text-primary" />
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">Homi Bhabha Cancer Hospital &amp; Research Centre, Visakhapatnam</p>
+                    <p className="text-xs text-muted-foreground">Tata Memorial Centre · Up to 500 meals served daily</p>
                   </div>
                 </div>
               </div>
