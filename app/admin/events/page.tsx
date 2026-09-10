@@ -50,6 +50,7 @@ export default function AdminEvents() {
   reset({ title: "", date: "", time: "", location: "", status: "upcoming", category: "" });
     fileRef.current = null;
     setEditing(null);
+    setSubmitting(false);
     setShowForm(true);
   };
 
@@ -59,6 +60,7 @@ export default function AdminEvents() {
   reset({ title: event.title, date: event.date, time: event.time, location: event.location, status: event.status as any, category: (event as any).category || "" });
     fileRef.current = null;
     setEditing(event.id);
+    setSubmitting(false);
     setShowForm(true);
   };
 
@@ -221,7 +223,6 @@ export default function AdminEvents() {
           toast({ title: 'Failed to update event', description: txt || res.statusText });
         }
   } else {
-  show && show('Creating event...');
         // If admin built a registration form while creating the event, include it so the server stores it
         if (registrationForm) {
           try {
@@ -297,16 +298,17 @@ export default function AdminEvents() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-foreground/50 flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 overflow-y-auto bg-foreground/50"
             onClick={() => setShowForm(false)}
           >
-            <motion.div
-              initial={{ scale: 0.95 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.95 }}
-              className="bg-background rounded-2xl p-6 w-full max-w-lg shadow-elevated"
-              onClick={(e) => e.stopPropagation()}
-            >
+            <div className="flex min-h-full items-center justify-center p-4">
+              <motion.div
+                initial={{ scale: 0.95 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0.95 }}
+                className="my-auto w-full max-w-lg rounded-2xl bg-background p-6 shadow-elevated"
+                onClick={(e) => e.stopPropagation()}
+              >
               <div className="flex items-center justify-between mb-5">
                 <h2 className="font-heading text-xl font-bold">
                   {editing ? "Edit Event" : "Create Event"}
@@ -387,7 +389,8 @@ export default function AdminEvents() {
                   <Button variant="outline" onClick={() => setShowForm(false)}>Cancel</Button>
                 </div>
               </div>
-            </motion.div>
+              </motion.div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -448,7 +451,12 @@ export default function AdminEvents() {
               return (
                 <div key={id} className="bg-card rounded-2xl overflow-hidden flex flex-col">
                   <div className="p-4">
-                    <EventCard event={display} href={`/events/${id}`} smallCard />
+                    <EventCard
+                      event={display}
+                      href={(display as any).registrationLink?.trim() || `/events/${id}`}
+                      external={!!(display as any).registrationLink?.trim()}
+                      smallCard
+                    />
                   </div>
 
                   <div className="px-4 pb-4 pt-2 flex items-center justify-center gap-2 border-t border-border bg-background">

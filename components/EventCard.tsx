@@ -15,6 +15,8 @@ export interface EventCardProps {
   };
   href?: string;
   smallCard?: boolean;
+  /** When the admin linked a separate registration/landing page, open it in a new tab. */
+  external?: boolean;
 }
 
 import { useEffect, useState } from "react";
@@ -49,13 +51,18 @@ function Countdown({ targetDate }: { targetDate: string }) {
   );
 }
 
-export default function EventCard({ event, href, smallCard }: EventCardProps) {
+export default function EventCard({ event, href, smallCard, external }: EventCardProps) {
   const formattedDate = event.date ? new Date(event.date).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : event.date;
   const now = Date.now();
   const eventTime = event.date ? new Date(event.date).getTime() : 0;
   const isCompleted = eventTime < now;
+  const Tag: any = external ? "a" : Link;
   return (
-    <Link href={href || "/events"} className={smallCard ? "block group focus:outline-none" : "block group focus:outline-none col-span-full"}>
+    <Tag
+      href={href || "/events"}
+      {...(external ? { target: "_blank", rel: "noreferrer" } : {})}
+      className={smallCard ? "block group focus:outline-none" : "block group focus:outline-none col-span-full"}
+    >
       <div
         className={
           smallCard
@@ -116,6 +123,6 @@ export default function EventCard({ event, href, smallCard }: EventCardProps) {
           {event.date && <Countdown targetDate={event.date} />}
         </div>
       </div>
-    </Link>
+    </Tag>
   );
 }
