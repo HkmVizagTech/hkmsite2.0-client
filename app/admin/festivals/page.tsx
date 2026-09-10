@@ -228,14 +228,19 @@ export default function AdminFestivals() {
     setLoading(true);
     try {
       const res = await authFetch(API("/festival-showcases"), { credentials: "include" });
-      if (res.ok) {
-        const data = await res.json();
-        const list = Array.isArray(data) ? (data as FestivalShowcase[]) : [];
-        setItems(list);
-        setFallbacks(list.length === 0 ? getFallbackFestivals() : []);
-      } else {
-        setFallbacks(getFallbackFestivals());
-      }
+      const list = res.ok
+        ? ((await res.json()) as FestivalShowcase[])
+        : [];
+      const items = Array.isArray(list) ? list : [];
+      setItems(items);
+      // Calendar festivals are always shown so one can be added with a click —
+      // minus any that are already managed here (matched by title).
+      const managed = new Set(items.map((f) => f.title.toLowerCase().trim()));
+      setFallbacks(
+        getFallbackFestivals().filter(
+          (f) => !managed.has(f.title.toLowerCase().trim())
+        )
+      );
     } catch (e: any) {
       toast({ title: "Network error", description: e.message, variant: "destructive" });
       setFallbacks(getFallbackFestivals());
@@ -531,66 +536,18 @@ export default function AdminFestivals() {
         </Button>
       </div>
 
-      {/* ── Empty fallback seeding ── */}
-      {items.length === 0 && fallbacks.length > 0 && (
-        <section className="space-y-4">
-          <div className="rounded-2xl border border-dashed border-primary/40 bg-primary/5 p-5 text-center">
-            <Calendar className="mx-auto mb-2 h-8 w-8 text-primary/50" />
-            <h3 className="font-semibold text-foreground">Festivals showing on the site right now</h3>
-            <p className="mx-auto mt-1 max-w-lg text-sm text-muted-foreground">
-              These come from the temple calendar. Click <strong>Edit &amp; manage</strong> to take over
-              any of them — you can then add a donate link, gallery, schedule and more. Saving
-              once converts them into admin-managed festivals.
-            </p>
+      {/* ── Admin-managed festivals ── */}
+      <section>
+        <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+          Admin-managed festivals
+        </h2>
+        {items.length === 0 && (
+          <div className="rounded-2xl border border-dashed border-border bg-muted/30 p-6 text-center text-sm text-muted-foreground">
+            No managed festivals yet. Pick one from the calendar below, or click{" "}
+            <strong className="text-foreground">Add Festival</strong> to create your own.
           </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {fallbacks.map((f) => (
-              <div key={f._id} className="bg-card rounded-2xl overflow-hidden flex flex-col shadow transition hover:-translate-y-1 hover:shadow-lg">
-                <div className="relative w-full h-44 bg-muted-foreground/5">
-                  {(f.cardImage || f.heroImage) ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={f.cardImage || f.heroImage} alt={f.title} className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm">No image</div>
-                  )}
-                  <span className="absolute left-2 top-2 rounded-full bg-primary/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-primary">
-                    Calendar
-                  </span>
-                </div>
-                <div className="p-4 flex-1 flex flex-col">
-                  <h3 className="font-semibold text-lg leading-tight mb-1">{f.title}</h3>
-                  <p className="text-xs text-muted-foreground mb-1">{f.eventDate || "TBA"}</p>
-                  <p className="text-sm text-muted-foreground line-clamp-3 mb-3 flex-1">{f.description}</p>
-                  <div className="mt-2 flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => openEditFallback(f)}
-                      className="border-primary text-primary hover:bg-primary/5"
-                    >
-                      <Pencil className="w-3.5 h-3.5 mr-1" /> Edit &amp; manage
-                    </Button>
-                    <a
-                      href={f.href || "#"}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary"
-                    >
-                      <ExternalLink className="w-3.5 h-3.5" /> View
-                    </a>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* ── Admin-managed festivals grid ── */}
-      {items.length > 0 && (
-        <section>
-          <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-muted-foreground">Admin-managed festivals</h2>
+        )}
+        {items.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {items.map((f) => {
               const img = f.cardImage || f.heroImage;
@@ -639,31 +596,62 @@ export default function AdminFestivals() {
               );
             })}
           </div>
-        </section>
-      )}
+        )}
+      </section>
 
-      {/* ── Fallback shown below admin list (for reference) ── */}
-      {items.length > 0 && fallbacks.length > 0 && (
+      {/* ── Calendar festivals (easy to take over & manage) ── */}
+      {fallbacks.length > 0 && (
         <section className="space-y-4">
-          <p className="text-xs text-muted-foreground">
-            These additional festivals are still showing on the site from the calendar until you add
-            them above.
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 opacity-70">
+          <div className="rounded-2xl border border-dashed border-primary/40 bg-primary/5 p-5">
+            <div className="flex items-start gap-3">
+              <Calendar className="mt-0.5 h-8 w-8 shrink-0 text-primary/50" />
+              <div>
+                <h3 className="font-semibold text-foreground">Calendar festivals</h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  These are showing on the site right now from the temple calendar (they are not
+                  admin-managed yet). Click{" "}
+                  <strong>Edit &amp; manage</strong> to take over one — add a donate link, banner,
+                  gallery, schedule and more, then save. Already-managed festivals are hidden here.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {fallbacks.map((f) => (
-              <div key={f._id} className="bg-card rounded-2xl overflow-hidden flex flex-col border border-border">
+              <div key={f._id} className="bg-card rounded-2xl overflow-hidden flex flex-col shadow transition hover:-translate-y-1 hover:shadow-lg">
+                <div className="relative w-full h-44 bg-muted-foreground/5">
+                  {(f.cardImage || f.heroImage) ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={f.cardImage || f.heroImage} alt={f.title} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground text-sm">No image</div>
+                  )}
+                  <span className="absolute left-2 top-2 rounded-full bg-primary/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-primary">
+                    Calendar
+                  </span>
+                </div>
                 <div className="p-4 flex-1 flex flex-col">
-                  <h3 className="font-semibold leading-tight mb-1">{f.title}</h3>
-                  <p className="text-xs text-muted-foreground mb-2">{f.eventDate || "TBA"}</p>
-                  <div className="mt-auto">
+                  <h3 className="font-semibold text-lg leading-tight mb-1">{f.title}</h3>
+                  <p className="text-xs text-muted-foreground mb-1">{f.eventDate || "TBA"}</p>
+                  <p className="text-sm text-muted-foreground line-clamp-3 mb-3 flex-1">{f.description}</p>
+                  <div className="mt-2 flex items-center gap-2">
                     <Button
-                      variant="ghost"
+                      variant="outline"
                       size="sm"
                       onClick={() => openEditFallback(f)}
-                      className="text-primary hover:bg-primary/10 text-xs"
+                      className="border-primary text-primary hover:bg-primary/5"
                     >
-                      <Plus className="w-3 h-3 mr-1" /> Add to managed
+                      <Pencil className="w-3.5 h-3.5 mr-1" /> Edit &amp; manage
                     </Button>
+                    <a
+                      href={f.href || "#"}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" /> View
+                    </a>
                   </div>
                 </div>
               </div>
