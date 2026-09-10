@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Bell, CalendarDays, Calendar, MapPin, ArrowRight } from "lucide-react";
+import { Bell, CalendarDays, Calendar, MapPin, ArrowRight, ExternalLink } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import PageHero from "@/components/PageHero";
 import Ornament from "@/components/Ornament";
@@ -32,6 +32,7 @@ type DisplayEvent = {
   bannerImage?: string;
   location?: string;
   href?: string;
+  registrationLink?: string;
   isFallback?: boolean;
 };
 
@@ -214,6 +215,9 @@ export default function EventsPage() {
   const featured = events[0];
   const rest = events.slice(1);
   const hrefFor = (e: DisplayEvent) => e.href || `/events/${e._id || e.title}`;
+  // When the admin linked a separate landing page, clicking the event opens
+  // that page (in a new tab) instead of the on-site event detail.
+  const externalOf = (e: DisplayEvent) => e.registrationLink?.trim() || "";
 
   const months = useMemo(() => {
     const groups = new Map<string, ImportantDate[]>();
@@ -285,13 +289,25 @@ export default function EventsPage() {
                   </p>
                 )}
                 <Countdown targetDate={featured.date} />
-                <Link
-                  href={hrefFor(featured)}
-                  className="mt-2 inline-flex w-fit items-center gap-2 rounded-full bg-gradient-gold px-6 py-3 text-sm font-bold text-[hsl(220,60%,12%)] shadow-gold transition-transform hover:-translate-y-0.5"
-                >
-                  View Details
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
+                {(() => {
+                  const external = externalOf(featured);
+                  const linkProps = external
+                    ? { href: external, target: "_blank" as const, rel: "noreferrer" }
+                    : { href: hrefFor(featured) };
+                  return (
+                    <Link
+                      {...linkProps}
+                      className="mt-2 inline-flex w-fit items-center gap-2 rounded-full bg-gradient-gold px-6 py-3 text-sm font-bold text-[hsl(220,60%,12%)] shadow-gold transition-transform hover:-translate-y-0.5"
+                    >
+                      {external ? "Register / Visit page" : "View Details"}
+                      {external ? (
+                        <ExternalLink className="h-4 w-4" />
+                      ) : (
+                        <ArrowRight className="h-4 w-4" />
+                      )}
+                    </Link>
+                  );
+                })()}
               </div>
             </div>
           </div>
@@ -341,10 +357,16 @@ export default function EventsPage() {
                     viewport={{ once: true, margin: "-40px" }}
                     transition={{ delay: Math.min(i, 5) * 0.06, duration: 0.45 }}
                   >
-                    <Link
-                      href={hrefFor(event)}
-                      className="group flex h-full flex-col overflow-hidden rounded-[20px] border border-border bg-card transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/35 hover:shadow-elevated"
-                    >
+                    {(() => {
+                      const external = externalOf(event);
+                      const cls = "group flex h-full flex-col overflow-hidden rounded-[20px] border border-border bg-card transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/35 hover:shadow-elevated";
+                      const Tag = external ? "a" : (Link as any);
+                      return (
+                        <Tag
+                          href={external || hrefFor(event)}
+                          {...(external ? { target: "_blank", rel: "noreferrer" } : {})}
+                          className={cls}
+                        >
                       <div className="relative aspect-[16/10] overflow-hidden bg-primary/5">
                         <img
                           src={event.bannerImage || event.image || FALLBACK_IMAGE}
@@ -352,6 +374,11 @@ export default function EventsPage() {
                           loading="lazy"
                           className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
                         />
+                        {external && (
+                          <span className="absolute right-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-primary shadow-md">
+                            External page
+                          </span>
+                        )}
                         <div className="absolute left-3 top-3 rounded-2xl bg-white/95 px-2.5 py-1.5 text-center leading-none shadow-md">
                           <span className="block text-[10px] font-extrabold uppercase tracking-[0.1em] text-gold">
                             {d.toLocaleDateString("en-IN", { month: "short" })}
@@ -376,10 +403,16 @@ export default function EventsPage() {
                             <MapPin className="h-3.5 w-3.5" />
                             {event.location || "Temple Premises"}
                           </span>
-                          <ArrowRight className="h-4 w-4 text-primary transition-transform group-hover:translate-x-1" />
+                          {external ? (
+                            <ExternalLink className="h-4 w-4 text-primary transition-transform group-hover:translate-x-0.5" />
+                          ) : (
+                            <ArrowRight className="h-4 w-4 text-primary transition-transform group-hover:translate-x-1" />
+                          )}
                         </div>
                       </div>
-                    </Link>
+                        </Tag>
+                      );
+                    })()}
                   </motion.div>
                 );
               })}

@@ -35,7 +35,7 @@ export default function AdminEvents() {
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<number | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [form, setForm] = useState<{ title: string; date: string; time: string; location: string; status: string; image: string; images?: string[]; bannerImage?: string; file?: File }>({ title: "", date: "", time: "", location: "", status: "upcoming", image: "", bannerImage: "" });
+  const [form, setForm] = useState<{ title: string; date: string; time: string; location: string; status: string; image: string; images?: string[]; bannerImage?: string; registrationLink?: string; file?: File }>({ title: "", date: "", time: "", location: "", status: "upcoming", image: "", bannerImage: "", registrationLink: "" });
     const [registrationForm, setRegistrationForm] = useState<any>(null);
     const [showFormBuilder, setShowFormBuilder] = useState(false);
   const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm({
@@ -45,7 +45,7 @@ export default function AdminEvents() {
   const fileRef = useRef<File | null>(null);
 
   const openCreate = () => {
-    setForm({ title: "", date: "", time: "", location: "", status: "upcoming", image: "", bannerImage: "" });
+    setForm({ title: "", date: "", time: "", location: "", status: "upcoming", image: "", bannerImage: "", registrationLink: "" });
   setRegistrationForm(null);
   reset({ title: "", date: "", time: "", location: "", status: "upcoming", category: "" });
     fileRef.current = null;
@@ -54,7 +54,7 @@ export default function AdminEvents() {
   };
 
   const openEdit = (event: EventType) => {
-  setForm({ title: event.title, date: event.date, time: event.time, location: event.location, status: event.status, image: event.image || (event.images && event.images[0]) || "", images: event.images, bannerImage: (event as any).bannerImage || "" });
+  setForm({ title: event.title, date: event.date, time: event.time, location: event.location, status: event.status, image: event.image || (event.images && event.images[0]) || "", images: event.images, bannerImage: (event as any).bannerImage || "", registrationLink: (event as any).registrationLink || "" });
   setRegistrationForm((event as any).registrationForm || null);
   reset({ title: event.title, date: event.date, time: event.time, location: event.location, status: event.status as any, category: (event as any).category || "" });
     fileRef.current = null;
@@ -197,6 +197,7 @@ export default function AdminEvents() {
       }
   if (fileRef.current) fd.append("images", fileRef.current);
   if (form.bannerImage) fd.append("bannerImage", form.bannerImage);
+  if (form.registrationLink) fd.append("registrationLink", form.registrationLink);
   if (editing) {
         // If admin has a registration form open/set, include it in the update payload
         if (registrationForm) {
@@ -340,6 +341,20 @@ export default function AdminEvents() {
                     value={form.bannerImage || ""}
                     onChange={(e) => setForm({ ...form, bannerImage: e.target.value })}
                   />
+                </div>
+                <div className="space-y-1">
+                  <label className="block text-xs font-medium">
+                    Registration landing page link <span className="text-muted-foreground">(optional)</span>
+                  </label>
+                  <Input
+                    placeholder="https://… or /page-slug"
+                    value={form.registrationLink || ""}
+                    onChange={(e) => setForm({ ...form, registrationLink: e.target.value })}
+                  />
+                  <p className="text-[11px] text-muted-foreground">
+                    When set, clicking the event on the site opens this page instead of the on-page
+                    registration form. Leave blank to take registrations right here.
+                  </p>
                 </div>
                   <div className="flex items-center justify-between">
                     <div />

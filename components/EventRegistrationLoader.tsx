@@ -12,6 +12,7 @@ interface Props {
 export default function EventRegistrationLoader({ eventId, initialFormSchema, initialEvent }: Props) {
   const [formSchema, setFormSchema] = useState<any | null>(initialFormSchema || null);
   const [event, setEvent] = useState<any | null>(initialEvent || null);
+  const [externalLink, setExternalLink] = useState<string>(initialEvent?.registrationLink || "");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -30,6 +31,7 @@ export default function EventRegistrationLoader({ eventId, initialFormSchema, in
           if (ev) {
             if (!mounted) return true;
             setEvent(ev);
+            if (ev.registrationLink) setExternalLink(ev.registrationLink);
             if (ev.registrationForm && ev.registrationForm.enabled) setFormSchema(ev.registrationForm);
             return true;
           }
@@ -54,6 +56,31 @@ export default function EventRegistrationLoader({ eventId, initialFormSchema, in
       return () => { mounted = false; };
     }
   }, [eventId, formSchema]);
+
+  // The event registers on its own landing page — link out instead of the
+  // on-page registration form.
+  if (externalLink) {
+    return (
+      <div className="flex flex-col items-center gap-3 py-6 text-center">
+        <p className="text-sm text-muted-foreground">
+          Registrations for this event are handled on its landing page.
+        </p>
+        <a
+          href={externalLink}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-2 rounded-full bg-gradient-gold px-7 py-3 text-sm font-bold text-[hsl(220,60%,12%)] shadow-gold transition-transform hover:-translate-y-0.5"
+        >
+          Register on the event page
+          <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+            <polyline points="15 3 21 3 21 9" />
+            <line x1="10" y1="14" x2="21" y2="3" />
+          </svg>
+        </a>
+      </div>
+    );
+  }
 
   if (!formSchema) {
    
