@@ -48,6 +48,7 @@ export const navEntries: NavEntry[] = [
         { label: "Daily Schedule", href: "/daily-schedule", description: "Aarti timings & daily programs", icon: Clock },
         { label: "Gallery", href: "/gallery", description: "Photos from the temple", icon: Image },
         { label: "Vaishnav Calendar", href: "/vaishnav-calendar", description: "2026 festivals & Ekadashis", icon: Calendar },
+        { label: "Ekadashi Seva", href: "/ekadashi", description: "Donate on the sacred Ekadashi day", icon: Calendar },
         { label: "Chaturmas", href: "/chaturmas", description: "Sacred four-month observance", icon: Snowflake },
       ],
     },

@@ -30,6 +30,7 @@ type DisplayEvent = {
   date: string;
   description?: string;
   image?: string;
+  bannerImage?: string;
   location?: string;
   href?: string;
   isFallback?: boolean;
@@ -251,7 +252,7 @@ export default function EventsPage() {
 
               <div className="relative min-h-[220px] md:col-span-5 md:min-h-[360px]">
                 <img
-                  src={featured.image || FALLBACK_IMAGE}
+                  src={featured.bannerImage || featured.image || FALLBACK_IMAGE}
                   alt={featured.title}
                   className="absolute inset-0 h-full w-full object-cover"
                 />
@@ -337,7 +338,7 @@ export default function EventsPage() {
                     >
                       <div className="relative aspect-[16/10] overflow-hidden bg-primary/5">
                         <img
-                          src={event.image || FALLBACK_IMAGE}
+                          src={event.bannerImage || event.image || FALLBACK_IMAGE}
                           alt={event.title}
                           loading="lazy"
                           className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"

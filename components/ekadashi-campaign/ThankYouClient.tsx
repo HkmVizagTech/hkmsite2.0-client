@@ -120,7 +120,7 @@ export default function ThankYouClient() {
                 Back to Home
               </Link>
               <Link
-                href="/shayani-ekadashi"
+                href="/ekadashi"
                 className="inline-flex items-center gap-2 rounded-full border border-gold/40 px-6 py-3 text-sm font-semibold text-gold transition-colors hover:bg-gold/10"
               >
                 <Repeat className="h-4 w-4" />

@@ -38,7 +38,7 @@ export default function EventDetailClient({ id }: { id: string }) {
 
   return (
     <>
-      <PageHero title={event.title} subtitle={event.description} breadcrumb={event.title} backgroundImage={event.images && event.images[0] ? event.images[0] : "/assets/gallery-festival-2.jpg"} />
+      <PageHero title={event.title} subtitle={event.description} breadcrumb={event.title} backgroundImage={event.bannerImage || (event.images && event.images[0]) || "/assets/gallery-festival-2.jpg"} />
       <section className="py-12 bg-white dark:bg-background">
         <div className="container mx-auto px-4 max-w-3xl">
           <div className="bg-card rounded-2xl p-6">

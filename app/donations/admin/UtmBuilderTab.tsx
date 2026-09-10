@@ -23,7 +23,7 @@ const KNOWN_PAGES: { label: string; path: string }[] = [
   { label: "Brick Seva Campaign", path: "/brick-seva-campaign" },
   { label: "Special Occasion", path: "/special-occasion" },
   { label: "Janmashtami", path: "/janmashtami" },
-  { label: "Shayani Ekadashi", path: "/shayani-ekadashi" },
+  { label: "Ekadashi Seva", path: "/ekadashi" },
   { label: "Vastra & Alankara Seva", path: "/alankara-vastra-seva" },
   // Per-seva donate pages, pulled live from sevaConfig
   ...sevas.map((s) => ({ label: `Donate — ${s.title}`, path: getSevaHref(s) })),

@@ -18,7 +18,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Pencil, Trash2, X, CalendarDays, MapPin, Clock, Download } from "lucide-react";
+import { Plus, Pencil, Trash2, X, CalendarDays, MapPin, Clock, Download, FolderOpen } from "lucide-react";
 import { useRouter } from "next/navigation";
 import ImageUpload from "@/components/ui/image-upload";
 import { useAdminLoader } from "@/contexts/AdminLoaderContext";
@@ -35,7 +35,7 @@ export default function AdminEvents() {
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<number | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [form, setForm] = useState<{ title: string; date: string; time: string; location: string; status: string; image: string; images?: string[]; file?: File }>({ title: "", date: "", time: "", location: "", status: "upcoming", image: "" });
+  const [form, setForm] = useState<{ title: string; date: string; time: string; location: string; status: string; image: string; images?: string[]; bannerImage?: string; file?: File }>({ title: "", date: "", time: "", location: "", status: "upcoming", image: "", bannerImage: "" });
     const [registrationForm, setRegistrationForm] = useState<any>(null);
     const [showFormBuilder, setShowFormBuilder] = useState(false);
   const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm({
@@ -45,7 +45,7 @@ export default function AdminEvents() {
   const fileRef = useRef<File | null>(null);
 
   const openCreate = () => {
-    setForm({ title: "", date: "", time: "", location: "", status: "upcoming", image: "" });
+    setForm({ title: "", date: "", time: "", location: "", status: "upcoming", image: "", bannerImage: "" });
   setRegistrationForm(null);
   reset({ title: "", date: "", time: "", location: "", status: "upcoming", category: "" });
     fileRef.current = null;
@@ -54,7 +54,7 @@ export default function AdminEvents() {
   };
 
   const openEdit = (event: EventType) => {
-  setForm({ title: event.title, date: event.date, time: event.time, location: event.location, status: event.status, image: event.image || (event.images && event.images[0]) || "", images: event.images });
+  setForm({ title: event.title, date: event.date, time: event.time, location: event.location, status: event.status, image: event.image || (event.images && event.images[0]) || "", images: event.images, bannerImage: (event as any).bannerImage || "" });
   setRegistrationForm((event as any).registrationForm || null);
   reset({ title: event.title, date: event.date, time: event.time, location: event.location, status: event.status as any, category: (event as any).category || "" });
     fileRef.current = null;
@@ -182,6 +182,7 @@ export default function AdminEvents() {
         if (data[key] !== undefined && data[key] !== null) fd.append(key, String(data[key]));
       }
   if (fileRef.current) fd.append("images", fileRef.current);
+  if (form.bannerImage) fd.append("bannerImage", form.bannerImage);
   if (editing) {
         // If admin has a registration form open/set, include it in the update payload
         if (registrationForm) {
@@ -282,6 +283,27 @@ export default function AdminEvents() {
                     if (file) fileRef.current = file;
                   }}
                 />
+                <div className="space-y-1">
+                  <label className="flex items-center justify-between text-xs font-medium">
+                    <span>Banner image URL (optional)</span>
+                    <a
+                      href="/admin/media"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1 text-primary/70 hover:text-primary"
+                    >
+                      <FolderOpen className="h-3 w-3" /> Media library
+                    </a>
+                  </label>
+                  {form.bannerImage && (
+                    <img src={form.bannerImage} alt="Banner preview" className="h-28 w-full object-cover rounded-lg border" />
+                  )}
+                  <Input
+                    placeholder="Paste image URL (R2 / media library)…"
+                    value={form.bannerImage || ""}
+                    onChange={(e) => setForm({ ...form, bannerImage: e.target.value })}
+                  />
+                </div>
                   <div className="flex items-center justify-between">
                     <div />
                     <div>

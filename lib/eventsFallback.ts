@@ -51,7 +51,7 @@ export type FallbackImportantDate = {
  */
 const IMAGE_BY_KEYWORD: Array<[string, string]> = [
   ["janmashtami", "/assets/home-event-janmashtami.webp"],
-  ["radhashtami", "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1788946765218-1788946764659-Radhashtamidesk.webp"],
+  ["radhashtami", "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1789035782586-1789035781981-event-radhashtami.webp"],
   ["gita jayanti", "/assets/home-event-gita-jayanti.webp"],
   ["nandotsav", "/assets/home-event-janmashtami.webp"],
   ["govardhan", "/assets/gallery-festival-1.jpg"],

@@ -16,6 +16,7 @@ import {
   MessageSquare,
   GalleryHorizontal,
   Megaphone,
+  PartyPopper,
   FolderOpen,
   Trash2,
   HandHeart,
@@ -53,6 +54,8 @@ const contentItems = [
   { title: "Gallery", url: "/admin/gallery", icon: Image },
   { title: "Media Library", url: "/admin/media", icon: FolderOpen },
   { title: "Festivals", url: "/admin/festivals", icon: Image },
+  { title: "Festival Showcase", url: "/admin/festival-showcases", icon: PartyPopper },
+  { title: "Ekadashi Seva", url: "/admin/ekadashi", icon: CalendarDays },
   { title: "Blogs", url: "/admin/blogs", icon: PenSquare }, // <-- NEW
   { title: "Pending Deletions", url: "/admin/blogs/deletion-requests", icon: Trash2 },
   { title: "Content", url: "/admin/content", icon: FileText },

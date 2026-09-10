@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useAttribution } from "@/lib/useAttribution";
 import Image from "next/image";
 import Link from "next/link";
@@ -8,8 +8,8 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   Loader2, ShieldCheck, User, Phone, Mail, Check, Copy,
-  UtensilsCrossed, Heart, BookOpen, Star,
-  ChevronDown, ChevronLeft, ChevronRight,
+  UtensilsCrossed, Heart, BookOpen, Star, Flower2,
+  ChevronDown, ChevronRight, type LucideIcon,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import Ornament from "@/components/Ornament";
@@ -23,253 +23,23 @@ import type { PrasadamAddress } from "@/components/AddressForm";
 import FaqSection from "@/components/sqft-campaign/FaqSection";
 import FounderSection from "@/components/sqft-campaign/FounderSection";
 import { unitImpact } from "@/lib/sevaConfig";
-import type { SevaUnit } from "@/lib/sevaConfig";
+import type { EkadashiCampaign, EkadashiSeva } from "@/lib/ekadashiCampaign";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 
 const apiBase = () =>
   (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(/\/+$/, "");
 
-/* ------------------------------------------------------------------ */
-/* Config                                                              */
-/* ------------------------------------------------------------------ */
+const SOURCE_PAGE = "/ekadashi";
 
-const EKADASHI_CONFIG = {
-  pageTitle: "Shayani Ekadashi Seva",
-  metaTitle: "Shayani Ekadashi Seva | Hare Krishna Vaikuntham Temple, Visakhapatnam",
-  metaDesc:
-    "Donate on Shayani Ekadashi as Lord Vishnu begins His four months of divine rest. Sponsor seva at the Hare Krishna Vaikuntham Temple on one of the year's most sacred days.",
-  ogTitle: "Shayani Ekadashi Seva — Hare Krishna Vaikuntham Temple",
-  ogDesc:
-    "Offer seva on Shayani Ekadashi at the Hare Krishna Vaikuntham Temple. Your donation sustains daily worship, sacred bhog, and festive arrangements during Chaturmas.",
-  ogImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/ekadashi-posters/ad%20poster%201%2016-9%20%20final%20.jpg.webp",
-  heroImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/ekadashi-posters/ad%20poster%201%2016-9%20%20final%20.jpg.webp",
-  heroImageMobile: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/ekadashi-posters/poster%202%20final%20.jpg.webp",
-  heroTagline: "A seva initiative of Hare Krishna Movement Visakhapatnam",
-  heroHeading1: "Shayani Ekadashi",
-  heroHeading2: "Seva",
-  heroDesc:
-    "Donate on Shayani Ekadashi (Ashadhi Ekadashi) as Lord Vishnu begins His four months of divine rest, and offer seva at the Hare Krishna Vaikuntham Temple on one of the year's most sacred days.",
-  formHeading: "Donate for Ekadashi Seva",
-  formSubheading:
-    "Your donation on this sacred day supports special puja arrangements, sacred bhog, and temple seva performed at the Hare Krishna Vaikuntham Temple.",
-  phone: "+91 89777 61187",
-  phoneHref: "tel:+918977761187",
-  email: "social@hkmvizag.org",
-  orderType: "EKADASHI",
+/** Icon keys accepted in admin-edited seva cards, mapped to lucide icons. */
+const CARD_ICONS: Record<string, LucideIcon> = {
+  utensils: UtensilsCrossed,
+  heart: Heart,
+  star: Star,
+  book: BookOpen,
+  flower: Flower2,
 };
-
-interface EkadashiTier {
-  label?: string;
-  amount: number;
-  popular?: boolean;
-  /** Pre-selected tier when this seva is first shown. */
-  default?: boolean;
-}
-
-interface EkadashiSeva {
-  key: string;
-  label: string;
-  icon: string;
-  /** Name recorded on the donation / receipt. */
-  sevaName: string;
-  /** Category used for accounting — matches the main seva pages. */
-  category: string;
-  /** Preset amounts. Empty array → open (custom) amount only. */
-  tiers: EkadashiTier[];
-  /** Set for per-unit sevas so custom amounts show their impact. */
-  unit?: SevaUnit;
-}
-
-// The sevas offered on the Ekadashi donation form. Amounts mirror the real
-// tiers on the dedicated /donate/[slug] pages (see lib/sevaConfig.ts) so the
-// pricing stays consistent everywhere. General Seva is open-amount only.
-const EKADASHI_SEVAS: EkadashiSeva[] = [
-  {
-    key: "annadan",
-    label: "Annadan Seva",
-    icon: "🍛",
-    sevaName: "Anna Daan Seva",
-    category: "ANNADAAN",
-    tiers: [
-      { amount: 501 },
-      { amount: 1251, default: true },
-      { amount: 2501, popular: true },
-      { amount: 3751 },
-    ],
-    unit: { price: 25, singular: "meal", plural: "meals" },
-  },
-  {
-    key: "gau",
-    label: "Gau Seva",
-    icon: "🐄",
-    sevaName: "Gau Seva",
-    category: "GO SEVA",
-    tiers: [
-      { label: "10 cows, 1 day", amount: 1500 },
-      { label: "Medicines", amount: 2500 },
-      { label: "1 cow, 1 month", amount: 3500 },
-      { label: "Green grass, 1 day", amount: 9000 },
-    ],
-  },
-  {
-    key: "deity",
-    label: "Deity Seva",
-    icon: "🌸",
-    sevaName: "Vastra & Alankara Seva",
-    category: "GDGD",
-    tiers: [
-      { label: "Daily vastra", amount: 501 },
-      { label: "Festival vastra", amount: 2100 },
-      { label: "Alankara set", amount: 5100 },
-      { label: "Full month", amount: 11000 },
-    ],
-  },
-  {
-    key: "sadhu-bhojan",
-    label: "Sadhu Bhojan Seva",
-    icon: "🍽️",
-    sevaName: "Sadhu Bhojan Seva",
-    category: "ANNADAAN",
-    tiers: [
-      { amount: 500 },
-      { amount: 1000, default: true },
-      { amount: 2000 },
-      { amount: 2500 },
-      { amount: 5000 },
-      { amount: 10000 },
-    ],
-    unit: { price: 100, singular: "plate", plural: "plates" },
-  },
-  {
-    key: "vidya",
-    label: "Vidya Daan",
-    icon: "📚",
-    sevaName: "Gita Daan Seva",
-    category: "BD",
-    tiers: [
-      { amount: 250 },
-      { amount: 1250 },
-      { amount: 2500 },
-      { amount: 12500 },
-    ],
-    unit: { price: 250, singular: "Gita", plural: "Gitas" },
-  },
-  {
-    key: "general",
-    label: "General Seva",
-    icon: "🛕",
-    sevaName: "General Seva",
-    category: "GENERAL",
-    tiers: [],
-  },
-];
-
-const SEVA_CARDS = [
-  {
-    title: "Anna Daan Seva",
-    description: "Feed devotees and the underprivileged with sanctified prasadam on Ekadashi — the highest form of charity.",
-    image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677363792-1783677363601-462395264797134589073566144398536696847591n.jpg",
-    href: "/anna-daan-seva",
-    icon: UtensilsCrossed,
-  },
-  {
-    title: "Gau Seva",
-    description: "Serve the sacred cows with fodder, care, and shelter — an act Lord Krishna Himself cherishes.",
-    image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783676646237-1783676645536-ChatGPTImageJul102026031357PM.png",
-    href: "/gau-seva",
-    icon: Heart,
-  },
-  {
-    title: "Vastra & Alankara Seva",
-    description: "Offer beautiful garments and ornaments to Sri Sri Radha Madan Mohan for the festival.",
-    image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677419371-1783677418690-DietyPhotos.jpeg",
-    href: "/alankara-vastra-seva",
-    icon: Star,
-  },
-  {
-    title: "Temple Construction",
-    description: "Contribute to the ongoing construction of the Hare Krishna Vaikuntham Temple — an eternal offering.",
-    image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677157979-1783677157883-Screenshot2026-07-10152227.png",
-    href: "/sqft-seva-campaign",
-    icon: BookOpen,
-  },
-];
-
-const SIGNIFICANCE_POINTS = [
-  {
-    title: "Divine Rest Begins",
-    text: "Lord Vishnu enters His four-month period of Yog Nidra (divine sleep) on Shayani Ekadashi. Donations made on this day are believed to reach the Lord directly during this sacred time.",
-  },
-  {
-    title: "Purification of Sins",
-    text: "Scriptures state that charity performed on Shayani Ekadashi purifies past karmas and brings prosperity to the giver's household throughout Chaturmas.",
-  },
-  {
-    title: "Auspicious Beginnings",
-    text: "Any auspicious ceremony or seva performed on this day carries manifold merit. The spiritual vibrations of the temple are especially elevated during this period.",
-  },
-  {
-    title: "Special Grace Throughout Chaturmas",
-    text: "Devotees who serve with sincerity during Shayani Ekadashi are believed to receive Lord Vishnu's special grace throughout the four months of Chaturmas.",
-  },
-];
-
-const WHY_DONATE_SECTIONS = [
-  {
-    title: "A Sacred Opportunity to Serve",
-    text: "As Lord Vishnu enters His divine rest, devotees are given a rare window to earn deep spiritual merit through seva. Your contribution on this day helps sustain the daily worship, festive arrangements, and upkeep of the Hare Krishna Vaikuntham Temple, allowing you to take part in the Lord's service even from a distance.",
-  },
-  {
-    title: "Seva That Reaches the Lord Directly",
-    text: "Every rupee offered on Shayani Ekadashi goes toward special puja arrangements, sacred bhog preparation, decoration of the Deities, and the temple's daily rituals. Donating on this day is considered a direct offering placed at the Lord's lotus feet, carrying significance beyond an ordinary act of charity.",
-  },
-  {
-    title: "Blessings for You and Your Family",
-    text: "Scriptures state that charity performed on Ekadashi, especially Shayani Ekadashi, purifies past karmas and brings prosperity to the giver's household. As the Lord begins His four months of Yog Nidra, devotees who serve with sincerity during this period are believed to receive His special grace throughout Chaturmas.",
-  },
-  {
-    title: "Be Part of the Temple's Ongoing Worship",
-    text: "The Hare Krishna Vaikuntham Temple continues its daily seva through the support of devotees like you. Your Shayani Ekadashi donation ensures that the worship, bhog, and celebrations at the temple continue uninterrupted, connecting you to the temple's spiritual mission even if you cannot visit in person.",
-  },
-];
-
-const FAQS = [
-  {
-    q: "What is Shayani Ekadashi?",
-    a: "Shayani Ekadashi (also known as Ashadhi Ekadashi) is one of the most sacred Ekadashi days in the Hindu calendar. It marks the day Lord Vishnu enters His four-month period of divine sleep (Yog Nidra) on the cosmic ocean. Donations and seva performed on this day are considered extremely auspicious.",
-  },
-  {
-    q: "Why should I donate on Shayani Ekadashi?",
-    a: "Donating on Shayani Ekadashi is believed to purify past karmas and bring prosperity. As the Lord begins His divine rest, your seva sustains the temple's worship and carries special spiritual merit throughout the four months of Chaturmas.",
-  },
-  {
-    q: "How will my donation be used?",
-    a: "Your donation supports special puja arrangements, sacred bhog preparation, decoration of the Deities, and the temple's daily rituals during the Ekadashi celebrations. For specific sevas like Anna Daan or Gau Seva, your contribution directly funds those activities.",
-  },
-  {
-    q: "Is my donation eligible for 80G tax exemption?",
-    a: "Yes. Donations to Hare Krishna Movement qualify for tax exemption under Section 80G of the Income Tax Act. Select the '80G receipt' option during checkout and provide your PAN.",
-  },
-  {
-    q: "Will I receive a receipt?",
-    a: "Yes. An email receipt is sent automatically the moment your payment is confirmed. Your 80G certificate follows separately once your PAN is verified.",
-  },
-  {
-    q: "Is it safe to donate online here?",
-    a: "Yes. All payments are processed through Razorpay, a PCI-DSS-compliant payment gateway. We never see or store your card details. You may also donate via direct bank transfer using the details on this page.",
-  },
-];
-
-const SHLOKA = {
-  sanskrit: "एकादश्या यतः पुण्यं ततः कोटिगुणं भवेत् । अश्वमेधशतं चैव विष्णोर्नामस्मरणं तथा ॥",
-  translation: "The merit gained from observing Ekadashi is multiplied by a crore. Even greater is the merit of chanting the holy names of Lord Vishnu.",
-  reference: "Padma Purana",
-};
-
-/* ------------------------------------------------------------------ */
-/* Component                                                           */
-/* ------------------------------------------------------------------ */
 
 const inputWrapClass =
   "relative flex items-center rounded-lg border border-border bg-card focus-within:border-gold transition-colors";
@@ -284,13 +54,27 @@ const defaultTierIndex = (seva: EkadashiSeva) => {
   return i === -1 ? 0 : i;
 };
 
-export default function ShayaniEkadashiClient() {
+interface EkadashiCampaignClientProps {
+  campaign: EkadashiCampaign;
+}
+
+export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignClientProps) {
   const router = useRouter();
-  const attribution = useAttribution("/shayani-ekadashi");
+  const attribution = useAttribution(SOURCE_PAGE);
   const razorpayReady = useRazorpayPreload();
   useScrollToDonate();
+
+  // Keep the browser tab's title in sync with the admin-configured meta title
+  // (the server metadata stays static for a non-dynamic route).
+  useEffect(() => {
+    if (campaign.metaTitle) document.title = campaign.metaTitle;
+  }, [campaign.metaTitle]);
+
+  const sevas = campaign.sevas.length > 0
+    ? campaign.sevas
+    : [{ key: "general", label: "General Seva", icon: "🛕", sevaName: "General Seva", category: "GENERAL", tiers: [] }];
   const [sevaIndex, setSevaIndex] = useState(0);
-  const [tierIndex, setTierIndex] = useState(() => defaultTierIndex(EKADASHI_SEVAS[0]));
+  const [tierIndex, setTierIndex] = useState(() => defaultTierIndex(sevas[0]));
   const [customAmount, setCustomAmount] = useState("");
   const [useCustom, setUseCustom] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", mobile: "", panNumber: "", sevakName: "", dob: "" });
@@ -300,8 +84,6 @@ export default function ShayaniEkadashiClient() {
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
-  const [significanceExpanded, setSignificanceExpanded] = useState(false);
-  const [whyDonateExpanded, setWhyDonateExpanded] = useState(false);
   const [showSticky, setShowSticky] = useState(false);
 
   useEffect(() => {
@@ -317,19 +99,14 @@ export default function ShayaniEkadashiClient() {
     return () => window.removeEventListener("scroll", check);
   }, []);
 
-  const selectedSeva = EKADASHI_SEVAS[sevaIndex];
+  const selectedSeva = sevas[sevaIndex];
   const customOnly = selectedSeva.tiers.length === 0;
   const finalAmount =
     useCustom || customOnly
       ? Number(customAmount) || 0
       : selectedSeva.tiers[tierIndex]?.amount || 0;
-  const selectedTierImpact =
-    (!useCustom && !customOnly && selectedSeva.unit)
-      ? unitImpact(selectedSeva.tiers[tierIndex]?.amount || 0, selectedSeva.unit)
-      : null;
   const customImpact =
     (useCustom || customOnly) ? unitImpact(finalAmount, selectedSeva.unit) : null;
-  const galleryRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (finalAmount <= 999) {
@@ -345,16 +122,9 @@ export default function ShayaniEkadashiClient() {
   // go straight to the custom input.
   const selectSeva = (i: number) => {
     setSevaIndex(i);
-    setTierIndex(defaultTierIndex(EKADASHI_SEVAS[i]));
-    setUseCustom(EKADASHI_SEVAS[i].tiers.length === 0);
+    setTierIndex(defaultTierIndex(sevas[i]));
+    setUseCustom(sevas[i].tiers.length === 0);
     setCustomAmount("");
-  };
-
-  const BANK_DETAILS = {
-    beneficiaryName: "HARE KRISHNA MOVEMENT INDIA",
-    bankName: "IDFC FIRST BANK LTD",
-    accountNumber: "10091415313",
-    ifsc: "IDFB0080412",
   };
 
   const scrollToDonate = () => {
@@ -406,7 +176,7 @@ export default function ShayaniEkadashiClient() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           account: "default",
-          sourcePage: "/shayani-ekadashi",
+          sourcePage: SOURCE_PAGE,
           utm: attribution.payload().utm,
           type: selectedSeva.category,
           sevaName: selectedSeva.sevaName,
@@ -443,7 +213,7 @@ export default function ShayaniEkadashiClient() {
         description: `${selectedSeva.sevaName} — Hare Krishna Vaikuntham Temple`,
         order_id: order.orderId,
         prefill: { name: form.name, email: form.email, contact: form.mobile },
-        notes: { sourcePage: "/shayani-ekadashi", sevaName: selectedSeva.sevaName, sevaType: selectedSeva.category },
+        notes: { sourcePage: SOURCE_PAGE, sevaName: selectedSeva.sevaName, sevaType: selectedSeva.category },
         handler: async (response: Record<string, string>) => {
           try {
             const verifyRes = await fetch(`${apiBase()}/payments/verify`, {
@@ -458,7 +228,7 @@ export default function ShayaniEkadashiClient() {
             });
             if (!verifyRes.ok) throw new Error("Payment verification failed.");
             trackPurchase({ value: finalAmount, eventId: metaEventId, content_name: selectedSeva.sevaName });
-            router.push(`/shayani-ekadashi/thank-you?seva=${encodeURIComponent(selectedSeva.sevaName)}&amount=${finalAmount}`);
+            router.push(`/ekadashi/thank-you?seva=${encodeURIComponent(selectedSeva.sevaName)}&amount=${finalAmount}`);
           } catch (err) {
             setStatus({
               type: "error",
@@ -477,6 +247,13 @@ export default function ShayaniEkadashiClient() {
     }
   };
 
+  const bankLabelValues: Array<[string, string]> = [
+    ["Beneficiary", campaign.bankDetails.beneficiaryName],
+    ["Bank", campaign.bankDetails.bankName],
+    ["Account No.", campaign.bankDetails.accountNumber],
+    ["IFSC", campaign.bankDetails.ifsc],
+  ];
+
   return (
     <PageLayout>
       <WhatsAppFloatButton />
@@ -492,12 +269,12 @@ export default function ShayaniEkadashiClient() {
             <picture>
               <source
                 media="(max-width: 767px)"
-                srcSet={EKADASHI_CONFIG.heroImageMobile}
+                srcSet={campaign.heroImageMobile}
               />
-              <source srcSet={EKADASHI_CONFIG.heroImage} />
+              <source srcSet={campaign.heroImage} />
               <img
-                src={EKADASHI_CONFIG.heroImage}
-                alt="Shayani Ekadashi Seva — Hare Krishna Vaikuntham Temple"
+                src={campaign.heroImage}
+                alt={`${campaign.campaignName} Seva — Hare Krishna Vaikuntham Temple`}
                 fetchPriority="high"
                 className="h-auto w-full"
               />
@@ -514,10 +291,10 @@ export default function ShayaniEkadashiClient() {
                 Ekadashi Seva
               </p>
               <h2 className="mb-2 font-heading text-2xl font-bold text-primary md:text-3xl">
-                {EKADASHI_CONFIG.formHeading}
+                {campaign.formHeading}
               </h2>
               <p className="mx-auto max-w-xl text-sm leading-relaxed text-muted-foreground">
-                {EKADASHI_CONFIG.formSubheading}
+                {campaign.formSubheading}
               </p>
             </div>
 
@@ -552,7 +329,7 @@ export default function ShayaniEkadashiClient() {
                       Choose Seva
                     </p>
                     <div className="grid grid-cols-3 gap-2">
-                      {EKADASHI_SEVAS.map((seva, i) => (
+                      {sevas.map((seva, i) => (
                         <button
                           key={seva.key}
                           type="button"
@@ -586,29 +363,29 @@ export default function ShayaniEkadashiClient() {
                             type="button"
                             onClick={() => { setUseCustom(false); setTierIndex(i); }}
                             aria-pressed={!useCustom && tierIndex === i}
-                          className={`rounded-lg border px-3 py-2.5 text-left transition-colors ${
-                            !useCustom && tierIndex === i
-                              ? "border-gold bg-gold/10"
-                              : "border-border bg-card hover:border-gold/60"
-                          }`}
-                        >
-                          <span className="block text-base font-extrabold text-gold">
-                            ₹{tier.amount.toLocaleString("en-IN")}
-                          </span>
-                          {(selectedSeva.unit
-                            ? unitImpact(tier.amount, selectedSeva.unit, true)
-                            : tier.label) && (
-                            <span className="block text-[11px] leading-snug text-muted-foreground">
-                              {selectedSeva.unit
-                                ? unitImpact(tier.amount, selectedSeva.unit, true)
-                                : tier.label}
+                            className={`rounded-lg border px-3 py-2.5 text-left transition-colors ${
+                              !useCustom && tierIndex === i
+                                ? "border-gold bg-gold/10"
+                                : "border-border bg-card hover:border-gold/60"
+                            }`}
+                          >
+                            <span className="block text-base font-extrabold text-gold">
+                              ₹{tier.amount.toLocaleString("en-IN")}
                             </span>
-                          )}
-                          {tier.popular && (
-                            <span className="mt-1 inline-block rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
-                              Most Donated
-                            </span>
-                          )}
+                            {(selectedSeva.unit
+                              ? unitImpact(tier.amount, selectedSeva.unit, true)
+                              : tier.label) && (
+                              <span className="block text-[11px] leading-snug text-muted-foreground">
+                                {selectedSeva.unit
+                                  ? unitImpact(tier.amount, selectedSeva.unit, true)
+                                  : tier.label}
+                              </span>
+                            )}
+                            {tier.popular && (
+                              <span className="mt-1 inline-block rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                                Most Donated
+                              </span>
+                            )}
                           </button>
                         ))}
                       </div>
@@ -656,14 +433,7 @@ export default function ShayaniEkadashiClient() {
                       <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" />
                     </summary>
                     <div className="mt-2.5 space-y-1.5">
-                      {(
-                        [
-                          ["Beneficiary", BANK_DETAILS.beneficiaryName],
-                          ["Bank", BANK_DETAILS.bankName],
-                          ["Account No.", BANK_DETAILS.accountNumber],
-                          ["IFSC", BANK_DETAILS.ifsc],
-                        ] as const
-                      ).map(([label, value]) => (
+                      {bankLabelValues.map(([label, value]) => (
                         <div key={label} className="flex items-center justify-between gap-2 text-xs">
                           <span className="text-muted-foreground">{label}</span>
                           <button
@@ -682,8 +452,8 @@ export default function ShayaniEkadashiClient() {
                       ))}
                       <p className="pt-1 text-[11px] leading-relaxed text-muted-foreground">
                         Email your transaction reference and PAN (for 80G) to{" "}
-                        <a href={`mailto:${EKADASHI_CONFIG.email}`} className="font-semibold text-gold">
-                          {EKADASHI_CONFIG.email}
+                        <a href={`mailto:${campaign.email}`} className="font-semibold text-gold">
+                          {campaign.email}
                         </a>
                         .
                       </p>
@@ -836,7 +606,7 @@ export default function ShayaniEkadashiClient() {
                 The divine occasion
               </p>
               <h2 className="mb-6 font-heading text-2xl font-bold text-primary md:text-3xl">
-                Spiritual Significance of Devshayani Ekadashi
+                Spiritual Significance of {campaign.campaignName}
               </h2>
             </div>
 
@@ -849,12 +619,12 @@ export default function ShayaniEkadashiClient() {
               className="mb-6 rounded-2xl border border-gold/20 bg-primary/5 p-6 text-center md:p-8"
             >
               <p className="mb-4 font-heading text-lg leading-relaxed text-primary md:text-xl">
-                {SHLOKA.sanskrit}
+                {campaign.shloka.sanskrit}
               </p>
               <p className="mb-2 text-sm italic leading-relaxed text-muted-foreground md:text-base">
-                &ldquo;{SHLOKA.translation}&rdquo;
+                &ldquo;{campaign.shloka.translation}&rdquo;
               </p>
-              <p className="text-xs font-semibold text-gold">— {SHLOKA.reference}</p>
+              <p className="text-xs font-semibold text-gold">— {campaign.shloka.reference}</p>
             </motion.div>
 
             <motion.p
@@ -864,7 +634,7 @@ export default function ShayaniEkadashiClient() {
               transition={{ duration: 0.5, delay: 0.1 }}
               className="mx-auto max-w-2xl text-center text-sm leading-relaxed text-muted-foreground md:text-base"
             >
-              Contributing to Devshayani Ekadashi is one of the most meaningful ways to serve the Lord
+              Contributing to {campaign.campaignName} is one of the most meaningful ways to serve the Lord
               as He begins His divine rest. Your donation supports special puja arrangements, sacred bhog,
               and temple seva performed at the Hare Krishna Vaikuntham Temple on this holy day.
             </motion.p>
@@ -880,50 +650,53 @@ export default function ShayaniEkadashiClient() {
                 Sacred offerings
               </p>
               <h2 className="font-heading text-2xl font-bold text-primary md:text-3xl">
-                Ashadhi Ekadashi Daan
+                {campaign.campaignName} Daan
               </h2>
             </div>
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {SEVA_CARDS.map((seva, i) => (
-                <motion.div
-                  key={seva.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1, duration: 0.5 }}
-                  className="group overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all hover:shadow-md hover:border-gold/40"
-                >
-                  <div className="relative aspect-[4/3] overflow-hidden">
-                    <Image
-                      src={seva.image}
-                      alt={seva.title}
-                      fill
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                      className="object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                    <div className="absolute bottom-3 left-3">
-                      <seva.icon className="h-6 w-6 text-gold" />
+              {campaign.sevaCards.map((seva, i) => {
+                const Icon = CARD_ICONS[seva.icon || "flower"] || Flower2;
+                return (
+                  <motion.div
+                    key={seva.title + i}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.1, duration: 0.5 }}
+                    className="group overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all hover:shadow-md hover:border-gold/40"
+                  >
+                    <div className="relative aspect-[4/3] overflow-hidden">
+                      <Image
+                        src={seva.image}
+                        alt={seva.title}
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                        className="object-cover transition-transform duration-500 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                      <div className="absolute bottom-3 left-3">
+                        <Icon className="h-6 w-6 text-gold" />
+                      </div>
                     </div>
-                  </div>
-                  <div className="p-4">
-                    <h3 className="mb-2 font-heading text-base font-bold text-primary">
-                      {seva.title}
-                    </h3>
-                    <p className="mb-4 text-xs leading-relaxed text-muted-foreground">
-                      {seva.description}
-                    </p>
-                    <Link
-                      href={seva.href}
-                      className="inline-flex items-center gap-2 rounded-full border border-gold/40 px-4 py-2 text-xs font-semibold text-gold transition-colors hover:bg-gold/10"
-                    >
-                      Donate
-                      <ChevronRight className="h-3 w-3" />
-                    </Link>
-                  </div>
-                </motion.div>
-              ))}
+                    <div className="p-4">
+                      <h3 className="mb-2 font-heading text-base font-bold text-primary">
+                        {seva.title}
+                      </h3>
+                      <p className="mb-4 text-xs leading-relaxed text-muted-foreground">
+                        {seva.description}
+                      </p>
+                      <Link
+                        href={seva.href}
+                        className="inline-flex items-center gap-2 rounded-full border border-gold/40 px-4 py-2 text-xs font-semibold text-gold transition-colors hover:bg-gold/10"
+                      >
+                        Donate
+                        <ChevronRight className="h-3 w-3" />
+                      </Link>
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -937,14 +710,14 @@ export default function ShayaniEkadashiClient() {
                 Why this day matters
               </p>
               <h2 className="font-heading text-2xl font-bold text-primary md:text-3xl">
-                Significance of Devshayani Ekadashi
+                Significance of {campaign.campaignName}
               </h2>
             </div>
 
             <div className="space-y-3">
-              {SIGNIFICANCE_POINTS.map((point, i) => (
+              {campaign.significancePoints.map((point, i) => (
                 <motion.div
-                  key={point.title}
+                  key={point.title + i}
                   initial={{ opacity: 0, y: 16 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -979,14 +752,14 @@ export default function ShayaniEkadashiClient() {
                 The divine merit
               </p>
               <h2 className="font-heading text-2xl font-bold text-primary md:text-3xl">
-                Why Donate on Shayani Ekadashi?
+                Why Donate on {campaign.campaignName}?
               </h2>
             </div>
 
             <div className="space-y-4">
-              {WHY_DONATE_SECTIONS.map((section, i) => (
+              {campaign.whyDonateSections.map((section, i) => (
                 <motion.div
-                  key={section.title}
+                  key={section.title + i}
                   initial={{ opacity: 0, y: 16 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -1016,7 +789,7 @@ export default function ShayaniEkadashiClient() {
         </section>
 
         {/* ── FAQs ── */}
-        <FaqSection faqs={FAQS} />
+        <FaqSection faqs={campaign.faqs} />
 
         {/* ── Founder's words ── */}
         <FounderSection />

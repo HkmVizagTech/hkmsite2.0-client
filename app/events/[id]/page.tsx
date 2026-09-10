@@ -36,9 +36,11 @@ export default async function EventDetail({ params }: { params: Promise<{ id: st
     );
   }
 
+  const heroImage = event.bannerImage || (event.images && event.images[0]) || "/assets/gallery-festival-2.jpg";
+
   return (
     <PageLayout>
-      <PageHero title={event.title} subtitle={event.description} breadcrumb={event.title} backgroundImage={event.images && event.images[0] ? event.images[0] : "/assets/gallery-festival-2.jpg"} />
+      <PageHero title={event.title} subtitle={event.description} breadcrumb={event.title} backgroundImage={heroImage} />
       <section className="py-12 bg-white dark:bg-background">
         <div className="container mx-auto px-4 max-w-3xl">
           <div className="bg-card rounded-2xl p-6">
