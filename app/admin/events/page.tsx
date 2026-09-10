@@ -40,14 +40,22 @@ export default function AdminEvents() {
     const [showFormBuilder, setShowFormBuilder] = useState(false);
   const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm({
     resolver: yupResolver(eventSchema),
-    defaultValues: { title: "", date: "", time: "", location: "", status: "upcoming", category: "" }
+    defaultValues: { title: "", date: "", time: "", location: "", status: "upcoming", category: "", description: "" }
   });
   const fileRef = useRef<File | null>(null);
+
+  // Date inputs want YYYY-MM-DD, not the full ISO timestamp stored in the DB.
+  const toDateInputValue = (d?: string | Date) => {
+    if (!d) return "";
+    const dt = new Date(d);
+    if (Number.isNaN(dt.getTime())) return String(d).slice(0, 10);
+    return dt.toISOString().slice(0, 10);
+  };
 
   const openCreate = () => {
     setForm({ title: "", date: "", time: "", location: "", status: "upcoming", image: "", bannerImage: "", registrationLink: "" });
   setRegistrationForm(null);
-  reset({ title: "", date: "", time: "", location: "", status: "upcoming", category: "" });
+  reset({ title: "", date: "", time: "", location: "", status: "upcoming", category: "", description: "" });
     fileRef.current = null;
     setEditing(null);
     setSubmitting(false);
@@ -57,7 +65,15 @@ export default function AdminEvents() {
   const openEdit = (event: EventType) => {
   setForm({ title: event.title, date: event.date, time: event.time, location: event.location, status: event.status, image: event.image || (event.images && event.images[0]) || "", images: event.images, bannerImage: (event as any).bannerImage || "", registrationLink: (event as any).registrationLink || "" });
   setRegistrationForm((event as any).registrationForm || null);
-  reset({ title: event.title, date: event.date, time: event.time, location: event.location, status: event.status as any, category: (event as any).category || "" });
+  reset({
+    title: event.title || "",
+    date: toDateInputValue(event.date),
+    time: event.time || "",
+    location: event.location || "",
+    status: (event.status || "upcoming") as any,
+    description: (event as any).description || "",
+    category: (event as any).category || "",
+  });
     fileRef.current = null;
     setEditing(event.id);
     setSubmitting(false);
