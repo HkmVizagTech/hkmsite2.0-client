@@ -13,6 +13,10 @@ import {
   festivalStatusLabel,
   type FestivalShowcase,
 } from "@/lib/festivalShowcase";
+import {
+  getFallbackFestivals,
+  type FestivalCardItem,
+} from "@/lib/festivalFallback";
 
 const FALLBACK_IMAGE = "/assets/gallery-festival-1.jpg";
 
@@ -86,15 +90,58 @@ function StatusChip({ status, featured }: { status?: string; featured?: boolean 
   );
 }
 
+function Countdown({ targetDate }: { targetDate: string }) {
+  const [left, setLeft] = useState({ days: 0, hours: 0, mins: 0, secs: 0 });
+
+  useEffect(() => {
+    const tick = () => {
+      const diff = asDate(targetDate)!.getTime() - Date.now();
+      if (diff <= 0) return setLeft({ days: 0, hours: 0, mins: 0, secs: 0 });
+      setLeft({
+        days: Math.floor(diff / 86400000),
+        hours: Math.floor((diff / 3600000) % 24),
+        mins: Math.floor((diff / 60000) % 60),
+        secs: Math.floor((diff / 1000) % 60),
+      });
+    };
+    tick();
+    const timer = setInterval(tick, 1000);
+    return () => clearInterval(timer);
+  }, [targetDate]);
+
+  return (
+    <div className="flex items-center gap-2.5">
+      {[
+        [left.days, "Days"],
+        [left.hours, "Hrs"],
+        [left.mins, "Min"],
+        [left.secs, "Sec"],
+      ].map(([val, label]) => (
+        <span
+          key={label as string}
+          className="rounded-xl border border-white/20 bg-white/10 px-3 py-1.5 text-center backdrop-blur-sm"
+        >
+          <span className="block text-lg font-extrabold leading-none text-white tabular-nums">
+            {String(val).padStart(2, "0")}
+          </span>
+          <span className="mt-1 block text-[9px] uppercase tracking-[0.12em] text-white/65">
+            {label as string}
+          </span>
+        </span>
+      ))}
+    </div>
+  );
+}
+
 export default function FestivalsPage() {
-  const [festivals, setFestivals] = useState<FestivalShowcase[]>([]);
+  const [festivals, setFestivals] = useState<FestivalCardItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
     fetchFestivalShowcases().then((list) => {
       if (cancelled) return;
-      setFestivals(list);
+      setFestivals(list.length > 0 ? list : getFallbackFestivals());
       setLoading(false);
     });
     return () => {
@@ -102,8 +149,13 @@ export default function FestivalsPage() {
     };
   }, []);
 
+  const elementId = (f: FestivalCardItem) => f._id || f.slug;
+  const hrefOf = (f: FestivalCardItem) => f.href || `/festivals/${f.slug}`;
+
   const featured = festivals.find((f) => f.featured) || festivals[0];
-  const grid = featured ? festivals.filter((f) => f._id !== featured._id) : [];
+  const grid = featured ? festivals.filter((f) => elementId(f) !== elementId(featured)) : [];
+  const featuredUpcoming =
+    !!featured && featured.status === "upcoming" && !!featured.eventDate && asDate(featured.eventDate)! > new Date();
 
   return (
     <PageLayout>
@@ -118,7 +170,7 @@ export default function FestivalsPage() {
       {!loading && featured && (
         <section className="bg-white py-14 dark:bg-background md:py-16">
           <div className="container mx-auto px-4">
-            <SectionHead eyebrow="Spotlight" title="Today's Grand Celebration" />
+            <SectionHead eyebrow="Spotlight" title="Featured Festival" />
 
             <div className="relative mx-auto grid max-w-6xl overflow-hidden rounded-3xl bg-gradient-navy shadow-elevated md:grid-cols-12">
               <div className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-accent/20 blur-3xl" />
@@ -156,6 +208,14 @@ export default function FestivalsPage() {
                     {featured.description}
                   </p>
                 )}
+                {featuredUpcoming && (
+                  <div className="mt-1 space-y-1.5">
+                    <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-gold">
+                      Celebrating in
+                    </span>
+                    <Countdown targetDate={featured.eventDate!} />
+                  </div>
+                )}
                 <div className="mt-1 flex flex-wrap gap-2">
                   {!!featured.gallery?.length && (
                     <span className="rounded-full bg-white/10 px-3 py-1.5 text-[11px] font-semibold text-white/85">
@@ -174,7 +234,7 @@ export default function FestivalsPage() {
                   )}
                 </div>
                 <Link
-                  href={`/festivals/${featured.slug}`}
+                  href={hrefOf(featured)}
                   className="mt-2 inline-flex w-fit items-center gap-2 rounded-full bg-gradient-gold px-6 py-3 text-sm font-bold text-[hsl(220,60%,12%)] shadow-gold transition-transform hover:-translate-y-0.5"
                 >
                   Explore Festival
@@ -224,7 +284,7 @@ export default function FestivalsPage() {
                     transition={{ delay: Math.min(i, 5) * 0.06, duration: 0.45 }}
                   >
                     <Link
-                      href={`/festivals/${f.slug}`}
+                      href={hrefOf(f)}
                       className="group flex h-full flex-col overflow-hidden rounded-[20px] border border-border bg-card transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/35 hover:shadow-elevated"
                     >
                       <div className="relative aspect-[16/10] overflow-hidden bg-primary/5">

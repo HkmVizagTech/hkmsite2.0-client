@@ -64,11 +64,14 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
   const razorpayReady = useRazorpayPreload();
   useScrollToDonate();
 
-  // Keep the browser tab's title in sync with the admin-configured meta title
-  // (the server metadata stays static for a non-dynamic route).
+  // Renaming the campaign (e.g. "Shayani Ekadashi" → "Kamika Ekadashi") must
+  // propagate everywhere the old name appears, including the browser tab.
+  const name = campaign.campaignName || "Ekadashi";
+  const withName = (t: string) => t.replace(/Shayani Ekadashi/g, name);
+
   useEffect(() => {
-    if (campaign.metaTitle) document.title = campaign.metaTitle;
-  }, [campaign.metaTitle]);
+    document.title = `${name} Seva | Hare Krishna Vaikuntham Temple, Visakhapatnam`;
+  }, [name]);
 
   const sevas = campaign.sevas.length > 0
     ? campaign.sevas
@@ -733,7 +736,7 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
                         {point.title}
                       </h3>
                       <p className="text-sm leading-relaxed text-muted-foreground">
-                        {point.text}
+                        {withName(point.text)}
                       </p>
                     </div>
                   </div>
@@ -770,7 +773,7 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
                     {section.title}
                   </h3>
                   <p className="text-sm leading-relaxed text-muted-foreground md:text-base">
-                    {section.text}
+                    {withName(section.text)}
                   </p>
                 </motion.div>
               ))}
@@ -789,7 +792,7 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
         </section>
 
         {/* ── FAQs ── */}
-        <FaqSection faqs={campaign.faqs} />
+        <FaqSection faqs={campaign.faqs.map((f) => ({ ...f, q: withName(f.q), a: withName(f.a) }))} />
 
         {/* ── Founder's words ── */}
         <FounderSection />

@@ -65,6 +65,7 @@ export default function AdminEvents() {
   const [activeEventForForm, setActiveEventForForm] = useState<number | null>(null);
   const router = useRouter();
   const { show, hide } = useAdminLoader();
+  const [filter, setFilter] = useState<"all" | "upcoming" | "recurring" | "completed">("all");
 
   const saveRegistrationForm = async (eventId: string | number, formSchema: any) => {
     const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:3000";
@@ -156,6 +157,19 @@ export default function AdminEvents() {
     return "outline";
   };
 
+  const filteredEvents = events.filter((eventItem) => {
+    if (filter === "all") return true;
+    const ev = (eventItem && (eventItem as any).event) ? (eventItem as any).event : (eventItem as any);
+    return (ev.status || "upcoming") === filter;
+  });
+
+  const statusTabs = [
+    { key: "all" as const, label: "All" },
+    { key: "upcoming" as const, label: "Upcoming" },
+    { key: "recurring" as const, label: "Recurring" },
+    { key: "completed" as const, label: "Completed" },
+  ];
+
   useEffect(() => {
     const fetchEvents = async () => {
       const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:3003";
@@ -246,9 +260,32 @@ export default function AdminEvents() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-heading text-3xl font-bold">Events</h1>
-          <p className="text-muted-foreground">Manage temple events and festivals</p>
+          <p className="text-muted-foreground">
+            Events you add here appear on the public /events page. Festivals are managed from{" "}
+            <a href="/admin/festival-showcases" className="underline decoration-primary/40 hover:decoration-primary">
+              Festival Showcase
+            </a>
+            .
+          </p>
         </div>
         <Button onClick={openCreate}><Plus className="w-4 h-4 mr-2" /> Add Event</Button>
+      </div>
+
+      {/* Status filter tabs */}
+      <div className="flex flex-wrap gap-2 border-b border-border pb-3">
+        {statusTabs.map((tab) => (
+          <button
+            key={tab.key}
+            onClick={() => setFilter(tab.key)}
+            className={`rounded-full px-4 py-1.5 text-sm font-semibold transition-colors ${
+              filter === tab.key
+                ? "bg-primary text-primary-foreground"
+                : "bg-background text-muted-foreground hover:bg-muted"
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
       {
@@ -379,11 +416,15 @@ export default function AdminEvents() {
       <section className="py-6">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
-            {!events.length && (
-              <div className="text-center text-muted-foreground py-10 col-span-full">No events found.</div>
+            {!filteredEvents.length && (
+              <div className="text-center text-muted-foreground py-10 col-span-full">
+                {events.length === 0
+                  ? "No events yet — add your first event (Friendship Day, New Year, drives…) and it will appear on the /events page."
+                  : "No events match this status."}
+              </div>
             )}
 
-            {events.map((eventItem, idx) => {
+            {filteredEvents.map((eventItem, idx) => {
               const ev = (eventItem && (eventItem as any).event) ? (eventItem as any).event : (eventItem as any);
               const id = ev._id || ev.id || `tmp-${idx}-${Date.now()}`;
               const image = ev.image || (ev.images && ev.images[0]) || '';
@@ -395,12 +436,11 @@ export default function AdminEvents() {
                     <EventCard event={display} href={`/events/${id}`} smallCard />
                   </div>
 
-                  {
-}
                   <div className="px-4 pb-4 pt-2 flex items-center justify-center gap-2 border-t border-border bg-background">
                     <Button
                       variant="ghost"
                       size="sm"
+                      title="Edit event"
                       onClick={() => openEdit(display)}
                       aria-label="Edit"
                       className="text-primary hover:bg-primary/10 hover:text-primary transition-colors"
@@ -411,6 +451,7 @@ export default function AdminEvents() {
                     <Button
                       variant="outline"
                       size="sm"
+                      title="Registration form"
                       onClick={() => {
                         setActiveEventForForm(id);
                         setRegistrationForm((display as any).registrationForm || null);
@@ -424,6 +465,7 @@ export default function AdminEvents() {
                     <Button
                       variant="outline"
                       size="sm"
+                      title="View registrations"
                       onClick={() => router.push(`/admin/events/registrations?eventId=${String(id)}`)}
                       className="border-primary text-primary hover:bg-primary/5 hover:border-primary/40 transition-colors"
                     >
@@ -433,6 +475,7 @@ export default function AdminEvents() {
                     <Button
                       variant="ghost"
                       size="sm"
+                      title="Export CSV"
                       onClick={() => {
                         const cols = ["title", "date", "time", "location", "description", "category"];
                         const rows = [cols.map((c) => JSON.stringify((display as any)[c] ?? "")).join(",")];
@@ -454,6 +497,7 @@ export default function AdminEvents() {
                     <Button
                       variant="ghost"
                       size="sm"
+                      title="Delete event"
                       onClick={() => handleDelete(id)}
                       aria-label="Delete"
                       className="text-destructive hover:bg-destructive/10 hover:text-destructive transition-colors"

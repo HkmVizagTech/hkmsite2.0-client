@@ -360,7 +360,7 @@ export default function AdminFestivalShowcases() {
                 checked={editing.featured}
                 onChange={(e) => set("featured", e.target.checked)}
               />
-              Featured (spotlight on /festival)
+              Featured (highlight on /festival — shows on top)
             </label>
             <label className="flex items-center gap-2 pt-6 text-sm">
               <input

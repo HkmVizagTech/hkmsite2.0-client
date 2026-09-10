@@ -9,7 +9,6 @@ import PageHero from "@/components/PageHero";
 import Ornament from "@/components/Ornament";
 import WhatsAppCommunityCTA from "@/components/WhatsAppCommunityCTA";
 import {
-  getFallbackEvents,
   getFallbackImportantDates,
 } from "@/lib/eventsFallback";
 
@@ -194,11 +193,15 @@ export default function EventsPage() {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
+      // Events are admin-created only. Festivals moved to their own page
+      // (/festival), so the events page shows just what the admin publishes —
+      // Friendship Day, New Year, drives, etc. — and a friendly empty state
+      // until then.
       const upcomingFromApi = apiEvents
         .filter((e) => e.date && asDate(e.date) >= today)
         .sort((a, b) => asDate(a.date).getTime() - asDate(b.date).getTime());
 
-      setEvents(upcomingFromApi.length > 0 ? upcomingFromApi : getFallbackEvents());
+      setEvents(upcomingFromApi);
       setImportantDates(apiDates.length > 0 ? apiDates : getFallbackImportantDates());
       setLoading(false);
     });
@@ -236,7 +239,7 @@ export default function EventsPage() {
     <PageLayout>
       <PageHero
         title="Upcoming Events"
-        subtitle="Join us in celebrating the divine festivals and spiritual gatherings"
+        subtitle="Events, drives and spiritual gatherings organised by the temple"
         breadcrumb="Events"
         backgroundImage="/assets/gallery-festival-2.jpg"
       />
@@ -300,8 +303,8 @@ export default function EventsPage() {
         <div className="container mx-auto px-4">
           <SectionHead
             eyebrow="Upcoming Events"
-            title="Temple Events & Festivals"
-            sub="Every festival and celebration on the temple calendar for the season ahead."
+            title="Temple Events & Drives"
+            sub="Special events and drives added by the temple — festivals live on their own page."
           />
 
           {loading && (
@@ -315,8 +318,14 @@ export default function EventsPage() {
                 Nothing scheduled right now
               </h3>
               <p className="text-sm text-muted-foreground">
-                Please check back soon — new festivals are added regularly.
+                New events and drives are added regularly.
               </p>
+              <Link
+                href="/festival"
+                className="mt-5 inline-flex items-center gap-2 rounded-full bg-gradient-gold px-6 py-3 text-sm font-bold text-[hsl(220,60%,12%)] shadow-gold transition-transform hover:-translate-y-0.5"
+              >
+                See Festivals <ArrowRight className="h-4 w-4" />
+              </Link>
             </div>
           )}
 
