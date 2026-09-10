@@ -233,13 +233,25 @@ export default function FestivalsPage() {
                     </span>
                   )}
                 </div>
-                <Link
-                  href={hrefOf(featured)}
-                  className="mt-2 inline-flex w-fit items-center gap-2 rounded-full bg-gradient-gold px-6 py-3 text-sm font-bold text-[hsl(220,60%,12%)] shadow-gold transition-transform hover:-translate-y-0.5"
-                >
-                  Explore Festival
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
+                <div className="mt-2 flex flex-wrap gap-3">
+                  <Link
+                    href={hrefOf(featured)}
+                    className="inline-flex w-fit items-center gap-2 rounded-full bg-gradient-gold px-6 py-3 text-sm font-bold text-[hsl(220,60%,12%)] shadow-gold transition-transform hover:-translate-y-0.5"
+                  >
+                    Explore Festival
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                  {featured.ctaHref && (
+                    <a
+                      href={featured.ctaHref}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex w-fit items-center gap-2 rounded-full border border-white/30 bg-white/10 px-6 py-3 text-sm font-bold text-white backdrop-blur-sm transition-transform hover:-translate-y-0.5 hover:bg-white/20"
+                    >
+                      {featured.ctaLabel || "Donate"}
+                    </a>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -283,11 +295,8 @@ export default function FestivalsPage() {
                     viewport={{ once: true, margin: "-40px" }}
                     transition={{ delay: Math.min(i, 5) * 0.06, duration: 0.45 }}
                   >
-                    <Link
-                      href={hrefOf(f)}
-                      className="group flex h-full flex-col overflow-hidden rounded-[20px] border border-border bg-card transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/35 hover:shadow-elevated"
-                    >
-                      <div className="relative aspect-[16/10] overflow-hidden bg-primary/5">
+                    <div className="group flex h-full flex-col overflow-hidden rounded-[20px] border border-border bg-card transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/35 hover:shadow-elevated">
+                      <Link href={hrefOf(f)} className="relative block aspect-[16/10] overflow-hidden bg-primary/5">
                         <img
                           src={imageOf(f)}
                           alt={f.title}
@@ -307,12 +316,14 @@ export default function FestivalsPage() {
                             </span>
                           </div>
                         )}
-                      </div>
+                      </Link>
 
                       <div className="flex flex-1 flex-col gap-2 p-5">
-                        <h3 className="line-clamp-2 min-h-[43px] font-heading text-[16.5px] font-bold leading-snug text-foreground">
-                          {f.title}
-                        </h3>
+                        <Link href={hrefOf(f)}>
+                          <h3 className="line-clamp-2 min-h-[43px] font-heading text-[16.5px] font-bold leading-snug text-foreground hover:text-primary transition-colors">
+                            {f.title}
+                          </h3>
+                        </Link>
                         {f.subtitle && (
                           <p className="text-[11.5px] font-semibold uppercase tracking-wider text-primary/70">
                             {f.subtitle}
@@ -328,10 +339,22 @@ export default function FestivalsPage() {
                             <MapPin className="h-3.5 w-3.5" />
                             {f.location || "Temple Premises"}
                           </span>
-                          <ArrowRight className="h-4 w-4 text-primary transition-transform group-hover:translate-x-1" />
+                          <div className="flex items-center gap-2">
+                            {f.ctaHref && (
+                              <a
+                                href={f.ctaHref}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="rounded-full bg-gradient-gold px-3 py-1 text-[11px] font-bold text-[hsl(220,60%,12%)] shadow-sm transition-transform hover:-translate-y-0.5"
+                              >
+                                {f.ctaLabel || "Donate"}
+                              </a>
+                            )}
+                            <ArrowRight className="h-4 w-4 text-primary transition-transform group-hover:translate-x-1" />
+                          </div>
                         </div>
                       </div>
-                    </Link>
+                    </div>
                   </motion.div>
                 );
               })}

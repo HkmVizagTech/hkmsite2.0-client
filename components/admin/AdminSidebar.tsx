@@ -53,8 +53,7 @@ const contentItems = [
   { title: "Important Dates", url: "/admin/important-dates", icon: CalendarDays },
   { title: "Gallery", url: "/admin/gallery", icon: Image },
   { title: "Media Library", url: "/admin/media", icon: FolderOpen },
-  { title: "Festivals", url: "/admin/festivals", icon: Image },
-  { title: "Festival Showcase", url: "/admin/festival-showcases", icon: PartyPopper },
+  { title: "Festivals", url: "/admin/festivals", icon: PartyPopper },
   { title: "Ekadashi Seva", url: "/admin/ekadashi", icon: CalendarDays },
   { title: "Blogs", url: "/admin/blogs", icon: PenSquare }, // <-- NEW
   { title: "Pending Deletions", url: "/admin/blogs/deletion-requests", icon: Trash2 },
