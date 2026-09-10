@@ -18,7 +18,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Pencil, Trash2, X, CalendarDays, MapPin, Clock, Download, FolderOpen } from "lucide-react";
+import { Plus, Pencil, Trash2, X, CalendarDays, MapPin, Clock, Download, FolderOpen, ExternalLink } from "lucide-react";
 import { useRouter } from "next/navigation";
 import ImageUpload from "@/components/ui/image-upload";
 import { useAdminLoader } from "@/contexts/AdminLoaderContext";
@@ -344,19 +344,34 @@ export default function AdminEvents() {
                     onChange={(e) => setForm({ ...form, bannerImage: e.target.value })}
                   />
                 </div>
-                <div className="space-y-1">
-                  <label className="block text-xs font-medium">
-                    Registration landing page link <span className="text-muted-foreground">(optional)</span>
-                  </label>
+                <div className="rounded-xl border border-primary/25 bg-primary/[0.04] p-4">
+                  <div className="mb-2 flex items-center gap-2">
+                    <ExternalLink className="h-4 w-4 text-primary" />
+                    <p className="text-xs font-bold uppercase tracking-wide text-primary">
+                      External registration site
+                    </p>
+                  </div>
+                  <p className="mb-2.5 text-[11.5px] leading-relaxed text-muted-foreground">
+                    Temple events register on separate sites. Paste the full URL of the event's
+                    registration/landing page — when someone clicks this event anywhere on the
+                    website it will open that page in a new tab instead of our event detail page.
+                    Leave empty if the event has no external site.
+                  </p>
                   <Input
-                    placeholder="https://… or /page-slug"
+                    placeholder="Paste registration site URL, e.g. https://yatra.harekrishnavizag.org/"
                     value={form.registrationLink || ""}
                     onChange={(e) => setForm({ ...form, registrationLink: e.target.value })}
                   />
-                  <p className="text-[11px] text-muted-foreground">
-                    When set, clicking the event on the site opens this page instead of the on-page
-                    registration form. Leave blank to take registrations right here.
-                  </p>
+                  {form.registrationLink && (
+                    <a
+                      href={form.registrationLink}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mt-2 inline-flex items-center gap-1.5 text-[11.5px] font-semibold text-primary hover:underline"
+                    >
+                      Open: {form.registrationLink}
+                    </a>
+                  )}
                 </div>
                   <div className="flex items-center justify-between">
                     <div />
@@ -457,6 +472,22 @@ export default function AdminEvents() {
                       external={!!(display as any).registrationLink?.trim()}
                       smallCard
                     />
+                    {(display as any).registrationLink?.trim() ? (
+                      <a
+                        href={(display as any).registrationLink.trim()}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="mt-2 flex items-center justify-center gap-1.5 rounded-lg bg-accent/70 px-2 py-1.5 text-[11px] font-semibold text-accent-foreground hover:bg-accent"
+                        title="Opens in a new tab"
+                      >
+                        <ExternalLink className="h-3 w-3" />
+                        Opens: {(display as any).registrationLink.trim()}
+                      </a>
+                    ) : (
+                      <p className="mt-2 rounded-lg bg-muted/60 px-2 py-1.5 text-center text-[11px] text-muted-foreground">
+                        No external site — opens the temple event page
+                      </p>
+                    )}
                   </div>
 
                   <div className="px-4 pb-4 pt-2 flex items-center justify-center gap-2 border-t border-border bg-background">
