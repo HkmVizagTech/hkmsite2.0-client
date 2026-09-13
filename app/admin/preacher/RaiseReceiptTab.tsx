@@ -11,12 +11,12 @@
 // pending donation" mode, since that reconciliation tool needs broader
 // donation-list access a preacher isn't granted.
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { authFetch } from "@/lib/authClient";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, CheckCircle2, FileText, UtensilsCrossed } from "lucide-react";
+import { Loader2, CheckCircle2, FileText, UtensilsCrossed, Search, User, X } from "lucide-react";
 import AddressForm, { type PrasadamAddress } from "@/components/AddressForm";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
 
@@ -42,6 +42,11 @@ const emptyAddress: PrasadamAddress = { street: "", city: "", state: "", pincode
 
 export default function RaiseReceiptTab() {
   const [submitting, setSubmitting] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<{ _id: string; donorId: string; name: string; mobile: string; email?: string }[]>([]);
+  const [searching, setSearching] = useState(false);
+  const [selectedDonor, setSelectedDonor] = useState<{ donorId: string; name: string } | null>(null);
+  const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [result, setResult] = useState<{ receiptNumber?: string; donorId?: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -68,6 +73,44 @@ export default function RaiseReceiptTab() {
     setUtrNumber(""); setPaymentMode("cash"); setNote("");
     setPanNumber(""); setWant80G(false); setWantPrasadam(false); setAddress(emptyAddress);
     setSevakName(""); setDob("");
+    setSearchQuery(""); setSearchResults([]); setSelectedDonor(null);
+  };
+
+  // Debounced search-as-you-type against existing donors (by name,
+  // mobile digits, or Donor ID) so a repeat donor's details can be
+  // pulled in instead of retyped — and so a small mobile-number typo
+  // doesn't silently create a duplicate Donor record.
+  useEffect(() => {
+    if (searchTimer.current) clearTimeout(searchTimer.current);
+    if (searchQuery.trim().length < 3) {
+      setSearchResults([]);
+      return;
+    }
+    setSearching(true);
+    searchTimer.current = setTimeout(async () => {
+      try {
+        const res = await authFetch(`${API_URL}/preacher/search-donor?q=${encodeURIComponent(searchQuery.trim())}`, { credentials: "include" });
+        const data = await res.json();
+        setSearchResults(data.donors || []);
+      } finally {
+        setSearching(false);
+      }
+    }, 400);
+    return () => { if (searchTimer.current) clearTimeout(searchTimer.current); };
+  }, [searchQuery]);
+
+  const selectDonor = (donor: { donorId: string; name: string; mobile: string; email?: string }) => {
+    setDonorName(donor.name);
+    setDonorMobile(donor.mobile);
+    setDonorEmail(donor.email || "");
+    setSelectedDonor({ donorId: donor.donorId, name: donor.name });
+    setSearchQuery("");
+    setSearchResults([]);
+  };
+
+  const clearSelectedDonor = () => {
+    setSelectedDonor(null);
+    setDonorName(""); setDonorMobile(""); setDonorEmail("");
   };
 
   const submit = async (e: React.FormEvent) => {
@@ -149,6 +192,56 @@ export default function RaiseReceiptTab() {
       <form onSubmit={submit}>
         <Card>
           <CardContent className="p-5 space-y-5">
+            {/* Search existing donor — optional. Autofills name/mobile/
+                email below when picked; otherwise proceed as a new donor. */}
+            <div>
+              {selectedDonor ? (
+                <div className="flex items-center justify-between rounded-lg border border-primary/40 bg-primary/5 px-3 py-2.5">
+                  <span className="flex items-center gap-2 text-sm">
+                    <User className="h-4 w-4 text-primary" />
+                    <span className="font-semibold">{selectedDonor.name}</span>
+                    <span className="text-xs text-muted-foreground">({selectedDonor.donorId})</span>
+                  </span>
+                  <button type="button" onClick={clearSelectedDonor} className="text-muted-foreground hover:text-foreground">
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              ) : (
+                <div className="relative">
+                  <label className="text-sm font-medium">Search existing donor (optional)</label>
+                  <div className="relative mt-1">
+                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <Input
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Search by name, mobile, or Donor ID"
+                      className="pl-9"
+                    />
+                    {searching && <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-muted-foreground" />}
+                  </div>
+                  {searchResults.length > 0 && (
+                    <div className="absolute z-10 mt-1 w-full rounded-lg border border-border bg-card shadow-lg">
+                      {searchResults.map((d) => (
+                        <button
+                          key={d._id}
+                          type="button"
+                          onClick={() => selectDonor(d)}
+                          className="flex w-full items-center justify-between px-3 py-2 text-left text-sm hover:bg-muted first:rounded-t-lg last:rounded-b-lg"
+                        >
+                          <span>
+                            <span className="font-medium">{d.name}</span>
+                            <span className="ml-2 text-xs text-muted-foreground">{d.mobile}</span>
+                          </span>
+                          <span className="text-xs text-muted-foreground">{d.donorId}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  <p className="mt-1 text-xs text-muted-foreground">Not found? Just fill in the details below for a new donor.</p>
+                </div>
+              )}
+            </div>
+
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label className="text-sm font-medium">Donor Name *</label>
