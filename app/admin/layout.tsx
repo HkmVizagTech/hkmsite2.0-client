@@ -101,6 +101,16 @@ export default function AdminRootLayout({
     );
   }
 
+  // Once a preacher is correctly on their own page, skip the full
+  // AdminLayout/sidebar wrap entirely — /admin/preacher/page.tsx already
+  // builds its own complete header and module tabs. Without this, the
+  // fallback below would wrap it in the full admin sidebar (Dashboard,
+  // Analytics, Campaigners, etc.) - links to pages they can't actually
+  // reach, since the check above would just bounce them right back here.
+  if (user?.role === "preacher") {
+    return <>{children}</>;
+  }
+
   // A blogs_admin account is scoped to /admin/blogs only — can write/edit
   // posts there, but every other admin area (dashboard, donations,
   // devotees, settings, staff, banners, campaigners...) is off-limits.

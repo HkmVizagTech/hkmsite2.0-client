@@ -20,6 +20,7 @@ import {
   FolderOpen,
   Trash2,
   HandHeart,
+  BookOpen,
 } from "lucide-react";
 import NextImage from "next/image";
 import Link from "next/link";
@@ -64,6 +65,7 @@ const systemItems = [
   { title: "Messages", url: "/admin/messages", icon: MessageSquare },
   { title: "Notifications", url: "/admin/notifications", icon: Bell },
   { title: "Devotees", url: "/admin/devotees", icon: Users },
+  { title: "Preacher Dashboard", url: "/admin/preacher", icon: BookOpen },
   { title: "Volunteers", url: "/admin/volunteers", icon: HandHeart },
   { title: "Settings", url: "/admin/settings", icon: Settings },
 ];
