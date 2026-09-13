@@ -5,7 +5,7 @@ import { authFetch, setToken, clearToken } from "@/lib/authClient";
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  user: { email: string; name: string; role: string; mustChangePassword?: boolean } | null;
+  user: { email: string; name: string; role: string; mustChangePassword?: boolean; allowedModules?: string[] } | null;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
 }
@@ -14,7 +14,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<{ email: string; name: string; role: string; mustChangePassword?: boolean } | null>(null);
+  const [user, setUser] = useState<{ email: string; name: string; role: string; mustChangePassword?: boolean; allowedModules?: string[] } | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const res = await authFetch(`${(process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080"}/users/profile`);
         if (res.ok) {
           const data = await res.json();
-          setUser({ email: data.user.email, name: data.user.name, role: data.user.role, mustChangePassword: !!data.user.mustChangePassword });
+          setUser({ email: data.user.email, name: data.user.name, role: data.user.role, mustChangePassword: !!data.user.mustChangePassword, allowedModules: data.user.allowedModules || [] });
         } else {
           setUser(null);
         }
@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (!res.ok) return false;
       const data = await res.json();
       if (data.token) setToken(data.token); // localStorage fallback for cross-site cookie blocking
-      setUser({ email: data.user.email, name: data.user.name, role: data.user.role, mustChangePassword: !!data.user.mustChangePassword });
+      setUser({ email: data.user.email, name: data.user.name, role: data.user.role, mustChangePassword: !!data.user.mustChangePassword, allowedModules: data.user.allowedModules || [] });
       return true;
     } catch {
       return false;

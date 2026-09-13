@@ -10,9 +10,22 @@ import { authFetch } from "@/lib/authClient";
 
 export default function AdminRegister() {
   const [form, setForm] = useState({ name: "", email: "", password: "", role: "user" });
+  const [allowedModules, setAllowedModules] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+
+  const PREACHER_MODULES = [
+    { value: "raise-receipt", label: "Raise Receipt", description: "Manually record a donor's seva payment (cash/bank/UPI/cheque)" },
+    { value: "my-donors", label: "My Donors", description: "See donors assigned to them and their giving history" },
+    { value: "resend", label: "Resend Receipt/WhatsApp", description: "Resend a receipt only for their own donors" },
+    { value: "my-reports", label: "My Reports", description: "Their own totals — how much raised, which sevas" },
+    { value: "donor-assignment", label: "Donor Assignment", description: "View which donors are formally assigned to them" },
+  ];
+
+  const toggleModule = (value: string) => {
+    setAllowedModules((prev) => (prev.includes(value) ? prev.filter((m) => m !== value) : [...prev, value]));
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -22,18 +35,24 @@ export default function AdminRegister() {
     e.preventDefault();
     setLoading(true);
     setError("");
+    if (form.role === "preacher" && allowedModules.length === 0) {
+      setError("Please select at least one module for this preacher.");
+      setLoading(false);
+      return;
+    }
     try {
       // This endpoint now requires an authenticated admin — you must already
       // be logged in as an admin to invite another staff account.
       const res = await authFetch(`${(process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "")}/users/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, allowedModules: form.role === "preacher" ? allowedModules : undefined }),
         credentials: "include",
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Registration failed");
       setForm({ name: "", email: "", password: "", role: "user" });
+      setAllowedModules([]);
       router.push("/admin/settings");
     } catch (err: any) {
       setError(err.message);
@@ -110,7 +129,7 @@ export default function AdminRegister() {
             </div>
             <div>
               <label className="text-sm font-medium mb-1.5 block">Access Level</label>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
                   onClick={() => setForm({ ...form, role: "user" })}
@@ -135,8 +154,43 @@ export default function AdminRegister() {
                   <span className="block font-semibold">Blog Manager</span>
                   <span className="block text-xs text-muted-foreground">Write/edit only — deletion needs your approval</span>
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setForm({ ...form, role: "preacher" })}
+                  className={`rounded-lg border-2 p-3 text-left text-sm transition-colors ${form.role === "preacher" ? "border-primary bg-primary/5" : "border-border"}`}
+                >
+                  <span className="block font-semibold">Preacher</span>
+                  <span className="block text-xs text-muted-foreground">Choose exactly which modules below</span>
+                </button>
               </div>
             </div>
+
+            {form.role === "preacher" && (
+              <div className="rounded-lg border border-border bg-muted/30 p-4">
+                <label className="text-sm font-medium mb-2 block">Modules to grant this preacher</label>
+                <div className="space-y-2">
+                  {PREACHER_MODULES.map((m) => (
+                    <label
+                      key={m.value}
+                      className={`flex cursor-pointer items-start gap-3 rounded-lg border p-3 transition-colors ${
+                        allowedModules.includes(m.value) ? "border-primary bg-primary/5" : "border-border bg-background"
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={allowedModules.includes(m.value)}
+                        onChange={() => toggleModule(m.value)}
+                        className="mt-0.5 h-4 w-4 shrink-0"
+                      />
+                      <span>
+                        <span className="block text-sm font-semibold">{m.label}</span>
+                        <span className="block text-xs text-muted-foreground">{m.description}</span>
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
             <Button type="submit" className="w-full" size="lg" disabled={loading}>
               {loading ? "Registering..." : "Register"}
             </Button>

@@ -79,6 +79,28 @@ export default function AdminRootLayout({
     );
   }
 
+  // A preacher account is scoped to /admin/preacher only — same admin
+  // login and URL space as everyone else (per design: one shared admin
+  // interface, the specific modules they were granted shape what they see
+  // inside it), but everything else in /admin (dashboard, blogs, staff
+  // management, banners, etc.) is off-limits regardless of which modules
+  // they hold.
+  if (user?.role === "preacher" && !pathname.startsWith("/admin/preacher")) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-muted px-4 text-center">
+        <p className="text-lg font-semibold text-foreground">This account only has access to the Preacher dashboard.</p>
+        <div className="flex gap-3">
+          <a href="/admin/preacher" className="rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground">
+            Go to Preacher Dashboard
+          </a>
+          <button onClick={() => { logout(); router.push("/admin/login"); }} className="rounded-full border border-border px-5 py-2.5 text-sm font-semibold text-muted-foreground">
+            Log Out
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   // A blogs_admin account is scoped to /admin/blogs only — can write/edit
   // posts there, but every other admin area (dashboard, donations,
   // devotees, settings, staff, banners, campaigners...) is off-limits.
