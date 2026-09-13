@@ -272,8 +272,15 @@ const Navbar = () => {
             })}
           </div>
 
-          {/* ── Desktop right actions (Donate) ─────── */}
+          {/* ── Desktop right actions (Donor Login + Donate) ─────── */}
           <div className="hidden lg:flex items-center gap-1.5">
+            <Link
+              href="/donor/login"
+              className="flex items-center gap-1 rounded-full px-3 py-1.5 text-sm font-medium text-foreground hover:bg-muted"
+            >
+              <User className="h-3.5 w-3.5" />
+              Login
+            </Link>
             <Button
               variant="default"
               className="rounded-full px-4 bg-gradient-ocean text-white border-0 hover:opacity-90"
@@ -286,8 +293,15 @@ const Navbar = () => {
             </Button>
           </div>
 
-          {/* ── Mobile: Donate Now button ─────────────────────────── */}
+          {/* ── Mobile: Donor Login + Donate Now button ─────────────────────────── */}
           <div className="lg:hidden flex items-center gap-1.5">
+            <Link
+              href="/donor/login"
+              className="flex items-center gap-1 rounded-full h-[30px] px-2.5 text-[11px] font-medium text-foreground hover:bg-muted"
+            >
+              <User className="h-3 w-3" />
+              Login
+            </Link>
             <Button
               variant="default"
               size="sm"
