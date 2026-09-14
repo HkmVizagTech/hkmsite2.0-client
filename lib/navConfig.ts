@@ -36,6 +36,7 @@ export const navEntries: NavEntry[] = [
       items: [
         { label: "About Us", href: "/about", description: "Our mission, history & values", icon: Info },
         { label: "Contact Us", href: "/contact", description: "Visit, call, or write to us", icon: Phone },
+        { label: "Donor Login", href: "/donor/login", description: "View your donations & receipts", icon: User },
       ],
     },
   },

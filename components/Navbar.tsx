@@ -272,15 +272,8 @@ const Navbar = () => {
             })}
           </div>
 
-          {/* ── Desktop right actions (Donor Login + Donate) ─────── */}
+          {/* ── Desktop right actions (Donate) ─────── */}
           <div className="hidden lg:flex items-center gap-1.5">
-            <Link
-              href="/donor/login"
-              className="flex items-center gap-1 rounded-full px-3 py-1.5 text-sm font-medium text-foreground hover:bg-muted"
-            >
-              <User className="h-3.5 w-3.5" />
-              Login
-            </Link>
             <Button
               variant="default"
               className="rounded-full px-4 bg-gradient-ocean text-white border-0 hover:opacity-90"
@@ -293,15 +286,8 @@ const Navbar = () => {
             </Button>
           </div>
 
-          {/* ── Mobile: Donor Login + Donate Now button ─────────────────────────── */}
+          {/* ── Mobile: Donate Now button ─────────────────────────── */}
           <div className="lg:hidden flex items-center gap-1.5">
-            <Link
-              href="/donor/login"
-              className="flex items-center gap-1 rounded-full h-[30px] px-2.5 text-[11px] font-medium text-foreground hover:bg-muted"
-            >
-              <User className="h-3 w-3" />
-              Login
-            </Link>
             <Button
               variant="default"
               size="sm"
@@ -343,6 +329,17 @@ const Navbar = () => {
                     {item.label}
                   </Link>
                 ))}
+                <Link
+                  href="/donor/login"
+                  className={`flex items-center gap-2 text-left px-4 py-2.5 text-[15px] rounded-lg font-medium transition-colors ${
+                    pathname === "/donor/login"
+                      ? "text-primary bg-primary/10"
+                      : "text-foreground hover:text-primary hover:bg-primary/10"
+                  }`}
+                >
+                  <User className="h-4 w-4" />
+                  Donor Login
+                </Link>
                 <Button
                   variant="default"
                   className="mt-1.5 rounded-full bg-gradient-ocean text-white border-0 text-[15px]"
