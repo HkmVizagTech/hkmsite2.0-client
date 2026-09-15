@@ -245,7 +245,7 @@ export default function ProductFormDialog({ open, onOpenChange, product, categor
       return;
     }
     setError(null);
-    mrpWarnings().forEach((w) => toast({ title: w) });
+    mrpWarnings().forEach((w) => toast({ title: w }));
 
     const body: Record<string, unknown> = {
       name: name.trim(),
