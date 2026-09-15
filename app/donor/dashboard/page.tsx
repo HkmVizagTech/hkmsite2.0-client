@@ -7,6 +7,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2, User, Phone, Download, LogOut, Heart, IndianRupee } from "lucide-react";
 import { donorFetch, clearDonorToken, getDonorToken } from "@/lib/donorAuthClient";
+import GivingGraphs from "./GivingGraphs";
+import NextSevas from "./NextSevas";
+import MyIssues from "./MyIssues";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 
@@ -94,9 +97,9 @@ export default function DonorDashboardPage() {
 
   return (
     <div className="min-h-screen bg-[#fef6e4] px-4 py-8">
-      <div className="mx-auto max-w-2xl space-y-6">
+      <div className="mx-auto max-w-3xl space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="font-heading text-2xl font-bold text-[#772036]">My Donations</h1>
+          <h1 className="font-heading text-2xl font-bold text-[#772036]">My Dashboard</h1>
           <button onClick={logout} className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground">
             <LogOut className="h-4 w-4" /> Log Out
           </button>
@@ -130,6 +133,10 @@ export default function DonorDashboardPage() {
             </CardContent>
           </Card>
         )}
+
+        <GivingGraphs />
+
+        <NextSevas />
 
         <Card>
           <CardContent className="p-5">
@@ -173,6 +180,8 @@ export default function DonorDashboardPage() {
             )}
           </CardContent>
         </Card>
+
+        <MyIssues />
       </div>
     </div>
   );
