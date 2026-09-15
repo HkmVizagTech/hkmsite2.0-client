@@ -15,6 +15,7 @@ import {
 } from "@/lib/festivalShowcase";
 import {
   getFallbackFestivals,
+  mergeFestivalCards,
   type FestivalCardItem,
 } from "@/lib/festivalFallback";
 
@@ -141,7 +142,12 @@ export default function FestivalsPage() {
     let cancelled = false;
     fetchFestivalShowcases().then((list) => {
       if (cancelled) return;
-      setFestivals(list.length > 0 ? list : getFallbackFestivals());
+      setFestivals(
+        mergeFestivalCards(
+          list,
+          getFallbackFestivals()
+        )
+      );
       setLoading(false);
     });
     return () => {

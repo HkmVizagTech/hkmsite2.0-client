@@ -54,8 +54,8 @@ const IMAGE_BY_KEYWORD: Array<[string, string]> = [
   ["radhashtami", "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1789035782586-1789035781981-event-radhashtami.webp"],
   ["gita jayanti", "/assets/home-event-gita-jayanti.webp"],
   ["nandotsav", "/assets/home-event-janmashtami.webp"],
-  ["govardhan", "/assets/gallery-festival-1.jpg"],
-  ["annakut", "/assets/gallery-festival-1.jpg"],
+  ["govardhan", "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1789476038584-1789476037499-govardhan-desk.webp"],
+  ["annakut", "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1789476038584-1789476037499-govardhan-desk.webp"],
   ["diwali", "/assets/gallery-aarti.jpg"],
   ["dipavali", "/assets/gallery-aarti.jpg"],
   ["rath yatra", "/assets/home-banner-jagannatha-rath-yatra.webp"],
@@ -84,6 +84,8 @@ const HREF_BY_KEYWORD: Array<[string, string]> = [
   ["janmashtami", "/janmashtami"],
   ["nandotsav", "/janmashtami"],
   ["radhashtami", "/radhashtami"],
+  ["govardhan", "/govardhan-puja"],
+  ["annakut", "/govardhan-puja"],
 ];
 
 function pick(list: Array<[string, string]>, title: string): string | undefined {

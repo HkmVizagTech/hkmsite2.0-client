@@ -219,7 +219,7 @@ export default function SubhojanamPage() {
                   <Hospital className="h-5 w-5 shrink-0 text-primary" />
                   <div>
                     <p className="text-sm font-semibold text-foreground">KGH Hospital, Visakhapatnam</p>
-                    <p className="text-xs text-muted-foreground">Up to 500 meals served daily</p>
+                    <p className="text-xs text-muted-foreground">1,700+ meals served daily</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-4">
