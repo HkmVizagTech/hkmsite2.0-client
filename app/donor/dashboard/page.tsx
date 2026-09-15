@@ -4,13 +4,16 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Loader2, History, Repeat, UserCog, Heart, ShieldCheck } from "lucide-react";
+import { Loader2, History, Repeat, UserCog, Heart, ShieldCheck, TrendingUp, CalendarDays, MessageSquareText } from "lucide-react";
 import { donorFetch, clearDonorToken, getDonorToken } from "@/lib/donorAuthClient";
 import DonorHero from "@/components/donor/DonorHero";
 import DonationHistorySection, { Donation } from "@/components/donor/DonationHistorySection";
 import RecurringDonationsSection, { Subscription } from "@/components/donor/RecurringDonationsSection";
 import DonorProfileSection from "@/components/donor/DonorProfileSection";
 import type { PrasadamAddress } from "@/components/AddressForm";
+import GivingGraphs from "./GivingGraphs";
+import NextSevas from "./NextSevas";
+import MyIssues from "./MyIssues";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 
@@ -187,6 +190,10 @@ export default function DonorDashboardPage() {
               <DonationHistorySection donations={donations} downloadingId={downloadingId} onDownload={downloadReceipt} />
             </SectionCard>
 
+            <SectionCard icon={TrendingUp} eyebrow="Giving Insights" title="Your Giving at a Glance">
+              <GivingGraphs />
+            </SectionCard>
+
             <SectionCard icon={Repeat} eyebrow="Monthly Seva" title="Recurring Donations">
               <RecurringDonationsSection
                 subscriptions={subscriptions}
@@ -195,10 +202,18 @@ export default function DonorDashboardPage() {
                 onChanged={loadAll}
               />
             </SectionCard>
+
+            <SectionCard icon={MessageSquareText} eyebrow="Support" title="Questions or Issues">
+              <MyIssues />
+            </SectionCard>
           </div>
 
           {/* Right column — account details & continue-the-journey */}
           <div className="space-y-6">
+            <SectionCard icon={CalendarDays} eyebrow="Festivals & Occasions" title="Upcoming Sevas">
+              <NextSevas />
+            </SectionCard>
+
             <SectionCard icon={UserCog} eyebrow="Your Details" title="My Profile">
               {profile ? (
                 <DonorProfileSection
