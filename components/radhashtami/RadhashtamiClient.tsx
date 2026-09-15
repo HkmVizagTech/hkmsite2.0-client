@@ -8,6 +8,7 @@ import {
   FileCheck2, UtensilsCrossed, Clock, Heart,
   ChevronDown, X,
 } from "lucide-react";
+import { useDonorAutofill } from "@/lib/useDonorAutofill";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
@@ -272,6 +273,7 @@ export default function RadhashtamiClient() {
 
   const [selected, setSelected] = useState<SelectedOffering | null>(null);
   const [form, setForm] = useState<CheckoutForm>(initialForm);
+  const { data: donorData, loggedIn: donorLoggedIn } = useDonorAutofill();
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<{
     type: "success" | "error" | "idle";
@@ -308,7 +310,7 @@ export default function RadhashtamiClient() {
 
   const openCheckout = (seva: Seva, option: SevaOption) => {
     setSelected({ seva, option });
-    setForm(initialForm);
+    setForm(donorData ? { ...initialForm, donorName: donorData.name, donorMobile: donorData.mobile, donorEmail: donorData.email } : initialForm);
     setStatus({ type: "idle", message: "" });
     trackInitiateCheckout({ content_name: seva.title });
   };
@@ -1309,6 +1311,13 @@ export default function RadhashtamiClient() {
                       Amount must be at least Rs.100.
                     </span>
                   </label>
+                )}
+
+                {donorLoggedIn && donorData && (
+                  <div className="mb-1 flex items-center gap-2 rounded-lg bg-black/5 px-3 py-2 text-xs font-medium" style={{ color: C.heading }}>
+                    <User className="h-3.5 w-3.5" />
+                    Logged in as {donorData.name} — your details are filled in automatically.
+                  </div>
                 )}
 
                 {/* Donor fields */}

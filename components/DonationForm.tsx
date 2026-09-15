@@ -8,6 +8,7 @@ import { newEventId, getMetaBrowserData, trackPurchase } from "@/lib/metaPixel";
 import { useAttribution } from "@/lib/useAttribution";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
 import { usePaymentStatusPoller } from "@/lib/usePaymentStatusPoller";
+import { useDonorAutofill } from "@/lib/useDonorAutofill";
 import AddressForm from "@/components/AddressForm";
 import type { PrasadamAddress } from "@/components/AddressForm";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
@@ -82,6 +83,20 @@ export default function DonationForm({
   const [customAmount, setCustomAmount] = useState("");
   const [useCustom, setUseCustom] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", mobile: "", panNumber: "", sevakName: "", dob: "" });
+  const { data: donorData, loggedIn: donorLoggedIn } = useDonorAutofill();
+
+  // Silently prefill from an active donor login session — never overwrites
+  // something the donor has already started typing (only fills genuinely
+  // empty fields), so this is purely a convenience, never surprising.
+  useEffect(() => {
+    if (!donorData) return;
+    setForm((prev) => ({
+      ...prev,
+      name: prev.name || donorData.name,
+      mobile: prev.mobile || donorData.mobile,
+      email: prev.email || donorData.email,
+    }));
+  }, [donorData]);
   const [want80G, setWant80G] = useState(false);
   const [monthly, setMonthly] = useState(false);
   const [wantsMahaPrasadam, setWantsMahaPrasadam] = useState(false);
@@ -624,6 +639,13 @@ export default function DonationForm({
                   🙏 {customImpact}
                 </p>
               )}
+            </div>
+          )}
+
+          {donorLoggedIn && donorData && (
+            <div className="flex items-center gap-2 rounded-lg bg-primary/5 px-3 py-2 text-xs font-medium text-primary">
+              <User className="h-3.5 w-3.5" />
+              Logged in as {donorData.name} — your details are filled in automatically.
             </div>
           )}
 

@@ -3,7 +3,7 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
-import { ArrowLeft, ArrowRight, Check, Clock, Copy, Facebook, FileCheck2, Heart, Instagram, Mail, MapPin, MessageCircle, Phone, ShieldCheck, Youtube, UtensilsCrossed, X, QrCode } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Clock, Copy, Facebook, FileCheck2, Heart, Instagram, Mail, MapPin, MessageCircle, Phone, ShieldCheck, Youtube, UtensilsCrossed, X, QrCode, User } from "lucide-react";
 import UpiQrCard from "@/components/UpiQrCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +17,7 @@ import { useSearchParams } from "next/navigation";
 import { newEventId, getMetaBrowserData, trackInitiateCheckout, trackPurchase } from "@/lib/metaPixel";
 import { usePaymentStatusPoller } from "@/lib/usePaymentStatusPoller";
 import { useScrollToDonate } from "@/lib/useScrollToDonate";
+import { useDonorAutofill } from "@/lib/useDonorAutofill";
 
 type SevaOption = {
   legacySevaId: number;
@@ -344,6 +345,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
   const [selected, setSelected] = useState<SelectedOffering | null>(null);
   const [highlightedSlug, setHighlightedSlug] = useState<string | null>(null);
   const [form, setForm] = useState<CheckoutForm>(initialForm);
+  const { data: donorData, loggedIn: donorLoggedIn } = useDonorAutofill();
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<{ type: "success" | "error" | "idle"; message: string }>({ type: "idle", message: "" });
   const [copiedField, setCopiedField] = useState<string | null>(null);
@@ -371,7 +373,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
 
   const openCheckout = (seva: Seva, option: SevaOption) => {
     setSelected({ seva, option });
-    setForm(initialForm);
+    setForm(donorData ? { ...initialForm, donorName: donorData.name, donorMobile: donorData.mobile, donorEmail: donorData.email } : initialForm);
     setStatus({ type: "idle", message: "" });
     trackInitiateCheckout({ content_name: seva.title });
   };
@@ -1100,6 +1102,13 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
                   />
                   <span className="mt-1 block text-xs text-amber-700/60">Amount must be at least Rs.100.</span>
                 </label>
+              )}
+
+              {donorLoggedIn && donorData && (
+                <div className="mb-1 flex items-center gap-2 rounded-lg bg-amber-100 px-3 py-2 text-xs font-medium text-[#5c3a0e]">
+                  <User className="h-3.5 w-3.5" />
+                  Logged in as {donorData.name} — your details are filled in automatically.
+                </div>
               )}
 
               <div className="grid gap-4 md:grid-cols-2">
