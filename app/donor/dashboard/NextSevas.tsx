@@ -2,9 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, Calendar, Sparkles } from "lucide-react";
+import { Loader2, Calendar } from "lucide-react";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 
@@ -35,23 +34,16 @@ export default function NextSevas() {
 
   if (loading) {
     return (
-      <Card>
-        <CardContent className="flex items-center justify-center p-8 text-muted-foreground">
-          <Loader2 className="h-5 w-5 animate-spin" />
-        </CardContent>
-      </Card>
+      <div className="flex items-center justify-center py-8 text-muted-foreground">
+        <Loader2 className="h-5 w-5 animate-spin" />
+      </div>
     );
   }
 
   if (upcoming.length === 0) return null;
 
   return (
-    <Card>
-      <CardContent className="p-5">
-        <div className="mb-3 flex items-center gap-2">
-          <Sparkles className="h-5 w-5 text-[#772036]" />
-          <h2 className="font-semibold">Upcoming Sevas & Festivals</h2>
-        </div>
+    <>
         <div className="grid gap-3 sm:grid-cols-2">
           {upcoming.map((f) => (
             <div key={f._id} className="flex flex-col overflow-hidden rounded-lg border border-border">
@@ -77,7 +69,6 @@ export default function NextSevas() {
             </div>
           ))}
         </div>
-      </CardContent>
-    </Card>
+  </>
   );
 }

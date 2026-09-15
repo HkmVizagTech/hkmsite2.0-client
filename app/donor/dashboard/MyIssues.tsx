@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, MessageSquareText, Plus, CheckCircle2, Clock } from "lucide-react";
+import { Loader2, Plus, CheckCircle2, Clock } from "lucide-react";
 import { donorFetch } from "@/lib/donorAuthClient";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
@@ -68,14 +67,14 @@ export default function MyIssues() {
   };
 
   return (
-    <Card>
-      <CardContent className="p-5">
-        <div className="mb-3 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <MessageSquareText className="h-5 w-5 text-[#772036]" />
-            <h2 className="font-semibold">Questions or Issues</h2>
-          </div>
-          <Button size="sm" variant="outline" onClick={() => setShowForm((v) => !v)} className="gap-1.5">
+    <>
+        <div className="mb-3 flex items-center justify-end">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setShowForm((v) => !v)}
+            className="gap-1.5 border-gold/40 text-gold hover:bg-gold/10 hover:text-gold"
+          >
             <Plus className="h-3.5 w-3.5" /> Raise an Issue
           </Button>
         </div>
@@ -122,7 +121,6 @@ export default function MyIssues() {
             ))}
           </div>
         )}
-      </CardContent>
-    </Card>
+      </>
   );
 }

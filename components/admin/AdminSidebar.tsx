@@ -21,6 +21,10 @@ import {
   Trash2,
   HandHeart,
   BookOpen,
+  ShoppingBag,
+  Package,
+  Settings2,
+  type LucideIcon,
 } from "lucide-react";
 import NextImage from "next/image";
 import Link from "next/link";
@@ -41,14 +45,16 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
-const mainItems = [
+type NavItem = { title: string; url: string; icon: LucideIcon; exact?: boolean };
+
+const mainItems: NavItem[] = [
   { title: "Dashboard", url: "/admin", icon: LayoutDashboard },
   { title: "Analytics", url: "/admin/analytics", icon: BarChart3 },
   { title: "Donations", url: "/admin/donations", icon: IndianRupee },
   { title: "Campaigners", url: "/admin/campaigners", icon: Megaphone },
 ];
 
-const contentItems = [
+const contentItems: NavItem[] = [
   { title: "Hero Banners", url: "/admin/banners", icon: GalleryHorizontal },
   { title: "Events", url: "/admin/events", icon: CalendarDays },
   { title: "Important Dates", url: "/admin/important-dates", icon: CalendarDays },
@@ -61,7 +67,15 @@ const contentItems = [
   { title: "Content", url: "/admin/content", icon: FileText },
 ];
 
-const systemItems = [
+// Products is `exact` because /admin/shop is also the prefix of the Orders and
+// Settings routes — without it all three rows would light up at once.
+const shopItems: NavItem[] = [
+  { title: "Products", url: "/admin/shop", icon: ShoppingBag, exact: true },
+  { title: "Orders", url: "/admin/shop/orders", icon: Package },
+  { title: "Shop Settings", url: "/admin/shop/settings", icon: Settings2 },
+];
+
+const systemItems: NavItem[] = [
   { title: "Messages", url: "/admin/messages", icon: MessageSquare },
   { title: "Notifications", url: "/admin/notifications", icon: Bell },
   { title: "Devotees", url: "/admin/devotees", icon: Users },
@@ -76,10 +90,10 @@ const AdminSidebar = () => {
   const { user, logout } = useAuth();
   const pathname = usePathname();
 
-  const isActive = (url: string) =>
-    url === "/admin" ? pathname === "/admin" : pathname.startsWith(url);
+  const isActive = (url: string, exact?: boolean) =>
+    url === "/admin" || exact ? pathname === url : pathname.startsWith(url);
 
-  const renderGroup = (label: string, items: typeof mainItems) => (
+  const renderGroup = (label: string, items: NavItem[]) => (
     <SidebarGroup>
       <SidebarGroupLabel className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/60 font-semibold mb-1">
         {label}
@@ -87,7 +101,7 @@ const AdminSidebar = () => {
       <SidebarGroupContent>
         <SidebarMenu>
           {items.map((item) => {
-            const active = isActive(item.url);
+            const active = isActive(item.url, item.exact);
             return (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton asChild>
@@ -137,11 +151,18 @@ const AdminSidebar = () => {
         )}
         {user?.role === "blogs_admin" ? (
           renderGroup("Blogs", [{ title: "Blogs", url: "/admin/blogs", icon: PenSquare }])
+        ) : user?.role === "shop_admin" ? (
+          // Same reasoning as blogs_admin above: the layout bounces this role
+          // out of every other /admin route, so showing the full menu would be
+          // a list of links that only lead to the "no access" screen.
+          renderGroup("Shop", shopItems)
         ) : (
           <>
             {renderGroup("Overview", mainItems)}
             <Separator className="my-2" />
             {renderGroup("Content", contentItems)}
+            <Separator className="my-2" />
+            {renderGroup("Shop", shopItems)}
             <Separator className="my-2" />
             {renderGroup("System", systemItems)}
           </>

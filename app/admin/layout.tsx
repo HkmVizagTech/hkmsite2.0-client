@@ -136,7 +136,27 @@ export default function AdminRootLayout({
     );
   }
 
-  if (user?.role !== "admin" && user?.role !== "blogs_admin") {
+  // A shop_admin account is scoped to /admin/shop only — products, orders and
+  // shop settings. Everything else in /admin (donations, devotees, staff,
+  // banners...) is off-limits: this role exists for the volunteers who pack
+  // and dispatch parcels, not for temple administration.
+  if (user?.role === "shop_admin" && !pathname.startsWith("/admin/shop")) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-muted px-4 text-center">
+        <p className="text-lg font-semibold text-foreground">This account only has access to the Shop admin.</p>
+        <div className="flex gap-3">
+          <a href="/admin/shop" className="rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground">
+            Go to Shop Admin
+          </a>
+          <button onClick={() => { logout(); router.push("/admin/login"); }} className="rounded-full border border-border px-5 py-2.5 text-sm font-semibold text-muted-foreground">
+            Log Out
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (user?.role !== "admin" && user?.role !== "blogs_admin" && user?.role !== "shop_admin") {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-muted px-4 text-center">
         <p className="text-lg font-semibold text-foreground">This account doesn't have admin access.</p>

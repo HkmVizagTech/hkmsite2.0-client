@@ -3,6 +3,7 @@ import {
   Clock, Image, Calendar, Snowflake,
   Heart, Utensils, Beef, BookOpen, Shirt, Sparkles, Gift,
   CalendarDays, PartyPopper, HandHeart, FileText, Flower2,
+  ShoppingBag, Package,
   type LucideIcon,
 } from "lucide-react";
 
@@ -27,6 +28,7 @@ export const navEntries: NavEntry[] = [
   { kind: "link", label: "Home", href: "/", icon: Home },
   { kind: "link", label: "Founder", href: "/founder", icon: User },
   { kind: "link", label: "Subhojanam", href: "/subhojanam", icon: Utensils },
+  { kind: "link", label: "Shop", href: "/shop", icon: ShoppingBag },
   { kind: "link", label: "Radhashtami", href: "/radhashtami", icon: Flower2 },
   {
     kind: "group",
@@ -37,6 +39,7 @@ export const navEntries: NavEntry[] = [
         { label: "About Us", href: "/about", description: "Our mission, history & values", icon: Info },
         { label: "Contact Us", href: "/contact", description: "Visit, call, or write to us", icon: Phone },
         { label: "Donor Login", href: "/donor/login", description: "View your donations & receipts", icon: User },
+        { label: "My Orders", href: "/shop/orders", description: "Track your temple shop orders", icon: Package },
       ],
     },
   },

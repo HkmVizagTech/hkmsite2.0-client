@@ -156,6 +156,14 @@ export default function AdminRegister() {
                 </button>
                 <button
                   type="button"
+                  onClick={() => setForm({ ...form, role: "shop_admin" })}
+                  className={`rounded-lg border-2 p-3 text-left text-sm transition-colors ${form.role === "shop_admin" ? "border-primary bg-primary/5" : "border-border"}`}
+                >
+                  <span className="block font-semibold">Shop Manager</span>
+                  <span className="block text-xs text-muted-foreground">Products, stock &amp; orders only — no donations access</span>
+                </button>
+                <button
+                  type="button"
                   onClick={() => setForm({ ...form, role: "preacher" })}
                   className={`rounded-lg border-2 p-3 text-left text-sm transition-colors ${form.role === "preacher" ? "border-primary bg-primary/5" : "border-border"}`}
                 >

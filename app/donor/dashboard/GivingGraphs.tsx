@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Loader2, TrendingUp } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { donorFetch } from "@/lib/donorAuthClient";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
-const COLORS = ["#772036", "#c9922f", "#9a6b1f", "#4a7a6b", "#8a4a6b", "#5b6b9a", "#a3532b"];
+// Palette matched to the site's navy/gold theme.
+const COLORS = ["#16307a", "#d99a26", "#3d8f7a", "#a3532b", "#8a4a6b", "#5b6b9a", "#c07f3a"];
 
 interface MonthlyPoint { month: string; amount: number; count: number }
 interface SevaSlice { sevaName: string; amount: number; count: number }
@@ -31,24 +31,16 @@ export default function GivingGraphs() {
 
   if (loading) {
     return (
-      <Card>
-        <CardContent className="flex items-center justify-center p-8 text-muted-foreground">
-          <Loader2 className="h-5 w-5 animate-spin" />
-        </CardContent>
-      </Card>
+      <div className="flex items-center justify-center py-8 text-muted-foreground">
+        <Loader2 className="h-5 w-5 animate-spin" />
+      </div>
     );
   }
 
   if (!totals || totals.totalCount === 0) return null;
 
   return (
-    <Card>
-      <CardContent className="p-5">
-        <div className="mb-4 flex items-center gap-2">
-          <TrendingUp className="h-5 w-5 text-[#772036]" />
-          <h2 className="font-semibold">Your Giving, at a Glance</h2>
-        </div>
-
+    <>
         {monthly.length > 1 && (
           <div className="mb-6">
             <p className="mb-2 text-xs font-medium text-muted-foreground">Monthly Trend</p>
@@ -57,7 +49,7 @@ export default function GivingGraphs() {
                 <XAxis dataKey="month" tick={{ fontSize: 11 }} />
                 <YAxis tick={{ fontSize: 11 }} />
                 <Tooltip formatter={(v: number) => [`₹${v.toLocaleString("en-IN")}`, "Amount"]} />
-                <Bar dataKey="amount" fill="#772036" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="amount" fill="#16307a" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -91,7 +83,6 @@ export default function GivingGraphs() {
             </div>
           </div>
         )}
-      </CardContent>
-    </Card>
+  </>
   );
 }

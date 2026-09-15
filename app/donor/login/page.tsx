@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -35,6 +35,21 @@ export default function DonorLoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [cooldown, setCooldown] = useState(0);
+  // Where to land after a successful login. Defaults to the donor dashboard,
+  // but the shop sends people here with ?redirect=/shop/orders so they end up
+  // where they were actually going. Read straight off window.location rather
+  // than via useSearchParams, which would force this page behind a Suspense
+  // boundary at build time for one optional query parameter.
+  const [redirectTo, setRedirectTo] = useState("/donor/dashboard");
+
+  useEffect(() => {
+    const target = new URLSearchParams(window.location.search).get("redirect");
+    // Only same-site paths — never an absolute URL, which would turn this
+    // login into an open redirect someone could point at a phishing page.
+    if (target && target.startsWith("/") && !target.startsWith("//")) {
+      setRedirectTo(target);
+    }
+  }, []);
 
   const requestOtp = async (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -88,7 +103,7 @@ export default function DonorLoginPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Could not verify OTP.");
       setDonorToken(data.token);
-      router.push("/donor/dashboard");
+      router.push(redirectTo);
     } catch (err: any) {
       setError(err.message);
     } finally {
