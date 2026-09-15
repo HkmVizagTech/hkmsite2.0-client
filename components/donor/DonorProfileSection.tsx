@@ -66,7 +66,7 @@ export default function DonorProfileSection({ profile, donorFetch, apiUrl, onSav
     <form onSubmit={save} className="space-y-6">
       {error && <div className="rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{error}</div>}
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4">
         <div>
           <label className="mb-1 block text-xs font-medium text-muted-foreground">Full Name</label>
           <div className="relative flex items-center rounded-lg border border-border bg-background focus-within:border-gold">
@@ -114,8 +114,10 @@ export default function DonorProfileSection({ profile, donorFetch, apiUrl, onSav
         </div>
       </div>
 
-      <div className="rounded-xl border border-border bg-background/60 p-4">
-        <p className="mb-3 text-xs font-semibold text-foreground">Saved Prasadam Delivery Address</p>
+      <div className="ring-gold-dashed rounded-xl bg-background/60 p-4">
+        <p className="mb-3 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-foreground">
+          <span className="h-1.5 w-1.5 rounded-full bg-gold" /> Saved Prasadam Delivery Address
+        </p>
         <AddressForm address={address} setAddress={setAddress} />
       </div>
 

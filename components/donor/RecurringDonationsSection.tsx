@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { format } from "date-fns";
-import { Loader2, Repeat, IndianRupee, CalendarClock, XCircle } from "lucide-react";
+import { Loader2, Repeat, IndianRupee, CalendarClock, XCircle, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -63,9 +64,20 @@ export default function RecurringDonationsSection({ subscriptions, donorFetch, a
 
   if (subscriptions.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed border-border py-12 text-center">
-        <Repeat className="mx-auto mb-2 h-6 w-6 text-muted-foreground" />
-        <p className="text-sm text-muted-foreground">You don&apos;t have any recurring (monthly) donations yet.</p>
+      <div className="ring-gold-dashed rounded-2xl py-10 text-center">
+        <span className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gold/10 text-gold">
+          <Repeat className="h-6 w-6" />
+        </span>
+        <p className="font-heading text-sm font-bold text-foreground">No monthly sevas yet</p>
+        <p className="mx-auto mt-1 max-w-xs text-sm text-muted-foreground">
+          Choose a seva with monthly giving — your support renews automatically.
+        </p>
+        <Link
+          href="/donate"
+          className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/10 px-4 py-2 text-xs font-semibold text-gold transition-colors hover:bg-gold/20"
+        >
+          <Link2 className="h-3.5 w-3.5" /> Explore Sevas
+        </Link>
       </div>
     );
   }
@@ -81,11 +93,11 @@ export default function RecurringDonationsSection({ subscriptions, donorFetch, a
         return (
           <div
             key={sub.subscriptionId}
-            className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4 sm:flex-row sm:items-center sm:justify-between"
+            className="flex flex-col gap-3 rounded-xl border border-border bg-background p-4 transition-all hover:border-gold/40 hover:shadow-warm sm:flex-row sm:items-center sm:justify-between"
           >
             <div className="flex items-start gap-3">
               <span
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-white shadow-[var(--shadow-gold)]"
                 style={{ background: "var(--gradient-gold)" }}
               >
                 <Repeat className="h-4 w-4" />

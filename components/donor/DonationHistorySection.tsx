@@ -1,9 +1,10 @@
 "use client";
 
 import { useMemo } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
-import { Download, Loader2, CheckCircle2, Clock, XCircle, Repeat, IndianRupee } from "lucide-react";
+import { Download, Loader2, CheckCircle2, Clock, XCircle, Repeat, IndianRupee, HeartHandshake } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
@@ -46,9 +47,21 @@ export default function DonationHistorySection({ donations, downloadingId, onDow
 
   if (donations.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed border-border py-12 text-center">
-        <IndianRupee className="mx-auto mb-2 h-6 w-6 text-muted-foreground" />
-        <p className="text-sm text-muted-foreground">No donations found yet.</p>
+      <div className="ring-gold-dashed rounded-2xl py-12 text-center">
+        <span className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gold/10 text-gold">
+          <HeartHandshake className="h-6 w-6" />
+        </span>
+        <p className="font-heading text-sm font-bold text-foreground">Your seva journey hasn&apos;t begun yet</p>
+        <p className="mx-auto mt-1 max-w-xs text-sm text-muted-foreground">
+          Every offering, big or small, nourishes the temple&apos;s services.
+        </p>
+        <Link
+          href="/donate"
+          className="mt-5 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-[hsl(220_90%_18%)] shadow-[var(--shadow-gold)] transition-transform hover:scale-[1.03]"
+          style={{ background: "var(--gradient-gold)" }}
+        >
+          <HeartHandshake className="h-4 w-4" /> Begin Your Seva
+        </Link>
       </div>
     );
   }
@@ -59,9 +72,10 @@ export default function DonationHistorySection({ donations, downloadingId, onDow
         <div key={year}>
           <div className="mb-3 flex items-center gap-3">
             <h3 className="font-heading text-sm font-bold text-primary">{year}</h3>
-            <div className="h-px flex-1 bg-border" />
+            <div className="h-px flex-1 bg-gradient-to-r from-gold/40 to-border" />
             <span className="text-xs text-muted-foreground">
-              {items.length} donation{items.length > 1 ? "s" : ""}
+              {items.length} donation{items.length > 1 ? "s" : ""} · ₹
+              {items.reduce((sum, d) => (d.status === "completed" ? sum + d.amount : sum), 0).toLocaleString("en-IN")}
             </span>
           </div>
           <div className="space-y-2">
@@ -74,7 +88,7 @@ export default function DonationHistorySection({ donations, downloadingId, onDow
                   initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.2, delay: Math.min(i, 6) * 0.03 }}
-                  className="flex items-center justify-between gap-3 rounded-xl border border-border bg-card p-3.5 transition-colors hover:border-gold/40 sm:p-4"
+                  className="flex items-center justify-between gap-3 rounded-xl border border-border bg-background p-3.5 transition-all hover:border-gold/50 hover:shadow-warm sm:p-4"
                 >
                   <div className="flex min-w-0 items-center gap-3">
                     <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${meta.className}`}>
