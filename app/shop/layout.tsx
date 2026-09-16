@@ -21,7 +21,13 @@ function ShopHeader() {
     <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
         <Link href="/shop" className="flex items-center gap-2.5">
-          <Image src="/assets/hkvt-logo-icon.png" alt="" width={34} height={34} className="rounded-full" />
+          <Image
+            src="/assets/hkvt-logo-full.png"
+            alt="Hare Krishna Movement, Visakhapatnam"
+            width={2438}
+            height={825}
+            className="h-8 w-auto"
+          />
           <span className="font-heading text-base font-bold text-primary sm:text-lg">Matchless Gifts</span>
         </Link>
 

@@ -22,6 +22,7 @@ export interface NavGroup {
 
 export type NavEntry =
   | { kind: "link"; label: string; href: string; icon?: LucideIcon }
+  | { kind: "festival"; icon?: LucideIcon }
   | { kind: "group"; group: NavGroup };
 
 export const navEntries: NavEntry[] = [
@@ -29,7 +30,9 @@ export const navEntries: NavEntry[] = [
   { kind: "link", label: "Founder", href: "/founder", icon: User },
   { kind: "link", label: "Subhojanam", href: "/subhojanam", icon: Utensils },
   { kind: "link", label: "Shop", href: "/shop", icon: ShoppingBag },
-  { kind: "link", label: "Radhashtami", href: "/radhashtami", icon: Flower2 },
+  // The current major festival, auto-picked from the Vaishnava calendar (or
+  // overridden by an admin). Rendered by Navbar only when one is active.
+  { kind: "festival", icon: Flower2 },
   {
     kind: "group",
     group: {
@@ -87,9 +90,10 @@ export const navEntries: NavEntry[] = [
   },
 ];
 
-// Flat list for "is this path active?" checks
+// Flat list for "is this path active?" checks (the festival slot resolves at
+// runtime inside Navbar, so it has no static href to include here)
 export const allNavHrefs = navEntries.flatMap((e) =>
-  e.kind === "link" ? [e.href] : e.group.items.map((i) => i.href)
+  e.kind === "group" ? e.group.items.map((i) => i.href) : e.kind === "link" ? [e.href] : []
 );
 
 // Bottom bar items for mobile

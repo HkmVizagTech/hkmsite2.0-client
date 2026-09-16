@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Phone, Mail, Clock, Heart, ChevronDown, Home, User, Utensils, Info } from "lucide-react";
+import { Menu, X, Phone, Mail, Clock, Heart, ChevronDown, Home, User, Utensils, Info, Flower2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ISKLogo from "@/assets/ISKCONGambheeramLogo.jpeg";
 import HKVTLogo from "@/assets/HKVTLogo.png";
@@ -12,6 +12,9 @@ import Image from "next/image";
 
 import { navEntries, isGroupActive } from "@/lib/navConfig";
 import { NavListItem } from "@/components/NavListItem";
+import { resolveMajorFestival, type MajorFestival } from "@/lib/majorFestival";
+
+const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 
 // ── Mobile: exact original flat link list (matches production site) ─
 const mobileNavItems = [
@@ -71,6 +74,7 @@ const Navbar = () => {
   const [darshanStatus, setDarshanStatus] = useState(getDarshanStatus);
   const [menuCanScroll, setMenuCanScroll] = useState(false);
   const menuScrollRef = useRef<HTMLDivElement>(null);
+  const [festival, setFestival] = useState<MajorFestival | null>(null);
 
   // Dark mode removed sitewide — theme is forced to light in ThemeProvider.
   const pathname = usePathname();
@@ -79,6 +83,30 @@ const Navbar = () => {
   useEffect(() => {
     const id = setInterval(() => setDarshanStatus(getDarshanStatus()), 60_000);
     return () => clearInterval(id);
+  }, []);
+
+  // ── Major festival in the navbar ──────────────────────────────────
+  // Reads the admin override from site-content (public endpoint), then
+  // resolves which festival to highlight. `"auto"` keeps the automatic
+  // calendar pick; `"none"` hides the item entirely.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      let override: string | null = null;
+      try {
+        const res = await fetch(`${API_URL}/site-content`, { cache: "no-store" });
+        if (res.ok) {
+          const data = await res.json();
+          override = data?.content?.navbar?.majorFestival ?? "auto";
+        }
+      } catch {
+        override = "auto";
+      }
+      if (!cancelled) setFestival(resolveMajorFestival(override));
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // ── Scroll detection ──────────────────────────────────────────────
@@ -236,6 +264,26 @@ const Navbar = () => {
                 );
               }
 
+              if (entry.kind === "festival") {
+                // Only rendered while a major festival is active — either
+                // auto-picked from the calendar or set by an admin.
+                if (!festival) return null;
+                const activeF =
+                  pathname === festival.href || pathname.startsWith(festival.href);
+                return (
+                  <Link
+                    key={festival.href}
+                    href={festival.href}
+                    className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-gold/50 bg-gold/10 px-3 py-1.5 text-[13px] font-semibold text-gold-deep transition-all hover:bg-gold/20 ${
+                      activeF ? "border-gold bg-gold/20" : ""
+                    }`}
+                  >
+                    <Flower2 className="h-3.5 w-3.5" />
+                    {festival.label}
+                  </Link>
+                );
+              }
+
               const group = entry.group;
               const groupActive = isGroupActive(group, pathname);
               const colCount =
@@ -312,10 +360,24 @@ const Navbar = () => {
               transition={{ duration: 0.25, ease: "easeInOut" }}
               className="relative lg:hidden bg-white dark:bg-card backdrop-blur-md border-t border-border overflow-hidden rounded-b-2xl"
             >
-              <div
-                ref={menuScrollRef}
-                className="container mx-auto px-4 py-3 flex flex-col gap-0.5 max-h-[calc(100dvh-9rem)] overflow-y-auto"
-              >
+<div
+                  ref={menuScrollRef}
+                  className="container mx-auto px-4 py-3 flex flex-col gap-0.5 max-h-[calc(100dvh-9rem)] overflow-y-auto"
+                >
+                {festival && (
+                  <Link
+                    href={festival.href}
+                    className={`flex items-center justify-between rounded-lg border border-gold/40 bg-gold/10 px-4 py-2.5 text-[15px] font-semibold text-gold-deep transition-colors hover:bg-gold/20 ${
+                      pathname === festival.href ? "bg-gold/20" : ""
+                    }`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <Flower2 className="h-4 w-4" />
+                      {festival.label}
+                    </span>
+                    <span className="text-[11px] font-medium text-gold-deep/70">Major festival</span>
+                  </Link>
+                )}
                 {mobileNavItems.map((item) => (
                   <Link
                     key={item.href}

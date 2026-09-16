@@ -13,8 +13,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Pencil, Save, X, FileText, Globe, Phone, Mail, MapPin, Clock, Loader2 } from "lucide-react";
+import { Pencil, Save, X, FileText, Globe, Phone, Mail, MapPin, Clock, Loader2, PartyPopper } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { MAJOR_FESTIVALS } from "@/lib/majorFestival";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 
@@ -22,13 +23,21 @@ interface SiteContent {
   hero: { title: string; subtitle: string; tagline: string };
   about: { heading: string; body: string };
   contact: { phone: string; email: string; address: string; morningHours: string; eveningHours: string };
+  navbar: { majorFestival: string };
 }
 
 const defaultContent: SiteContent = {
   hero: { title: "Hare Krishna Movement", subtitle: "Visakhapatnam", tagline: "Spreading the timeless message of Lord Krishna through devotion, service, and community" },
   about: { heading: "A Legacy of Devotion & Service", body: "" },
   contact: { phone: "+91 89777 61187", email: "social@hkmvizag.org", address: "Chaitanya Bhavan, Hare Krishna Vaikuntam Cultural Centre, IIM Rd, opp. Akshaya Patra Foundation, Gambhiram, Visakhapatnam, Andhra Pradesh 531163", morningHours: "4:30 AM - 1:00 PM", eveningHours: "4:00 PM - 8:30 PM" },
+  navbar: { majorFestival: "auto" },
 };
+
+const FESTIVAL_OPTIONS: { value: string; label: string }[] = [
+  { value: "auto", label: "Auto — pick the current festival from the calendar" },
+  { value: "none", label: "None — hide the highlight" },
+  ...MAJOR_FESTIVALS.map((f) => ({ value: f.key, label: f.label })),
+];
 
 export default function AdminContent() {
   const [content, setContent] = useState<SiteContent>(defaultContent);
@@ -42,14 +51,18 @@ export default function AdminContent() {
         const res = await authFetch(`${API_URL}/site-content`);
         if (res.ok) {
           const data = await res.json();
-          setContent({ ...defaultContent, ...data.content });
+          setContent({
+            ...defaultContent,
+            ...data.content,
+            navbar: { ...defaultContent.navbar, ...data.content?.navbar },
+          });
         }
       } catch {}
       setLoading(false);
     })();
   }, []);
 
-  const handleSave = async (section: "hero" | "about" | "contact") => {
+  const handleSave = async (section: "hero" | "about" | "contact" | "navbar") => {
     setSaving(true);
     try {
       const res = await authFetch(`${API_URL}/site-content`, {
@@ -86,10 +99,11 @@ export default function AdminContent() {
       </div>
 
       <Tabs defaultValue="hero" className="space-y-4">
-        <TabsList className="grid grid-cols-3 w-full max-w-md">
+        <TabsList className="grid grid-cols-4 w-full max-w-md">
           <TabsTrigger value="hero">Hero</TabsTrigger>
           <TabsTrigger value="about">About</TabsTrigger>
           <TabsTrigger value="contact">Contact</TabsTrigger>
+          <TabsTrigger value="navigation">Navigation</TabsTrigger>
         </TabsList>
 
         {/* HERO */}
@@ -193,6 +207,48 @@ export default function AdminContent() {
                   <Input value={content.contact.eveningHours} disabled={editingSection !== "contact"} onChange={(e) => setContent({ ...content, contact: { ...content.contact, eveningHours: e.target.value } })} />
                 </div>
               </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* NAVBAR */}
+        <TabsContent value="navigation">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle className="flex items-center gap-2"><PartyPopper className="w-5 h-5" /> Navbar — Major Festival Highlight</CardTitle>
+              {editingSection === "navbar" ? (
+                <div className="flex gap-2">
+                  <Button onClick={() => handleSave("navbar")} disabled={saving}>
+                    {saving ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Save className="w-4 h-4 mr-1" />} Save
+                  </Button>
+                  <Button className="bg-transparent text-foreground hover:bg-muted" onClick={() => setEditingSection(null)}><X className="w-4 h-4" /></Button>
+                </div>
+              ) : (
+                <Button className="bg-transparent border border-border text-foreground hover:bg-muted" onClick={() => setEditingSection("navbar")}><Pencil className="w-4 h-4 mr-1" /> Edit</Button>
+              )}
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <label className="text-sm font-medium mb-1 block">Highlighted festival</label>
+                <select
+                  value={content.navbar.majorFestival}
+                  disabled={editingSection !== "navbar"}
+                  onChange={(e) => setContent({ ...content, navbar: { majorFestival: e.target.value } })}
+                  className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm outline-none focus:border-gold disabled:opacity-60"
+                >
+                  {FESTIVAL_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                The navbar highlights one major festival at a time. &ldquo;Auto&rdquo; picks the current festival
+                from the Vaishnava calendar automatically (&plusmn; a couple of weeks). Choose a specific festival
+                to force it, or &ldquo;None&rdquo; to remove the highlight. Only festivals that have a page on the
+                site are available here.
+              </p>
             </CardContent>
           </Card>
         </TabsContent>

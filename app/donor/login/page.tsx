@@ -129,7 +129,13 @@ export default function DonorLoginPage() {
         />
 
         <Link href="/" className="relative z-10 flex items-center gap-3">
-          <Image src="/assets/hkvt-logo-icon.png" alt="HKM Vizag Tech" width={44} height={44} className="rounded-full bg-white/90 p-1" />
+          <Image
+            src="/assets/hkvt-logo-full.png"
+            alt="Hare Krishna Movement, Visakhapatnam"
+            width={2438}
+            height={825}
+            className="h-11 w-auto"
+          />
           <span className="font-heading text-lg font-semibold text-white">Hare Krishna Movement, Vizag</span>
         </Link>
 
@@ -165,7 +171,13 @@ export default function DonorLoginPage() {
       {/* Right — login card */}
       <div className="flex min-h-screen flex-col items-center justify-center gap-8 px-4 py-12">
         <Link href="/" className="flex items-center gap-2 lg:hidden">
-          <Image src="/assets/hkvt-logo-icon.png" alt="HKM Vizag Tech" width={40} height={40} />
+          <Image
+            src="/assets/hkvt-logo-full.png"
+            alt="Hare Krishna Movement, Visakhapatnam"
+            width={2438}
+            height={825}
+            className="h-8 w-auto"
+          />
           <span className="font-heading text-base font-semibold text-primary">Hare Krishna Movement, Vizag</span>
         </Link>
 
