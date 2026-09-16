@@ -1,4 +1,4 @@
-// Types and fetch helpers for the temple shop.
+// Types and fetch helpers for Matchless Gifts (the temple shop).
 //
 // Everything the storefront knows about money comes from here, and every
 // price shown is the one the server sent. The cart in localStorage stores
@@ -36,6 +36,7 @@ export interface Product {
   priceMax: number;
   inStock: boolean;
   featured: boolean;
+  freeShipping?: boolean;
   tags: string[];
   weightGrams?: number;
   variants: ProductVariant[];
@@ -70,6 +71,7 @@ export interface QuotedItem {
   mrp?: number;
   quantity: number;
   lineTotal: number;
+  freeShipping?: boolean;
 }
 
 export interface CartProblem {

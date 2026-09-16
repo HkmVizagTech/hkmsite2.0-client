@@ -22,7 +22,7 @@ function ShopHeader() {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
         <Link href="/shop" className="flex items-center gap-2.5">
           <Image src="/assets/hkvt-logo-icon.png" alt="" width={34} height={34} className="rounded-full" />
-          <span className="font-heading text-base font-bold text-primary sm:text-lg">Temple Shop</span>
+          <span className="font-heading text-base font-bold text-primary sm:text-lg">Matchless Gifts</span>
         </Link>
 
         <nav className="flex items-center gap-5">

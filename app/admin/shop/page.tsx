@@ -195,7 +195,7 @@ export default function AdminShopProductsPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-heading text-2xl font-bold text-foreground">Shop</h1>
-          <p className="text-sm text-muted-foreground">Products and categories for the temple shop.</p>
+          <p className="text-sm text-muted-foreground">Products and categories for Matchless Gifts.</p>
         </div>
       </div>
 

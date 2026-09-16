@@ -78,7 +78,7 @@ export default function ShopOrdersPage() {
         <div className="mt-8 rounded-2xl border border-dashed border-border py-14 text-center">
           <ShoppingBag className="mx-auto mb-3 h-9 w-9 text-muted-foreground/50" />
           <p className="font-medium text-foreground">No orders yet</p>
-          <p className="mt-1 text-sm text-muted-foreground">Anything you order from the temple shop will appear here.</p>
+          <p className="mt-1 text-sm text-muted-foreground">Anything you order from Matchless Gifts will appear here.</p>
           <Link href="/shop" className="mt-4 inline-block">
             <Button variant="outline">Browse the shop</Button>
           </Link>
