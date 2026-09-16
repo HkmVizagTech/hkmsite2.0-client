@@ -46,6 +46,7 @@ export default function CartDrawer() {
     quote && quote.freeShippingAbove > 0 && quote.subtotal < quote.freeShippingAbove
       ? quote.freeShippingAbove - quote.subtotal
       : 0;
+  const allItemsFree = quote?.items?.length ? quote.items.every((i) => i.freeShipping) : false;
 
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && closeCart()}>
@@ -119,6 +120,11 @@ export default function CartDrawer() {
                     {item.variantLabel && (
                       <p className="text-xs text-muted-foreground">{item.variantLabel}</p>
                     )}
+                    {item.freeShipping && (
+                      <p className="mt-0.5 flex items-center gap-1 text-[10px] font-bold uppercase tracking-wide text-emerald-600">
+                        <Truck className="h-3 w-3" /> Free delivery
+                      </p>
+                    )}
                     <p className="mt-0.5 text-sm font-semibold text-primary">{formatINR(item.unitPrice)}</p>
 
                     <div className="mt-2 flex items-center justify-between">
@@ -158,7 +164,7 @@ export default function CartDrawer() {
 
         {quote && quote.items.length > 0 && (
           <div className="border-t border-border bg-card px-5 py-4">
-            {shortfallToFreeShipping > 0 && (
+            {shortfallToFreeShipping > 0 && !allItemsFree && (
               <div className="mb-3 flex items-center gap-2 rounded-lg bg-gold/10 px-3 py-2 text-xs font-medium text-gold-deep">
                 <Truck className="h-3.5 w-3.5 shrink-0" />
                 Add {formatINR(shortfallToFreeShipping)} more for free delivery

@@ -234,6 +234,12 @@ export default function ProductDetailPage() {
           </div>
 
           <div className="mt-6 space-y-2.5 rounded-xl border border-border bg-card p-4 text-sm">
+            {product.freeShipping && (
+              <p className="flex items-center gap-2 text-emerald-600">
+                <Truck className="h-4 w-4 shrink-0" />
+                Free delivery on this item
+              </p>
+            )}
             <p className="flex items-center gap-2 text-muted-foreground">
               <Truck className="h-4 w-4 shrink-0 text-gold" />
               {settings?.deliveryEstimate || "Usually dispatched in 3–5 working days"}

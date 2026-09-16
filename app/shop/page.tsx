@@ -105,7 +105,7 @@ export default function ShopCatalogPage() {
         />
         <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-gold">
-            <Sparkles className="h-3 w-3" /> Temple Shop
+            <Sparkles className="h-3 w-3" /> Matchless Gifts
           </span>
           <h1 className="mt-3 max-w-2xl font-heading text-3xl font-bold leading-tight text-white sm:text-5xl">
             Books, puja items &amp; sacred gifts

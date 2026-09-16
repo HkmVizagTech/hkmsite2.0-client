@@ -39,7 +39,7 @@ export const navEntries: NavEntry[] = [
         { label: "About Us", href: "/about", description: "Our mission, history & values", icon: Info },
         { label: "Contact Us", href: "/contact", description: "Visit, call, or write to us", icon: Phone },
         { label: "Donor Login", href: "/donor/login", description: "View your donations & receipts", icon: User },
-        { label: "My Orders", href: "/shop/orders", description: "Track your temple shop orders", icon: Package },
+        { label: "My Orders", href: "/shop/orders", description: "Track your Matchless Gifts orders", icon: Package },
       ],
     },
   },

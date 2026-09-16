@@ -93,13 +93,28 @@ export default function OrderDetailPage() {
       </Link>
 
       {justPlaced && (
-        <div className="mb-5 flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
-          <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
-          <div>
-            <p className="font-semibold text-emerald-900">Thank you! Your order is confirmed.</p>
-            <p className="mt-0.5 text-sm text-emerald-800">
-              We&apos;ve sent the details to your WhatsApp and will message you again when it ships.
+        <div className="mb-6 overflow-hidden rounded-3xl border border-emerald-200 bg-emerald-50">
+          <div className="p-5 text-center sm:p-7">
+            <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-600 text-white shadow-lg">
+              <CheckCircle2 className="h-7 w-7" />
+            </span>
+            <h1 className="mt-3 font-heading text-xl font-bold text-emerald-900 sm:text-2xl">
+              Thank you! Your order is confirmed.
+            </h1>
+            <p className="mt-1 text-sm text-emerald-800">
+              A confirmation has been sent to your WhatsApp. We&apos;ll message you again the day it ships.
             </p>
+            <div className="mx-auto mt-4 max-w-sm rounded-xl border border-emerald-200 bg-white/70 px-4 py-3">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-700">Your reference number</p>
+              <p className="mt-0.5 font-mono text-lg font-bold text-emerald-900">{order.orderNumber}</p>
+              <p className="mt-1 text-xs text-emerald-700">
+                Keep this handy — quote it to our support team for any query, and
+                use it to track your order status below.
+              </p>
+            </div>
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs text-emerald-700">
+              <span className="inline-flex items-center gap-1"><Truck className="h-3.5 w-3.5" /> Status updates live below</span>
+            </div>
           </div>
         </div>
       )}
@@ -107,6 +122,7 @@ export default function OrderDetailPage() {
       <div className="rounded-2xl border border-border bg-card p-5 sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">Reference number</p>
             <p className="font-mono text-lg font-bold text-foreground">{order.orderNumber}</p>
             <p className="text-sm text-muted-foreground">
               Placed {format(new Date(order.createdAt), "d MMM yyyy, h:mm a")}
