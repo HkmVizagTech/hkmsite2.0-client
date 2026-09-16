@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Loader2, Plus, Star, Trash2, Upload, X } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import {
@@ -102,9 +102,11 @@ interface Props {
   product: ShopProduct | null;
   categories: ShopCategory[];
   onSaved: () => void;
+  /** Called after an inline-created category so the parent can refresh its list. */
+  onCategoryCreated?: () => void;
 }
 
-export default function ProductFormDialog({ open, onOpenChange, product, categories, onSaved }: Props) {
+export default function ProductFormDialog({ open, onOpenChange, product, categories, onSaved, onCategoryCreated }: Props) {
   const editing = Boolean(product);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -128,6 +130,19 @@ export default function ProductFormDialog({ open, onOpenChange, product, categor
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Categories created inline from this dialog (added here rather than on the
+  // Categories tab). Merged into the dropdown so the admin can pick them in
+  // the same session, and onCategoryCreated refreshes the parent's list too.
+  const [extraCategories, setExtraCategories] = useState<ShopCategory[]>([]);
+  const [newCategoryOpen, setNewCategoryOpen] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [creatingCategory, setCreatingCategory] = useState(false);
+
+  const allCategories = useMemo(() => {
+    const seen = new Set(categories.map((c) => c.slug));
+    return [...categories, ...extraCategories.filter((c) => !seen.has(c.slug))];
+  }, [categories, extraCategories]);
 
   // Reset from scratch every time the dialog opens, rather than on `product`
   // changing — otherwise closing the dialog and reopening "Add product"
@@ -238,6 +253,35 @@ export default function ProductFormDialog({ open, onOpenChange, product, categor
     return out;
   };
 
+  const createCategory = async () => {
+    const name = newCategoryName.trim();
+    if (!name) return;
+    setCreatingCategory(true);
+    try {
+      const res = await authFetch(`${API_URL}/shop-admin/categories`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, sortOrder: 0 }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success || !data.category)
+        throw new Error(data.message || "Could not create category.");
+      const created = data.category as ShopCategory;
+      setExtraCategories((prev) =>
+        prev.some((c) => c.slug === created.slug) ? prev : [...prev, created]
+      );
+      setCategory(created.slug);
+      setNewCategoryName("");
+      setNewCategoryOpen(false);
+      toast({ title: `Category "${created.name}" created and selected.` });
+      onCategoryCreated?.();
+    } catch (err: any) {
+      toast({ title: err?.message || "Could not create category.", variant: "destructive" });
+    } finally {
+      setCreatingCategory(false);
+    }
+  };
+
   const handleSubmit = async () => {
     const problem = validate();
     if (problem) {
@@ -339,19 +383,54 @@ export default function ProductFormDialog({ open, onOpenChange, product, categor
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="product-category">Category</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="product-category">Category</Label>
+                <button
+                  type="button"
+                  onClick={() => setNewCategoryOpen((v) => !v)}
+                  className="flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
+                >
+                  <Plus className="h-3 w-3" /> New category
+                </button>
+              </div>
               <Select value={category} onValueChange={setCategory}>
                 <SelectTrigger id="product-category">
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
                 <SelectContent>
-                  {categories.map((c) => (
+                  {allCategories.map((c) => (
                     <SelectItem key={c._id} value={c.slug}>
                       {c.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+              {newCategoryOpen && (
+                <div className="flex gap-2 pt-1">
+                  <Input
+                    value={newCategoryName}
+                    onChange={(e) => setNewCategoryName(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        createCategory();
+                      }
+                    }}
+                    placeholder="e.g. Tulasi Mala"
+                    autoFocus
+                  />
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={createCategory}
+                    disabled={creatingCategory || !newCategoryName.trim()}
+                    className="shrink-0 gap-1"
+                  >
+                    {creatingCategory && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                    Create
+                  </Button>
+                </div>
+              )}
             </div>
 
             <div className="space-y-1.5">

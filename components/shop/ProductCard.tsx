@@ -10,20 +10,30 @@ import { Product, discountPercent, displayPrice, formatINR } from "@/lib/shopApi
 interface Props {
   product: Product;
   index?: number;
+  categoryName?: string;
 }
 
-export default function ProductCard({ product, index = 0 }: Props) {
+export default function ProductCard({ product, index = 0, categoryName }: Props) {
   const { addItem, openCart } = useCart();
   const [justAdded, setJustAdded] = useState(false);
 
-  const off = product.hasVariants
-    ? null
-    : discountPercent(product.price, product.mrp);
+  const off = product.hasVariants ? null : discountPercent(product.price, product.mrp);
+  const saveAmount =
+    !product.hasVariants && off !== null && product.mrp
+      ? (product.mrp || 0) - (product.price || 0)
+      : null;
 
   // A variant product can't be added straight from the card — the devotee
   // has to choose 100g or 250g first — so its button sends them to the
   // product page instead of silently picking one for them.
   const needsChoice = product.hasVariants;
+
+  // Lowest stock across variants decides the "Low stock" hint — a simple
+  // product just uses its own stock figure.
+  const minStock = product.hasVariants
+    ? Math.min(...product.variants.map((v) => v.stock))
+    : product.stock;
+  const lowStock = product.inStock && minStock <= 5;
 
   const quickAdd = () => {
     addItem({ productId: product._id, variantId: null, quantity: 1 });
@@ -57,6 +67,12 @@ export default function ProductCard({ product, index = 0 }: Props) {
           </div>
         )}
 
+        {product.featured && (
+          <span className="absolute right-3 top-3 rounded-full bg-primary/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-primary-foreground shadow-sm">
+            Best seller
+          </span>
+        )}
+
         {off !== null && (
           <span
             className="absolute left-3 top-3 rounded-full px-2.5 py-1 text-[11px] font-bold text-white shadow-sm"
@@ -76,6 +92,12 @@ export default function ProductCard({ product, index = 0 }: Props) {
       </Link>
 
       <div className="flex flex-1 flex-col p-3.5 sm:p-4">
+        {categoryName && (
+          <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+            {categoryName}
+          </p>
+        )}
+
         <Link href={`/shop/${product.slug}`} className="flex-1">
           <h3 className="line-clamp-2 text-sm font-semibold text-foreground transition-colors group-hover:text-primary sm:text-[15px]">
             {product.name}
@@ -85,34 +107,58 @@ export default function ProductCard({ product, index = 0 }: Props) {
           )}
         </Link>
 
-        <div className="mt-3 flex items-end justify-between gap-2">
-          <div>
-            <p className="text-base font-bold text-primary">{displayPrice(product)}</p>
-            {off !== null && product.mrp && (
-              <p className="text-xs text-muted-foreground line-through">{formatINR(product.mrp)}</p>
-            )}
-          </div>
+        <div className="mt-2 flex items-center gap-3">
+          <p className="text-base font-bold text-primary">{displayPrice(product)}</p>
+          {off !== null && product.mrp && (
+            <p className="text-xs text-muted-foreground line-through">{formatINR(product.mrp)}</p>
+          )}
+          {saveAmount !== null && saveAmount > 0 && (
+            <p className="text-[10px] font-bold uppercase text-emerald-600">Save {formatINR(saveAmount)}</p>
+          )}
+        </div>
 
+        {product.inStock && (
+          <p className={`mt-1.5 flex items-center gap-1 text-[11px] font-medium ${lowStock ? "text-amber-600" : "text-emerald-600"}`}>
+            <span
+              className={`h-1.5 w-1.5 rounded-full ${lowStock ? "bg-amber-500" : "bg-emerald-500"}`}
+            />
+            {lowStock ? `Only ${minStock} left` : "In stock"}
+          </p>
+        )}
+
+        <div className="mt-3">
           {product.inStock ? (
             needsChoice ? (
               <Link
                 href={`/shop/${product.slug}`}
-                className="rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-primary transition-colors hover:border-gold hover:bg-gold/10"
+                className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-primary px-3 py-2.5 text-xs font-semibold text-primary-foreground transition-all hover:bg-primary/90 active:scale-[0.98]"
               >
-                Options
+                <ShoppingBag className="h-3.5 w-3.5" /> Choose variant
               </Link>
             ) : (
               <button
                 onClick={quickAdd}
                 aria-label={`Add ${product.name} to cart`}
-                className="flex items-center gap-1 rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground transition-all hover:bg-primary/90 active:scale-95"
+                className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-primary px-3 py-2.5 text-xs font-semibold text-primary-foreground transition-all hover:bg-primary/90 active:scale-[0.98]"
               >
-                {justAdded ? <Check className="h-3.5 w-3.5" /> : <ShoppingBag className="h-3.5 w-3.5" />}
-                {justAdded ? "Added" : "Add"}
+                {justAdded ? (
+                  <>
+                    <Check className="h-3.5 w-3.5" /> Added
+                  </>
+                ) : (
+                  <>
+                    <ShoppingBag className="h-3.5 w-3.5" /> Add to Cart
+                  </>
+                )}
               </button>
             )
           ) : (
-            <span className="text-xs font-medium text-muted-foreground">Sold out</span>
+            <button
+              disabled
+              className="w-full cursor-not-allowed rounded-xl bg-muted px-3 py-2.5 text-xs font-semibold text-muted-foreground"
+            >
+              Sold out
+            </button>
           )}
         </div>
       </div>

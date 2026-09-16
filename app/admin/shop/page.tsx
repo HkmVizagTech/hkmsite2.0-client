@@ -415,6 +415,7 @@ export default function AdminShopProductsPage() {
         product={editing}
         categories={categories}
         onSaved={loadProducts}
+        onCategoryCreated={loadCategories}
       />
 
       <VariantRestockDialog

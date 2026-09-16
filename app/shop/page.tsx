@@ -1,7 +1,18 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Search, SlidersHorizontal, PackageOpen, Megaphone } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Search,
+  SlidersHorizontal,
+  PackageOpen,
+  Megaphone,
+  Sparkles,
+  ShieldCheck,
+  Truck,
+  HeartHandshake,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import ProductCard from "@/components/shop/ProductCard";
 import {
   Product,
@@ -21,6 +32,7 @@ const SORTS = [
 
 export default function ShopCatalogPage() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [featured, setFeatured] = useState<Product[]>([]);
   const [categories, setCategories] = useState<ShopCategory[]>([]);
   const [settings, setSettings] = useState<ShopSettings | null>(null);
   const [category, setCategory] = useState("all");
@@ -29,6 +41,7 @@ export default function ShopCatalogPage() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const featuredRef = useRef<HTMLDivElement>(null);
 
   // Debounced so a search box doesn't fire a request per keystroke.
   useEffect(() => {
@@ -39,6 +52,11 @@ export default function ShopCatalogPage() {
   useEffect(() => {
     fetchCategories().then(setCategories).catch(() => setCategories([]));
     fetchShopSettings().then(setSettings).catch(() => setSettings(null));
+    // The "Featured" rail always shows the store's curated picks, independent
+    // of the active category/search/sort filtering the main grid.
+    fetchProducts({ sort: "featured", limit: 40 })
+      .then((data) => setFeatured(data.products.filter((p) => p.featured).slice(0, 10)))
+      .catch(() => setFeatured([]));
   }, []);
 
   const load = useCallback(async () => {
@@ -63,39 +81,53 @@ export default function ShopCatalogPage() {
     [categories, category]
   );
 
+  const scrollFeatured = (dir: 1 | -1) => {
+    featuredRef.current?.scrollBy({ left: dir * 320, behavior: "smooth" });
+  };
+
+  const categoryName = useCallback(
+    (slug?: string) => (slug ? categories.find((c) => c.slug === slug)?.name : undefined),
+    [categories]
+  );
+
   return (
     <div>
-      {/* Hero */}
+      {/* ═══ HERO ═══ */}
       <section className="relative overflow-hidden border-b border-border">
         <div className="absolute inset-0" style={{ background: "var(--gradient-hero)" }} />
         <div
-          className="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full blur-3xl"
-          style={{ background: "var(--gradient-gold)", opacity: 0.3 }}
+          className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full blur-3xl"
+          style={{ background: "var(--gradient-gold)", opacity: 0.25 }}
         />
-        <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14">
-          <span className="inline-flex items-center rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-xs font-medium text-gold">
-            Temple Shop
+        <div
+          className="pointer-events-none absolute -left-24 bottom-0 h-72 w-72 rounded-full blur-3xl"
+          style={{ background: "var(--gradient-gold)", opacity: 0.12 }}
+        />
+        <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-gold">
+            <Sparkles className="h-3 w-3" /> Temple Shop
           </span>
-          <h1 className="mt-3 font-heading text-2xl font-bold text-white sm:text-4xl">
+          <h1 className="mt-3 max-w-2xl font-heading text-3xl font-bold leading-tight text-white sm:text-5xl">
             Books, puja items &amp; sacred gifts
           </h1>
-          <p className="mt-2 max-w-xl text-sm text-white/75 sm:text-base">
+          <p className="mt-3 max-w-xl text-sm text-white/75 sm:text-base">
             Every purchase supports the temple&apos;s daily sevas and prasadam distribution.
           </p>
 
-          <div className="relative mt-6 max-w-md">
+          <div className="relative mt-7 max-w-md">
             <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <input
               type="search"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              placeholder="Search for books, incense, malas…"
-              className="h-12 w-full rounded-full border border-white/20 bg-background/95 pl-11 pr-4 text-sm text-foreground shadow-lg outline-none transition-colors focus:border-gold"
+              placeholder="Search books, incense, malas…"
+              className="w-full rounded-full border border-white/20 bg-background/95 py-3.5 pl-11 pr-4 text-sm text-foreground shadow-xl outline-none transition-colors focus:border-gold"
             />
           </div>
         </div>
       </section>
 
+      {/* ═══ ANNOUNCEMENT + CLOSED BANNERS ═══ */}
       {settings?.announcement && (
         <div className="flex items-center justify-center gap-2 bg-gold/10 px-4 py-2.5 text-center text-xs font-medium text-gold-deep sm:text-sm">
           <Megaphone className="h-3.5 w-3.5 shrink-0" />
@@ -109,16 +141,16 @@ export default function ShopCatalogPage() {
         </div>
       )}
 
-      {/* Filters */}
+      {/* ═══ STICKY FILTERS ═══ */}
       <div className="sticky top-16 z-30 border-b border-border bg-background/95 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center gap-3 overflow-x-auto px-4 py-3 sm:px-6">
           <div className="flex items-center gap-2">
             <button
               onClick={() => setCategory("all")}
-              className={`whitespace-nowrap rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors sm:text-sm ${
+              className={`whitespace-nowrap rounded-full px-4 py-2 text-xs font-semibold transition-all sm:text-sm ${
                 category === "all"
-                  ? "bg-primary text-primary-foreground"
-                  : "border border-border text-muted-foreground hover:border-gold hover:text-foreground"
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "border border-border bg-background text-muted-foreground hover:border-gold hover:text-foreground"
               }`}
             >
               All
@@ -127,14 +159,20 @@ export default function ShopCatalogPage() {
               <button
                 key={c._id}
                 onClick={() => setCategory(c.slug)}
-                className={`whitespace-nowrap rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors sm:text-sm ${
+                className={`whitespace-nowrap rounded-full px-4 py-2 text-xs font-semibold transition-all sm:text-sm ${
                   category === c.slug
-                    ? "bg-primary text-primary-foreground"
-                    : "border border-border text-muted-foreground hover:border-gold hover:text-foreground"
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "border border-border bg-background text-muted-foreground hover:border-gold hover:text-foreground"
                 }`}
               >
                 {c.name}
-                <span className="ml-1.5 opacity-60">{c.productCount}</span>
+                <span
+                  className={`ml-1.5 rounded-full px-1.5 py-0.5 text-[10px] font-bold ${
+                    category === c.slug ? "bg-white/20" : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  {c.productCount}
+                </span>
               </button>
             ))}
           </div>
@@ -144,7 +182,7 @@ export default function ShopCatalogPage() {
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value)}
-              className="cursor-pointer rounded-lg border border-border bg-background px-2 py-1.5 text-xs font-medium text-foreground outline-none focus:border-gold sm:text-sm"
+              className="cursor-pointer rounded-lg border border-border bg-background px-2 py-2 text-xs font-medium text-foreground outline-none focus:border-gold sm:text-sm"
             >
               {SORTS.map((s) => (
                 <option key={s.value} value={s.value}>
@@ -156,8 +194,51 @@ export default function ShopCatalogPage() {
         </div>
       </div>
 
-      {/* Grid */}
-      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+      {/* ═══ FEATURED RAIL ═══ */}
+      {featured.length > 0 && (
+        <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+          <div className="mb-5 flex items-end justify-between gap-4">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">Curated for you</p>
+              <h2 className="mt-1 font-heading text-2xl font-bold text-foreground sm:text-3xl">Featured</h2>
+            </div>
+            <div className="hidden items-center gap-2 sm:flex">
+              <button
+                type="button"
+                onClick={() => scrollFeatured(-1)}
+                aria-label="Scroll featured left"
+                className="rounded-full border border-border p-2 text-muted-foreground transition-colors hover:border-gold hover:text-primary"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => scrollFeatured(1)}
+                aria-label="Scroll featured right"
+                className="rounded-full border border-border p-2 text-muted-foreground transition-colors hover:border-gold hover:text-primary"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+          <div
+            ref={featuredRef}
+            className="featured-rail -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          >
+            {/* Hide webkit scrollbar for the rail */}
+            <style>{`.featured-rail::-webkit-scrollbar { display: none; }`}</style>
+            {featured.map((p, i) => (
+              <div key={p._id} className="w-[220px] shrink-0 snap-start sm:w-[240px]">
+                <ProductCard product={p} index={i} categoryName={categoryName(p.category)} />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* ═══ MAIN GRID ═══ */}
+      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
         {loading ? (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
             {Array.from({ length: 8 }).map((_, i) => (
@@ -204,17 +285,57 @@ export default function ShopCatalogPage() {
           </div>
         ) : (
           <>
-            <p className="mb-4 text-xs text-muted-foreground">
-              {products.length} item{products.length === 1 ? "" : "s"}
-              {activeCategoryName ? ` in ${activeCategoryName}` : ""}
-            </p>
+            <div className="mb-4 flex items-center justify-between">
+              <p className="text-xs text-muted-foreground">
+                {products.length} item{products.length === 1 ? "" : "s"}
+                {activeCategoryName ? ` in ${activeCategoryName}` : ""}
+              </p>
+            </div>
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
               {products.map((p, i) => (
-                <ProductCard key={p._id} product={p} index={i} />
+                <ProductCard key={p._id} product={p} index={i} categoryName={categoryName(p.category)} />
               ))}
             </div>
           </>
         )}
+      </section>
+
+      {/* ═══ TRUST STRIP ═══ */}
+      <section className="border-t border-border bg-card">
+        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-4 py-8 sm:px-6 lg:grid-cols-4">
+          <div className="flex items-center gap-3">
+            <ShieldCheck className="h-8 w-8 shrink-0 text-gold" />
+            <div>
+              <p className="text-sm font-bold text-foreground">Secure payments</p>
+              <p className="text-xs text-muted-foreground">PCI-DSS Razorpay checkout</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <Truck className="h-8 w-8 shrink-0 text-gold" />
+            <div>
+              <p className="text-sm font-bold text-foreground">
+                {settings
+                  ? `Free shipping above ₹${settings.freeShippingAbove.toLocaleString("en-IN")}`
+                  : "Pan-India shipping"}
+              </p>
+              <p className="text-xs text-muted-foreground">{settings?.deliveryEstimate || "Carefully packed & shipped"}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <HeartHandshake className="h-8 w-8 shrink-0 text-gold" />
+            <div>
+              <p className="text-sm font-bold text-foreground">Every purchase gives</p>
+              <p className="text-xs text-muted-foreground">Funds daily temple sevas</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <Sparkles className="h-8 w-8 shrink-0 text-gold" />
+            <div>
+              <p className="text-sm font-bold text-foreground">Blessed & sanctified</p>
+              <p className="text-xs text-muted-foreground">Items offered to the Lordships</p>
+            </div>
+          </div>
+        </div>
       </section>
     </div>
   );
