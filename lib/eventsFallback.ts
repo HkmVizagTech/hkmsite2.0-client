@@ -68,7 +68,7 @@ const IMAGE_BY_KEYWORD: Array<[string, string]> = [
  * Rotated for festivals with no dedicated banner, so a page of cards never
  * repeats the same generic temple photo twice in a row.
  */
-const GENERIC_IMAGES = [
+export const GENERIC_IMAGES = [
   "/assets/gallery-festival-2.jpg",
   "/assets/home-gallery-radha-krishna.webp",
   "/assets/gallery-darshan-1.jpg",
@@ -93,7 +93,15 @@ function pick(list: Array<[string, string]>, title: string): string | undefined 
   return list.find(([keyword]) => t.includes(keyword))?.[1];
 }
 
-function startOfToday(): Date {
+export function pickImageByKeyword(title: string): string | undefined {
+  return pick(IMAGE_BY_KEYWORD, title);
+}
+
+export function pickFestivalHref(title: string): string | undefined {
+  return pick(HREF_BY_KEYWORD, title);
+}
+
+export function startOfToday(): Date {
   const d = new Date();
   d.setHours(0, 0, 0, 0);
   return d;
@@ -123,10 +131,10 @@ export function getFallbackEvents(limit = 12): FallbackEvent[] {
       date: d.date,
       description: d.description,
       image:
-        pick(IMAGE_BY_KEYWORD, d.title) ||
+        pickImageByKeyword(d.title) ||
         GENERIC_IMAGES[i % GENERIC_IMAGES.length],
       location: "Temple Premises",
-      href: pick(HREF_BY_KEYWORD, d.title) || "/vaishnav-calendar",
+      href: pickFestivalHref(d.title) || "/vaishnav-calendar",
       isFallback: true as const,
     }));
 
