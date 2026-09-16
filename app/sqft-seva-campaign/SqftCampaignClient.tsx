@@ -512,6 +512,10 @@ export default function SqftCampaignClient({
         {/* Donor privileges */}
         <DonorPrivilegesSection scrollToDonate={scrollToDonate} config={config} />
 
+        {/* Temple construction status — right below the donor privileges so
+            contributors see the live building progress early */}
+        <ConstructionStatusSection scrollToDonate={scrollToDonate} />
+
         {/* ₹5 Lakh Seva — Square Foot campaign only (beneath the donor privileges) */}
         {campaignType === "SQFT" && (
           <FiveLakhSevaSection scrollToDonate={scrollToDonateWith5Lakh} config={config} />
@@ -538,9 +542,6 @@ export default function SqftCampaignClient({
 
         {/* Scriptural significance of temple construction */}
         <ImportanceSection />
-
-        {/* Photo + video proof of ongoing construction */}
-        <ConstructionStatusSection scrollToDonate={scrollToDonate} />
 
         {/* Gallery */}
         <GallerySection />
