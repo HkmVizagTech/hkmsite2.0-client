@@ -7,6 +7,7 @@ import { Heart, X } from "lucide-react";
 import { newEventId, getMetaBrowserData, trackPurchase } from "@/lib/metaPixel";
 import { captureTracking, getStoredTracking } from "@/lib/tracking";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
+import { useDonorPrefill } from "@/lib/donorPrefill";
 
 type DonationOption = {
   id: number;
@@ -230,7 +231,17 @@ export default function DonationsClient() {
     const editedAmount = option.amount ? Number(cardAmounts[option.id]) : null;
     const finalOption = editedAmount && editedAmount > 0 ? { ...option, amount: editedAmount } : option;
     setSelected(finalOption);
-    setForm(initialForm);
+    setForm(
+      prefill
+        ? {
+            ...initialForm,
+            donorName: prefill.name,
+            donorMobile: prefill.mobile,
+            donorEmail: prefill.email,
+            panNumber: prefill.panNumber,
+          }
+        : initialForm
+    );
     setStatus({ type: "idle", message: "" });
   };
 
@@ -241,6 +252,29 @@ export default function DonationsClient() {
   const updateForm = (patch: Partial<CheckoutForm>) => {
     setForm((current) => ({ ...current, ...patch }));
   };
+
+  // Donor pre-fill: logged-in profile auto-fills name/email/mobile; a
+  // returning donor's phone lookup fills the same fields after they type
+  // their 10-digit number. PAN/address are filled only when 80G/prasadam
+  // are selected.
+  const { lookupHint, prefill, handle80GToggle, handlePrasadamToggle } = useDonorPrefill({
+    form,
+    setForm,
+    fieldMap: { name: "donorName", email: "donorEmail", mobile: "donorMobile" },
+    onMahaPrasadamSelect: (saved) => {
+      setForm((current) =>
+        !current.street && !current.area && !current.city && !current.state && !current.pincode
+          ? {
+              ...current,
+              street: (saved.street || "").trim(),
+              city: saved.city,
+              state: saved.state,
+              pincode: saved.pincode,
+            }
+          : current
+      );
+    },
+  });
 
   const validate = () => {
     if (!selected) return "Please select a seva.";
@@ -639,6 +673,8 @@ export default function DonationsClient() {
                 </label>
               </div>
 
+              {lookupHint}
+
               <DonorExtrasFields
                 sevakName={form.sevakName}
                 dob={form.dob}
@@ -661,13 +697,21 @@ export default function DonationsClient() {
               <div className="space-y-3">
                 {showPrasadamField && (
                   <label className="flex items-start gap-3 rounded-lg border border-border p-4 text-sm text-foreground">
-                    <input type="checkbox" checked={form.wantPrasadam} onChange={(event) => updateForm({ wantPrasadam: event.target.checked })} className="mt-1" />
+                    <input type="checkbox" checked={form.wantPrasadam} onChange={(event) => {
+                    const next = event.target.checked;
+                    updateForm({ wantPrasadam: next });
+                    handlePrasadamToggle(next);
+                  }} className="mt-1" />
                     I would like to receive Maha Prasadam (Only within India)
                   </label>
                 )}
                 {showTaxField && (
                   <label className="flex items-start gap-3 rounded-lg border border-border p-4 text-sm text-foreground">
-                    <input type="checkbox" checked={form.want80G} onChange={(event) => updateForm({ want80G: event.target.checked })} className="mt-1" />
+                    <input type="checkbox" checked={form.want80G} onChange={(event) => {
+                    const next = event.target.checked;
+                    updateForm({ want80G: next });
+                    handle80GToggle(next);
+                  }} className="mt-1" />
                     <span>
                       I wish to receive 80G Tax Exemption
                       <span className="mt-1 block text-xs text-muted-foreground">PAN and address are mandatory when 80G is selected.</span>

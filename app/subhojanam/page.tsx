@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { newEventId, getMetaBrowserData, trackInitiateCheckout, trackPurchase } from "@/lib/metaPixel";
 import { useAttribution } from "@/lib/useAttribution";
+import { useDonorPrefill } from "@/lib/donorPrefill";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 const apiBase = () => (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(/\/+$/, "");
@@ -78,7 +79,25 @@ export default function SubhojanamPage() {
   const attribution = useAttribution("/subhojanam");
   const razorpayReady = useRazorpayPreload();
 
-  const closeCheckout = () => { if (!submitting) { setCheckoutTier(null); setStatus(null); setForm({ name: "", email: "", mobile: "" }); } };
+  // Donor pre-fill: logged-in profile auto-fills name/email/mobile; a
+  // returning donor's phone lookup fills the same fields after they type
+  // their 10-digit number.
+  const { lookupHint, prefill } = useDonorPrefill({
+    form,
+    setForm,
+  });
+
+  const closeCheckout = () => {
+    if (!submitting) {
+      setCheckoutTier(null);
+      setStatus(null);
+      setForm(
+        prefill
+          ? { name: prefill.name, email: prefill.email, mobile: prefill.mobile }
+          : { name: "", email: "", mobile: "" }
+      );
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); setStatus(null);
@@ -472,6 +491,7 @@ export default function SubhojanamPage() {
                   <input type="email" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm" placeholder="Email Address (optional)" />
                   <input type="tel" required maxLength={10} inputMode="numeric" value={form.mobile} onChange={(e) => setForm((f) => ({ ...f, mobile: e.target.value.replace(/[^\d]/g, "").slice(0, 10) }))} className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm" placeholder="10-digit Mobile Number" />
                 </div>
+                {lookupHint}
                 {status?.type === "error" && <p className="text-sm text-destructive">{status.message}</p>}
                 <button type="submit" disabled={submitting} className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-gold py-3.5 text-sm font-bold text-[hsl(220,60%,12%)] disabled:opacity-60">
                   {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}

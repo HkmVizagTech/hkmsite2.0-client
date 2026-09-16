@@ -11,6 +11,7 @@ import { usePaymentStatusPoller } from "@/lib/usePaymentStatusPoller";
 import AddressForm from "@/components/AddressForm";
 import type { PrasadamAddress } from "@/components/AddressForm";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
+import { useDonorPrefill } from "@/lib/donorPrefill";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 
@@ -88,6 +89,18 @@ export default function DonationForm({
   const [address, setAddress] = useState<PrasadamAddress>({ street: "", city: "", state: "", pincode: "", country: "India" });
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
+
+  // -- Donor pre-fill (logged-in profile OR phone lookup for past donors) --
+  const { lookupHint, handle80GToggle, handlePrasadamToggle } = useDonorPrefill({
+    form,
+    setForm,
+    onMahaPrasadamSelect: (saved) => {
+      setAddress((a) => {
+        const blank = !a.street && !a.city && !a.state && !a.pincode;
+        return blank ? { ...saved } as PrasadamAddress : a;
+      });
+    },
+  });
 
   // Pre-select a tier (or custom amount) when arriving with ?amount=...
   useEffect(() => {
@@ -367,20 +380,22 @@ export default function DonationForm({
                 <label htmlFor="donor-mobile" className={labelClass}>Mobile number</label>
                 <div className={inputWrapClass}>
                   <Phone className="pointer-events-none absolute left-3 h-4 w-4 text-muted-foreground" />
-                  <input
-                    id="donor-mobile"
-                    type="tel"
-                    required
-                    maxLength={10}
-                    inputMode="numeric"
-                    placeholder="10-digit mobile"
-                    value={form.mobile}
-                    onChange={(e) => setForm({ ...form, mobile: e.target.value.replace(/[^\d]/g, "").slice(0, 10) })}
-                    className={inputClass}
-                  />
+<input
+                      id="donor-mobile"
+                      type="tel"
+                      required
+                      maxLength={10}
+                      inputMode="numeric"
+                      placeholder="10-digit mobile"
+                      value={form.mobile}
+                      onChange={(e) => setForm({ ...form, mobile: e.target.value.replace(/[^\d]/g, "").slice(0, 10) })}
+                      className={inputClass}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
+
+            {lookupHint}
 
             <div>
               <label htmlFor="donor-email" className={labelClass}>Email address (optional)</label>
@@ -412,7 +427,10 @@ export default function DonationForm({
                   <input
                     type="checkbox"
                     checked={wantsMahaPrasadam}
-                    onChange={(e) => setWantsMahaPrasadam(e.target.checked)}
+                    onChange={(e) => {
+                      setWantsMahaPrasadam(e.target.checked);
+                      handlePrasadamToggle(e.target.checked);
+                    }}
                     className="h-3.5 w-3.5 shrink-0 accent-[hsl(42,92%,46%)]"
                   />
                   🙏 I&apos;d like Maha Prasadam delivered
@@ -428,7 +446,10 @@ export default function DonationForm({
                   <input
                     type="checkbox"
                     checked={want80G}
-                    onChange={(e) => setWant80G(e.target.checked)}
+                    onChange={(e) => {
+                      setWant80G(e.target.checked);
+                      handle80GToggle(e.target.checked);
+                    }}
                     className="h-3.5 w-3.5 shrink-0 accent-[hsl(42,92%,46%)]"
                   />
                   I need an 80G tax exemption receipt
@@ -661,6 +682,8 @@ export default function DonationForm({
             />
           </div>
 
+          {lookupHint}
+
           <DonorExtrasFields
             sevakName={form.sevakName}
             dob={form.dob}
@@ -675,7 +698,10 @@ export default function DonationForm({
                 <input
                   type="checkbox"
                   checked={want80G}
-                  onChange={(e) => setWant80G(e.target.checked)}
+                  onChange={(e) => {
+                    setWant80G(e.target.checked);
+                    handle80GToggle(e.target.checked);
+                  }}
                   className="rounded"
                 />
                 I want an 80G tax exemption receipt
@@ -702,7 +728,10 @@ export default function DonationForm({
                 <input
                   type="checkbox"
                   checked={wantsMahaPrasadam}
-                  onChange={(e) => setWantsMahaPrasadam(e.target.checked)}
+                  onChange={(e) => {
+                    setWantsMahaPrasadam(e.target.checked);
+                    handlePrasadamToggle(e.target.checked);
+                  }}
                   className="h-4 w-4 shrink-0 rounded accent-[hsl(42,92%,46%)]"
                 />
                 🙏 I&apos;d like Maha Prasadam delivered

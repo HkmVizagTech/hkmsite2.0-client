@@ -8,6 +8,7 @@ import { ArrowLeft, ArrowRight, Check, Clock, Copy, Facebook, FileCheck2, Heart,
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
+import { useDonorPrefill } from "@/lib/donorPrefill";
 import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
 import JanmashtamiGallery from "@/components/JanmashtamiGallery";
 import JanmashtamiImportanceSection from "@/components/janmashtami/JanmashtamiImportanceSection";
@@ -315,9 +316,42 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
     setForm((current) => ({ ...current, ...patch }));
   };
 
+  // Donor pre-fill: logged-in profile auto-fills name/email/mobile; a
+  // returning donor's phone lookup fills the same fields after they type
+  // their 10-digit number. PAN/address are filled only when 80G/prasadam
+  // are selected.
+  const { lookupHint, prefill, handle80GToggle, handlePrasadamToggle } = useDonorPrefill({
+    form,
+    setForm,
+    fieldMap: { name: "donorName", email: "donorEmail", mobile: "donorMobile" },
+    onMahaPrasadamSelect: (saved) => {
+      setForm((current) =>
+        !current.street && !current.area && !current.city && !current.state && !current.pincode
+          ? {
+              ...current,
+              street: (saved.street || "").trim(),
+              city: saved.city,
+              state: saved.state,
+              pincode: saved.pincode,
+            }
+          : current
+      );
+    },
+  });
+
   const openCheckout = (seva: Seva, option: SevaOption) => {
     setSelected({ seva, option });
-    setForm(initialForm);
+    setForm(
+      prefill
+        ? {
+            ...initialForm,
+            donorName: prefill.name,
+            donorMobile: prefill.mobile,
+            donorEmail: prefill.email,
+            panNumber: prefill.panNumber,
+          }
+        : initialForm
+    );
     setStatus({ type: "idle", message: "" });
   };
 
@@ -1066,6 +1100,8 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
                 </label>
               </div>
 
+              {lookupHint}
+
               <DonorExtrasFields
                 sevakName={form.sevakName}
                 dob={form.dob}
@@ -1078,13 +1114,21 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
               <div className="space-y-3">
                 {showPrasadamField && (
                   <label className="flex items-start gap-3 rounded-lg border border-amber-200/60 bg-white/40 p-4 text-sm text-[#331447]">
-                    <input type="checkbox" checked={form.wantPrasadam} onChange={(event) => updateForm({ wantPrasadam: event.target.checked })} className="mt-1 accent-amber-600" />
+                    <input type="checkbox" checked={form.wantPrasadam} onChange={(event) => {
+                    const next = event.target.checked;
+                    updateForm({ wantPrasadam: next });
+                    handlePrasadamToggle(next);
+                  }} className="mt-1 accent-amber-600" />
                     I would like to receive Maha Prasadam (Only within India)
                   </label>
                 )}
                 {showTaxField && (
                   <label className="flex items-start gap-3 rounded-lg border border-amber-200/60 bg-white/40 p-4 text-sm text-[#331447]">
-                    <input type="checkbox" checked={form.want80G} onChange={(event) => updateForm({ want80G: event.target.checked })} className="mt-1 accent-amber-600" />
+                    <input type="checkbox" checked={form.want80G} onChange={(event) => {
+                    const next = event.target.checked;
+                    updateForm({ want80G: next });
+                    handle80GToggle(next);
+                  }} className="mt-1 accent-amber-600" />
                     <span>
                       I wish to receive 80G Tax Exemption
                       <span className="mt-1 block text-xs text-amber-700/60">PAN and address are mandatory when 80G is selected.</span>

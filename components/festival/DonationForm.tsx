@@ -4,6 +4,7 @@ import { useAttribution } from "@/lib/useAttribution";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
 import { newEventId, getMetaBrowserData, trackPurchase } from "@/lib/metaPixel";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
+import { useDonorPrefill } from "@/lib/donorPrefill";
 
 const fmt = (n: number) => Number(n).toLocaleString("en-IN");
 
@@ -23,6 +24,30 @@ export default function DonationForm({ config, setToast }: any) {
   const [expandedSeva, setExpandedSeva] = useState<string | null>(null);
   const [formData, setFormData] = useState({ name: "", email: "", mobile: "", dob: "", sevakName: "", panNumber: "", want80G: false, wantPrasadam: false,
     doorNo: '', house: '', street: '', area: '', country: 'India', state: '', city: '', pincode: '' });
+
+  // Donor pre-fill: logged-in profile auto-fills name/email/mobile; a
+  // returning donor's phone lookup fills the same fields after they type
+  // their 10-digit number. PAN/address are filled only when 80G/prasadam
+  // are selected.
+  const { lookupHint, handle80GToggle, handlePrasadamToggle } = useDonorPrefill({
+    form: formData,
+    setForm: setFormData,
+    onMahaPrasadamSelect: (saved) => {
+      setFormData((f) => {
+        const blank = !f.doorNo && !f.house && !f.street && !f.area && !f.city && !f.state && !f.pincode;
+        return blank
+          ? {
+              ...f,
+              street: (saved.street || "").trim(),
+              state: saved.state,
+              city: saved.city,
+              pincode: saved.pincode,
+              country: "India",
+            }
+          : f;
+      });
+    },
+  });
 
   const toggleSeva = (id: string) => setExpandedSeva(expandedSeva === id ? null : id);
 
@@ -266,6 +291,8 @@ export default function DonationForm({ config, setToast }: any) {
           <input type="email" placeholder="Email ID (optional)" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className={inputCls} />
           <input type="tel" maxLength={10} inputMode="numeric" placeholder="Mobile Number *" value={formData.mobile} onChange={(e) => setFormData({ ...formData, mobile: e.target.value.replace(/[^\d]/g, "").slice(0, 10) })} className={inputCls} />
 
+          {lookupHint}
+
           <DonorExtrasFields
             sevakName={formData.sevakName}
             dob={formData.dob}
@@ -275,7 +302,11 @@ export default function DonationForm({ config, setToast }: any) {
           />
 
           <label className="flex items-start gap-2 cursor-pointer py-1">
-            <input type="checkbox" checked={formData.want80G} onChange={(e) => setFormData({ ...formData, want80G: e.target.checked })} className="mt-1 accent-amber-500" />
+            <input type="checkbox" checked={formData.want80G} onChange={(e) => {
+              const next = e.target.checked;
+              setFormData({ ...formData, want80G: next });
+              handle80GToggle(next);
+            }} className="mt-1 accent-amber-500" />
             <span className="text-violet-200/60 text-xs">I would like to receive 80(G) Certificate</span>
           </label>
 
@@ -284,7 +315,11 @@ export default function DonationForm({ config, setToast }: any) {
           )}
 
           <label className="flex items-start gap-2 cursor-pointer py-1">
-            <input type="checkbox" checked={formData.wantPrasadam} onChange={(e) => setFormData({ ...formData, wantPrasadam: e.target.checked })} className="mt-1 accent-amber-500" />
+            <input type="checkbox" checked={formData.wantPrasadam} onChange={(e) => {
+              const next = e.target.checked;
+              setFormData({ ...formData, wantPrasadam: next });
+              handlePrasadamToggle(next);
+            }} className="mt-1 accent-amber-500" />
             <span className="text-violet-200/60 text-xs">I would like to receive Maha Prasadam (Only within India)</span>
           </label>
 

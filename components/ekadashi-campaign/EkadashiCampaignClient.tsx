@@ -20,6 +20,7 @@ import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
 import { useScrollToDonate } from "@/lib/useScrollToDonate";
 import { newEventId, getMetaBrowserData, trackPurchase } from "@/lib/metaPixel";
 import type { PrasadamAddress } from "@/components/AddressForm";
+import { useDonorPrefill } from "@/lib/donorPrefill";
 import FaqSection from "@/components/sqft-campaign/FaqSection";
 import FounderSection from "@/components/sqft-campaign/FounderSection";
 import { unitImpact } from "@/lib/sevaConfig";
@@ -88,6 +89,21 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [showSticky, setShowSticky] = useState(false);
+
+  // Donor pre-fill: logged-in profile auto-fills name/email/mobile; a
+  // returning donor's phone lookup fills the same fields after they type
+  // their 10-digit number. PAN/address are filled only when 80G/prasadam
+  // are selected.
+  const { lookupHint, handle80GToggle, handlePrasadamToggle } = useDonorPrefill({
+    form,
+    setForm,
+    onMahaPrasadamSelect: (saved) => {
+      setAddress((a) => {
+        const blank = !a.street && !a.city && !a.state && !a.pincode;
+        return blank ? ({ ...saved } as PrasadamAddress) : a;
+      });
+    },
+  });
 
   useEffect(() => {
     const check = () => {
@@ -501,6 +517,8 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
                     </div>
                   </div>
 
+                  {lookupHint}
+
                   <div>
                     <label htmlFor="donor-email" className={labelClass}>Email address (optional)</label>
                     <div className={inputWrapClass}>
@@ -531,7 +549,10 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
                         <input
                           type="checkbox"
                           checked={want80G}
-                          onChange={(e) => setWant80G(e.target.checked)}
+                          onChange={(e) => {
+                            setWant80G(e.target.checked);
+                            handle80GToggle(e.target.checked);
+                          }}
                           className="h-3.5 w-3.5 shrink-0 accent-[hsl(42,92%,46%)]"
                         />
                         I need an 80G tax exemption receipt
@@ -556,7 +577,10 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
                         <input
                           type="checkbox"
                           checked={wantsMahaPrasadam}
-                          onChange={(e) => setWantsMahaPrasadam(e.target.checked)}
+                          onChange={(e) => {
+                            setWantsMahaPrasadam(e.target.checked);
+                            handlePrasadamToggle(e.target.checked);
+                          }}
                           className="h-3.5 w-3.5 shrink-0 accent-[hsl(42,92%,46%)]"
                         />
                         🙏 I&apos;d like Maha Prasadam delivered

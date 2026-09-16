@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
+import { useDonorPrefill } from "@/lib/donorPrefill";
 import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
 import FaqSection from "@/components/sqft-campaign/FaqSection";
 import PageLayout from "@/components/PageLayout";
@@ -306,9 +307,42 @@ export default function RadhashtamiClient() {
     setForm((c) => ({ ...c, ...patch }));
   };
 
+  // Donor pre-fill: logged-in profile auto-fills name/email/mobile; a
+  // returning donor's phone lookup fills the same fields after they type
+  // their 10-digit number. PAN/address are filled only when 80G/prasadam
+  // are selected.
+  const { lookupHint, prefill, handle80GToggle, handlePrasadamToggle } = useDonorPrefill({
+    form,
+    setForm,
+    fieldMap: { name: "donorName", email: "donorEmail", mobile: "donorMobile" },
+    onMahaPrasadamSelect: (saved) => {
+      setForm((c) =>
+        !c.address && !c.city && !c.state && !c.pincode
+          ? {
+              ...c,
+              address: (saved.street || "").trim(),
+              city: saved.city,
+              state: saved.state,
+              pincode: saved.pincode,
+            }
+          : c
+      );
+    },
+  });
+
   const openCheckout = (seva: Seva, option: SevaOption) => {
     setSelected({ seva, option });
-    setForm(initialForm);
+    setForm(
+      prefill
+        ? {
+            ...initialForm,
+            donorName: prefill.name,
+            donorMobile: prefill.mobile,
+            donorEmail: prefill.email,
+            panNumber: prefill.panNumber,
+          }
+        : initialForm
+    );
     setStatus({ type: "idle", message: "" });
     trackInitiateCheckout({ content_name: seva.title });
   };
@@ -1370,6 +1404,8 @@ export default function RadhashtamiClient() {
                   </label>
                 </div>
 
+                {lookupHint}
+
                 <DonorExtrasFields
                   sevakName={form.sevakName}
                   dob={form.dob}
@@ -1393,9 +1429,11 @@ export default function RadhashtamiClient() {
                       <input
                         type="checkbox"
                         checked={form.wantPrasadam}
-                        onChange={(e) =>
-                          updateForm({ wantPrasadam: e.target.checked })
-                        }
+                        onChange={(e) => {
+                          const next = e.target.checked;
+                          updateForm({ wantPrasadam: next });
+                          handlePrasadamToggle(next);
+                        }}
                         className="mt-1 accent-emerald-600"
                       />
                       I would like to receive Maha Prasadam (Only within
@@ -1414,9 +1452,11 @@ export default function RadhashtamiClient() {
                       <input
                         type="checkbox"
                         checked={form.want80G}
-                        onChange={(e) =>
-                          updateForm({ want80G: e.target.checked })
-                        }
+                        onChange={(e) => {
+                          const next = e.target.checked;
+                          updateForm({ want80G: next });
+                          handle80GToggle(next);
+                        }}
                         className="mt-1 accent-emerald-600"
                       />
                       <span>

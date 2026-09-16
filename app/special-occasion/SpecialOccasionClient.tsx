@@ -25,6 +25,7 @@ import { sevas, getSevaHref, type Seva } from "@/lib/sevaConfig";
 import { useAttribution } from "@/lib/useAttribution";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
 import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
+import { useDonorPrefill } from "@/lib/donorPrefill";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
 import { useScrollToDonate } from "@/lib/useScrollToDonate";
 import { newEventId, getMetaBrowserData, trackInitiateCheckout, trackPurchase } from "@/lib/metaPixel";
@@ -144,6 +145,14 @@ export default function SpecialOccasionClient() {
   const [form, setForm] = useState({ name: "", email: "", mobile: "" });
   const [want80G, setWant80G] = useState(false);
   const [panNumber, setPanNumber] = useState("");
+
+  // Donor pre-fill: logged-in profile auto-fills name/email/mobile; a
+  // returning donor's phone lookup fills the same fields after they type
+  // their 10-digit number. PAN is filled only when 80G is selected.
+  const { lookupHint, prefill } = useDonorPrefill({
+    form,
+    setForm,
+  });
   const [dedication, setDedication] = useState("");
   const [sevakName, setSevakName] = useState("");
   const [dob, setDob] = useState("");
@@ -516,6 +525,8 @@ export default function SpecialOccasionClient() {
                 <input type="text" placeholder="Dedicate to / occasion note (optional)" value={dedication} onChange={(e) => setDedication(e.target.value)} className="rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none focus:border-gold sm:col-span-2" />
               </div>
 
+              {lookupHint}
+
               <DonorExtrasFields
                 sevakName={sevakName}
                 dob={dob}
@@ -525,7 +536,11 @@ export default function SpecialOccasionClient() {
               />
 
               <label className="mb-3 flex cursor-pointer items-center gap-2 text-sm text-foreground">
-                <input type="checkbox" checked={want80G} onChange={(e) => setWant80G(e.target.checked)} className="h-4 w-4 accent-[hsl(42,92%,46%)]" />
+                <input type="checkbox" checked={want80G} onChange={(e) => {
+                  const next = e.target.checked;
+                  setWant80G(next);
+                  if (next && !panNumber.trim() && prefill?.panNumber) setPanNumber(prefill.panNumber.trim());
+                }} className="h-4 w-4 accent-[hsl(42,92%,46%)]" />
                 I need an 80G tax exemption receipt
               </label>
               {want80G && (

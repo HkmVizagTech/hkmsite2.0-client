@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { ShieldCheck, Loader2, User, Phone, Mail, Check, Copy, ChevronDown, MapPin, Crown, PenLine } from "lucide-react";
 import Ornament from "@/components/Ornament";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
+import { useDonorPrefill } from "@/lib/donorPrefill";
 import type { CampaignConfig, GoldenTierConfig } from "@/lib/campaignConfig";
 
 export interface DonorForm {
@@ -124,6 +125,29 @@ export default function DonationFormSection({
   const [pinLoading, setPinLoading] = useState(false);
   const [pinError, setPinError] = useState<string | null>(null);
   const lastPin = useRef("");
+
+  // Donor pre-fill: logged-in profile auto-fills name/email/mobile; a
+  // returning donor's phone lookup fills the same fields after they type
+  // their 10-digit number. PAN/address are filled only when 80G/prasadam
+  // are selected.
+  const { lookupHint, handle80GToggle, handlePrasadamToggle } = useDonorPrefill({
+    form,
+    setForm,
+    onMahaPrasadamSelect: (saved) => {
+      setForm((prev) => {
+        const blank = !prev.addressLine && !prev.city && !prev.state && !prev.pincode;
+        return blank
+          ? ({
+              ...prev,
+              addressLine: (saved.street || "").trim(),
+              city: saved.city,
+              state: saved.state,
+              pincode: saved.pincode,
+            })
+          : prev;
+      });
+    },
+  });
 
   // Auto-fill city & state from a 6-digit PIN code (India Post public API).
   useEffect(() => {
@@ -451,6 +475,8 @@ export default function DonationFormSection({
                 </div>
               </div>
 
+              {lookupHint}
+
               <div>
                 <label htmlFor="donor-email" className={labelClass}>
                   Email address (optional)
@@ -483,7 +509,10 @@ export default function DonationFormSection({
                     <input
                       type="checkbox"
                       checked={wantsMahaPrasadam}
-                      onChange={(e) => setWantsMahaPrasadam(e.target.checked)}
+                      onChange={(e) => {
+                        setWantsMahaPrasadam(e.target.checked);
+                        handlePrasadamToggle(e.target.checked);
+                      }}
                       className="h-3.5 w-3.5 shrink-0 accent-[hsl(42,92%,46%)]"
                     />
                     🙏 I&apos;d like Maha Prasadam delivered
@@ -556,7 +585,10 @@ className="w-full rounded-lg border border-slate-300 bg-white dark:bg-card px-3 
                   <input
                     type="checkbox"
                     checked={want80G}
-                    onChange={(e) => setWant80G(e.target.checked)}
+                    onChange={(e) => {
+                      setWant80G(e.target.checked);
+                      handle80GToggle(e.target.checked);
+                    }}
                     className="h-3.5 w-3.5 shrink-0 accent-[hsl(42,92%,46%)]"
                   />
                   I need an 80G tax exemption receipt

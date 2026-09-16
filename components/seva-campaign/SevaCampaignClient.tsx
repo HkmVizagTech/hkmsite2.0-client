@@ -22,6 +22,7 @@ import AddressForm from "@/components/AddressForm";
 import type { PrasadamAddress } from "@/components/AddressForm";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
 import { getSevaCampaignConfig, GAU_CAMPAIGN, type SevaCampaignConfig } from "@/lib/sevaCampaignConfig";
+import { useDonorPrefill } from "@/lib/donorPrefill";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 
@@ -81,6 +82,22 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [showSticky, setShowSticky] = useState(false);
   const [stats, setStats] = useState<SevaStats | null>(null);
+
+  // Donor pre-fill: logged-in profile auto-fills name/email/mobile; a
+  // returning donor's phone lookup fills the same fields after they type
+  // their 10-digit number. PAN/address are filled only when 80G/prasadam
+  // are selected.
+  const { lookupHint, handle80GToggle, handlePrasadamToggle } = useDonorPrefill({
+    form,
+    setForm,
+    onMahaPrasadamSelect: (saved) => {
+      setAddress((a) => {
+        const blank = !a.street && !a.city && !a.state && !a.pincode;
+        return blank ? ({ ...saved } as PrasadamAddress) : a;
+      });
+    },
+  });
+
   const formRef = useRef<HTMLElement>(null);
   const galleryRef = useRef<HTMLDivElement>(null);
   const testimonialsRef = useRef<HTMLDivElement>(null);
@@ -518,6 +535,8 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                     </div>
                   </div>
 
+                  {lookupHint}
+
                   <div>
                     <label htmlFor="donor-email" className={labelClass}>Email address (optional)</label>
                     <div className={inputWrapClass}>
@@ -548,7 +567,10 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                         <input
                           type="checkbox"
                           checked={want80G}
-                          onChange={(e) => setWant80G(e.target.checked)}
+                          onChange={(e) => {
+                            setWant80G(e.target.checked);
+                            handle80GToggle(e.target.checked);
+                          }}
                           className="h-3.5 w-3.5 shrink-0 accent-[hsl(42,92%,46%)]"
                         />
                         I need an 80G tax exemption receipt
@@ -573,7 +595,10 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                         <input
                           type="checkbox"
                           checked={wantsMahaPrasadam}
-                          onChange={(e) => setWantsMahaPrasadam(e.target.checked)}
+                          onChange={(e) => {
+                            setWantsMahaPrasadam(e.target.checked);
+                            handlePrasadamToggle(e.target.checked);
+                          }}
                           className="h-3.5 w-3.5 shrink-0 accent-[hsl(42,92%,46%)]"
                         />
                         🙏 I&apos;d like Maha Prasadam delivered
