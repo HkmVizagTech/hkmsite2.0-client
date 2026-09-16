@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Search,
-  SlidersHorizontal,
   PackageOpen,
   Megaphone,
   Sparkles,
@@ -12,7 +11,19 @@ import {
   HeartHandshake,
   ChevronLeft,
   ChevronRight,
+  LayoutGrid,
+  ArrowUpDown,
+  ChevronDown,
+  Check,
+  X,
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import ProductCard from "@/components/shop/ProductCard";
 import {
   Product,
@@ -143,55 +154,104 @@ export default function ShopCatalogPage() {
 
       {/* ═══ STICKY FILTERS ═══ */}
       <div className="sticky top-16 z-30 border-b border-border bg-background/95 backdrop-blur-md">
-        <div className="mx-auto flex max-w-7xl items-center gap-3 overflow-x-auto px-4 py-3 sm:px-6">
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setCategory("all")}
-              className={`whitespace-nowrap rounded-full px-4 py-2 text-xs font-semibold transition-all sm:text-sm ${
-                category === "all"
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "border border-border bg-background text-muted-foreground hover:border-gold hover:text-foreground"
-              }`}
-            >
-              All
-            </button>
-            {categories.map((c) => (
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-2 px-4 py-3 sm:px-6">
+          {/* Category selector */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
               <button
-                key={c._id}
-                onClick={() => setCategory(c.slug)}
-                className={`whitespace-nowrap rounded-full px-4 py-2 text-xs font-semibold transition-all sm:text-sm ${
-                  category === c.slug
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "border border-border bg-background text-muted-foreground hover:border-gold hover:text-foreground"
-                }`}
+                className="inline-flex h-10 items-center gap-2 rounded-full border border-border bg-background px-4 text-xs font-semibold text-foreground transition-colors hover:border-gold sm:text-sm"
+                aria-label="Filter by category"
               >
-                {c.name}
-                <span
-                  className={`ml-1.5 rounded-full px-1.5 py-0.5 text-[10px] font-bold ${
-                    category === c.slug ? "bg-white/20" : "bg-muted text-muted-foreground"
-                  }`}
-                >
-                  {c.productCount}
-                </span>
+                <LayoutGrid className="h-4 w-4 text-muted-foreground" />
+                {activeCategoryName ?? "All categories"}
+                <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
               </button>
-            ))}
-          </div>
-
-          <div className="ml-auto flex shrink-0 items-center gap-1.5">
-            <SlidersHorizontal className="h-3.5 w-3.5 text-muted-foreground" />
-            <select
-              value={sort}
-              onChange={(e) => setSort(e.target.value)}
-              className="cursor-pointer rounded-lg border border-border bg-background px-2 py-2 text-xs font-medium text-foreground outline-none focus:border-gold sm:text-sm"
-            >
-              {SORTS.map((s) => (
-                <option key={s.value} value={s.value}>
-                  {s.label}
-                </option>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="max-h-96 w-64 overflow-y-auto p-1.5">
+              <DropdownMenuLabel className="px-2 py-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Category
+              </DropdownMenuLabel>
+              <DropdownMenuItem onSelect={() => setCategory("all")}>
+                <span className="flex w-full items-center justify-between gap-3">
+                  All categories
+                  {category === "all" && <Check className="h-4 w-4 text-primary" />}
+                </span>
+              </DropdownMenuItem>
+              {categories.map((c) => (
+                <DropdownMenuItem key={c._id} onSelect={() => setCategory(c.slug)}>
+                  <span className="flex w-full items-center justify-between gap-3">
+                    {c.name}
+                    <span className="flex items-center gap-2">
+                      {c.productCount > 0 && (
+                        <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
+                          {c.productCount}
+                        </span>
+                      )}
+                      {category === c.slug && <Check className="h-4 w-4 text-primary" />}
+                    </span>
+                  </span>
+                </DropdownMenuItem>
               ))}
-            </select>
-          </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Sort selector */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                className="inline-flex h-10 items-center gap-2 rounded-full border border-border bg-background px-4 text-xs font-semibold text-foreground transition-colors hover:border-gold sm:text-sm"
+                aria-label="Sort products"
+              >
+                <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground" />
+                {SORTS.find((s) => s.value === sort)?.label ?? "Sort"}
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-56 p-1.5">
+              <DropdownMenuLabel className="px-2 py-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Sort by
+              </DropdownMenuLabel>
+              {SORTS.map((s) => (
+                <DropdownMenuItem key={s.value} onSelect={() => setSort(s.value)}>
+                  <span className="flex w-full items-center justify-between gap-3">
+                    {s.label}
+                    {sort === s.value && <Check className="h-4 w-4 text-primary" />}
+                  </span>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
+
+        {/* Active filter chips */}
+        {(category !== "all" || search) && (
+          <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-2 px-4 pb-3 sm:px-6">
+            {category !== "all" && (
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-xs font-semibold text-gold-deep">
+                {activeCategoryName ?? "Category"}
+                <button onClick={() => setCategory("all")} aria-label="Remove category filter">
+                  <X className="h-3 w-3" />
+                </button>
+              </span>
+            )}
+            {search && (
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-xs font-semibold text-gold-deep">
+                “{search}”
+                <button onClick={() => setSearchInput("")} aria-label="Clear search">
+                  <X className="h-3 w-3" />
+                </button>
+              </span>
+            )}
+            <button
+              onClick={() => {
+                setCategory("all");
+                setSearchInput("");
+              }}
+              className="text-xs font-medium text-muted-foreground underline-offset-2 hover:text-primary hover:underline"
+            >
+              Clear all filters
+            </button>
+          </div>
+        )}
       </div>
 
       {/* ═══ FEATURED RAIL ═══ */}
