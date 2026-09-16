@@ -1,13 +1,21 @@
 /**
  * Fallback content for the /festival index.
  *
- * Festivals are admin-managed records (festivalShowcase). Until the admin
- * publishes any, we project the temple's own Gaudiya Vaishnava calendar into
- * the same card shape so the page always has real, accurate festivals —
- * Janmashtami, Radhashtami, etc. Admin records win whenever they exist.
+ * Festivals are admin-managed records (festivalShowcase). Until one is
+ * published for every celebration, we project the temple's own Gaudiya
+ * Vaishnava calendar into the same card shape so the page always lists the
+ * full festival line-up of the year — Janmashtami, Radhashtami, Ratha Yatra,
+ * Diwali, Govardhan Puja, etc. — rather than depending on the admin state or
+ * on the (upcoming-only) events helper. Admin records win whenever they exist.
  */
 
-import { getFallbackEvents, type FallbackEvent } from "./eventsFallback";
+import { vaishnavaCalendar2026 } from "./vaishnavaCalendarData";
+import {
+  startOfToday,
+  pickImageByKeyword,
+  pickFestivalHref,
+  GENERIC_IMAGES,
+} from "./eventsFallback";
 import type { FestivalShowcase } from "./festivalShowcase";
 
 /**
@@ -17,25 +25,46 @@ import type { FestivalShowcase } from "./festivalShowcase";
  */
 export type FestivalCardItem = FestivalShowcase & { href?: string };
 
-export function getFallbackFestivals(limit = 12): FestivalCardItem[] {
-  return getFallbackEvents(limit).map(
-    ({ _id, title, date, description, image, location, href }: FallbackEvent) => ({
-      _id,
-      title,
-      slug: `calendar-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
-      heroImage: image,
-      cardImage: image,
-      eventDate: date,
-      location,
-      description,
-      status: "upcoming",
-      featured: false,
-      gallery: [],
-      schedule: [],
-      testimonials: [],
-      href,
-    })
-  );
+export function getFallbackFestivals(limit = 0): FestivalCardItem[] {
+  const today = startOfToday();
+
+  const festivals = vaishnavaCalendar2026
+    .filter((d) => d.type === "Festival")
+    .slice()
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    .map(
+      (d, i): FestivalCardItem => {
+        const image =
+          pickImageByKeyword(d.title) || GENERIC_IMAGES[i % GENERIC_IMAGES.length];
+        return {
+          _id: `calendar-${d.date}-${d.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
+          slug: `calendar-${d.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
+          title: d.title,
+          heroImage: image,
+          cardImage: image,
+          eventDate: d.date,
+          location: "Temple Premises",
+          description: d.description,
+          status: new Date(d.date) >= today ? "upcoming" : "completed",
+          featured: false,
+          gallery: [],
+          schedule: [],
+          testimonials: [],
+          href: pickFestivalHref(d.title) || "/vaishnav-calendar",
+        };
+      }
+    )
+    .filter((_, i) => limit <= 0 || i < limit);
+
+  // Spotlight the next upcoming festival; if the whole year is behind us,
+  // spotlight the most recent one so the page never features an empty card.
+  const nextIdx = festivals.findIndex((f) => f.status === "upcoming");
+  const spotlightIdx = nextIdx >= 0 ? nextIdx : festivals.length - 1;
+  if (spotlightIdx >= 0) {
+    festivals[spotlightIdx] = { ...festivals[spotlightIdx], featured: true };
+  }
+
+  return festivals;
 }
 
 /**
