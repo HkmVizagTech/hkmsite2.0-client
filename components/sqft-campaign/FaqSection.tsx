@@ -11,12 +11,13 @@ interface FaqItem {
 
 interface FaqSectionProps {
   faqs: FaqItem[];
-  tone?: "default" | "mint";
+  tone?: "default" | "mint" | "blue";
 }
 
 export default function FaqSection({ faqs, tone = "default" }: FaqSectionProps) {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const mint = tone === "mint";
+  const blue = tone === "blue";
 
   // FAQPage structured data — lets Google show these Q&As directly in
   // search results (the "People also ask"-style rich snippet), which
@@ -34,11 +35,17 @@ export default function FaqSection({ faqs, tone = "default" }: FaqSectionProps) 
   return (
     <section
       className={
-        mint
+        mint || blue
           ? "py-12 md:py-16"
           : "bg-white dark:bg-background py-12 md:py-16"
       }
-      style={mint ? { background: "#F2FAF7" } : undefined}
+      style={
+        mint
+          ? { background: "#F2FAF7" }
+          : blue
+            ? { background: "#F2F7FC" }
+            : undefined
+      }
     >
       <script
         type="application/ld+json"
@@ -48,7 +55,7 @@ export default function FaqSection({ faqs, tone = "default" }: FaqSectionProps) 
         <Ornament className="mb-6" />
         <h2
           className={`mb-8 text-center font-heading text-2xl font-bold md:text-3xl ${
-            mint ? "text-[#063D35]" : "text-primary"
+            mint ? "text-[#063D35]" : blue ? "text-[#0B2D4A]" : "text-primary"
           }`}
         >
           Frequently Asked Questions
@@ -58,7 +65,11 @@ export default function FaqSection({ faqs, tone = "default" }: FaqSectionProps) 
             <div
               key={f.q}
               className={`overflow-hidden rounded-2xl border ${
-                mint ? "border-[#AEE4D2] bg-[#C9F3E8]" : "border-border bg-card"
+                mint
+                  ? "border-[#AEE4D2] bg-[#C9F3E8]"
+                  : blue
+                    ? "border-[#BFD2E6] bg-[#E6EDF6]"
+                    : "border-border bg-card"
               }`}
             >
               <button
@@ -69,7 +80,7 @@ export default function FaqSection({ faqs, tone = "default" }: FaqSectionProps) 
               >
                 <span
                   className={`text-sm font-semibold md:text-base ${
-                    mint ? "text-[#063D35]" : "text-foreground"
+                    mint ? "text-[#063D35]" : blue ? "text-[#0B2D4A]" : "text-foreground"
                   }`}
                 >
                   {f.q}
@@ -85,7 +96,9 @@ export default function FaqSection({ faqs, tone = "default" }: FaqSectionProps) 
                   className={`border-t px-5 py-4 text-sm leading-relaxed ${
                     mint
                       ? "border-[#AEE4D2] text-[#2C5B4E]"
-                      : "border-border text-muted-foreground"
+                      : blue
+                        ? "border-[#BFD2E6] text-[#2E4358]"
+                        : "border-border text-muted-foreground"
                   }`}
                 >
                   {f.a}
