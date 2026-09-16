@@ -253,21 +253,25 @@ const apiBase = () =>
   );
 const formatAmount = (amount: number) => amount.toLocaleString("en-IN");
 
-// ─── Color tokens ────────────────────────────────────────────────────────────
+// ─── Color tokens (Govardhan Puja brand palette: deep blue, gold, saffron) ───
+// deepGreen / heading = Deep Blue #0B2D4A · emerald = Secondary Blue #1E4E7A ·
+// teal = Sky Blue #5B8FB9 · gold / yellow = Primary Gold #F4C430 ·
+// mint / softGold / pink = Light Gold #F9E8A2 · magenta = Saffron Orange #F29F3D ·
+// lightMint = page mist #F2F7FC · text = ink #2E4358
 
 const C = {
-  deepGreen: "#064C3F",
-  emerald: "#023B32",
-  teal: "#087A68",
-  mint: "#C9F3E8",
-  lightMint: "#F2FAF7",
-  gold: "#D6A93A",
-  softGold: "#F2D98B",
-  magenta: "#C21875",
-  pink: "#E84A8A",
-  yellow: "#F2C318",
-  heading: "#063D35",
-  text: "#263A36",
+  deepGreen: "#0B2D4A",
+  emerald: "#1E4E7A",
+  teal: "#5B8FB9",
+  mint: "#F9E8A2",
+  lightMint: "#F2F7FC",
+  gold: "#F4C430",
+  softGold: "#F9E8A2",
+  magenta: "#F29F3D",
+  pink: "#F9E8A2",
+  yellow: "#F4C430",
+  heading: "#0B2D4A",
+  text: "#2E4358",
 } as const;
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -577,7 +581,7 @@ export default function GovardhanPujaClient() {
       <section
         id="offer-seva"
         className="relative overflow-hidden px-4 py-12 md:py-16"
-        style={{ background: `linear-gradient(180deg, ${C.lightMint}, #e8f8f0 50%, ${C.lightMint})` }}
+        style={{ background: `linear-gradient(180deg, ${C.lightMint}, #E4EEF7 50%, ${C.lightMint})` }}
       >
         {/* Decorative background elements */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
@@ -710,7 +714,7 @@ export default function GovardhanPujaClient() {
                   <div
                     className="absolute inset-0"
                     style={{
-                      background: `linear-gradient(to top, ${C.emerald}ee, rgba(2,59,50,0.35) 55%, rgba(2,59,50,0.05))`,
+                      background: `linear-gradient(to top, ${C.emerald}ee, rgba(30,78,122,0.35) 55%, rgba(30,78,122,0.05))`,
                     }}
                   />
                   <div className="absolute bottom-2.5 left-4 right-4 flex items-center gap-2">
@@ -1037,7 +1041,7 @@ export default function GovardhanPujaClient() {
                   title={`Copy ${label}`}
                 >
                   {copiedField === label ? (
-                    <Check className="h-4 w-4 text-green-500" />
+                    <Check className="h-4 w-4 text-sky-600" />
                   ) : (
                     <Copy className="h-4 w-4 text-slate-400" />
                   )}
@@ -1199,7 +1203,7 @@ export default function GovardhanPujaClient() {
       {/* ═══════════════════════════════════════════════════════════════════
           FAQS
       ═══════════════════════════════════════════════════════════════════ */}
-      <FaqSection faqs={FAQS} tone="mint" />
+      <FaqSection faqs={FAQS} tone="blue" />
 
       {/* ═══════════════════════════════════════════════════════════════════
           STATUS TOAST
@@ -1447,7 +1451,7 @@ export default function GovardhanPujaClient() {
                           updateForm({ wantPrasadam: next });
                           handlePrasadamToggle(next);
                         }}
-                        className="mt-1 accent-emerald-600"
+                        className="mt-1 accent-sky-600"
                       />
                       I would like to receive Maha Prasadam (Only within
                       India)
@@ -1470,7 +1474,7 @@ export default function GovardhanPujaClient() {
                           updateForm({ want80G: next });
                           handle80GToggle(next);
                         }}
-                        className="mt-1 accent-emerald-600"
+                        className="mt-1 accent-sky-600"
                       />
                       <span>
                         I wish to receive 80G Tax Exemption
