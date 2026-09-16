@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ShoppingBag, Check } from "lucide-react";
+import { ShoppingBag, Check, Truck } from "lucide-react";
 import { useState } from "react";
 import { useCart } from "@/contexts/CartContext";
 import { Product, discountPercent, displayPrice, formatINR } from "@/lib/shopApi";
@@ -114,6 +114,11 @@ export default function ProductCard({ product, index = 0, categoryName }: Props)
           )}
           {saveAmount !== null && saveAmount > 0 && (
             <p className="text-[10px] font-bold uppercase text-emerald-600">Save {formatINR(saveAmount)}</p>
+          )}
+          {product.freeShipping && (
+            <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-600">
+              <Truck className="h-3 w-3" /> Free delivery
+            </span>
           )}
         </div>
 

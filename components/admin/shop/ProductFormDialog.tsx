@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Loader2, Plus, Star, Trash2, Upload, X } from "lucide-react";
+import { Loader2, Plus, Star, Truck, Trash2, Upload, X } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import {
   Dialog,
@@ -54,6 +54,7 @@ export interface ShopProduct {
   weightGrams?: number;
   status: "active" | "draft";
   featured: boolean;
+  freeShipping?: boolean;
   tags: string[];
   sortOrder: number;
   totalStock: number;
@@ -123,6 +124,7 @@ export default function ProductFormDialog({ open, onOpenChange, product, categor
   const [weightGrams, setWeightGrams] = useState("");
   const [status, setStatus] = useState<"active" | "draft">("draft");
   const [featured, setFeatured] = useState(false);
+  const [freeShipping, setFreeShipping] = useState(false);
   const [tags, setTags] = useState("");
   const [sortOrder, setSortOrder] = useState("0");
   const [regenerateSlug, setRegenerateSlug] = useState(false);
@@ -177,6 +179,7 @@ export default function ProductFormDialog({ open, onOpenChange, product, categor
       setWeightGrams(product.weightGrams != null ? String(product.weightGrams) : "");
       setStatus(product.status === "active" ? "active" : "draft");
       setFeatured(Boolean(product.featured));
+      setFreeShipping(Boolean(product.freeShipping));
       setTags((product.tags || []).join(", "));
       setSortOrder(String(product.sortOrder ?? 0));
     } else {
@@ -193,6 +196,7 @@ export default function ProductFormDialog({ open, onOpenChange, product, categor
       setWeightGrams("");
       setStatus("draft");
       setFeatured(false);
+      setFreeShipping(false);
       setTags("");
       setSortOrder("0");
     }
@@ -301,6 +305,7 @@ export default function ProductFormDialog({ open, onOpenChange, product, categor
       weightGrams: weightGrams.trim() ? num(weightGrams) : 0,
       status,
       featured,
+      freeShipping,
       tags: tags.split(",").map((t) => t.trim()).filter(Boolean),
       sortOrder: num(sortOrder),
     };
@@ -703,6 +708,19 @@ export default function ProductFormDialog({ open, onOpenChange, product, categor
               </div>
             </div>
             <Switch id="product-featured" checked={featured} onCheckedChange={setFeatured} />
+          </div>
+
+          <div className="flex items-center justify-between rounded-lg border border-border p-3">
+            <div className="flex items-center gap-2">
+              <Truck className={`h-4 w-4 ${freeShipping ? "text-emerald-600" : "text-muted-foreground"}`} />
+              <div>
+                <Label htmlFor="product-free-shipping">Free delivery</Label>
+                <p className="text-xs text-muted-foreground">
+                  This item ships free, even if the cart is below the free-delivery threshold.
+                </p>
+              </div>
+            </div>
+            <Switch id="product-free-shipping" checked={freeShipping} onCheckedChange={setFreeShipping} />
           </div>
 
           {editing && (

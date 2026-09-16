@@ -395,6 +395,9 @@ export default function CheckoutPage() {
                         <p className="text-xs text-muted-foreground">
                           {item.variantLabel ? `${item.variantLabel} · ` : ""}Qty {item.quantity}
                         </p>
+                        {item.freeShipping && (
+                          <p className="mt-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-600">Free delivery</p>
+                        )}
                       </div>
                       <p className="font-semibold text-foreground">{formatINR(item.lineTotal)}</p>
                     </div>
