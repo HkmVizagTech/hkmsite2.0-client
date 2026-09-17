@@ -11,6 +11,7 @@ import {
 import PageLayout from "@/components/PageLayout";
 import Ornament from "@/components/Ornament";
 import TempleCarousel from "@/components/TempleCarousel";
+import FestivalDonationsSection from "@/components/FestivalDonationsSection";
 import { sevas, getSevaHref, type Seva } from "@/lib/sevaConfig";
 
 const PRIVILEGES = [
@@ -191,6 +192,9 @@ export default function DonateHubPage() {
             </div>
           </div>
         </section>
+
+        {/* ══ FESTIVAL SEVAS ══ */}
+        <FestivalDonationsSection variant="donations" />
 
         {/* ══ MANDIR NIRMAN SEVA — dedicated section, detailed treatment ══ */}
         <section className="py-12 md:py-16">

@@ -1,16 +1,19 @@
 "use client";
 
 /**
- * Festival Donations section — used on the home page and the /donations
- * page. Lists the festival donation campaigns the admin has created
- * (server: festivalDonation records, served by /festival-donations/all)
- * with a Donate button that links to the campaign's own donation page at
- * /festival/<slug>.
+ * Festival Donations section — used on the home page, the /donations page and
+ * the /donate page. Lists active festival donation campaigns (server:
+ * festivalDonation records, served by /festival-donations/all) as poster cards
+ * matching the /donate seva card style, each linking straight to its real
+ * festival donation page (e.g. /radhashtami, /govardhan-puja, /ekadashi).
  *
- * Renders nothing at all when there are no active campaigns, so the host
- * page never shows an empty section. `variant` picks the two skins:
+ * Only campaigns with a known real page are rendered — anything else is
+ * skipped so we never link to the removed generic /festival/<slug> route.
+ * When there are no matching campaigns the whole section renders nothing.
+ *
+ * `variant` picks the two skins:
  *   - "home"      — dark gradient band matching the home page's sections
- *   - "donations" — lighter card look for the standalone donations page
+ *   - "donations" — lighter band for the standalone donations / donate pages
  */
 
 import { useEffect, useState } from "react";
@@ -21,6 +24,17 @@ import Ornament from "@/components/Ornament";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 
+/**
+ * Real festival donation pages on the site. The generic /festival/<slug>
+ * route was removed to keep the bundle lean, so each campaign slug must map
+ * to an actual page here — add a new entry when a campaign is added.
+ */
+const FESTIVAL_PAGE: Record<string, string> = {
+  radhashtami: "/radhashtami",
+  "govardhan-puja": "/govardhan-puja",
+  ekadashi: "/ekadashi",
+};
+
 interface FestivalDonationCampaign {
   _id?: string;
   slug: string;
@@ -30,6 +44,17 @@ interface FestivalDonationCampaign {
   active?: boolean;
   donationOptions?: { label?: string; amount?: number }[];
   meta?: Record<string, unknown>;
+}
+
+function formatEventDate(value: unknown): { day: number; month: string; year: number } | null {
+  if (typeof value !== "string" || !value) return null;
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return null;
+  return {
+    day: d.getDate(),
+    month: d.toLocaleString("en-US", { month: "short" }),
+    year: d.getFullYear(),
+  };
 }
 
 export default function FestivalDonationsSection({
@@ -50,7 +75,16 @@ export default function FestivalDonationsSection({
         // The public endpoint returns a bare array; a stray
         // { message: "Currently there are no festivals" } object when empty.
         const list: FestivalDonationCampaign[] = Array.isArray(data) ? data : [];
-        setCampaigns(list.filter((c) => c && c.slug && c.title && c.active !== false));
+        setCampaigns(
+          list.filter(
+            (c) =>
+              c &&
+              c.slug &&
+              c.title &&
+              c.active !== false &&
+              !!FESTIVAL_PAGE[c.slug]
+          )
+        );
       })
       .catch(() => {
         if (!cancelled) setCampaigns([]);
@@ -67,11 +101,11 @@ export default function FestivalDonationsSection({
   const visible = campaigns.slice(0, limit);
   const isHome = variant === "home";
 
-  const sevaChips = (c: FestivalDonationCampaign) =>
+  const sevas = (c: FestivalDonationCampaign) =>
     (c.donationOptions || [])
       .filter((o) => o?.label)
       .slice(0, 3)
-      .map((o) => o.label as string);
+      .map((o) => ({ label: o.label as string, amount: o.amount }));
 
   return (
     <section
@@ -94,10 +128,10 @@ export default function FestivalDonationsSection({
               isHome ? "text-white" : "text-foreground"
             }`}
           >
-            Sevas for the Current Festival
+            Festival Sevas
           </h2>
           <p className={`mx-auto mt-2.5 max-w-xl text-sm md:text-[15px] ${isHome ? "text-white/70" : "text-muted-foreground"}`}>
-            The festival now being celebrated — offer your seva and be part of the celebration.
+            Offer your seva during the festivals being celebrated and become part of the divine pastime.
           </p>
         </motion.div>
 
@@ -109,13 +143,13 @@ export default function FestivalDonationsSection({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-40px" }}
               transition={{ delay: Math.min(i, 5) * 0.06, duration: 0.45 }}
-              className={`group flex h-full flex-col overflow-hidden rounded-[20px] border transition-all duration-300 hover:-translate-y-1.5 ${
-                isHome
-                  ? "border-white/10 bg-white/[0.04] hover:border-gold/40"
-                  : "border-border bg-card hover:border-primary/35 hover:shadow-elevated"
-              }`}
             >
-              <Link href={`/festival/${c.slug}`} className="relative block aspect-[16/9] overflow-hidden bg-primary/5">
+              <Link
+                href={FESTIVAL_PAGE[c.slug]}
+                className={`group relative block aspect-[3/2] overflow-hidden rounded-3xl border shadow-warm transition-all duration-300 hover:-translate-y-2 hover:shadow-elevated ${
+                  isHome ? "border-white/15" : "border-border"
+                }`}
+              >
                 {c.images?.[0] ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
                   <img
@@ -125,51 +159,61 @@ export default function FestivalDonationsSection({
                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
                   />
                 ) : (
-                  <div className={`flex h-full w-full items-center justify-center ${isHome ? "bg-white/5" : "bg-muted"}`}>
-                    <Sparkles className={`h-10 w-10 ${isHome ? "text-gold/40" : "text-primary/30"}`} />
+                  <div className="flex h-full w-full items-center justify-center bg-muted">
+                    <Sparkles className="h-10 w-10 text-primary/30" />
                   </div>
                 )}
-              </Link>
 
-              <div className={`flex flex-1 flex-col gap-2 p-5`}>
-                <Link href={`/festival/${c.slug}`}>
-                  <h3
-                    className={`line-clamp-2 min-h-[43px] font-heading text-[16.5px] font-bold leading-snug transition-colors ${
-                      isHome ? "text-white hover:text-gold" : "text-foreground hover:text-primary"
-                    }`}
-                  >
+                {/* Scrim so the bottom text always stays readable. */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+
+                {/* Top chips */}
+                <div className="absolute inset-x-0 top-0 flex items-start justify-between p-3 md:p-4">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-black/45 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white/90 backdrop-blur-sm">
+                    <CalendarDays className="h-3 w-3" />
+                    {(() => {
+                      const d = formatEventDate(c.meta?.eventDate);
+                      return d ? `${d.day} ${d.month} ${d.year}` : "Save the date";
+                    })()}
+                  </span>
+                  <span className="rounded-full bg-gold px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[hsl(220,60%,12%)]">
+                    Festival Seva
+                  </span>
+                </div>
+
+                {/* Bottom content */}
+                <div className="absolute inset-x-0 bottom-0 p-4 md:p-5">
+                  <h3 className="line-clamp-2 font-heading text-lg font-bold leading-snug text-white md:text-xl">
                     {c.title}
                   </h3>
-                </Link>
-                {c.description && (
-                  <p className={`line-clamp-2 text-[12.5px] leading-relaxed ${isHome ? "text-white/65" : "text-muted-foreground"}`}>
-                    {c.description}
-                  </p>
-                )}
-                {sevaChips(c).length > 0 && (
-                  <div className="flex flex-wrap gap-1.5">
-                    {sevaChips(c).map((label) => (
-                      <span
-                        key={label}
-                        className={`rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider ${
-                          isHome ? "bg-white/10 text-gold" : "bg-primary/10 text-primary"
-                        }`}
-                      >
-                        {label}
-                      </span>
-                    ))}
-                  </div>
-                )}
-                <div className={`mt-auto flex items-center justify-between border-t pt-3.5 ${isHome ? "border-white/10" : "border-border"}`}>
-                  <Link
-                    href={`/festival/${c.slug}`}
-                    className="inline-flex items-center gap-1.5 rounded-full bg-gradient-gold px-4 py-2 text-[12px] font-bold text-[hsl(220,60%,12%)] shadow-gold transition-transform hover:-translate-y-0.5"
-                  >
-                    Donate Now <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
-                  <CalendarDays className={`h-4 w-4 ${isHome ? "text-white/40" : "text-muted-foreground"}`} />
+                  {c.description && (
+                    <p className="mt-1 line-clamp-2 text-[12px] leading-relaxed text-white/75">
+                      {c.description}
+                    </p>
+                  )}
+                  {sevas(c).length > 0 && (
+                    <div className="mt-2.5 flex flex-wrap gap-1.5">
+                      {sevas(c).map((s) => (
+                        <span
+                          key={s.label}
+                          className="rounded-full bg-white/15 px-2.5 py-1 text-[10px] font-semibold text-gold backdrop-blur-sm"
+                        >
+                          {s.amount
+                            ? `${s.label} · ₹${s.amount.toLocaleString("en-IN")}`
+                            : s.label}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              </div>
+
+                {/* Hover donate pill */}
+                <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-gold px-5 py-2.5 text-[13px] font-bold text-[hsl(220,60%,12%)] shadow-gold">
+                    Donate Now <ArrowRight className="h-3.5 w-3.5" />
+                  </span>
+                </div>
+              </Link>
             </motion.div>
           ))}
         </div>

@@ -32,6 +32,7 @@ type Editable = {
   description: string;
   status: "upcoming" | "completed" | "annual";
   featured: boolean;
+  featuredOrder: number;
   active: boolean;
   ctaLabel: string;
   ctaHref: string;
@@ -66,6 +67,7 @@ const emptyDraft = (): Editable => ({
   description: "",
   status: "upcoming",
   featured: false,
+  featuredOrder: 0,
   active: true,
   ctaLabel: "Donate Now",
   ctaHref: "",
@@ -87,6 +89,7 @@ const fromShowcase = (f: FestivalShowcase): Editable => ({
   description: f.description || "",
   status: f.status || "upcoming",
   featured: !!f.featured,
+  featuredOrder: f.featuredOrder || 0,
   active: f.active !== false,
   ctaLabel: f.ctaLabel || "Donate Now",
   ctaHref: f.ctaHref || "",
@@ -121,6 +124,7 @@ const fromFallback = (f: FestivalCardItem): Editable => ({
   description: f.description || "",
   status: (f.status as Editable["status"]) || "upcoming",
   featured: false,
+  featuredOrder: 0,
   active: true,
   ctaLabel: "Donate Now",
   ctaHref: "",
@@ -305,6 +309,7 @@ export default function AdminFestivals() {
         description: editing.description,
         status: editing.status,
         featured: editing.featured,
+        featuredOrder: Number(editing.featuredOrder) || 0,
         active: editing.active,
         ctaLabel: editing.ctaLabel || "Donate Now",
         ctaHref: editing.ctaHref,
@@ -397,14 +402,32 @@ export default function AdminFestivals() {
                 <option value="annual">Annual</option>
               </select>
             </div>
-            <label className="flex items-center gap-2 pt-6 text-sm">
-              <input
-                type="checkbox"
-                checked={editing.featured}
-                onChange={(e) => set("featured", e.target.checked)}
-              />
-              Highlight on /festival (top + countdown)
-            </label>
+            <div className="pt-6 text-sm">
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={editing.featured}
+                  onChange={(e) => set("featured", e.target.checked)}
+                />
+                Highlight on /festival (spotlight)
+              </label>
+              {editing.featured && (
+                <div className="mt-2 space-y-1">
+                  <Input
+                    type="number"
+                    min={1}
+                    value={editing.featuredOrder || ""}
+                    onChange={(e) => set("featuredOrder", Number(e.target.value) || 0)}
+                    placeholder="Order (1 = first)"
+                    className="h-8 text-sm"
+                  />
+                  <p className="text-[11px] leading-snug text-muted-foreground">
+                    Lower numbers appear first. Festivals whose date has passed are hidden from the
+                    spotlight automatically.
+                  </p>
+                </div>
+              )}
+            </div>
             <label className="flex items-center gap-2 pt-6 text-sm">
               <input
                 type="checkbox"
@@ -567,7 +590,7 @@ export default function AdminFestivals() {
                     )}
                     {f.featured && (
                       <span className="absolute left-2 top-2 rounded-full bg-accent/95 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-primary">
-                        Highlighted
+                        Highlighted{f.featuredOrder ? ` · #${f.featuredOrder}` : ""}
                       </span>
                     )}
                   </div>
