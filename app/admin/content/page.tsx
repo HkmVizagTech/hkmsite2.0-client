@@ -34,8 +34,8 @@ const defaultContent: SiteContent = {
 };
 
 const FESTIVAL_OPTIONS: { value: string; label: string }[] = [
+  { value: "none", label: "None — hide the highlight (default)" },
   { value: "auto", label: "Auto — pick the current festival from the calendar" },
-  { value: "none", label: "None — hide the highlight" },
   ...MAJOR_FESTIVALS.map((f) => ({ value: f.key, label: f.label })),
 ];
 
@@ -244,10 +244,10 @@ export default function AdminContent() {
                 </select>
               </div>
               <p className="text-xs text-muted-foreground">
-                The navbar highlights one major festival at a time. &ldquo;Auto&rdquo; picks the current festival
-                from the Vaishnava calendar automatically (&plusmn; a couple of weeks). Choose a specific festival
-                to force it, or &ldquo;None&rdquo; to remove the highlight. Only festivals that have a page on the
-                site are available here.
+                The navbar can highlight one major festival at a time. By default the highlight is hidden;
+                choose &ldquo;Auto&rdquo; to pick the current festival from the Vaishnava calendar automatically,
+                or pick a specific festival to pin it. Only festivals that have a page on the site are available
+                here.
               </p>
             </CardContent>
           </Card>
