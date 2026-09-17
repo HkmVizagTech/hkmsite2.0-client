@@ -13,12 +13,15 @@ import {
   ShieldCheck,
   Truck,
   Check,
+  Heart,
   PackageOpen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ProductCard from "@/components/shop/ProductCard";
 import { showAddedToCart } from "@/components/shop/CartToast";
 import { useCart } from "@/contexts/CartContext";
+import { useWishlist } from "@/hooks/useWishlist";
+import { recordRecentView } from "@/hooks/useRecent";
 import {
   Product,
   ProductVariant,
@@ -33,6 +36,7 @@ export default function ProductDetailPage() {
   const params = useParams<{ slug: string }>();
   const slug = params?.slug as string;
   const { addItem, openCart, lines } = useCart();
+  const { has: isWishlisted, toggle: toggleWishlist, hydrated: wishlistReady } = useWishlist();
 
   const [product, setProduct] = useState<Product | null>(null);
   const [related, setRelated] = useState<Product[]>([]);
@@ -46,6 +50,7 @@ export default function ProductDetailPage() {
 
   useEffect(() => {
     if (!slug) return;
+    recordRecentView(slug);
     let cancelled = false;
     setLoading(true);
     fetchProduct(slug)
@@ -92,6 +97,7 @@ export default function ProductDetailPage() {
   const currentStock = product.hasVariants ? variant?.stock ?? 0 : product.stock;
   const off = discountPercent(currentPrice, currentMrp);
   const canBuy = currentStock > 0 && (!product.hasVariants || !!variant);
+  const wishlisted = wishlistReady && isWishlisted(product._id);
 
   // How many of the currently-selected option are already in the cart.
   const inCartForSelection =
@@ -166,7 +172,7 @@ export default function ProductDetailPage() {
         </div>
 
         {/* Details */}
-        <div>
+        <div className="relative">
           {product.category && (
             <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
               {product.category.replace(/-/g, " ")}
@@ -191,6 +197,21 @@ export default function ProductDetailPage() {
               </>
             )}
           </div>
+
+          {/* Save-for-later heart, aligned with the title block. */}
+          <button
+            type="button"
+            onClick={() => toggleWishlist(product._id)}
+            aria-label={wishlisted ? "Remove from wishlist" : "Save for later"}
+            aria-pressed={wishlisted}
+            className={`absolute right-0 top-0 flex h-10 w-10 items-center justify-center rounded-full border transition-colors sm:h-11 sm:w-11 ${
+              wishlisted
+                ? "border-rose-200 bg-rose-50 text-rose-500"
+                : "border-border bg-background text-muted-foreground hover:text-rose-500"
+            }`}
+          >
+            <Heart className={`h-5 w-5 ${wishlisted ? "fill-current" : ""}`} />
+          </button>
 
           {product.hasVariants && (
             <div className="mt-6">

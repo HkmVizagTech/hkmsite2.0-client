@@ -16,6 +16,7 @@ import {
   ArrowUpDown,
   ChevronDown,
   Check,
+  Loader2,
   X,
 } from "lucide-react";
 import {
@@ -26,12 +27,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import ProductCard from "@/components/shop/ProductCard";
+import { useWishlist } from "@/hooks/useWishlist";
+import { useRecentlyViewed } from "@/hooks/useRecent";
 import {
   Product,
   ShopCategory,
   ShopSettings,
   fetchCategories,
   fetchProducts,
+  fetchProduct,
   fetchShopSettings,
   displayPrice,
 } from "@/lib/shopApi";
@@ -52,9 +56,21 @@ export default function ShopCatalogPage() {
   const [sort, setSort] = useState("featured");
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
+  const [inStockOnly, setInStockOnly] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const featuredRef = useRef<HTMLDivElement>(null);
+
+  // Saved-for-later + recently-viewed — both are personal, browser-local
+  // rails that global storefronts use to shorten the path back to an item.
+  const { ids: savedIds, hydrated: wishlistReady } = useWishlist();
+  const [saved, setSaved] = useState<Product[]>([]);
+  const recentSlugs = useRecentlyViewed();
+  const [recent, setRecent] = useState<Product[]>([]);
 
   // Debounced so a search box doesn't fire a request per keystroke.
   useEffect(() => {
@@ -72,22 +88,68 @@ export default function ShopCatalogPage() {
       .catch(() => setFeatured([]));
   }, []);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const { products: rows } = await fetchProducts({ category, search, sort, limit: 48 });
-      setProducts(rows);
-    } catch (e: any) {
-      setError(e.message || "Could not load the shop.");
-    } finally {
-      setLoading(false);
-    }
-  }, [category, search, sort]);
+  const load = useCallback(
+    async (targetPage = 1, append = false) => {
+      if (append) setLoadingMore(true);
+      else setLoading(true);
+      setError(null);
+      try {
+        const { products: rows, pagination } = await fetchProducts({
+          category,
+          search,
+          sort,
+          page: targetPage,
+          limit: 24,
+          inStockOnly,
+        });
+        setProducts((prev) => (append ? [...prev, ...rows] : rows));
+        setPages(pagination.pages);
+        setTotal(pagination.total);
+        setPage(targetPage);
+      } catch (e: any) {
+        setError(e.message || "Could not load the shop.");
+      } finally {
+        setLoading(false);
+        setLoadingMore(false);
+      }
+    },
+    [category, search, sort, inStockOnly]
+  );
 
   useEffect(() => {
-    load();
+    load(1);
   }, [load]);
+
+  // Saved for later: the wishlist stores ids only — resolve them into real
+  // products here so the rail always reflects the live catalog (price,
+  // stock, name) rather than a stale snapshot.
+  useEffect(() => {
+    if (!wishlistReady || savedIds.length === 0) {
+      setSaved([]);
+      return;
+    }
+    fetchProducts({ ids: savedIds.slice(0, 20).join(","), limit: 20 })
+      .then((d) => setSaved(d.products))
+      .catch(() => setSaved([]));
+  }, [wishlistReady, savedIds]);
+
+  // Recently viewed: slugs resolve individually (≤ 8 parallel calls).
+  useEffect(() => {
+    const list = recentSlugs.slice(0, 8);
+    if (list.length === 0) {
+      setRecent([]);
+      return;
+    }
+    let cancelled = false;
+    Promise.all(list.map((s) => fetchProduct(s).then((d) => d.product).catch(() => null)))
+      .then((ps) => {
+        if (!cancelled) setRecent(ps.filter((p): p is Product => !!p));
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [recentSlugs]);
 
   const activeCategoryName = useMemo(
     () => categories.find((c) => c.slug === category)?.name,
@@ -113,6 +175,10 @@ export default function ShopCatalogPage() {
     (slug?: string) => (slug ? categories.find((c) => c.slug === slug)?.name : undefined),
     [categories]
   );
+
+  const loadMore = () => {
+    if (!loadingMore && page < pages) load(page + 1, true);
+  };
 
   return (
     <div>
@@ -299,10 +365,25 @@ export default function ShopCatalogPage() {
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
+
+          {/* In-stock-only toggle — global-standard availability filter. */}
+          <button
+            type="button"
+            onClick={() => setInStockOnly((v) => !v)}
+            aria-pressed={inStockOnly}
+            className={`inline-flex h-10 items-center gap-2 rounded-full border px-4 text-xs font-semibold transition-colors sm:text-sm ${
+              inStockOnly
+                ? "border-gold bg-gold/10 text-gold-deep"
+                : "border-border bg-background text-foreground hover:border-gold"
+            }`}
+          >
+            <Check className={`h-3.5 w-3.5 ${inStockOnly ? "text-gold-deep" : "text-muted-foreground"}`} />
+            In stock only
+          </button>
         </div>
 
         {/* Active filter chips */}
-        {(category !== "all" || search) && (
+        {(category !== "all" || search || inStockOnly) && (
           <div className="mx-auto flex max-w-[1440px] flex-wrap items-center gap-2 px-4 pb-3 sm:px-6 lg:px-8">
             {category !== "all" && (
               <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-xs font-semibold text-gold-deep">
@@ -320,10 +401,19 @@ export default function ShopCatalogPage() {
                 </button>
               </span>
             )}
+            {inStockOnly && (
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-xs font-semibold text-gold-deep">
+                In stock only
+                <button onClick={() => setInStockOnly(false)} aria-label="Remove in-stock filter">
+                  <X className="h-3 w-3" />
+                </button>
+              </span>
+            )}
             <button
               onClick={() => {
                 setCategory("all");
                 setSearchInput("");
+                setInStockOnly(false);
               }}
               className="text-xs font-medium text-muted-foreground underline-offset-2 hover:text-primary hover:underline"
             >
@@ -393,7 +483,7 @@ export default function ShopCatalogPage() {
         ) : error ? (
           <div className="py-16 text-center">
             <p className="text-sm font-medium text-destructive">{error}</p>
-            <button onClick={load} className="mt-3 text-sm font-semibold text-primary underline">
+            <button onClick={() => load(1)} className="mt-3 text-sm font-semibold text-primary underline">
               Try again
             </button>
           </div>
@@ -426,7 +516,7 @@ export default function ShopCatalogPage() {
           <>
             <div className="mb-4 flex items-center justify-between">
               <p className="text-xs text-muted-foreground">
-                {products.length} item{products.length === 1 ? "" : "s"}
+                Showing {products.length} of {total} item{total === 1 ? "" : "s"}
                 {activeCategoryName ? ` in ${activeCategoryName}` : ""}
               </p>
             </div>
@@ -435,9 +525,65 @@ export default function ShopCatalogPage() {
                 <ProductCard key={p._id} product={p} index={i} categoryName={categoryName(p.category)} />
               ))}
             </div>
+            {page < pages && (
+              <div className="mt-10 text-center">
+                <button
+                  type="button"
+                  onClick={loadMore}
+                  disabled={loadingMore}
+                  className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:border-gold hover:text-primary disabled:opacity-60"
+                >
+                  {loadingMore ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" /> Loading…
+                    </>
+                  ) : (
+                    <>
+                      Load more ({total - products.length} remaining)
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
           </>
         )}
       </section>
+
+      {/* ═══ SAVED FOR LATER ═══ */}
+      {saved.length > 0 && (
+        <section className="border-t border-border bg-card/50">
+          <div className="mx-auto max-w-[1440px] px-4 py-10 sm:px-6 lg:px-8">
+            <div className="mb-5 flex items-end justify-between gap-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">Your wishlist</p>
+                <h2 className="mt-1 font-heading text-2xl font-bold text-foreground sm:text-3xl">Saved for later</h2>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
+              {saved.slice(0, 5).map((p, i) => (
+                <ProductCard key={p._id} product={p} index={i} categoryName={categoryName(p.category)} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ═══ RECENTLY VIEWED ═══ */}
+      {recent.length > 0 && (
+        <section className="border-t border-border">
+          <div className="mx-auto max-w-[1440px] px-4 py-10 sm:px-6 lg:px-8">
+            <div className="mb-5">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">Pick up where you left off</p>
+              <h2 className="mt-1 font-heading text-2xl font-bold text-foreground sm:text-3xl">Recently viewed</h2>
+            </div>
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
+              {recent.slice(0, 4).map((p, i) => (
+                <ProductCard key={p._id} product={p} index={i} categoryName={categoryName(p.category)} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ═══ TRUST STRIP ═══ */}
       <section className="border-t border-border bg-card">

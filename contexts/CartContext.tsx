@@ -30,7 +30,9 @@ interface CartContextValue {
 }
 
 const CartContext = createContext<CartContextValue | null>(null);
-const STORAGE_KEY = "hkm_shop_cart";
+// Exported so the shop header can read a lightweight snapshot for its total
+// display without threading more context through the tree.
+export const STORAGE_KEY = "hkm_shop_cart";
 
 const sameLine = (a: CartLine, productId: string, variantId: string | null) =>
   a.productId === productId && (a.variantId || null) === (variantId || null);
