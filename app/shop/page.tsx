@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import {
   Search,
   PackageOpen,
@@ -32,6 +33,7 @@ import {
   fetchCategories,
   fetchProducts,
   fetchShopSettings,
+  displayPrice,
 } from "@/lib/shopApi";
 
 const SORTS = [
@@ -92,6 +94,17 @@ export default function ShopCatalogPage() {
     [categories, category]
   );
 
+  // A few featured items double as the hero collage, so the right side of the
+  // hero is real merchandise instead of empty decorative space.
+  const heroProducts = featured.slice(0, 4);
+
+  const heroPill = (active: boolean) =>
+    `rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+      active
+        ? "border-gold bg-gold/20 text-gold"
+        : "border-white/20 text-white/75 hover:border-gold/60 hover:text-white"
+    }`;
+
   const scrollFeatured = (dir: 1 | -1) => {
     featuredRef.current?.scrollBy({ left: dir * 320, behavior: "smooth" });
   };
@@ -107,6 +120,13 @@ export default function ShopCatalogPage() {
       <section className="relative overflow-hidden border-b border-border">
         <div className="absolute inset-0" style={{ background: "var(--gradient-hero)" }} />
         <div
+          className="pointer-events-none absolute inset-0 opacity-[0.07]"
+          style={{
+            backgroundImage: "radial-gradient(hsl(42 92% 56%) 1px, transparent 1px)",
+            backgroundSize: "22px 22px",
+          }}
+        />
+        <div
           className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full blur-3xl"
           style={{ background: "var(--gradient-gold)", opacity: 0.25 }}
         />
@@ -114,27 +134,86 @@ export default function ShopCatalogPage() {
           className="pointer-events-none absolute -left-24 bottom-0 h-72 w-72 rounded-full blur-3xl"
           style={{ background: "var(--gradient-gold)", opacity: 0.12 }}
         />
-        <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-gold">
-            <Sparkles className="h-3 w-3" /> Matchless Gifts
-          </span>
-          <h1 className="mt-3 max-w-2xl font-heading text-3xl font-bold leading-tight text-white sm:text-5xl">
-            Books, puja items &amp; sacred gifts
-          </h1>
-          <p className="mt-3 max-w-xl text-sm text-white/75 sm:text-base">
-            Every purchase supports the temple&apos;s daily sevas and prasadam distribution.
-          </p>
 
-          <div className="relative mt-7 max-w-md">
-            <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <input
-              type="search"
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              placeholder="Search books, incense, malas…"
-              className="w-full rounded-full border border-white/20 bg-background/95 py-3.5 pl-11 pr-4 text-sm text-foreground shadow-xl outline-none transition-colors focus:border-gold"
-            />
+        <div className="relative mx-auto grid max-w-[1440px] items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.15fr_1fr] lg:gap-14 lg:px-8 lg:py-20">
+          <div>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-gold">
+              <Sparkles className="h-3 w-3" /> Matchless Gifts
+            </span>
+            <h1 className="mt-4 max-w-2xl font-heading text-4xl font-bold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-[3.4rem]">
+              Books, puja items &amp; <span className="text-gradient-gold">sacred gifts</span>
+            </h1>
+            <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/75 sm:text-base">
+              Every purchase supports the temple&apos;s daily sevas and prasadam distribution.
+            </p>
+
+            <div className="relative mt-7 max-w-md">
+              <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <input
+                type="search"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                placeholder="Search books, incense, malas…"
+                className="w-full rounded-full border border-white/20 bg-background/95 py-3.5 pl-11 pr-4 text-sm text-foreground shadow-xl outline-none transition-colors focus:border-gold"
+              />
+            </div>
+
+            {categories.length > 0 && (
+              <div className="mt-5 flex flex-wrap items-center gap-2">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-white/50">
+                  Browse
+                </span>
+                <button type="button" onClick={() => setCategory("all")} className={heroPill(category === "all")}>
+                  All
+                </button>
+                {categories.slice(0, 5).map((c) => (
+                  <button
+                    key={c._id}
+                    type="button"
+                    onClick={() => setCategory(c.slug)}
+                    className={heroPill(category === c.slug)}
+                  >
+                    {c.name}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
+
+          {heroProducts.length > 0 && (
+            <div className="relative hidden lg:block">
+              <div className="grid grid-cols-2 gap-4">
+                {heroProducts.map((p) => (
+                  <Link
+                    key={p._id}
+                    href={`/shop/${p.slug}`}
+                    className="group overflow-hidden rounded-2xl border border-white/15 bg-white/[0.06] shadow-2xl backdrop-blur-sm transition-transform duration-300 hover:-translate-y-1"
+                  >
+                    <div className="aspect-square overflow-hidden bg-white/5">
+                      {p.images?.[0] ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={p.images[0]}
+                          alt={p.name}
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      ) : null}
+                    </div>
+                    <div className="p-3">
+                      <p className="line-clamp-1 text-xs font-semibold text-white">{p.name}</p>
+                      <p className="mt-0.5 text-[11px] font-bold text-gold">{displayPrice(p)}</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+              <div className="absolute -bottom-4 -left-4 rounded-2xl border border-gold/30 bg-background/95 px-4 py-2.5 shadow-elevated backdrop-blur">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  Every order
+                </p>
+                <p className="text-sm font-bold text-primary">Supports temple sevas</p>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
@@ -154,7 +233,7 @@ export default function ShopCatalogPage() {
 
       {/* ═══ STICKY FILTERS ═══ */}
       <div className="sticky top-16 z-30 border-b border-border bg-background/95 backdrop-blur-md">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-2 px-4 py-3 sm:px-6">
+        <div className="mx-auto flex max-w-[1440px] flex-wrap items-center gap-2 px-4 py-3 sm:px-6 lg:px-8">
           {/* Category selector */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -224,7 +303,7 @@ export default function ShopCatalogPage() {
 
         {/* Active filter chips */}
         {(category !== "all" || search) && (
-          <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-2 px-4 pb-3 sm:px-6">
+          <div className="mx-auto flex max-w-[1440px] flex-wrap items-center gap-2 px-4 pb-3 sm:px-6 lg:px-8">
             {category !== "all" && (
               <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-xs font-semibold text-gold-deep">
                 {activeCategoryName ?? "Category"}
@@ -256,7 +335,7 @@ export default function ShopCatalogPage() {
 
       {/* ═══ FEATURED RAIL ═══ */}
       {featured.length > 0 && (
-        <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+        <section className="mx-auto max-w-[1440px] px-4 py-10 sm:px-6 lg:px-8">
           <div className="mb-5 flex items-end justify-between gap-4">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">Curated for you</p>
@@ -298,9 +377,9 @@ export default function ShopCatalogPage() {
       )}
 
       {/* ═══ MAIN GRID ═══ */}
-      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+      <section className="mx-auto max-w-[1440px] px-4 py-10 sm:px-6 lg:px-8">
         {loading ? (
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
             {Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className="overflow-hidden rounded-2xl border border-border">
                 <div className="aspect-square animate-pulse bg-muted" />
@@ -351,7 +430,7 @@ export default function ShopCatalogPage() {
                 {activeCategoryName ? ` in ${activeCategoryName}` : ""}
               </p>
             </div>
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
               {products.map((p, i) => (
                 <ProductCard key={p._id} product={p} index={i} categoryName={categoryName(p.category)} />
               ))}
@@ -362,7 +441,7 @@ export default function ShopCatalogPage() {
 
       {/* ═══ TRUST STRIP ═══ */}
       <section className="border-t border-border bg-card">
-        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-4 py-8 sm:px-6 lg:grid-cols-4">
+        <div className="mx-auto grid max-w-[1440px] grid-cols-2 gap-6 px-4 py-8 sm:px-6 lg:grid-cols-4 lg:px-8">
           <div className="flex items-center gap-3">
             <ShieldCheck className="h-8 w-8 shrink-0 text-gold" />
             <div>

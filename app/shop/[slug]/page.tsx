@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ProductCard from "@/components/shop/ProductCard";
+import { showAddedToCart } from "@/components/shop/CartToast";
 import { useCart } from "@/contexts/CartContext";
 import {
   Product,
@@ -97,7 +98,17 @@ export default function ProductDetailPage() {
     addItem({ productId: product._id, variantId: variant?._id || null, quantity });
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);
-    openCart();
+    // Elegant confirmation popup instead of force-opening the cart drawer.
+    showAddedToCart(
+      {
+        name: product.name,
+        image: product.images?.[activeImage] || product.images?.[0],
+        price: currentPrice,
+        variantLabel: variant?.label,
+        quantity,
+      },
+      openCart
+    );
   };
 
   return (

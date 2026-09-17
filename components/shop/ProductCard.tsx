@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { ShoppingBag, Check, Truck } from "lucide-react";
 import { useState } from "react";
 import { useCart } from "@/contexts/CartContext";
+import { showAddedToCart } from "@/components/shop/CartToast";
 import { Product, discountPercent, displayPrice, formatINR } from "@/lib/shopApi";
 
 interface Props {
@@ -39,7 +40,16 @@ export default function ProductCard({ product, index = 0, categoryName }: Props)
     addItem({ productId: product._id, variantId: null, quantity: 1 });
     setJustAdded(true);
     setTimeout(() => setJustAdded(false), 1200);
-    openCart();
+    // Confirm with an elegant popup instead of force-opening the cart drawer.
+    showAddedToCart(
+      {
+        name: product.name,
+        image: product.images?.[0],
+        price: product.price,
+        quantity: 1,
+      },
+      openCart
+    );
   };
 
   return (
