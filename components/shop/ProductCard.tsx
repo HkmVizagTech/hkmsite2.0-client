@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ShoppingBag, Check, Truck } from "lucide-react";
+import { ShoppingBag, Check, Truck, Minus, Plus } from "lucide-react";
 import { useState } from "react";
 import { useCart } from "@/contexts/CartContext";
 import { showAddedToCart } from "@/components/shop/CartToast";
@@ -14,8 +14,10 @@ interface Props {
   categoryName?: string;
 }
 
+const MAX_QTY = 99;
+
 export default function ProductCard({ product, index = 0, categoryName }: Props) {
-  const { addItem, openCart } = useCart();
+  const { addItem, setQuantity, openCart, lines } = useCart();
   const [justAdded, setJustAdded] = useState(false);
 
   const off = product.hasVariants ? null : discountPercent(product.price, product.mrp);
@@ -36,6 +38,17 @@ export default function ProductCard({ product, index = 0, categoryName }: Props)
     : product.stock;
   const lowStock = product.inStock && minStock <= 5;
 
+  // How many of this simple product are already in the cart — drives the
+  // inline stepper so the card reflects cart state (and survives a reload).
+  const inCartQty =
+    lines.find((l) => l.productId === product._id && !l.variantId)?.quantity ?? 0;
+  // Total across every line of this product (any variant) — used for the
+  // "In cart" cue, so a variant product still shows it was added.
+  const inCartAny = lines
+    .filter((l) => l.productId === product._id)
+    .reduce((sum, l) => sum + l.quantity, 0);
+  const maxQty = Math.min(MAX_QTY, product.stock || MAX_QTY);
+
   const quickAdd = () => {
     addItem({ productId: product._id, variantId: null, quantity: 1 });
     setJustAdded(true);
@@ -52,12 +65,17 @@ export default function ProductCard({ product, index = 0, categoryName }: Props)
     );
   };
 
+  const increase = () => setQuantity(product._id, null, Math.min(maxQty, inCartQty + 1));
+  const decrease = () => setQuantity(product._id, null, inCartQty - 1);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: Math.min(index, 8) * 0.04 }}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all duration-300 hover:-translate-y-1 hover:border-gold/40 hover:shadow-[var(--shadow-warm)]"
+      className={`group flex flex-col overflow-hidden rounded-2xl border bg-card transition-all duration-300 hover:-translate-y-1 hover:border-gold/40 hover:shadow-[var(--shadow-warm)] ${
+        inCartAny > 0 ? "border-gold/40 ring-1 ring-gold/20" : "border-border"
+      }`}
     >
       <Link href={`/shop/${product.slug}`} className="relative block aspect-square overflow-hidden bg-muted">
         {product.images?.[0] ? (
@@ -89,6 +107,14 @@ export default function ProductCard({ product, index = 0, categoryName }: Props)
             style={{ background: "var(--gradient-gold)" }}
           >
             {off}% OFF
+          </span>
+        )}
+
+        {/* In-cart marker on the image — a discreet, modern cue that this
+            item is already in the bag even before you reach the button. */}
+        {inCartAny > 0 && (
+          <span className="absolute bottom-3 left-3 inline-flex items-center gap-1 rounded-full bg-primary/90 px-2.5 py-1 text-[10px] font-bold text-primary-foreground shadow-sm backdrop-blur-sm">
+            <Check className="h-3 w-3" /> In cart{inCartAny > 1 ? ` · ${inCartAny}` : ""}
           </span>
         )}
 
@@ -150,6 +176,35 @@ export default function ProductCard({ product, index = 0, categoryName }: Props)
               >
                 <ShoppingBag className="h-3.5 w-3.5" /> Choose variant
               </Link>
+            ) : inCartQty > 0 ? (
+              // Once added, the button becomes an inline quantity stepper —
+              // the pattern shoppers expect from modern stores.
+              <div className="flex w-full items-center justify-between rounded-xl border border-gold/50 bg-gold/5 p-1">
+                <button
+                  type="button"
+                  onClick={decrease}
+                  aria-label={`Decrease quantity of ${product.name}`}
+                  className="flex h-8 w-9 items-center justify-center rounded-lg text-primary transition-colors hover:bg-gold/15 active:scale-95"
+                >
+                  <Minus className="h-3.5 w-3.5" />
+                </button>
+                <span
+                  aria-live="polite"
+                  className="flex items-center gap-1.5 text-xs font-bold text-primary"
+                >
+                  <Check className="h-3.5 w-3.5 text-emerald-600" />
+                  <span className="tabular-nums">{inCartQty}</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={increase}
+                  disabled={inCartQty >= maxQty}
+                  aria-label={`Increase quantity of ${product.name}`}
+                  className="flex h-8 w-9 items-center justify-center rounded-lg text-primary transition-colors hover:bg-gold/15 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                </button>
+              </div>
             ) : (
               <button
                 onClick={quickAdd}
