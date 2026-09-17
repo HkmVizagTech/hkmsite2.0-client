@@ -35,7 +35,7 @@ import {
 export default function ProductDetailPage() {
   const params = useParams<{ slug: string }>();
   const slug = params?.slug as string;
-  const { addItem, openCart, lines } = useCart();
+  const { addItem, setQuantity: setCartQuantity, openCart, lines } = useCart();
   const { has: isWishlisted, toggle: toggleWishlist, hydrated: wishlistReady } = useWishlist();
 
   const [product, setProduct] = useState<Product | null>(null);
@@ -43,7 +43,6 @@ export default function ProductDetailPage() {
   const [settings, setSettings] = useState<ShopSettings | null>(null);
   const [activeImage, setActiveImage] = useState(0);
   const [variant, setVariant] = useState<ProductVariant | null>(null);
-  const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [added, setAdded] = useState(false);
@@ -59,7 +58,6 @@ export default function ProductDetailPage() {
         setProduct(p);
         setRelated(r);
         setActiveImage(0);
-        setQuantity(1);
         // Pre-select the first variant that's actually buyable, so the page
         // opens on something the devotee can add rather than a sold-out size.
         setVariant(p.hasVariants ? p.variants.find((v) => v.inStock) || p.variants[0] || null : null);
@@ -105,9 +103,15 @@ export default function ProductDetailPage() {
       (l) => l.productId === product._id && (l.variantId || null) === (variant?._id || null)
     )?.quantity ?? 0;
 
+  // The stepper is bound straight to the cart (same as the product cards):
+  // + adds a unit to the cart, - takes one out, and the number always shows
+  // the live in-cart total — never a local "how many to add" picker that
+  // silently drifts out of sync with the bag.
+  const maxQty = Math.min(99, currentStock || 99);
+
   const handleAdd = () => {
     if (!canBuy) return;
-    addItem({ productId: product._id, variantId: variant?._id || null, quantity });
+    addItem({ productId: product._id, variantId: variant?._id || null, quantity: 1 });
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);
     // Elegant confirmation popup instead of force-opening the cart drawer.
@@ -117,7 +121,7 @@ export default function ProductDetailPage() {
         image: product.images?.[activeImage] || product.images?.[0],
         price: currentPrice,
         variantLabel: variant?.label,
-        quantity,
+        quantity: 1,
       },
       openCart
     );
@@ -241,16 +245,26 @@ export default function ProductDetailPage() {
           <div className="mt-5 flex items-center gap-3">
             <div className="flex items-center rounded-lg border border-border">
               <button
-                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                className="px-3 py-2.5 text-muted-foreground transition-colors hover:text-foreground"
+                type="button"
+                onClick={() => setCartQuantity(product._id, variant?._id || null, inCartForSelection - 1)}
+                disabled={!canBuy || inCartForSelection < 1}
+                className="px-3 py-2.5 text-muted-foreground transition-colors hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
                 aria-label="Decrease quantity"
               >
                 <Minus className="h-3.5 w-3.5" />
               </button>
-              <span className="min-w-[36px] text-center text-sm font-semibold">{quantity}</span>
+              <span
+                aria-live="polite"
+                className="flex min-w-[36px] items-center justify-center gap-1 text-center text-sm font-semibold"
+              >
+                {inCartForSelection > 0 && <Check className="h-3.5 w-3.5 text-emerald-600" />}
+                <span className="tabular-nums">{inCartForSelection}</span>
+              </span>
               <button
-                onClick={() => setQuantity((q) => Math.min(Math.max(1, currentStock), q + 1))}
-                className="px-3 py-2.5 text-muted-foreground transition-colors hover:text-foreground"
+                type="button"
+                onClick={() => setCartQuantity(product._id, variant?._id || null, Math.min(maxQty, inCartForSelection + 1))}
+                disabled={!canBuy || inCartForSelection >= maxQty}
+                className="px-3 py-2.5 text-muted-foreground transition-colors hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
                 aria-label="Increase quantity"
               >
                 <Plus className="h-3.5 w-3.5" />

@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import Link from "next/link";
 import {
   Search,
   PackageOpen,
@@ -37,7 +36,6 @@ import {
   fetchProducts,
   fetchProduct,
   fetchShopSettings,
-  displayPrice,
 } from "@/lib/shopApi";
 
 const SORTS = [
@@ -46,6 +44,13 @@ const SORTS = [
   { value: "price-asc", label: "Price: Low to High" },
   { value: "price-desc", label: "Price: High to Low" },
 ];
+
+// Designed shop banner, served from the media bucket (same host as product
+// photos, so a plain <img> — see next.config remotePatterns note in ProductCard).
+const SHOP_BANNER_DESKTOP =
+  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1789648085166-1789648084187-shop-desk.webp";
+const SHOP_BANNER_MOBILE =
+  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1789648084586-1789648083922-shop-mob.webp";
 
 export default function ShopCatalogPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -156,17 +161,6 @@ export default function ShopCatalogPage() {
     [categories, category]
   );
 
-  // A few featured items double as the hero collage, so the right side of the
-  // hero is real merchandise instead of empty decorative space.
-  const heroProducts = featured.slice(0, 4);
-
-  const heroPill = (active: boolean) =>
-    `rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
-      active
-        ? "border-gold bg-gold/20 text-gold"
-        : "border-white/20 text-white/75 hover:border-gold/60 hover:text-white"
-    }`;
-
   const scrollFeatured = (dir: 1 | -1) => {
     featuredRef.current?.scrollBy({ left: dir * 320, behavior: "smooth" });
   };
@@ -182,105 +176,18 @@ export default function ShopCatalogPage() {
 
   return (
     <div>
-      {/* ═══ HERO ═══ */}
-      <section className="relative overflow-hidden border-b border-border">
-        <div className="absolute inset-0" style={{ background: "var(--gradient-hero)" }} />
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.07]"
-          style={{
-            backgroundImage: "radial-gradient(hsl(42 92% 56%) 1px, transparent 1px)",
-            backgroundSize: "22px 22px",
-          }}
-        />
-        <div
-          className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full blur-3xl"
-          style={{ background: "var(--gradient-gold)", opacity: 0.25 }}
-        />
-        <div
-          className="pointer-events-none absolute -left-24 bottom-0 h-72 w-72 rounded-full blur-3xl"
-          style={{ background: "var(--gradient-gold)", opacity: 0.12 }}
-        />
-
-        <div className="relative mx-auto grid max-w-[1440px] items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.15fr_1fr] lg:gap-14 lg:px-8 lg:py-20">
-          <div>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-gold">
-              <Sparkles className="h-3 w-3" /> Matchless Gifts
-            </span>
-            <h1 className="mt-4 max-w-2xl font-heading text-4xl font-bold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-[3.4rem]">
-              Books, puja items &amp; <span className="text-gradient-gold">sacred gifts</span>
-            </h1>
-            <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/75 sm:text-base">
-              Every purchase supports the temple&apos;s daily sevas and prasadam distribution.
-            </p>
-
-            <div className="relative mt-7 max-w-md">
-              <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <input
-                type="search"
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                placeholder="Search books, incense, malas…"
-                className="w-full rounded-full border border-white/20 bg-background/95 py-3.5 pl-11 pr-4 text-sm text-foreground shadow-xl outline-none transition-colors focus:border-gold"
-              />
-            </div>
-
-            {categories.length > 0 && (
-              <div className="mt-5 flex flex-wrap items-center gap-2">
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-white/50">
-                  Browse
-                </span>
-                <button type="button" onClick={() => setCategory("all")} className={heroPill(category === "all")}>
-                  All
-                </button>
-                {categories.slice(0, 5).map((c) => (
-                  <button
-                    key={c._id}
-                    type="button"
-                    onClick={() => setCategory(c.slug)}
-                    className={heroPill(category === c.slug)}
-                  >
-                    {c.name}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {heroProducts.length > 0 && (
-            <div className="relative hidden lg:block">
-              <div className="grid grid-cols-2 gap-4">
-                {heroProducts.map((p) => (
-                  <Link
-                    key={p._id}
-                    href={`/shop/${p.slug}`}
-                    className="group overflow-hidden rounded-2xl border border-white/15 bg-white/[0.06] shadow-2xl backdrop-blur-sm transition-transform duration-300 hover:-translate-y-1"
-                  >
-                    <div className="aspect-square overflow-hidden bg-white/5">
-                      {p.images?.[0] ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={p.images[0]}
-                          alt={p.name}
-                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        />
-                      ) : null}
-                    </div>
-                    <div className="p-3">
-                      <p className="line-clamp-1 text-xs font-semibold text-white">{p.name}</p>
-                      <p className="mt-0.5 text-[11px] font-bold text-gold">{displayPrice(p)}</p>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-              <div className="absolute -bottom-4 -left-4 rounded-2xl border border-gold/30 bg-background/95 px-4 py-2.5 shadow-elevated backdrop-blur">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                  Every order
-                </p>
-                <p className="text-sm font-bold text-primary">Supports temple sevas</p>
-              </div>
-            </div>
-          )}
-        </div>
+      {/* ═══ HERO BANNER ═══ */}
+      <section className="relative border-b border-border">
+        {/* The banner itself comes in two crops — a wide desktop frame and a
+            taller mobile one that still breathes on a small screen. */}
+        <picture>
+          <source media="(max-width: 640px)" srcSet={SHOP_BANNER_MOBILE} />
+          <img
+            src={SHOP_BANNER_DESKTOP}
+            alt="The Hare Krishna temple shop — books, puja items & sacred gifts"
+            className="block h-auto w-full"
+          />
+        </picture>
       </section>
 
       {/* ═══ ANNOUNCEMENT + CLOSED BANNERS ═══ */}
@@ -380,6 +287,18 @@ export default function ShopCatalogPage() {
             <Check className={`h-3.5 w-3.5 ${inStockOnly ? "text-gold-deep" : "text-muted-foreground"}`} />
             In stock only
           </button>
+
+          {/* Search — moved here from the hero. */}
+          <div className="relative w-full sm:ml-auto sm:w-64">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <input
+              type="search"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder="Search books, incense, malas…"
+              className="w-full rounded-full border border-border bg-background py-2.5 pl-9 pr-4 text-sm text-foreground outline-none transition-colors focus:border-gold"
+            />
+          </div>
         </div>
 
         {/* Active filter chips */}

@@ -1,6 +1,7 @@
 "use client";
 
-import { MessageCircle, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import WhatsAppIcon from "@/components/WhatsAppIcon";
 
 const WA_CHANNEL_LINK = "https://whatsapp.com/channel/0029VaZDEG67T8bWHjibTy2u";
 
@@ -10,7 +11,7 @@ export default function WhatsAppCommunityCTA() {
       <div className="container mx-auto flex flex-col items-center justify-between gap-4 px-4 md:flex-row">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/20">
-            <MessageCircle className="h-5 w-5 text-white" />
+            <WhatsAppIcon className="h-5 w-5 fill-current text-white" />
           </div>
           <div>
             <h3 className="text-lg font-semibold text-white md:text-xl">
