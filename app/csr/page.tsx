@@ -18,21 +18,13 @@ import {
 /* ------------------------------------------------------------------ */
 
 const heroStats = [
-  { icon: Utensils, value: "10,95,000+", label: "Meals served every year" },
+  { icon: Utensils, value: "3,000+", label: "Meals served every single day" },
   { icon: Hospital, value: "3", label: "Government hospitals served daily" },
-  { icon: Users, value: "1,000+", label: "Lives touched every single day" },
+  { icon: Users, value: "10.95 L+", label: "Beneficiaries every year" },
   { icon: Clock, value: "365", label: "Days of service — no breaks" },
 ];
 
 const programs = [
-  {
-    id: "annadaan",
-    icon: Utensils,
-    title: "Annadaan",
-    tag: "Food for hungry souls",
-    image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1786100757954-1786100756855-annadan2.jpg",
-    desc: "Sanctified prasadam distributed every day to devotees, students and the underprivileged — the highest charity in the Vedic tradition.",
-  },
   {
     id: "subhojanam",
     icon: Hospital,
@@ -40,6 +32,14 @@ const programs = [
     tag: "Free hospital meals",
     image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677363792-1783677363601-462395264797134589073566144398536696847591n.jpg",
     desc: "3,000+ hot, nutritious meals served daily to patients and their attendants at government hospitals in Visakhapatnam and Kakinada.",
+  },
+  {
+    id: "annadaan",
+    icon: Utensils,
+    title: "Annadaan",
+    tag: "Food for hungry souls",
+    image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1786100757954-1786100756855-annadan2.jpg",
+    desc: "Sanctified prasadam distributed every day to devotees, students and the underprivileged — the highest charity in the Vedic tradition.",
   },
   {
     id: "gau-seva",
@@ -75,13 +75,6 @@ const programs = [
   },
 ];
 
-const annadaanImpact = [
-  { period: "Daily prasadam at the temple", meals: "500+ plates every day" },
-  { period: "Festival mahaprasadam (Janmashtami, Ratha Yatra & more)", meals: "5,000+ plates per festival" },
-  { period: "Gita Jayanti & special occasions", meals: "2,000+ plates per occasion" },
-  { period: "Emergency & community feeding drives", meals: "Regular, as need arises" },
-];
-
 const subhojanamHospitals = [
   {
     name: "King George Hospital (KGH), Visakhapatnam",
@@ -95,6 +88,13 @@ const subhojanamHospitals = [
     name: "Homi Bhabha Cancer Hospital & Research Centre, Visakhapatnam",
     desc: "Up to 500 meals served daily for cancer patients and their caregivers at the Tata Memorial Centre facility.",
   },
+];
+
+const annadaanImpact = [
+  { period: "Daily prasadam at the temple", meals: "500+ plates every day" },
+  { period: "Festival mahaprasadam (Janmashtami, Ratha Yatra & more)", meals: "5,000+ plates per festival" },
+  { period: "Gita Jayanti & special occasions", meals: "2,000+ plates per occasion" },
+  { period: "Emergency & community feeding drives", meals: "Regular, as need arises" },
 ];
 
 const gauSevaTiers = [
@@ -228,58 +228,81 @@ function SectionHeading({
 export default function CsrPage() {
   // One in-view ref per section keeps scroll-triggered animations cheap.
   const refs = [useRef(null), useRef(null), useRef(null), useRef(null), useRef(null), useRef(null), useRef(null), useRef(null)];
-  const [intro, programsRef, annadaan, subhojanam, gau, education, partner, contact] = refs;
+  const [intro, programsRef, subhojanam, annadaan, gau, education, partner, contact] = refs;
   const views = refs.map((r) => useInView(r, { once: true, margin: "-80px" }));
-  const [vIntro, vPrograms, vAnnadaan, vSubhojanam, vGau, vEducation, vPartner, vContact] = views;
+  const [vIntro, vPrograms, vSubhojanam, vAnnadaan, vGau, vEducation, vPartner, vContact] = views;
 
   const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 
   return (
     <PageLayout>
-      {/* ── HERO ─────────────────────────────────────────────────── */}
-      <section className="relative min-h-[92vh] flex flex-col justify-end overflow-hidden pt-20">
-        <div className="absolute inset-0">
-          <Image
-            src="https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677363792-1783677363601-462395264797134589073566144398536696847591n.jpg"
-            alt="Prasadam distribution by Hare Krishna Movement Visakhapatnam"
-            fill priority sizes="100vw"
-            className="object-cover object-center"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[hsl(220,85%,6%)] via-[hsl(220,85%,8%,0.65)] to-transparent" />
-        </div>
-        <div className="relative z-10 container mx-auto px-4 pb-16 md:pb-24">
-          <nav className="mb-6 flex items-center gap-1.5 text-xs text-white/60">
-            <Link href="/" className="hover:text-white">Home</Link>
-            <ChevronRight className="h-3 w-3" />
-            <span className="text-white/90">Corporate Social Responsibility</span>
-          </nav>
-          <div className="max-w-3xl">
-            <p className="mb-4 text-sm font-semibold uppercase tracking-[0.25em] text-gold">
-              Corporate Social Responsibility
-            </p>
-            <h1 className="font-heading text-4xl font-bold leading-tight text-white md:text-6xl mb-6">
-              Creating a Better<br />Society for Tomorrow
-            </h1>
-            <p className="mb-8 max-w-2xl text-base leading-relaxed text-white/80">
-              Corporate Social Responsibility is a business commitment to creating a positive social
-              impact through ethical practices, community engagement, volunteering and charitable
-              initiatives. Partner with Hare Krishna Movement Visakhapatnam — feed the hungry, care
-              for cows, educate children and uplift society through the timeless wisdom of the Vedas.
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <button
-                onClick={() => scrollTo("partner-with-us")}
-                className="rounded-full bg-gradient-gold px-7 py-3.5 text-sm font-bold text-[hsl(220,60%,12%)] shadow-gold transition hover:opacity-90"
-              >
-                Partner With Us
-              </button>
-              <button
-                onClick={() => scrollTo("our-programs")}
-                className="rounded-full border border-white/30 bg-white/10 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20"
-              >
-                Explore Our Programs
-              </button>
-            </div>
+      {/* ── HERO — text left, banner image right (like a split banner) ── */}
+      <section className="relative overflow-hidden bg-[hsl(220,60%,9%)] pt-20">
+        {/* Decorative glows */}
+        <div className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-gold/10 blur-3xl" aria-hidden />
+        <div className="absolute -right-24 top-1/3 h-80 w-80 rounded-full bg-primary/20 blur-3xl" aria-hidden />
+
+        <div className="relative z-10 container mx-auto px-4 py-14 md:py-20">
+          <div className="grid items-center gap-12 lg:grid-cols-2">
+            {/* Left: copy */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
+            >
+              <nav className="mb-6 flex items-center gap-1.5 text-xs text-white/60">
+                <Link href="/" className="hover:text-white">Home</Link>
+                <ChevronRight className="h-3 w-3" />
+                <span className="text-white/90">Corporate Social Responsibility</span>
+              </nav>
+              <p className="mb-4 text-sm font-semibold uppercase tracking-[0.25em] text-gold">
+                Corporate Social Responsibility
+              </p>
+              <h1 className="font-heading text-4xl font-bold leading-tight text-white md:text-5xl lg:text-6xl mb-6">
+                Creating a Better<br />Society for Tomorrow
+              </h1>
+              <p className="mb-8 max-w-xl text-base leading-relaxed text-white/75">
+                Corporate Social Responsibility is a business commitment to creating a positive
+                social impact through ethical practices, community engagement, volunteering and
+                charitable initiatives. Partner with Hare Krishna Movement Visakhapatnam — feed the
+                hungry, care for cows, educate children and uplift society through the timeless
+                wisdom of the Vedas.
+              </p>
+              <div className="flex flex-wrap gap-4">
+                <button
+                  onClick={() => scrollTo("partner-with-us")}
+                  className="rounded-full bg-gradient-gold px-7 py-3.5 text-sm font-bold text-[hsl(220,60%,12%)] shadow-gold transition hover:opacity-90"
+                >
+                  Partner With Us
+                </button>
+                <button
+                  onClick={() => scrollTo("our-programs")}
+                  className="rounded-full border border-white/30 bg-white/10 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20"
+                >
+                  Explore Our Programs
+                </button>
+              </div>
+            </motion.div>
+
+            {/* Right: banner image */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2 }}
+              className="relative"
+            >
+              <div className="absolute -inset-4 rotate-1 rounded-3xl bg-gradient-to-br from-gold/20 to-primary/10" aria-hidden />
+              <Image
+                src="https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677363792-1783677363601-462395264797134589073566144398536696847591n.jpg"
+                alt="Prasadam distribution by Hare Krishna Movement Visakhapatnam"
+                width={720} height={540} priority
+                className="relative w-full rounded-2xl object-cover shadow-elevated"
+              />
+              {/* Floating daily-meals badge */}
+              <div className="absolute -bottom-5 left-4 flex items-center gap-3 rounded-2xl bg-gradient-gold px-5 py-3.5 shadow-gold md:-left-6">
+                <Utensils className="h-6 w-6 shrink-0 text-[hsl(220,60%,12%)]" />
+                <div>
+                  <p className="font-heading text-xl font-bold leading-none text-[hsl(220,60%,12%)]">3,000+</p>
+                  <p className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-[hsl(220,60%,20%)]">meals every day</p>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </div>
 
@@ -341,8 +364,61 @@ export default function CsrPage() {
         </div>
       </section>
 
+      {/* ── SUBHOJANAM ───────────────────────────────────────────── */}
+      <section id="subhojanam" className="bg-[hsl(220,60%,10%)] py-16 md:py-20" ref={subhojanam}>
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }} animate={vSubhojanam ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8 }}
+          >
+            <SectionHeading eyebrow="CSR Initiative · Hospital Meals" title="Subhojanam — Food With Dignity" dark />
+          </motion.div>
+
+          <div className="mx-auto mb-12 grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {subhojanamHospitals.map((h, i) => (
+              <motion.div
+                key={h.name}
+                initial={{ opacity: 0, y: 30 }} animate={vSubhojanam ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.12 * i }}
+                className="flex flex-col rounded-2xl border border-white/10 bg-white/5 p-6"
+              >
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gold/15">
+                  <Hospital className="h-6 w-6 text-gold" />
+                </div>
+                <h3 className="font-heading text-base font-bold text-white mb-2">{h.name}</h3>
+                <p className="text-sm leading-relaxed text-white/60 flex-1">{h.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Impact strip */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }} animate={vSubhojanam ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, delay: 0.2 }}
+            className="mx-auto max-w-5xl rounded-2xl border border-white/10 bg-white/5 p-8"
+          >
+            <div className="grid grid-cols-2 gap-6 text-center md:grid-cols-4">
+              {[
+                { value: "3,000+", label: "Meals served daily" },
+                { value: "365", label: "Days a year, without exception" },
+                { value: "10.95 L+", label: "Beneficiaries every year" },
+                { value: "₹25", label: "Cost of one wholesome meal" },
+              ].map((s) => (
+                <div key={s.label}>
+                  <p className="font-heading text-3xl font-bold text-gold md:text-4xl">{s.value}</p>
+                  <p className="mt-1 text-xs font-semibold text-white/70">{s.label}</p>
+                </div>
+              ))}
+            </div>
+            <p className="mt-6 border-t border-white/10 pt-6 text-center text-sm leading-relaxed text-white/60">
+              When a family below the poverty line is guaranteed one hot meal for every member, that
+              is one less expense — savings that flow to medicine, education and dignity. Subhojanam
+              is run under <strong className="text-white/90">Touchstone Charities</strong>, an
+              initiative of Hare Krishna Movement Visakhapatnam.
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
       {/* ── ANNADAAN ─────────────────────────────────────────────── */}
-      <section id="annadaan" className="py-16 md:py-20 bg-white dark:bg-background border-t border-border" ref={annadaan}>
+      <section id="annadaan" className="py-16 md:py-20 bg-white dark:bg-background" ref={annadaan}>
         <div className="container mx-auto px-4">
           <div className="mx-auto mb-14 max-w-3xl text-center">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={vAnnadaan ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7 }}>
@@ -395,59 +471,6 @@ export default function CsrPage() {
               </p>
             </motion.div>
           </div>
-        </div>
-      </section>
-
-      {/* ── SUBHOJANAM ───────────────────────────────────────────── */}
-      <section id="subhojanam" className="bg-[hsl(220,60%,10%)] py-16 md:py-20" ref={subhojanam}>
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }} animate={vSubhojanam ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8 }}
-          >
-            <SectionHeading eyebrow="CSR Initiative · Hospital Meals" title="Subhojanam — Food With Dignity" dark />
-          </motion.div>
-
-          <div className="mx-auto mb-12 grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {subhojanamHospitals.map((h, i) => (
-              <motion.div
-                key={h.name}
-                initial={{ opacity: 0, y: 30 }} animate={vSubhojanam ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.12 * i }}
-                className="flex flex-col rounded-2xl border border-white/10 bg-white/5 p-6"
-              >
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gold/15">
-                  <Hospital className="h-6 w-6 text-gold" />
-                </div>
-                <h3 className="font-heading text-base font-bold text-white mb-2">{h.name}</h3>
-                <p className="text-sm leading-relaxed text-white/60 flex-1">{h.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Impact strip */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }} animate={vSubhojanam ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, delay: 0.2 }}
-            className="mx-auto max-w-5xl rounded-2xl border border-white/10 bg-white/5 p-8"
-          >
-            <div className="grid grid-cols-2 gap-6 text-center md:grid-cols-4">
-              {[
-                { value: "3,000+", label: "Meals served daily" },
-                { value: "365", label: "Days a year, without exception" },
-                { value: "10.95 L+", label: "Beneficiaries every year" },
-                { value: "₹25", label: "Cost of one wholesome meal" },
-              ].map((s) => (
-                <div key={s.label}>
-                  <p className="font-heading text-3xl font-bold text-gold md:text-4xl">{s.value}</p>
-                  <p className="mt-1 text-xs font-semibold text-white/70">{s.label}</p>
-                </div>
-              ))}
-            </div>
-            <p className="mt-6 border-t border-white/10 pt-6 text-center text-sm leading-relaxed text-white/60">
-              When a family below the poverty line is guaranteed one hot meal for every member, that
-              is one less expense — savings that flow to medicine, education and dignity. Subhojanam
-              is run under <strong className="text-white/90">Touchstone Charities</strong>, an
-              initiative of Hare Krishna Movement Visakhapatnam.
-            </p>
-          </motion.div>
         </div>
       </section>
 
@@ -565,6 +588,7 @@ export default function CsrPage() {
             <motion.div
               initial={{ opacity: 0, y: 30 }} animate={vEducation ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, delay: 0.25 }}
             >
+              {/* TODO: swap in our own youth-program image links (to be provided) */}
               <div className="relative mb-6 overflow-hidden rounded-2xl">
                 <Image
                   src="https://iskconattapur-website-new.s3.ap-south-1.amazonaws.com/uploads/campaigns/payment-form-images/1770811960559.jpg"
@@ -685,7 +709,8 @@ export default function CsrPage() {
               <h3 className="font-heading text-xl font-bold text-white mb-6">Ways Your Company Can Support</h3>
               <div className="space-y-4">
                 {[
-                  { icon: Utensils, title: "Sponsor Annadaan & Subhojanam", desc: "₹25 per meal — fund daily hospital meals, festival feeding drives or a full day of city-wide distribution." },
+                  { icon: Hospital, title: "Sponsor Subhojanam Hospital Meals", desc: "₹25 per meal — fund daily meals at KGH, GGH Kakinada and Homi Bhabha Cancer Hospital, or sponsor a full day of distribution." },
+                  { icon: Utensils, title: "Sponsor Annadaan", desc: "Fund daily prasadam, festival mahaprasadam drives or community feeding across Visakhapatnam." },
                   { icon: Beef, title: "Support Gau Seva", desc: "Fodder, medicines, veterinary care or shelter infrastructure for the cows in our goshala." },
                   { icon: BookOpen, title: "Fund Gita Daan & Value Education", desc: "Sponsor books, school programs and value-education contests for students across Andhra Pradesh." },
                   { icon: Building2, title: "Support the Temple of Tomorrow", desc: "Join the Square Foot Seva campaign for the Hare Krishna Vaikuntham temple project at Gambheeram." },
