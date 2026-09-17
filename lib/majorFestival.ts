@@ -81,7 +81,12 @@ export function resolveCurrentFestival(now: Date = new Date()): MajorFestival | 
  * anything else must be a registry key).
  */
 export function resolveMajorFestival(override?: string | null): MajorFestival | null {
-  if (!override || override === "auto") return resolveCurrentFestival();
-  if (override === "none") return null;
+  // No stored preference (or "none") → show nothing. Auto-highlighting was
+  // removed: it put e.g. Radhashtami in the navbar for weeks around its
+  // calendar date, which read as stale rather than topical. An admin can
+  // still pin a festival explicitly via Admin → Content → Navigation, or
+  // opt back into the automatic pick with "auto".
+  if (!override || override === "none") return null;
+  if (override === "auto") return resolveCurrentFestival();
   return findByKey(override);
 }

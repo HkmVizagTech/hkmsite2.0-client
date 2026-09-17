@@ -97,10 +97,10 @@ const Navbar = () => {
         const res = await fetch(`${API_URL}/site-content`, { cache: "no-store" });
         if (res.ok) {
           const data = await res.json();
-          override = data?.content?.navbar?.majorFestival ?? "auto";
+          override = data?.content?.navbar?.majorFestival ?? "none";
         }
       } catch {
-        override = "auto";
+        override = "none";
       }
       if (!cancelled) setFestival(resolveMajorFestival(override));
     })();

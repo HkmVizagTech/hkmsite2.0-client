@@ -61,6 +61,30 @@ export default function OrderDetailPage() {
     };
   }, [orderNumber]);
 
+  // Keep the tracker fresh while the page is open: the admin can mark the
+  // order shipped / add tracking at any time, and the courier-sync job can
+  // flip it to delivered between visits. A quiet 45s poll picks up all of
+  // that without the customer having to refresh. Pauses when the tab is
+  // hidden so we don't burn API calls in a background tab.
+  useEffect(() => {
+    if (!orderNumber || !getDonorToken()) return;
+    if (typeof document !== "undefined" && document.visibilityState === "hidden") return;
+    const tick = () => {
+      fetchMyOrder(orderNumber)
+        .then((o) => setOrder((current) => o || current))
+        .catch(() => {});
+    };
+    const id = setInterval(tick, 45_000);
+    const onVisible = () => {
+      if (document.visibilityState === "visible") tick();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      clearInterval(id);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [orderNumber]);
+
   if (loading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
@@ -82,6 +106,14 @@ export default function OrderDetailPage() {
 
   const cancelled = order.fulfilmentStatus === "cancelled";
   const currentStep = STEPS.findIndex((s) => s.key === order.fulfilmentStatus);
+
+  // Courier scan updates written by the auto-tracking sync, newest last —
+  // show the most recent few so the customer sees movement without opening
+  // the courier's own site.
+  const latestCourierNotes = (order.statusHistory || [])
+    .filter((h) => h.status === "tracking_note" && h.note?.startsWith("Auto: "))
+    .slice(-3)
+    .map((h) => h.note!.replace(/^Auto: /, ""));
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
@@ -190,6 +222,15 @@ export default function OrderDetailPage() {
               >
                 Track shipment <ExternalLink className="h-3 w-3" />
               </a>
+            )}
+            {/* Live courier updates — pushed into the order history by the
+                auto-tracking sync (in transit / out for delivery scans). */}
+            {latestCourierNotes.length > 0 && (
+              <ul className="mt-2 space-y-0.5 text-xs text-muted-foreground">
+                {latestCourierNotes.map((note, i) => (
+                  <li key={i}>• {note}</li>
+                ))}
+              </ul>
             )}
           </div>
         )}
