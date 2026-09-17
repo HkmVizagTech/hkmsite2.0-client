@@ -201,26 +201,25 @@ export default function ShopCatalogPage() {
 
   return (
     <div>
-      {/* ═══ HERO BANNER — replaced by a results band while searching so the
-          matches are visible the moment the devotee types. ═══ */}
+      {/* ═══ HERO BANNER — replaced by a slim results band while searching so
+          the matches are visible the moment the devotee types. ═══ */}
       {searchActive ? (
-        <section className="mx-auto max-w-[1440px] px-4 pt-6 sm:px-6 lg:px-8">
-          <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-gold/30 bg-gold/5 px-5 py-4 md:px-6 md:py-5">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">Search</p>
-              <h1 className="mt-1 font-heading text-2xl font-bold text-foreground sm:text-3xl">
-                Results for “{search}”
+        <section className="mx-auto max-w-[1440px] px-4 pt-5 sm:px-6 lg:px-8">
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-border pb-4">
+            <div className="flex min-w-0 flex-wrap items-baseline gap-x-2.5 gap-y-1">
+              <h1 className="truncate font-heading text-xl font-bold text-foreground sm:text-2xl">
+                Results for <span className="text-primary">“{search}”</span>
               </h1>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {loading ? "Searching…" : `${total} item${total === 1 ? "" : "s"} found`}
-              </p>
+              <span className="shrink-0 text-xs text-muted-foreground sm:text-sm">
+                {loading ? "Searching…" : `${total} item${total === 1 ? "" : "s"}`}
+              </span>
             </div>
             <button
               type="button"
               onClick={() => setSearch("")}
-              className="inline-flex h-10 items-center gap-1.5 rounded-full border border-border bg-background px-4 text-sm font-semibold text-foreground transition-colors hover:border-gold hover:text-primary"
+              className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full border border-border bg-background px-3.5 text-xs font-semibold text-foreground transition-colors hover:border-gold hover:text-primary"
             >
-              <X className="h-4 w-4" /> Clear search
+              <X className="h-3.5 w-3.5" /> Clear search
             </button>
           </div>
         </section>
@@ -350,14 +349,6 @@ export default function ShopCatalogPage() {
               <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-xs font-semibold text-gold-deep">
                 {activeCategoryName ?? "Category"}
                 <button onClick={() => setCategory("all")} aria-label="Remove category filter">
-                  <X className="h-3 w-3" />
-                </button>
-              </span>
-            )}
-            {search && (
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-xs font-semibold text-gold-deep">
-                “{search}”
-                <button onClick={() => setSearch("")} aria-label="Clear search">
                   <X className="h-3 w-3" />
                 </button>
               </span>

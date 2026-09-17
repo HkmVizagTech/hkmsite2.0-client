@@ -105,7 +105,7 @@ function ShopHeader() {
       <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between gap-2 px-4 sm:h-[72px] sm:px-6 lg:gap-6 lg:px-8">
         {/* Brand wordmark only — no logo image. */}
         <Link href="/shop" className="group flex shrink-0 flex-col leading-none">
-          <span className="font-heading text-xl font-semibold tracking-tight sm:text-2xl">
+          <span className="font-heading text-[17px] font-semibold tracking-tight sm:text-2xl">
             Matchless <span className="text-gradient-gold">Gifts</span>
           </span>
           <span className="mt-1 text-[9px] font-semibold uppercase tracking-[0.28em] text-white/60">
@@ -167,8 +167,13 @@ function ShopHeader() {
           <Link href="/" className={`${linkCls(false)} hidden sm:inline-flex`}>
             <Home className="h-3.5 w-3.5" /> Main site
           </Link>
-          <Link href="/shop/orders" className={linkCls(pathname.startsWith("/shop/orders"))}>
-            <Package className="h-3.5 w-3.5" /> My Orders
+          <Link
+            href="/shop/orders"
+            aria-label="My orders"
+            className={linkCls(pathname.startsWith("/shop/orders"))}
+          >
+            <Package className="h-4 w-4 sm:h-3.5 sm:w-3.5" />
+            <span className="hidden sm:inline">My Orders</span>
           </Link>
           <button
             onClick={openCart}

@@ -19,6 +19,7 @@ const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "
 // ── Mobile: exact original flat link list (matches production site) ─
 const mobileNavItems = [
   { label: "Home", href: "/" },
+  { label: "Shop", href: "/shop" },
   { label: "About Us", href: "/about" },
   { label: "Founder", href: "/founder" },
   { label: "Volunteer", href: "/volunteer" },
