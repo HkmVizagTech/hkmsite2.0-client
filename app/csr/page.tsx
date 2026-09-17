@@ -62,7 +62,7 @@ const programs = [
     icon: GraduationCap,
     title: "Value Education",
     tag: "Character for the next generation",
-    image: "https://iskconattapur-website-new.s3.ap-south-1.amazonaws.com/uploads/campaigns/payment-form-images/1770811960559.jpg",
+    image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1789641526472-1789641525685-GlimpsesfromKrishnaPulseYouthFestivalKrishnaPulsebroughttogether1200studentsfor.jpg",
     desc: "Timeless Vedic values taught to school children through interactive sessions, competitions and cultural programs.",
   },
   {
@@ -442,8 +442,8 @@ export default function CsrPage() {
             >
               <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-primary/10 to-gold/10 -rotate-1" />
               <Image
-                src="https://iskconattapur-website-new.s3.ap-south-1.amazonaws.com/uploads/campaigns/payment-form-images/1770812074326.jpg"
-                alt="Annadaan meal distribution" width={640} height={420}
+                src="https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677363792-1783677363601-462395264797134589073566144398536696847591n.jpg"
+                alt="Annadaan meal distribution" width={720} height={540}
                 className="relative w-full rounded-2xl object-cover shadow-elevated"
               />
               <div className="absolute -bottom-4 -right-4 rounded-2xl bg-gradient-gold px-5 py-4 text-center shadow-gold">
@@ -588,13 +588,34 @@ export default function CsrPage() {
             <motion.div
               initial={{ opacity: 0, y: 30 }} animate={vEducation ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, delay: 0.25 }}
             >
-              {/* TODO: swap in our own youth-program image links (to be provided) */}
-              <div className="relative mb-6 overflow-hidden rounded-2xl">
-                <Image
-                  src="https://iskconattapur-website-new.s3.ap-south-1.amazonaws.com/uploads/campaigns/payment-form-images/1770811960559.jpg"
-                  alt="Value education for school children" width={640} height={360}
-                  className="w-full object-cover"
-                />
+              {/* 1:1 glimpses collage — one featured + two stacked */}
+              <div className="mb-6 grid grid-cols-2 gap-3">
+                <div className="relative aspect-square overflow-hidden rounded-2xl">
+                  <Image
+                    src="https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1789641527236-1789641526047-GlimpsesfromthemostexcitingVanabhojanameventconductedatourHareKrishnaVaikunthamte.jpg"
+                    alt="Vanabhojanam celebration at Hare Krishna Vaikuntham" fill
+                    sizes="(max-width: 1024px) 100vw, 25vw"
+                    className="object-cover transition-transform duration-500 hover:scale-105"
+                  />
+                </div>
+                <div className="grid grid-rows-2 gap-3">
+                  <div className="relative overflow-hidden rounded-2xl">
+                    <Image
+                      src="https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1789641526855-1789641525984-GlimpsesfromthemostexcitingVanabhojanameventconductedatourHareKrishnaVaikunthamte1.jpg"
+                      alt="Students enjoying the Vanabhojanam event" fill
+                      sizes="(max-width: 1024px) 100vw, 25vw"
+                      className="object-cover transition-transform duration-500 hover:scale-105"
+                    />
+                  </div>
+                  <div className="relative overflow-hidden rounded-2xl">
+                    <Image
+                      src="https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1789641526472-1789641525685-GlimpsesfromKrishnaPulseYouthFestivalKrishnaPulsebroughttogether1200studentsfor.jpg"
+                      alt="Krishna Pulse youth festival bringing together 1,200 students" fill
+                      sizes="(max-width: 1024px) 100vw, 25vw"
+                      className="object-cover transition-transform duration-500 hover:scale-105"
+                    />
+                  </div>
+                </div>
               </div>
               <h3 className="font-heading text-xl font-bold text-foreground mb-3">Value Education — Building Strong Children</h3>
               <p className="text-sm leading-relaxed text-muted-foreground mb-4">

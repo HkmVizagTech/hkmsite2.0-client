@@ -124,6 +124,9 @@ export async function fetchProducts(params: {
   sort?: string;
   page?: number;
   limit?: number;
+  inStockOnly?: boolean;
+  /** Comma-separated Mongo ids — powers the "Saved for later" section. */
+  ids?: string;
 }): Promise<{ products: Product[]; pagination: { page: number; pages: number; total: number } }> {
   const qs = new URLSearchParams();
   if (params.category && params.category !== "all") qs.set("category", params.category);
@@ -131,6 +134,8 @@ export async function fetchProducts(params: {
   if (params.sort) qs.set("sort", params.sort);
   if (params.page) qs.set("page", String(params.page));
   if (params.limit) qs.set("limit", String(params.limit));
+  if (params.inStockOnly) qs.set("inStockOnly", "true");
+  if (params.ids) qs.set("ids", params.ids);
   const data = await asJson(await fetch(`${SHOP_API}/shop/products?${qs.toString()}`));
   return { products: data.products || [], pagination: data.pagination };
 }

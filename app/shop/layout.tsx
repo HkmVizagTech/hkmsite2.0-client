@@ -2,18 +2,64 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { ShoppingBag, Package, Home } from "lucide-react";
 import { motion } from "framer-motion";
+import { quoteCart, formatINR } from "@/lib/shopApi";
+import { STORAGE_KEY as CART_STORAGE_KEY } from "@/contexts/CartContext";
 import { CartProvider, useCart } from "@/contexts/CartContext";
 import CartDrawer from "@/components/shop/CartDrawer";
+import MiniCartBar from "@/components/shop/MiniCartBar";
 import { Toaster } from "@/components/ui/sonner";
+
+// The header only needs current ids/quantities for pricing — read them
+// straight from the same localStorage key the provider persists to, rather
+// than re-plumbing context through another component.
+function cartSnapshot(): { lines: { productId: string; variantId: string | null; quantity: number }[] } {
+  try {
+    const raw = localStorage.getItem(CART_STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    if (!Array.isArray(parsed)) return { lines: [] };
+    return {
+      lines: parsed
+        .filter((l) => l && typeof l.productId === "string")
+        .map((l) => ({
+          productId: l.productId,
+          variantId: l.variantId || null,
+          quantity: Math.min(99, Math.max(1, Number(l.quantity) || 1)),
+        })),
+    };
+  } catch {
+    return { lines: [] };
+  }
+}
 
 // The cart provider is scoped to /shop rather than the root layout: nothing
 // outside the shop needs cart state, and keeping it here means the donation
 // side of the site carries none of this weight.
 function ShopHeader() {
   const { itemCount, openCart, hydrated } = useCart();
+  const [cartTotal, setCartTotal] = useState<number | null>(null);
   const pathname = usePathname();
+
+  // A cart button that also shows the running total is the global-standard
+  // pattern (Amazon, Flipkart): the devotee knows where they stand before
+  // opening anything. Same quote endpoint as the drawer, so the number
+  // can't drift from what checkout will charge.
+  useEffect(() => {
+    const { lines } = cartSnapshot();
+    if (!hydrated || lines.length === 0) {
+      setCartTotal(null);
+      return;
+    }
+    let cancelled = false;
+    quoteCart(lines)
+      .then((q) => !cancelled && setCartTotal(q.subtotal))
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [hydrated, itemCount]);
 
   const linkCls = (active: boolean) =>
     `relative inline-flex items-center gap-1.5 text-sm font-medium transition-colors after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-gradient-gold after:transition-all after:duration-300 hover:after:w-full ${
@@ -62,7 +108,9 @@ function ShopHeader() {
                 </motion.span>
               )}
             </span>
-            <span className="hidden text-xs font-semibold text-foreground sm:inline">Cart</span>
+            <span className="hidden text-xs font-semibold text-foreground sm:inline">
+              Cart{cartTotal !== null ? ` · ${formatINR(cartTotal)}` : ""}
+            </span>
           </button>
         </nav>
       </div>
@@ -156,10 +204,14 @@ export default function ShopLayout({ children }: { children: React.ReactNode }) 
         <ShopHeader />
         <main className="flex-1">{children}</main>
         <CartDrawer />
+        {/* Persistent mini-cart bar — the always-visible "proceed to
+            checkout" affordance for when the add-to-cart toast has faded. */}
+        <MiniCartBar />
         {/* Sonner toaster, scoped to the shop. Add-to-cart confirmations are
             custom-rendered (components/shop/CartToast) and rely on being inside
-            CartProvider. */}
-        <Toaster position="bottom-center" />
+            CartProvider. Offset keeps toasts stacked above the mini-cart bar
+            instead of colliding with it. */}
+        <Toaster position="bottom-center" offset={84} />
         <ShopFooter />
       </div>
     </CartProvider>

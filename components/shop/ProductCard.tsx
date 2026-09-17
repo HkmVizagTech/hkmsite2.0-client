@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ShoppingBag, Check, Truck, Minus, Plus } from "lucide-react";
+import { ShoppingBag, Check, Truck, Minus, Plus, Heart } from "lucide-react";
 import { useState } from "react";
 import { useCart } from "@/contexts/CartContext";
+import { useWishlist } from "@/hooks/useWishlist";
 import { showAddedToCart } from "@/components/shop/CartToast";
 import { Product, discountPercent, displayPrice, formatINR } from "@/lib/shopApi";
 
@@ -18,7 +19,9 @@ const MAX_QTY = 99;
 
 export default function ProductCard({ product, index = 0, categoryName }: Props) {
   const { addItem, setQuantity, openCart, lines } = useCart();
+  const { has: isWishlisted, toggle: toggleWishlist, hydrated: wishlistReady } = useWishlist();
   const [justAdded, setJustAdded] = useState(false);
+  const wishlisted = wishlistReady && isWishlisted(product._id);
 
   const off = product.hasVariants ? null : discountPercent(product.price, product.mrp);
   const saveAmount =
@@ -77,7 +80,8 @@ export default function ProductCard({ product, index = 0, categoryName }: Props)
         inCartAny > 0 ? "border-gold/40 ring-1 ring-gold/20" : "border-border"
       }`}
     >
-      <Link href={`/shop/${product.slug}`} className="relative block aspect-square overflow-hidden bg-muted">
+      <div className="relative">
+      <Link href={`/shop/${product.slug}`} className="block aspect-square overflow-hidden bg-muted">
         {product.images?.[0] ? (
           // Plain <img> rather than next/image: product photos are uploaded
           // to R2 and the public bucket host is env-configured, so it isn't
@@ -126,6 +130,27 @@ export default function ProductCard({ product, index = 0, categoryName }: Props)
           </div>
         )}
       </Link>
+
+      {/* Save-for-later heart — sibling of the link (not nested inside it, a
+          button inside a link is invalid HTML and breaks screen readers).
+          Appears on hover on desktop, always visible once saved, so the
+          affordance is discoverable but never noisy. */}
+      <button
+        type="button"
+        onClick={() => toggleWishlist(product._id)}
+        aria-label={wishlisted ? `Remove ${product.name} from wishlist` : `Save ${product.name} for later`}
+        aria-pressed={wishlisted}
+        className={`absolute right-3 z-10 flex h-8 w-8 items-center justify-center rounded-full border shadow-sm backdrop-blur transition-all ${
+          product.featured ? "top-12" : "top-3"
+        } ${
+          wishlisted
+            ? "border-rose-200 bg-rose-50 text-rose-500 opacity-100"
+            : "border-border bg-background/85 text-muted-foreground opacity-0 hover:text-rose-500 focus-visible:opacity-100 group-hover:opacity-100"
+        }`}
+      >
+        <Heart className={`h-4 w-4 ${wishlisted ? "fill-current" : ""}`} />
+      </button>
+      </div>
 
       <div className="flex flex-1 flex-col p-3.5 sm:p-4">
         {categoryName && (
