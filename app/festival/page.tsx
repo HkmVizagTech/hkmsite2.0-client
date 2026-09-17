@@ -69,6 +69,11 @@ function SectionHead({
 const imageOf = (f: FestivalShowcase) =>
   f.cardImage || f.heroImage || FALLBACK_IMAGE;
 
+// Admin showcases link to their own /festivals/<slug> page; calendar-derived
+// fallback items carry an explicit href (a real festival page where one
+// exists).
+const hrefOf = (f: FestivalCardItem) => f.href || `/festivals/${f.slug}`;
+
 function StatusChip({ status, featured }: { status?: string; featured?: boolean }) {
   if (status === "upcoming") {
     return (
@@ -156,12 +161,26 @@ export default function FestivalsPage() {
   }, []);
 
   const elementId = (f: FestivalCardItem) => f._id || f.slug;
-  const hrefOf = (f: FestivalCardItem) => f.href || `/festivals/${f.slug}`;
 
   const featured = festivals.find((f) => f.featured) || festivals[0];
-  const grid = featured ? festivals.filter((f) => elementId(f) !== elementId(featured)) : [];
   const featuredUpcoming =
     !!featured && featured.status === "upcoming" && !!featured.eventDate && asDate(featured.eventDate)! > new Date();
+
+  // Everything except the spotlight card, split into what's still ahead vs
+  // what has already been celebrated. Upcoming festivals lead the page in
+  // date order (soonest first); past ones sit beneath, most recent first,
+  // as a browsable archive instead of last-year's dates appearing on top.
+  const rest = featured ? festivals.filter((f) => elementId(f) !== elementId(featured)) : [];
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+  const byDate = (a: FestivalCardItem, b: FestivalCardItem) =>
+    (asDate(a.eventDate)?.getTime() || 0) - (asDate(b.eventDate)?.getTime() || 0);
+  const upcomingGrid = rest
+    .filter((f) => asDate(f.eventDate) && asDate(f.eventDate)! >= todayStart)
+    .sort(byDate);
+  const pastGrid = rest
+    .filter((f) => !asDate(f.eventDate) || asDate(f.eventDate)! < todayStart)
+    .sort((a, b) => byDate(b, a));
 
   return (
     <PageLayout>
@@ -270,7 +289,7 @@ export default function FestivalsPage() {
           <SectionHead
             eyebrow="Festival Archive"
             title="All Festivals"
-            sub="From Sri Krishna Janmashtami and Radhashtami to Laksha Deepotsav — relive every grand celebration."
+            sub="What's coming up next, and every grand celebration we've had so far."
           />
 
           {loading && (
@@ -289,19 +308,47 @@ export default function FestivalsPage() {
             </div>
           )}
 
-          {!loading && grid.length > 0 && (
-            <div className="mx-auto grid max-w-6xl gap-5 sm:grid-cols-2 md:gap-6 lg:grid-cols-3">
-              {grid.map((f, i) => {
-                const d = asDate(f.eventDate);
-                return (
-                  <motion.div
-                    key={f._id}
-                    initial={{ opacity: 0, y: 18 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-40px" }}
-                    transition={{ delay: Math.min(i, 5) * 0.06, duration: 0.45 }}
-                  >
-                    <div className="group flex h-full flex-col overflow-hidden rounded-[20px] border border-border bg-card transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/35 hover:shadow-elevated">
+          {!loading && upcomingGrid.length > 0 && (
+            <div className="mx-auto max-w-6xl">
+              <h3 className="mb-5 flex items-center gap-2 text-sm font-bold uppercase tracking-[0.2em] text-primary">
+                <Sparkles className="h-4 w-4" /> Upcoming Festivals
+              </h3>
+              <div className="grid gap-5 sm:grid-cols-2 md:gap-6 lg:grid-cols-3">
+                {upcomingGrid.map((f, i) => festivalCard(f, i))}
+              </div>
+            </div>
+          )}
+
+          {!loading && pastGrid.length > 0 && (
+            <div className={`mx-auto max-w-6xl ${upcomingGrid.length > 0 ? "mt-12" : ""}`}>
+              <h3 className="mb-5 flex items-center gap-2 text-sm font-bold uppercase tracking-[0.2em] text-muted-foreground">
+                <CalendarDays className="h-4 w-4" /> Completed Festivals
+              </h3>
+              <div className="grid gap-5 sm:grid-cols-2 md:gap-6 lg:grid-cols-3">
+                {pastGrid.map((f, i) => festivalCard(f, i))}
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      <WhatsAppCommunityCTA />
+    </PageLayout>
+  );
+}
+
+/* eslint-disable @next/next/no-img-element */
+function festivalCard(f: FestivalCardItem, i: number) {
+  const d = asDate(f.eventDate);
+  return (
+    <motion.div
+      key={f._id}
+      initial={{ opacity: 0, y: 18 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ delay: Math.min(i, 5) * 0.06, duration: 0.45 }}
+    >
+      <div className="group flex h-full flex-col overflow-hidden rounded-[20px] border border-border bg-card transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/35 hover:shadow-elevated">
                       <Link href={hrefOf(f)} className="relative block aspect-[16/10] overflow-hidden bg-primary/5">
                         <img
                           src={imageOf(f)}
@@ -361,15 +408,6 @@ export default function FestivalsPage() {
                         </div>
                       </div>
                     </div>
-                  </motion.div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      </section>
-
-      <WhatsAppCommunityCTA />
-    </PageLayout>
+  </motion.div>
   );
 }
