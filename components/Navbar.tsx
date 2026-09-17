@@ -266,7 +266,8 @@ const Navbar = () => {
 
               if (entry.kind === "festival") {
                 // Only rendered while a major festival is active — either
-                // auto-picked from the calendar or set by an admin.
+                // auto-picked from the calendar or set by an admin. Styled
+                // like any other top-level link (no gold pill / badge).
                 if (!festival) return null;
                 const activeF =
                   pathname === festival.href || pathname.startsWith(festival.href);
@@ -274,8 +275,8 @@ const Navbar = () => {
                   <Link
                     key={festival.href}
                     href={festival.href}
-                    className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-gold/50 bg-gold/10 px-3 py-1.5 text-[13px] font-semibold text-gold-deep transition-all hover:bg-gold/20 ${
-                      activeF ? "border-gold bg-gold/20" : ""
+                    className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-2 text-[13px] font-medium transition-all ${
+                      activeF ? "text-primary" : "text-muted-foreground hover:text-primary"
                     }`}
                   >
                     <Flower2 className="h-3.5 w-3.5" />
@@ -367,15 +368,14 @@ const Navbar = () => {
                 {festival && (
                   <Link
                     href={festival.href}
-                    className={`flex items-center justify-between rounded-lg border border-gold/40 bg-gold/10 px-4 py-2.5 text-[15px] font-semibold text-gold-deep transition-colors hover:bg-gold/20 ${
-                      pathname === festival.href ? "bg-gold/20" : ""
+                    className={`flex items-center gap-2 rounded-lg px-4 py-2.5 text-[15px] font-medium transition-colors ${
+                      pathname === festival.href || pathname.startsWith(festival.href)
+                        ? "text-primary bg-primary/10"
+                        : "text-foreground hover:text-primary hover:bg-primary/10"
                     }`}
                   >
-                    <span className="flex items-center gap-2">
-                      <Flower2 className="h-4 w-4" />
-                      {festival.label}
-                    </span>
-                    <span className="text-[11px] font-medium text-gold-deep/70">Major festival</span>
+                    <Flower2 className="h-4 w-4" />
+                    {festival.label}
                   </Link>
                 )}
                 {mobileNavItems.map((item) => (
