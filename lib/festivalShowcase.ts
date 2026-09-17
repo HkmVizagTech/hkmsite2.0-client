@@ -39,6 +39,7 @@ export type FestivalShowcase = {
   description?: string;
   status?: "upcoming" | "completed" | "annual";
   featured?: boolean;
+  featuredOrder?: number;
   active?: boolean;
   ctaLabel?: string;
   ctaHref?: string;

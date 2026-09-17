@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Phone, Mail, Clock, Heart, ChevronDown, Home, User, Utensils, Info, Flower2 } from "lucide-react";
+import { Menu, X, Phone, Mail, Clock, Heart, ChevronDown, Home, User, Utensils, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ISKLogo from "@/assets/ISKCONGambheeramLogo.jpeg";
 import HKVTLogo from "@/assets/HKVTLogo.png";
@@ -279,7 +279,6 @@ const Navbar = () => {
                       activeF ? "text-primary" : "text-muted-foreground hover:text-primary"
                     }`}
                   >
-                    <Flower2 className="h-3.5 w-3.5" />
                     {festival.label}
                   </Link>
                 );
@@ -374,7 +373,6 @@ const Navbar = () => {
                         : "text-foreground hover:text-primary hover:bg-primary/10"
                     }`}
                   >
-                    <Flower2 className="h-4 w-4" />
                     {festival.label}
                   </Link>
                 )}
