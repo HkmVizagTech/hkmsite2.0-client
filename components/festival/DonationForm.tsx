@@ -22,6 +22,15 @@ export default function DonationForm({ config, setToast }: any) {
   const razorpayReady = useRazorpayPreload();
   const [selectedSevas, setSelectedSevas] = useState<any>({});
   const [expandedSeva, setExpandedSeva] = useState<string | null>(null);
+
+  // Each festival page defines its own sevas (admin: festival-donations).
+  // Those come through as config.sevaOptions — [{ id, name, amounts }] —
+  // and win over the generic defaults below, which only exist so a page
+  // with no options configured still shows a usable form.
+  const sevaOptions: { id: string; name: string; amounts: number[] }[] =
+    Array.isArray(config?.sevaOptions) && config.sevaOptions.length > 0
+      ? config.sevaOptions
+      : DEFAULT_SEVA_OPTIONS;
   const [formData, setFormData] = useState({ name: "", email: "", mobile: "", dob: "", sevakName: "", panNumber: "", want80G: false, wantPrasadam: false,
     doorNo: '', house: '', street: '', area: '', country: 'India', state: '', city: '', pincode: '' });
 
@@ -242,7 +251,7 @@ export default function DonationForm({ config, setToast }: any) {
       </div>
 
       <form onSubmit={handleSubmit} className="p-5 md:p-6 space-y-3">
-  { DEFAULT_SEVA_OPTIONS.map((seva: any) => {
+  { sevaOptions.map((seva: any) => {
           const isExpanded = expandedSeva === seva.id;
           const selected = selectedSevas[seva.id];
 

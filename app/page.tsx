@@ -7,6 +7,7 @@ import SevasSection from "@/components/SevasSection";
 import GalleryPreview from "@/components/GalleryPreview";
 import BlogPreview from "@/components/BlogPreview";
 import SubhojanamSection from "@/components/SubhojanamSection";
+import FestivalDonationsSection from "@/components/FestivalDonationsSection";
 import ContactSection from "@/components/ContactSection";
 import WhatsAppCommunityCTA from "@/components/WhatsAppCommunityCTA";
 import Footer from "@/components/Footer";
@@ -29,6 +30,7 @@ export default function Home() {
       <AboutSection />
       <FounderSection />
       <SevasSection />
+      <FestivalDonationsSection variant="home" />
       <GalleryPreview />
       {/* Upcoming Celebrations temporarily disabled — component kept intact
           in components/EventsPreview.tsx, just not rendered here for now. */}
