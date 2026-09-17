@@ -86,18 +86,27 @@ export default function ShopCatalogPage() {
   const recentSlugs = useRecentlyViewed();
   const [recent, setRecent] = useState<Product[]>([]);
 
-  // Auto-scroll past the hero artwork on arrival, so the devotee lands on
-  // the filters and products rather than a full screen of banner.
+  // Scroll behaviour tied to search state:
+  //   - no search: auto-scroll past the hero artwork on arrival so the
+  //     devotee lands on the filters and products.
+  //   - search active: the banner is replaced by a results band, so jump to
+  //     the very top — results are immediately visible, no scrolling needed.
+  //   - search cleared: the banner comes back, so return to just below it.
+  const searchActive = search.trim().length > 0;
   useEffect(() => {
     const t = setTimeout(() => {
+      if (searchActive) {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
       if (window.scrollY > 0) return;
       const el = document.getElementById("shop-hero");
       if (!el) return;
-      const bottom = el.getBoundingClientRect().bottom;
-      if (bottom > 96) window.scrollTo({ top: bottom - 72, behavior: "smooth" });
-    }, 500);
+      const bottom = el.getBoundingClientRect().bottom + window.scrollY;
+      if (bottom > 96) window.scrollTo({ top: Math.max(bottom - 72, 0), behavior: "smooth" });
+    }, 80);
     return () => clearTimeout(t);
-  }, []);
+  }, [searchActive]);
 
   useEffect(() => {
     fetchCategories().then(setCategories).catch(() => setCategories([]));
@@ -192,22 +201,46 @@ export default function ShopCatalogPage() {
 
   return (
     <div>
-      {/* ═══ HERO BANNER ═══ */}
-      <section id="shop-hero" className="relative">
-        {/* The banner itself comes in two crops — a wide desktop frame and a
-            taller mobile one that still breathes on a small screen. Like the
-            festival pages, its bottom edge curves. */}
-        <div className="overflow-hidden rounded-b-[2rem] md:rounded-b-[2.5rem]">
-          <picture>
-            <source media="(max-width: 640px)" srcSet={SHOP_BANNER_MOBILE} />
-            <img
-              src={SHOP_BANNER_DESKTOP}
-              alt="The Hare Krishna temple shop — books, puja items & sacred gifts"
-              className="block h-auto w-full"
-            />
-          </picture>
-        </div>
-      </section>
+      {/* ═══ HERO BANNER — replaced by a results band while searching so the
+          matches are visible the moment the devotee types. ═══ */}
+      {searchActive ? (
+        <section className="mx-auto max-w-[1440px] px-4 pt-6 sm:px-6 lg:px-8">
+          <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-gold/30 bg-gold/5 px-5 py-4 md:px-6 md:py-5">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">Search</p>
+              <h1 className="mt-1 font-heading text-2xl font-bold text-foreground sm:text-3xl">
+                Results for “{search}”
+              </h1>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {loading ? "Searching…" : `${total} item${total === 1 ? "" : "s"} found`}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setSearch("")}
+              className="inline-flex h-10 items-center gap-1.5 rounded-full border border-border bg-background px-4 text-sm font-semibold text-foreground transition-colors hover:border-gold hover:text-primary"
+            >
+              <X className="h-4 w-4" /> Clear search
+            </button>
+          </div>
+        </section>
+      ) : (
+        <section id="shop-hero" className="relative">
+          {/* The banner itself comes in two crops — a wide desktop frame and a
+              taller mobile one that still breathes on a small screen. Like the
+              festival pages, its bottom edge curves. */}
+          <div className="overflow-hidden rounded-b-[2rem] md:rounded-b-[2.5rem]">
+            <picture>
+              <source media="(max-width: 640px)" srcSet={SHOP_BANNER_MOBILE} />
+              <img
+                src={SHOP_BANNER_DESKTOP}
+                alt="The Hare Krishna temple shop — books, puja items & sacred gifts"
+                className="block h-auto w-full"
+              />
+            </picture>
+          </div>
+        </section>
+      )}
 
       {/* ═══ ANNOUNCEMENT + CLOSED BANNERS ═══ */}
       {settings?.announcement && (
@@ -351,8 +384,8 @@ export default function ShopCatalogPage() {
         )}
       </div>
 
-      {/* ═══ FEATURED RAIL ═══ */}
-      {featured.length > 0 && (
+      {/* ═══ FEATURED RAIL — hidden while searching so results lead. */}
+      {!searchActive && featured.length > 0 && (
         <section className="mx-auto max-w-[1440px] px-4 py-10 sm:px-6 lg:px-8">
           <div className="mb-5 flex items-end justify-between gap-4">
             <div>
