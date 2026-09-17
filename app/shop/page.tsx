@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  Search,
   PackageOpen,
   Megaphone,
   Sparkles,
@@ -26,6 +25,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import ProductCard from "@/components/shop/ProductCard";
+import { useShopSearch } from "@/contexts/ShopSearchContext";
 import { useWishlist } from "@/hooks/useWishlist";
 import { useRecentlyViewed } from "@/hooks/useRecent";
 import {
@@ -53,14 +53,13 @@ const SHOP_BANNER_MOBILE =
   "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1789648084586-1789648083922-shop-mob.webp";
 
 export default function ShopCatalogPage() {
+  const { query: search, setQuery: setSearch } = useShopSearch();
   const [products, setProducts] = useState<Product[]>([]);
   const [featured, setFeatured] = useState<Product[]>([]);
   const [categories, setCategories] = useState<ShopCategory[]>([]);
   const [settings, setSettings] = useState<ShopSettings | null>(null);
   const [category, setCategory] = useState("all");
   const [sort, setSort] = useState("featured");
-  const [searchInput, setSearchInput] = useState("");
-  const [search, setSearch] = useState("");
   const [inStockOnly, setInStockOnly] = useState(false);
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
@@ -70,6 +69,16 @@ export default function ShopCatalogPage() {
   const [error, setError] = useState<string | null>(null);
   const featuredRef = useRef<HTMLDivElement>(null);
 
+  // Arriving from the navbar search on another page lands here with a
+  // ?search= term in the URL — seed the shared query once so the grid shows
+  // those results even on a fresh load.
+  useEffect(() => {
+    try {
+      const term = new URLSearchParams(window.location.search).get("search");
+      if (term) setSearch(term);
+    } catch {}
+  }, []);
+
   // Saved-for-later + recently-viewed — both are personal, browser-local
   // rails that global storefronts use to shorten the path back to an item.
   const { ids: savedIds, hydrated: wishlistReady } = useWishlist();
@@ -77,11 +86,18 @@ export default function ShopCatalogPage() {
   const recentSlugs = useRecentlyViewed();
   const [recent, setRecent] = useState<Product[]>([]);
 
-  // Debounced so a search box doesn't fire a request per keystroke.
+  // Auto-scroll past the hero artwork on arrival, so the devotee lands on
+  // the filters and products rather than a full screen of banner.
   useEffect(() => {
-    const t = setTimeout(() => setSearch(searchInput.trim()), 350);
+    const t = setTimeout(() => {
+      if (window.scrollY > 0) return;
+      const el = document.getElementById("shop-hero");
+      if (!el) return;
+      const bottom = el.getBoundingClientRect().bottom;
+      if (bottom > 96) window.scrollTo({ top: bottom - 72, behavior: "smooth" });
+    }, 500);
     return () => clearTimeout(t);
-  }, [searchInput]);
+  }, []);
 
   useEffect(() => {
     fetchCategories().then(setCategories).catch(() => setCategories([]));
@@ -177,17 +193,20 @@ export default function ShopCatalogPage() {
   return (
     <div>
       {/* ═══ HERO BANNER ═══ */}
-      <section className="relative border-b border-border">
+      <section id="shop-hero" className="relative">
         {/* The banner itself comes in two crops — a wide desktop frame and a
-            taller mobile one that still breathes on a small screen. */}
-        <picture>
-          <source media="(max-width: 640px)" srcSet={SHOP_BANNER_MOBILE} />
-          <img
-            src={SHOP_BANNER_DESKTOP}
-            alt="The Hare Krishna temple shop — books, puja items & sacred gifts"
-            className="block h-auto w-full"
-          />
-        </picture>
+            taller mobile one that still breathes on a small screen. Like the
+            festival pages, its bottom edge curves. */}
+        <div className="overflow-hidden rounded-b-[2rem] md:rounded-b-[2.5rem]">
+          <picture>
+            <source media="(max-width: 640px)" srcSet={SHOP_BANNER_MOBILE} />
+            <img
+              src={SHOP_BANNER_DESKTOP}
+              alt="The Hare Krishna temple shop — books, puja items & sacred gifts"
+              className="block h-auto w-full"
+            />
+          </picture>
+        </div>
       </section>
 
       {/* ═══ ANNOUNCEMENT + CLOSED BANNERS ═══ */}
@@ -205,13 +224,15 @@ export default function ShopCatalogPage() {
       )}
 
       {/* ═══ STICKY FILTERS ═══ */}
-      <div className="sticky top-16 z-30 border-b border-border bg-background/95 backdrop-blur-md">
-        <div className="mx-auto flex max-w-[1440px] flex-wrap items-center gap-2 px-4 py-3 sm:px-6 lg:px-8">
+      <div className="sticky top-16 z-30 border-b border-border bg-background/95 backdrop-blur-md sm:top-[72px]">
+        {/* On mobile the filters live in one swipeable row (the pattern the
+            big storefronts use) rather than wrapping onto two lines. */}
+        <div className="mx-auto flex max-w-[1440px] items-center gap-2 overflow-x-auto px-4 py-3 sm:px-6 lg:px-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {/* Category selector */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
-                className="inline-flex h-10 items-center gap-2 rounded-full border border-border bg-background px-4 text-xs font-semibold text-foreground transition-colors hover:border-gold sm:text-sm"
+                className="inline-flex h-10 shrink-0 items-center gap-2 rounded-full border border-border bg-background px-4 text-xs font-semibold text-foreground transition-colors hover:border-gold sm:text-sm"
                 aria-label="Filter by category"
               >
                 <LayoutGrid className="h-4 w-4 text-muted-foreground" />
@@ -251,7 +272,7 @@ export default function ShopCatalogPage() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
-                className="inline-flex h-10 items-center gap-2 rounded-full border border-border bg-background px-4 text-xs font-semibold text-foreground transition-colors hover:border-gold sm:text-sm"
+                className="inline-flex h-10 shrink-0 items-center gap-2 rounded-full border border-border bg-background px-4 text-xs font-semibold text-foreground transition-colors hover:border-gold sm:text-sm"
                 aria-label="Sort products"
               >
                 <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground" />
@@ -278,7 +299,7 @@ export default function ShopCatalogPage() {
             type="button"
             onClick={() => setInStockOnly((v) => !v)}
             aria-pressed={inStockOnly}
-            className={`inline-flex h-10 items-center gap-2 rounded-full border px-4 text-xs font-semibold transition-colors sm:text-sm ${
+            className={`inline-flex h-10 shrink-0 items-center gap-2 rounded-full border px-4 text-xs font-semibold transition-colors sm:text-sm ${
               inStockOnly
                 ? "border-gold bg-gold/10 text-gold-deep"
                 : "border-border bg-background text-foreground hover:border-gold"
@@ -287,18 +308,6 @@ export default function ShopCatalogPage() {
             <Check className={`h-3.5 w-3.5 ${inStockOnly ? "text-gold-deep" : "text-muted-foreground"}`} />
             In stock only
           </button>
-
-          {/* Search — moved here from the hero. */}
-          <div className="relative w-full sm:ml-auto sm:w-64">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <input
-              type="search"
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              placeholder="Search books, incense, malas…"
-              className="w-full rounded-full border border-border bg-background py-2.5 pl-9 pr-4 text-sm text-foreground outline-none transition-colors focus:border-gold"
-            />
-          </div>
         </div>
 
         {/* Active filter chips */}
@@ -315,7 +324,7 @@ export default function ShopCatalogPage() {
             {search && (
               <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-xs font-semibold text-gold-deep">
                 “{search}”
-                <button onClick={() => setSearchInput("")} aria-label="Clear search">
+                <button onClick={() => setSearch("")} aria-label="Clear search">
                   <X className="h-3 w-3" />
                 </button>
               </span>
@@ -331,7 +340,7 @@ export default function ShopCatalogPage() {
             <button
               onClick={() => {
                 setCategory("all");
-                setSearchInput("");
+                setSearch("");
                 setInStockOnly(false);
               }}
               className="text-xs font-medium text-muted-foreground underline-offset-2 hover:text-primary hover:underline"
@@ -422,7 +431,7 @@ export default function ShopCatalogPage() {
             {(search || category !== "all") && (
               <button
                 onClick={() => {
-                  setSearchInput("");
+                  setSearch("");
                   setCategory("all");
                 }}
                 className="mt-4 rounded-full border border-border px-4 py-2 text-sm font-semibold text-primary transition-colors hover:border-gold"

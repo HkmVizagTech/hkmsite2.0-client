@@ -133,19 +133,19 @@ export default function ProductCard({ product, index = 0, categoryName }: Props)
 
       {/* Save-for-later heart — sibling of the link (not nested inside it, a
           button inside a link is invalid HTML and breaks screen readers).
-          Appears on hover on desktop, always visible once saved, so the
-          affordance is discoverable but never noisy. */}
+          Always visible so hearting/unhearting is discoverable on every
+          device (touch has no hover to reveal a hidden one). */}
       <button
         type="button"
         onClick={() => toggleWishlist(product._id)}
         aria-label={wishlisted ? `Remove ${product.name} from wishlist` : `Save ${product.name} for later`}
         aria-pressed={wishlisted}
-        className={`absolute right-3 z-10 flex h-8 w-8 items-center justify-center rounded-full border shadow-sm backdrop-blur transition-all ${
+        className={`absolute right-3 z-10 flex h-8 w-8 items-center justify-center rounded-full border shadow-sm backdrop-blur transition-colors ${
           product.featured ? "top-12" : "top-3"
         } ${
           wishlisted
-            ? "border-rose-200 bg-rose-50 text-rose-500 opacity-100"
-            : "border-border bg-background/85 text-muted-foreground opacity-0 hover:text-rose-500 focus-visible:opacity-100 group-hover:opacity-100"
+            ? "border-rose-200 bg-rose-50 text-rose-500"
+            : "border-border bg-background/85 text-muted-foreground hover:text-rose-500"
         }`}
       >
         <Heart className={`h-4 w-4 ${wishlisted ? "fill-current" : ""}`} />
