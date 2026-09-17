@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ShoppingBag, Package, Home } from "lucide-react";
+import { motion } from "framer-motion";
 import { CartProvider, useCart } from "@/contexts/CartContext";
 import CartDrawer from "@/components/shop/CartDrawer";
 import { Toaster } from "@/components/ui/sonner";
@@ -49,12 +50,16 @@ function ShopHeader() {
               {/* Hidden until hydration so the badge never flashes a stale or
                   zero count before localStorage has been read. */}
               {hydrated && itemCount > 0 && (
-                <span
+                <motion.span
+                  key={itemCount}
+                  initial={{ scale: 0.5, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: "spring", stiffness: 520, damping: 20 }}
                   className="absolute -right-1.5 -top-1.5 flex h-4 min-w-[16px] items-center justify-center rounded-full px-1 text-[9px] font-bold text-[hsl(220,60%,12%)] shadow-sm"
                   style={{ background: "var(--gradient-gold)" }}
                 >
                   {itemCount}
-                </span>
+                </motion.span>
               )}
             </span>
             <span className="hidden text-xs font-semibold text-foreground sm:inline">Cart</span>

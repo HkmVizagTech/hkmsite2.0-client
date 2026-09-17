@@ -2,7 +2,7 @@ import {
   Home, Info, User, Phone,
   Clock, Image, Calendar, Snowflake,
   Heart, Utensils, Beef, BookOpen, Shirt, Sparkles, Gift,
-  CalendarDays, PartyPopper, HandHeart, FileText, Flower2,
+  CalendarDays, PartyPopper, HandHeart, FileText, Flower2, Building2,
   ShoppingBag, Package,
   type LucideIcon,
 } from "lucide-react";
@@ -85,6 +85,7 @@ export const navEntries: NavEntry[] = [
         { label: "Events", href: "/events", description: "Upcoming programs & registrations", icon: CalendarDays },
         { label: "Festivals", href: "/festival", description: "Grand celebrations at the temple", icon: PartyPopper },
         { label: "Volunteer", href: "/volunteer", description: "Serve with us", icon: HandHeart },
+        { label: "CSR Partnership", href: "/csr", description: "Corporate social responsibility programs", icon: Building2 },
       ],
     },
   },

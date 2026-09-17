@@ -32,7 +32,7 @@ import {
 export default function ProductDetailPage() {
   const params = useParams<{ slug: string }>();
   const slug = params?.slug as string;
-  const { addItem, openCart } = useCart();
+  const { addItem, openCart, lines } = useCart();
 
   const [product, setProduct] = useState<Product | null>(null);
   const [related, setRelated] = useState<Product[]>([]);
@@ -92,6 +92,12 @@ export default function ProductDetailPage() {
   const currentStock = product.hasVariants ? variant?.stock ?? 0 : product.stock;
   const off = discountPercent(currentPrice, currentMrp);
   const canBuy = currentStock > 0 && (!product.hasVariants || !!variant);
+
+  // How many of the currently-selected option are already in the cart.
+  const inCartForSelection =
+    lines.find(
+      (l) => l.productId === product._id && (l.variantId || null) === (variant?._id || null)
+    )?.quantity ?? 0;
 
   const handleAdd = () => {
     if (!canBuy) return;
@@ -237,10 +243,24 @@ export default function ProductDetailPage() {
             )}
           </div>
 
+          {inCartForSelection > 0 && (
+            <p className="mt-4 flex items-center gap-2 text-xs font-medium text-emerald-600">
+              <Check className="h-3.5 w-3.5" />
+              {inCartForSelection} in your cart
+              <button
+                type="button"
+                onClick={openCart}
+                className="font-semibold text-primary underline-offset-2 hover:underline"
+              >
+                View cart
+              </button>
+            </p>
+          )}
+
           <div className="mt-5 flex gap-3">
             <Button size="lg" className="flex-1 gap-2" disabled={!canBuy || settings?.shopEnabled === false} onClick={handleAdd}>
               {added ? <Check className="h-4 w-4" /> : <ShoppingBag className="h-4 w-4" />}
-              {!canBuy ? "Out of stock" : settings?.shopEnabled === false ? "Shop closed" : added ? "Added to cart" : "Add to Cart"}
+              {!canBuy ? "Out of stock" : settings?.shopEnabled === false ? "Shop closed" : added ? "Added" : inCartForSelection > 0 ? "Add more" : "Add to Cart"}
             </Button>
           </div>
 
