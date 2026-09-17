@@ -146,48 +146,55 @@ export default function FestivalDonationsSection({
             >
               <Link
                 href={FESTIVAL_PAGE[c.slug]}
-                className={`group relative block aspect-[3/2] overflow-hidden rounded-3xl border shadow-warm transition-all duration-300 hover:-translate-y-2 hover:shadow-elevated ${
+                className={`group block overflow-hidden rounded-3xl border bg-card shadow-warm transition-all duration-300 hover:-translate-y-2 hover:shadow-elevated ${
                   isHome ? "border-white/15" : "border-border"
                 }`}
               >
-                {c.images?.[0] ? (
-                  /* eslint-disable-next-line @next/next/no-img-element */
-                  <img
-                    src={c.images[0]}
-                    alt={c.title}
-                    loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
-                  />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center bg-muted">
-                    <Sparkles className="h-10 w-10 text-primary/30" />
+                {/* Banner — the photo sits on top, uncluttered by text. */}
+                <div className="relative aspect-[3/2] overflow-hidden">
+                  {c.images?.[0] ? (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img
+                      src={c.images[0]}
+                      alt={c.title}
+                      loading="lazy"
+                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-muted">
+                      <Sparkles className="h-10 w-10 text-primary/30" />
+                    </div>
+                  )}
+
+                  {/* Top chips */}
+                  <div className="absolute inset-x-0 top-0 flex items-start justify-between p-3 md:p-4">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-black/45 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white/90 backdrop-blur-sm">
+                      <CalendarDays className="h-3 w-3" />
+                      {(() => {
+                        const d = formatEventDate(c.meta?.eventDate);
+                        return d ? `${d.day} ${d.month} ${d.year}` : "Save the date";
+                      })()}
+                    </span>
+                    <span className="rounded-full bg-gold px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[hsl(220,60%,12%)]">
+                      Festival Seva
+                    </span>
                   </div>
-                )}
 
-                {/* Scrim so the bottom text always stays readable. */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
-
-                {/* Top chips */}
-                <div className="absolute inset-x-0 top-0 flex items-start justify-between p-3 md:p-4">
-                  <span className="inline-flex items-center gap-1 rounded-full bg-black/45 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white/90 backdrop-blur-sm">
-                    <CalendarDays className="h-3 w-3" />
-                    {(() => {
-                      const d = formatEventDate(c.meta?.eventDate);
-                      return d ? `${d.day} ${d.month} ${d.year}` : "Save the date";
-                    })()}
-                  </span>
-                  <span className="rounded-full bg-gold px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[hsl(220,60%,12%)]">
-                    Festival Seva
-                  </span>
+                  {/* Hover donate pill — appears over the banner on hover. */}
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-gold px-5 py-2.5 text-[13px] font-bold text-[hsl(220,60%,12%)] shadow-gold">
+                      Donate Now <ArrowRight className="h-3.5 w-3.5" />
+                    </span>
+                  </div>
                 </div>
 
-                {/* Bottom content */}
-                <div className="absolute inset-x-0 bottom-0 p-4 md:p-5">
-                  <h3 className="line-clamp-2 font-heading text-lg font-bold leading-snug text-white md:text-xl">
+                {/* Content below the banner. */}
+                <div className="p-4 md:p-5">
+                  <h3 className="line-clamp-2 font-heading text-lg font-bold leading-snug text-foreground md:text-xl">
                     {c.title}
                   </h3>
                   {c.description && (
-                    <p className="mt-1 line-clamp-2 text-[12px] leading-relaxed text-white/75">
+                    <p className="mt-1 line-clamp-2 text-[12px] leading-relaxed text-muted-foreground">
                       {c.description}
                     </p>
                   )}
@@ -196,7 +203,7 @@ export default function FestivalDonationsSection({
                       {sevas(c).map((s) => (
                         <span
                           key={s.label}
-                          className="rounded-full bg-white/15 px-2.5 py-1 text-[10px] font-semibold text-gold backdrop-blur-sm"
+                          className="rounded-full bg-gold/10 px-2.5 py-1 text-[10px] font-semibold text-gold-deep"
                         >
                           {s.amount
                             ? `${s.label} · ₹${s.amount.toLocaleString("en-IN")}`
@@ -205,13 +212,6 @@ export default function FestivalDonationsSection({
                       ))}
                     </div>
                   )}
-                </div>
-
-                {/* Hover donate pill */}
-                <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-gold px-5 py-2.5 text-[13px] font-bold text-[hsl(220,60%,12%)] shadow-gold">
-                    Donate Now <ArrowRight className="h-3.5 w-3.5" />
-                  </span>
                 </div>
               </Link>
             </motion.div>

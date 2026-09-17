@@ -7,7 +7,7 @@ import { useRef, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  Utensils, Hospital, Users, Clock, Phone, Mail, ChevronRight,
+  Utensils, Hospital, Users, Clock, Phone, Mail, MessageCircle, ChevronRight,
   ShieldCheck, Quote, Beef, BookOpen, GraduationCap, Building2,
   HeartHandshake, Target, Landmark, FileCheck2, Drumstick,
   Music, Globe, Flower2, Award,
@@ -23,6 +23,12 @@ const heroStats = [
   { icon: Users, value: "10.95 L+", label: "Beneficiaries every year" },
   { icon: Clock, value: "365", label: "Days of service — no breaks" },
 ];
+
+// CSR enquiries go straight to WhatsApp with a prefilled message — the same
+// number the rest of the site uses for temple contact (+91 89777 61187).
+const CSR_WHATSAPP_URL = `https://wa.me/918977761187?text=${encodeURIComponent(
+  "Hare Krishna! I would like to enquire about CSR (Corporate Social Responsibility) partnership opportunities with Hare Krishna Movement Visakhapatnam."
+)}`;
 
 const programs = [
   {
@@ -237,10 +243,10 @@ export default function CsrPage() {
   return (
     <PageLayout>
       {/* ── HERO — text left, banner image right (like a split banner) ── */}
-      <section className="relative overflow-hidden bg-[hsl(220,60%,9%)] pt-20">
+      <section className="relative overflow-hidden bg-white pt-20 dark:bg-background">
         {/* Decorative glows */}
         <div className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-gold/10 blur-3xl" aria-hidden />
-        <div className="absolute -right-24 top-1/3 h-80 w-80 rounded-full bg-primary/20 blur-3xl" aria-hidden />
+        <div className="absolute -right-24 top-1/3 h-80 w-80 rounded-full bg-primary/[0.07] blur-3xl" aria-hidden />
 
         <div className="relative z-10 container mx-auto px-4 py-14 md:py-20">
           <div className="grid items-center gap-12 lg:grid-cols-2">
@@ -248,18 +254,18 @@ export default function CsrPage() {
             <motion.div
               initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
             >
-              <nav className="mb-6 flex items-center gap-1.5 text-xs text-white/60">
-                <Link href="/" className="hover:text-white">Home</Link>
+              <nav className="mb-6 flex items-center gap-1.5 text-xs text-muted-foreground">
+                <Link href="/" className="hover:text-primary">Home</Link>
                 <ChevronRight className="h-3 w-3" />
-                <span className="text-white/90">Corporate Social Responsibility</span>
+                <span className="text-foreground">Corporate Social Responsibility</span>
               </nav>
               <p className="mb-4 text-sm font-semibold uppercase tracking-[0.25em] text-gold">
                 Corporate Social Responsibility
               </p>
-              <h1 className="font-heading text-4xl font-bold leading-tight text-white md:text-5xl lg:text-6xl mb-6">
+              <h1 className="font-heading text-4xl font-bold leading-tight text-foreground md:text-5xl lg:text-6xl mb-6">
                 Creating a Better<br />Society for Tomorrow
               </h1>
-              <p className="mb-8 max-w-xl text-base leading-relaxed text-white/75">
+              <p className="mb-8 max-w-xl text-base leading-relaxed text-muted-foreground">
                 Corporate Social Responsibility is a business commitment to creating a positive
                 social impact through ethical practices, community engagement, volunteering and
                 charitable initiatives. Partner with Hare Krishna Movement Visakhapatnam — feed the
@@ -275,7 +281,7 @@ export default function CsrPage() {
                 </button>
                 <button
                   onClick={() => scrollTo("our-programs")}
-                  className="rounded-full border border-white/30 bg-white/10 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20"
+                  className="rounded-full border border-border bg-card px-7 py-3.5 text-sm font-semibold text-foreground shadow-sm transition hover:border-gold/60 hover:bg-muted"
                 >
                   Explore Our Programs
                 </button>
@@ -307,12 +313,12 @@ export default function CsrPage() {
         </div>
 
         {/* Stats bar */}
-        <div className="relative z-10 border-t border-white/10 bg-white/5 backdrop-blur-md">
-          <div className="container mx-auto grid grid-cols-2 divide-x divide-white/10 md:grid-cols-4">
+        <div className="relative z-10 border-t border-border bg-card/50 backdrop-blur-md">
+          <div className="container mx-auto grid grid-cols-2 divide-x divide-border md:grid-cols-4">
             {heroStats.map((s) => (
               <div key={s.label} className="flex flex-col items-center px-4 py-5 text-center">
-                <span className="font-heading text-2xl font-bold text-gold md:text-3xl">{s.value}</span>
-                <span className="mt-0.5 text-xs font-semibold text-white/90">{s.label}</span>
+                <span className="font-heading text-2xl font-bold text-gold-deep md:text-3xl">{s.value}</span>
+                <span className="mt-0.5 text-xs font-semibold text-muted-foreground">{s.label}</span>
               </div>
             ))}
           </div>
@@ -787,12 +793,15 @@ export default function CsrPage() {
                     </div>
                   </div>
                 </div>
-                <Link
-                  href="/contact"
-                  className="mt-6 block rounded-full bg-gradient-gold py-3.5 text-center text-sm font-bold text-[hsl(220,60%,12%)] shadow-gold transition hover:opacity-90"
+                <a
+                  href={CSR_WHATSAPP_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-6 flex items-center justify-center gap-2 rounded-full bg-gradient-gold py-3.5 text-center text-sm font-bold text-[hsl(220,60%,12%)] shadow-gold transition hover:opacity-90"
                 >
+                  <MessageCircle className="h-4 w-4" />
                   Send a CSR Partnership Enquiry
-                </Link>
+                </a>
               </div>
 
               <div className="mt-4 flex flex-wrap justify-center gap-4 text-xs text-white/50">
