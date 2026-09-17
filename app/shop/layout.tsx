@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { ShoppingBag, Package, Home } from "lucide-react";
 import { CartProvider, useCart } from "@/contexts/CartContext";
 import CartDrawer from "@/components/shop/CartDrawer";
+import { Toaster } from "@/components/ui/sonner";
 
 // The cart provider is scoped to /shop rather than the root layout: nothing
 // outside the shop needs cart state, and keeping it here means the donation
@@ -15,49 +15,132 @@ function ShopHeader() {
   const pathname = usePathname();
 
   const linkCls = (active: boolean) =>
-    `text-sm font-medium transition-colors ${active ? "text-primary" : "text-muted-foreground hover:text-foreground"}`;
+    `relative inline-flex items-center gap-1.5 text-sm font-medium transition-colors after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-gradient-gold after:transition-all after:duration-300 hover:after:w-full ${
+      active ? "text-primary after:w-full" : "text-muted-foreground hover:text-foreground"
+    }`;
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
-        <Link href="/shop" className="flex items-center gap-2.5">
-          <Image
-            src="/assets/hkvt-logo-full.png"
-            alt="Hare Krishna Movement, Visakhapatnam"
-            width={2438}
-            height={825}
-            className="h-8 w-auto"
-          />
-          <span className="font-heading text-base font-bold text-primary sm:text-lg">Matchless Gifts</span>
+    <header className="sticky top-0 z-40 border-b border-border/70 bg-background/85 backdrop-blur-xl">
+      <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between gap-4 px-4 sm:h-[72px] sm:px-6 lg:px-8">
+        {/* Brand wordmark only — no logo image. */}
+        <Link href="/shop" className="group flex flex-col leading-none">
+          <span className="font-heading text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+            Matchless <span className="text-gradient-gold">Gifts</span>
+          </span>
+          <span className="mt-1 text-[9px] font-semibold uppercase tracking-[0.28em] text-muted-foreground">
+            HKM Visakhapatnam
+          </span>
         </Link>
 
-        <nav className="flex items-center gap-5">
-          <Link href="/" className={`${linkCls(false)} hidden items-center gap-1.5 sm:flex`}>
+        <nav className="flex items-center gap-4 sm:gap-7">
+          <Link href="/" className={`${linkCls(false)} hidden sm:inline-flex`}>
             <Home className="h-3.5 w-3.5" /> Main site
           </Link>
-          <Link href="/shop/orders" className={`${linkCls(pathname.startsWith("/shop/orders"))} flex items-center gap-1.5`}>
+          <Link href="/shop/orders" className={linkCls(pathname.startsWith("/shop/orders"))}>
             <Package className="h-3.5 w-3.5" /> My Orders
           </Link>
           <button
             onClick={openCart}
-            className="relative flex h-10 w-10 items-center justify-center rounded-full transition-colors hover:bg-muted"
+            className="group relative flex h-10 items-center gap-2 rounded-full border border-border bg-background/60 pl-2.5 pr-2.5 transition-colors hover:border-gold/50 hover:bg-gold/5 sm:pr-3.5"
             aria-label="Open cart"
           >
-            <ShoppingBag className="h-5 w-5 text-foreground" />
-            {/* Hidden until hydration so the badge never flashes a stale or
-                zero count before localStorage has been read. */}
-            {hydrated && itemCount > 0 && (
-              <span
-                className="absolute -right-0.5 -top-0.5 flex h-5 min-w-[20px] items-center justify-center rounded-full px-1 text-[10px] font-bold text-white"
-                style={{ background: "var(--gradient-gold)" }}
-              >
-                {itemCount}
-              </span>
-            )}
+            <span className="relative flex h-6 w-6 items-center justify-center">
+              <ShoppingBag className="h-[18px] w-[18px] text-foreground" />
+              {/* Hidden until hydration so the badge never flashes a stale or
+                  zero count before localStorage has been read. */}
+              {hydrated && itemCount > 0 && (
+                <span
+                  className="absolute -right-1.5 -top-1.5 flex h-4 min-w-[16px] items-center justify-center rounded-full px-1 text-[9px] font-bold text-[hsl(220,60%,12%)] shadow-sm"
+                  style={{ background: "var(--gradient-gold)" }}
+                >
+                  {itemCount}
+                </span>
+              )}
+            </span>
+            <span className="hidden text-xs font-semibold text-foreground sm:inline">Cart</span>
           </button>
         </nav>
       </div>
+      {/* Gold hairline that grounds the header. */}
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
     </header>
+  );
+}
+
+function ShopFooter() {
+  const shopLinks = [
+    { href: "/shop", label: "All items" },
+    { href: "/shop/orders", label: "My orders" },
+    { href: "/", label: "Main site" },
+  ];
+  const supportLinks = [
+    { href: "/contact", label: "Contact us" },
+    { href: "/donate", label: "Donate" },
+    { href: "/refund-policy", label: "Refund policy" },
+    { href: "/privacy-policy", label: "Privacy policy" },
+  ];
+
+  return (
+    <footer className="mt-16 border-t border-border bg-gradient-to-b from-card to-background">
+      <div className="mx-auto max-w-[1440px] px-4 py-12 sm:px-6 lg:px-8">
+        <div className="grid gap-10 md:grid-cols-[1.5fr_1fr_1fr]">
+          <div>
+            <span className="font-heading text-xl font-semibold tracking-tight text-foreground">
+              Matchless <span className="text-gradient-gold">Gifts</span>
+            </span>
+            <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">
+              Sacred books, puja essentials and devotional gifts — every purchase supports the
+              temple&apos;s daily sevas, annadanam and Go-seva.
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <span className="rounded-full bg-gold/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-gold-deep">
+                Blessed items
+              </span>
+              <span className="rounded-full bg-gold/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-gold-deep">
+                Pan-India shipping
+              </span>
+            </div>
+          </div>
+
+          <div>
+            <h3 className="text-xs font-bold uppercase tracking-[0.18em] text-foreground">Shop</h3>
+            <ul className="mt-4 space-y-2.5">
+              {shopLinks.map((l) => (
+                <li key={l.href}>
+                  <Link
+                    href={l.href}
+                    className="text-sm text-muted-foreground transition-colors hover:text-primary"
+                  >
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="text-xs font-bold uppercase tracking-[0.18em] text-foreground">Support</h3>
+            <ul className="mt-4 space-y-2.5">
+              {supportLinks.map((l) => (
+                <li key={l.href}>
+                  <Link
+                    href={l.href}
+                    className="text-sm text-muted-foreground transition-colors hover:text-primary"
+                  >
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row">
+          <p>© {new Date().getFullYear()} Hare Krishna Movement, Visakhapatnam. All rights reserved.</p>
+          <p>All proceeds support the temple&apos;s sevas.</p>
+        </div>
+      </div>
+    </footer>
   );
 }
 
@@ -68,9 +151,11 @@ export default function ShopLayout({ children }: { children: React.ReactNode }) 
         <ShopHeader />
         <main className="flex-1">{children}</main>
         <CartDrawer />
-        <footer className="border-t border-border px-4 py-6 text-center text-xs text-muted-foreground">
-          Hare Krishna Movement, Visakhapatnam · All proceeds support the temple&apos;s sevas
-        </footer>
+        {/* Sonner toaster, scoped to the shop. Add-to-cart confirmations are
+            custom-rendered (components/shop/CartToast) and rely on being inside
+            CartProvider. */}
+        <Toaster position="bottom-center" />
+        <ShopFooter />
       </div>
     </CartProvider>
   );
