@@ -18,6 +18,8 @@ import {
   Heart,
   PackageOpen,
   ClipboardList,
+  Sparkles,
+  BookOpen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ProductCard from "@/components/shop/ProductCard";
@@ -203,9 +205,9 @@ export default function ProductDetailPage() {
         <ChevronLeft className="h-4 w-4" /> Back to shop
       </Link>
 
-      <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
         {/* Gallery */}
-        <div>
+        <div className="min-w-0">
           <div className="relative overflow-hidden rounded-2xl border border-border bg-muted">
             <motion.div
               initial={{ opacity: 0 }}
@@ -292,29 +294,23 @@ export default function ProductDetailPage() {
         </div>
 
         {/* Details */}
-        <div className="relative">
-          {product.category && (
-            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              {product.category.replace(/-/g, " ")}
-            </span>
-          )}
-          <h1 className="mt-1 font-heading text-2xl font-bold text-foreground sm:text-3xl">{product.name}</h1>
-          {product.shortDescription && (
-            <p className="mt-2 text-sm text-muted-foreground">{product.shortDescription}</p>
-          )}
-
-          <div className="mt-5 flex items-end gap-3">
-            <span className="text-3xl font-bold text-primary">{formatINR(currentPrice)}</span>
-            {off !== null && currentMrp && (
-              <>
-                <span className="text-lg text-muted-foreground line-through">{formatINR(currentMrp)}</span>
-                <span
-                  className="mb-1 rounded-full px-2 py-0.5 text-xs font-bold text-white"
-                  style={{ background: "var(--gradient-gold)" }}
-                >
-                  {off}% OFF
-                </span>
-              </>
+        <div className="relative min-w-0">
+          <div className="mt-2 flex flex-wrap items-center gap-2 pr-12">
+            {product.category && (
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/30 bg-gold/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-gold-deep">
+                <Sparkles className="h-3 w-3" />
+                {product.category.replace(/-/g, " ")}
+              </span>
+            )}
+            {product.inStock ? (
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[11px] font-semibold text-emerald-700">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                In stock
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-rose-200 bg-rose-50 px-3 py-1 text-[11px] font-semibold text-rose-600">
+                Out of stock
+              </span>
             )}
           </div>
 
@@ -324,7 +320,7 @@ export default function ProductDetailPage() {
             onClick={() => toggleWishlist(product._id)}
             aria-label={wishlisted ? "Remove from wishlist" : "Save for later"}
             aria-pressed={wishlisted}
-            className={`absolute right-0 top-0 flex h-10 w-10 items-center justify-center rounded-full border transition-colors sm:h-11 sm:w-11 ${
+            className={`absolute right-0 top-0 z-10 flex h-10 w-10 items-center justify-center rounded-full border transition-colors sm:h-11 sm:w-11 ${
               wishlisted
                 ? "border-rose-200 bg-rose-50 text-rose-500"
                 : "border-border bg-background text-muted-foreground hover:text-rose-500"
@@ -333,115 +329,174 @@ export default function ProductDetailPage() {
             <Heart className={`h-5 w-5 ${wishlisted ? "fill-current" : ""}`} />
           </button>
 
-          {product.hasVariants && (
-            <div className="mt-6">
-              <p className="mb-2 text-sm font-semibold text-foreground">Choose an option</p>
-              <div className="flex flex-wrap gap-2">
-                {product.variants.map((v) => (
-                  <button
-                    key={v._id}
-                    onClick={() => v.inStock && setVariant(v)}
-                    disabled={!v.inStock}
-                    className={`rounded-lg border px-3.5 py-2 text-sm font-medium transition-all ${
-                      variant?._id === v._id
-                        ? "border-gold bg-gold/10 text-foreground"
-                        : v.inStock
-                          ? "border-border text-muted-foreground hover:border-muted-foreground"
-                          : "cursor-not-allowed border-border text-muted-foreground/40 line-through"
-                    }`}
-                  >
-                    {v.label}
-                    <span className="ml-1.5 text-xs opacity-70">{formatINR(v.price)}</span>
-                  </button>
-                ))}
+          <h1 className="mt-3 break-words font-heading text-2xl font-bold text-foreground sm:text-3xl">{product.name}</h1>
+          <div className="mt-2 h-1 w-16 rounded-full bg-gradient-gold" />
+          {product.shortDescription && (
+            <p className="mt-3 break-words text-sm leading-relaxed text-muted-foreground">{product.shortDescription}</p>
+          )}
+
+          {/* Buy box — price, options, stepper and the add action in one warm,
+              gold-accented card, the same visual language as the campaign pages. */}
+          <div className="mt-6 overflow-hidden rounded-2xl border border-gold/25 shadow-warm">
+            <div className="h-1.5 bg-gradient-gold" />
+            <div className="bg-gradient-to-br from-gold/10 via-card to-card p-5 sm:p-6">
+              <div className="flex flex-wrap items-end gap-x-3 gap-y-1.5">
+                <span className="text-3xl font-extrabold tracking-tight text-gold-deep sm:text-4xl">
+                  {formatINR(currentPrice)}
+                </span>
+                {off !== null && currentMrp && (
+                  <>
+                    <span className="text-base font-medium text-muted-foreground line-through sm:text-lg">
+                      {formatINR(currentMrp)}
+                    </span>
+                    <span
+                      className="mb-1 rounded-full px-2.5 py-1 text-xs font-bold text-white shadow-gold"
+                      style={{ background: "var(--gradient-gold)" }}
+                    >
+                      {off}% OFF
+                    </span>
+                  </>
+                )}
               </div>
-            </div>
-          )}
 
-          <div className="mt-5 flex items-center gap-3">
-            <div className="flex items-center rounded-lg border border-border">
-              <button
-                type="button"
-                onClick={() => setCartQuantity(product._id, variant?._id || null, inCartForSelection - 1)}
-                disabled={!canBuy || inCartForSelection < 1}
-                className="px-3 py-2.5 text-muted-foreground transition-colors hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
-                aria-label="Decrease quantity"
-              >
-                <Minus className="h-3.5 w-3.5" />
-              </button>
-              <span
-                aria-live="polite"
-                className="flex min-w-[36px] items-center justify-center gap-1 text-center text-sm font-semibold"
-              >
-                {inCartForSelection > 0 && <Check className="h-3.5 w-3.5 text-emerald-600" />}
-                <span className="tabular-nums">{inCartForSelection}</span>
-              </span>
-              <button
-                type="button"
-                onClick={() => setCartQuantity(product._id, variant?._id || null, Math.min(maxQty, inCartForSelection + 1))}
-                disabled={!canBuy || inCartForSelection >= maxQty}
-                className="px-3 py-2.5 text-muted-foreground transition-colors hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
-                aria-label="Increase quantity"
-              >
-                <Plus className="h-3.5 w-3.5" />
-              </button>
-            </div>
+              {product.hasVariants && (
+                <div className="mt-5">
+                  <p className="mb-2 text-sm font-semibold text-foreground">Choose an option</p>
+                  <div className="flex flex-wrap gap-2">
+                    {product.variants.map((v) => (
+                      <button
+                        key={v._id}
+                        onClick={() => v.inStock && setVariant(v)}
+                        disabled={!v.inStock}
+                        className={`rounded-lg border px-3.5 py-2 text-sm font-medium transition-all ${
+                          variant?._id === v._id
+                            ? "border-gold bg-gold/15 text-foreground shadow-sm"
+                            : v.inStock
+                              ? "border-border text-muted-foreground hover:border-muted-foreground"
+                              : "cursor-not-allowed border-border text-muted-foreground/40 line-through"
+                        }`}
+                      >
+                        {v.label}
+                        <span className="ml-1.5 text-xs opacity-70">{formatINR(v.price)}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
-            {/* A low-stock line is only worth showing when it's genuinely
-                scarce — "12 left" on a shelf of 200 is just noise. */}
-            {currentStock > 0 && currentStock <= 5 && (
-              <span className="text-xs font-medium text-amber-600">Only {currentStock} left</span>
-            )}
+              <div className="mt-5 flex flex-wrap items-center gap-3">
+                <div className="flex items-center rounded-xl border border-border bg-background">
+                  <button
+                    type="button"
+                    onClick={() => setCartQuantity(product._id, variant?._id || null, inCartForSelection - 1)}
+                    disabled={!canBuy || inCartForSelection < 1}
+                    className="px-3 py-2.5 text-muted-foreground transition-colors hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
+                    aria-label="Decrease quantity"
+                  >
+                    <Minus className="h-3.5 w-3.5" />
+                  </button>
+                  <span
+                    aria-live="polite"
+                    className="flex min-w-[36px] items-center justify-center gap-1 text-center text-sm font-semibold"
+                  >
+                    {inCartForSelection > 0 && <Check className="h-3.5 w-3.5 text-emerald-600" />}
+                    <span className="tabular-nums">{inCartForSelection}</span>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setCartQuantity(product._id, variant?._id || null, Math.min(maxQty, inCartForSelection + 1))}
+                    disabled={!canBuy || inCartForSelection >= maxQty}
+                    className="px-3 py-2.5 text-muted-foreground transition-colors hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
+                    aria-label="Increase quantity"
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+
+                {currentStock > 0 && currentStock <= 5 && (
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-600">
+                    <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+                    Only {currentStock} left
+                  </span>
+                )}
+              </div>
+
+              <div className="mt-5 flex gap-3">
+                <button
+                  type="button"
+                  onClick={handleAdd}
+                  disabled={!canBuy || settings?.shopEnabled === false}
+                  className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-gradient-gold px-6 text-sm font-bold text-[hsl(220,60%,12%)] shadow-gold transition-all hover:-translate-y-0.5 hover:shadow-[0_14px_36px_hsl(42,92%,46%,0.45)] active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50"
+                >
+                  {added ? <Check className="h-4 w-4" /> : <ShoppingBag className="h-4 w-4" />}
+                  {!canBuy ? "Out of stock" : settings?.shopEnabled === false ? "Shop closed" : added ? "Added" : inCartForSelection > 0 ? "Add more" : "Add to Cart"}
+                </button>
+              </div>
+
+              {inCartForSelection > 0 && (
+                <p className="mt-4 flex items-center gap-2 text-xs font-medium text-emerald-600">
+                  <Check className="h-3.5 w-3.5" />
+                  {inCartForSelection} in your cart
+                  <button
+                    type="button"
+                    onClick={openCart}
+                    className="font-semibold text-primary underline-offset-2 hover:underline"
+                  >
+                    View cart
+                  </button>
+                </p>
+              )}
+            </div>
           </div>
 
-          {inCartForSelection > 0 && (
-            <p className="mt-4 flex items-center gap-2 text-xs font-medium text-emerald-600">
-              <Check className="h-3.5 w-3.5" />
-              {inCartForSelection} in your cart
-              <button
-                type="button"
-                onClick={openCart}
-                className="font-semibold text-primary underline-offset-2 hover:underline"
-              >
-                View cart
-              </button>
-            </p>
-          )}
-
-          <div className="mt-5 flex gap-3">
-            <Button size="lg" className="flex-1 gap-2" disabled={!canBuy || settings?.shopEnabled === false} onClick={handleAdd}>
-              {added ? <Check className="h-4 w-4" /> : <ShoppingBag className="h-4 w-4" />}
-              {!canBuy ? "Out of stock" : settings?.shopEnabled === false ? "Shop closed" : added ? "Added" : inCartForSelection > 0 ? "Add more" : "Add to Cart"}
-            </Button>
-          </div>
-
-          <div className="mt-6 space-y-2.5 rounded-xl border border-border bg-card p-4 text-sm">
+          {/* Delivery & trust — tinted cards with coloured icon chips so each
+              guarantee reads at a glance, echoing the artwork on the home page. */}
+          <div className="mt-6 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
             {product.freeShipping && (
-              <p className="flex items-center gap-2 text-emerald-600">
-                <Truck className="h-4 w-4 shrink-0" />
-                Free delivery on this item
-              </p>
+              <div className="flex items-center gap-3 rounded-xl border border-emerald-100 bg-emerald-50/70 p-3">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-600">
+                  <Truck className="h-5 w-5" />
+                </span>
+                <p className="min-w-0 text-sm font-semibold text-emerald-800">Free delivery on this item</p>
+              </div>
             )}
-            <p className="flex items-center gap-2 text-muted-foreground">
-              <Truck className="h-4 w-4 shrink-0 text-gold" />
-              {settings?.deliveryEstimate || "Usually dispatched in 3–5 working days"}
-            </p>
+            <div className="flex items-center gap-3 rounded-xl border border-sky-100 bg-sky-50/70 p-3">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky-500/15 text-sky-600">
+                <Truck className="h-5 w-5" />
+              </span>
+              <p className="min-w-0 text-sm font-semibold text-sky-800">
+                {settings?.deliveryEstimate || "Usually dispatched in 3–5 working days"}
+              </p>
+            </div>
             {settings && settings.freeShippingAbove > 0 && (
-              <p className="flex items-center gap-2 text-muted-foreground">
-                <PackageOpen className="h-4 w-4 shrink-0 text-gold" />
-                Free delivery on orders above {formatINR(settings.freeShippingAbove)}
-              </p>
+              <div className="flex items-center gap-3 rounded-xl border border-gold/30 bg-gold/10 p-3">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gold/20 text-gold-deep">
+                  <PackageOpen className="h-5 w-5" />
+                </span>
+                <p className="min-w-0 text-sm font-semibold text-gold-deep">
+                  Free delivery on orders above {formatINR(settings.freeShippingAbove)}
+                </p>
+              </div>
             )}
-            <p className="flex items-center gap-2 text-muted-foreground">
-              <ShieldCheck className="h-4 w-4 shrink-0 text-gold" />
-              Secure payment · Supports the temple&apos;s sevas
-            </p>
+            <div className="flex items-center gap-3 rounded-xl border border-violet-100 bg-violet-50/70 p-3">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-500/15 text-violet-600">
+                <ShieldCheck className="h-5 w-5" />
+              </span>
+              <p className="min-w-0 text-sm font-semibold text-violet-800">
+                Secure payment · Supports the temple&apos;s sevas
+              </p>
+            </div>
           </div>
 
           {product.description && (
-            <div className="mt-6">
-              <h2 className="mb-2 font-heading text-base font-bold text-foreground">About this item</h2>
-              <div className="whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
+            <div className="mt-6 overflow-hidden rounded-2xl border border-border bg-card p-5 sm:p-6">
+              <h2 className="flex items-center gap-2 font-heading text-base font-bold text-foreground">
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <BookOpen className="h-4 w-4" />
+                </span>
+                About this item
+              </h2>
+              <div className="mt-3 break-words whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
                 {product.description}
               </div>
             </div>
@@ -452,13 +507,15 @@ export default function ProductDetailPage() {
               authored HTML so the formatting an admin chose is exactly what a
               devotee sees. */}
           {product.productInfo && (
-            <div className="mt-6 rounded-2xl border border-border bg-card p-5">
+            <div className="mt-6 overflow-hidden rounded-2xl border border-gold/25 bg-gradient-to-b from-gold/10 to-card p-5 sm:p-6">
               <h2 className="flex items-center gap-2 font-heading text-base font-bold text-foreground">
-                <ClipboardList className="h-4 w-4 text-gold" />
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-gold text-[hsl(220,60%,12%)]">
+                  <ClipboardList className="h-4 w-4" />
+                </span>
                 Product information
               </h2>
               <div
-                className="product-info-content mt-1 text-sm leading-relaxed text-foreground/90"
+                className="product-info-content mt-2 break-words text-sm leading-relaxed text-foreground/90"
                 dangerouslySetInnerHTML={{ __html: product.productInfo }}
               />
             </div>

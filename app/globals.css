@@ -145,6 +145,22 @@
     font-weight: 700;
     font-style: normal;
   }
+
+  /* Responsive safety nets: grids without an explicit mobile column count
+     would otherwise place every child side-by-side in implicit auto tracks —
+     squeezing them past the right edge of a phone screen. Default every grid
+     to a single fluid column; any grid-cols-* utility overrides this. */
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .grid > * {
+    min-width: 0;
+  }
+
+  img {
+    max-width: 100%;
+  }
 }
 
 @layer utilities {
