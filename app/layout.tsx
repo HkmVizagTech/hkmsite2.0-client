@@ -22,7 +22,7 @@ const playfair = Playfair_Display({
   variable: "--font-playfair",
 });
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://harekrishnavizag.org";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.harekrishnavizag.org";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

@@ -5,7 +5,7 @@
 
 import type { Metadata } from "next";
 
-export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://harekrishnavizag.org";
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.harekrishnavizag.org";
 
 export const ORG_NAME = "ISKCON Gambheeram Visakhapatnam";
 export const SHOP_NAME = "Matchless Gifts";
