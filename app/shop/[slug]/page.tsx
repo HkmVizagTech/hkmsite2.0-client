@@ -549,6 +549,7 @@ export default function ProductDetailPage() {
         .product-info-content p:first-child { margin-top: 0; }
         .product-info-content p:last-child { margin-bottom: 0; }
         .product-info-content strong { font-weight: 700; color: hsl(var(--foreground)); }
+        .product-info-content b { font-weight: 700; color: hsl(var(--foreground)); }
         .product-info-content h1,
         .product-info-content h2,
         .product-info-content h3,
