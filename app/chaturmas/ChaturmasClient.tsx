@@ -454,7 +454,7 @@ export default function ChaturmasClient() {
               </div>
             </motion.div>
             <motion.div
-              initial={reduce ? undefined : { opacity: 0, x: 30 }}
+              initial={reduce ? undefined : { opacity: 0, x: -30 }}
               animate={inView1 ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.8, delay: 0.15 }}
               className="relative"
@@ -1010,7 +1010,7 @@ export default function ChaturmasClient() {
               ))}
             </div>
             <motion.div
-              initial={reduce ? undefined : { opacity: 0, x: 30 }}
+              initial={reduce ? undefined : { opacity: 0, x: -30 }}
               animate={inView5 ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.7, delay: 0.15 }}
               className="space-y-6"

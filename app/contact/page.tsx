@@ -119,7 +119,7 @@ export default function ContactPage() {
 
             <motion.form
               onSubmit={handleSubmit}
-              initial={{ opacity: 0, x: 30 }}
+              initial={{ opacity: 0, x: -30 }}
               animate={inView1 ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.8, delay: 0.2 }}
               className="bg-card rounded-2xl p-8 border border-border space-y-5"

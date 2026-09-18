@@ -290,7 +290,7 @@ export default function CsrPage() {
 
             {/* Right: banner image */}
             <motion.div
-              initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2 }}
+              initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2 }}
               className="relative"
             >
               <div className="absolute -inset-4 rotate-1 rounded-3xl bg-gradient-to-br from-gold/20 to-primary/10" aria-hidden />
@@ -459,7 +459,7 @@ export default function CsrPage() {
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, x: 30 }} animate={vAnnadaan ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.8 }}
+              initial={{ opacity: 0, x: -30 }} animate={vAnnadaan ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.8 }}
             >
               <h3 className="font-heading text-xl font-bold text-foreground mb-4">Where Your Support Goes</h3>
               <div className="space-y-3">
@@ -518,7 +518,7 @@ export default function CsrPage() {
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, x: 30 }} animate={vGau ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.8, delay: 0.2 }}
+              initial={{ opacity: 0, x: -30 }} animate={vGau ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.8, delay: 0.2 }}
               className="relative"
             >
               <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-gold/10 to-primary/10 rotate-1" />
@@ -762,7 +762,7 @@ export default function CsrPage() {
 
             {/* Contact card */}
             <motion.div
-              initial={{ opacity: 0, x: 30 }} animate={vContact ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.8, delay: 0.25 }}
+              initial={{ opacity: 0, x: -30 }} animate={vContact ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.8, delay: 0.25 }}
               className="flex flex-col"
             >
               <div className="rounded-2xl border border-gold/30 bg-gradient-to-b from-gold/10 to-transparent p-8">
