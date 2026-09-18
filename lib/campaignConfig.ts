@@ -161,9 +161,9 @@ export const SQFT_CAMPAIGN: CampaignConfig = {
 export const BRICK_CAMPAIGN: CampaignConfig = {
   type: "BRICK",
   pageTitle: "Brick Seva",
-  metaTitle: "Brick Seva | Hare Krishna Vaikuntham Temple, Visakhapatnam",
+  metaTitle: "Brick Seva ISKCON Vizag | Hare Krishna Vaikuntham Temple, Visakhapatnam",
   metaDesc:
-    "Sponsor bricks for the Hare Krishna Vaikuntham Temple at ₹1,500 per brick. Every brick becomes an eternal part of the Lord's abode — with prasadam, contribution certificate and 80G tax exemption.",
+    "Sponsor bricks for the Hare Krishna Vaikuntham Temple (ISKCON Vizag) at ₹1,500 per brick. Every brick becomes an eternal part of the Lord's abode — with prasadam, contribution certificate and 80G tax exemption.",
   ogTitle: "Brick Seva — Hare Krishna Vaikuntham Temple",
   ogDesc:
     "Sponsor bricks for the temple construction. Every brick laid with devotion becomes part of the Lord's eternal home.",
