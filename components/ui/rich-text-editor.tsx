@@ -17,6 +17,8 @@ interface RichTextEditorProps {
   onChange: (html: string) => void;
   placeholder?: string;
   disabled?: boolean;
+  /** Min-height of the editable area (defaults to 400px). */
+  minHeight?: string;
   /** API base URL — defaults to (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") */
   apiUrl?: string;
 }
@@ -26,6 +28,7 @@ export default function RichTextEditor({
   onChange,
   placeholder = "Start writing your blog post…",
   disabled = false,
+  minHeight = "400px",
   apiUrl,
 }: RichTextEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
@@ -174,7 +177,7 @@ export default function RichTextEditor({
           enough; deeper theming is in the project-level CSS (see SETUP.md). */}
       <style jsx global>{`
         .rich-text-editor .ck-editor__editable_inline {
-          min-height: 400px;
+          min-height: ${minHeight};
           max-height: 700px;
           border: 1px solid hsl(var(--border, 220 13% 91%)) !important;
           border-radius: 0 0 8px 8px;
