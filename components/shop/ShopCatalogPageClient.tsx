@@ -246,7 +246,8 @@ export default function ShopCatalogPage() {
             <h1 className="font-heading text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
               ISKCON Vizag Shop — <span className="text-gradient-gold">Matchless Gifts</span>
             </h1>
-            <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+            <div className="mt-3 h-1 w-16 rounded-full bg-gradient-gold" />
+            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground sm:text-base">
               Welcome to the online store of the ISKCON Visakhapatnam temple — the
               Hare Krishna Movement, Gambheeram. Here you&apos;ll find
               Bhagavad Gita As It Is and Srila Prabhupada&apos;s books, puja
@@ -499,7 +500,7 @@ export default function ShopCatalogPage() {
                   type="button"
                   onClick={loadMore}
                   disabled={loadingMore}
-                  className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:border-gold hover:text-primary disabled:opacity-60"
+                  className="inline-flex items-center gap-2 rounded-full bg-gradient-gold px-6 py-3 text-sm font-bold text-[hsl(220,60%,12%)] shadow-gold transition-all hover:-translate-y-0.5 hover:shadow-[0_14px_36px_hsl(42,92%,46%,0.45)] disabled:opacity-60"
                 >
                   {loadingMore ? (
                     <>
@@ -553,19 +554,24 @@ export default function ShopCatalogPage() {
         </section>
       )}
 
-      {/* ═══ TRUST STRIP ═══ */}
+      {/* ═══ TRUST STRIP — tinted cards with coloured icon chips, the same
+          multi-colour language as the home page cards. ═══ */}
       <section className="border-t border-border bg-card">
-        <div className="mx-auto grid max-w-[1440px] grid-cols-2 gap-6 px-4 py-8 sm:px-6 lg:grid-cols-4 lg:px-8">
-          <div className="flex items-center gap-3">
-            <ShieldCheck className="h-8 w-8 shrink-0 text-gold" />
-            <div>
+        <div className="mx-auto grid max-w-[1440px] grid-cols-1 gap-3 px-4 py-8 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8">
+          <div className="flex items-center gap-3 rounded-xl border border-gold/30 bg-gradient-to-br from-gold/15 to-gold/5 p-3.5">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-gold text-[hsl(220,60%,12%)] shadow-gold">
+              <ShieldCheck className="h-5 w-5" />
+            </span>
+            <div className="min-w-0">
               <p className="text-sm font-bold text-foreground">Secure payments</p>
               <p className="text-xs text-muted-foreground">PCI-DSS Razorpay checkout</p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <Truck className="h-8 w-8 shrink-0 text-gold" />
-            <div>
+          <div className="flex items-center gap-3 rounded-xl border border-emerald-100 bg-gradient-to-br from-emerald-50/80 to-emerald-50/40 p-3.5">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-600">
+              <Truck className="h-5 w-5" />
+            </span>
+            <div className="min-w-0">
               <p className="text-sm font-bold text-foreground">
                 {settings
                   ? `Free shipping above ₹${settings.freeShippingAbove.toLocaleString("en-IN")}`
@@ -574,16 +580,20 @@ export default function ShopCatalogPage() {
               <p className="text-xs text-muted-foreground">{settings?.deliveryEstimate || "Carefully packed & shipped"}</p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <HeartHandshake className="h-8 w-8 shrink-0 text-gold" />
-            <div>
+          <div className="flex items-center gap-3 rounded-xl border border-rose-100 bg-gradient-to-br from-rose-50/80 to-rose-50/40 p-3.5">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-rose-500/15 text-rose-500">
+              <HeartHandshake className="h-5 w-5" />
+            </span>
+            <div className="min-w-0">
               <p className="text-sm font-bold text-foreground">Every purchase gives</p>
               <p className="text-xs text-muted-foreground">Funds daily temple sevas</p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <Sparkles className="h-8 w-8 shrink-0 text-gold" />
-            <div>
+          <div className="flex items-center gap-3 rounded-xl border border-sky-100 bg-gradient-to-br from-sky-50/80 to-sky-50/40 p-3.5">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-sky-500/15 text-sky-600">
+              <Sparkles className="h-5 w-5" />
+            </span>
+            <div className="min-w-0">
               <p className="text-sm font-bold text-foreground">Blessed & sanctified</p>
               <p className="text-xs text-muted-foreground">Items offered to the Lordships</p>
             </div>

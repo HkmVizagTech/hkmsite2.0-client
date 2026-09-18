@@ -119,7 +119,7 @@ export default function ProductCard({ product, index = 0, categoryName }: Props)
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: Math.min(index, 8) * 0.04 }}
-      className={`group flex flex-col overflow-hidden rounded-2xl border bg-card transition-all duration-300 hover:-translate-y-1 hover:border-gold/40 hover:shadow-[var(--shadow-warm)] ${
+      className={`group flex min-w-0 flex-col overflow-hidden rounded-2xl border bg-card transition-all duration-300 hover:-translate-y-1 hover:border-gold/40 hover:shadow-[var(--shadow-warm)] ${
         inCartAny > 0 ? "border-gold/40 ring-1 ring-gold/20" : "border-border"
       }`}
     >
@@ -242,15 +242,15 @@ export default function ProductCard({ product, index = 0, categoryName }: Props)
         )}
 
         <Link href={`/shop/${product.slug}`} className="flex-1">
-          <h3 className="line-clamp-2 text-sm font-semibold text-foreground transition-colors group-hover:text-primary sm:text-[15px]">
+          <h3 className="break-words line-clamp-2 text-sm font-semibold text-foreground transition-colors group-hover:text-primary sm:text-[15px]">
             {product.name}
           </h3>
           {product.shortDescription && (
-            <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{product.shortDescription}</p>
+            <p className="mt-1 line-clamp-2 break-words text-xs text-muted-foreground">{product.shortDescription}</p>
           )}
         </Link>
 
-        <div className="mt-2 flex items-center gap-3">
+        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
           <p className="text-base font-bold text-primary">{displayPrice(product)}</p>
           {off !== null && product.mrp && (
             <p className="text-xs text-muted-foreground line-through">{formatINR(product.mrp)}</p>
@@ -259,7 +259,7 @@ export default function ProductCard({ product, index = 0, categoryName }: Props)
             <p className="text-[10px] font-bold uppercase text-emerald-600">Save {formatINR(saveAmount)}</p>
           )}
           {product.freeShipping && (
-            <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-600">
+            <span className="ml-auto inline-flex shrink-0 items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-600">
               <Truck className="h-3 w-3" /> Free delivery
             </span>
           )}
