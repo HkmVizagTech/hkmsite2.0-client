@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import nextDynamic from "next/dynamic";
 import { Loader2, Plus, Star, Truck, Trash2, Upload, X } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import {
@@ -18,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
+import SimpleTextEditor from "@/components/ui/simple-text-editor";
 import {
   Select,
   SelectContent,
@@ -28,17 +28,6 @@ import {
 import { authFetch } from "@/lib/authClient";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
-
-// CKEditor boots on the client only, so it's loaded lazily here — same
-// pattern as the blog admin — and kept out of the SSR bundle.
-const RichTextEditor = nextDynamic(() => import("@/components/ui/rich-text-editor"), {
-  ssr: false,
-  loading: () => (
-    <div className="text-sm text-muted-foreground border border-border rounded-md bg-muted/20 px-3 py-8 text-center">
-      Loading editor…
-    </div>
-  ),
-});
 
 export interface ShopVariant {
   _id?: string;
@@ -491,17 +480,15 @@ export default function ProductFormDialog({ open, onOpenChange, product, categor
 
             <div className="sm:col-span-2">
               <Label>Product information</Label>
-              <p className="mb-1.5 mt-0.5 text-xs text-muted-foreground">
-                Optional label:value rows (e.g. Book Name, Author, Language, Format) shown in a
-                "Product information" card below the description. Use the toolbar to bold the side
-                headings and key words — <span className="font-semibold text-foreground">Book Name:</span>{" "}
-                <span>Bhagavad Gita As It Is</span>.
+              <p className="mb-2 mt-0.5 text-xs text-muted-foreground">
+                Optional label:value rows — e.g. <span className="font-semibold text-foreground">Book Name:</span>{" "}
+                Bhagavad Gita As It Is. Press <span className="font-medium text-foreground">Shift + Enter</span> for
+                every new point. Select text to <b>bold</b> or <i>italicise</i>, or turn points into a bullet list.
               </p>
-              <RichTextEditor
+              <SimpleTextEditor
                 value={productInfo}
                 onChange={setProductInfo}
-                minHeight="180px"
-                placeholder="Book Name: Bhagavad Gita As It Is&#10;Author: His Divine Grace A.C. Bhaktivedanta Swami Prabhupada&#10;…"
+                placeholder="Book Name: Bhagavad Gita As It Is"
               />
             </div>
           </div>
