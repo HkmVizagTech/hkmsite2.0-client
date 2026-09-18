@@ -1,10 +1,17 @@
 import { Suspense } from "react";
 import SqftCampaignClient from "./SqftCampaignClient";
+import { siteKeywords } from "@/lib/seo";
 
 export const metadata = {
-  title: "Square Foot Seva | Hare Krishna Vaikuntham Temple, Visakhapatnam",
+  title: { absolute: "Square Foot Seva | Hare Krishna Vaikuntham Temple, Visakhapatnam" },
   description:
-    "Be a part of the Hare Krishna Vaikuntham Temple in the making. Sponsor one or more square feet of construction at ₹2,100 per square foot and receive prasadam, a contribution certificate and 80G tax exemption.",
+    "Be a part of the Hare Krishna Vaikuntham Temple (ISKCON Vizag) in the making. Sponsor one or more square feet of construction at ₹2,100 per square foot and receive prasadam, a contribution certificate and 80G tax exemption.",
+  keywords: [
+    "Square foot seva ISKCON",
+    "temple construction donation",
+    "Hare Krishna temple Visakhapatnam",
+    ...siteKeywords,
+  ],
   alternates: { canonical: "/sqft-seva-campaign" },
   openGraph: {
     title: "Square Foot Seva — Hare Krishna Vaikuntham Temple",

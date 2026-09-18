@@ -1,31 +1,43 @@
 import PageLayout from "@/components/PageLayout";
-import { notFound } from "next/navigation";
 import PageHero from "@/components/PageHero";
 import EventRegistrationLoader from "@/components/EventRegistrationLoader";
 import EventDetailClient from "@/components/EventDetailClient";
 import Image from "next/image";
+import type { Metadata } from "next";
+
+async function fetchEvent(id: string): Promise<any> {
+  const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:3000";
+  try {
+    const res = await fetch(`${apiUrl}/events/${id}`, { cache: "no-store" });
+    if (!res.ok) return null;
+    const json = await res.json().catch(() => null);
+    return json?.event || null;
+  } catch {
+    return null;
+  }
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const event = await fetchEvent(id);
+  if (!event?.title) return { title: "Event · ISKCON Vizag" };
+  const image = event.bannerImage || (event.images && event.images[0]);
+  return {
+    title: `${event.title} — ISKCON Vizag`,
+    description: (event.description || "").slice(0, 160),
+    alternates: { canonical: `/events/${id}` },
+    openGraph: {
+      title: event.title,
+      description: (event.description || "").slice(0, 200),
+      type: "article",
+      images: image ? [image] : [],
+    },
+  };
+}
 
 export default async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:3000";
-  let event: any = null;
-  let fetchStatus: number | null = null;
-  let fetchBody: any = null;
-  try {
-    // ensure we always fetch fresh data for event detail pages so newly created events
-    // by admins appear immediately instead of returning a cached "not found"
-    const res = await fetch(`${apiUrl}/events/${id}`, { cache: 'no-store' });
-    fetchStatus = res.status;
-    try {
-      fetchBody = await res.json();
-    } catch (e) {
-      fetchBody = await res.text().catch(() => null);
-    }
-    if (res.ok) {
-      event = fetchBody?.event;
-    }
-  } catch (e) {
-  }
+  const event = await fetchEvent(id);
 
   if (!event) {
     // render a client boundary that will try to fetch the event and show registration form if it appears

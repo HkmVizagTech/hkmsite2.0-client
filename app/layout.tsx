@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/toaster";
 import ReduxProvider from "@/components/ReduxProvider";
 import MetaPixel from "@/components/MetaPixel";
 import ThemeProvider from "@/components/ThemeProvider";
+import { siteKeywords, ORG_ALT_NAMES } from "@/lib/seo";
 
 
 const poppins = Poppins({
@@ -29,8 +30,9 @@ export const metadata: Metadata = {
     default: "ISKCON Gambheeram Visakhapatnam | Hare Krishna Movement Vizag",
     template: "%s · ISKCON Gambheeram Visakhapatnam",
   },
-  description: "ISKCON Gambheeram Visakhapatnam (Hare Krishna Movement, Gambheeram) — spreading the timeless message of Lord Krishna through devotion, service, and community since 2008. Daily darshan, prasadam, festivals, and spiritual programs in Vizag.",
-  keywords: ["ISKCON Gambheeram Visakhapatnam", "ISKCON Vizag", "ISKCON Gambheeram", "Hare Krishna Vizag", "Hare Krishna Movement Visakhapatnam", "Hare Krishna", "ISKCON", "Visakhapatnam", "Temple", "Spiritual", "Krishna", "Prabhupada", "Vaikuntham", "Vizag temple"],
+  description:
+    "ISKCON Gambheeram Visakhapatnam (Hare Krishna Movement, Gambheeram) — a Hare Krishna temple and Vaikuntham cultural centre in Vizag spreading the timeless message of Lord Krishna through devotion, service, and community since 2008. Daily darshan, prasadam, festivals, spiritual programs, temple seva and an online devotional store.",
+  keywords: siteKeywords,
   // NOTE: no sitewide `alternates.canonical` here on purpose. It was
   // previously set to "/" at this root level, which Next.js's metadata
   // merging then applied to EVERY page that didn't explicitly override
@@ -58,14 +60,9 @@ export const metadata: Metadata = {
 const organizationJsonLd = {
   "@context": "https://schema.org",
   "@type": "HinduTemple",
+  "@id": `${SITE_URL}/#organization`,
   name: "ISKCON Gambheeram Visakhapatnam",
-  alternateName: [
-    "Hare Krishna Movement Visakhapatnam",
-    "Hare Krishna Vaikuntham",
-    "ISKCON Gambheeram",
-    "ISKCON Vizag",
-    "Hare Krishna Movement Vizag",
-  ],
+  alternateName: ORG_ALT_NAMES,
   description: "ISKCON Gambheeram Visakhapatnam, also known as Hare Krishna Movement Vizag, is a center of the International Society for Krishna Consciousness serving the Gambheeram area of Visakhapatnam since 2008.",
   url: SITE_URL,
   foundingDate: "2008",
@@ -100,6 +97,26 @@ const organizationJsonLd = {
     "https://www.youtube.com/user/harekrishnavizag",
     "https://x.com/hkm_vizag",
   ],
+};
+
+const webSiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": `${SITE_URL}/#website`,
+  url: SITE_URL,
+  name: "ISKCON Gambheeram Visakhapatnam — Hare Krishna Movement Vizag",
+  description:
+    "Hare Krishna temple, Vaikuntham cultural centre and online devotional store of the Hare Krishna Movement Visakhapatnam (ISKCON Vizag).",
+  publisher: { "@id": `${SITE_URL}/#organization` },
+  inLanguage: "en-IN",
+  potentialAction: {
+    "@type": "SearchAction",
+    target: {
+      "@type": "EntryPoint",
+      urlTemplate: `${SITE_URL}/shop?search={search_term_string}`,
+    },
+    "query-input": "required name=search_term_string",
+  },
 };
 
 const faqJsonLd = {
@@ -151,6 +168,10 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteJsonLd) }}
         />
         <script
           type="application/ld+json"
