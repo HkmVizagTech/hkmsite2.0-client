@@ -84,7 +84,7 @@ const Footer = () => {
               </div>
               {/* Map beside the address — keeps the card compact instead of
                   stacking everything vertically and stretching the footer */}
-              <div className="mb-4 flex items-start gap-3">
+              <div className="mb-4 flex flex-wrap items-start gap-3">
                 <div className="relative h-48 w-48 shrink-0 overflow-hidden rounded-xl border border-white/10 shadow-lg">
                   <iframe
                     src={MAPS_EMBED_URL}
@@ -95,7 +95,7 @@ const Footer = () => {
                     referrerPolicy="no-referrer-when-downgrade"
                   />
                 </div>
-                <div className="flex min-w-0 flex-col gap-3">
+                <div className="flex min-w-0 flex-1 flex-col gap-3">
                   <address className="max-w-[220px] text-sm leading-relaxed text-[hsl(210,30%,97%)]/60 not-italic">
                     Chaitanya Bhavan,
                     <br />
