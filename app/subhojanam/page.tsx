@@ -258,7 +258,7 @@ export default function SubhojanamPage() {
               </div>
             </motion.div>
             <motion.div
-              initial={{ opacity: 0, x: 30 }} animate={inView1 ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.8, delay: 0.2 }}
+              initial={{ opacity: 0, x: -30 }} animate={inView1 ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.8, delay: 0.2 }}
               className="relative"
             >
               <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-primary/10 to-gold/10 -rotate-1" />

@@ -125,7 +125,7 @@ export default function AboutPage() {
                 activities have grown consistently, touching thousands of lives across Visakhapatnam and beyond.
               </p>
             </motion.div>
-            <motion.div initial={{ opacity: 0, x: 30 }} animate={inView1 ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.8, delay: 0.2 }}>
+            <motion.div initial={{ opacity: 0, x: -30 }} animate={inView1 ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.8, delay: 0.2 }}>
               <Image src="/assets/about-community.jpg" alt="Community gathering" width={600} height={400} className="rounded-2xl shadow-elevated w-full" />
             </motion.div>
           </div>
