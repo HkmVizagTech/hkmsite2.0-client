@@ -3,13 +3,15 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import type { PanInfo } from "framer-motion";
 import {
   ShoppingBag,
   Minus,
   Plus,
   Loader2,
   ChevronLeft,
+  ChevronRight,
   ShieldCheck,
   Truck,
   Check,
@@ -42,6 +44,8 @@ export default function ProductDetailPage() {
   const [related, setRelated] = useState<Product[]>([]);
   const [settings, setSettings] = useState<ShopSettings | null>(null);
   const [activeImage, setActiveImage] = useState(0);
+  const [imageDirection, setImageDirection] = useState(1);
+  const [galleryHovered, setGalleryHovered] = useState(false);
   const [variant, setVariant] = useState<ProductVariant | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -70,6 +74,19 @@ export default function ProductDetailPage() {
     };
   }, [slug]);
 
+  // Auto-slide the gallery one frame every 3s — paused while a fine pointer
+  // rests on it. activeImage is in the deps so whatever changed the frame
+  // (auto, arrows, thumbnails or a swipe) restarts the timer, keeping each
+  // photo showing for a full 3 seconds.
+  useEffect(() => {
+    if (!product || product.images.length <= 1 || galleryHovered) return;
+    const id = setInterval(() => {
+      setImageDirection(1);
+      setActiveImage((i) => (i + 1) % product.images.length);
+    }, 3000);
+    return () => clearInterval(id);
+  }, [product, galleryHovered, activeImage]);
+
   if (loading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
@@ -96,6 +113,32 @@ export default function ProductDetailPage() {
   const off = discountPercent(currentPrice, currentMrp);
   const canBuy = currentStock > 0 && (!product.hasVariants || !!variant);
   const wishlisted = wishlistReady && isWishlisted(product._id);
+
+  const imageCount = product.images.length;
+
+  // Slide the gallery to a specific frame; the new photo enters from the
+  // side it would naturally come from (next → enters from the right).
+  const goImage = (next: number) => {
+    setImageDirection(next === (activeImage + 1) % imageCount ? 1 : -1);
+    setActiveImage(next);
+  };
+
+  // Horizontal swipe on the main photo — touch or trackpad drag. The image
+  // mostly follows the finger (elastic snap-back) until the gesture crosses
+  // a threshold, then it advances like a swipe.
+  const gallerySwipe = (_: unknown, info: PanInfo) => {
+    const { offset, velocity } = info;
+    if (Math.abs(offset.x) < 50 && Math.abs(velocity.x) < 400) return;
+    const forward = offset.x < 0 || velocity.x < 0;
+    setImageDirection(forward ? 1 : -1);
+    setActiveImage((i) => (forward ? (i + 1) % imageCount : (i - 1 + imageCount) % imageCount));
+  };
+
+  const galleryVariants = {
+    enter: (dir: number) => ({ x: dir > 0 ? 80 : -80, opacity: 0 }),
+    center: { x: 0, opacity: 1 },
+    exit: (dir: number) => ({ x: dir > 0 ? -80 : 80, opacity: 0 }),
+  };
 
   // How many of the currently-selected option are already in the cart.
   const inCartForSelection =
@@ -139,30 +182,85 @@ export default function ProductDetailPage() {
       <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
         {/* Gallery */}
         <div>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="aspect-square overflow-hidden rounded-2xl border border-border bg-muted"
+          <div
+            className="relative"
+            onPointerEnter={(e) => {
+              if (e.pointerType === "mouse") setGalleryHovered(true);
+            }}
+            onPointerLeave={() => setGalleryHovered(false)}
           >
-            {product.images?.[activeImage] ? (
-              <img
-                src={product.images[activeImage]}
-                alt={product.name}
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <div className="flex h-full items-center justify-center text-muted-foreground">
-                <ShoppingBag className="h-10 w-10" />
-              </div>
-            )}
-          </motion.div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="aspect-square overflow-hidden rounded-2xl border border-border bg-muted"
+              drag={imageCount > 1 ? "x" : false}
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.16}
+              dragMomentum={false}
+              onDragEnd={gallerySwipe}
+            >
+              {product.images?.[activeImage] ? (
+                <AnimatePresence initial={false} custom={imageDirection}>
+                  <motion.img
+                    key={activeImage}
+                    src={product.images[activeImage]}
+                    alt={product.name}
+                    custom={imageDirection}
+                    variants={galleryVariants}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    transition={{ duration: 0.3, ease: "easeOut" }}
+                    className="h-full w-full object-cover"
+                  />
+                </AnimatePresence>
+              ) : (
+                <div className="flex h-full items-center justify-center text-muted-foreground">
+                  <ShoppingBag className="h-10 w-10" />
+                </div>
+              )}
+            </motion.div>
 
-          {product.images.length > 1 && (
+            {/* Prev/next arrows + frame dots. The gallery auto-slides, swipes
+                on touch, and the arrows cover fine-pointer navigation. */}
+            {imageCount > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => goImage((activeImage - 1 + imageCount) % imageCount)}
+                  aria-label="Previous image"
+                  className="absolute left-3 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-background/85 text-foreground shadow-sm backdrop-blur transition-colors hover:border-gold hover:text-primary active:scale-95"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => goImage((activeImage + 1) % imageCount)}
+                  aria-label="Next image"
+                  className="absolute right-3 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-background/85 text-foreground shadow-sm backdrop-blur transition-colors hover:border-gold hover:text-primary active:scale-95"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+                <div className="absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-black/30 px-2.5 py-1.5 backdrop-blur-sm">
+                  {product.images.map((_, i) => (
+                    <span
+                      key={i}
+                      className={`h-1.5 rounded-full bg-white/90 shadow transition-all duration-300 ${
+                        i === activeImage ? "w-4" : "w-1.5 opacity-60"
+                      }`}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+
+          {imageCount > 1 && (
             <div className="mt-3 flex gap-2.5 overflow-x-auto pb-1">
               {product.images.map((img, i) => (
                 <button
                   key={img + i}
-                  onClick={() => setActiveImage(i)}
+                  onClick={() => goImage(i)}
                   className={`h-16 w-16 shrink-0 overflow-hidden rounded-lg border-2 transition-colors ${
                     i === activeImage ? "border-gold" : "border-border hover:border-muted-foreground"
                   }`}

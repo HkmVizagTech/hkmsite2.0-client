@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ShoppingBag, Check, Truck, Minus, Plus, Heart } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/hooks/useWishlist";
 import { showAddedToCart } from "@/components/shop/CartToast";
@@ -22,6 +22,49 @@ export default function ProductCard({ product, index = 0, categoryName }: Props)
   const { has: isWishlisted, toggle: toggleWishlist, hydrated: wishlistReady } = useWishlist();
   const [justAdded, setJustAdded] = useState(false);
   const wishlisted = wishlistReady && isWishlisted(product._id);
+
+  // Multi-image products auto-swipe through their photos on the card itself
+  // (one frame every 3s) so devotees see the whole product before clicking.
+  // Hovering over the photo (fine pointers only — touch taps would otherwise
+  // freeze the rotation) pauses it so the current frame is easy to inspect,
+  // and a horizontal swipe on the photo steps through the frames manually.
+  const slideCount = product.images?.length || 0;
+  const multiImage = slideCount > 1;
+  const [imgIndex, setImgIndex] = useState(0);
+  const [carouselHovered, setCarouselHovered] = useState(false);
+  // True right after a finger/mouse swipe — blocks the Link click that
+  // browsers fire when a drag finishes on top of an anchor.
+  const swipedRef = useRef(false);
+
+  useEffect(() => {
+    if (!multiImage || carouselHovered) return;
+    const id = setInterval(() => {
+      setImgIndex((i) => (i + 1) % slideCount);
+    }, 3000);
+    return () => clearInterval(id);
+  }, [multiImage, carouselHovered, slideCount, imgIndex]);
+
+  const handleSwipe = (_: unknown, info: { offset: { x: number }; velocity: { x: number } }) => {
+    const { offset, velocity } = info;
+    if (Math.abs(offset.x) < 50 && Math.abs(velocity.x) < 400) return;
+    swipedRef.current = true;
+    const forward = offset.x < 0 || velocity.x < 0;
+    setImgIndex((i) =>
+      forward ? (i + 1) % slideCount : (i - 1 + slideCount) % slideCount
+    );
+    // Even if the release doesn't land on the anchor, drop the flag shortly
+    // after so a later genuine tap is never swallowed.
+    setTimeout(() => {
+      swipedRef.current = false;
+    }, 600);
+  };
+
+  const handleCardClick = (e: React.MouseEvent) => {
+    if (swipedRef.current) {
+      e.preventDefault();
+      swipedRef.current = false;
+    }
+  };
 
   const off = product.hasVariants ? null : discountPercent(product.price, product.mrp);
   const saveAmount =
@@ -81,18 +124,57 @@ export default function ProductCard({ product, index = 0, categoryName }: Props)
       }`}
     >
       <div className="relative">
-      <Link href={`/shop/${product.slug}`} className="block aspect-square overflow-hidden bg-muted">
-        {product.images?.[0] ? (
-          // Plain <img> rather than next/image: product photos are uploaded
-          // to R2 and the public bucket host is env-configured, so it isn't
-          // guaranteed to match next.config's remotePatterns allow-list.
-          // A broken optimiser would mean no product photos at all.
-          <img
-            src={product.images[0]}
-            alt={product.name}
-            loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
+      <Link
+        href={`/shop/${product.slug}`}
+        onClick={handleCardClick}
+        className="block aspect-square overflow-hidden bg-muted"
+        onPointerEnter={(e) => {
+          if (e.pointerType === "mouse") setCarouselHovered(true);
+        }}
+        onPointerLeave={() => setCarouselHovered(false)}
+      >
+        {product.images?.length ? (
+          <motion.div
+            className="relative h-full w-full"
+            drag={multiImage ? "x" : false}
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.12}
+            dragMomentum={false}
+            onDragStart={() => {
+              swipedRef.current = false;
+            }}
+            onDragEnd={handleSwipe}
+          >
+            {product.images.map((src, i) => (
+              <img
+                key={src + i}
+                src={src}
+                alt={i === 0 ? product.name : ""}
+                aria-hidden={i !== 0}
+                loading="lazy"
+                className={`absolute inset-0 h-full w-full object-cover ${
+                  i === imgIndex
+                    ? "opacity-100 transition-all duration-500 group-hover:scale-105"
+                    : "opacity-0 transition-opacity duration-500"
+                }`}
+              />
+            ))}
+
+            {/* Slide indicator — a simple progress dots row that echoes the
+                active frame of the auto-swiping gallery. */}
+            {multiImage && (
+              <div className="absolute bottom-2 left-1/2 z-10 flex -translate-x-1/2 items-center gap-1.5">
+                {product.images.map((_, i) => (
+                  <span
+                    key={i}
+                    className={`h-1.5 rounded-full bg-white/80 shadow transition-all duration-300 ${
+                      i === imgIndex ? "w-4" : "w-1.5 opacity-60"
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
+          </motion.div>
         ) : (
           <div className="flex h-full w-full items-center justify-center text-muted-foreground">
             <ShoppingBag className="h-8 w-8" />
