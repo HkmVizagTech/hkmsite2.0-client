@@ -206,11 +206,11 @@ export default function ProductDetailPage() {
       <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
         {/* Gallery */}
         <div>
-          <div className="relative">
+          <div className="relative overflow-hidden rounded-2xl border border-border bg-muted">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="aspect-square cursor-grab touch-pan-y overflow-hidden rounded-2xl border border-border bg-muted active:cursor-grabbing"
+              className="aspect-square cursor-grab touch-pan-y overflow-hidden active:cursor-grabbing"
               drag={imageCount > 1 ? "x" : false}
               dragConstraints={{ left: 0, right: 0 }}
               dragElastic={0.16}
@@ -229,7 +229,7 @@ export default function ProductDetailPage() {
                     animate="center"
                     exit="exit"
                     transition={{ duration: 0.3, ease: "easeOut" }}
-                    className="h-full w-full object-cover"
+                    className="absolute inset-0 h-full w-full object-cover"
                   />
                 </AnimatePresence>
               ) : (
@@ -545,6 +545,7 @@ export default function ProductDetailPage() {
       {/* Rich HTML styles for the Product information block — CKEditor output
           is plain semantic tags, so format them to match the product page. */}
       <style>{`
+        .product-info-content { overflow-x: auto; }
         .product-info-content p { margin: 0.4rem 0; line-height: 1.7; }
         .product-info-content p:first-child { margin-top: 0; }
         .product-info-content p:last-child { margin-bottom: 0; }
