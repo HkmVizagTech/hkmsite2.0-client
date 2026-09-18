@@ -95,7 +95,7 @@ const Footer = () => {
                     referrerPolicy="no-referrer-when-downgrade"
                   />
                 </div>
-                <div className="flex min-w-0 flex-1 flex-col gap-3">
+                <div className="flex w-full min-w-0 flex-col gap-3 sm:w-auto sm:flex-1">
                   <address className="max-w-[220px] text-sm leading-relaxed text-[hsl(210,30%,97%)]/60 not-italic">
                     Chaitanya Bhavan,
                     <br />
