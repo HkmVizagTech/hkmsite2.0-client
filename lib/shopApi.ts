@@ -26,6 +26,8 @@ export interface Product {
   slug: string;
   shortDescription?: string;
   description?: string;
+  /** Rich-text (CKEditor HTML) "Product Information" block — e.g. Book Name / Author / Language rows. */
+  productInfo?: string;
   category?: string;
   images: string[];
   hasVariants: boolean;

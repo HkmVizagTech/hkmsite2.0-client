@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
@@ -17,6 +17,7 @@ import {
   Check,
   Heart,
   PackageOpen,
+  ClipboardList,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ProductCard from "@/components/shop/ProductCard";
@@ -29,6 +30,7 @@ import {
   ProductVariant,
   ShopSettings,
   fetchProduct,
+  fetchProducts,
   fetchShopSettings,
   discountPercent,
   formatINR,
@@ -42,14 +44,15 @@ export default function ProductDetailPage() {
 
   const [product, setProduct] = useState<Product | null>(null);
   const [related, setRelated] = useState<Product[]>([]);
+  const [moreProducts, setMoreProducts] = useState<Product[]>([]);
   const [settings, setSettings] = useState<ShopSettings | null>(null);
   const [activeImage, setActiveImage] = useState(0);
   const [imageDirection, setImageDirection] = useState(1);
-  const [galleryHovered, setGalleryHovered] = useState(false);
   const [variant, setVariant] = useState<ProductVariant | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [added, setAdded] = useState(false);
+  const relatedRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!slug) return;
@@ -69,23 +72,33 @@ export default function ProductDetailPage() {
       .catch((e) => !cancelled && setError(e.message))
       .finally(() => !cancelled && setLoading(false));
     fetchShopSettings().then(setSettings).catch(() => {});
+    // A secondary rail of other catalog picks below "You may also like" — the
+    // same pattern storefronts use to keep a devotee browsing. Anything
+    // already shown (this product, its same-category neighbours) is filtered
+    // out in the render.
+    fetchProducts({ sort: "featured", limit: 12 })
+      .then((data) => {
+        if (!cancelled) setMoreProducts(data.products);
+      })
+      .catch(() => {});
     return () => {
       cancelled = true;
     };
   }, [slug]);
 
-  // Auto-slide the gallery one frame every 3s — paused while a fine pointer
-  // rests on it. activeImage is in the deps so whatever changed the frame
-  // (auto, arrows, thumbnails or a swipe) restarts the timer, keeping each
-  // photo showing for a full 3 seconds.
+  // Auto-slide the gallery one frame every 3s, always — waiting on a hover
+  // made desktop feel like auto-swipe was broken, since resting the mouse on
+  // the photo froze it. activeImage is in the deps so whatever changed the
+  // frame (auto, arrows, thumbnails or a swipe) restarts the timer, keeping
+  // each photo showing for a full 3 seconds.
   useEffect(() => {
-    if (!product || product.images.length <= 1 || galleryHovered) return;
+    if (!product || product.images.length <= 1) return;
     const id = setInterval(() => {
       setImageDirection(1);
       setActiveImage((i) => (i + 1) % product.images.length);
     }, 3000);
     return () => clearInterval(id);
-  }, [product, galleryHovered, activeImage]);
+  }, [product, activeImage]);
 
   if (loading) {
     return (
@@ -123,12 +136,13 @@ export default function ProductDetailPage() {
     setActiveImage(next);
   };
 
-  // Horizontal swipe on the main photo — touch or trackpad drag. The image
-  // mostly follows the finger (elastic snap-back) until the gesture crosses
-  // a threshold, then it advances like a swipe.
+  // Horizontal swipe on the main photo — finger on touch screens, or a
+  // click-and-drag with the mouse on desktop. The image follows the pointer
+  // with an elastic snap-back until the gesture crosses a small threshold,
+  // then it advances like a swipe.
   const gallerySwipe = (_: unknown, info: PanInfo) => {
     const { offset, velocity } = info;
-    if (Math.abs(offset.x) < 50 && Math.abs(velocity.x) < 400) return;
+    if (Math.abs(offset.x) < 35 && Math.abs(velocity.x) < 300) return;
     const forward = offset.x < 0 || velocity.x < 0;
     setImageDirection(forward ? 1 : -1);
     setActiveImage((i) => (forward ? (i + 1) % imageCount : (i - 1 + imageCount) % imageCount));
@@ -139,6 +153,16 @@ export default function ProductDetailPage() {
     center: { x: 0, opacity: 1 },
     exit: (dir: number) => ({ x: dir > 0 ? -80 : 80, opacity: 0 }),
   };
+
+  // Horizontal scroll for the "You may also like" rail (desktop arrows).
+  const scrollRelated = (dir: 1 | -1) => {
+    relatedRef.current?.scrollBy({ left: dir * 320, behavior: "smooth" });
+  };
+
+  // "You might also love" — featured picks from the store, minus anything that
+  // already appeared above (this product or its same-category companions).
+  const seenIds = new Set([product._id, ...related.map((r) => r._id)]);
+  const explore = moreProducts.filter((p) => !seenIds.has(p._id)).slice(0, 8);
 
   // How many of the currently-selected option are already in the cart.
   const inCartForSelection =
@@ -182,17 +206,11 @@ export default function ProductDetailPage() {
       <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
         {/* Gallery */}
         <div>
-          <div
-            className="relative"
-            onPointerEnter={(e) => {
-              if (e.pointerType === "mouse") setGalleryHovered(true);
-            }}
-            onPointerLeave={() => setGalleryHovered(false)}
-          >
+          <div className="relative">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="aspect-square overflow-hidden rounded-2xl border border-border bg-muted"
+              className="aspect-square cursor-grab touch-pan-y overflow-hidden rounded-2xl border border-border bg-muted active:cursor-grabbing"
               drag={imageCount > 1 ? "x" : false}
               dragConstraints={{ left: 0, right: 0 }}
               dragElastic={0.16}
@@ -221,8 +239,8 @@ export default function ProductDetailPage() {
               )}
             </motion.div>
 
-            {/* Prev/next arrows + frame dots. The gallery auto-slides, swipes
-                on touch, and the arrows cover fine-pointer navigation. */}
+            {/* Prev/next arrows + frame dots. The gallery auto-slides every 3s, swipes
+                (finger or mouse drag) and the arrows cover explicit stepping. */}
             {imageCount > 1 && (
               <>
                 <button
@@ -428,19 +446,125 @@ export default function ProductDetailPage() {
               </div>
             </div>
           )}
+
+          {/* Product information — admin-authored rich text (label:value rows
+              like "Book Name: …" with the side headings bolded). Rendered as
+              authored HTML so the formatting an admin chose is exactly what a
+              devotee sees. */}
+          {product.productInfo && (
+            <div className="mt-6 rounded-2xl border border-border bg-card p-5">
+              <h2 className="flex items-center gap-2 font-heading text-base font-bold text-foreground">
+                <ClipboardList className="h-4 w-4 text-gold" />
+                Product information
+              </h2>
+              <div
+                className="product-info-content mt-1 text-sm leading-relaxed text-foreground/90"
+                dangerouslySetInnerHTML={{ __html: product.productInfo }}
+              />
+            </div>
+          )}
         </div>
       </div>
 
+      {/* ═══ YOU MAY ALSO LIKE — same-category picks in a swipeable rail, with
+          arrows on desktop, mirroring the shop's featured rail. ═══ */}
       {related.length > 0 && (
-        <section className="mt-14">
-          <h2 className="mb-4 font-heading text-lg font-bold text-foreground">You may also like</h2>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        <section className="mt-14 sm:mt-16">
+          <div className="flex items-end justify-between gap-4">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">
+                Similar to this item
+              </p>
+              <h2 className="mt-1 font-heading text-xl font-bold text-foreground sm:text-2xl">
+                You may also like
+              </h2>
+            </div>
+            <div className="hidden items-center gap-2 sm:flex">
+              <button
+                type="button"
+                onClick={() => scrollRelated(-1)}
+                aria-label="Scroll related products left"
+                className="rounded-full border border-border p-2 text-muted-foreground transition-colors hover:border-gold hover:text-primary active:scale-95"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => scrollRelated(1)}
+                aria-label="Scroll related products right"
+                className="rounded-full border border-border p-2 text-muted-foreground transition-colors hover:border-gold hover:text-primary active:scale-95"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+          <div
+            ref={relatedRef}
+            className="related-rail -mx-4 mt-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          >
+            <style>{`.related-rail::-webkit-scrollbar { display: none; }`}</style>
             {related.map((p, i) => (
+              <div key={p._id} className="w-[220px] shrink-0 snap-start sm:w-[240px]">
+                <ProductCard product={p} index={i} />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* ═══ YOU MIGHT ALSO LOVE — a second rail of other catalog picks, the
+          "keep them browsing" layer modern stores place under the related
+          rail. ═══ */}
+      {explore.length > 0 && (
+        <section className="mt-12 border-t border-border pt-8 sm:mt-14 sm:pt-10">
+          <div className="flex items-end justify-between gap-4">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">
+                More from the store
+              </p>
+              <h2 className="mt-1 font-heading text-xl font-bold text-foreground sm:text-2xl">
+                You might also love
+              </h2>
+            </div>
+            <Link
+              href="/shop"
+              className="hidden items-center gap-1 text-sm font-semibold text-primary underline-offset-2 hover:underline sm:inline-flex"
+            >
+              View all products <ChevronRight className="h-4 w-4" />
+            </Link>
+          </div>
+          <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            {explore.map((p, i) => (
               <ProductCard key={p._id} product={p} index={i} />
             ))}
           </div>
         </section>
       )}
+
+      {/* Rich HTML styles for the Product information block — CKEditor output
+          is plain semantic tags, so format them to match the product page. */}
+      <style>{`
+        .product-info-content p { margin: 0.4rem 0; line-height: 1.7; }
+        .product-info-content p:first-child { margin-top: 0; }
+        .product-info-content p:last-child { margin-bottom: 0; }
+        .product-info-content strong { font-weight: 700; color: hsl(var(--foreground)); }
+        .product-info-content h1,
+        .product-info-content h2,
+        .product-info-content h3,
+        .product-info-content h4 { margin: 0.75rem 0 0.3rem; font-weight: 700; color: hsl(var(--foreground)); }
+        .product-info-content h2 { font-size: 1.05rem; }
+        .product-info-content h3,
+        .product-info-content h4 { font-size: 0.95rem; }
+        .product-info-content ul,
+        .product-info-content ol { padding-left: 1.25rem; margin: 0.4rem 0; }
+        .product-info-content li { margin: 0.15rem 0; }
+        .product-info-content a { color: hsl(var(--primary)); text-decoration: underline; }
+        .product-info-content table { width: 100%; border-collapse: collapse; margin: 0.5rem 0; font-size: 0.85rem; }
+        .product-info-content th,
+        .product-info-content td { border: 1px solid hsl(var(--border)); padding: 0.4rem 0.6rem; text-align: left; }
+        .product-info-content th { background: hsl(var(--muted)); font-weight: 600; }
+      `}</style>
     </div>
   );
 }

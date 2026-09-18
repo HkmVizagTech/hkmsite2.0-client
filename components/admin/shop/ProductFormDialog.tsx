@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import nextDynamic from "next/dynamic";
 import { Loader2, Plus, Star, Truck, Trash2, Upload, X } from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import {
@@ -28,6 +29,17 @@ import { authFetch } from "@/lib/authClient";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 
+// CKEditor boots on the client only, so it's loaded lazily here — same
+// pattern as the blog admin — and kept out of the SSR bundle.
+const RichTextEditor = nextDynamic(() => import("@/components/ui/rich-text-editor"), {
+  ssr: false,
+  loading: () => (
+    <div className="text-sm text-muted-foreground border border-border rounded-md bg-muted/20 px-3 py-8 text-center">
+      Loading editor…
+    </div>
+  ),
+});
+
 export interface ShopVariant {
   _id?: string;
   label: string;
@@ -44,6 +56,7 @@ export interface ShopProduct {
   slug: string;
   shortDescription?: string;
   description?: string;
+  productInfo?: string;
   category: string;
   images: string[];
   hasVariants: boolean;
@@ -114,6 +127,7 @@ export default function ProductFormDialog({ open, onOpenChange, product, categor
   const [name, setName] = useState("");
   const [shortDescription, setShortDescription] = useState("");
   const [description, setDescription] = useState("");
+  const [productInfo, setProductInfo] = useState("");
   const [category, setCategory] = useState("");
   const [images, setImages] = useState<string[]>([]);
   const [hasVariants, setHasVariants] = useState(false);
@@ -157,6 +171,7 @@ export default function ProductFormDialog({ open, onOpenChange, product, categor
       setName(product.name || "");
       setShortDescription(product.shortDescription || "");
       setDescription(product.description || "");
+      setProductInfo(product.productInfo || "");
       setCategory(product.category || "");
       setImages(product.images || []);
       setHasVariants(Boolean(product.hasVariants));
@@ -186,6 +201,7 @@ export default function ProductFormDialog({ open, onOpenChange, product, categor
       setName("");
       setShortDescription("");
       setDescription("");
+      setProductInfo("");
       setCategory(categories[0]?.slug || "");
       setImages([]);
       setHasVariants(false);
@@ -299,6 +315,7 @@ export default function ProductFormDialog({ open, onOpenChange, product, categor
       name: name.trim(),
       shortDescription: shortDescription.trim(),
       description: description.trim(),
+      productInfo,
       category,
       images,
       hasVariants,
@@ -469,6 +486,22 @@ export default function ProductFormDialog({ open, onOpenChange, product, categor
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Full description shown on the product page"
+              />
+            </div>
+
+            <div className="sm:col-span-2">
+              <Label>Product information</Label>
+              <p className="mb-1.5 mt-0.5 text-xs text-muted-foreground">
+                Optional label:value rows (e.g. Book Name, Author, Language, Format) shown in a
+                "Product information" card below the description. Use the toolbar to bold the side
+                headings and key words — <span className="font-semibold text-foreground">Book Name:</span>{" "}
+                <span>Bhagavad Gita As It Is</span>.
+              </p>
+              <RichTextEditor
+                value={productInfo}
+                onChange={setProductInfo}
+                minHeight="180px"
+                placeholder="Book Name: Bhagavad Gita As It Is&#10;Author: His Divine Grace A.C. Bhaktivedanta Swami Prabhupada&#10;…"
               />
             </div>
           </div>
