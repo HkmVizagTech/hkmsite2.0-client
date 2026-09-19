@@ -67,6 +67,7 @@ export const navEntries: NavEntry[] = [
       icon: Heart,
       items: [
         { label: "Square Foot Seva", href: "/sqft-seva-campaign", description: "Sponsor the temple foundation", icon: Heart },
+        { label: "Brick Seva", href: "/brick-seva-campaign", description: "Sponsor a brick for the temple", icon: Heart },
         { label: "Anna Daan", href: "/anna-daan-seva", description: "Feed the hungry", icon: Utensils },
         { label: "Gau Seva", href: "/gau-seva", description: "Cow care & protection", icon: Beef },
         { label: "Gita Daan", href: "/gita-daan-seva", description: "Distribute Bhagavad Gita", icon: BookOpen },

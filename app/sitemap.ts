@@ -21,7 +21,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/sqft-seva-campaign`, changeFrequency: "monthly", priority: 0.9 },
     { url: `${SITE_URL}/gita-daan-seva`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE_URL}/alankara-vastra-seva`, changeFrequency: "monthly", priority: 0.8 },
-    { url: `${SITE_URL}/brick-seva-campaign`, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${SITE_URL}/brick-seva-campaign`, changeFrequency: "monthly", priority: 0.9 },
     { url: `${SITE_URL}/donations`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${SITE_URL}/janmashtami`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${SITE_URL}/contact`, changeFrequency: "monthly", priority: 0.6 },
