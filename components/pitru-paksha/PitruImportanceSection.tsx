@@ -61,18 +61,18 @@ export default function PitruImportanceSection() {
         };
 
   return (
-    <section
-      className="relative overflow-hidden px-4 py-16 md:py-24"
-      style={{
-        background: `linear-gradient(135deg, ${C.emerald}, ${C.gold} 55%, ${C.softGold} 140%)`,
-      }}
-    >
+      <section
+        className="relative overflow-hidden px-4 py-16 md:py-24"
+        style={{
+          background: `linear-gradient(135deg, ${C.gold} 0%, ${C.softGold} 48%, #FFFFFF 140%)`,
+        }}
+      >
       {/* Radially-placed golden glow */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
         style={{
-          background: `radial-gradient(ellipse 60% 45% at 50% -8%, ${C.gold}33, transparent 65%), radial-gradient(ellipse 50% 40% at 50% 108%, rgba(255,245,217,0.10), transparent 60%)`,
+          background: `radial-gradient(ellipse 60% 45% at 50% -8%, ${C.gold}33, transparent 65%), radial-gradient(ellipse 8% 40% at 95% 30%, ${C.gold}2d, transparent 65%)`,
         }}
       />
       {/* A faint woven texture. On a full-bleed gradient this is the difference
@@ -105,20 +105,20 @@ export default function PitruImportanceSection() {
           <Ornament className="mx-auto mb-6" />
           <p
             className="text-xs font-semibold uppercase tracking-[0.28em] md:text-sm"
-            style={{ color: C.softGold }}
+            style={{ color: C.deepGreen }}
           >
             Importance of Pitru Paksha &amp; Why We Donate
           </p>
           <h2
             className="mt-4 text-3xl font-bold leading-tight md:text-5xl"
-            style={{ color: C.lightMint, textShadow: `0 0 40px rgba(0,0,0,0.35)` }}
+            style={{ color: C.deepGreen }}
           >
             The Sacred Fortnight of
-            <span className="block" style={{ color: C.gold }}>
+            <span className="block" style={{ color: C.emerald }}>
               Remembering the Departed
             </span>
           </h2>
-          <p className="mx-auto mt-5 max-w-2xl text-[15px] leading-8 text-white/85 md:text-lg">
+          <p className="mx-auto mt-5 max-w-2xl text-[15px] leading-8 text-[#59321F]/85 md:text-lg">
             Pitru Paksha is the fortnight the scriptures set apart for one
             purpose alone — gratitude. Everything given with love in these
             sixteen days becomes an offering that reaches those who gave us life.
@@ -149,8 +149,8 @@ export default function PitruImportanceSection() {
           </span>
 
           <blockquote
-            className="relative font-serif text-xl leading-[2.1] md:text-[1.75rem] md:leading-[2]"
-            style={{ color: C.softGold }}
+            className="relative font-serif text-2xl leading-[2.1] md:text-[1.75rem] md:leading-[2]"
+            style={{ color: C.deepGreen }}
           >
             अन्नदानं महादानं जलदानं ततः परम्।
             <br />
@@ -195,8 +195,8 @@ export default function PitruImportanceSection() {
             </h3>
 
             <div
-              className="mt-5 space-y-5 border-l-2 pl-5 text-[15px] leading-8 text-white/85 md:pl-6 md:text-base"
-              style={{ borderColor: `${C.gold}4d` }}
+            className="mt-5 space-y-5 border-l-2 border-l-[#E9A62A]/30 pl-5 text-[15px] leading-8 text-[#59321F]/85 md:pl-6 md:text-base"
+            style={{ borderColor: `${C.gold}4d` }}
             >
               <p>
                 During Pitru Paksha, the ancestors (pitrs) are said to descend
@@ -252,13 +252,13 @@ export default function PitruImportanceSection() {
           <motion.div {...fade(0.15)} className="flex flex-col">
             <p
               className="text-xs font-bold uppercase tracking-[0.24em] md:text-sm"
-              style={{ color: C.gold }}
+              style={{ color: C.deepGreen }}
             >
               Why Donate
             </p>
             <h3
               className="mt-3 text-2xl font-bold leading-snug md:text-3xl"
-              style={{ color: C.lightMint }}
+              style={{ color: C.deepGreen }}
             >
               Four Reasons to Offer Seva
             </h3>

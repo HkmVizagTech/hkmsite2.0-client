@@ -242,7 +242,7 @@ export default function OtherDonationsCarousel() {
           <Ornament className="mx-auto mb-6" />
           <p
             className="text-xs font-semibold uppercase tracking-[0.28em] md:text-sm"
-            style={{ color: C.softGold }}
+            style={{ color: C.deepGreen }}
           >
             Continue your seva
           </p>
