@@ -58,7 +58,7 @@ export default function ThankYouClient() {
               className="mb-8 text-sm leading-relaxed text-muted-foreground md:text-base"
             >
               Your offering has been received with gratitude. May Lord Krishna bless you
-              and your family throughout Chaturmas.
+              and your family.
             </motion.p>
 
             {/* Donation summary card */}

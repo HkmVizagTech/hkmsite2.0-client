@@ -17,6 +17,16 @@ const VERSES: Record<string, { verse: string; translation: string; attribution: 
     translation: "The cow is the mother of the universe",
     attribution: "Vedic tradition",
   },
+  "Sadhu Bhojan": {
+    verse: "अन्नदानं महादानं जलदानं ततः परम्।",
+    translation: "The gift of food is the greatest gift; the gift of water is greater still.",
+    attribution: "Garuda Purana",
+  },
+  "Pitru Paksha": {
+    verse: "अन्नदानं महादानं जलदानं ततः परम्।",
+    translation: "The gift of food is the greatest gift — offered in your ancestors' name, it reaches them directly.",
+    attribution: "Garuda Purana",
+  },
   default: {
     verse: "यत्करोषि यदश्नासि यज्जुहोषि ददासि यत् । यत्तपस्यसि कौन्तेय तत्कुरुष्व मदर्पणम् ॥",
     translation:
@@ -37,6 +47,36 @@ function getVerse(sevaName: string) {
   return VERSES.default;
 }
 
+// Banner palette of the Pitru Paksha campaign. The /payment/thank-you page is
+// shared by every flow; when the donor arrived from the Pitru Paksha page the
+// whole card is re-skinned to the campaign's warm ivory / burnt-saffron theme
+// so the journey stays visually continuous from banner → sevas → receipt.
+const PITRU_THEME = {
+  pageBg: "#FFF5D9", // Warm Ivory (page background)
+  cardBorder: "#E9A62A", // Golden Amber
+  cardBg: "#FFFFFF",
+  eyebrow: "#C95718", // Warm Terracotta
+  heading: "#D24A0A", // Burnt Orange
+  body: "#59321F", // Warm Brown
+  subtle: "#7A4A26", // muted brown for secondary text
+  summaryBg: "#FCE8B5", // Pale Golden Cream
+  summaryBorder: "#E9A62A",
+  verseBg: "#F7D9A3", // Soft Peach Cream
+  verseBgAlt: "#FCE8B5",
+  cta: "#D83B05", // Deep Saffron Orange (primary CTA)
+  ctaHover: "#B92F03", // Dark Burnt Orange (CTA hover)
+  ctaSecondaryBg: "#FFFFFF",
+  ctaSecondaryBorder: "#E9A62A",
+  ctaSecondaryText: "#D24A0A",
+  white: "#FFFFFF",
+} as const;
+
+// Donors from the Pitru Paksha page are tagged via the human-readable
+// "source" query param the page appends on redirect. The saffron gradient
+// strip at the top is baked into the banner art too, so the themed card
+// matches without touching the shared layout defaults.
+const isPitruSource = (source: string) => /pitru/i.test(source);
+
 function formatAmount(amount: string | null) {
   if (!amount) return null;
   const n = Number(amount);
@@ -53,6 +93,11 @@ export default function ThankYouPageClient() {
 
   const formattedAmount = formatAmount(amount);
   const verse = getVerse(sevaName);
+
+  // Pitru Paksha donors get the campaign's banner palette; every other flow
+  // keeps the shared amber theme.
+  const pitru = isPitruSource(source);
+  const T = pitru ? PITRU_THEME : null;
 
   const [copied, setCopied] = useState(false);
   const [petals, setPetals] = useState<{ id: number; left: number; delay: number; duration: number; size: number }[]>([]);
@@ -89,7 +134,10 @@ export default function ThankYouPageClient() {
   };
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#fefaf0] text-slate-900">
+    <main
+      className="relative min-h-screen overflow-hidden text-slate-900"
+      style={{ background: T ? T.pageBg : "#fefaf0" }}
+    >
       {/* Falling petals */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
         {petals.map((p) => (
@@ -114,35 +162,64 @@ export default function ThankYouPageClient() {
       <div className="relative mx-auto max-w-2xl px-4 py-14 md:py-20">
 
         {/* Main card */}
-        <div className="relative overflow-hidden rounded-3xl border border-amber-200 bg-white shadow-2xl shadow-amber-100">
-
-          {/* Decorative gold arc at top */}
-          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-400" />
+        <div
+          className="relative overflow-hidden rounded-3xl border shadow-2xl"
+          style={
+            T
+              ? { borderColor: T.cardBorder, background: T.cardBg, boxShadow: `0 25px 60px -25px ${T.cta}45` }
+              : undefined
+          }
+        >
+          {/* Decorative gold arc at top — saffron→amber for Pitru, amber for the default */}
+          <div
+            className="absolute inset-x-0 top-0 h-1"
+            style={{
+              background: T
+                ? `linear-gradient(90deg, ${T.cta}, ${T.cardBorder}, ${T.cta})`
+                : "linear-gradient(90deg, #fbbf24, #fde047, #fbbf24)",
+            }}
+          />
 
           {/* OM symbol watermark */}
-          <div className="pointer-events-none absolute right-4 top-4 select-none font-serif text-7xl font-bold leading-none text-amber-100 md:text-9xl" aria-hidden>
+          <div
+            className="pointer-events-none absolute right-4 top-4 select-none font-serif text-7xl font-bold leading-none md:text-9xl"
+            style={{ color: T ? `${T.cardBorder}30` : undefined }}
+            aria-hidden
+          >
             ॐ
           </div>
 
           <div className="relative px-8 py-10 text-center md:px-12 md:py-14">
 
             {/* Success icon */}
-            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-orange-500 shadow-lg shadow-amber-200">
-              <svg viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8">
+            <div
+              className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full shadow-lg"
+              style={{
+                background: T ? `linear-gradient(135deg, ${T.cta}, ${T.cardBorder})` : undefined,
+                boxShadow: T ? `0 10px 24px -8px ${T.cta}70` : undefined,
+              }}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke={T ? T.white : "white"} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8">
                 <polyline points="20 6 9 17 4 12" />
               </svg>
             </div>
 
             {/* Eyebrow */}
-            <p className="mb-2 text-xs font-bold uppercase tracking-[0.35em] text-amber-600">
+            <p
+              className="mb-2 text-xs font-bold uppercase tracking-[0.35em]"
+              style={{ color: T ? T.eyebrow : undefined }}
+            >
               Hare Krishna 🙏
             </p>
 
             {/* Headline */}
-            <h1 className="mb-2 font-heading text-3xl font-bold text-slate-900 md:text-4xl">
+            <h1
+              className="mb-2 font-heading text-3xl font-bold md:text-4xl"
+              style={{ color: T ? T.heading : undefined }}
+            >
               Your Seva Is Offered
             </h1>
-            <p className="mb-7 text-base text-slate-500 md:text-lg">
+            <p className="mb-7 text-base md:text-lg" style={{ color: T ? T.subtle : undefined }}>
               {recurring
                 ? "Your monthly seva has been set up. May Krishna bless you every month."
                 : "Thank you for your heartfelt offering to Sri Sri Radha Damodar."}
@@ -150,21 +227,31 @@ export default function ThankYouPageClient() {
 
             {/* Summary card */}
             {(formattedAmount || sevaName) && (
-              <div className="mb-8 rounded-2xl border border-amber-100 bg-amber-50 px-6 py-5 text-left">
-                <p className="mb-3 text-xs font-bold uppercase tracking-widest text-amber-700">
+              <div
+                className="mb-8 rounded-2xl border px-6 py-5 text-left"
+                style={
+                  T
+                    ? { borderColor: T.summaryBorder, background: T.summaryBg }
+                    : undefined
+                }
+              >
+                <p
+                  className="mb-3 text-xs font-bold uppercase tracking-widest"
+                  style={{ color: T ? T.cta : undefined }}
+                >
                   Offering Summary
                 </p>
                 <div className="space-y-2">
                   {sevaName && (
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-slate-500">Seva</span>
-                      <span className="text-sm font-semibold text-slate-800">{sevaName}</span>
+                      <span className="text-sm" style={{ color: T ? T.subtle : undefined }}>Seva</span>
+                      <span className="text-sm font-semibold" style={{ color: T ? T.body : undefined }}>{sevaName}</span>
                     </div>
                   )}
                   {formattedAmount && (
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-slate-500">Amount</span>
-                      <span className="text-lg font-bold text-amber-700">{formattedAmount}</span>
+                      <span className="text-sm" style={{ color: T ? T.subtle : undefined }}>Amount</span>
+                      <span className="text-lg font-bold" style={{ color: T ? T.cta : undefined }}>{formattedAmount}</span>
                     </div>
                   )}
                   {recurring && (
@@ -188,17 +275,30 @@ export default function ThankYouPageClient() {
             )}
 
             {/* Sanskrit verse */}
-            <div className="mb-8 rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 to-orange-50 px-6 py-5">
-              <p className="mb-2 font-serif text-base italic leading-relaxed text-slate-700 md:text-lg">
+            <div
+              className="mb-8 rounded-2xl border border-amber-200 px-6 py-5"
+              style={
+                T
+                  ? {
+                      borderColor: T.cardBorder,
+                      background: `linear-gradient(135deg, ${T.verseBg}, ${T.verseBgAlt})`,
+                    }
+                  : undefined
+              }
+            >
+              <p
+                className="mb-2 font-serif text-base italic leading-relaxed md:text-lg"
+                style={{ color: T ? T.body : undefined }}
+              >
                 "{verse.verse}"
               </p>
-              <p className="mb-1 text-sm text-slate-600">{verse.translation}</p>
-              <p className="text-xs font-medium text-amber-600">{verse.attribution}</p>
+              <p className="mb-1 text-sm" style={{ color: T ? T.subtle : undefined }}>{verse.translation}</p>
+              <p className="text-xs font-medium" style={{ color: T ? T.cta : undefined }}>{verse.attribution}</p>
             </div>
 
             {/* Share section */}
             <div className="mb-8">
-              <p className="mb-3 text-sm font-medium text-slate-600">
+              <p className="mb-3 text-sm font-medium" style={{ color: T ? T.subtle : undefined }}>
                 Inspire others to offer seva too
               </p>
               <div className="flex flex-wrap items-center justify-center gap-3">
@@ -229,16 +329,51 @@ export default function ThankYouPageClient() {
             <div className="flex flex-wrap items-center justify-center gap-3">
               <Link
                 href="/"
-                className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-3 text-sm font-semibold text-white shadow-md shadow-amber-200 transition hover:opacity-90"
+                className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold shadow-md transition"
+                style={
+                  T
+                    ? {
+                        background: T.cta,
+                        color: T.white,
+                        boxShadow: `0 6px 18px -6px ${T.cta}70`,
+                      }
+                    : undefined
+                }
+                onMouseEnter={
+                  T
+                    ? (e) => {
+                        e.currentTarget.style.background = T.ctaHover;
+                      }
+                    : undefined
+                }
+                onMouseLeave={
+                  T
+                    ? (e) => {
+                        e.currentTarget.style.background = T.cta;
+                      }
+                    : undefined
+                }
               >
                 <Home className="h-4 w-4" />
                 Return Home
               </Link>
               <Link
                 href="/donate"
-                className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-white px-6 py-3 text-sm font-semibold text-amber-700 transition hover:bg-amber-50"
+                className="inline-flex items-center gap-2 rounded-full border bg-white px-6 py-3 text-sm font-semibold transition"
+                style={
+                  T
+                    ? { borderColor: T.ctaSecondaryBorder, color: T.ctaSecondaryText }
+                    : undefined
+                }
               >
-                <Heart className="h-4 w-4 fill-amber-500 text-amber-500" />
+                <Heart
+                  className="h-4 w-4"
+                  style={
+                    T
+                      ? { fill: T.ctaSecondaryText, color: T.ctaSecondaryText }
+                      : undefined
+                  }
+                />
                 Offer Another Seva
               </Link>
             </div>

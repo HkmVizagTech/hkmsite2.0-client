@@ -46,7 +46,7 @@ export default function FaqSection({ faqs, tone = "default" }: FaqSectionProps) 
           : blue
             ? { background: "#F2F7FC" }
             : sand
-              ? { background: "#FBF5E4" }
+              ? { background: "#FFF5D9" } // Pitru Paksha banner palette — warm ivory
               : undefined
       }
     >
@@ -63,7 +63,7 @@ export default function FaqSection({ faqs, tone = "default" }: FaqSectionProps) 
               : blue
                 ? "text-[#0B2D4A]"
                 : sand
-                  ? "text-[#3A211A]"
+                  ? "text-[#D24A0A]" // burnt orange headings
                   : "text-primary"
           }`}
         >
@@ -79,7 +79,7 @@ export default function FaqSection({ faqs, tone = "default" }: FaqSectionProps) 
                   : blue
                     ? "border-[#BFD2E6] bg-[#E6EDF6]"
                     : sand
-                      ? "border-[#E7B46C] bg-[#E8D5A9]"
+                      ? "border-[#E9A62A] bg-[#FCE8B5]" // golden amber border, pale golden cream
                       : "border-border bg-card"
               }`}
             >
@@ -96,7 +96,7 @@ export default function FaqSection({ faqs, tone = "default" }: FaqSectionProps) 
                       : blue
                         ? "text-[#0B2D4A]"
                         : sand
-                          ? "text-[#3A211A]"
+                          ? "text-[#59321F]" // warm brown
                           : "text-foreground"
                   }`}
                 >
@@ -116,7 +116,7 @@ export default function FaqSection({ faqs, tone = "default" }: FaqSectionProps) 
                       : blue
                         ? "border-[#BFD2E6] text-[#2E4358]"
                         : sand
-                          ? "border-[#E7B46C] text-[#4B3428]"
+                          ? "border-[#E9A62A] text-[#59321F]"
                           : "border-border text-muted-foreground"
                   }`}
                 >
