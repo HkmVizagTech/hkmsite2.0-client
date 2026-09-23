@@ -302,6 +302,13 @@ const C = {
   yellow: "#D9A34A",
   heading: "#3A211A",
   text: "#4B3428",
+  // `teal` (#A4713A) reads at only ~3.8:1 against lightMint, under the 4.5:1
+  // minimum for body copy — it is a decorative gold, not an ink, and prose set
+  // in it was genuinely hard to read on the cream sections. These are its
+  // accessible counterparts: muted (~7.3:1) for secondary text, accent
+  // (~5.4:1) for eyebrows and small labels.
+  muted: "#6B4A33",
+  accent: "#8A5A28",
 } as const;
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -680,8 +687,8 @@ export default function PitruPakshaClient() {
               />
             </div>
             <p
-              className="text-xs font-semibold uppercase tracking-[0.28em] md:text-sm"
-              style={{ color: C.teal }}
+              className="text-xs font-bold uppercase tracking-[0.28em] md:text-sm"
+              style={{ color: C.accent }}
             >
               Choose Your Offering
             </p>
@@ -692,8 +699,8 @@ export default function PitruPakshaClient() {
               Pitru Paksha Sevas
             </h2>
             <p
-              className="mx-auto mt-4 max-w-lg text-sm leading-relaxed md:text-base"
-              style={{ color: C.teal }}
+              className="mx-auto mt-4 max-w-xl text-[15px] leading-8 md:text-lg"
+              style={{ color: C.muted }}
             >
               Honour your ancestors with sacred seva and receive their blessings
             </p>
@@ -913,7 +920,10 @@ export default function PitruPakshaClient() {
             >
               Pitru Paksha
             </h1>
-            <p className="mt-5 max-w-4xl text-base leading-8 text-white/92 md:text-lg">
+            {/* Opacity modifiers only exist in steps of 5 — text-white/92 was
+                generating no CSS at all, so this paragraph fell back to the
+                page's default foreground (dark navy) on top of the banner. */}
+            <p className="mt-5 max-w-4xl text-base leading-8 text-white/90 md:text-lg">
               The sacred fortnight to honour our ancestors. During Pitru Paksha,
               we offer shraddha, tarpan and charity — feeding devotees, serving
               sacred cows and glorifying the Lord — so the departed souls may
@@ -942,7 +952,7 @@ export default function PitruPakshaClient() {
                 <h2 className="text-lg font-bold text-white">
                   Offer Seva This Pitru Paksha
                 </h2>
-                <p className="mt-2 text-sm leading-6 text-white/78">
+                <p className="mt-2 text-sm leading-6 text-white/80">
                   Your offering sustains Annadana, Sadhu Bhojan, sacred cow care
                   and every divine ritual performed at HKM Vizag — carrying your
                   gratitude to the ancestors you remember.
@@ -1082,8 +1092,27 @@ export default function PitruPakshaClient() {
       {/* ═══════════════════════════════════════════════════════════════════
           ABOUT PITRU PAKSHA — HONOUR YOUR ANCESTORS
       ═══════════════════════════════════════════════════════════════════ */}
-      <section className="px-4 py-12 md:py-16" style={{ background: C.lightMint }}>
-        <div className="mx-auto max-w-6xl">
+      <section className="relative overflow-hidden px-4 py-16 md:py-24" style={{ background: C.lightMint }}>
+        {/* The cream background was a flat slab edge to edge. These give it
+            depth without competing with the photography below: warmth pooling
+            behind the heading, and a faint dotted weave for texture. */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 h-[520px]"
+          style={{
+            background: `radial-gradient(ellipse 70% 100% at 50% 0%, ${C.gold}1f, transparent 70%)`,
+          }}
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-[0.05]"
+          style={{
+            backgroundImage: `radial-gradient(${C.emerald} 1px, transparent 1px)`,
+            backgroundSize: "22px 22px",
+          }}
+        />
+
+        <div className="relative mx-auto max-w-6xl">
           <div className="mx-auto max-w-3xl text-center">
             <div className="mx-auto mb-5 flex items-center justify-center gap-4">
               <span
@@ -1101,20 +1130,20 @@ export default function PitruPakshaClient() {
               />
             </div>
             <p
-              className="text-xs font-semibold uppercase tracking-[0.28em] md:text-sm"
-              style={{ color: C.teal }}
+              className="text-xs font-bold uppercase tracking-[0.28em] md:text-sm"
+              style={{ color: C.accent }}
             >
               Pitru Paksha Daan
             </p>
             <h2
-              className="mt-2 text-3xl font-bold md:text-4xl lg:text-[2.6rem] lg:leading-tight"
+              className="mt-3 text-3xl font-bold md:text-4xl lg:text-[2.75rem] lg:leading-[1.15]"
               style={{ color: C.heading }}
             >
               Honour Your Ancestors Through Pitru Paksha Daan Online
             </h2>
             <p
-              className="mt-4 text-sm leading-relaxed md:text-base"
-              style={{ color: C.teal }}
+              className="mx-auto mt-5 max-w-2xl text-[15px] leading-8 md:text-lg"
+              style={{ color: C.muted }}
             >
               The daans that most deeply satisfy the departed souls — offered
               with devotion at the temple, they carry your gratitude directly
@@ -1123,12 +1152,14 @@ export default function PitruPakshaClient() {
           </div>
 
           {/* The three supreme daans */}
-          <div className="mt-12 grid gap-6 md:grid-cols-3">
+          <div className="mt-14 grid gap-7 md:grid-cols-3 md:gap-6 lg:gap-7">
             {[
               {
                 slug: "annadana",
                 title: "Annadana Seva",
                 image: SECTION_ANNADAN,
+                icon: UtensilsCrossed,
+                kicker: "The highest daan",
                 text:
                   "Feeding devotees and the needy with sanctified prasadam is glorified as the highest form of daan — it is said to reach the ancestors directly.",
               },
@@ -1136,6 +1167,8 @@ export default function PitruPakshaClient() {
                 slug: "gau-seva",
                 title: "Gau Seva",
                 image: SECTION_GAU_SEVA,
+                icon: Heart,
+                kicker: "Dear to Krishna",
                 text:
                   "Serving the sacred cows with fodder and loving care is supremely dear to Lord Krishna — and utterly satisfying to the departed.",
               },
@@ -1143,6 +1176,8 @@ export default function PitruPakshaClient() {
                 slug: "sadhu-bhojan",
                 title: "Sadhu Bhojan Seva",
                 image: SECTION_SADHU_BHOJAN,
+                icon: Leaf,
+                kicker: "Blessings of saints",
                 text:
                   "Serving a sanctified meal to sadhus and Vaishnavas draws their blessings — carrying the offering to the pitrs.",
               },
@@ -1154,74 +1189,155 @@ export default function PitruPakshaClient() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: reduce ? 0 : i * 0.1 }}
-                className="group block overflow-hidden rounded-2xl border bg-white transition-all duration-500 hover:-translate-y-1"
+                className="group flex flex-col overflow-hidden rounded-3xl border bg-white transition-all duration-500 hover:-translate-y-1.5"
                 style={{
-                  borderColor: `${C.teal}30`,
-                  boxShadow: `0 2px 20px ${C.teal}10`,
+                  borderColor: `${C.teal}33`,
+                  boxShadow: `0 4px 24px ${C.teal}14`,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow = `0 26px 60px -28px ${C.emerald}99`;
+                  e.currentTarget.style.borderColor = `${C.gold}99`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = `0 4px 24px ${C.teal}14`;
+                  e.currentTarget.style.borderColor = `${C.teal}33`;
                 }}
               >
-                <div className="relative h-52 overflow-hidden">
+                <div className="relative h-60 overflow-hidden md:h-64">
                   <Image
                     src={c.image}
                     alt={c.title}
                     fill
                     unoptimized
                     sizes="(max-width: 768px) 100vw, 33vw"
-                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    className="object-cover transition-transform duration-700 group-hover:scale-[1.06]"
                   />
                   <div
                     className="absolute inset-0"
                     style={{
-                      background: `linear-gradient(to top, ${C.emerald}dd, rgba(91,58,36,0.25) 55%, rgba(91,58,36,0.05))`,
+                      background: `linear-gradient(to top, ${C.deepGreen}F0 0%, ${C.emerald}A6 38%, rgba(91,58,36,0.2) 70%, transparent 100%)`,
                     }}
                   />
-                  <h3 className="absolute bottom-3 left-4 right-4 text-lg font-bold tracking-wide text-white drop-shadow-md md:text-xl">
-                    {c.title}
-                  </h3>
+                  <div
+                    aria-hidden
+                    className="absolute inset-x-0 top-0 h-[3px] origin-left scale-x-0 transition-transform duration-500 group-hover:scale-x-100"
+                    style={{ background: `linear-gradient(to right, ${C.gold}, ${C.softGold})` }}
+                  />
+
+                  {/* Numeral in the corner, so the three read as an ordered set
+                      of the supreme daans rather than three loose cards. */}
+                  <span
+                    aria-hidden
+                    className="absolute right-5 top-4 font-serif text-4xl font-bold leading-none text-white/25 transition-colors duration-500 group-hover:text-white/40"
+                  >
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+
+                  <div className="absolute inset-x-5 bottom-4">
+                    <p
+                      className="text-[10px] font-bold uppercase tracking-[0.2em]"
+                      style={{ color: C.softGold, textShadow: "0 2px 8px rgba(0,0,0,0.6)" }}
+                    >
+                      {c.kicker}
+                    </p>
+                    <h3 className="mt-1 text-xl font-bold leading-snug tracking-wide text-white [text-shadow:0_2px_12px_rgba(0,0,0,0.6)] md:text-2xl">
+                      {c.title}
+                    </h3>
+                  </div>
                 </div>
-                <p
-                  className="p-5 pb-6 text-[13px] leading-relaxed md:text-sm"
-                  style={{ color: C.text }}
-                >
-                  {c.text}
-                </p>
+
+                <div className="relative flex flex-1 flex-col p-6 pt-8">
+                  {/* Icon medallion straddling the image edge — the detail that
+                      separates a considered card from a photo with a caption. */}
+                  <span
+                    className="absolute -top-6 left-6 flex h-12 w-12 items-center justify-center rounded-full border-4 border-white transition-transform duration-500 group-hover:scale-110"
+                    style={{
+                      background: `linear-gradient(135deg, ${C.gold}, ${C.softGold})`,
+                      boxShadow: `0 10px 24px -10px ${C.emerald}99`,
+                    }}
+                  >
+                    <c.icon className="h-5 w-5" style={{ color: C.deepGreen }} strokeWidth={2} />
+                  </span>
+
+                  <p className="text-sm leading-7" style={{ color: C.text }}>
+                    {c.text}
+                  </p>
+
+                  <span
+                    className="mt-5 inline-flex w-fit items-center gap-1.5 border-b-2 border-transparent pb-0.5 text-xs font-bold uppercase tracking-[0.14em] transition-all duration-300 group-hover:gap-2.5"
+                    style={{ color: C.accent, borderBottomColor: `${C.gold}00` }}
+                    onMouseEnter={(e) => { e.currentTarget.style.borderBottomColor = C.gold; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.borderBottomColor = `${C.gold}00`; }}
+                  >
+                    Offer this seva
+                    <span aria-hidden>→</span>
+                  </span>
+                </div>
               </motion.a>
             ))}
           </div>
 
-          <div className="mx-auto mt-12 max-w-3xl space-y-5 text-left">
-            <p
-              className="text-sm leading-relaxed md:text-base"
-              style={{ color: C.text }}
+          {/* Three equal paragraphs stacked full-width read as a wall of text
+              and were the last thing on the page anyone finished. Same words,
+              given an editorial shape: a lead paragraph that carries the
+              section, then the detail in two columns that the eye can graze. */}
+          <div
+            className="relative mx-auto mt-14 max-w-4xl overflow-hidden rounded-3xl border px-6 py-9 md:px-10 md:py-11"
+            style={{
+              borderColor: `${C.gold}40`,
+              background: `linear-gradient(135deg, #FFFFFF 0%, ${C.mint}33 100%)`,
+              boxShadow: `0 20px 50px -34px ${C.emerald}80`,
+            }}
+          >
+            <span
+              aria-hidden
+              className="pointer-events-none absolute -right-6 -top-10 select-none font-serif text-[8rem] leading-none opacity-[0.07]"
+              style={{ color: C.gold }}
             >
-              Pitru Paksha is the fortnight of the Vedic calendar set aside for
+              ॐ
+            </span>
+
+            <p
+              className="relative text-base leading-8 md:text-lg md:leading-9"
+              style={{ color: C.heading }}
+            >
+              <span
+                className="float-left mr-3 mt-1 font-serif text-5xl font-bold leading-[0.85] md:text-6xl"
+                style={{ color: C.gold }}
+              >
+                P
+              </span>
+              itru Paksha is the fortnight of the Vedic calendar set aside for
               remembering and honouring our ancestors — the pitrs. Falling each
               year in the dark fortnight of Ashwin (September–October), it is a
               season of profound gratitude, when families across India offer
               shraddha, tarpan and charity on the tithi (date) of their departed
               elders.
             </p>
-            <p
-              className="text-sm leading-relaxed md:text-base"
-              style={{ color: C.text }}
-            >
-              The scriptures tell us that whatever is given with love during
-              this period — food, water, clothing or service — reaches the
-              ancestors directly and brings them peace. Among all offerings,
-              Annadana (feeding the hungry), Sadhu Bhojan (feeding saintly
-              Vaishnavas) and Gau Seva (serving the sacred cows) are glorified
-              as supremely pleasing, for they serve the Lord&apos;s own
-              dependents.
-            </p>
-            <p
-              className="text-sm leading-relaxed md:text-base"
-              style={{ color: C.text }}
-            >
-              By offering seva this Pitru Paksha, you transform grief into grace.
-              Every offering — no matter the amount — carries your love for
-              those who came before you and returns as blessings upon your
-              family.
-            </p>
+
+            <div
+              className="my-7 h-px w-full"
+              style={{ background: `linear-gradient(to right, transparent, ${C.gold}66, transparent)` }}
+              aria-hidden
+            />
+
+            <div className="grid gap-6 md:grid-cols-2 md:gap-8">
+              <p className="text-sm leading-7 md:text-[15px]" style={{ color: C.text }}>
+                The scriptures tell us that whatever is given with love during
+                this period — food, water, clothing or service — reaches the
+                ancestors directly and brings them peace. Among all offerings,
+                Annadana (feeding the hungry), Sadhu Bhojan (feeding saintly
+                Vaishnavas) and Gau Seva (serving the sacred cows) are glorified
+                as supremely pleasing, for they serve the Lord&apos;s own
+                dependents.
+              </p>
+              <p className="text-sm leading-7 md:text-[15px]" style={{ color: C.text }}>
+                By offering seva this Pitru Paksha, you transform grief into
+                grace. Every offering — no matter the amount — carries your love
+                for those who came before you and returns as blessings upon your
+                family.
+              </p>
+            </div>
           </div>
         </div>
       </section>

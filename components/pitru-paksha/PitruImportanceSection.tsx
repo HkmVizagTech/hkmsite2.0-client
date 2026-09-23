@@ -1,9 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import { HandHeart, Home, Scale, Sparkles } from "lucide-react";
 import Ornament from "@/components/Ornament";
+
+// Annadana at the temple — the section argues that giving food is the supreme
+// offering, and showing it happening is more persuasive than another paragraph.
+const ANNADANA_IMAGE =
+  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1786100757954-1786100756855-annadan2.jpg";
 
 const C = {
   deepGreen: "#3A211A",
@@ -47,7 +53,7 @@ export default function PitruImportanceSection() {
       : {
           initial: { opacity: 0, y: 24 },
           whileInView: { opacity: 1, y: 0 },
-          viewport: { once: true },
+          viewport: { once: true, margin: "-80px" },
           transition: { duration: 0.6, delay, ease: "easeOut" as const },
         };
 
@@ -66,6 +72,16 @@ export default function PitruImportanceSection() {
           background: `radial-gradient(ellipse 60% 45% at 50% -8%, ${C.gold}33, transparent 65%)`,
         }}
       />
+      {/* A faint woven texture. On a full-bleed gradient this is the difference
+          between "a coloured panel" and "a surface" — barely perceptible on its
+          own, but the section stops looking flat. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-[0.06]"
+        style={{
+          backgroundImage: `repeating-linear-gradient(45deg, ${C.gold} 0 1px, transparent 1px 14px)`,
+        }}
+      />
       {/* Soft sheen sweeping diagonally */}
       {!reduce && (
         <motion.div
@@ -82,10 +98,7 @@ export default function PitruImportanceSection() {
 
       <div className="relative mx-auto max-w-6xl">
         {/* ── Header ── */}
-        <motion.div
-          {...fade(0)}
-          className="mx-auto max-w-3xl text-center"
-        >
+        <motion.div {...fade(0)} className="mx-auto max-w-3xl text-center">
           <Ornament className="mx-auto mb-6" />
           <p
             className="text-xs font-semibold uppercase tracking-[0.28em] md:text-sm"
@@ -94,141 +107,180 @@ export default function PitruImportanceSection() {
             Importance of Pitru Paksha &amp; Why We Donate
           </p>
           <h2
-            className="mt-4 text-3xl font-bold leading-tight md:text-4xl"
-            style={{
-              color: C.lightMint,
-              textShadow: `0 0 40px ${C.gold}40`,
-            }}
+            className="mt-4 text-3xl font-bold leading-tight md:text-5xl"
+            style={{ color: C.lightMint, textShadow: `0 0 40px ${C.gold}40` }}
           >
             The Sacred Fortnight of
             <span className="block" style={{ color: C.softGold }}>
               Remembering the Departed
             </span>
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-white/85 md:text-base">
+          <p className="mx-auto mt-5 max-w-2xl text-[15px] leading-8 text-white/85 md:text-lg">
             Pitru Paksha is the fortnight the scriptures set apart for one
             purpose alone — gratitude. Everything given with love in these
-            sixteen days becomes an offering that reaches those who gave us
-            life.
+            sixteen days becomes an offering that reaches those who gave us life.
           </p>
         </motion.div>
 
-        {/* ── Two-panel body ── */}
-        <div className="mt-12 grid gap-8 lg:mt-16 lg:grid-cols-[1fr_1.1fr] lg:gap-10">
-          {/* LEFT — Importance narrative */}
-          <motion.div
-            {...fade(0.05)}
-            className="flex flex-col gap-6"
+        {/* ── Scripture band ──
+            The shloka used to sit in the left column underneath a block of
+            prose, where the most beautiful thing on the page was also the
+            easiest to scroll past. Given the full width it becomes the
+            section's centrepiece, and the two columns below it read as
+            commentary on it rather than competing with it. */}
+        <motion.figure
+          {...fade(0.05)}
+          className="relative mx-auto mt-12 max-w-4xl overflow-hidden rounded-3xl px-6 py-10 text-center md:mt-16 md:px-12 md:py-12"
+          style={{
+            background: `linear-gradient(135deg, ${C.gold}1f, rgba(255,255,255,0.05) 55%, ${C.gold}14)`,
+            boxShadow: `inset 0 0 60px ${C.gold}12, 0 24px 60px -30px rgba(0,0,0,0.6)`,
+            border: `1px solid ${C.gold}38`,
+          }}
+        >
+          <span
+            aria-hidden
+            className="pointer-events-none absolute -left-10 -top-12 select-none font-serif text-[9rem] leading-none opacity-[0.10]"
+            style={{ color: C.gold }}
           >
-            <div
-              className="rounded-2xl border px-6 py-7 backdrop-blur md:p-8"
-              style={{
-                borderColor: `${C.gold}30`,
-                background: "rgba(255,255,255,0.07)",
-                boxShadow: `0 20px 50px -20px rgba(0,0,0,0.5)`,
-              }}
+            ॐ
+          </span>
+
+          <blockquote
+            className="relative font-serif text-xl leading-[2.1] md:text-[1.75rem] md:leading-[2]"
+            style={{ color: C.softGold }}
+          >
+            अन्नदानं महादानं जलदानं ततः परम्।
+            <br />
+            सर्वेषामेव दानानां प्राणदानं विशिष्यते॥
+          </blockquote>
+
+          <div
+            className="mx-auto my-6 h-px w-24"
+            style={{ background: `linear-gradient(to right, transparent, ${C.gold}, transparent)` }}
+            aria-hidden
+          />
+
+          <figcaption className="mx-auto max-w-2xl">
+            <p className="text-[15px] italic leading-8 text-white/85 md:text-base">
+              The gift of food is the greatest gift; the gift of water is greater
+              still. Yet of all gifts, the gift of life is the supreme.
+            </p>
+            <p
+              className="mt-3 text-xs font-bold uppercase tracking-[0.22em]"
+              style={{ color: C.gold }}
             >
-              <p
-                className="text-sm font-semibold uppercase tracking-[0.22em]"
-                style={{ color: C.gold }}
-              >
-                The Importance
+              — Garuḍa Purāṇa
+            </p>
+          </figcaption>
+        </motion.figure>
+
+        {/* ── Two-panel body ── */}
+        <div className="mt-12 grid gap-8 lg:mt-16 lg:grid-cols-[0.95fr_1.05fr] lg:gap-12">
+          {/* LEFT — Importance narrative */}
+          <motion.div {...fade(0.1)} className="flex flex-col">
+            <p
+              className="text-xs font-bold uppercase tracking-[0.24em] md:text-sm"
+              style={{ color: C.gold }}
+            >
+              The Importance
+            </p>
+            <h3
+              className="mt-3 text-2xl font-bold leading-snug md:text-3xl"
+              style={{ color: C.lightMint }}
+            >
+              Honouring Those Who Came Before Us
+            </h3>
+
+            <div
+              className="mt-5 space-y-5 border-l-2 pl-5 text-[15px] leading-8 text-white/85 md:pl-6 md:text-base"
+              style={{ borderColor: `${C.gold}4d` }}
+            >
+              <p>
+                During Pitru Paksha, the ancestors (pitrs) are said to descend
+                near the mortal world to receive the offerings of their
+                descendants. Through shraddha, tarpan and charity, the living
+                fulfil the love they owe to those who shaped their lives.
               </p>
-              <h3
-                className="mt-2 text-2xl font-bold leading-snug"
-                style={{ color: C.lightMint }}
-              >
-                Honouring Those Who Came Before Us
-              </h3>
-              <div
-                className="mt-4 space-y-4 text-sm leading-7 text-white/88 md:text-base"
-              >
-                <p>
-                  During Pitru Paksha, the ancestors (pitrs) are said to descend
-                  near the mortal world to receive the offerings of their
-                  descendants. Through shraddha, tarpan and charity, the living
-                  fulfil the love they owe to those who shaped their lives.
-                </p>
-                <p>
-                  The scriptures praise giving during this period with singular
-                  emphasis — a handful of food offered to a deserving soul is
-                  said to carry more merit than grand gifts made at other
-                  times. It is a season where even the smallest seva becomes an
-                  act of deep reverence.
-                </p>
-              </div>
+              <p>
+                The scriptures praise giving during this period with singular
+                emphasis — a handful of food offered to a deserving soul is said
+                to carry more merit than grand gifts made at other times. It is a
+                season where even the smallest seva becomes an act of deep
+                reverence.
+              </p>
             </div>
 
-            {/* Shloka card */}
-            <div
-              className="relative overflow-hidden rounded-2xl border-l-4 px-6 py-7 md:p-8"
-              style={{
-                borderColor: C.gold,
-                background: `linear-gradient(135deg, ${C.gold}1a, transparent 60%)`,
-                boxShadow: `inset 0 0 40px ${C.gold}0d`,
-              }}
-            >
-              <p
-                className="font-serif text-lg leading-relaxed text-white/95 md:text-xl"
-                style={{ color: C.softGold }}
-              >
-                अन्नदानं महादानं जलदानं ततः परम्।
-                <br />
-                सर्वेषामेव दानानां प्राणदानं विशिष्यते॥
-              </p>
-              <p className="mt-4 text-sm italic leading-7 text-white/75">
-                The gift of food is the greatest gift; the gift of water is
-                greater still. Yet of all gifts, the gift of life is the
-                supreme.
-                <span className="mt-1 block not-italic font-semibold" style={{ color: C.gold }}>
-                  — Garuḍa Purāṇa
-                </span>
-              </p>
-            </div>
+            {/* The column was pure prose against a 2×2 grid of cards, which
+                left it feeling like the lesser half of the layout. */}
+            <figure className="group relative mt-8 overflow-hidden rounded-3xl border" style={{ borderColor: `${C.gold}3d` }}>
+              <div className="relative aspect-[16/10] w-full overflow-hidden">
+                <Image
+                  src={ANNADANA_IMAGE}
+                  alt="Annadana being served at Hare Krishna Vaikuntham Temple"
+                  fill
+                  unoptimized
+                  sizes="(max-width: 1024px) 100vw, 45vw"
+                  className="object-cover transition-transform duration-[900ms] group-hover:scale-[1.05]"
+                />
+                <div
+                  aria-hidden
+                  className="absolute inset-0"
+                  style={{
+                    background: `linear-gradient(to top, ${C.deepGreen}F0 0%, ${C.deepGreen}80 40%, transparent 78%)`,
+                  }}
+                />
+              </div>
+              <figcaption className="absolute inset-x-0 bottom-0 p-5 md:p-6">
+                <p
+                  className="text-[10px] font-bold uppercase tracking-[0.22em]"
+                  style={{ color: C.softGold }}
+                >
+                  Annadana at the temple
+                </p>
+                <p className="mt-1.5 text-sm leading-6 text-white/90">
+                  Through the fortnight, every offering is cooked, sanctified and
+                  served in your ancestors&apos; name.
+                </p>
+              </figcaption>
+            </figure>
           </motion.div>
 
           {/* RIGHT — Why donate cards */}
-          <motion.div
-            {...fade(0.1)}
-            className="flex flex-col gap-6"
-          >
-            <div className="px-1">
-              <p
-                className="text-sm font-semibold uppercase tracking-[0.22em]"
-                style={{ color: C.gold }}
-              >
-                Why Donate
-              </p>
-              <h3
-                className="mt-2 text-2xl font-bold leading-snug"
-                style={{ color: C.lightMint }}
-              >
-                Four Reasons to Offer Seva
-              </h3>
-            </div>
+          <motion.div {...fade(0.15)} className="flex flex-col">
+            <p
+              className="text-xs font-bold uppercase tracking-[0.24em] md:text-sm"
+              style={{ color: C.gold }}
+            >
+              Why Donate
+            </p>
+            <h3
+              className="mt-3 text-2xl font-bold leading-snug md:text-3xl"
+              style={{ color: C.lightMint }}
+            >
+              Four Reasons to Offer Seva
+            </h3>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              {WHY_DONATE.map(({ icon: Icon, title, text }) => (
+            {/* Hover styling moved from inline onMouseEnter/onMouseLeave
+                handlers into CSS. The handlers overwrote element.style
+                directly, which both fought the declared transition and meant
+                a card left mid-hover (touch, or the pointer leaving the
+                window) could stay stuck in its hovered state. */}
+            <div className="mt-5 grid gap-4 sm:grid-cols-2">
+              {WHY_DONATE.map(({ icon: Icon, title, text }, i) => (
                 <div
                   key={title}
-                  className="group flex flex-col rounded-2xl border px-5 py-6 backdrop-blur transition-all duration-300"
-                  style={{
-                    borderColor: "rgba(255,255,255,0.14)",
-                    background: "rgba(255,255,255,0.06)",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = C.gold;
-                    e.currentTarget.style.background = "rgba(255,255,255,0.1)";
-                    e.currentTarget.style.transform = "translateY(-3px)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = "rgba(255,255,255,0.14)";
-                    e.currentTarget.style.background = "rgba(255,255,255,0.06)";
-                    e.currentTarget.style.transform = "translateY(0)";
-                  }}
+                  className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/[0.14] bg-white/[0.06] px-5 py-6 backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:border-[rgba(217,163,74,0.75)] hover:bg-white/[0.1] hover:shadow-[0_18px_40px_-22px_rgba(0,0,0,0.8)]"
                 >
                   <span
-                    className="flex h-11 w-11 items-center justify-center rounded-full transition-shadow duration-300 group-hover:shadow-lg"
+                    aria-hidden
+                    className="absolute right-4 top-3 font-serif text-3xl font-bold leading-none opacity-20 transition-opacity duration-300 group-hover:opacity-40"
+                    style={{ color: C.gold }}
+                  >
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+
+                  <span
+                    className="flex h-12 w-12 items-center justify-center rounded-full transition-shadow duration-300 group-hover:shadow-lg"
                     style={{
                       background: `${C.gold}22`,
                       boxShadow: `inset 0 0 0 1px ${C.gold}66`,
@@ -236,15 +288,16 @@ export default function PitruImportanceSection() {
                   >
                     <Icon className="h-5 w-5" style={{ color: C.gold }} />
                   </span>
+
                   <h4
-                    className="mt-4 text-[15px] font-bold leading-snug"
+                    className="mt-4 text-base font-bold leading-snug"
                     style={{ color: C.lightMint }}
                   >
                     {title}
                   </h4>
-                  <p className="mt-2 text-[13px] leading-6 text-white/78">
-                    {text}
-                  </p>
+                  {/* Was 13px at white/78 — small and dim enough on this
+                      gradient to be genuinely hard work to read. */}
+                  <p className="mt-2 text-sm leading-7 text-white/85">{text}</p>
                 </div>
               ))}
             </div>
@@ -252,10 +305,10 @@ export default function PitruImportanceSection() {
         </div>
 
         {/* ── CTA ── */}
-        <motion.div {...fade(0.15)} className="mt-12 text-center lg:mt-16">
+        <motion.div {...fade(0.2)} className="mt-14 text-center lg:mt-16">
           <Link
             href="#offer-seva"
-            className="inline-flex items-center gap-2 rounded-full px-8 py-3.5 text-sm font-bold uppercase tracking-[0.08em] shadow-lg transition-transform duration-300 hover:scale-[1.03]"
+            className="inline-flex items-center gap-2 rounded-full px-9 py-4 text-sm font-bold uppercase tracking-[0.08em] shadow-lg transition-transform duration-300 hover:scale-[1.03]"
             style={{
               background: `linear-gradient(135deg, ${C.gold}, ${C.softGold})`,
               color: C.deepGreen,
@@ -265,6 +318,10 @@ export default function PitruImportanceSection() {
             Offer Your Seva This Pitru Paksha
             <span aria-hidden>→</span>
           </Link>
+          <p className="mx-auto mt-4 max-w-md text-xs leading-6 text-white/65">
+            Every offering, however small, is received with the same devotion at
+            the temple altar.
+          </p>
         </motion.div>
       </div>
     </section>

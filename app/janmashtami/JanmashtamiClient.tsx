@@ -661,7 +661,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
           <div>
             <p className="mb-3 text-sm font-semibold uppercase tracking-[0.22em] text-[#ffd96f]">Hare Krishna Movement</p>
             <h1 className="text-3xl font-bold leading-tight text-[#ffdb68] md:text-5xl" style={{ textShadow: "0 0 40px hsl(42,92%,56%,0.3), 0 0 80px hsl(42,92%,56%,0.15)" }}>Sri Krishna Janmashtami</h1>
-            <p className="mt-5 max-w-4xl text-base leading-8 text-white/92 md:text-lg">
+            <p className="mt-5 max-w-4xl text-base leading-8 text-white/90 md:text-lg">
               This Janmashtami, on the 4th & 5th of September, join the grand celebrations at HKM Vizag.
               Donate towards any of the sevas listed and receive special prasadam and the unlimited blessings of Lord Krishna.
             </p>
@@ -674,7 +674,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
               <ShieldCheck className="mt-1 h-6 w-6 shrink-0 text-[#ffdb68]" />
               <div>
                 <h2 className="text-lg font-bold text-white">Offer Seva This Janmashtami</h2>
-                <p className="mt-2 text-sm leading-6 text-white/78">
+                <p className="mt-2 text-sm leading-6 text-white/80">
                   Your offering sustains the midnight Abhisheka, the grand Nandotsava feast, and every sacred ritual performed at HKM Vizag on Lord Krishna&apos;s appearance day.
                 </p>
               </div>
