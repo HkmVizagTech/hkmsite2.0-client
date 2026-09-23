@@ -65,12 +65,11 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
   const razorpayReady = useRazorpayPreload();
   useScrollToDonate();
 
-  // This is the permanent, festival-agnostic Ekadashi page. Campaign copy
-  // stored in older records may still contain the old "Shayani Ekadashi"
-  // name — rewrite any remaining occurrences so a rename propagates
-  // everywhere, including the browser tab.
+  // This is the permanent, festival-agnostic Ekadashi page. Legacy records
+  // saved under the old "Shayani Ekadashi" name are normalized server-side
+  // (see ekadashiCampaign.controller), so copy arrives already renamed —
+  // including the browser tab below.
   const name = campaign.campaignName || "Ekadashi";
-  const withName = (t: string) => t.replace(/Shayani Ekadashi/g, name);
 
   useEffect(() => {
     document.title = `${name} Seva | Hare Krishna Vaikuntham Temple, Visakhapatnam`;
@@ -762,7 +761,7 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
                         {point.title}
                       </h3>
                       <p className="text-sm leading-relaxed text-muted-foreground">
-                        {withName(point.text)}
+                        {point.text}
                       </p>
                     </div>
                   </div>
@@ -799,7 +798,7 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
                     {section.title}
                   </h3>
                   <p className="text-sm leading-relaxed text-muted-foreground md:text-base">
-                    {withName(section.text)}
+                    {section.text}
                   </p>
                 </motion.div>
               ))}
@@ -818,7 +817,7 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
         </section>
 
         {/* ── FAQs ── */}
-        <FaqSection faqs={campaign.faqs.map((f) => ({ ...f, q: withName(f.q), a: withName(f.a) }))} />
+        <FaqSection faqs={campaign.faqs} />
 
         {/* ── Founder's words ── */}
         <FounderSection />

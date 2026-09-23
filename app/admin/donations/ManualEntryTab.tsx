@@ -31,7 +31,7 @@ const PAYMENT_MODES = [
 
 // Every distinct seva/offering name actually used across the site's
 // donation flows (donate/[seva], sevaCampaignConfig, campaignConfig,
-// Janmashtami, Shayani Ekadashi, festival programs, Subhojanam) —
+// Janmashtami, the /ekadashi campaign page, festival programs, Subhojanam) —
 // compiled from each source rather than guessed, so admin can match
 // what a donor says they paid for. "Other" reveals a free-text field,
 // so a seva added to the site later never blocks manual entry.
