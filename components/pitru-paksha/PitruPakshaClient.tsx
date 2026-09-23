@@ -16,6 +16,7 @@ import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
 import FaqSection from "@/components/sqft-campaign/FaqSection";
 import DonorPrivilegesSection from "@/components/sqft-campaign/DonorPrivilegesSection";
 import OtherDonationsCarousel from "@/components/pitru-paksha/OtherDonationsCarousel";
+import PitruImportanceSection from "@/components/pitru-paksha/PitruImportanceSection";
 import type { CampaignConfig } from "@/lib/campaignConfig";
 import PageLayout from "@/components/PageLayout";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
@@ -41,6 +42,10 @@ type SevaOption = {
 type Seva = {
   slug: string;
   title: string;
+  /** Regular seva `type` code, same as the standalone seva pages — drives the
+   *  DCC seva-category mapping (ANNADAAN → ANGE, GO SEVA → GOSE, SQFT →
+   *  MNSO-S, BRICK → MNSO-B). */
+  type: string;
   description: string;
   icon: string;
   image: string;
@@ -86,8 +91,7 @@ const DECOR_GARLAND =
 // the design team (target ~1200x800, 3:2 landscape).
 const SECTION_ANNADAN =
   "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1786100757954-1786100756855-annadan2.jpg";
-const SECTION_GAU_SEVA =
-  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1784305706071-1784305696382-ChatGPTImageJul172026095421PM.png";
+const SECTION_GAU_SEVA = "/assets/donations-gau-seva-real.jpeg";
 const SECTION_SADHU_BHOJAN =
   "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1790144104776-1790144104666-sadhuBhojan.webp";
 
@@ -95,6 +99,7 @@ const sevas: Seva[] = [
   {
     slug: "annadana",
     title: "Annadana Seva",
+    type: "ANNADAAN",
     description:
       "Feed devotees and the needy with sanctified prasadam in honour of your forefathers — the highest form of daan.",
     icon: "🍛",
@@ -111,6 +116,7 @@ const sevas: Seva[] = [
   {
     slug: "sadhu-bhojan",
     title: "Sadhu Bhojan Seva",
+    type: "VAISHNAV BHOJAN",
     description:
       "Serve a sanctified meal to Vaishnavas and saintly persons — dinner blessed by the saints reaches the ancestors.",
     icon: "🍽️",
@@ -127,6 +133,7 @@ const sevas: Seva[] = [
   {
     slug: "gau-seva",
     title: "Gau Seva",
+    type: "GO SEVA",
     description:
       "Serve the sacred cows at our goshala — a seva that pleases the Lord and sanctifies the memory of the departed.",
     icon: "🐄",
@@ -143,11 +150,11 @@ const sevas: Seva[] = [
   {
     slug: "brick-seva",
     title: "Brick Seva",
+    type: "BRICK",
     description:
       "Sponsor a sacred brick of the Hare Krishna Vaikuntham Temple under construction — each brick laid in devotion becomes an eternal part of the Lord's abode.",
     icon: "🧱",
-    image:
-      "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785588189215-1785588187426-brick-hero-desk.webp",
+    image: "/assets/vizag-temple-1.jpeg",
     options: [
       { legacySevaId: 3530, label: "Donate Rs. 11,111", amount: 11111 },
       { legacySevaId: 3531, label: "Donate Rs. 5,100", amount: 5100 },
@@ -159,11 +166,12 @@ const sevas: Seva[] = [
   {
     slug: "square-foot-seva",
     title: "Square Foot Seva",
+    type: "SQFT",
     description:
       "Be a part of the temple in the making — sponsor square feet of its sacred construction and leave an eternal footprint in the Lord's divine abode.",
     icon: "🛕",
     image:
-      "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1786528614525-1786528613759-ChatGPTImageAug122026022735PM.webp",
+      "https://res.cloudinary.com/ddmzeqpkc/image/upload/f_auto,q_auto/phase_1",
     options: [
       { legacySevaId: 3540, label: "Donate Rs. 5,555", amount: 5555 },
       { legacySevaId: 3541, label: "Donate Rs. 3,100", amount: 3100 },
@@ -439,7 +447,7 @@ export default function PitruPakshaClient() {
           sourcePage: "pitru-paksha",
           utm: attribution.payload().utm,
           festivalSlug: "pitru-paksha",
-          type: "Pitru Paksha Seva",
+          type: selected.seva.type,
           sevaName: selected.seva.title,
           legacySevaId: selected.option.legacySevaId,
           name: form.donorName.trim(),
@@ -488,6 +496,7 @@ export default function PitruPakshaClient() {
         notes: {
           sourcePage: "pitru-paksha",
           festivalSlug: "pitru-paksha",
+          sevaType: selected.seva.type,
           legacySevaId: selected.option.legacySevaId,
           sevaName: selected.seva.title,
           sevaOption: selected.option.label,
@@ -1216,6 +1225,11 @@ export default function PitruPakshaClient() {
           </div>
         </div>
       </section>
+
+      {/* ═══════════════════════════════════════════════════════════════════
+          IMPORTANCE + WHY DONATE — one combined elegant section
+      ═══════════════════════════════════════════════════════════════════ */}
+      <PitruImportanceSection />
 
       {/* ═══════════════════════════════════════════════════════════════════
           DONOR PRIVILEGES — shared carousel
