@@ -869,7 +869,7 @@ export default function RadhashtamiClient() {
             >
               Sri Radhashtami
             </h1>
-            <p className="mt-5 max-w-4xl text-base leading-8 text-white/92 md:text-lg">
+            <p className="mt-5 max-w-4xl text-base leading-8 text-white/90 md:text-lg">
               Celebrate the divine appearance of Srimati Radharani — the supreme
               goddess of devotion and the most beloved of Lord Krishna. Offer
               sacred sevas and receive the unlimited blessings of Radha Rani at
@@ -897,7 +897,7 @@ export default function RadhashtamiClient() {
                 <h2 className="text-lg font-bold text-white">
                   Offer Seva This Radhashtami
                 </h2>
-                <p className="mt-2 text-sm leading-6 text-white/78">
+                <p className="mt-2 text-sm leading-6 text-white/80">
                   Your offering sustains the sacred Abhishekam, flower
                   decorations, Annadana and every divine ritual performed at
                   HKM Vizag on Srimati Radharani&apos;s appearance day.

@@ -4,7 +4,8 @@ import { useCallback, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { motion } from "framer-motion";
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import Ornament from "@/components/Ornament";
 
 const C = {
@@ -17,10 +18,13 @@ const C = {
   lightMint: "#FBF5E4",
 } as const;
 
+const AUTOPLAY_MS = 5000;
+
 interface DonationCard {
   href: string;
   title: string;
   tagline: string;
+  blurb: string;
   image: string;
 }
 
@@ -32,6 +36,7 @@ const OTHER_DONATIONS: DonationCard[] = [
     href: "/alankara-vastra-seva",
     title: "Vastra & Alankara Seva",
     tagline: "Adorn the Lordships",
+    blurb: "Offer silks, ornaments and fresh garlands for the daily shringar of the Deities.",
     image:
       "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677419371-1783677418690-DietyPhotos.jpeg",
   },
@@ -39,6 +44,7 @@ const OTHER_DONATIONS: DonationCard[] = [
     href: "/sqft-seva-campaign",
     title: "Square Foot Seva",
     tagline: "Be a part of the temple",
+    blurb: "Sponsor a square foot of the Vaikuntham temple and leave a permanent offering.",
     image:
       "https://res.cloudinary.com/ddmzeqpkc/image/upload/f_auto,q_auto/phase_1",
   },
@@ -46,12 +52,14 @@ const OTHER_DONATIONS: DonationCard[] = [
     href: "/brick-seva-campaign",
     title: "Brick Seva",
     tagline: "Sponsor a sacred brick",
+    blurb: "Every brick you offer becomes part of the Lord's abode for generations.",
     image: "/assets/vizag-temple-1.jpeg",
   },
   {
     href: "/gita-daan-seva",
     title: "Gita Daan Seva",
     tagline: "Share the Song of God",
+    blurb: "Place the Bhagavad Gita into the hands of a seeker and share timeless wisdom.",
     image:
       "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783672760162-1783672758959-ChatGPTImageJul92026043444PM.png",
   },
@@ -59,6 +67,7 @@ const OTHER_DONATIONS: DonationCard[] = [
     href: "/govardhan-puja",
     title: "Govardhan Puja",
     tagline: "Annual festival sevas",
+    blurb: "Participate in the Annakut offering and the worship of Giri Govardhan.",
     image:
       "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1789476038584-1789476037499-govardhan-desk.webp",
   },
@@ -66,6 +75,7 @@ const OTHER_DONATIONS: DonationCard[] = [
     href: "/ekadashi",
     title: "Ekadashi Seva",
     tagline: "Observe the sacred fast",
+    blurb: "Honour the most auspicious day of the fortnight with fasting and seva.",
     image:
       "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/ekadashi-posters/ad%20poster%201%2016-9%20%20final%20.jpg.webp",
   },
@@ -73,6 +83,7 @@ const OTHER_DONATIONS: DonationCard[] = [
     href: "/anna-daan-seva",
     title: "Anna Daan Seva",
     tagline: "The highest charity",
+    blurb: "Serve sanctified prasadam to those who need it most — the greatest of all gifts.",
     image:
       "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1786100757954-1786100756855-annadan2.jpg",
   },
@@ -80,12 +91,14 @@ const OTHER_DONATIONS: DonationCard[] = [
     href: "/gau-seva",
     title: "Gau Seva",
     tagline: "Serve Gau Mata",
+    blurb: "Provide fodder, shelter and loving care for the temple's sacred cows.",
     image: "/assets/donations-gau-seva-real.jpeg",
   },
   {
     href: "/subhojanam",
     title: "Subhojanam",
     tagline: "Hospital prasadam seva",
+    blurb: "Free, wholesome meals for patients and families at Vizag's hospitals.",
     image:
       "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677363792-1783677363601-462395264797134589073566144398536696847591n.jpg",
   },
@@ -95,7 +108,10 @@ export default function OtherDonationsCarousel() {
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: "center",
     loop: true,
-    containScroll: "trimSnaps",
+    // Snap trimming fights centre alignment on a looping coverflow: it clamps
+    // the first and last snaps so those slides never reach the middle, leaving
+    // the front card off-centre at the ends of the rail.
+    containScroll: false,
     slidesToScroll: 1,
     dragFree: false,
   });
@@ -103,27 +119,46 @@ export default function OtherDonationsCarousel() {
   const [paused, setPaused] = useState(false);
   const router = useRouter();
 
-  // Coverflow look: the centred slide is pushed to the front at full size,
-  // while both neighbours recede, shrink and slide out behind it. Live on
-  // every "scroll" event so the motion is smooth while dragging / scrolling.
+  // Coverflow: the centred slide sits at full size in front while its
+  // neighbours shrink, dim, blur, desaturate and tuck in behind it.
+  //
+  // The offset is normalised by the distance between two adjacent slide
+  // CENTRES — card width plus flex gap — so the immediate neighbour is always
+  // exactly ±1 at every breakpoint. (The original divided by half the card
+  // width, putting every neighbour at ≈2.05; since the opacity curve zeroed
+  // out at 2 they rendered completely invisible, which is why the rail looked
+  // like one card floating in empty space.)
   const applyCoverflow = useCallback(() => {
     if (!emblaApi) return;
-    const viewportRect = emblaApi.rootNode().getBoundingClientRect();
-    const viewportCenter = viewportRect.left + viewportRect.width / 2;
+    const root = emblaApi.rootNode().getBoundingClientRect();
+    const viewportCenter = root.left + root.width / 2;
+    const gap = parseFloat(getComputedStyle(emblaApi.containerNode()).columnGap || "0") || 0;
+
     emblaApi.slideNodes().forEach((node) => {
       const rect = node.getBoundingClientRect();
+      if (!rect.width) return;
       const slideCenter = rect.left + rect.width / 2;
-      const off = (slideCenter - viewportCenter) / (rect.width / 2);
-      const abs = Math.min(Math.abs(off), 2);
-      const front = abs < 0.6;
-      const scale = front ? 1 : 1 - Math.min(abs, 1.5) * 0.22;
-      const translateX = off === 0 ? 0 : Math.sign(off) * Math.min(abs, 1.5) * 16;
-      const translateY = front ? 0 : 5;
-      const opacity = abs >= 2 ? 0 : 1 - Math.max(0, abs - 0.55) * 0.42;
-      const zIndex = front ? 30 : Math.max(3, 24 - Math.floor(abs * 8));
+      const off = (slideCenter - viewportCenter) / (rect.width + gap);
+      const abs = Math.abs(off);
+      const ramp = Math.min(abs, 2);
+
+      const scale = 1 - ramp * 0.12;
+      const opacity = abs > 2.6 ? 0 : 1 - ramp * 0.26;
+      // A small inward pull closes the gap left by the shrink, so neighbours
+      // read as tucked behind the front card rather than drifting apart.
+      const translateX = -Math.sign(off) * ramp * 4;
+      const translateY = ramp * 2.5;
+
       node.style.transform = `translate3d(${translateX}%, ${translateY}%, 0) scale(${scale})`;
       node.style.opacity = opacity.toFixed(3);
-      node.style.zIndex = String(zIndex);
+      node.style.filter =
+        ramp > 0.05 ? `blur(${(ramp * 1.1).toFixed(2)}px) saturate(${(1 - ramp * 0.45).toFixed(2)})` : "none";
+      node.style.zIndex = String(30 - Math.round(Math.min(abs, 3) * 10));
+
+      // Parallax: the photograph drifts against the card's own travel, which
+      // is what stops a coverflow feeling like flat pictures sliding past.
+      const art = node.querySelector<HTMLElement>("[data-parallax]");
+      if (art) art.style.transform = `translate3d(${(off * 7).toFixed(2)}%, 0, 0) scale(1.16)`;
     });
   }, [emblaApi]);
 
@@ -134,18 +169,19 @@ export default function OtherDonationsCarousel() {
       applyCoverflow();
       setSelected(emblaApi.selectedScrollSnap());
     };
-    const onResize = () => applyCoverflow();
     emblaApi.on("scroll", applyCoverflow);
+    emblaApi.on("reInit", onSelect);
     emblaApi.on("select", onSelect);
-    window.addEventListener("resize", onResize);
+    window.addEventListener("resize", applyCoverflow);
     return () => {
       emblaApi.off("scroll", applyCoverflow);
+      emblaApi.off("reInit", onSelect);
       emblaApi.off("select", onSelect);
-      window.removeEventListener("resize", onResize);
+      window.removeEventListener("resize", applyCoverflow);
     };
   }, [emblaApi, applyCoverflow]);
 
-  // Pause auto-advance while hovering or dragging.
+  // Pause auto-advance while dragging.
   useEffect(() => {
     if (!emblaApi) return;
     const down = () => setPaused(true);
@@ -160,35 +196,44 @@ export default function OtherDonationsCarousel() {
 
   useEffect(() => {
     if (!emblaApi || paused) return;
-    const id = setInterval(() => emblaApi.scrollNext(), 4000);
+    const id = setInterval(() => emblaApi.scrollNext(), AUTOPLAY_MS);
     return () => clearInterval(id);
   }, [emblaApi, paused]);
 
-  const snapCount = emblaApi
-    ? emblaApi.scrollSnapList().length
-    : OTHER_DONATIONS.length;
+  const snapCount = emblaApi ? emblaApi.scrollSnapList().length : OTHER_DONATIONS.length;
 
   return (
     <section
-      className="relative overflow-hidden px-4 py-14 md:py-20"
+      className="relative overflow-hidden px-4 py-16 md:py-24"
       style={{
         background: `linear-gradient(160deg, ${C.emerald} 0%, ${C.deepGreen} 55%, ${C.magenta}55 160%)`,
       }}
+      onKeyDown={(e) => {
+        if (e.key === "ArrowLeft") emblaApi?.scrollPrev();
+        if (e.key === "ArrowRight") emblaApi?.scrollNext();
+      }}
     >
-      {/* Soft glow accents */}
+      {/* Ambient glow accents */}
       <div
-        className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full blur-[110px]"
-        style={{ background: `${C.gold}22` }}
+        className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full blur-[120px]"
+        style={{ background: `${C.gold}26` }}
         aria-hidden
       />
       <div
-        className="pointer-events-none absolute -bottom-28 -left-24 h-80 w-80 rounded-full blur-[110px]"
-        style={{ background: `${C.teal}26` }}
+        className="pointer-events-none absolute -bottom-28 -left-24 h-96 w-96 rounded-full blur-[120px]"
+        style={{ background: `${C.teal}2b` }}
+        aria-hidden
+      />
+      {/* A pool of light behind the rail, so the front card reads as lit rather
+          than pasted onto a flat panel. */}
+      <div
+        className="pointer-events-none absolute left-1/2 top-1/2 h-[440px] w-[min(1100px,92vw)] -translate-x-1/2 -translate-y-1/2 rounded-[50%] blur-[90px]"
+        style={{ background: `${C.gold}16` }}
         aria-hidden
       />
 
-      <div className="relative mx-auto max-w-6xl">
-        <div className="mb-10 text-center md:mb-12">
+      <div className="relative mx-auto max-w-7xl">
+        <div className="mb-10 text-center md:mb-14">
           <Ornament className="mx-auto mb-6" />
           <p
             className="text-xs font-semibold uppercase tracking-[0.28em] md:text-sm"
@@ -197,136 +242,205 @@ export default function OtherDonationsCarousel() {
             Continue your seva
           </p>
           <h2
-            className="mt-2 text-3xl font-bold text-white md:text-4xl"
+            className="mt-3 text-3xl font-bold text-white md:text-5xl"
             style={{ textShadow: `0 0 40px ${C.gold}33` }}
           >
             Other Donations
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-white/80 md:text-base">
-            Beyond Pitru Paksha, your devotion can bless the temple in many
-            ways — from feeding and cow care to the very stones of the Lord&apos;s
+          <p className="mx-auto mt-4 max-w-2xl text-[15px] leading-7 text-white/85 md:text-base">
+            Beyond Pitru Paksha, your devotion can bless the temple in many ways
+            — from feeding and cow care to the very stones of the Lord&apos;s
             abode.
           </p>
         </div>
 
         <div
+          className="relative"
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => setPaused(false)}
         >
-          <div ref={emblaRef} className="overflow-hidden">
-            <div className="flex items-stretch gap-4 py-6 md:gap-5">
-              {OTHER_DONATIONS.map((d, i) => (
-                <button
-                  key={d.href}
-                  type="button"
-                  aria-label={d.title}
-                  onClick={() => {
-                    if (selected === i) router.push(d.href);
-                    else emblaApi?.scrollTo(i);
-                  }}
-                  className="shrink-0 grow-0 basis-[58%] cursor-pointer select-none outline-none sm:basis-[44%] lg:basis-[32%]"
-                  style={{ willChange: "transform, opacity" }}
-                >
-                  <div
-                    className={
-                      "relative aspect-[4/3] w-full overflow-hidden rounded-2xl border text-left transition-[border-color,box-shadow] duration-500 " +
-                      (selected === i
-                        ? "border-[rgba(217,163,74,0.85)] shadow-[0_18px_60px_rgba(0,0,0,0.55)]"
-                        : "border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.35)]")
-                    }
-                  >
-                    <Image
-                      src={d.image}
-                      alt={d.title}
-                      fill
-                      unoptimized
-                      sizes="(max-width: 640px) 58vw, (max-width: 1024px) 44vw, 32vw"
-                      className="object-cover"
-                    />
-                    <div
-                      className="absolute inset-0"
-                      style={{
-                        background: `linear-gradient(to top, ${C.deepGreen}E6 0%, rgba(46,28,19,0.5) 42%, rgba(46,28,19,0.1) 72%, transparent 100%)`,
-                      }}
-                    />
-                    {/* Gold accent line on the front card */}
-                    <div
-                      className={
-                        "absolute inset-x-0 top-0 h-[3px] origin-left transition-transform duration-500 " +
-                        (selected === i
-                          ? "scale-x-100"
-                          : "scale-x-0")
-                      }
-                      style={{
-                        background: `linear-gradient(to right, ${C.gold}, ${C.softGold})`,
-                      }}
-                    />
-                    <div className="absolute inset-x-0 bottom-0 p-4 md:p-5">
-                      <p
-                        className="text-[10px] font-bold uppercase tracking-[0.22em]"
-                        style={{ color: C.softGold }}
-                      >
-                        {d.tagline}
-                      </p>
-                      <h3 className="mt-1 text-base font-bold leading-snug text-white drop-shadow md:text-xl">
-                        {d.title}
-                      </h3>
-                    </div>
-                    <span
-                      className={
-                        "absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider " +
-                        (selected === i
-                          ? "opacity-100"
-                          : "opacity-40")
-                      }
-                      style={{ background: C.gold, color: C.deepGreen }}
-                    >
-                      Donate
-                      <ChevronRight className="h-3 w-3" />
-                    </span>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Dots + arrows */}
-        <div className="mt-8 flex items-center justify-center gap-6">
+          {/* Desktop arrows flank the rail rather than sitting under it, so the
+              next and previous cards are reachable where the eye already is. */}
           <button
             type="button"
             aria-label="Previous donations"
             onClick={() => emblaApi?.scrollPrev()}
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-white/80 transition-all duration-300 hover:border-[rgba(217,163,74,0.8)] hover:text-[#EECC8B]"
+            className="absolute -left-2 top-1/2 z-40 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/25 text-white/90 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:border-[rgba(217,163,74,0.9)] hover:bg-black/45 hover:text-[#EECC8B] lg:flex"
           >
-            <ChevronLeft className="h-5 w-5" />
+            <ChevronLeft className="h-6 w-6" />
           </button>
-
-          <div className="flex items-center gap-2">
-            {Array.from({ length: snapCount }).map((_, i) => (
-              <button
-                key={i}
-                type="button"
-                aria-label={`Go to slide ${i + 1}`}
-                onClick={() => emblaApi?.scrollTo(i)}
-                className="h-1.5 rounded-full transition-all duration-300"
-                style={{
-                  width: i === selected ? 24 : 6,
-                  background:
-                    i === selected ? C.gold : "rgba(255,255,255,0.35)",
-                }}
-              />
-            ))}
-          </div>
-
           <button
             type="button"
             aria-label="Next donations"
             onClick={() => emblaApi?.scrollNext()}
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-white/80 transition-all duration-300 hover:border-[rgba(217,163,74,0.8)] hover:text-[#EECC8B]"
+            className="absolute -right-2 top-1/2 z-40 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/25 text-white/90 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:border-[rgba(217,163,74,0.9)] hover:bg-black/45 hover:text-[#EECC8B] lg:flex"
           >
-            <ChevronRight className="h-5 w-5" />
+            <ChevronRight className="h-6 w-6" />
           </button>
+
+          <div ref={emblaRef} className="overflow-hidden">
+            {/* 42% of a 7xl container ≈ 540px on desktop — wide enough to be the
+                clear subject, narrow enough to leave a generous slice of each
+                neighbour showing either side. */}
+            <div className="flex items-stretch gap-5 py-10 md:gap-6">
+              {OTHER_DONATIONS.map((d, i) => {
+                const isFront = selected === i;
+                return (
+                  <button
+                    key={d.href}
+                    type="button"
+                    aria-label={isFront ? `Open ${d.title}` : `Show ${d.title}`}
+                    aria-current={isFront || undefined}
+                    tabIndex={isFront ? 0 : -1}
+                    onClick={() => {
+                      if (isFront) router.push(d.href);
+                      else emblaApi?.scrollTo(i);
+                    }}
+                    className="group shrink-0 grow-0 basis-[74%] cursor-pointer select-none outline-none sm:basis-[54%] lg:basis-[42%]"
+                    style={{ willChange: "transform, opacity, filter" }}
+                  >
+                    <div
+                      className={
+                        "relative aspect-[4/3] w-full overflow-hidden rounded-3xl border text-left transition-[border-color,box-shadow] duration-500 " +
+                        (isFront
+                          ? "border-[rgba(217,163,74,0.85)] shadow-[0_34px_90px_-24px_rgba(0,0,0,0.8)]"
+                          : "border-white/10 shadow-[0_14px_44px_rgba(0,0,0,0.4)]")
+                      }
+                    >
+                      <div data-parallax className="absolute inset-0 will-change-transform">
+                        <Image
+                          src={d.image}
+                          alt={d.title}
+                          fill
+                          unoptimized
+                          sizes="(max-width: 640px) 74vw, (max-width: 1024px) 54vw, 42vw"
+                          className="object-cover"
+                        />
+                      </div>
+
+                      {/* A deeper, taller scrim than before: these captions sit
+                          on nine different photographs, several of them bright,
+                          and the old overlay left the small gold tagline
+                          fighting the artwork underneath it. */}
+                      <div
+                        className="absolute inset-0"
+                        style={{
+                          background: `linear-gradient(to top, ${C.deepGreen}F5 0%, ${C.deepGreen}D6 28%, rgba(46,28,19,0.42) 56%, rgba(46,28,19,0.08) 82%, transparent 100%)`,
+                        }}
+                      />
+                      <div
+                        className={
+                          "absolute inset-x-0 top-0 h-[3px] origin-left transition-transform duration-500 " +
+                          (isFront ? "scale-x-100" : "scale-x-0")
+                        }
+                        style={{
+                          background: `linear-gradient(to right, ${C.gold}, ${C.softGold})`,
+                        }}
+                      />
+
+                      <div className="absolute inset-x-0 bottom-0 p-5 md:p-7">
+                        <p
+                          className="text-[11px] font-bold uppercase tracking-[0.2em] md:text-xs"
+                          style={{ color: C.softGold, textShadow: "0 2px 8px rgba(0,0,0,0.65)" }}
+                        >
+                          {d.tagline}
+                        </p>
+                        <h3 className="mt-1.5 text-xl font-bold leading-snug text-white [text-shadow:0_2px_12px_rgba(0,0,0,0.7)] md:text-2xl">
+                          {d.title}
+                        </h3>
+
+                        {/* The blurb and CTA belong to the focused card only —
+                            revealing them on all nine would turn the rail into
+                            a wall of competing text. */}
+                        <div
+                          className={
+                            "grid transition-all duration-500 " +
+                            (isFront
+                              ? "mt-2 grid-rows-[1fr] opacity-100"
+                              : "grid-rows-[0fr] opacity-0")
+                          }
+                        >
+                          <div className="overflow-hidden">
+                            <p className="max-w-md text-[13px] leading-6 text-white/85 md:text-sm">
+                              {d.blurb}
+                            </p>
+                            <span
+                              className="mt-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] transition-transform duration-300 group-hover:translate-x-1 md:text-xs"
+                              style={{ background: C.gold, color: C.deepGreen }}
+                            >
+                              Donate
+                              <ArrowRight className="h-3.5 w-3.5" />
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Controls: counter, autoplay progress, dots */}
+        <div className="mt-6 flex flex-col items-center gap-5 md:mt-8">
+          <div className="flex w-full max-w-md items-center gap-4">
+            <span className="shrink-0 font-mono text-xs tabular-nums text-white/70">
+              {String(selected + 1).padStart(2, "0")}
+            </span>
+            {/* Restarting on pause is deliberate: the autoplay interval itself
+                is torn down and recreated on pause/resume, so a bar that
+                resumed mid-fill would promise a tick that isn't coming. */}
+            <div className="h-[3px] flex-1 overflow-hidden rounded-full bg-white/15">
+              <motion.div
+                key={`${selected}-${paused}`}
+                className="h-full rounded-full"
+                style={{ background: `linear-gradient(to right, ${C.gold}, ${C.softGold})` }}
+                initial={{ width: paused ? "100%" : "0%" }}
+                animate={{ width: "100%" }}
+                transition={{ duration: paused ? 0 : AUTOPLAY_MS / 1000, ease: "linear" }}
+              />
+            </div>
+            <span className="shrink-0 font-mono text-xs tabular-nums text-white/45">
+              {String(snapCount).padStart(2, "0")}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-5">
+            <button
+              type="button"
+              aria-label="Previous donations"
+              onClick={() => emblaApi?.scrollPrev()}
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-white/80 transition-all duration-300 hover:border-[rgba(217,163,74,0.8)] hover:text-[#EECC8B] lg:hidden"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+
+            <div className="flex items-center gap-2">
+              {Array.from({ length: snapCount }).map((_, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  aria-label={`Go to slide ${i + 1}`}
+                  onClick={() => emblaApi?.scrollTo(i)}
+                  className="h-1.5 rounded-full transition-all duration-300"
+                  style={{
+                    width: i === selected ? 28 : 6,
+                    background: i === selected ? C.gold : "rgba(255,255,255,0.35)",
+                  }}
+                />
+              ))}
+            </div>
+
+            <button
+              type="button"
+              aria-label="Next donations"
+              onClick={() => emblaApi?.scrollNext()}
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-white/80 transition-all duration-300 hover:border-[rgba(217,163,74,0.8)] hover:text-[#EECC8B] lg:hidden"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+          </div>
         </div>
       </div>
     </section>
