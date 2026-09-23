@@ -8,14 +8,17 @@ import { motion } from "framer-motion";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import Ornament from "@/components/Ornament";
 
+// Banner palette — matches the campaign art (see PitruPakshaClient for the
+// full token map). Dark band stays dark: deep saffron → brown gradient with
+// golden amber decor.
 const C = {
-  deepGreen: "#3A211A",
-  emerald: "#5B3A24",
-  teal: "#A4713A",
-  gold: "#D9A34A",
-  softGold: "#EECC8B",
-  magenta: "#B54B2E",
-  lightMint: "#FBF5E4",
+  deepGreen: "#59321F", // warm brown ink / scrim base
+  emerald: "#C93F05", // deep burnt saffron
+  teal: "#C95718", // warm terracotta
+  gold: "#E9A62A", // golden amber
+  softGold: "#FFF5D9", // warm ivory (text on dark)
+  magenta: "#D24A0A", // burnt orange
+  lightMint: "#FFF5D9", // warm ivory
 } as const;
 
 const AUTOPLAY_MS = 5000;
@@ -208,7 +211,7 @@ export default function OtherDonationsCarousel() {
     <section
       className="relative overflow-hidden px-4 py-16 md:py-24"
       style={{
-        background: `linear-gradient(160deg, ${C.emerald} 0%, ${C.deepGreen} 55%, ${C.magenta}55 160%)`,
+        background: `linear-gradient(160deg, ${C.emerald} 0%, ${C.gold} 52%, ${C.softGold} 130%)`,
       }}
       onKeyDown={(e) => {
         if (e.key === "ArrowLeft") emblaApi?.scrollPrev();
@@ -267,7 +270,7 @@ export default function OtherDonationsCarousel() {
             type="button"
             aria-label="Previous donations"
             onClick={() => emblaApi?.scrollPrev()}
-            className="absolute -left-2 top-1/2 z-40 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/25 text-white/90 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:border-[rgba(217,163,74,0.9)] hover:bg-black/45 hover:text-[#EECC8B] lg:flex"
+            className="absolute -left-2 top-1/2 z-40 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/25 text-white/90 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:border-[rgba(233,166,42,0.9)] hover:bg-black/45 hover:text-[#FFF5D9] lg:flex"
           >
             <ChevronLeft className="h-6 w-6" />
           </button>
@@ -275,7 +278,7 @@ export default function OtherDonationsCarousel() {
             type="button"
             aria-label="Next donations"
             onClick={() => emblaApi?.scrollNext()}
-            className="absolute -right-2 top-1/2 z-40 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/25 text-white/90 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:border-[rgba(217,163,74,0.9)] hover:bg-black/45 hover:text-[#EECC8B] lg:flex"
+            className="absolute -right-2 top-1/2 z-40 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/25 text-white/90 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:border-[rgba(233,166,42,0.9)] hover:bg-black/45 hover:text-[#FFF5D9] lg:flex"
           >
             <ChevronRight className="h-6 w-6" />
           </button>
@@ -305,7 +308,7 @@ export default function OtherDonationsCarousel() {
                       className={
                         "relative aspect-[4/3] w-full overflow-hidden rounded-3xl border text-left transition-[border-color,box-shadow] duration-500 " +
                         (isFront
-                          ? "border-[rgba(217,163,74,0.85)] shadow-[0_34px_90px_-24px_rgba(0,0,0,0.8)]"
+                          ? "border-[rgba(233,166,42,0.9)] shadow-[0_34px_90px_-24px_rgba(0,0,0,0.8)]"
                           : "border-white/10 shadow-[0_14px_44px_rgba(0,0,0,0.4)]")
                       }
                     >
@@ -327,7 +330,7 @@ export default function OtherDonationsCarousel() {
                       <div
                         className="absolute inset-0"
                         style={{
-                          background: `linear-gradient(to top, ${C.deepGreen}F5 0%, ${C.deepGreen}D6 28%, rgba(46,28,19,0.42) 56%, rgba(46,28,19,0.08) 82%, transparent 100%)`,
+                          background: `linear-gradient(to top, ${C.deepGreen}F5 0%, ${C.deepGreen}D6 28%, rgba(42,22,8,0.42) 56%, rgba(42,22,8,0.08) 82%, transparent 100%)`,
                         }}
                       />
                       <div
@@ -368,7 +371,7 @@ export default function OtherDonationsCarousel() {
                             </p>
                             <span
                               className="mt-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] transition-transform duration-300 group-hover:translate-x-1 md:text-xs"
-                              style={{ background: C.gold, color: C.deepGreen }}
+                              style={{ background: `linear-gradient(135deg, ${C.gold}, ${C.softGold} 190%)`, color: "#FFFFFF" }}
                             >
                               Donate
                               <ArrowRight className="h-3.5 w-3.5" />
@@ -395,7 +398,7 @@ export default function OtherDonationsCarousel() {
             type="button"
             aria-label="Previous donations"
             onClick={() => emblaApi?.scrollPrev()}
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/20 text-white/80 transition-all duration-300 hover:border-[rgba(217,163,74,0.8)] hover:text-[#EECC8B] lg:hidden"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/20 text-white/80 transition-all duration-300 hover:border-[rgba(233,166,42,0.85)] hover:text-[#FFF5D9] lg:hidden"
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
@@ -445,7 +448,7 @@ export default function OtherDonationsCarousel() {
             type="button"
             aria-label="Next donations"
             onClick={() => emblaApi?.scrollNext()}
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/20 text-white/80 transition-all duration-300 hover:border-[rgba(217,163,74,0.8)] hover:text-[#EECC8B] lg:hidden"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/20 text-white/80 transition-all duration-300 hover:border-[rgba(233,166,42,0.85)] hover:text-[#FFF5D9] lg:hidden"
           >
             <ChevronRight className="h-5 w-5" />
           </button>
