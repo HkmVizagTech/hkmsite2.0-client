@@ -53,7 +53,8 @@ const OTHER_DONATIONS: DonationCard[] = [
     title: "Brick Seva",
     tagline: "Sponsor a sacred brick",
     blurb: "Every brick you offer becomes part of the Lord's abode for generations.",
-    image: "/assets/vizag-temple-1.jpeg",
+    image:
+      "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1790154837849-1790154837122-brick.webp",
   },
   {
     href: "/gita-daan-seva",
@@ -69,7 +70,7 @@ const OTHER_DONATIONS: DonationCard[] = [
     tagline: "Annual festival sevas",
     blurb: "Participate in the Annakut offering and the worship of Giri Govardhan.",
     image:
-      "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1789476038584-1789476037499-govardhan-desk.webp",
+      "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1790154839039-1790154837479-govardhan.webp",
   },
   {
     href: "/ekadashi",
@@ -92,7 +93,8 @@ const OTHER_DONATIONS: DonationCard[] = [
     title: "Gau Seva",
     tagline: "Serve Gau Mata",
     blurb: "Provide fodder, shelter and loving care for the temple's sacred cows.",
-    image: "/assets/donations-gau-seva-real.jpeg",
+    image:
+      "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1790154838469-1790154837450-gauseva.webp",
   },
   {
     href: "/subhojanam",
@@ -382,65 +384,71 @@ export default function OtherDonationsCarousel() {
           </div>
         </div>
 
-        {/* Controls: counter, autoplay progress, dots */}
-        <div className="mt-6 flex flex-col items-center gap-5 md:mt-8">
-          <div className="flex w-full max-w-md items-center gap-4">
-            <span className="shrink-0 font-mono text-xs tabular-nums text-white/70">
-              {String(selected + 1).padStart(2, "0")}
-            </span>
-            {/* Restarting on pause is deliberate: the autoplay interval itself
-                is torn down and recreated on pause/resume, so a bar that
-                resumed mid-fill would promise a tick that isn't coming. */}
-            <div className="h-[3px] flex-1 overflow-hidden rounded-full bg-white/15">
-              <motion.div
-                key={`${selected}-${paused}`}
-                className="h-full rounded-full"
-                style={{ background: `linear-gradient(to right, ${C.gold}, ${C.softGold})` }}
-                initial={{ width: paused ? "100%" : "0%" }}
-                animate={{ width: "100%" }}
-                transition={{ duration: paused ? 0 : AUTOPLAY_MS / 1000, ease: "linear" }}
-              />
-            </div>
-            <span className="shrink-0 font-mono text-xs tabular-nums text-white/45">
-              {String(snapCount).padStart(2, "0")}
-            </span>
-          </div>
+        {/* Controls — one element, not two.
+            The separate progress bar and dot row said the same thing twice:
+            where you are in the rail, and how long until it moves. Merging them
+            makes the ACTIVE dot the timer — it widens into a track that fills
+            with gold as the interval runs — so position and countdown are read
+            in a single glance, on every breakpoint. */}
+        <div className="mt-7 flex items-center justify-center gap-4 md:mt-9">
+          <button
+            type="button"
+            aria-label="Previous donations"
+            onClick={() => emblaApi?.scrollPrev()}
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/20 text-white/80 transition-all duration-300 hover:border-[rgba(217,163,74,0.8)] hover:text-[#EECC8B] lg:hidden"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
 
-          <div className="flex items-center gap-5">
-            <button
-              type="button"
-              aria-label="Previous donations"
-              onClick={() => emblaApi?.scrollPrev()}
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-white/80 transition-all duration-300 hover:border-[rgba(217,163,74,0.8)] hover:text-[#EECC8B] lg:hidden"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </button>
-
-            <div className="flex items-center gap-2">
-              {Array.from({ length: snapCount }).map((_, i) => (
+          <div className="flex items-center gap-2">
+            {Array.from({ length: snapCount }).map((_, i) => {
+              const active = i === selected;
+              return (
                 <button
                   key={i}
                   type="button"
-                  aria-label={`Go to slide ${i + 1}`}
+                  aria-label={`Go to slide ${i + 1} of ${snapCount}`}
+                  aria-current={active || undefined}
                   onClick={() => emblaApi?.scrollTo(i)}
-                  className="h-1.5 rounded-full transition-all duration-300"
-                  style={{
-                    width: i === selected ? 28 : 6,
-                    background: i === selected ? C.gold : "rgba(255,255,255,0.35)",
-                  }}
-                />
-              ))}
-            </div>
-
-            <button
-              type="button"
-              aria-label="Next donations"
-              onClick={() => emblaApi?.scrollNext()}
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-white/80 transition-all duration-300 hover:border-[rgba(217,163,74,0.8)] hover:text-[#EECC8B] lg:hidden"
-            >
-              <ChevronRight className="h-5 w-5" />
-            </button>
+                  // The visible bar is 6px tall; the button pads it out to a
+                  // ~36px touch target so the dots stay tappable on a phone.
+                  className="group py-3"
+                >
+                  <span
+                    className="relative block h-1.5 overflow-hidden rounded-full transition-all duration-300 group-hover:bg-white/50"
+                    style={{
+                      width: active ? 34 : 6,
+                      background: active ? "rgba(255,255,255,0.28)" : "rgba(255,255,255,0.35)",
+                    }}
+                  >
+                    {active && (
+                      // Restarting rather than resuming on pause is deliberate:
+                      // the autoplay interval is itself torn down and recreated
+                      // on pause/resume, so a bar that picked up mid-fill would
+                      // promise a tick that isn't coming.
+                      <motion.span
+                        key={`${selected}-${paused}`}
+                        className="absolute inset-y-0 left-0 block rounded-full"
+                        style={{ background: `linear-gradient(to right, ${C.gold}, ${C.softGold})` }}
+                        initial={{ width: paused ? "100%" : "0%" }}
+                        animate={{ width: "100%" }}
+                        transition={{ duration: paused ? 0 : AUTOPLAY_MS / 1000, ease: "linear" }}
+                      />
+                    )}
+                  </span>
+                </button>
+              );
+            })}
           </div>
+
+          <button
+            type="button"
+            aria-label="Next donations"
+            onClick={() => emblaApi?.scrollNext()}
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/20 text-white/80 transition-all duration-300 hover:border-[rgba(217,163,74,0.8)] hover:text-[#EECC8B] lg:hidden"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
         </div>
       </div>
     </section>

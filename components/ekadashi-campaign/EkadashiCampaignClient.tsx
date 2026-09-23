@@ -43,7 +43,7 @@ const CARD_ICONS: Record<string, LucideIcon> = {
 };
 
 const inputWrapClass =
-  "relative flex items-center rounded-lg border border-border bg-card focus-within:border-gold transition-colors";
+  "relative flex items-center rounded-lg border border-slate-300 bg-white dark:bg-card focus-within:border-gold transition-colors";
 const inputClass =
   "h-10 w-full bg-transparent pl-9 pr-3 text-sm text-foreground outline-none placeholder:text-muted-foreground";
 const labelClass = "mb-1 block text-[11px] font-medium text-muted-foreground";
@@ -65,8 +65,10 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
   const razorpayReady = useRazorpayPreload();
   useScrollToDonate();
 
-  // Renaming the campaign (e.g. "Shayani Ekadashi" → "Kamika Ekadashi") must
-  // propagate everywhere the old name appears, including the browser tab.
+  // This is the permanent, festival-agnostic Ekadashi page. Campaign copy
+  // stored in older records may still contain the old "Shayani Ekadashi"
+  // name — rewrite any remaining occurrences so a rename propagates
+  // everywhere, including the browser tab.
   const name = campaign.campaignName || "Ekadashi";
   const withName = (t: string) => t.replace(/Shayani Ekadashi/g, name);
 
@@ -322,7 +324,7 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="overflow-hidden rounded-[28px] border border-border bg-white dark:bg-card shadow-elevated"
+              className="overflow-hidden rounded-[28px] border border-slate-200 bg-white dark:bg-card shadow-elevated"
             >
               {/* Amount summary strip */}
               <div className="flex items-center justify-between gap-3 bg-gradient-gold px-6 py-4 sm:px-8">
@@ -357,7 +359,7 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
                           className={`flex flex-col items-center justify-center gap-1.5 rounded-xl border px-1.5 py-3 text-center transition-colors ${
                             sevaIndex === i
                               ? "border-gold bg-gold/10"
-                              : "border-border bg-card hover:border-gold/60"
+                              : "border-slate-300 bg-white dark:bg-card hover:border-gold/60"
                           }`}
                         >
                           <span className="text-2xl leading-none">{seva.icon}</span>
@@ -385,7 +387,7 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
                             className={`rounded-lg border px-3 py-2.5 text-left transition-colors ${
                               !useCustom && tierIndex === i
                                 ? "border-gold bg-gold/10"
-                                : "border-border bg-card hover:border-gold/60"
+                                : "border-slate-300 bg-white dark:bg-card hover:border-gold/60"
                             }`}
                           >
                             <span className="block text-base font-extrabold text-gold">
@@ -415,7 +417,7 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
                       className={`${customOnly ? "" : "mt-3"} overflow-hidden rounded-xl border-2 transition-all ${
                         useCustom || customOnly
                           ? "border-gold/60 bg-gradient-to-r from-gold/5 to-gold/10 shadow-[0_0_0_1px_rgba(214,158,46,0.15)]"
-                          : "border-border bg-card hover:border-gold/30"
+                          : "border-slate-300 bg-white dark:bg-card hover:border-gold/30"
                       }`}
                     >
                       <label htmlFor="custom-amount" className="flex items-center gap-2 px-3.5 pt-2.5 pb-1 text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">
@@ -564,7 +566,7 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
                           placeholder="PAN number *"
                           value={form.panNumber}
                           onChange={(e) => setForm({ ...form, panNumber: e.target.value.toUpperCase() })}
-                          className="mt-2 h-9 w-full rounded-lg border border-border bg-card px-3 text-xs uppercase outline-none focus:border-gold"
+                          className="mt-2 h-9 w-full rounded-lg border border-slate-300 bg-white dark:bg-card px-3 text-xs uppercase outline-none focus:border-gold"
                         />
                       )}
                     </div>
@@ -662,8 +664,8 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
               className="mx-auto max-w-2xl text-center text-sm leading-relaxed text-muted-foreground md:text-base"
             >
               Contributing to {campaign.campaignName} is one of the most meaningful ways to serve the Lord
-              as He begins His divine rest. Your donation supports special puja arrangements, sacred bhog,
-              and temple seva performed at the Hare Krishna Vaikuntham Temple on this holy day.
+              on this most sacred of days. Your donation supports special puja arrangements, sacred bhog,
+              and temple seva performed at the Hare Krishna Vaikuntham Temple on Ekadashi.
             </motion.p>
           </div>
         </section>

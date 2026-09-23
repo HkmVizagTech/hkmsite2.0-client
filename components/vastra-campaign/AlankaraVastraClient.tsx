@@ -137,7 +137,7 @@ const DEITY_PHOTOS = [
 /* ------------------------------------------------------------------ */
 
 const inputWrapClass =
-  "relative flex items-center rounded-lg border border-border bg-card focus-within:border-gold transition-colors";
+  "relative flex items-center rounded-lg border border-slate-300 bg-white dark:bg-card focus-within:border-gold transition-colors";
 const inputClass =
   "h-10 w-full bg-transparent pl-9 pr-3 text-sm text-foreground outline-none placeholder:text-muted-foreground";
 const labelClass = "mb-1 block text-[11px] font-medium text-muted-foreground";
@@ -465,7 +465,7 @@ export default function AlankaraVastraClient() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="overflow-hidden rounded-[28px] border border-border bg-white dark:bg-card shadow-elevated"
+              className="overflow-hidden rounded-[28px] border border-slate-200 bg-white dark:bg-card shadow-elevated"
             >
               {/* Amount summary strip */}
               <div className="flex items-center justify-between gap-3 bg-gradient-gold px-6 py-4 sm:px-8">
@@ -497,7 +497,7 @@ export default function AlankaraVastraClient() {
                         className={`rounded-lg border px-3 py-3 text-left transition-colors ${
                           !useCustom && tierIndex === i
                             ? "border-gold bg-gold/10"
-                            : "border-border bg-card hover:border-gold/60"
+                            : "border-slate-300 bg-white dark:bg-card hover:border-gold/60"
                         }`}
                       >
                         <span className="mb-1 block text-sm font-bold text-primary">{tier.label}</span>
@@ -514,7 +514,7 @@ export default function AlankaraVastraClient() {
                   {/* Custom amount */}
                   <div
                     className={`flex items-center gap-3 rounded-lg border px-3 transition-colors ${
-                      useCustom ? "border-gold bg-gold/5" : "border-border bg-card"
+                      useCustom ? "border-gold bg-gold/5" : "border-slate-300 bg-white dark:bg-card"
                     }`}
                   >
                     <label htmlFor="custom-amount" className="shrink-0 text-xs font-medium text-muted-foreground">
@@ -662,7 +662,7 @@ export default function AlankaraVastraClient() {
                         placeholder="PAN number *"
                         value={form.panNumber}
                         onChange={(e) => setForm({ ...form, panNumber: e.target.value.toUpperCase() })}
-                        className="mt-2 h-9 w-full rounded-lg border border-border bg-card px-3 text-xs uppercase outline-none focus:border-gold"
+                        className="mt-2 h-9 w-full rounded-lg border border-slate-300 bg-white dark:bg-card px-3 text-xs uppercase outline-none focus:border-gold"
                       />
                     )}
                   </div>
@@ -698,7 +698,7 @@ export default function AlankaraVastraClient() {
                       });
                     }}
                     className={`flex w-full items-center gap-3 rounded-lg border px-3 py-2.5 text-left transition-colors ${
-                      monthly ? "border-gold bg-gold/10" : "border-border bg-card hover:border-gold/60"
+                      monthly ? "border-gold bg-gold/10" : "border-slate-300 bg-white dark:bg-card hover:border-gold/60"
                     }`}
                   >
                     <span
