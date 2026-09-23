@@ -82,10 +82,16 @@ const Footer = () => {
                 <span className="block text-xl font-bold leading-tight text-[hsl(210,30%,97%)]">Hare Krishna Movement</span>
                 <span className="text-xs uppercase tracking-widest text-[hsl(210,30%,97%)]/60">Visakhapatnam</span>
               </div>
-              {/* Map beside the address — keeps the card compact instead of
-                  stacking everything vertically and stretching the footer */}
+              {/* From sm upwards the map sits BESIDE the address, which keeps
+                  the card compact instead of stretching the footer.
+                  On a phone that same rule was the problem: a fixed 192px
+                  square map plus a 220px-capped address left roughly half the
+                  row empty on the right, with the address wrapping underneath
+                  the map rather than filling the space next to it. Below sm the
+                  map now spans the full width and the address cap is lifted, so
+                  the block uses the screen it has. */}
               <div className="mb-4 flex flex-wrap items-start gap-3">
-                <div className="relative h-48 w-48 shrink-0 overflow-hidden rounded-xl border border-white/10 shadow-lg">
+                <div className="relative h-44 w-full shrink-0 overflow-hidden rounded-xl border border-white/10 shadow-lg sm:h-48 sm:w-48">
                   <iframe
                     src={MAPS_EMBED_URL}
                     title="Hare Krishna Vaikuntham Temple location on Google Maps"
@@ -96,7 +102,7 @@ const Footer = () => {
                   />
                 </div>
                 <div className="flex w-full min-w-0 flex-col gap-3 sm:w-auto sm:flex-1">
-                  <address className="max-w-[220px] text-sm leading-relaxed text-[hsl(210,30%,97%)]/60 not-italic">
+                  <address className="max-w-none text-sm leading-relaxed text-[hsl(210,30%,97%)]/60 not-italic sm:max-w-[220px]">
                     Chaitanya Bhavan,
                     <br />
                     Hare Krishna Vaikuntham Cultural Centre,
@@ -111,7 +117,7 @@ const Footer = () => {
                     href={MAPS_DIRECTIONS_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex w-fit items-center gap-1.5 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-all hover:brightness-110"
+                    className="inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition-all hover:brightness-110 sm:w-fit sm:justify-start sm:py-2.5"
                   >
                     <Navigation className="h-4 w-4" />
                     Get Directions

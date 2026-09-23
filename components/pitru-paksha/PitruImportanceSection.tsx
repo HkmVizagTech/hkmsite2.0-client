@@ -6,7 +6,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { HandHeart, Home, Scale, Sparkles } from "lucide-react";
 import Ornament from "@/components/Ornament";
 
-// Annadana at the temple — the section argues that giving food is the supreme
+// Annadana at the hospitals — the section argues that giving food is the supreme
 // offering, and showing it happening is more persuasive than another paragraph.
 const ANNADANA_IMAGE =
   "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1786100757954-1786100756855-annadan2.jpg";
@@ -235,7 +235,7 @@ export default function PitruImportanceSection() {
                   className="text-[10px] font-bold uppercase tracking-[0.22em]"
                   style={{ color: C.softGold }}
                 >
-                  Annadana at the temple
+                  Annadana at the Hospitals
                 </p>
                 <p className="mt-1.5 text-sm leading-6 text-white/90">
                   Through the fortnight, every offering is cooked, sanctified and

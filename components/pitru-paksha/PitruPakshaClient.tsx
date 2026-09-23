@@ -121,7 +121,7 @@ const sevas: Seva[] = [
       "Serve a sanctified meal to Vaishnavas and saintly persons — dinner blessed by the saints reaches the ancestors.",
     icon: "🍽️",
     image:
-      "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785833545819-1785833545717-naivedya.jpeg",
+      "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1790144104776-1790144104666-sadhuBhojan.webp",
     options: [
       { legacySevaId: 3510, label: "Donate Rs. 11,111", amount: 11111 },
       { legacySevaId: 3511, label: "Donate Rs. 5,100", amount: 5100 },
