@@ -15,6 +15,7 @@ import { useDonorPrefill } from "@/lib/donorPrefill";
 import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
 import FaqSection from "@/components/sqft-campaign/FaqSection";
 import DonorPrivilegesSection from "@/components/sqft-campaign/DonorPrivilegesSection";
+import OtherDonationsCarousel from "@/components/pitru-paksha/OtherDonationsCarousel";
 import type { CampaignConfig } from "@/lib/campaignConfig";
 import PageLayout from "@/components/PageLayout";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
@@ -80,13 +81,15 @@ const MOBILE_BANNER =
 const DECOR_GARLAND =
   "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785481873117-1785481872052-garland-removebg-preview.png";
 
-// Imagery for the "Honour Your Ancestors" daan section.
+// Imagery for the "Honour Your Ancestors" daan section. The final Annadana /
+// Sadhu Bhojan / Gau Seva photos will replace these placeholders — sent by
+// the design team (target ~1200x800, 3:2 landscape).
 const SECTION_ANNADAN =
-  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1790142201311-1790142201311-annadan.avif";
+  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1786100757954-1786100756855-annadan2.jpg";
 const SECTION_GAU_SEVA =
   "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1784305706071-1784305696382-ChatGPTImageJul172026095421PM.png";
 const SECTION_SADHU_BHOJAN =
-  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677363792-1783677363601-462395264797134589073566144398536696847591n.jpg";
+  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1790144104776-1790144104666-sadhuBhojan.webp";
 
 const sevas: Seva[] = [
   {
@@ -138,15 +141,15 @@ const sevas: Seva[] = [
     ],
   },
   {
-    slug: "naivedya",
-    title: "Naivedya Seva",
+    slug: "brick-seva",
+    title: "Brick Seva",
     description:
-      "Sponsor the sacred food offering — exquisite dishes prepared with devotion and offered to the Lordships.",
-    icon: "🪷",
+      "Sponsor a sacred brick of the Hare Krishna Vaikuntham Temple under construction — each brick laid in devotion becomes an eternal part of the Lord's abode.",
+    icon: "🧱",
     image:
-      "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785833232608-1785833231421-chapan-bhog.webp",
+      "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785588189215-1785588187426-brick-hero-desk.webp",
     options: [
-      { legacySevaId: 3530, label: "Donate Rs. 7,777", amount: 7777 },
+      { legacySevaId: 3530, label: "Donate Rs. 11,111", amount: 11111 },
       { legacySevaId: 3531, label: "Donate Rs. 5,100", amount: 5100 },
       { legacySevaId: 3532, label: "Donate Rs. 2,100", amount: 2100 },
       { legacySevaId: 3533, label: "Donate Rs. 1,100", amount: 1100 },
@@ -154,35 +157,19 @@ const sevas: Seva[] = [
     ],
   },
   {
-    slug: "alankara",
-    title: "Vastra & Alankara Seva",
+    slug: "square-foot-seva",
+    title: "Square Foot Seva",
     description:
-      "Offer divine garments, ornaments and floral adornments to Sri Sri Radha Madan Mohan in memory of your loved ones.",
-    icon: "🌺",
+      "Be a part of the temple in the making — sponsor square feet of its sacred construction and leave an eternal footprint in the Lord's divine abode.",
+    icon: "🛕",
     image:
-      "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677419371-1783677418690-DietyPhotos.jpeg",
+      "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1786528614525-1786528613759-ChatGPTImageAug122026022735PM.webp",
     options: [
-      { legacySevaId: 3540, label: "Donate Rs. 9,999", amount: 9999 },
-      { legacySevaId: 3541, label: "Donate Rs. 5,100", amount: 5100 },
+      { legacySevaId: 3540, label: "Donate Rs. 5,555", amount: 5555 },
+      { legacySevaId: 3541, label: "Donate Rs. 3,100", amount: 3100 },
       { legacySevaId: 3542, label: "Donate Rs. 2,100", amount: 2100 },
       { legacySevaId: 3543, label: "Donate Rs. 1,100", amount: 1100 },
       { legacySevaId: 3544, label: "Donate Any Other Amount", amount: null },
-    ],
-  },
-  {
-    slug: "gita-daan",
-    title: "Gita Daan Seva",
-    description:
-      "Gift the eternal wisdom of Bhagavad-Gita As It Is to seekers — a daan that uplifts the soul beyond the material world.",
-    icon: "📖",
-    image:
-      "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783672760162-1783672758959-ChatGPTImageJul92026043444PM.png",
-    options: [
-      { legacySevaId: 3550, label: "Donate Rs. 11,000", amount: 11000 },
-      { legacySevaId: 3551, label: "Donate Rs. 5,000", amount: 5000 },
-      { legacySevaId: 3552, label: "Donate Rs. 2,500", amount: 2500 },
-      { legacySevaId: 3553, label: "Donate Rs. 1,000", amount: 1000 },
-      { legacySevaId: 3554, label: "Donate Any Other Amount", amount: null },
     ],
   },
 ];
@@ -244,7 +231,7 @@ const FAQS = [
   },
   {
     q: "What sevas can I offer in Pitru Paksha?",
-    a: "You can offer Annadana Seva (feeding the hungry), Sadhu Bhojan Seva (feeding Vaishnavas and saintly persons), Gau Seva (serving the sacred cows), Naivedya Seva (food offered to the Deities), Vastra & Alankara Seva (adorning the Lordships) and Gita Daan Seva. You may also donate any custom amount.",
+    a: "You can offer Annadana Seva (feeding the hungry), Sadhu Bhojan Seva (feeding Vaishnavas and saintly persons), Gau Seva (serving the sacred cows) and also Brick Seva or Square Foot Seva of the sacred temple construction. You may also donate any custom amount.",
   },
   {
     q: "Why is Annadana considered the highest daan for ancestors?",
@@ -256,7 +243,7 @@ const FAQS = [
   },
   {
     q: "How will my donation be used?",
-    a: "Your donation directly funds the Pitru Paksha celebrations — prasadam preparation and distribution, meals for sadhus and Vaishnavas, cow care, sacred food offerings, deity adornment and Gita distribution. We are fully transparent about how every rupee is spent.",
+    a: "Your donation directly funds the Pitru Paksha celebrations — prasadam preparation and distribution, meals for sadhus and Vaishnavas, and loving care for the sacred cows of our goshala. We are fully transparent about how every rupee is spent.",
   },
   {
     q: "Is my donation eligible for 80G tax exemption?",
@@ -1242,6 +1229,11 @@ export default function PitruPakshaClient() {
           FAQS
       ═══════════════════════════════════════════════════════════════════ */}
       <FaqSection faqs={FAQS} tone="sand" />
+
+      {/* ═══════════════════════════════════════════════════════════════════
+          OTHER DONATIONS — carousel of the temple's other seva pages
+      ═══════════════════════════════════════════════════════════════════ */}
+      <OtherDonationsCarousel />
 
       {/* ═══════════════════════════════════════════════════════════════════
           STATUS TOAST
