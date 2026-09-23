@@ -376,14 +376,15 @@ export default function PrasadamTab() {
                   <th className="px-4 py-3 text-left font-medium">Seva / Source</th>
                   <th className="px-4 py-3 text-left font-medium">Prasadam Status</th>
                   <th className="px-4 py-3 text-left font-medium">Courier / Tracking</th>
+                  <th className="px-4 py-3 text-left font-medium">Date</th>
                   <th className="px-4 py-3 text-left font-medium">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
-                  <tr><td colSpan={7} className="text-center py-8 text-muted-foreground"><Loader2 className="inline mr-2 h-4 w-4 animate-spin" />Loading...</td></tr>
+                  <tr><td colSpan={8} className="text-center py-8 text-muted-foreground"><Loader2 className="inline mr-2 h-4 w-4 animate-spin" />Loading...</td></tr>
                 ) : list.length === 0 ? (
-                  <tr><td colSpan={7} className="text-center py-6 text-muted-foreground">{error ? "—" : "No prasadam requests match these filters."}</td></tr>
+                  <tr><td colSpan={8} className="text-center py-6 text-muted-foreground">{error ? "—" : "No prasadam requests match these filters."}</td></tr>
                 ) : list.map((r) => {
                   const ps = r.prasadamStatus || "pending";
                   return (
@@ -415,6 +416,13 @@ export default function PrasadamTab() {
                       <td className="px-4 py-3 text-xs">
                         {r.prasadamCourier || <span className="text-muted-foreground">-</span>}
                         {r.prasadamTrackingNumber && <div className="font-mono text-[11px]">{r.prasadamTrackingNumber}</div>}
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap text-xs">
+                        {new Date(r.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
+                        <br />
+                        <span className="text-muted-foreground">
+                          {new Date(r.createdAt).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
+                        </span>
                       </td>
                       <td className="px-4 py-3">
                         <Button className="gap-1.5 h-8 px-3 text-xs bg-transparent border border-border text-foreground hover:bg-muted" onClick={() => openEditor(r)}>
