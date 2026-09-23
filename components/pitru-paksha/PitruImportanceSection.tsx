@@ -149,7 +149,7 @@ export default function PitruImportanceSection() {
           </span>
 
           <blockquote
-            className="relative font-serif text-2xl leading-[2.1] md:text-[1.75rem] md:leading-[2]"
+            className="relative font-serif text-xl leading-[2.1] md:text-[1.75rem] md:leading-[2]"
             style={{ color: C.deepGreen }}
           >
             अन्नदानं महादानं जलदानं ततः परम्।
@@ -189,7 +189,7 @@ export default function PitruImportanceSection() {
             </p>
             <h3
               className="mt-3 text-2xl font-bold leading-snug md:text-3xl"
-              style={{ color: C.lightMint }}
+              style={{ color: C.deepGreen }}
             >
               Honouring Those Who Came Before Us
             </h3>
@@ -294,13 +294,13 @@ export default function PitruImportanceSection() {
 
                   <h4
                     className="mt-4 text-base font-bold leading-snug"
-                    style={{ color: C.lightMint }}
+                    style={{ color: C.deepGreen }}
                   >
                     {title}
                   </h4>
                   {/* Was 13px at white/78 — small and dim enough on this
                       gradient to be genuinely hard work to read. */}
-                  <p className="mt-2 text-sm leading-7 text-white/85">{text}</p>
+                  <p className="mt-2 text-sm leading-7 text-[#59321F]/85">{text}</p>
                 </div>
               ))}
             </div>
