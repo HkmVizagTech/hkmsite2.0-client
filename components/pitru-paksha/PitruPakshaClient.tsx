@@ -282,33 +282,47 @@ const apiBase = () =>
   );
 const formatAmount = (amount: number) => amount.toLocaleString("en-IN");
 
-// ─── Color tokens (Pitru Paksha brand palette: earthen sand · bronze · ember) ─
+// ─── Color tokens (Pitru Paksha banner palette: warm ivory · burnt saffron · golden amber) ─
+// Matches the campaign banner art exactly — same HEX values, same roles.
 // Distinct from Radhashtami (green), Govardhan (blue) and Janmashtami (purple).
-// deepGreen / heading = Deep Espresso #3A211A · emerald = Earthy Bronze #5B3A24 ·
-// teal = Sandalwood #A4713A · gold = Marigold Gold #D9A34A ·
-// mint / softGold = Warm Sand #E8D5A9 · magenta = Ember Terracotta #B54B2E ·
-// lightMint = page cream #FBF5E4 · text = roasted brown #4B3428
+// Main title / headings = Burnt Orange #D24A0A · body text = Warm Terracotta #C95718 ·
+// primary CTA = Deep Saffron Orange #D83B05 (hover #B92F03) with white labels ·
+// page bg = Warm Ivory #FFF5D9 · section bg = Pale Golden Cream #FCE8B5 ·
+// alt section = Soft Peach Cream #F7D9A3 · decor = Golden Amber #E9A62A ·
+// dark body text = Warm Brown #59321F · white button text = #FFFFFF
 
 const C = {
-  deepGreen: "#3A211A",
-  emerald: "#5B3A24",
-  teal: "#A4713A",
-  mint: "#E8D5A9",
-  lightMint: "#FBF5E4",
-  gold: "#D9A34A",
-  softGold: "#EECC8B",
-  magenta: "#B54B2E",
-  pink: "#E7B46C",
-  yellow: "#D9A34A",
-  heading: "#3A211A",
-  text: "#4B3428",
-  // `teal` (#A4713A) reads at only ~3.8:1 against lightMint, under the 4.5:1
-  // minimum for body copy — it is a decorative gold, not an ink, and prose set
-  // in it was genuinely hard to read on the cream sections. These are its
-  // accessible counterparts: muted (~7.3:1) for secondary text, accent
-  // (~5.4:1) for eyebrows and small labels.
-  muted: "#6B4A33",
-  accent: "#8A5A28",
+  // Banner palette — canonical values from the campaign design.
+  ivory: "#FFF5D9", // page background
+  cream: "#FCE8B5", // section background
+  peach: "#F7D9A3", // alternate section background
+  amber: "#E9A62A", // decorative gold
+  saffron: "#D83B05", // primary CTA
+  saffronDark: "#B92F03", // CTA hover
+  heading: "#D24A0A", // headings / main title
+  accent: "#C95718", // body / highlighted text
+  text: "#59321F", // dark body text
+  white: "#FFFFFF", // white text on buttons
+
+  // Muted inks for secondary prose — #C95718 (#C95718 ≈ 4.0:1 on ivory) sits
+  // just under the 4.5:1 minimum for long paragraphs, so large bodies use
+  // this warmer brown (~7.5:1) instead.
+  muted: "#7A4A26",
+
+  // Legacy alias names (deepGreen/emerald/teal/mint/gold/softGold/magenta/pink/
+  // yellow) were repurposed from the Radhashtami template and are kept so the
+  // existing style declarations keep compiling. Each maps to the closest
+  // banner colour; NEW code should use the canonical banner names above.
+  deepGreen: "#59321F", // darkest ink (was deep espresso)
+  emerald: "#C93F05", // deep burnt saffron (main title colour)
+  teal: "#C95718", // warm terracotta (was sandalwood)
+  mint: "#F7D9A3", // soft peach cream (was warm sand)
+  lightMint: "#FFF5D9", // warm ivory page bg (was page cream)
+  gold: "#E9A62A", // golden amber (was marigold)
+  softGold: "#F2C15E", // light amber tint for gradients
+  magenta: "#D24A0A", // burnt orange (was ember terracotta)
+  pink: "#F2C15E",
+  yellow: "#E9A62A",
 } as const;
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -551,7 +565,7 @@ export default function PitruPakshaClient() {
             });
           },
         },
-        theme: { color: C.deepGreen },
+        theme: { color: C.saffron },
       }).open();
 
       startPolling(order.orderId);
@@ -618,14 +632,11 @@ export default function PitruPakshaClient() {
           </a>
         </div>
       </section>
-
       {/* ═══════════════════════════════════════════════════════════════════
           SEVA CARDS
       ═══════════════════════════════════════════════════════════════════ */}
-      <section
-        id="offer-seva"
-        className="relative overflow-hidden px-4 py-12 md:py-16"
-        style={{ background: `linear-gradient(180deg, ${C.lightMint}, #F3E7CE 50%, ${C.lightMint})` }}
+      <section id="offer-seva" className="relative overflow-hidden px-4 py-12 md:py-16"
+        style={{ background: `linear-gradient(180deg, ${C.ivory}, ${C.cream} 50%, ${C.ivory})` }}
       >
         {/* Decorative background elements */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
@@ -748,7 +759,7 @@ export default function PitruPakshaClient() {
                   <div
                     className="absolute inset-0"
                     style={{
-                      background: `linear-gradient(to top, ${C.emerald}ee, rgba(91,58,36,0.35) 55%, rgba(91,58,36,0.05))`,
+                      background: `linear-gradient(to top, ${C.deepGreen}ee, rgba(89,50,31,0.35) 55%, rgba(89,50,31,0.05))`,
                     }}
                   />
                   <div className="absolute bottom-2.5 left-4 right-4 flex items-center gap-2">
@@ -782,16 +793,18 @@ export default function PitruPakshaClient() {
                             onClick={() => openCheckout(seva, primary)}
                             className="flex w-full items-center justify-between rounded-xl border px-4 py-3.5 text-left transition-all duration-300"
                             style={{
-                              borderColor: `${C.teal}50`,
-                              background: `linear-gradient(135deg, ${C.deepGreen}, ${C.teal})`,
-                              color: "white",
+                              borderColor: `${C.saffronDark}40`,
+                              background: C.saffron,
+                              color: C.white,
                             }}
                             onMouseEnter={(e) => {
-                              e.currentTarget.style.borderColor = C.gold;
-                              e.currentTarget.style.boxShadow = `0 4px 16px ${C.teal}30`;
+                              e.currentTarget.style.borderColor = C.amber;
+                              e.currentTarget.style.background = C.saffronDark;
+                              e.currentTarget.style.boxShadow = `0 4px 16px ${C.saffron}40`;
                             }}
                             onMouseLeave={(e) => {
-                              e.currentTarget.style.borderColor = `${C.teal}50`;
+                              e.currentTarget.style.borderColor = `${C.saffronDark}40`;
+                              e.currentTarget.style.background = C.saffron;
                               e.currentTarget.style.boxShadow = "none";
                             }}
                           >
@@ -822,18 +835,18 @@ export default function PitruPakshaClient() {
                                 onClick={() => openCheckout(seva, t)}
                                 className="rounded-xl border px-1 py-2.5 text-center transition-all duration-300"
                                 style={{
-                                  borderColor: `${C.teal}30`,
-                                  background: C.lightMint,
-                                  color: C.deepGreen,
+                                  borderColor: `${C.amber}45`,
+                                  background: C.ivory,
+                                  color: C.text,
                                 }}
                                 onMouseEnter={(e) => {
-                                  e.currentTarget.style.borderColor = C.gold;
-                                  e.currentTarget.style.background = `linear-gradient(135deg, ${C.mint}, ${C.softGold}40)`;
-                                  e.currentTarget.style.boxShadow = `0 3px 10px ${C.teal}18`;
+                                  e.currentTarget.style.borderColor = C.saffron;
+                                  e.currentTarget.style.background = C.peach;
+                                  e.currentTarget.style.boxShadow = `0 3px 10px ${C.amber}30`;
                                 }}
                                 onMouseLeave={(e) => {
-                                  e.currentTarget.style.borderColor = `${C.teal}30`;
-                                  e.currentTarget.style.background = C.lightMint;
+                                  e.currentTarget.style.borderColor = `${C.amber}45`;
+                                  e.currentTarget.style.background = C.ivory;
                                   e.currentTarget.style.boxShadow = "none";
                                 }}
                               >
@@ -849,14 +862,14 @@ export default function PitruPakshaClient() {
                             onClick={() => openCheckout(seva, custom)}
                             className="flex w-full items-center justify-center gap-1.5 rounded-xl border px-3 py-3 text-[13px] font-bold transition-all duration-300"
                             style={{
-                              borderColor: `${C.gold}90`,
-                              background: `linear-gradient(135deg, ${C.mint}, ${C.softGold}40)`,
-                              color: C.deepGreen,
+                              borderColor: `${C.amber}90`,
+                              background: C.peach,
+                              color: C.text,
                             }}
                           >
                             <svg
                               className="h-3 w-3"
-                              style={{ color: C.teal }}
+                              style={{ color: C.accent }}
                               viewBox="0 0 24 24"
                               fill="none"
                               stroke="currentColor"
@@ -886,17 +899,17 @@ export default function PitruPakshaClient() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
-        className="relative px-4 py-12 text-white md:py-16"
+        className="relative px-4 py-12 md:py-16"
         style={{
-          background: `linear-gradient(135deg, ${C.emerald}, ${C.deepGreen} 60%, ${C.teal})`,
+          background: `linear-gradient(135deg, ${C.peach}, ${C.cream} 60%, ${C.ivory})`,
         }}
       >
         {!reduce && (
           <motion.div
-            className="pointer-events-none absolute inset-0 opacity-[0.07]"
+            className="pointer-events-none absolute inset-0 opacity-[0.09]"
             aria-hidden
             style={{
-              background: `linear-gradient(135deg, transparent 30%, ${C.gold} 50%, transparent 70%)`,
+              background: `linear-gradient(135deg, transparent 30%, ${C.saffron} 50%, transparent 70%)`,
               backgroundSize: "200% 200%",
             }}
             animate={{ backgroundPosition: ["100% 100%", "0% 0%"] }}
@@ -907,15 +920,15 @@ export default function PitruPakshaClient() {
           <div>
             <p
               className="mb-3 text-sm font-semibold uppercase tracking-[0.22em]"
-              style={{ color: C.softGold }}
+              style={{ color: C.accent }}
             >
               Hare Krishna Movement
             </p>
             <h1
               className="text-3xl font-bold leading-tight md:text-5xl"
               style={{
-                color: C.softGold,
-                textShadow: `0 0 40px ${C.gold}40, 0 0 80px ${C.gold}20`,
+                color: C.emerald,
+                textShadow: `0 0 40px ${C.amber}30, 0 0 80px ${C.amber}18`,
               }}
             >
               Pitru Paksha
@@ -923,15 +936,15 @@ export default function PitruPakshaClient() {
             {/* Opacity modifiers only exist in steps of 5 — text-white/92 was
                 generating no CSS at all, so this paragraph fell back to the
                 page's default foreground (dark navy) on top of the banner. */}
-            <p className="mt-5 max-w-4xl text-base leading-8 text-white/90 md:text-lg">
+            <p className="mt-5 max-w-4xl text-base leading-8 md:text-lg" style={{ color: C.text }}>
               The sacred fortnight to honour our ancestors. During Pitru Paksha,
               we offer shraddha, tarpan and charity — feeding devotees, serving
               sacred cows and glorifying the Lord — so the departed souls may
               attain peace and our families may receive their blessings.
             </p>
             <p
-              className="mt-5 max-w-4xl border-l-4 pl-4 text-sm font-medium italic leading-7 text-white/90 md:text-base"
-              style={{ borderColor: C.softGold }}
+              className="mt-5 max-w-4xl border-l-4 pl-4 text-sm font-medium italic leading-7 md:text-base"
+              style={{ borderColor: C.saffron, color: C.text }}
             >
               &ldquo;The scriptures declare that whatever is offered with devotion
               during this fortnight — food, water or charity — reaches the
@@ -940,19 +953,19 @@ export default function PitruPakshaClient() {
             </p>
           </div>
           <div
-            className="rounded-lg border p-5 shadow-2xl backdrop-blur"
-            style={{ borderColor: "rgba(255,255,255,0.15)", background: "rgba(255,255,255,0.1)" }}
+            className="rounded-lg border p-5 shadow-2xl"
+            style={{ borderColor: `${C.amber}55`, background: "rgba(255,255,255,0.55)" }}
           >
             <div className="flex items-start gap-3">
               <ShieldCheck
                 className="mt-1 h-6 w-6 shrink-0"
-                style={{ color: C.softGold }}
+                style={{ color: C.saffron }}
               />
               <div>
-                <h2 className="text-lg font-bold text-white">
+                <h2 className="text-lg font-bold" style={{ color: C.heading }}>
                   Offer Seva This Pitru Paksha
                 </h2>
-                <p className="mt-2 text-sm leading-6 text-white/80">
+                <p className="mt-2 text-sm leading-6" style={{ color: C.text }}>
                   Your offering sustains Annadana, Sadhu Bhojan, sacred cow care
                   and every divine ritual performed at HKM Vizag — carrying your
                   gratitude to the ancestors you remember.
@@ -966,17 +979,17 @@ export default function PitruPakshaClient() {
                   ? undefined
                   : {
                       boxShadow: [
-                        `0 0 0 0 ${C.gold}66`,
-                        `0 0 0 16px ${C.gold}00`,
-                        `0 0 0 0 ${C.gold}66`,
+                        `0 0 0 0 ${C.saffron}66`,
+                        `0 0 0 16px ${C.saffron}00`,
+                        `0 0 0 0 ${C.saffron}66`,
                       ],
                     }
               }
               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
               className="mt-5 inline-flex w-full items-center justify-center rounded-md px-5 py-3 text-sm font-bold uppercase tracking-[0.08em] shadow-lg transition"
               style={{
-                background: C.gold,
-                color: C.deepGreen,
+                background: C.saffron,
+                color: C.white,
               }}
             >
               Offer Seva
@@ -995,24 +1008,25 @@ export default function PitruPakshaClient() {
         transition={{ duration: 0.5 }}
         className="border-y-2 py-3.5"
         style={{
-          borderColor: `${C.gold}99`,
-          background: C.emerald,
+          borderColor: `${C.amber}99`,
+          background: C.peach,
         }}
       >
         <div className="container mx-auto flex flex-wrap items-center justify-center gap-x-10 gap-y-2 px-4">
           {TRUST_BADGES.map((b) => (
             <span
               key={b.label}
-              className="flex items-center gap-2 text-xs font-semibold tracking-wide text-white/90 md:text-sm"
+              className="flex items-center gap-2 text-xs font-semibold tracking-wide md:text-sm"
+              style={{ color: C.text }}
             >
               <span
                 className="flex h-6 w-6 items-center justify-center rounded-full"
                 style={{
-                  background: `${C.gold}22`,
-                  boxShadow: `inset 0 0 0 1px ${C.gold}66`,
+                  background: `${C.amber}22`,
+                  boxShadow: `inset 0 0 0 1px ${C.amber}66`,
                 }}
               >
-                <b.icon className="h-3 w-3" style={{ color: C.gold }} />
+                <b.icon className="h-3 w-3" style={{ color: C.saffron }} />
               </span>
               {b.label}
             </span>
@@ -1023,14 +1037,14 @@ export default function PitruPakshaClient() {
       {/* ═══════════════════════════════════════════════════════════════════
           BANK TRANSFER + NOTE
       ═══════════════════════════════════════════════════════════════════ */}
-      <section className="px-4 py-6" style={{ background: C.emerald }}>
-        <div className="mx-auto max-w-6xl text-sm leading-7 text-white/90 md:text-base">
+      <section className="px-4 py-6" style={{ background: `linear-gradient(180deg, ${C.gold} 0%, ${C.softGold} 100%)` }}>
+        <div className="mx-auto max-w-6xl text-sm leading-7 md:text-base" style={{ color: C.text }}>
           While making UPI/Bank payments, please send a screenshot with your
           name, mobile, address and PAN details to our WhatsApp{" "}
           <a
             className="font-bold"
             href="tel:+918977761187"
-            style={{ color: C.softGold }}
+            style={{ color: C.saffron }}
           >
             +91 89777 61187
           </a>{" "}
@@ -1038,7 +1052,7 @@ export default function PitruPakshaClient() {
           <a
             className="font-bold"
             href="mailto:social@hkmvizag.org"
-            style={{ color: C.softGold }}
+            style={{ color: C.saffron }}
           >
             social@hkmvizag.org
           </a>
@@ -1046,10 +1060,10 @@ export default function PitruPakshaClient() {
         </div>
       </section>
 
-      <section className="px-4 py-12 md:py-16" style={{ background: C.lightMint }}>
+      <section className="px-4 py-12 md:py-16" style={{ background: C.peach }}>
         <div
           className="mx-auto max-w-6xl overflow-hidden rounded-2xl border bg-white p-6 shadow-lg md:p-8"
-          style={{ borderColor: `${C.teal}30` }}
+          style={{ borderColor: `${C.amber}45` }}
         >
           <h2
             className="text-xl font-bold"
@@ -1092,7 +1106,7 @@ export default function PitruPakshaClient() {
       {/* ═══════════════════════════════════════════════════════════════════
           ABOUT PITRU PAKSHA — HONOUR YOUR ANCESTORS
       ═══════════════════════════════════════════════════════════════════ */}
-      <section className="relative overflow-hidden px-4 py-16 md:py-24" style={{ background: C.lightMint }}>
+      <section className="relative overflow-hidden px-4 py-16 md:py-24" style={{ background: C.ivory }}>
         {/* The cream background was a flat slab edge to edge. These give it
             depth without competing with the photography below: warmth pooling
             behind the heading, and a faint dotted weave for texture. */}
@@ -1100,14 +1114,14 @@ export default function PitruPakshaClient() {
           aria-hidden
           className="pointer-events-none absolute inset-x-0 top-0 h-[520px]"
           style={{
-            background: `radial-gradient(ellipse 70% 100% at 50% 0%, ${C.gold}1f, transparent 70%)`,
+            background: `radial-gradient(ellipse 70% 100% at 50% 0%, ${C.amber}1f, transparent 70%)`,
           }}
         />
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 opacity-[0.05]"
           style={{
-            backgroundImage: `radial-gradient(${C.emerald} 1px, transparent 1px)`,
+            backgroundImage: `radial-gradient(${C.saffron} 1px, transparent 1px)`,
             backgroundSize: "22px 22px",
           }}
         />
@@ -1191,16 +1205,16 @@ export default function PitruPakshaClient() {
                 transition={{ duration: 0.5, delay: reduce ? 0 : i * 0.1 }}
                 className="group flex flex-col overflow-hidden rounded-3xl border bg-white transition-all duration-500 hover:-translate-y-1.5"
                 style={{
-                  borderColor: `${C.teal}33`,
-                  boxShadow: `0 4px 24px ${C.teal}14`,
+                  borderColor: `${C.amber}33`,
+                  boxShadow: `0 4px 24px ${C.amber}20`,
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = `0 26px 60px -28px ${C.emerald}99`;
-                  e.currentTarget.style.borderColor = `${C.gold}99`;
+                  e.currentTarget.style.boxShadow = `0 26px 60px -28px ${C.saffron}70`;
+                  e.currentTarget.style.borderColor = `${C.saffron}80`;
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = `0 4px 24px ${C.teal}14`;
-                  e.currentTarget.style.borderColor = `${C.teal}33`;
+                  e.currentTarget.style.boxShadow = `0 4px 24px ${C.amber}20`;
+                  e.currentTarget.style.borderColor = `${C.amber}33`;
                 }}
               >
                 <div className="relative h-60 overflow-hidden md:h-64">
@@ -1215,7 +1229,7 @@ export default function PitruPakshaClient() {
                   <div
                     className="absolute inset-0"
                     style={{
-                      background: `linear-gradient(to top, ${C.deepGreen}F0 0%, ${C.emerald}A6 38%, rgba(91,58,36,0.2) 70%, transparent 100%)`,
+                      background: `linear-gradient(to top, ${C.deepGreen}F0 0%, rgba(89,50,31,0.62) 38%, rgba(89,50,31,0.2) 70%, transparent 100%)`,
                     }}
                   />
                   <div
@@ -1252,11 +1266,11 @@ export default function PitruPakshaClient() {
                   <span
                     className="absolute -top-6 left-6 flex h-12 w-12 items-center justify-center rounded-full border-4 border-white transition-transform duration-500 group-hover:scale-110"
                     style={{
-                      background: `linear-gradient(135deg, ${C.gold}, ${C.softGold})`,
-                      boxShadow: `0 10px 24px -10px ${C.emerald}99`,
+                      background: `linear-gradient(135deg, ${C.saffron}, ${C.amber})`,
+                      boxShadow: `0 10px 24px -10px ${C.saffron}80`,
                     }}
                   >
-                    <c.icon className="h-5 w-5" style={{ color: C.deepGreen }} strokeWidth={2} />
+                    <c.icon className="h-5 w-5" style={{ color: C.white }} strokeWidth={2} />
                   </span>
 
                   <p className="text-sm leading-7" style={{ color: C.text }}>
@@ -1284,15 +1298,15 @@ export default function PitruPakshaClient() {
           <div
             className="relative mx-auto mt-14 max-w-4xl overflow-hidden rounded-3xl border px-6 py-9 md:px-10 md:py-11"
             style={{
-              borderColor: `${C.gold}40`,
-              background: `linear-gradient(135deg, #FFFFFF 0%, ${C.mint}33 100%)`,
-              boxShadow: `0 20px 50px -34px ${C.emerald}80`,
+              borderColor: `${C.amber}40`,
+              background: `linear-gradient(135deg, #FFFFFF 0%, ${C.peach}55 100%)`,
+              boxShadow: `0 20px 50px -34px ${C.saffron}70`,
             }}
           >
             <span
               aria-hidden
               className="pointer-events-none absolute -right-6 -top-10 select-none font-serif text-[8rem] leading-none opacity-[0.07]"
-              style={{ color: C.gold }}
+              style={{ color: C.saffron }}
             >
               ॐ
             </span>
@@ -1303,7 +1317,7 @@ export default function PitruPakshaClient() {
             >
               <span
                 className="float-left mr-3 mt-1 font-serif text-5xl font-bold leading-[0.85] md:text-6xl"
-                style={{ color: C.gold }}
+                style={{ color: C.saffron }}
               >
                 P
               </span>
@@ -1317,7 +1331,7 @@ export default function PitruPakshaClient() {
 
             <div
               className="my-7 h-px w-full"
-              style={{ background: `linear-gradient(to right, transparent, ${C.gold}66, transparent)` }}
+              style={{ background: `linear-gradient(to right, transparent, ${C.amber}66, transparent)` }}
               aria-hidden
             />
 
@@ -1382,27 +1396,27 @@ export default function PitruPakshaClient() {
           CHECKOUT MODAL
       ═══════════════════════════════════════════════════════════════════ */}
       {selected && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/75 p-4 backdrop-blur-sm">
+        <div            className="fixed inset-0 z-[100] flex items-center justify-center bg-[#2A1608]/80 p-4">
           <div
             className="pitru-form-scroll relative max-h-[92vh] w-full max-w-2xl overflow-x-hidden overflow-y-auto rounded-2xl border shadow-2xl"
             style={{
-              borderColor: `${C.teal}40`,
-              background: `linear-gradient(180deg, ${C.lightMint}, white 40%)`,
+              borderColor: `${C.amber}50`,
+              background: `linear-gradient(180deg, ${C.ivory}, white 40%)`,
             }}
           >
             <style>{`
               .pitru-form-scroll::-webkit-scrollbar { width: 6px; }
               .pitru-form-scroll::-webkit-scrollbar-track { background: transparent; }
-              .pitru-form-scroll::-webkit-scrollbar-thumb { background: ${C.gold}; border-radius: 9999px; }
-              .pitru-form-scroll::-webkit-scrollbar-thumb:hover { background: ${C.deepGreen}; }
-              .pitru-form-scroll { scrollbar-width: thin; scrollbar-color: ${C.gold} transparent; }
+              .pitru-form-scroll::-webkit-scrollbar-thumb { background: ${C.saffron}; border-radius: 9999px; }
+              .pitru-form-scroll::-webkit-scrollbar-thumb:hover { background: ${C.saffronDark}; }
+              .pitru-form-scroll { scrollbar-width: thin; scrollbar-color: ${C.saffron} transparent; }
             `}</style>
 
-            {/* Gold accent bar */}
+            {/* Saffron accent bar */}
             <div
               className="h-1.5 w-full"
               style={{
-                background: `linear-gradient(to right, ${C.deepGreen}, ${C.teal}, ${C.gold}, ${C.magenta})`,
+                background: `linear-gradient(to right, ${C.emerald}, ${C.saffron}, ${C.amber}, ${C.accent})`,
               }}
             />
 
@@ -1411,15 +1425,15 @@ export default function PitruPakshaClient() {
               <div
                 className="sticky top-0 z-10 flex items-center justify-between border-b px-6 py-4 backdrop-blur"
                 style={{
-                  borderColor: `${C.teal}20`,
-                  background: `${C.lightMint}ee`,
+                  borderColor: `${C.amber}25`,
+                  background: `${C.ivory}ee`,
                 }}
               >
                 <div className="flex items-center gap-3">
                   <span
                     className="flex h-11 w-11 items-center justify-center rounded-full text-2xl shadow-sm"
                     style={{
-                      background: `linear-gradient(135deg, ${C.deepGreen}, ${C.teal})`,
+                      background: `linear-gradient(135deg, ${C.saffron}, ${C.amber})`,
                     }}
                   >
                     <span className="drop-shadow">{selected.seva.icon}</span>
@@ -1427,7 +1441,7 @@ export default function PitruPakshaClient() {
                   <div>
                     <p
                       className="text-[10px] font-semibold uppercase tracking-[0.18em]"
-                      style={{ color: `${C.magenta}cc` }}
+                      style={{ color: C.accent }}
                     >
                       Pitru Paksha Seva
                     </p>
@@ -1444,9 +1458,9 @@ export default function PitruPakshaClient() {
                   onClick={closeCheckout}
                   className="rounded-full border p-2 transition hover:scale-105"
                   style={{
-                    borderColor: `${C.teal}30`,
+                    borderColor: `${C.amber}40`,
                     background: "white",
-                    color: C.teal,
+                    color: C.text,
                   }}
                   aria-label="Close checkout"
                 >
@@ -1778,8 +1792,8 @@ export default function PitruPakshaClient() {
                     disabled={submitting}
                     className="w-full py-6 text-base font-bold"
                     style={{
-                      background: `linear-gradient(135deg, ${C.gold}, ${C.softGold})`,
-                      color: C.deepGreen,
+                      background: C.saffron,
+                      color: C.white,
                     }}
                   >
                     <Heart className="mr-2 h-5 w-5 fill-current" />
@@ -1803,9 +1817,9 @@ export default function PitruPakshaClient() {
             href="#offer-seva"
             className="inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 text-xs font-bold shadow-lg"
             style={{
-              background: `linear-gradient(135deg, ${C.gold}, ${C.softGold})`,
-              color: C.deepGreen,
-              boxShadow: `0 8px 24px ${C.gold}50`,
+              background: C.saffron,
+              color: C.white,
+              boxShadow: `0 8px 24px ${C.saffron}55`,
             }}
           >
             🪔 Donate Now

@@ -11,14 +11,17 @@ import Ornament from "@/components/Ornament";
 const ANNADANA_IMAGE =
   "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1786100757954-1786100756855-annadan2.jpg";
 
+// Banner palette — matches the campaign art (see PitruPakshaClient for the
+// full token map). Dark band stays dark: deep saffron → burnt orange gradient
+// with golden amber decor and warm ivory text.
 const C = {
-  deepGreen: "#3A211A",
-  emerald: "#5B3A24",
-  teal: "#A4713A",
-  gold: "#D9A34A",
-  softGold: "#EECC8B",
-  magenta: "#B54B2E",
-  lightMint: "#FBF5E4",
+  deepGreen: "#59321F", // warm brown ink / gradient base
+  emerald: "#C93F05", // deep burnt saffron
+  teal: "#C95718", // warm terracotta
+  gold: "#E9A62A", // golden amber
+  softGold: "#FFF5D9", // warm ivory (text on dark)
+  magenta: "#D24A0A", // burnt orange
+  lightMint: "#FFF5D9", // warm ivory
 } as const;
 
 const WHY_DONATE = [
@@ -61,7 +64,7 @@ export default function PitruImportanceSection() {
     <section
       className="relative overflow-hidden px-4 py-16 md:py-24"
       style={{
-        background: `linear-gradient(135deg, ${C.emerald}, ${C.deepGreen} 55%, ${C.teal})`,
+        background: `linear-gradient(135deg, ${C.emerald}, ${C.gold} 55%, ${C.softGold} 140%)`,
       }}
     >
       {/* Radially-placed golden glow */}
@@ -69,7 +72,7 @@ export default function PitruImportanceSection() {
         aria-hidden
         className="pointer-events-none absolute inset-0"
         style={{
-          background: `radial-gradient(ellipse 60% 45% at 50% -8%, ${C.gold}33, transparent 65%)`,
+          background: `radial-gradient(ellipse 60% 45% at 50% -8%, ${C.gold}33, transparent 65%), radial-gradient(ellipse 50% 40% at 50% 108%, rgba(255,245,217,0.10), transparent 60%)`,
         }}
       />
       {/* A faint woven texture. On a full-bleed gradient this is the difference
@@ -108,10 +111,10 @@ export default function PitruImportanceSection() {
           </p>
           <h2
             className="mt-4 text-3xl font-bold leading-tight md:text-5xl"
-            style={{ color: C.lightMint, textShadow: `0 0 40px ${C.gold}40` }}
+            style={{ color: C.lightMint, textShadow: `0 0 40px rgba(0,0,0,0.35)` }}
           >
             The Sacred Fortnight of
-            <span className="block" style={{ color: C.softGold }}>
+            <span className="block" style={{ color: C.gold }}>
               Remembering the Departed
             </span>
           </h2>
@@ -226,7 +229,7 @@ export default function PitruImportanceSection() {
                   aria-hidden
                   className="absolute inset-0"
                   style={{
-                    background: `linear-gradient(to top, ${C.deepGreen}F0 0%, ${C.deepGreen}80 40%, transparent 78%)`,
+                    background: `linear-gradient(to top, #2A1608F0 0%, rgba(42,22,8,0.62) 40%, transparent 78%)`,
                   }}
                 />
               </div>
@@ -269,7 +272,7 @@ export default function PitruImportanceSection() {
               {WHY_DONATE.map(({ icon: Icon, title, text }, i) => (
                 <div
                   key={title}
-                  className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/[0.14] bg-white/[0.06] px-5 py-6 backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:border-[rgba(217,163,74,0.75)] hover:bg-white/[0.1] hover:shadow-[0_18px_40px_-22px_rgba(0,0,0,0.8)]"
+                  className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/[0.14] bg-white/[0.06] px-5 py-6 backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:border-[rgba(233,166,42,0.8)] hover:bg-white/[0.1] hover:shadow-[0_18px_40px_-22px_rgba(0,0,0,0.8)]"
                 >
                   <span
                     aria-hidden
@@ -310,9 +313,9 @@ export default function PitruImportanceSection() {
             href="#offer-seva"
             className="inline-flex items-center gap-2 rounded-full px-9 py-4 text-sm font-bold uppercase tracking-[0.08em] shadow-lg transition-transform duration-300 hover:scale-[1.03]"
             style={{
-              background: `linear-gradient(135deg, ${C.gold}, ${C.softGold})`,
-              color: C.deepGreen,
-              boxShadow: `0 10px 30px -10px ${C.gold}80`,
+              background: "#D83B05",
+              color: "#FFFFFF",
+              boxShadow: `0 10px 30px -10px rgba(216,59,5,0.75)`,
             }}
           >
             Offer Your Seva This Pitru Paksha
