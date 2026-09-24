@@ -43,6 +43,10 @@ export type FestivalShowcase = {
   active?: boolean;
   ctaLabel?: string;
   ctaHref?: string;
+  /** Master switch for the festival's donate button(s). */
+  donateEnabled?: boolean;
+  /** Full "Explore Festival" link override — "/govardhan" or "https://…"; blank keeps /festivals/<slug>. */
+  customLink?: string;
   gallery?: string[];
   schedule?: ScheduleItem[];
   details?: DetailSection[];

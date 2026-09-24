@@ -72,10 +72,42 @@ function SectionHead({
 const imageOf = (f: FestivalShowcase) =>
   f.cardImage || f.heroImage || FALLBACK_IMAGE;
 
-// Admin showcases link to their own /festivals/<slug> page; calendar-derived
-// fallback items carry an explicit href (a real festival page where one
-// exists).
-const hrefOf = (f: FestivalCardItem) => f.href || `/festivals/${f.slug}`;
+// Where a festival card points. Priority:
+//   1. customLink from the admin (root-relative "/govardhan" or a full URL)
+//   2. href carried by calendar fallback items (a real festival page)
+//   3. the admin showcase's own /festivals/<slug> page
+const hrefOf = (f: FestivalCardItem) => f.customLink?.trim() || f.href || `/festivals/${f.slug}`;
+
+// Admin donate CTA is opt-in: shown only when the flagship switch is on AND a
+// link exists. Old records without the field stay enabled (backward compatible).
+const donateOn = (f: FestivalCardItem) => f.donateEnabled !== false && !!f.ctaHref?.trim();
+
+const isExternalHref = (href: string) => /^https?:\/\//i.test(href);
+
+// Next <Link> for same-site paths (keeps SPA navigation) and a normal anchor
+// (new tab) for administrator-supplied absolute URLs.
+function CTALink({
+  href,
+  className,
+  children,
+}: {
+  href: string;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  if (isExternalHref(href)) {
+    return (
+      <a href={href} target="_blank" rel="noreferrer" className={className}>
+        {children}
+      </a>
+    );
+  }
+  return (
+    <Link href={href} className={className}>
+      {children}
+    </Link>
+  );
+}
 
 function StatusChip({ status, featured }: { status?: string; featured?: boolean }) {
   if (status === "upcoming") {
@@ -271,7 +303,7 @@ export default function FestivalsPage() {
       {/* ── Hero — full-bleed banner like every other page (title baked in) ── */}
       {/* Tapping it glides down to the festivals below. */}
       <section
-        className="relative w-full cursor-pointer overflow-hidden pt-[88px] md:pt-[104px]"
+        className="relative w-full cursor-pointer overflow-hidden rounded-b-3xl pt-[88px] md:pt-[104px]"
         onClick={() =>
           document
             .getElementById("festivals-sections")
@@ -389,14 +421,14 @@ export default function FestivalsPage() {
                         )}
                       </div>
                       <div className="mt-2 flex flex-wrap gap-3">
-                        <Link
+                        <CTALink
                           href={hrefOf(featured)}
                           className="inline-flex w-fit items-center gap-2 rounded-full bg-gradient-gold px-6 py-3 text-sm font-bold text-[hsl(220,60%,12%)] shadow-gold transition-transform hover:-translate-y-0.5"
                         >
                           Explore Festival
                           <ArrowRight className="h-4 w-4" />
-                        </Link>
-                        {featured.ctaHref && (
+                        </CTALink>
+                        {donateOn(featured) && (
                           <a
                             href={featured.ctaHref}
                             target="_blank"
@@ -485,7 +517,7 @@ function festivalCard(f: FestivalCardItem, i: number) {
       transition={{ delay: Math.min(i, 5) * 0.06, duration: 0.45 }}
     >
       <div className="group flex h-full flex-col overflow-hidden rounded-[20px] border border-border bg-card transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/35 hover:shadow-elevated">
-                      <Link href={hrefOf(f)} className="relative block aspect-[16/10] overflow-hidden bg-primary/5">
+                      <CTALink href={hrefOf(f)} className="relative block aspect-[16/10] overflow-hidden bg-primary/5">
                         <img
                           src={imageOf(f)}
                           alt={f.title}
@@ -505,14 +537,14 @@ function festivalCard(f: FestivalCardItem, i: number) {
                             </span>
                           </div>
                         )}
-                      </Link>
+                      </CTALink>
 
                       <div className="flex flex-1 flex-col gap-2 p-5">
-                        <Link href={hrefOf(f)}>
+                        <CTALink href={hrefOf(f)}>
                           <h3 className="line-clamp-2 min-h-[43px] font-heading text-[16.5px] font-bold leading-snug text-foreground hover:text-primary transition-colors">
                             {f.title}
                           </h3>
-                        </Link>
+                        </CTALink>
                         {f.subtitle && (
                           <p className="text-[11.5px] font-semibold uppercase tracking-wider text-primary/70">
                             {f.subtitle}
@@ -529,7 +561,7 @@ function festivalCard(f: FestivalCardItem, i: number) {
                             {f.location || DEFAULT_FESTIVAL_LOCATION}
                           </span>
                           <div className="flex items-center gap-2">
-                            {f.ctaHref && (
+                            {donateOn(f) && (
                               <a
                                 href={f.ctaHref}
                                 target="_blank"

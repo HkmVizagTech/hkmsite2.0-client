@@ -77,6 +77,8 @@ const fmtLong = (s?: string) => {
 const ctaOf = (f: FestivalShowcase) => ({
   label: f.ctaLabel || "Donate / Offer Seva",
   href: f.ctaHref || "/donate",
+  // Admin toggle: button only renders when enabled AND a link is set.
+  on: f.donateEnabled !== false && !!f.ctaHref?.trim(),
 });
 
 function Stars({ rating }: { rating?: number }) {
@@ -164,13 +166,15 @@ export default async function FestivalShowcasePage({
             </p>
           )}
           <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-            <a
-              href={cta.href}
-              className="inline-flex items-center gap-2 rounded-full bg-gradient-gold px-8 py-3.5 text-sm font-bold text-[hsl(220,60%,12%)] shadow-gold transition-transform hover:-translate-y-0.5"
-            >
-              {cta.label}
-              <ArrowRight className="h-4 w-4" />
-            </a>
+            {cta.on && (
+              <a
+                href={cta.href}
+                className="inline-flex items-center gap-2 rounded-full bg-gradient-gold px-8 py-3.5 text-sm font-bold text-[hsl(220,60%,12%)] shadow-gold transition-transform hover:-translate-y-0.5"
+              >
+                {cta.label}
+                <ArrowRight className="h-4 w-4" />
+              </a>
+            )}
             <Link
               href="/festival"
               className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-6 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition-colors hover:bg-white/20"
@@ -337,7 +341,8 @@ export default async function FestivalShowcasePage({
       )}
 
       {/* ── Bottom CTA ───────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-gradient-navy py-16 text-white md:py-20">
+      {cta.on && (
+        <section className="relative overflow-hidden bg-gradient-navy py-16 text-white md:py-20">
         <div className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-accent/20 blur-3xl" />
         <div className="container mx-auto max-w-2xl px-4 text-center">
           <Ornament className="mb-5" />
@@ -357,6 +362,7 @@ export default async function FestivalShowcasePage({
           </a>
         </div>
       </section>
+      )}
     </PageLayout>
   );
 }

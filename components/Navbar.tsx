@@ -55,6 +55,9 @@ const Navbar = () => {
   const [darshanStatus, setDarshanStatus] = useState(getDarshanStatus);
   const [menuCanScroll, setMenuCanScroll] = useState(false);
   const menuScrollRef = useRef<HTMLDivElement>(null);
+  // Live refs to each collapsible category wrapper so we can scroll an opened
+  // one fully into view inside the sheet.
+  const groupRefs = useRef<Map<string, HTMLDivElement | null>>(new Map());
   const [festival, setFestival] = useState<MajorFestival | null>(null);
   // Which "More" menu category is expanded (single-open accordion — opening
   // one closes any that was open before).
@@ -131,8 +134,31 @@ const Navbar = () => {
 
   // ── Toggle a collapsible category in the mobile "More" menu ───────
   // Only one category stays open at a time; tapping the open one closes it.
-  const toggleGroup = (label: string) =>
-    setOpenGroup((prev) => (prev === label ? null : label));
+  // After toggling we wait for the fold/unfold animation, then glide the
+  // opened category fully into view (or bring a closed one's header back).
+  const toggleGroup = (label: string) => {
+    if (openGroup === label) {
+      setOpenGroup(null);
+      window.setTimeout(() => scrollGroupIntoView(label), 220);
+    } else {
+      setOpenGroup(label);
+      window.setTimeout(() => scrollGroupIntoView(label), 240);
+    }
+  };
+
+  // Smoothly scroll the mobile sheet so the target category slot is visible.
+  const scrollGroupIntoView = (label: string) => {
+    const container = menuScrollRef.current;
+    const el = groupRefs.current.get(label);
+    if (!container || !el) return;
+    const cRect = container.getBoundingClientRect();
+    const eRect = el.getBoundingClientRect();
+    const elTop = eRect.top - cRect.top + container.scrollTop;
+    container.scrollTo({
+      top: Math.max(0, elTop - 12),
+      behavior: "smooth",
+    });
+  };
 
   // Link styling shared by the mobile "More" menu rows.
   const mobileLinkCls = (active: boolean) =>
@@ -345,20 +371,40 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* ── Mobile overlay menu (flat link list) ────────────────── */}
+        {/* ── Mobile "More" sheet ─────────────────────────────────── */}
         <AnimatePresence>
           {mobileOpen && (
             <motion.div
-              initial={{ height: 0 }}
-              animate={{ height: "auto" }}
-              exit={{ height: 0 }}
-              transition={{ duration: 0.25, ease: "easeInOut" }}
-              className="relative lg:hidden bg-white dark:bg-card backdrop-blur-md border-t border-border overflow-hidden rounded-b-2xl"
+              key="mobile-sheet"
+              initial={{ opacity: 0, y: -14 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -14 }}
+              transition={{ duration: 0.22, ease: "easeInOut" }}
+              className={`absolute top-full flex max-h-[calc(100dvh-96px)] flex-col overflow-hidden bg-white shadow-elevated dark:bg-card md:max-h-[calc(100dvh-112px)] ${
+                scrolled
+                  ? "inset-x-2 md:inset-x-8 rounded-b-2xl md:rounded-2xl border border-border/60"
+                  : "inset-x-0 rounded-b-3xl border-t border-border"
+              }`}
             >
-<div
-                  ref={menuScrollRef}
-                  className="container mx-auto px-4 py-3 flex flex-col gap-0.5 max-h-[calc(100dvh-9rem)] overflow-y-auto"
+              {/* Sheet header */}
+              <div className="flex items-center justify-between border-b border-border/60 bg-gradient-to-r from-primary/[0.07] to-transparent px-5 py-3.5">
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-primary">More</p>
+                  <p className="mt-0.5 font-heading text-base font-bold leading-tight text-foreground">
+                    Explore the temple
+                  </p>
+                </div>
+                <button
+                  onClick={() => setMobileOpen(false)}
+                  aria-label="Close menu"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-background text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
                 >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+
+              {/* Scrollable body */}
+              <div ref={menuScrollRef} className="flex-1 overflow-y-auto overscroll-contain px-4 py-3">
                 {festival && (
                   <Link
                     href={festival.href}
@@ -388,7 +434,6 @@ const Navbar = () => {
                   Festivals
                 </Link>
 
-                {/* Collapsible categories — mirror the desktop dropdowns */}
                 <p className="px-4 pb-1 pt-3 text-[11px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
                   Explore by Category
                 </p>
@@ -400,14 +445,20 @@ const Navbar = () => {
                     const group = entry.group;
                     const GroupIcon = group.icon;
                     const open = openGroup === group.label;
-                    const groupActive = !open && isGroupActive(group, pathname);
                     return (
-                      <div key={group.label} className="overflow-hidden rounded-xl">
+                      <div
+                        key={group.label}
+                        ref={(el) => {
+                          if (el) groupRefs.current.set(group.label, el);
+                          else groupRefs.current.delete(group.label);
+                        }}
+                        className="overflow-hidden rounded-xl"
+                      >
                         <button
                           onClick={() => toggleGroup(group.label)}
                           aria-expanded={open}
-                          className={`flex w-full items-center justify-between rounded-xl px-4 py-2.5 text-[15px] font-medium transition-all duration-200 ${
-                            open || groupActive
+                          className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-[15px] font-medium transition-all duration-200 ${
+                            open
                               ? "bg-primary/[0.06] text-primary ring-1 ring-inset ring-primary/15"
                               : "text-foreground hover:bg-primary/5 hover:text-primary"
                           }`}
@@ -416,17 +467,17 @@ const Navbar = () => {
                             {GroupIcon && (
                               <span
                                 className={`flex h-7 w-7 items-center justify-center rounded-lg transition-colors ${
-                                  open || groupActive ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
+                                  open ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
                                 }`}
                               >
                                 <GroupIcon className="h-4 w-4" />
                               </span>
                             )}
-                            {group.label}
+                            <span>{group.label}</span>
                           </span>
                           <span
                             className={`flex h-6 w-6 items-center justify-center rounded-full transition-all duration-300 ${
-                              open ? "rotate-180 bg-primary/10 text-primary" : "text-muted-foreground"
+                              open ? "rotate-180 bg-primary/10 text-primary" : "bg-muted/60 text-muted-foreground"
                             }`}
                           >
                             <ChevronDown className="h-4 w-4" />
@@ -435,18 +486,17 @@ const Navbar = () => {
                         <AnimatePresence initial={false}>
                           {open && (
                             <motion.div
-                              initial={{ height: 0, opacity: 0 }}
-                              animate={{ height: "auto", opacity: 1 }}
-                              exit={{ height: 0, opacity: 0 }}
-                              transition={{ duration: 0.22, ease: "easeInOut" }}
-                              className="overflow-hidden"
+                              initial={{ opacity: 0, y: -6 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -6 }}
+                              transition={{ duration: 0.18, ease: "easeOut" }}
                             >
                               <div className="ml-5 mt-1 flex flex-col gap-0.5 border-l border-primary/15 pb-1 pl-4">
                                 {group.items.map((item) => (
                                   <Link
                                     key={item.href}
                                     href={item.href}
-                                    className={`flex items-center gap-2 rounded-lg px-3 py-2 text-[14px] transition-colors ${
+                                    className={`flex items-center gap-2 rounded-lg px-3 py-2.5 text-[14px] transition-colors ${
                                       pathname === item.href
                                         ? "text-primary bg-primary/10"
                                         : "text-muted-foreground hover:bg-primary/5 hover:text-primary"
@@ -462,26 +512,35 @@ const Navbar = () => {
                       </div>
                     );
                   })}
-                <Button
-                  variant="default"
-                  className="mt-1.5 rounded-full bg-gradient-ocean text-white border-0 text-[15px]"
-                  asChild
-                >
-                  <Link href="/donate">
-                    <Heart className="w-4 h-4 mr-1.5 fill-current" />
-                    Donate Now
-                  </Link>
-                </Button>
-                <button
-                  onClick={() => setMobileOpen(false)}
-                  className="mt-1.5 flex items-center justify-center gap-2 rounded-full border border-border px-4 py-2.5 text-[15px] font-medium text-foreground transition-colors hover:text-primary hover:border-primary"
-                >
-                  <X className="w-4 h-4" />
-                  Close Menu
-                </button>
               </div>
+
+              {/* Sticky footer actions — always visible, never buried in the scroll */}
+              <div className="border-t border-border/60 bg-muted/25 px-4 py-3">
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="default"
+                    size="sm"
+                    className="h-11 flex-1 rounded-full bg-gradient-ocean text-white border-0 text-sm shadow-sm"
+                    asChild
+                  >
+                    <Link href="/donate">
+                      <Heart className="w-4 h-4 mr-1.5 fill-current" />
+                      Donate Now
+                    </Link>
+                  </Button>
+                  <button
+                    onClick={() => setMobileOpen(false)}
+                    className="inline-flex h-11 flex-1 items-center justify-center gap-1.5 rounded-full border border-border bg-background text-sm font-medium text-foreground transition-colors hover:border-primary/40 hover:text-primary"
+                  >
+                    <X className="w-4 h-4" />
+                    Close Menu
+                  </button>
+                </div>
+              </div>
+
+              {/* Scroll hint */}
               {menuCanScroll && (
-                <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-10 flex h-10 items-end justify-center bg-gradient-to-t from-white dark:from-card via-white/80 dark:via-card/80 to-transparent pb-1">
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex h-10 items-end justify-center bg-gradient-to-t from-white via-white/80 to-transparent pb-1 dark:from-card dark:via-card/80">
                   <ChevronDown className="h-4 w-4 animate-bounce text-muted-foreground" />
                 </div>
               )}

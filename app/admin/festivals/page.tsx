@@ -36,6 +36,8 @@ type Editable = {
   active: boolean;
   ctaLabel: string;
   ctaHref: string;
+  donateEnabled: boolean;
+  customLink: string;
   gallery: string[];
   schedule: { start: string; title: string; description: string }[];
   details: { heading: string; body: string; image: string }[];
@@ -71,6 +73,8 @@ const emptyDraft = (): Editable => ({
   active: true,
   ctaLabel: "Donate Now",
   ctaHref: "",
+  donateEnabled: true,
+  customLink: "",
   gallery: [],
   schedule: [],
   details: [],
@@ -93,6 +97,8 @@ const fromShowcase = (f: FestivalShowcase): Editable => ({
   active: f.active !== false,
   ctaLabel: f.ctaLabel || "Donate Now",
   ctaHref: f.ctaHref || "",
+  donateEnabled: f.donateEnabled !== false,
+  customLink: f.customLink || "",
   gallery: f.gallery || [],
   schedule: (f.schedule || []).map((s) => ({
     start: s.start || "",
@@ -128,6 +134,8 @@ const fromFallback = (f: FestivalCardItem): Editable => ({
   active: true,
   ctaLabel: "Donate Now",
   ctaHref: "",
+  donateEnabled: true,
+  customLink: (f as { customLink?: string }).customLink || "",
   gallery: f.gallery || [],
   schedule: (f.schedule || []).map((s) => ({
     start: s.start || "",
@@ -193,8 +201,19 @@ function ImageField({
         </a>
       </label>
       {value && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={value} alt={label} className="h-24 w-full object-cover rounded-lg border" />
+        <div className="relative overflow-hidden rounded-lg border border-border bg-muted/40">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={value}
+            alt={label}
+            className="aspect-[16/10] w-full object-cover"
+          />
+          <div className="pointer-events-none absolute inset-0 flex items-end justify-end p-2">
+            <span className="rounded-full bg-black/55 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur-sm">
+              {label}
+            </span>
+          </div>
+        </div>
       )}
       <Input value={value} onChange={(e) => onChange(e.target.value)} placeholder="Paste image URL (R2 / media library)…" />
     </div>
@@ -313,6 +332,8 @@ export default function AdminFestivals() {
         active: editing.active,
         ctaLabel: editing.ctaLabel || "Donate Now",
         ctaHref: editing.ctaHref,
+        donateEnabled: editing.donateEnabled,
+        customLink: editing.customLink.trim(),
         gallery: editing.gallery.map((g) => g.trim()).filter(Boolean),
         schedule: editing.schedule
           .filter((s) => s.start || s.title || s.description)
@@ -381,13 +402,20 @@ export default function AdminFestivals() {
         </div>
 
         {/* ── General ── */}
-        <Section title="General" description="Name, slug, status and donate link.">
+        <Section title="General" description="Name, slug, status, festival link and the donate button.">
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Festival title" value={editing.title} onChange={(v) => set("title", v)} placeholder="e.g. Sri Krishna Janmashtami" />
             <Field label="Slug (URL)" value={editing.slug} onChange={(v) => set("slug", v)} placeholder="auto from title" hint={`/festivals/${editing.slug || slugify(editing.title) || "…"}`} />
             <Field label="Subtitle / tagline" value={editing.subtitle} onChange={(v) => set("subtitle", v)} placeholder="e.g. Appearance of Lord Krishna" />
             <Field label="Location" value={editing.location} onChange={(v) => set("location", v)} placeholder="Hare Krishna Vaikuntham, Gambheeram" />
             <Field label="Festival date" value={editing.eventDate} onChange={(v) => set("eventDate", v)} placeholder="2026-07-18" />
+            <Field
+              label="Custom festival link"
+              value={editing.customLink}
+              onChange={(v) => set("customLink", v)}
+              placeholder="/govardhan or https://harekrishnavizag.org/govardhan"
+              hint={`Opens when visitors tap "Explore Festival". A path like /govardhan opens on this site's root — not /festival/govardhan. Leave blank to use /festivals/${editing.slug || slugify(editing.title) || "…"}.`}
+            />
           </div>
           <div className="grid gap-4 sm:grid-cols-3">
             <div className="space-y-1">
@@ -441,9 +469,25 @@ export default function AdminFestivals() {
             <label className="block text-xs font-medium">Short description</label>
             <Textarea rows={3} value={editing.description} onChange={(e) => set("description", e.target.value)} placeholder="One or two lines for the festival card and hero." />
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Donate button label" value={editing.ctaLabel} onChange={(v) => set("ctaLabel", v)} placeholder="Donate Now" />
-            <Field label="Donate button link" value={editing.ctaHref} onChange={(v) => set("ctaHref", v)} hint="e.g. /janmashtami or /radhashtami. Leave blank to hide the button." />
+          <div className="rounded-xl border border-border bg-background/50 p-4 space-y-3">
+            <label className="flex items-center justify-between gap-3 text-sm font-semibold">
+              <span>Show the donate button</span>
+              <input
+                type="checkbox"
+                checked={editing.donateEnabled}
+                onChange={(e) => set("donateEnabled", e.target.checked)}
+              />
+            </label>
+            <p className="text-[11px] leading-snug text-muted-foreground">
+              Toggle on to show the donate button on this festival's cards and page. Tapping it
+              opens the link below. Toggle off to remove it entirely.
+            </p>
+            {editing.donateEnabled && (
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Field label="Donate button label" value={editing.ctaLabel} onChange={(v) => set("ctaLabel", v)} placeholder="Donate Now" />
+                <Field label="Donate button link" value={editing.ctaHref} onChange={(v) => set("ctaHref", v)} placeholder="/janmashtami or https://…" hint="Leave blank to hide the button even when enabled." />
+              </div>
+            )}
           </div>
         </Section>
 
@@ -596,7 +640,7 @@ export default function AdminFestivals() {
                   </div>
                   <div className="p-4 flex-1 flex flex-col">
                     <h3 className="font-semibold text-lg leading-tight mb-1">{f.title}</h3>
-                    <p className="text-xs text-muted-foreground mb-1">{f.status} · /festivals/{f.slug}</p>
+                    <p className="text-xs text-muted-foreground mb-1">{f.status} · {f.customLink || `/festivals/${f.slug}`}</p>
                     <p className="text-sm text-muted-foreground line-clamp-3 mb-3 flex-1">{f.description}</p>
                     <div className="mt-2 flex items-center gap-2">
                       <Button variant="ghost" size="sm" onClick={() => openEdit(f)} className="text-primary hover:bg-primary/10">
