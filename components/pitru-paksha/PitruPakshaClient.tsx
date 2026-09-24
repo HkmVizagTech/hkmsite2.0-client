@@ -37,6 +37,13 @@ type SevaOption = {
   legacySevaId: number;
   label: string;
   amount: number | null;
+  /** What this amount actually buys, in the seva's own units — "20 meals",
+   *  "2 bricks", "8 cows · a day". Shown under the figure so a donor is
+   *  choosing an outcome rather than a number. Rates: Annadana ₹25/meal,
+   *  Sadhu Bhojan ₹100/plate, Gau Seva ₹150/cow/day, Brick ₹1,500/brick,
+   *  Square Foot ₹2,100/sq ft. Omitted on the open-ended "any amount" option,
+   *  which has no fixed impact. */
+  impact?: string;
 };
 
 type Seva = {
@@ -106,10 +113,12 @@ const sevas: Seva[] = [
     image:
       "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677363792-1783677363601-462395264797134589073566144398536696847591n.jpg",
     options: [
-      { legacySevaId: 3500, label: "Donate Rs. 15,555", amount: 15555 },
-      { legacySevaId: 3501, label: "Donate Rs. 1,100", amount: 1100 },
-      { legacySevaId: 3502, label: "Donate Rs. 2,100", amount: 2100 },
-      { legacySevaId: 3503, label: "Donate Rs. 5,555", amount: 5555 },
+      { legacySevaId: 3500, label: "Donate Rs. 1,100", amount: 1100, impact: "44 meals" },
+      { legacySevaId: 3501, label: "Donate Rs. 2,000", amount: 2000, impact: "80 meals" },
+      { legacySevaId: 3502, label: "Donate Rs. 2,500", amount: 2500, impact: "100 meals" },
+      { legacySevaId: 3503, label: "Donate Rs. 4,000", amount: 4000, impact: "160 meals" },
+      { legacySevaId: 3505, label: "Donate Rs. 6,000", amount: 6000, impact: "240 meals" },
+      { legacySevaId: 3506, label: "Donate Rs. 10,000", amount: 10000, impact: "400 meals" },
       { legacySevaId: 3504, label: "Donate Any Other Amount", amount: null },
     ],
   },
@@ -123,10 +132,12 @@ const sevas: Seva[] = [
     image:
       "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1790144104776-1790144104666-sadhuBhojan.webp",
     options: [
-      { legacySevaId: 3510, label: "Donate Rs. 11,111", amount: 11111 },
-      { legacySevaId: 3511, label: "Donate Rs. 5,100", amount: 5100 },
-      { legacySevaId: 3512, label: "Donate Rs. 2,100", amount: 2100 },
-      { legacySevaId: 3513, label: "Donate Rs. 1,100", amount: 1100 },
+      { legacySevaId: 3510, label: "Donate Rs. 1,100", amount: 1100, impact: "11 plates" },
+      { legacySevaId: 3511, label: "Donate Rs. 1,500", amount: 1500, impact: "15 plates" },
+      { legacySevaId: 3512, label: "Donate Rs. 2,500", amount: 2500, impact: "25 plates" },
+      { legacySevaId: 3513, label: "Donate Rs. 3,500", amount: 3500, impact: "35 plates" },
+      { legacySevaId: 3515, label: "Donate Rs. 5,000", amount: 5000, impact: "50 plates" },
+      { legacySevaId: 3516, label: "Donate Rs. 6,000", amount: 6000, impact: "60 plates" },
       { legacySevaId: 3514, label: "Donate Any Other Amount", amount: null },
     ],
   },
@@ -140,10 +151,12 @@ const sevas: Seva[] = [
     image:
       "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783676646237-1783676645536-ChatGPTImageJul102026031357PM.png",
     options: [
-      { legacySevaId: 3520, label: "Donate Rs. 5,555", amount: 5555 },
-      { legacySevaId: 3521, label: "Donate Rs. 3,100", amount: 3100 },
-      { legacySevaId: 3522, label: "Donate Rs. 2,100", amount: 2100 },
-      { legacySevaId: 3523, label: "Donate Rs. 1,100", amount: 1100 },
+      { legacySevaId: 3520, label: "Donate Rs. 1,100", amount: 1100, impact: "Fodder for a day" },
+      { legacySevaId: 3521, label: "Donate Rs. 1,500", amount: 1500, impact: "10 cows · a day" },
+      { legacySevaId: 3522, label: "Donate Rs. 2,500", amount: 2500, impact: "Medicines & care" },
+      { legacySevaId: 3523, label: "Donate Rs. 3,500", amount: 3500, impact: "1 cow · a month" },
+      { legacySevaId: 3525, label: "Donate Rs. 7,000", amount: 7000, impact: "2 cows · a month" },
+      { legacySevaId: 3526, label: "Donate Rs. 9,000", amount: 9000, impact: "Green grass, all cows" },
       { legacySevaId: 3524, label: "Donate Any Other Amount", amount: null },
     ],
   },
@@ -156,10 +169,12 @@ const sevas: Seva[] = [
     icon: "🧱",
     image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1790226869681-1790226868033-cardbrick.webp",
     options: [
-      { legacySevaId: 3530, label: "Donate Rs. 11,111", amount: 11111 },
-      { legacySevaId: 3531, label: "Donate Rs. 5,100", amount: 5100 },
-      { legacySevaId: 3532, label: "Donate Rs. 2,100", amount: 2100 },
-      { legacySevaId: 3533, label: "Donate Rs. 1,100", amount: 1100 },
+      { legacySevaId: 3530, label: "Donate Rs. 1,100", amount: 1100, impact: "Towards a brick" },
+      { legacySevaId: 3531, label: "Donate Rs. 1,500", amount: 1500, impact: "1 brick" },
+      { legacySevaId: 3532, label: "Donate Rs. 3,000", amount: 3000, impact: "2 bricks" },
+      { legacySevaId: 3533, label: "Donate Rs. 4,500", amount: 4500, impact: "3 bricks" },
+      { legacySevaId: 3535, label: "Donate Rs. 7,500", amount: 7500, impact: "5 bricks" },
+      { legacySevaId: 3536, label: "Donate Rs. 15,000", amount: 15000, impact: "10 bricks" },
       { legacySevaId: 3534, label: "Donate Any Other Amount", amount: null },
     ],
   },
@@ -173,10 +188,12 @@ const sevas: Seva[] = [
     image:
       "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1790226868531-1790226867774-cardsft.webp",
     options: [
-      { legacySevaId: 3540, label: "Donate Rs. 5,555", amount: 5555 },
-      { legacySevaId: 3541, label: "Donate Rs. 3,100", amount: 3100 },
-      { legacySevaId: 3542, label: "Donate Rs. 2,100", amount: 2100 },
-      { legacySevaId: 3543, label: "Donate Rs. 1,100", amount: 1100 },
+      { legacySevaId: 3540, label: "Donate Rs. 1,100", amount: 1100, impact: "Towards a sq ft" },
+      { legacySevaId: 3541, label: "Donate Rs. 2,100", amount: 2100, impact: "1 sq ft" },
+      { legacySevaId: 3542, label: "Donate Rs. 4,200", amount: 4200, impact: "2 sq ft" },
+      { legacySevaId: 3543, label: "Donate Rs. 6,300", amount: 6300, impact: "3 sq ft" },
+      { legacySevaId: 3545, label: "Donate Rs. 10,500", amount: 10500, impact: "5 sq ft" },
+      { legacySevaId: 3546, label: "Donate Rs. 21,000", amount: 21000, impact: "10 sq ft" },
       { legacySevaId: 3544, label: "Donate Any Other Amount", amount: null },
     ],
   },
@@ -783,57 +800,22 @@ export default function PitruPakshaClient() {
                   </p>
                   <div className="mt-4 space-y-2.5">
                     {(() => {
-                      const primary = seva.options[0];
-                      const tiers = seva.options.slice(1, 4);
+                      // Six amount cards, no featured tier. Every seva now
+                      // opens at ₹1,100, so the first card is the entry point
+                      // rather than a headline figure — nothing is visually
+                      // promoted over anything else, and the donor picks by
+                      // what the offering buys.
+                      const amountCards = seva.options.filter((o) => o.amount != null);
                       const custom = seva.options.find((o) => !o.amount) || seva.options[seva.options.length - 1];
                       return (
                         <>
-                          <button
-                            type="button"
-                            onClick={() => openCheckout(seva, primary)}
-                            className="flex w-full items-center justify-between rounded-xl border px-4 py-3.5 text-left transition-all duration-300"
-                            style={{
-                              borderColor: `${C.saffronDark}40`,
-                              background: C.saffron,
-                              color: C.white,
-                            }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.borderColor = C.amber;
-                              e.currentTarget.style.background = C.saffronDark;
-                              e.currentTarget.style.boxShadow = `0 4px 16px ${C.saffron}40`;
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.borderColor = `${C.saffronDark}40`;
-                              e.currentTarget.style.background = C.saffron;
-                              e.currentTarget.style.boxShadow = "none";
-                            }}
-                          >
-                            <span className="text-[13px] font-semibold leading-tight">
-                              Sponsor for{" "}
-                              <span className="font-bold">
-                                ₹{primary.amount != null ? formatAmount(primary.amount) : "—"}
-                              </span>
-                            </span>
-                            <svg
-                              className="h-4 w-4 shrink-0 opacity-70"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2.5"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <path d="M5 12h14M13 6l6 6-6 6" />
-                            </svg>
-                          </button>
-
-                          <div className="grid grid-cols-3 gap-2">
-                            {tiers.map((t) => (
+                          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                            {amountCards.map((t) => (
                               <button
                                 key={t.legacySevaId}
                                 type="button"
                                 onClick={() => openCheckout(seva, t)}
-                                className="rounded-xl border px-1 py-2.5 text-center transition-all duration-300"
+                                className="flex min-h-[68px] flex-col items-center justify-center rounded-xl border px-1.5 py-2.5 text-center transition-all duration-300"
                                 style={{
                                   borderColor: `${C.amber}45`,
                                   background: C.ivory,
@@ -850,9 +832,17 @@ export default function PitruPakshaClient() {
                                   e.currentTarget.style.boxShadow = "none";
                                 }}
                               >
-                                <span className="text-sm font-bold leading-none">
+                                <span className="block text-sm font-bold leading-none">
                                   ₹{t.amount != null ? formatAmount(t.amount) : "—"}
                                 </span>
+                                {t.impact && (
+                                  <span
+                                    className="mt-1 block text-[10px] font-medium leading-tight"
+                                    style={{ color: C.muted }}
+                                  >
+                                    {t.impact}
+                                  </span>
+                                )}
                               </button>
                             ))}
                           </div>
