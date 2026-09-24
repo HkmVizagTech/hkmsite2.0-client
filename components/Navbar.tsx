@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Phone, Mail, Clock, Heart, ChevronDown, Home, User, Utensils, Info } from "lucide-react";
+import { Menu, X, Phone, Mail, Clock, Heart, ChevronDown, Home, User, Utensils, Info, ShoppingBag, Calendar, PartyPopper } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ISKLogo from "@/assets/ISKCONGambheeramLogo.jpeg";
 import HKVTLogo from "@/assets/HKVTLogo.png";
@@ -15,22 +15,6 @@ import { NavListItem } from "@/components/NavListItem";
 import { resolveMajorFestival, type MajorFestival } from "@/lib/majorFestival";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
-
-// ── Mobile: exact original flat link list (matches production site) ─
-const mobileNavItems = [
-  { label: "Home", href: "/" },
-  { label: "Shop", href: "/shop" },
-  { label: "About Us", href: "/about" },
-  { label: "Founder", href: "/founder" },
-  { label: "Volunteer", href: "/volunteer" },
-  { label: "Gallery", href: "/gallery" },
-  { label: "Events", href: "/events" },
-  { label: "Blog", href: "/blogs" },
-  { label: "Schedule", href: "/daily-schedule" },
-  { label: "Subhojanam", href: "/subhojanam" },
-  { label: "Anna-Daan", href: "/anna-daan-seva" },
-  { label: "Contact", href: "/contact" },
-];
 
 // ── Mobile bottom bar (matches production site) ────────────────────
 const bottomNavItems = [
@@ -65,10 +49,6 @@ const getDarshanStatus = () => {
   return { isOpen: false, label: `Darshan Closed · ${reopenLabel}` };
 };
 
-// ── Helper: returns true if the href matches the current pathname ────
-const isActive = (href: string, pathname: string) =>
-  href === pathname || (href !== "/" && pathname.startsWith(href));
-
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -76,6 +56,9 @@ const Navbar = () => {
   const [menuCanScroll, setMenuCanScroll] = useState(false);
   const menuScrollRef = useRef<HTMLDivElement>(null);
   const [festival, setFestival] = useState<MajorFestival | null>(null);
+  // Which "More" menu category is expanded (single-open accordion — opening
+  // one closes any that was open before).
+  const [openGroup, setOpenGroup] = useState<string | null>(null);
 
   // Dark mode removed sitewide — theme is forced to light in ThemeProvider.
   const pathname = usePathname();
@@ -145,6 +128,17 @@ const Navbar = () => {
 
   // ── Toggle mobile menu ────────────────────────────────────────────
   const toggleMobile = () => setMobileOpen((v) => !v);
+
+  // ── Toggle a collapsible category in the mobile "More" menu ───────
+  // Only one category stays open at a time; tapping the open one closes it.
+  const toggleGroup = (label: string) =>
+    setOpenGroup((prev) => (prev === label ? null : label));
+
+  // Link styling shared by the mobile "More" menu rows.
+  const mobileLinkCls = (active: boolean) =>
+    `flex items-center gap-2 rounded-lg px-4 py-2.5 text-[15px] font-medium transition-colors ${
+      active ? "text-primary bg-primary/10" : "text-foreground hover:text-primary hover:bg-primary/10"
+    }`;
 
 
   // ── Render ────────────────────────────────────────────────────────
@@ -368,39 +362,106 @@ const Navbar = () => {
                 {festival && (
                   <Link
                     href={festival.href}
-                    className={`flex items-center gap-2 rounded-lg px-4 py-2.5 text-[15px] font-medium transition-colors ${
-                      pathname === festival.href || pathname.startsWith(festival.href)
-                        ? "text-primary bg-primary/10"
-                        : "text-foreground hover:text-primary hover:bg-primary/10"
-                    }`}
+                    className={mobileLinkCls(pathname === festival.href || pathname.startsWith(festival.href))}
                   >
+                    <PartyPopper className="h-4 w-4" />
                     {festival.label}
                   </Link>
                 )}
-                {mobileNavItems.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={`text-left px-4 py-2.5 text-[15px] rounded-lg font-medium transition-colors ${
-                      pathname === item.href
-                        ? "text-primary bg-primary/10"
-                        : "text-foreground hover:text-primary hover:bg-primary/10"
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-                <Link
-                  href="/donor/login"
-                  className={`flex items-center gap-2 text-left px-4 py-2.5 text-[15px] rounded-lg font-medium transition-colors ${
-                    pathname === "/donor/login"
-                      ? "text-primary bg-primary/10"
-                      : "text-foreground hover:text-primary hover:bg-primary/10"
-                  }`}
-                >
+                <Link href="/shop" className={mobileLinkCls(pathname === "/shop")}>
+                  <ShoppingBag className="h-4 w-4" />
+                  Shop
+                </Link>
+                <Link href="/donor/login" className={mobileLinkCls(pathname === "/donor/login")}>
                   <User className="h-4 w-4" />
                   Donor Login
                 </Link>
+                <Link href="/ekadashi" className={mobileLinkCls(pathname === "/ekadashi")}>
+                  <Calendar className="h-4 w-4" />
+                  Ekadashi
+                </Link>
+                <Link
+                  href="/festival"
+                  className={mobileLinkCls(pathname === "/festival" || pathname.startsWith("/festivals"))}
+                >
+                  <PartyPopper className="h-4 w-4" />
+                  Festivals
+                </Link>
+
+                {/* Collapsible categories — mirror the desktop dropdowns */}
+                <p className="px-4 pb-1 pt-3 text-[11px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+                  Explore by Category
+                </p>
+                {navEntries
+                  .filter(
+                    (entry): entry is Extract<typeof entry, { kind: "group" }> => entry.kind === "group"
+                  )
+                  .map((entry) => {
+                    const group = entry.group;
+                    const GroupIcon = group.icon;
+                    const open = openGroup === group.label;
+                    const groupActive = !open && isGroupActive(group, pathname);
+                    return (
+                      <div key={group.label} className="overflow-hidden rounded-xl">
+                        <button
+                          onClick={() => toggleGroup(group.label)}
+                          aria-expanded={open}
+                          className={`flex w-full items-center justify-between rounded-xl px-4 py-2.5 text-[15px] font-medium transition-all duration-200 ${
+                            open || groupActive
+                              ? "bg-primary/[0.06] text-primary ring-1 ring-inset ring-primary/15"
+                              : "text-foreground hover:bg-primary/5 hover:text-primary"
+                          }`}
+                        >
+                          <span className="flex items-center gap-2.5">
+                            {GroupIcon && (
+                              <span
+                                className={`flex h-7 w-7 items-center justify-center rounded-lg transition-colors ${
+                                  open || groupActive ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
+                                }`}
+                              >
+                                <GroupIcon className="h-4 w-4" />
+                              </span>
+                            )}
+                            {group.label}
+                          </span>
+                          <span
+                            className={`flex h-6 w-6 items-center justify-center rounded-full transition-all duration-300 ${
+                              open ? "rotate-180 bg-primary/10 text-primary" : "text-muted-foreground"
+                            }`}
+                          >
+                            <ChevronDown className="h-4 w-4" />
+                          </span>
+                        </button>
+                        <AnimatePresence initial={false}>
+                          {open && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: "auto", opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.22, ease: "easeInOut" }}
+                              className="overflow-hidden"
+                            >
+                              <div className="ml-5 mt-1 flex flex-col gap-0.5 border-l border-primary/15 pb-1 pl-4">
+                                {group.items.map((item) => (
+                                  <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    className={`flex items-center gap-2 rounded-lg px-3 py-2 text-[14px] transition-colors ${
+                                      pathname === item.href
+                                        ? "text-primary bg-primary/10"
+                                        : "text-muted-foreground hover:bg-primary/5 hover:text-primary"
+                                    }`}
+                                  >
+                                    {item.label}
+                                  </Link>
+                                ))}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    );
+                  })}
                 <Button
                   variant="default"
                   className="mt-1.5 rounded-full bg-gradient-ocean text-white border-0 text-[15px]"

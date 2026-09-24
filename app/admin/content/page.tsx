@@ -13,9 +13,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Pencil, Save, X, FileText, Globe, Phone, Mail, MapPin, Clock, Loader2, PartyPopper } from "lucide-react";
+import { Pencil, Save, X, FileText, Globe, Phone, Mail, MapPin, Clock, Loader2, PartyPopper, Image as ImageIcon } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { MAJOR_FESTIVALS } from "@/lib/majorFestival";
+import { FESTIVAL_PAGE_BANNER } from "@/lib/festivalShowcase";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 
@@ -24,6 +25,7 @@ interface SiteContent {
   about: { heading: string; body: string };
   contact: { phone: string; email: string; address: string; morningHours: string; eveningHours: string };
   navbar: { majorFestival: string };
+  festival: { bannerDesktop: string; bannerMobile: string };
 }
 
 const defaultContent: SiteContent = {
@@ -31,6 +33,7 @@ const defaultContent: SiteContent = {
   about: { heading: "A Legacy of Devotion & Service", body: "" },
   contact: { phone: "+91 89777 61187", email: "social@hkmvizag.org", address: "Chaitanya Bhavan, Hare Krishna Vaikuntam Cultural Centre, IIM Rd, opp. Akshaya Patra Foundation, Gambhiram, Visakhapatnam, Andhra Pradesh 531163", morningHours: "4:30 AM - 1:00 PM", eveningHours: "4:00 PM - 8:30 PM" },
   navbar: { majorFestival: "auto" },
+  festival: { bannerDesktop: FESTIVAL_PAGE_BANNER.desktop, bannerMobile: FESTIVAL_PAGE_BANNER.mobile },
 };
 
 const FESTIVAL_OPTIONS: { value: string; label: string }[] = [
@@ -55,6 +58,10 @@ export default function AdminContent() {
             ...defaultContent,
             ...data.content,
             navbar: { ...defaultContent.navbar, ...data.content?.navbar },
+            festival: {
+              ...defaultContent.festival,
+              ...data.content?.festival,
+            },
           });
         }
       } catch {}
@@ -62,7 +69,7 @@ export default function AdminContent() {
     })();
   }, []);
 
-  const handleSave = async (section: "hero" | "about" | "contact" | "navbar") => {
+  const handleSave = async (section: "hero" | "about" | "contact" | "navbar" | "festival") => {
     setSaving(true);
     try {
       const res = await authFetch(`${API_URL}/site-content`, {
@@ -99,11 +106,12 @@ export default function AdminContent() {
       </div>
 
       <Tabs defaultValue="hero" className="space-y-4">
-        <TabsList className="grid grid-cols-4 w-full max-w-md">
+        <TabsList className="grid grid-cols-5 w-full max-w-xl">
           <TabsTrigger value="hero">Hero</TabsTrigger>
           <TabsTrigger value="about">About</TabsTrigger>
           <TabsTrigger value="contact">Contact</TabsTrigger>
           <TabsTrigger value="navigation">Navigation</TabsTrigger>
+          <TabsTrigger value="festival">Festivals</TabsTrigger>
         </TabsList>
 
         {/* HERO */}
@@ -248,6 +256,57 @@ export default function AdminContent() {
                 choose &ldquo;Auto&rdquo; to pick the current festival from the Vaishnava calendar automatically,
                 or pick a specific festival to pin it. Only festivals that have a page on the site are available
                 here.
+              </p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      {/* FESTIVALS */}
+        <TabsContent value="festival">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle className="flex items-center gap-2"><ImageIcon className="w-5 h-5" /> Festival Page Banners</CardTitle>
+              {editingSection === "festival" ? (
+                <div className="flex gap-2">
+                  <Button onClick={() => handleSave("festival")} disabled={saving}>
+                    {saving ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Save className="w-4 h-4 mr-1" />} Save
+                  </Button>
+                  <Button className="bg-transparent text-foreground hover:bg-muted" onClick={() => setEditingSection(null)}><X className="w-4 h-4" /></Button>
+                </div>
+              ) : (
+                <Button className="bg-transparent border border-border text-foreground hover:bg-muted" onClick={() => setEditingSection("festival")}><Pencil className="w-4 h-4 mr-1" /> Edit</Button>
+              )}
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <label className="text-sm font-medium mb-1 block">Desktop banner (title included in the artwork)</label>
+                {content.festival.bannerDesktop && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={content.festival.bannerDesktop} alt="Desktop festival banner preview" className="mb-2 h-32 w-full rounded-md border object-cover" />
+                )}
+                <Input
+                  value={content.festival.bannerDesktop}
+                  disabled={editingSection !== "festival"}
+                  onChange={(e) => setContent({ ...content, festival: { ...content.festival, bannerDesktop: e.target.value } })}
+                  placeholder="https://… festivaldesk.webp"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-1 block">Mobile banner</label>
+                {content.festival.bannerMobile && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={content.festival.bannerMobile} alt="Mobile festival banner preview" className="mb-2 h-32 w-full rounded-md border object-cover" />
+                )}
+                <Input
+                  value={content.festival.bannerMobile}
+                  disabled={editingSection !== "festival"}
+                  onChange={(e) => setContent({ ...content, festival: { ...content.festival, bannerMobile: e.target.value } })}
+                  placeholder="https://… Festivalmob.webp"
+                />
+              </div>
+              <p className="text-xs text-muted-foreground">
+                These are the hero banners on <code>/festival</code>. The festival title is baked into the
+                artwork, so no text is overlaid on top. Desktop is used from the <code>md</code> breakpoint
+                up; the mobile banner shows below it.
               </p>
             </CardContent>
           </Card>

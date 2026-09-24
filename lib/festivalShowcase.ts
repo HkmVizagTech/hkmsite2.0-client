@@ -91,3 +91,19 @@ export const festivalStatusLabel: Record<string, string> = {
   completed: "Recap",
   annual: "Annual",
 };
+
+/** Default venue shown whenever a festival has no `location` set. */
+export const DEFAULT_FESTIVAL_LOCATION = "Hare Krishna Vaikuntham, Gambheeram";
+
+/**
+ * Default hero banners for the /festival index page. The title is baked into
+ * the artwork, so the page renders the image standalone (no text overlay).
+ * Both are admin-editable under Admin → Content → Festivals (site-content
+ * `festival.bannerDesktop` / `festival.bannerMobile`).
+ */
+export const FESTIVAL_PAGE_BANNER = {
+  desktop:
+    "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1790229048498-1790229047458-festivaldesk.webp",
+  mobile:
+    "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1790229047831-1790229047198-Festivalmob.webp",
+};

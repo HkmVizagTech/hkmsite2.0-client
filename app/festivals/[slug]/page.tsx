@@ -8,6 +8,7 @@ import FestivalGallery from "@/components/festival/FestivalGallery";
 import {
   fetchFestivalShowcase,
   festivalStatusLabel,
+  DEFAULT_FESTIVAL_LOCATION,
   type FestivalShowcase,
 } from "@/lib/festivalShowcase";
 
@@ -149,7 +150,7 @@ export default async function FestivalShowcasePage({
             )}
             <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 backdrop-blur-sm">
               <MapPin className="h-4 w-4 text-gold" />
-              {f.location || "Temple Premises"}
+              {f.location || DEFAULT_FESTIVAL_LOCATION}
             </span>
             {f.status && (
               <span className="rounded-full bg-white/10 px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider backdrop-blur-sm">

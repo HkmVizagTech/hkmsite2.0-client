@@ -10,6 +10,7 @@ import SubhojanamSection from "@/components/SubhojanamSection";
 import FestivalDonationsSection from "@/components/FestivalDonationsSection";
 import ContactSection from "@/components/ContactSection";
 import WhatsAppCommunityCTA from "@/components/WhatsAppCommunityCTA";
+import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
 import Footer from "@/components/Footer";
 import type { Metadata } from "next";
 
@@ -25,6 +26,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white dark:bg-background pt-[88px] md:pt-[104px]">
       <Navbar />
+      <WhatsAppFloatButton />
       <TempleCarousel />
       <TodaysDarshan />
       <AboutSection />

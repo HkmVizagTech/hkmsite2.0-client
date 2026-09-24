@@ -386,7 +386,7 @@ export default function AdminFestivals() {
             <Field label="Festival title" value={editing.title} onChange={(v) => set("title", v)} placeholder="e.g. Sri Krishna Janmashtami" />
             <Field label="Slug (URL)" value={editing.slug} onChange={(v) => set("slug", v)} placeholder="auto from title" hint={`/festivals/${editing.slug || slugify(editing.title) || "…"}`} />
             <Field label="Subtitle / tagline" value={editing.subtitle} onChange={(v) => set("subtitle", v)} placeholder="e.g. Appearance of Lord Krishna" />
-            <Field label="Location" value={editing.location} onChange={(v) => set("location", v)} placeholder="Temple Premises" />
+            <Field label="Location" value={editing.location} onChange={(v) => set("location", v)} placeholder="Hare Krishna Vaikuntham, Gambheeram" />
             <Field label="Festival date" value={editing.eventDate} onChange={(v) => set("eventDate", v)} placeholder="2026-07-18" />
           </div>
           <div className="grid gap-4 sm:grid-cols-3">

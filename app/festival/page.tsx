@@ -1,16 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { CalendarDays, MapPin, ArrowRight, Sparkles } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
-import PageHero from "@/components/PageHero";
 import Ornament from "@/components/Ornament";
 import WhatsAppCommunityCTA from "@/components/WhatsAppCommunityCTA";
 import {
   fetchFestivalShowcases,
   festivalStatusLabel,
+  DEFAULT_FESTIVAL_LOCATION,
+  FESTIVAL_PAGE_BANNER,
   type FestivalShowcase,
 } from "@/lib/festivalShowcase";
 import {
@@ -20,6 +21,8 @@ import {
 } from "@/lib/festivalFallback";
 
 const FALLBACK_IMAGE = "/assets/gallery-festival-1.jpg";
+
+const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 
 const asDate = (s?: string) => {
   if (!s) return null;
@@ -142,6 +145,10 @@ function Countdown({ targetDate }: { targetDate: string }) {
 export default function FestivalsPage() {
   const [festivals, setFestivals] = useState<FestivalCardItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [banners, setBanners] = useState(FESTIVAL_PAGE_BANNER);
+  const [hasAdminHighlight, setHasAdminHighlight] = useState(false);
+  const spotlightRef = useRef<HTMLElement | null>(null);
+  const autoScrolled = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -160,19 +167,73 @@ export default function FestivalsPage() {
     };
   }, []);
 
-  const elementId = (f: FestivalCardItem) => f._id || f.slug;
+  // Can only tell an admin-featured festival apart from the calendar fallback
+  // auto-spotlight from the raw admin list, before it is merged.
   const todayStart = new Date();
   todayStart.setHours(0, 0, 0, 0);
+  const isSpotlightEligible = (f: FestivalCardItem) =>
+    f.featured &&
+    f.status !== "completed" &&
+    (!asDate(f.eventDate) || asDate(f.eventDate)! >= todayStart);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchFestivalShowcases().then((list) => {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const adminHighlighted = list.some(
+        (f) =>
+          f.featured &&
+          f.status !== "completed" &&
+          (!asDate(f.eventDate) || asDate(f.eventDate)! >= today)
+      );
+      if (!cancelled) setHasAdminHighlight(adminHighlighted);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // If a festival is genuinely highlighted (admin-featured & still upcoming),
+  // glide down to the spotlight once the cards are ready. No highlighted
+  // festival → stay at the top and just let the banner speak.
+  useEffect(() => {
+    if (loading || autoScrolled.current) return;
+    autoScrolled.current = true;
+    if (!hasAdminHighlight) return;
+    const t = setTimeout(() => {
+      spotlightRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 150);
+    return () => clearTimeout(t);
+  }, [loading, hasAdminHighlight]);
+
+  // Hero banners come from site-content (Admin → Content → Festivals) so they
+  // can be swapped without a deploy; falls back to the bundled defaults.
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch(`${API_URL}/site-content`, { cache: "no-store" });
+        if (!res.ok) return;
+        const data = await res.json();
+        const f = data?.content?.festival;
+        if (!f) return;
+        setBanners((prev) => ({
+          desktop: f.bannerDesktop || prev.desktop,
+          mobile: f.bannerMobile || prev.mobile,
+        }));
+      } catch {
+        /* server offline — keep defaults */
+      }
+    })();
+  }, []);
+
+  const elementId = (f: FestivalCardItem) => f._id || f.slug;
 
   // Featured festivals keep their own admin-set order (featuredOrder asc, then
   // soonest first). A festival whose date has already passed never appears in
   // the spotlight, even if it is still marked as featured.
   const byDate = (a: FestivalCardItem, b: FestivalCardItem) =>
     (asDate(a.eventDate)?.getTime() || 0) - (asDate(b.eventDate)?.getTime() || 0);
-  const isSpotlightEligible = (f: FestivalCardItem) =>
-    f.featured &&
-    f.status !== "completed" &&
-    (!asDate(f.eventDate) || asDate(f.eventDate)! >= todayStart);
   const featuredList = festivals
     .filter(isSpotlightEligible)
     .sort((a, b) => (a.featuredOrder || 0) - (b.featuredOrder || 0) || byDate(a, b));
@@ -207,16 +268,48 @@ export default function FestivalsPage() {
 
   return (
     <PageLayout>
-      <PageHero
-        title="Festivals & Celebrations"
-        subtitle="The grand festivals of the year — their pastimes, schedules, galleries and memories"
-        breadcrumb="Festivals"
-        backgroundImage="/assets/gallery-festival-1.jpg"
-      />
+      {/* ── Hero — full-bleed banner like every other page (title baked in) ── */}
+      {/* Tapping it glides down to the festivals below. */}
+      <section
+        className="relative w-full cursor-pointer overflow-hidden pt-[88px] md:pt-[104px]"
+        onClick={() =>
+          document
+            .getElementById("festivals-sections")
+            ?.scrollIntoView({ behavior: "smooth", block: "start" })
+        }
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            document
+              .getElementById("festivals-sections")
+              ?.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        }}
+        aria-label="Scroll to festivals below"
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={banners.mobile}
+          alt="Festivals & Celebrations"
+          className="block h-auto w-full md:hidden"
+        />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={banners.desktop}
+          alt="Festivals & Celebrations"
+          className="hidden h-auto w-full md:block"
+        />
+      </section>
 
       {/* ── Featured festivals ─────────────────────────────────────── */}
       {!loading && spotlights.length > 0 && (
-        <section className="bg-white py-14 dark:bg-background md:py-16">
+        <section
+          id="festival-spotlight"
+          ref={spotlightRef}
+          className="scroll-mt-[88px] bg-white py-14 dark:bg-background md:scroll-mt-[104px] md:py-16"
+        >
           <div className="container mx-auto px-4">
             <SectionHead
               eyebrow="Spotlight"
@@ -262,7 +355,7 @@ export default function FestivalsPage() {
                         )}
                         <span className="inline-flex items-center gap-2">
                           <MapPin className="h-4 w-4" />
-                          {featured.location || "Temple Premises"}
+                          {featured.location || DEFAULT_FESTIVAL_LOCATION}
                         </span>
                       </div>
                       {featured.description && (
@@ -324,7 +417,10 @@ export default function FestivalsPage() {
       )}
 
       {/* ── Festivals grid ────────────────────────────────────────── */}
-      <section className="bg-white pb-14 pt-4 dark:bg-background md:pb-16">
+      <section
+        id="festivals-sections"
+        className="scroll-mt-[88px] bg-white pb-14 pt-4 dark:bg-background md:scroll-mt-[104px] md:pb-16"
+      >
         <div className="container mx-auto px-4">
           <SectionHead
             eyebrow="Festival Archive"
@@ -430,7 +526,7 @@ function festivalCard(f: FestivalCardItem, i: number) {
                         <div className="mt-auto flex items-center justify-between border-t border-border pt-3.5">
                           <span className="inline-flex items-center gap-1.5 text-[11.5px] text-muted-foreground">
                             <MapPin className="h-3.5 w-3.5" />
-                            {f.location || "Temple Premises"}
+                            {f.location || DEFAULT_FESTIVAL_LOCATION}
                           </span>
                           <div className="flex items-center gap-2">
                             {f.ctaHref && (

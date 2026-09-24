@@ -16,7 +16,10 @@ import {
   pickFestivalHref,
   GENERIC_IMAGES,
 } from "./eventsFallback";
-import type { FestivalShowcase } from "./festivalShowcase";
+import {
+  DEFAULT_FESTIVAL_LOCATION,
+  type FestivalShowcase,
+} from "./festivalShowcase";
 
 /**
  * A festival card for the index. `href` lets fallback items point at real
@@ -43,7 +46,7 @@ export function getFallbackFestivals(limit = 0): FestivalCardItem[] {
           heroImage: image,
           cardImage: image,
           eventDate: d.date,
-          location: "Temple Premises",
+          location: DEFAULT_FESTIVAL_LOCATION,
           description: d.description,
           status: new Date(d.date) >= today ? "upcoming" : "completed",
           featured: false,
