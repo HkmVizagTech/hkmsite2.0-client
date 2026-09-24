@@ -809,13 +809,13 @@ export default function PitruPakshaClient() {
                       const custom = seva.options.find((o) => !o.amount) || seva.options[seva.options.length - 1];
                       return (
                         <>
-                          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                          <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
                             {amountCards.map((t) => (
                               <button
                                 key={t.legacySevaId}
                                 type="button"
                                 onClick={() => openCheckout(seva, t)}
-                                className="flex min-h-[68px] flex-col items-center justify-center rounded-xl border px-1.5 py-2.5 text-center transition-all duration-300"
+                                className="flex min-h-[52px] flex-col items-center justify-center rounded-lg border px-1 py-1.5 text-center transition-all duration-300 sm:min-h-[56px] sm:px-1.5 sm:py-2"
                                 style={{
                                   borderColor: `${C.amber}45`,
                                   background: C.ivory,
@@ -832,12 +832,12 @@ export default function PitruPakshaClient() {
                                   e.currentTarget.style.boxShadow = "none";
                                 }}
                               >
-                                <span className="block text-sm font-bold leading-none">
+                                <span className="block text-[13px] font-bold leading-none sm:text-sm">
                                   ₹{t.amount != null ? formatAmount(t.amount) : "—"}
                                 </span>
                                 {t.impact && (
                                   <span
-                                    className="mt-1 block text-[10px] font-medium leading-tight"
+                                    className="mt-0.5 block text-[9px] font-medium leading-[1.2] sm:text-[10px]"
                                     style={{ color: C.muted }}
                                   >
                                     {t.impact}
