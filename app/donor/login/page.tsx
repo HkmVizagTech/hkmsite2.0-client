@@ -80,15 +80,14 @@ export default function DonorLoginPage() {
   };
 
   /**
-   * Requests an OTP.
+   * Requests an OTP and only then shows the code screen.
    *
-   * The code screen is shown IMMEDIATELY rather than after the request
-   * resolves. The WhatsApp send takes a couple of seconds on Meta's side, and
-   * making the donor watch a spinner for it was the slowest part of logging
-   * in — while in reality they should already be switching to WhatsApp to
-   * read the code. The request keeps running; its outcome lands on the screen
-   * they are now looking at, and a genuine failure drops them back to the
-   * number step with the reason.
+   * This deliberately waits for the server. An earlier version jumped to the
+   * code screen immediately to hide the couple of seconds the WhatsApp send
+   * takes — but that turned a provider outage into a screen that cheerfully
+   * asked for a code nobody had been sent. The server now answers only once
+   * the message has actually been accepted, so "Enter your code" means the
+   * code is genuinely on its way, and an outage is reported here instead.
    */
   const requestOtp = async (opts: { resend?: boolean } = {}) => {
     setError(null);
@@ -97,11 +96,8 @@ export default function DonorLoginPage() {
       return;
     }
 
-    if (!opts.resend) setStep("otp");
     setSending(true);
     setSent(false);
-    setOtp("");
-    startCooldown();
 
     try {
       const res = await fetch(`${API_URL}/donor-auth/send-otp`, {
@@ -111,13 +107,15 @@ export default function DonorLoginPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Could not send OTP.");
+
+      if (!opts.resend) setStep("otp");
+      setOtp("");
       setSent(true);
+      startCooldown();
     } catch (err) {
-      // Back to the number — an unrecognised number is the common case here,
-      // and it is fixed by editing the number, not by waiting for a code.
-      setStep("mobile");
-      setCooldown(0);
-      if (timerRef.current) clearInterval(timerRef.current);
+      // Stay where we are. On the number step that is where the fix lives
+      // (wrong number); on a resend the donor keeps the code box they may
+      // still receive a message for.
       setError(err instanceof Error ? err.message : "Could not send OTP.");
     } finally {
       setSending(false);
@@ -272,9 +270,16 @@ export default function DonorLoginPage() {
                         className="h-12 w-full bg-transparent px-3 text-base text-foreground outline-none placeholder:text-sm placeholder:text-muted-foreground"
                       />
                     </div>
-                    <Button type="submit" className="w-full gap-2" size="lg">
-                      <MessageCircle className="h-4 w-4" />
-                      Send code on WhatsApp
+                    <Button type="submit" disabled={sending} className="w-full gap-2" size="lg">
+                      {sending ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin" /> Sending code…
+                        </>
+                      ) : (
+                        <>
+                          <MessageCircle className="h-4 w-4" /> Send code on WhatsApp
+                        </>
+                      )}
                     </Button>
                   </motion.form>
                 ) : (
@@ -305,7 +310,7 @@ export default function DonorLoginPage() {
                     <p className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
                       {sending ? (
                         <>
-                          <Loader2 className="h-3.5 w-3.5 animate-spin" /> Sending your code…
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" /> Resending your code…
                         </>
                       ) : sent ? (
                         <>

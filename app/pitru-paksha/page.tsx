@@ -11,7 +11,7 @@ export const metadata = {
     description:
       "Pay homage to your forefathers this Pitru Paksha. Offer Annadana, Sadhu Bhojan, Gau Seva and more with devotion at HKM Vizag.",
     images: [
-      "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1790142053890-1790142053377-pitrupakshadesk.webp",
+      "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1790235076658-1790235074922-pitru-paksha-desk.webp",
     ],
   },
 };

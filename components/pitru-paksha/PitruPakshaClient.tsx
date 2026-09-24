@@ -80,9 +80,9 @@ type RazorpayConstructor = new (
 // ─── Data ────────────────────────────────────────────────────────────────────
 
 const DESKTOP_BANNER =
-  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1790142053890-1790142053377-pitrupakshadesk.webp";
+  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1790235076658-1790235074922-pitru-paksha-desk.webp";
 const MOBILE_BANNER =
-  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1790142054571-1790142053617-pitrupakshamob.webp";
+  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1790235075802-1790235074751-pitru-paksha-mob.webp";
 const DECOR_GARLAND =
   "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785481873117-1785481872052-garland-removebg-preview.png";
 
