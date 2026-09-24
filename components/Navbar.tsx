@@ -122,12 +122,13 @@ const Navbar = () => {
     const timer = setTimeout(update, 320);
     el.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", update);
+    update();
     return () => {
       clearTimeout(timer);
       el.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
     };
-  }, [mobileOpen]);
+  }, [mobileOpen, openGroup]);
 
   // ── Toggle mobile menu ────────────────────────────────────────────
   const toggleMobile = () => setMobileOpen((v) => !v);
@@ -139,10 +140,10 @@ const Navbar = () => {
   const toggleGroup = (label: string) => {
     if (openGroup === label) {
       setOpenGroup(null);
-      window.setTimeout(() => scrollGroupIntoView(label), 220);
+      window.setTimeout(() => scrollGroupIntoView(label), 320);
     } else {
       setOpenGroup(label);
-      window.setTimeout(() => scrollGroupIntoView(label), 240);
+      window.setTimeout(() => scrollGroupIntoView(label), 340);
     }
   };
 
@@ -386,23 +387,6 @@ const Navbar = () => {
                   : "inset-x-0 rounded-b-3xl border-t border-border"
               }`}
             >
-              {/* Sheet header */}
-              <div className="flex items-center justify-between border-b border-border/60 bg-gradient-to-r from-primary/[0.07] to-transparent px-5 py-3.5">
-                <div>
-                  <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-primary">More</p>
-                  <p className="mt-0.5 font-heading text-base font-bold leading-tight text-foreground">
-                    Explore the temple
-                  </p>
-                </div>
-                <button
-                  onClick={() => setMobileOpen(false)}
-                  aria-label="Close menu"
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-border bg-background text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-
               {/* Scrollable body */}
               <div ref={menuScrollRef} className="flex-1 overflow-y-auto overscroll-contain px-4 py-3">
                 {festival && (
@@ -483,16 +467,18 @@ const Navbar = () => {
                             <ChevronDown className="h-4 w-4" />
                           </span>
                         </button>
-                        <AnimatePresence initial={false}>
-                          {open && (
-                            <motion.div
-                              initial={{ opacity: 0, y: -6 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: -6 }}
-                              transition={{ duration: 0.18, ease: "easeOut" }}
-                            >
-                              <div className="ml-5 mt-1 flex flex-col gap-0.5 border-l border-primary/15 pb-1 pl-4">
-                                {group.items.map((item) => (
+                        <motion.div
+                          initial={false}
+                          animate={
+                            open
+                              ? { height: "auto", opacity: 1, y: 0 }
+                              : { height: 0, opacity: 0, y: -6 }
+                          }
+                          transition={{ duration: 0.28, ease: "easeInOut" }}
+                          style={{ overflow: "hidden" }}
+                        >
+                          <div className="ml-5 mt-1 flex flex-col gap-0.5 border-l border-primary/15 pb-1 pl-4">
+                            {group.items.map((item) => (
                                   <Link
                                     key={item.href}
                                     href={item.href}
@@ -507,11 +493,16 @@ const Navbar = () => {
                                 ))}
                               </div>
                             </motion.div>
-                          )}
-                        </AnimatePresence>
                       </div>
                     );
                   })}
+
+              {/* Scroll hint — shown only while there is actually more below */}
+              {menuCanScroll && (
+                <div className="pointer-events-none sticky bottom-0 -mt-10 z-10 flex h-10 items-end justify-center bg-gradient-to-t from-white via-white/80 to-transparent pb-1 dark:from-card dark:via-card/80">
+                  <ChevronDown className="h-4 w-4 animate-bounce text-muted-foreground" />
+                </div>
+              )}
               </div>
 
               {/* Sticky footer actions — always visible, never buried in the scroll */}
@@ -537,13 +528,6 @@ const Navbar = () => {
                   </button>
                 </div>
               </div>
-
-              {/* Scroll hint */}
-              {menuCanScroll && (
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex h-10 items-end justify-center bg-gradient-to-t from-white via-white/80 to-transparent pb-1 dark:from-card dark:via-card/80">
-                  <ChevronDown className="h-4 w-4 animate-bounce text-muted-foreground" />
-                </div>
-              )}
             </motion.div>
           )}
         </AnimatePresence>

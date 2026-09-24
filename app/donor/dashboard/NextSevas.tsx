@@ -27,8 +27,29 @@ export default function NextSevas() {
     fetch(`${API_URL}/festival-showcases/public`)
       .then((res) => res.json())
       .then((data: Showcase[]) => {
-        setUpcoming((data || []).filter((f) => f.status === "upcoming"));
+        // `status` is set by hand in the admin, so a festival that has come
+        // and gone stays flagged "upcoming" until someone remembers to change
+        // it — which is why finished festivals were still being shown here.
+        // The event's own date is the fact that can't go stale, so it decides:
+        // anything dated before today is dropped no matter what status says.
+        // Entries with no date at all (a recurring "annual" seva) are kept,
+        // since there is nothing to judge them by.
+        const startOfToday = new Date();
+        startOfToday.setHours(0, 0, 0, 0);
+
+        const live = (data || [])
+          .filter((f) => f.status === "upcoming")
+          .filter((f) => !f.eventDate || new Date(f.eventDate).getTime() >= startOfToday.getTime())
+          // Soonest first — the next festival is the one worth acting on.
+          .sort((a, b) => {
+            if (!a.eventDate) return 1;
+            if (!b.eventDate) return -1;
+            return new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime();
+          });
+
+        setUpcoming(live);
       })
+      .catch(() => setUpcoming([]))
       .finally(() => setLoading(false));
   }, []);
 
