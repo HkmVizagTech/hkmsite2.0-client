@@ -1,10 +1,13 @@
 "use client";
 
-// Live "Today's Darshan" section for the homepage. Pulls real photos
-// uploaded via Admin → Gallery (category "Daily Darshan" / type "darshan").
-// Shows today's upload if the priest has posted one; otherwise falls back
-// to the most recent darshan date so the section is never empty. Links
-// through to the full /gallery date-scroller experience.
+// Live "Today's Darshan" section for the homepage. Pulls the current set of
+// daily darshan photos synced automatically from the Vaikuntham admin
+// panel (server-to-server, via GET /darshan) — every add, edit, block, or
+// delete an admin makes there pushes a fresh full replace to this
+// collection, so what's returned here is always exactly what's currently
+// active. There's no "today" vs "older" distinction to compute anymore
+// (Vaikuntham only ever sends its current active set) — `syncedAt` just
+// tells us whether that set was refreshed today, for the section's label.
 
 import { useEffect, useState } from "react";
 import { motion, useInView } from "framer-motion";
@@ -13,16 +16,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Sparkles, X, ChevronLeft, ChevronRight } from "lucide-react";
 import Ornament from "@/components/Ornament";
-import { getGalleryImages } from "@/lib/galleryApi";
+import { getDarshanPhotos } from "@/lib/darshanApi";
 
 interface DarshanPhoto {
   src: string;
   title: string;
 }
 
-function todayKey() {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+function todayKey(date: Date = new Date()) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 }
 
 export default function TodaysDarshan() {
@@ -36,39 +38,34 @@ export default function TodaysDarshan() {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   useEffect(() => {
-    getGalleryImages({ type: "darshan", status: "active" })
-      .then((items: any[]) => {
+    getDarshanPhotos()
+      .then((items) => {
         if (!items || items.length === 0) return;
 
-        // Group by date, keep the newest first (server already sorts desc).
-        const byDate = new Map<string, DarshanPhoto[]>();
-        for (const item of items) {
-          const key = (item.date || "").slice(0, 10);
-          if (!key) continue;
-          if (!byDate.has(key)) byDate.set(key, []);
-          for (const src of item.images || []) {
-            byDate.get(key)!.push({ src, title: item.title || "Darshan" });
-          }
+        const sorted = [...items].sort((a, b) => a.position - b.position);
+        setPhotos(sorted.map((item) => ({ src: item.imageUrl, title: "Darshan" })));
+
+        const latestSync = sorted.reduce((latest, item) => {
+          const t = item.syncedAt ? new Date(item.syncedAt).getTime() : 0;
+          return t > latest ? t : latest;
+        }, 0);
+
+        if (latestSync) {
+          const syncDate = new Date(latestSync);
+          setIsToday(todayKey() === todayKey(syncDate));
+          setDateLabel(
+            syncDate.toLocaleDateString("en-US", {
+              weekday: "long",
+              month: "long",
+              day: "numeric",
+            })
+          );
         }
-        if (byDate.size === 0) return;
-
-        const today = todayKey();
-        const chosenKey = byDate.has(today) ? today : Array.from(byDate.keys()).sort((a, b) => b.localeCompare(a))[0];
-
-        setPhotos(byDate.get(chosenKey) || []);
-        setIsToday(chosenKey === today);
-        setDateLabel(
-          new Date(chosenKey + "T00:00:00").toLocaleDateString("en-US", {
-            weekday: "long",
-            month: "long",
-            day: "numeric",
-          })
-        );
       })
       .finally(() => setLoading(false));
   }, []);
 
-  // Nothing uploaded yet at all — don't show a broken/empty section.
+  // Nothing synced yet at all — don't show a broken/empty section.
   if (!loading && photos.length === 0) return null;
 
   return (
@@ -129,7 +126,7 @@ export default function TodaysDarshan() {
             href="/gallery"
             className="inline-flex items-center gap-2 rounded-full border-2 border-gold px-6 py-3 text-sm font-bold text-gold transition-colors hover:bg-gold/10"
           >
-            View Full Darshan Gallery <ArrowRight className="h-4 w-4" />
+            View Full Gallery <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       </div>

@@ -44,6 +44,14 @@ const nextConfig: NextConfig = {
         hostname: "guptvrindavandham.org",
         pathname: "/**",
       },
+      // DigitalOcean Spaces — Vaikuntham admin panel's daily darshan photo
+      // uploads (bucket "appdid", region "blr1"), synced in via /darshan.
+      // Update this if that bucket/region ever changes.
+      {
+        protocol: "https",
+        hostname: "appdid.blr1.digitaloceanspaces.com",
+        pathname: "/**",
+      },
     ],
   },
   // Ensures per-icon tree-shaking for large barrel-export libraries so a
