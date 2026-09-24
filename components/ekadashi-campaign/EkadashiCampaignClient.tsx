@@ -65,10 +65,10 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
   const razorpayReady = useRazorpayPreload();
   useScrollToDonate();
 
-  // This is the permanent, festival-agnostic Ekadashi page. Legacy records
-  // saved under the old "Shayani Ekadashi" name are normalized server-side
-  // (see ekadashiCampaign.controller), so copy arrives already renamed —
-  // including the browser tab below.
+  // This is the permanent, festival-agnostic Ekadashi page. It always
+  // renders the fixed server default (admin editing was removed), so the
+  // campaign name and browser tab are the generic "Ekadashi" — never a
+  // specific observance like Shayani Ekadashi.
   const name = campaign.campaignName || "Ekadashi";
 
   useEffect(() => {

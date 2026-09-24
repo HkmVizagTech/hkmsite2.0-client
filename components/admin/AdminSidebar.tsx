@@ -61,7 +61,6 @@ const contentItems: NavItem[] = [
   { title: "Gallery", url: "/admin/gallery", icon: Image },
   { title: "Media Library", url: "/admin/media", icon: FolderOpen },
   { title: "Festivals", url: "/admin/festivals", icon: PartyPopper },
-  { title: "Ekadashi Seva", url: "/admin/ekadashi", icon: CalendarDays },
   { title: "Blogs", url: "/admin/blogs", icon: PenSquare }, // <-- NEW
   { title: "Pending Deletions", url: "/admin/blogs/deletion-requests", icon: Trash2 },
   { title: "Content", url: "/admin/content", icon: FileText },
