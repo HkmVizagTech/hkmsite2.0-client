@@ -154,7 +154,7 @@ const sevas: Seva[] = [
     description:
       "Sponsor a sacred brick of the Hare Krishna Vaikuntham Temple under construction — each brick laid in devotion becomes an eternal part of the Lord's abode.",
     icon: "🧱",
-    image: "/assets/vizag-temple-1.jpeg",
+    image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1790226869681-1790226868033-cardbrick.webp",
     options: [
       { legacySevaId: 3530, label: "Donate Rs. 11,111", amount: 11111 },
       { legacySevaId: 3531, label: "Donate Rs. 5,100", amount: 5100 },
@@ -171,7 +171,7 @@ const sevas: Seva[] = [
       "Be a part of the temple in the making — sponsor square feet of its sacred construction and leave an eternal footprint in the Lord's divine abode.",
     icon: "🛕",
     image:
-      "https://res.cloudinary.com/ddmzeqpkc/image/upload/f_auto,q_auto/phase_1",
+      "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1790226868531-1790226867774-cardsft.webp",
     options: [
       { legacySevaId: 3540, label: "Donate Rs. 5,555", amount: 5555 },
       { legacySevaId: 3541, label: "Donate Rs. 3,100", amount: 3100 },
