@@ -169,10 +169,10 @@ const sevas: Seva[] = [
     icon: "🧱",
     image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1790226869681-1790226868033-cardbrick.webp",
     options: [
-      { legacySevaId: 3530, label: "Donate Rs. 1,100", amount: 1100, impact: "Towards a brick" },
       { legacySevaId: 3531, label: "Donate Rs. 1,500", amount: 1500, impact: "1 brick" },
       { legacySevaId: 3532, label: "Donate Rs. 3,000", amount: 3000, impact: "2 bricks" },
       { legacySevaId: 3533, label: "Donate Rs. 4,500", amount: 4500, impact: "3 bricks" },
+      { legacySevaId: 3537, label: "Donate Rs. 6,000", amount: 6000, impact: "4 bricks" },
       { legacySevaId: 3535, label: "Donate Rs. 7,500", amount: 7500, impact: "5 bricks" },
       { legacySevaId: 3536, label: "Donate Rs. 15,000", amount: 15000, impact: "10 bricks" },
       { legacySevaId: 3534, label: "Donate Any Other Amount", amount: null },
@@ -188,11 +188,11 @@ const sevas: Seva[] = [
     image:
       "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1790226868531-1790226867774-cardsft.webp",
     options: [
-      { legacySevaId: 3540, label: "Donate Rs. 1,100", amount: 1100, impact: "Towards a sq ft" },
       { legacySevaId: 3541, label: "Donate Rs. 2,100", amount: 2100, impact: "1 sq ft" },
       { legacySevaId: 3542, label: "Donate Rs. 4,200", amount: 4200, impact: "2 sq ft" },
       { legacySevaId: 3543, label: "Donate Rs. 6,300", amount: 6300, impact: "3 sq ft" },
       { legacySevaId: 3545, label: "Donate Rs. 10,500", amount: 10500, impact: "5 sq ft" },
+      { legacySevaId: 3547, label: "Donate Rs. 14,700", amount: 14700, impact: "7 sq ft" },
       { legacySevaId: 3546, label: "Donate Rs. 21,000", amount: 21000, impact: "10 sq ft" },
       { legacySevaId: 3544, label: "Donate Any Other Amount", amount: null },
     ],
@@ -800,13 +800,8 @@ export default function PitruPakshaClient() {
                   </p>
                   <div className="mt-4 space-y-2.5">
                     {(() => {
-                      // Six amount cards, no featured tier. Every seva now
-                      // opens at ₹1,100, so the first card is the entry point
-                      // rather than a headline figure — nothing is visually
-                      // promoted over anything else, and the donor picks by
-                      // what the offering buys.
                       const amountCards = seva.options.filter((o) => o.amount != null);
-                      const custom = seva.options.find((o) => !o.amount) || seva.options[seva.options.length - 1];
+                      const custom = seva.options.find((o) => o.amount == null);
                       return (
                         <>
                           <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
@@ -847,30 +842,32 @@ export default function PitruPakshaClient() {
                             ))}
                           </div>
 
-                          <button
-                            type="button"
-                            onClick={() => openCheckout(seva, custom)}
-                            className="flex w-full items-center justify-center gap-1.5 rounded-xl border px-3 py-3 text-[13px] font-bold transition-all duration-300"
-                            style={{
-                              borderColor: `${C.amber}90`,
-                              background: C.peach,
-                              color: C.text,
-                            }}
-                          >
-                            <svg
-                              className="h-3 w-3"
-                              style={{ color: C.accent }}
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2.5"
-                              strokeLinecap="round"
+                          {custom && (
+                            <button
+                              type="button"
+                              onClick={() => openCheckout(seva, custom)}
+                              className="flex w-full items-center justify-center gap-1.5 rounded-xl border px-3 py-3 text-[13px] font-bold transition-all duration-300"
+                              style={{
+                                borderColor: `${C.amber}90`,
+                                background: C.peach,
+                                color: C.text,
+                              }}
                             >
-                              <line x1="12" y1="5" x2="12" y2="19" />
-                              <line x1="5" y1="12" x2="19" y2="12" />
-                            </svg>
-                            <span>Donate Other Amount</span>
-                          </button>
+                              <svg
+                                className="h-3 w-3"
+                                style={{ color: C.accent }}
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2.5"
+                                strokeLinecap="round"
+                              >
+                                <line x1="12" y1="5" x2="12" y2="19" />
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                              </svg>
+                              <span>Donate Other Amount</span>
+                            </button>
+                          )}
                         </>
                       );
                     })()}
