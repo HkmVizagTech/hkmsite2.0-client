@@ -8,7 +8,6 @@ import { newEventId, getMetaBrowserData, trackPurchase } from "@/lib/metaPixel";
 import { captureTracking, getStoredTracking } from "@/lib/tracking";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
 import { useDonorPrefill } from "@/lib/donorPrefill";
-import FestivalDonationsSection from "@/components/FestivalDonationsSection";
 
 type DonationOption = {
   id: number;
@@ -543,10 +542,6 @@ export default function DonationsClient() {
             </p>
           </div>
         </section>
-
-        {/* Festival donation campaigns — admin-created festival seva pages,
-            hidden automatically when none are active. */}
-        <FestivalDonationsSection variant="donations" />
 
         <section className="gallery-section container-wide">
           <div className="gallery-grid">
