@@ -3,7 +3,7 @@ import {
   Clock, Image, Calendar, Snowflake,
   Heart, Utensils, Beef, BookOpen, Shirt, Gift,
   CalendarDays, PartyPopper, HandHeart, FileText, Flower2, Building2,
-  ShoppingBag, Package,
+  ShoppingBag, Package, Megaphone,
   type LucideIcon,
 } from "lucide-react";
 
@@ -23,6 +23,7 @@ export interface NavGroup {
 export type NavEntry =
   | { kind: "link"; label: string; href: string; icon?: LucideIcon }
   | { kind: "festival"; icon?: LucideIcon }
+  | { kind: "customLink"; icon?: LucideIcon }
   | { kind: "group"; group: NavGroup };
 
 export const navEntries: NavEntry[] = [
@@ -33,6 +34,11 @@ export const navEntries: NavEntry[] = [
   // The current major festival, auto-picked from the Vaishnava calendar (or
   // overridden by an admin). Rendered by Navbar only when one is active.
   { kind: "festival", icon: Flower2 },
+  // An optional custom nav link (name + URL) an admin can turn on, separate
+  // from the major-festival highlight. Rendered by Navbar only when enabled,
+  // the same way the festival highlight is (desktop link + mobile "More"
+  // sheet row).
+  { kind: "customLink", icon: Megaphone },
   {
     kind: "group",
     group: {
@@ -92,8 +98,8 @@ export const navEntries: NavEntry[] = [
   },
 ];
 
-// Flat list for "is this path active?" checks (the festival slot resolves at
-// runtime inside Navbar, so it has no static href to include here)
+// Flat list for "is this path active?" checks (the festival/customLink slots
+// resolve at runtime inside Navbar, so they have no static href to include here)
 export const allNavHrefs = navEntries.flatMap((e) =>
   e.kind === "group" ? e.group.items.map((i) => i.href) : e.kind === "link" ? [e.href] : []
 );

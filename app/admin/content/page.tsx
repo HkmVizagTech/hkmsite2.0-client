@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Pencil, Save, X, FileText, Globe, Phone, Mail, MapPin, Clock, Loader2, PartyPopper, Image as ImageIcon } from "lucide-react";
+import { Pencil, Save, X, FileText, Globe, Phone, Mail, MapPin, Clock, Loader2, PartyPopper, Megaphone, Image as ImageIcon } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { MAJOR_FESTIVALS } from "@/lib/majorFestival";
 import { FESTIVAL_PAGE_BANNER } from "@/lib/festivalShowcase";
@@ -24,7 +24,7 @@ interface SiteContent {
   hero: { title: string; subtitle: string; tagline: string };
   about: { heading: string; body: string };
   contact: { phone: string; email: string; address: string; morningHours: string; eveningHours: string };
-  navbar: { majorFestival: string };
+  navbar: { majorFestival: string; customLink: { enabled: boolean; label: string; href: string } };
   festival: { bannerDesktop: string; bannerMobile: string };
 }
 
@@ -32,7 +32,7 @@ const defaultContent: SiteContent = {
   hero: { title: "Hare Krishna Movement", subtitle: "Visakhapatnam", tagline: "Spreading the timeless message of Lord Krishna through devotion, service, and community" },
   about: { heading: "A Legacy of Devotion & Service", body: "" },
   contact: { phone: "+91 89777 61187", email: "social@hkmvizag.org", address: "Chaitanya Bhavan, Hare Krishna Vaikuntam Cultural Centre, IIM Rd, opp. Akshaya Patra Foundation, Gambhiram, Visakhapatnam, Andhra Pradesh 531163", morningHours: "4:30 AM - 1:00 PM", eveningHours: "4:00 PM - 8:30 PM" },
-  navbar: { majorFestival: "auto" },
+  navbar: { majorFestival: "auto", customLink: { enabled: false, label: "", href: "" } },
   festival: { bannerDesktop: FESTIVAL_PAGE_BANNER.desktop, bannerMobile: FESTIVAL_PAGE_BANNER.mobile },
 };
 
@@ -57,7 +57,11 @@ export default function AdminContent() {
           setContent({
             ...defaultContent,
             ...data.content,
-            navbar: { ...defaultContent.navbar, ...data.content?.navbar },
+            navbar: {
+              ...defaultContent.navbar,
+              ...data.content?.navbar,
+              customLink: { ...defaultContent.navbar.customLink, ...data.content?.navbar?.customLink },
+            },
             festival: {
               ...defaultContent.festival,
               ...data.content?.festival,
@@ -241,7 +245,7 @@ export default function AdminContent() {
                 <select
                   value={content.navbar.majorFestival}
                   disabled={editingSection !== "navbar"}
-                  onChange={(e) => setContent({ ...content, navbar: { majorFestival: e.target.value } })}
+                  onChange={(e) => setContent({ ...content, navbar: { ...content.navbar, majorFestival: e.target.value } })}
                   className="w-full h-10 rounded-md border border-input bg-background px-3 text-sm outline-none focus:border-gold disabled:opacity-60"
                 >
                   {FESTIVAL_OPTIONS.map((opt) => (
@@ -257,6 +261,66 @@ export default function AdminContent() {
                 or pick a specific festival to pin it. Only festivals that have a page on the site are available
                 here.
               </p>
+
+              <div className="border-t border-border pt-4">
+                <label className="mb-2 flex items-center gap-2 text-sm font-medium">
+                  <Megaphone className="h-4 w-4" /> Custom nav link
+                </label>
+                <div className="flex items-center gap-2 mb-3">
+                  <input
+                    id="customLinkEnabled"
+                    type="checkbox"
+                    checked={content.navbar.customLink.enabled}
+                    disabled={editingSection !== "navbar"}
+                    onChange={(e) =>
+                      setContent({
+                        ...content,
+                        navbar: { ...content.navbar, customLink: { ...content.navbar.customLink, enabled: e.target.checked } },
+                      })
+                    }
+                    className="h-4 w-4 rounded border-input disabled:opacity-60"
+                  />
+                  <label htmlFor="customLinkEnabled" className="text-sm">
+                    Show this custom link in the navbar
+                  </label>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div>
+                    <label className="text-sm font-medium mb-1 block">Link name</label>
+                    <Input
+                      value={content.navbar.customLink.label}
+                      disabled={editingSection !== "navbar"}
+                      placeholder="e.g. Krishna Pulse Festival"
+                      onChange={(e) =>
+                        setContent({
+                          ...content,
+                          navbar: { ...content.navbar, customLink: { ...content.navbar.customLink, label: e.target.value } },
+                        })
+                      }
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-1 block">Redirects to</label>
+                    <Input
+                      value={content.navbar.customLink.href}
+                      disabled={editingSection !== "navbar"}
+                      placeholder="/some-page or https://..."
+                      onChange={(e) =>
+                        setContent({
+                          ...content,
+                          navbar: { ...content.navbar, customLink: { ...content.navbar.customLink, href: e.target.value } },
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  A separate, independent slot from the festival highlight above — both can be shown in the
+                  navbar at the same time. It appears in the desktop nav and in the mobile &ldquo;More&rdquo;
+                  menu exactly the way the festival highlight does. Leave the name or URL blank (or the
+                  checkbox off) to hide it.
+                </p>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>

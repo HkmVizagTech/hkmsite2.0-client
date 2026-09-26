@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Phone, Mail, Clock, Heart, ChevronDown, Home, User, Utensils, Info, ShoppingBag, Calendar, PartyPopper } from "lucide-react";
+import { Menu, X, Phone, Mail, Clock, Heart, ChevronDown, Home, User, Utensils, Info, ShoppingBag, Calendar, PartyPopper, Megaphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ISKLogo from "@/assets/ISKCONGambheeramLogo.jpeg";
 import HKVTLogo from "@/assets/HKVTLogo.png";
@@ -13,6 +13,7 @@ import Image from "next/image";
 import { navEntries, isGroupActive } from "@/lib/navConfig";
 import { NavListItem } from "@/components/NavListItem";
 import { resolveMajorFestival, type MajorFestival } from "@/lib/majorFestival";
+import { resolveCustomNavLink, type CustomNavLink } from "@/lib/customNavLink";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 
@@ -59,6 +60,7 @@ const Navbar = () => {
   // one fully into view inside the sheet.
   const groupRefs = useRef<Map<string, HTMLDivElement | null>>(new Map());
   const [festival, setFestival] = useState<MajorFestival | null>(null);
+  const [customLink, setCustomLink] = useState<CustomNavLink | null>(null);
   // Which "More" menu category is expanded (single-open accordion — opening
   // one closes any that was open before).
   const [openGroup, setOpenGroup] = useState<string | null>(null);
@@ -72,24 +74,31 @@ const Navbar = () => {
     return () => clearInterval(id);
   }, []);
 
-  // ── Major festival in the navbar ──────────────────────────────────
-  // Reads the admin override from site-content (public endpoint), then
-  // resolves which festival to highlight. `"auto"` keeps the automatic
-  // calendar pick; `"none"` hides the item entirely.
+  // ── Major festival + custom link in the navbar ─────────────────────
+  // Reads the admin overrides from site-content (public endpoint), then
+  // resolves which festival to highlight (`"auto"` keeps the automatic
+  // calendar pick; `"none"` hides the item entirely) and whether the
+  // separate custom nav link is enabled. Both are independent slots and can
+  // show at the same time.
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      let override: string | null = null;
+      let festivalOverride: string | null = null;
+      let customLinkOverride: { enabled?: boolean; label?: string; href?: string } | null = null;
       try {
         const res = await fetch(`${API_URL}/site-content`, { cache: "no-store" });
         if (res.ok) {
           const data = await res.json();
-          override = data?.content?.navbar?.majorFestival ?? "none";
+          festivalOverride = data?.content?.navbar?.majorFestival ?? "none";
+          customLinkOverride = data?.content?.navbar?.customLink ?? null;
         }
       } catch {
-        override = "none";
+        festivalOverride = "none";
       }
-      if (!cancelled) setFestival(resolveMajorFestival(override));
+      if (!cancelled) {
+        setFestival(resolveMajorFestival(festivalOverride));
+        setCustomLink(resolveCustomNavLink(customLinkOverride));
+      }
     })();
     return () => {
       cancelled = true;
@@ -306,6 +315,25 @@ const Navbar = () => {
                 );
               }
 
+              if (entry.kind === "customLink") {
+                // Only rendered while an admin has enabled this separate
+                // custom nav link. Styled like the festival slot.
+                if (!customLink) return null;
+                const activeC =
+                  pathname === customLink.href || pathname.startsWith(customLink.href);
+                return (
+                  <Link
+                    key={customLink.href}
+                    href={customLink.href}
+                    className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-2 text-[13px] font-medium transition-all ${
+                      activeC ? "text-primary" : "text-muted-foreground hover:text-primary"
+                    }`}
+                  >
+                    {customLink.label}
+                  </Link>
+                );
+              }
+
               const group = entry.group;
               const groupActive = isGroupActive(group, pathname);
               const colCount =
@@ -396,6 +424,15 @@ const Navbar = () => {
                   >
                     <PartyPopper className="h-4 w-4" />
                     {festival.label}
+                  </Link>
+                )}
+                {customLink && (
+                  <Link
+                    href={customLink.href}
+                    className={mobileLinkCls(pathname === customLink.href || pathname.startsWith(customLink.href))}
+                  >
+                    <Megaphone className="h-4 w-4" />
+                    {customLink.label}
                   </Link>
                 )}
                 <Link href="/shop" className={mobileLinkCls(pathname === "/shop")}>
