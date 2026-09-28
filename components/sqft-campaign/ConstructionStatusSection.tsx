@@ -7,12 +7,19 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import Ornament from "@/components/Ornament";
 import useInViewVideo from "@/hooks/useInViewVideo";
 
-const CONSTRUCTION_PHOTOS = [
-  { src: "/assets/construction-update-1.jpg", caption: "Foundation & Ground Floor" },
-  { src: "/assets/construction-update-2.jpg", caption: "Structural Framework" },
-  { src: "/assets/construction-update-3.jpg", caption: "Column & Beam Work" },
-  { src: "/assets/construction-update-4.jpg", caption: "Multi-Level Construction" },
-  { src: "/assets/construction-update-5.jpg", caption: "Building Elevation" },
+interface SitePhoto {
+  url: string;
+  caption?: string;
+}
+
+// Shown until the admin-managed gallery arrives, and kept if that request
+// fails. Photos and captions are edited in Admin → Content → Construction.
+const FALLBACK_PHOTOS: SitePhoto[] = [
+  { url: "/assets/construction-update-1.jpg", caption: "Foundation & Ground Floor" },
+  { url: "/assets/construction-update-2.jpg", caption: "Structural Framework" },
+  { url: "/assets/construction-update-3.jpg", caption: "Column & Beam Work" },
+  { url: "/assets/construction-update-4.jpg", caption: "Multi-Level Construction" },
+  { url: "/assets/construction-update-5.jpg", caption: "Building Elevation" },
 ];
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
@@ -30,6 +37,7 @@ export default function ConstructionStatusSection({ scrollToDonate }: { scrollTo
   // The monthly update video, set by an admin. Fetched rather than baked in
   // so swapping it each month doesn't need a code change and a deploy.
   const [videoId, setVideoId] = useState(FALLBACK_VIDEO_ID);
+  const [photos, setPhotos] = useState<SitePhoto[]>(FALLBACK_PHOTOS);
 
   useEffect(() => {
     let cancelled = false;
@@ -38,8 +46,14 @@ export default function ConstructionStatusSection({ scrollToDonate }: { scrollTo
         const res = await fetch(`${API_URL}/site-content`);
         if (!res.ok) return;
         const data = await res.json();
+        if (cancelled) return;
         const id = data?.content?.construction?.videoId;
-        if (!cancelled && id) setVideoId(id);
+        if (id) setVideoId(id);
+        const list = data?.content?.construction?.photos;
+        // An empty array is a real choice (admin removed them all), but a
+        // missing key means this site-content row predates the field — keep
+        // the fallback rather than emptying the strip.
+        if (Array.isArray(list)) setPhotos(list.filter((p: SitePhoto) => p?.url));
       } catch {
         // Keep the fallback — a campaign page must not lose its video
         // because one content request failed.
@@ -108,7 +122,10 @@ export default function ConstructionStatusSection({ scrollToDonate }: { scrollTo
           </motion.div>
         </div>
 
-        {/* Photo gallery */}
+        {/* Photo gallery — hidden entirely when there are no photos, rather
+            than leaving a heading over an empty rail. */}
+        {photos.length > 0 && (
+        <>
         <div className="mb-6 flex items-end justify-between gap-4">
           <h3 className="font-heading text-xl font-bold text-primary md:text-2xl">
             Recent Site Photos
@@ -141,25 +158,29 @@ export default function ConstructionStatusSection({ scrollToDonate }: { scrollTo
           ref={scrollerRef}
           className="flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
-          {CONSTRUCTION_PHOTOS.map((p) => (
+          {photos.map((p) => (
             <div
-              key={p.src}
+              key={p.url}
               className="group relative aspect-[4/3] w-80 shrink-0 snap-start overflow-hidden rounded-2xl border border-border shadow-sm sm:w-96"
             >
               <Image
-                src={p.src}
-                alt={p.caption}
+                src={p.url}
+                alt={p.caption || "Temple construction progress"}
                 fill
                 sizes="(max-width: 640px) 320px, 384px"
                 className="object-cover transition-transform duration-500 group-hover:scale-110"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-              <div className="absolute bottom-4 left-4 rounded-full bg-black/60 px-4 py-1.5 text-sm font-semibold text-white backdrop-blur">
-                {p.caption}
-              </div>
+              {p.caption && (
+                <div className="absolute bottom-4 left-4 right-4 w-fit max-w-[calc(100%-2rem)] truncate rounded-full bg-black/60 px-4 py-1.5 text-sm font-semibold text-white backdrop-blur">
+                  {p.caption}
+                </div>
+              )}
             </div>
           ))}
         </motion.div>
+        </>
+        )}
       </div>
     </section>
   );

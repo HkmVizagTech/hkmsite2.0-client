@@ -13,12 +13,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Pencil, Save, X, FileText, Globe, Phone, Mail, MapPin, Clock, Loader2, PartyPopper, Megaphone, Image as ImageIcon, Video } from "lucide-react";
+import { Pencil, Save, X, FileText, Globe, Phone, Mail, MapPin, Clock, Loader2, PartyPopper, Megaphone, Image as ImageIcon, Video, Upload, Trash2, ArrowUp, ArrowDown, Plus } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { MAJOR_FESTIVALS } from "@/lib/majorFestival";
 import { FESTIVAL_PAGE_BANNER } from "@/lib/festivalShowcase";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
+
+interface SitePhoto {
+  url: string;
+  caption?: string;
+}
 
 interface SiteContent {
   hero: { title: string; subtitle: string; tagline: string };
@@ -26,7 +31,7 @@ interface SiteContent {
   contact: { phone: string; email: string; address: string; morningHours: string; eveningHours: string };
   navbar: { majorFestival: string; customLink: { enabled: boolean; label: string; href: string } };
   festival: { bannerDesktop: string; bannerMobile: string };
-  construction: { videoUrl: string; videoId: string };
+  construction: { videoUrl: string; videoId: string; photos: SitePhoto[] };
 }
 
 const defaultContent: SiteContent = {
@@ -35,7 +40,7 @@ const defaultContent: SiteContent = {
   contact: { phone: "+91 89777 61187", email: "social@hkmvizag.org", address: "Chaitanya Bhavan, Hare Krishna Vaikuntam Cultural Centre, IIM Rd, opp. Akshaya Patra Foundation, Gambhiram, Visakhapatnam, Andhra Pradesh 531163", morningHours: "4:30 AM - 1:00 PM", eveningHours: "4:00 PM - 8:30 PM" },
   navbar: { majorFestival: "auto", customLink: { enabled: false, label: "", href: "" } },
   festival: { bannerDesktop: FESTIVAL_PAGE_BANNER.desktop, bannerMobile: FESTIVAL_PAGE_BANNER.mobile },
-  construction: { videoUrl: "", videoId: "" },
+  construction: { videoUrl: "", videoId: "", photos: [] },
 };
 
 
@@ -95,6 +100,9 @@ export default function AdminContent() {
             construction: {
               ...defaultContent.construction,
               ...data.content?.construction,
+              photos: Array.isArray(data.content?.construction?.photos)
+                ? data.content.construction.photos
+                : [],
             },
           });
         }
@@ -102,6 +110,71 @@ export default function AdminContent() {
       setLoading(false);
     })();
   }, []);
+
+  const [uploading, setUploading] = useState(false);
+
+  // Uploads go through the existing Media Library endpoint, so a construction
+  // photo is also filed there and can be reused elsewhere later — rather than
+  // a second, parallel upload path that only this tab knows about.
+  const uploadPhotos = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    setUploading(true);
+    try {
+      const fd = new FormData();
+      Array.from(files).forEach((f) => fd.append("files", f));
+      const res = await authFetch(`${API_URL}/media`, { method: "POST", body: fd });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        toast({ title: "Upload failed", description: json.message, variant: "destructive" });
+        return;
+      }
+      const added: SitePhoto[] = (json.items || [])
+        .filter((it: { url?: string }) => it?.url)
+        .map((it: { url: string; name?: string }) => ({ url: it.url, caption: "" }));
+      setContent((c) => ({
+        ...c,
+        construction: { ...c.construction, photos: [...c.construction.photos, ...added] },
+      }));
+      toast({
+        title: `${added.length} photo${added.length === 1 ? "" : "s"} added`,
+        description: "Add captions, then press Save to publish.",
+      });
+    } catch (e: unknown) {
+      toast({
+        title: "Upload failed",
+        description: e instanceof Error ? e.message : undefined,
+        variant: "destructive",
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const updatePhoto = (index: number, patch: Partial<SitePhoto>) =>
+    setContent((c) => ({
+      ...c,
+      construction: {
+        ...c.construction,
+        photos: c.construction.photos.map((p, i) => (i === index ? { ...p, ...patch } : p)),
+      },
+    }));
+
+  const removePhoto = (index: number) =>
+    setContent((c) => ({
+      ...c,
+      construction: { ...c.construction, photos: c.construction.photos.filter((_, i) => i !== index) },
+    }));
+
+  // Order in this list is the order on the page, so moving a photo is how a
+  // new month's work is put first.
+  const movePhoto = (index: number, dir: -1 | 1) =>
+    setContent((c) => {
+      const photos = [...c.construction.photos];
+      const target = index + dir;
+      if (target < 0 || target >= photos.length) return c;
+      [photos[index], photos[target]] = [photos[target], photos[index]];
+      return { ...c, construction: { ...c.construction, photos } };
+    });
 
   const handleSave = async (section: "hero" | "about" | "contact" | "navbar" | "festival" | "construction") => {
     setSaving(true);
@@ -464,11 +537,133 @@ export default function AdminContent() {
                 </div>
               )}
 
+              {/* ── Recent Site Photos ───────────────────────────────── */}
+              <div className="border-t pt-5">
+                <div className="mb-1 flex flex-wrap items-center justify-between gap-2">
+                  <label className="text-sm font-medium">Recent Site Photos</label>
+                  <span className="text-xs text-muted-foreground">
+                    {content.construction.photos.length} photo
+                    {content.construction.photos.length === 1 ? "" : "s"}
+                  </span>
+                </div>
+                <p className="mb-3 text-xs text-muted-foreground">
+                  The scrolling strip under the video. The caption appears on top of each photo — keep it
+                  short, like &ldquo;Column &amp; Beam Work&rdquo;. First in this list is first on the page.
+                </p>
+
+                {editingSection === "construction" && (
+                  <div className="mb-4 flex flex-wrap items-center gap-2">
+                    <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-border px-3 py-2 text-sm hover:bg-muted">
+                      {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                      {uploading ? "Uploading…" : "Upload photos"}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        className="hidden"
+                        disabled={uploading}
+                        onChange={(e) => {
+                          uploadPhotos(e.target.files);
+                          e.target.value = "";
+                        }}
+                      />
+                    </label>
+                    <Button
+                      className="bg-transparent border border-border text-foreground hover:bg-muted"
+                      onClick={() =>
+                        setContent({
+                          ...content,
+                          construction: {
+                            ...content.construction,
+                            photos: [...content.construction.photos, { url: "", caption: "" }],
+                          },
+                        })
+                      }
+                    >
+                      <Plus className="mr-1 h-4 w-4" /> Add by URL
+                    </Button>
+                  </div>
+                )}
+
+                {content.construction.photos.length === 0 ? (
+                  <p className="rounded-md border border-dashed px-4 py-6 text-center text-sm text-muted-foreground">
+                    No photos yet. The gallery is hidden on the public page until you add one.
+                  </p>
+                ) : (
+                  <div className="space-y-3">
+                    {content.construction.photos.map((photo, i) => (
+                      <div key={i} className="flex gap-3 rounded-lg border p-3">
+                        {/* Plain img on purpose — this previews whatever URL is
+                            in the field, including one just typed in. */}
+                        {photo.url ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={photo.url}
+                            alt={photo.caption || "Site photo"}
+                            className="h-20 w-28 shrink-0 rounded-md border object-cover"
+                          />
+                        ) : (
+                          <div className="flex h-20 w-28 shrink-0 items-center justify-center rounded-md border border-dashed text-xs text-muted-foreground">
+                            No image
+                          </div>
+                        )}
+
+                        <div className="min-w-0 flex-1 space-y-2">
+                          <Input
+                            value={photo.caption || ""}
+                            disabled={editingSection !== "construction"}
+                            onChange={(e) => updatePhoto(i, { caption: e.target.value })}
+                            placeholder="Caption shown on the photo — e.g. Column & Beam Work"
+                            maxLength={80}
+                          />
+                          <Input
+                            value={photo.url}
+                            disabled={editingSection !== "construction"}
+                            onChange={(e) => updatePhoto(i, { url: e.target.value })}
+                            placeholder="https://… image URL"
+                            className="text-xs"
+                          />
+                        </div>
+
+                        {editingSection === "construction" && (
+                          <div className="flex shrink-0 flex-col gap-1">
+                            <Button
+                              className="h-7 w-7 bg-transparent p-0 text-foreground hover:bg-muted disabled:opacity-40"
+                              disabled={i === 0}
+                              onClick={() => movePhoto(i, -1)}
+                              title="Move up"
+                            >
+                              <ArrowUp className="h-3.5 w-3.5" />
+                            </Button>
+                            <Button
+                              className="h-7 w-7 bg-transparent p-0 text-foreground hover:bg-muted disabled:opacity-40"
+                              disabled={i === content.construction.photos.length - 1}
+                              onClick={() => movePhoto(i, 1)}
+                              title="Move down"
+                            >
+                              <ArrowDown className="h-3.5 w-3.5" />
+                            </Button>
+                            <Button
+                              className="h-7 w-7 bg-transparent p-0 text-destructive hover:bg-muted"
+                              onClick={() => removePhoto(i)}
+                              title="Remove"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               <p className="text-xs text-muted-foreground">
                 This is the vertical video in the <strong>Monthly Construction Update</strong> section of the
                 Square Foot Seva and Brick Seva pages. Shorts, normal watch links, youtu.be share links and a
                 bare video id all work. Leaving it blank keeps the last known video rather than showing an
-                empty frame.
+                empty frame. Uploaded photos are stored in your Media Library. Press <strong>Save</strong>
+                to publish both the video and the photos.
               </p>
             </CardContent>
           </Card>
