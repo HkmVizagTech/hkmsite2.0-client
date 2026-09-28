@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Calendar,
@@ -18,6 +18,7 @@ import {
 import Link from "next/link";
 import PageLayout from "@/components/PageLayout";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import {
   vaishnavaCalendar2026,
   getDatesForMonth,
@@ -71,6 +72,28 @@ const typeConfig: Record<
   },
 };
 
+/** Solid hex per type — used for tinted calendar cells & legend swatches. */
+const TYPE_HEX: Record<VaishnavaDateType, string> = {
+  Ekadashi: "#3b82f6", // blue-500
+  Festival: "#f59e0b", // amber-500
+  Appearance: "#22c55e", // green-500
+  Disappearance: "#a855f7", // purple-500
+  Observance: "#9ca3af", // gray-400
+};
+
+/** Tinted background (gradient when 2+ types) + matching border for a day cell. */
+function eventCellStyle(types: VaishnavaDateType[]): CSSProperties {
+  const first = TYPE_HEX[types[0]] ?? TYPE_HEX.Observance;
+  if (types.length === 1) {
+    return { background: `${first}1f`, borderColor: `${first}55` };
+  }
+  const second = TYPE_HEX[types[1]] ?? first;
+  return {
+    background: `linear-gradient(135deg, ${first}26 0%, ${second}26 100%)`,
+    borderColor: `${first}55`,
+  };
+}
+
 const MONTHS = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December",
@@ -94,6 +117,19 @@ const discoverCards = [
 ──────────────────────────────────────────────────────────── */
 const pad = (n: number) => String(n).padStart(2, "0");
 const dateStrOf = (month: number, day: number) => `${YEAR}-${pad(month + 1)}-${pad(day)}`;
+
+/** Below lg the detail panel is hidden, so taps open a bottom sheet instead. */
+function useIsCompactView() {
+  const [isCompact, setIsCompact] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 1023px)");
+    const update = () => setIsCompact(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+  return isCompact;
+}
 
 function useNow(intervalMs = 1000) {
   const [now, setNow] = useState(Date.now());
@@ -131,7 +167,7 @@ function Countdown({ targetDate }: { targetDate: string }) {
             </span>
             <span className="mt-0.5 text-[8px] font-semibold uppercase tracking-widest text-white/60 md:text-[9px]">
               {u.label}
-</span>
+            </span>
           </div>
           {i < units.length - 1 && <span className="font-heading text-base text-white/40 md:text-lg">:</span>}
         </div>
@@ -165,15 +201,129 @@ function EventTooltip({ event }: { event: VaishnavaDate }) {
   );
 }
 
+function EventCard({ event, index = 0 }: { event: VaishnavaDate; index?: number }) {
+  const config = typeConfig[event.type];
+  const Icon = config.icon;
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.05 }}
+      className="rounded-xl border border-border/50 bg-card p-3.5 transition-all hover:border-primary/30 hover:shadow-sm"
+    >
+      <div className="flex items-start gap-2.5">
+        <div className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${config.badge}`}>
+          <Icon className="h-3.5 w-3.5" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-semibold leading-snug text-foreground">{event.title}</p>
+          {event.description && (
+            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{event.description}</p>
+          )}
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium ${config.badge}`}>
+              {event.type}
+            </span>
+            {event.fastUntilNoon && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-orange-100 px-2 py-0.5 text-[10px] font-medium text-orange-700 dark:bg-orange-900/30 dark:text-orange-300">
+                <Clock className="h-2.5 w-2.5" />Fast until noon
+              </span>
+            )}
+            {event.completeFast && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-medium text-red-700 dark:bg-red-900/30 dark:text-red-300">
+                <Clock className="h-2.5 w-2.5" />Complete fast
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────
+   Day cell — tinted square, hover tooltip on desktop
+──────────────────────────────────────────────────────────── */
+interface DayCellProps {
+  day: number;
+  dateStr: string;
+  allEvents: VaishnavaDate[];
+  visibleEvents: VaishnavaDate[];
+  dimmed: boolean;
+  today: boolean;
+  isSelected: boolean;
+  showTooltip: boolean;
+  onSelect: (dateStr: string) => void;
+}
+
+function DayCell({
+  day,
+  dateStr,
+  allEvents,
+  visibleEvents,
+  dimmed,
+  today,
+  isSelected,
+  showTooltip,
+  onSelect,
+}: DayCellProps) {
+  const types = [...new Set(visibleEvents.map((e) => e.type))];
+  const hasVisible = visibleEvents.length > 0;
+  const hasAny = allEvents.length > 0;
+  const hasCompleteFast = allEvents.some((e) => e.completeFast);
+
+  const button = (
+    <button
+      onClick={() => onSelect(dateStr)}
+      style={hasVisible ? eventCellStyle(types) : undefined}
+      className={`relative flex aspect-square w-full flex-col items-center justify-center rounded-xl border text-sm transition-all duration-200 ${
+        isSelected
+          ? "scale-105 border-primary bg-primary font-bold text-primary-foreground shadow-md"
+          : today
+            ? "border-transparent bg-muted/60 font-bold text-foreground ring-2 ring-[hsl(var(--gold))] ring-offset-1 ring-offset-background"
+            : hasVisible
+              ? "border font-semibold text-foreground hover:scale-105 hover:shadow-md"
+              : dimmed
+                ? "border-transparent text-muted-foreground/35"
+                : "border-transparent text-muted-foreground hover:bg-muted/50"
+      } ${hasVisible && !isSelected && !today ? (dimmed ? "opacity-50" : "") : ""}`}
+      aria-label={`${day} ${MONTHS[parseInt(dateStr.slice(5, 7), 10) - 1]} ${dateStr.slice(0, 4)}${hasAny ? ", has events" : ""}`}
+    >
+      <span className="leading-none">{day}</span>
+      {hasCompleteFast && !isSelected && (
+        <span className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-red-500/90" aria-hidden />
+      )}
+      {isSelected && <span className="sr-only">selected</span>}
+    </button>
+  );
+
+  if (!showTooltip || allEvents.length === 0) return button;
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>{button}</TooltipTrigger>
+      <TooltipContent side="top" className="p-2.5">
+        <div className="space-y-2">
+          {allEvents.map((e) => (
+            <EventTooltip key={e.date + e.title} event={e} />
+          ))}
+        </div>
+      </TooltipContent>
+    </Tooltip>
+  );
+}
+
 /* ────────────────────────────────────────────────────────────
    Page
 ──────────────────────────────────────────────────────────── */
 export default function VaishnavCalendarPage() {
   const [selectedMonth, setSelectedMonth] = useState(CURRENT_MONTH);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [sheetDate, setSheetDate] = useState<string | null>(null);
   const [view, setView] = useState<"calendar" | "list">("calendar");
   const [typeFilter, setTypeFilter] = useState<VaishnavaDateType | "All">("All");
 
+  const isCompact = useIsCompactView();
   const now = useNow(60000);
   const nextEvent = useMemo(() => getNextUpcomingEvent(), [now]);
 
@@ -187,6 +337,11 @@ export default function VaishnavCalendarPage() {
   const selectedDateEvents = useMemo(
     () => (selectedDate ? getEventsForDate(selectedDate) : []),
     [selectedDate]
+  );
+
+  const sheetEvents = useMemo(
+    () => (sheetDate ? getEventsForDate(sheetDate) : []),
+    [sheetDate]
   );
 
   const calendarDays = useMemo(() => {
@@ -219,6 +374,15 @@ export default function VaishnavCalendarPage() {
         if (selectedMonth !== CURRENT_MONTH || YEAR !== TODAY.getFullYear()) return [];
         return getEventsForDate(`${YEAR}-${pad(CURRENT_MONTH + 1)}-${pad(TODAY.getDate())}`);
       })();
+
+  /** Desktop: toggle right-panel selection. Compact: open bottom sheet. */
+  const handleDaySelect = (dateStr: string) => {
+    if (isCompact) {
+      setSheetDate(dateStr);
+    } else {
+      setSelectedDate((prev) => (prev === dateStr ? null : dateStr));
+    }
+  };
 
   /* Upcoming list view */
   const upcomingEvents = useMemo(() => {
@@ -442,104 +606,77 @@ export default function VaishnavCalendarPage() {
                       </div>
 
                       {/* Weekday headers */}
-                      <div className="mb-1 grid grid-cols-7">
+                      <div className="mb-1.5 grid grid-cols-7 gap-1">
                         {WEEKDAYS_SHORT.map((day, i) => (
-                          <div key={`wd-${i}`} className="py-1.5 text-center text-[11px] font-semibold text-muted-foreground">
+                          <div key={`wd-${i}`} className="py-1 text-center text-[11px] font-semibold text-muted-foreground">
                             {day}
                           </div>
                         ))}
                       </div>
 
                       {/* Day cells */}
-                      <div className="grid grid-cols-7">
-                        {calendarDays.map((day, idx) => {
-                          if (day === null) return <div key={`empty-${idx}`} className="aspect-square" />;
+                      <TooltipProvider delayDuration={150} skipDelayDuration={50}>
+                        <div className="grid grid-cols-7 gap-1">
+                          {calendarDays.map((day, idx) => {
+                            if (day === null) return <div key={`empty-${idx}`} className="aspect-square" />;
 
-                          const dateStr = dateStrOf(selectedMonth, day);
-                          const events = filteredMonthEvents.filter((e) => e.date === dateStr);
-                          const allEvents = getEventsForDate(dateStr);
-                          const dimmed = typeFilter !== "All" && events.length === 0 && allEvents.length > 0;
-                          const today = isToday(day);
-                          const isSelected = selectedDate === dateStr;
-                          const hasEvents = events.length > 0;
-                          const hasAnyEvents = allEvents.length > 0;
-                          const eventTypes = [...new Set(events.map((e) => e.type))];
+                            const dateStr = dateStrOf(selectedMonth, day);
+                            const visibleEvents = filteredMonthEvents.filter((e) => e.date === dateStr);
+                            const allEvents = getEventsForDate(dateStr);
+                            const dimmed = typeFilter !== "All" && visibleEvents.length === 0 && allEvents.length > 0;
 
-                          return (
-                            <div key={day} className="flex items-center justify-center p-0.5">
-                              <TooltipProvider delayDuration={150}>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <button
-                                      onClick={() => setSelectedDate(isSelected ? null : dateStr)}
-                                      className={`group relative flex h-10 w-10 flex-col items-center justify-center rounded-full text-sm transition-all duration-200 ${
-                                        isSelected
-                                          ? "scale-110 bg-primary font-bold text-primary-foreground shadow-md"
-                                          : today
-                                            ? "ring-2 ring-primary font-bold text-primary"
-                                            : hasEvents
-                                              ? "font-medium text-foreground hover:scale-110 hover:bg-primary/10"
-                                              : dimmed
-                                                ? "text-muted-foreground/40"
-                                                : "text-muted-foreground hover:bg-muted/50"
-                                      }`}
-                                    >
-                                      <span className="leading-none">{day}</span>
-                                      {hasAnyEvents && !isSelected && (
-                                        <div className="absolute bottom-1 flex gap-px">
-                                          {(hasEvents ? eventTypes : [...new Set(allEvents.map((e) => e.type))]).slice(0, 3).map((type) => (
-                                            <span
-                                              key={type}
-                                              className={`h-1 w-1 rounded-full ${typeConfig[type]?.dot || "bg-gray-400"} ${
-                                                dimmed ? "opacity-30" : ""
-                                              }`}
-                                            />
-                                          ))}
-                                        </div>
-                                      )}
-                                      {hasEvents && isSelected && (
-                                        <div className="absolute bottom-1 flex gap-px">
-                                          {eventTypes.slice(0, 3).map((type) => (
-                                            <span key={type} className="h-1 w-1 rounded-full bg-white/60" />
-                                          ))}
-                                        </div>
-                                      )}
-                                    </button>
-                                  </TooltipTrigger>
-                                  {allEvents.length > 0 && (
-                                    <TooltipContent side="top" className="p-2.5">
-                                      <div className="space-y-2">
-                                        {allEvents.map((e) => (
-                                          <EventTooltip key={e.date + e.title} event={e} />
-                                        ))}
-                                      </div>
-                                    </TooltipContent>
-                                  )}
-                                </Tooltip>
-                              </TooltipProvider>
-                              </div>
+                            return (
+                              <DayCell
+                                key={day}
+                                day={day}
+                                dateStr={dateStr}
+                                allEvents={allEvents}
+                                visibleEvents={visibleEvents}
+                                dimmed={dimmed}
+                                today={isToday(day)}
+                                isSelected={selectedDate === dateStr}
+                                showTooltip={!isCompact}
+                                onSelect={handleDaySelect}
+                              />
                             );
                           })}
                         </div>
+                      </TooltipProvider>
 
-                        {/* Legend */}
-                      <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1.5 border-t border-border/50 pt-3">
+                      {/* Legend */}
+                      <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-border/50 pt-3">
                         {([
-                          ["Ekadashi", "bg-blue-500"],
-                          ["Festival", "bg-amber-500"],
-                          ["Appearance", "bg-green-500"],
-                          ["Disappearance", "bg-purple-500"],
-                        ] as const).map(([type, dotClass]) => (
+                          ["Ekadashi", "#3b82f6"],
+                          ["Festival", "#f59e0b"],
+                          ["Appearance", "#22c55e"],
+                          ["Disappearance", "#a855f7"],
+                        ] as const).map(([type, hex]) => (
                           <div key={type} className="flex items-center gap-1.5">
-                            <span className={`h-2 w-2 rounded-full ${dotClass}`} />
+                            <span
+                              className="h-3 w-3 rounded-[4px] border"
+                              style={{ background: `${hex}1f`, borderColor: `${hex}55` }}
+                            />
                             <span className="text-[11px] text-muted-foreground">{type}</span>
                           </div>
                         ))}
+                        <div className="flex items-center gap-1.5">
+                          <span className="h-3 w-3 rounded-[4px] border-2 border-[hsl(var(--gold))] bg-muted/60" />
+                          <span className="text-[11px] text-muted-foreground">Today</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
+                          <span className="text-[11px] text-muted-foreground">Complete fast</span>
+                        </div>
                       </div>
+
+                      {/* Compact hint */}
+                      <p className="mt-3 text-center text-[11px] text-muted-foreground/70 lg:hidden">
+                        Tap a highlighted date to see its events
+                      </p>
                     </div>
 
-                    {/* Right: day detail panel */}
-                    <div className="border-t border-border/30 p-4 md:p-6 lg:min-w-[300px] lg:max-w-[340px] lg:border-t-0">
+                    {/* Right: day detail panel (desktop only — mobile uses the bottom sheet) */}
+                    <div className="hidden border-border/30 p-4 md:p-6 lg:block lg:min-w-[300px] lg:max-w-[340px] lg:border-l lg:border-t-0">
                       <div className="mb-4 flex items-center justify-between">
                         <h3 className="font-heading text-sm font-bold text-foreground">{formatSelectedDate()}</h3>
                         {selectedDate && (
@@ -570,48 +707,9 @@ export default function VaishnavCalendarPage() {
                             </div>
                           ) : (
                             <div className="scrollbar-thin scrollbar-track-transparent scrollbar-thumb-primary/20 space-y-3 lg:max-h-[360px] lg:overflow-y-auto lg:pr-1">
-                              {currentDateEvents.map((event, i) => {
-                                const config = typeConfig[event.type];
-                                const Icon = config.icon;
-                                return (
-                                  <motion.div
-                                    key={event.date + event.title}
-                                    initial={{ opacity: 0, y: 8 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: i * 0.05 }}
-                                    className="rounded-xl border border-border/50 bg-card p-3.5 transition-all hover:border-primary/30 hover:shadow-sm"
-                                  >
-                                    <div className="flex items-start gap-2.5">
-                                      <div className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${config.badge}`}>
-                                        <Icon className="h-3.5 w-3.5" />
-                                      </div>
-                                      <div className="min-w-0 flex-1">
-                                        <p className="text-sm font-semibold leading-snug text-foreground">{event.title}</p>
-                                        {event.description && (
-                                          <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                                            {event.description}
-                                          </p>
-                                        )}
-                                        <div className="mt-2 flex flex-wrap gap-1.5">
-                                          <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium ${config.badge}`}>
-                                            {event.type}
-                                          </span>
-                                          {event.fastUntilNoon && (
-                                            <span className="inline-flex items-center gap-1 rounded-full bg-orange-100 px-2 py-0.5 text-[10px] font-medium text-orange-700 dark:bg-orange-900/30 dark:text-orange-300">
-                                              <Clock className="h-2.5 w-2.5" />Fast until noon
-                                            </span>
-                                          )}
-                                          {event.completeFast && (
-                                            <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-medium text-red-700 dark:bg-red-900/30 dark:text-red-300">
-                                              <Clock className="h-2.5 w-2.5" />Complete fast
-                                            </span>
-                                          )}
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </motion.div>
-                                );
-                              })}
+                              {currentDateEvents.map((event, i) => (
+                                <EventCard key={event.date + event.title} event={event} index={i} />
+                              ))}
                             </div>
                           )}
                         </motion.div>
@@ -748,6 +846,43 @@ export default function VaishnavCalendarPage() {
           </div>
         </div>
       </section>
+
+      {/* ── Mobile bottom sheet: day events ─────────────── */}
+      <Sheet open={sheetDate !== null} onOpenChange={(open) => !open && setSheetDate(null)}>
+        <SheetContent side="bottom" className="max-h-[75vh] overflow-y-auto rounded-t-2xl px-4 pb-8 pt-3">
+          {/* drag handle */}
+          <div className="mx-auto mb-3 h-1.5 w-10 rounded-full bg-muted-foreground/25" />
+          <SheetHeader className="mb-4 space-y-0 pb-3 text-left">
+            <SheetTitle className="font-heading text-base font-bold text-foreground">
+              {sheetDate
+                ? new Date(sheetDate + "T00:00:00").toLocaleDateString("en-IN", {
+                    weekday: "long", day: "numeric", month: "long", year: "numeric",
+                  })
+                : ""}
+            </SheetTitle>
+            <p className="text-xs text-muted-foreground">
+              {sheetEvents.length > 0
+                ? `${sheetEvents.length} observance${sheetEvents.length > 1 ? "s" : ""} on this day`
+                : "No notable events on this day"}
+            </p>
+          </SheetHeader>
+          {sheetEvents.length > 0 ? (
+            <div className="space-y-3">
+              {sheetEvents.map((event, i) => (
+                <EventCard key={event.date + event.title} event={event} index={i} />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-8 text-center">
+              <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-muted/50">
+                <Calendar className="h-5 w-5 text-muted-foreground/50" />
+              </div>
+              <p className="text-sm font-medium text-muted-foreground">No Notable Events</p>
+              <p className="mt-1 text-xs text-muted-foreground/70">on This Day</p>
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
     </PageLayout>
   );
 }
