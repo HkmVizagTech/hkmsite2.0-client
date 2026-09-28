@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Pencil, Save, X, FileText, Globe, Phone, Mail, MapPin, Clock, Loader2, PartyPopper, Megaphone, Image as ImageIcon } from "lucide-react";
+import { Pencil, Save, X, FileText, Globe, Phone, Mail, MapPin, Clock, Loader2, PartyPopper, Megaphone, Image as ImageIcon, Video } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { MAJOR_FESTIVALS } from "@/lib/majorFestival";
 import { FESTIVAL_PAGE_BANNER } from "@/lib/festivalShowcase";
@@ -26,6 +26,7 @@ interface SiteContent {
   contact: { phone: string; email: string; address: string; morningHours: string; eveningHours: string };
   navbar: { majorFestival: string; customLink: { enabled: boolean; label: string; href: string } };
   festival: { bannerDesktop: string; bannerMobile: string };
+  construction: { videoUrl: string; videoId: string };
 }
 
 const defaultContent: SiteContent = {
@@ -34,6 +35,31 @@ const defaultContent: SiteContent = {
   contact: { phone: "+91 89777 61187", email: "social@hkmvizag.org", address: "Chaitanya Bhavan, Hare Krishna Vaikuntam Cultural Centre, IIM Rd, opp. Akshaya Patra Foundation, Gambhiram, Visakhapatnam, Andhra Pradesh 531163", morningHours: "4:30 AM - 1:00 PM", eveningHours: "4:00 PM - 8:30 PM" },
   navbar: { majorFestival: "auto", customLink: { enabled: false, label: "", href: "" } },
   festival: { bannerDesktop: FESTIVAL_PAGE_BANNER.desktop, bannerMobile: FESTIVAL_PAGE_BANNER.mobile },
+  construction: { videoUrl: "", videoId: "" },
+};
+
+
+// Preview-only twin of parseYouTubeId in siteContent.controller.js. It exists
+// so the admin sees the actual video the moment they paste, instead of saving
+// and then going to the public page to check. The server re-parses on save and
+// is the source of truth for what gets stored.
+const previewYouTubeId = (raw: string): string | null => {
+  const input = (raw || "").trim();
+  if (!input) return null;
+  if (/^[A-Za-z0-9_-]{11}$/.test(input)) return input;
+  const patterns = [
+    /youtube(?:-nocookie)?\.com\/shorts\/([A-Za-z0-9_-]{11})/i,
+    /youtu\.be\/([A-Za-z0-9_-]{11})/i,
+    /youtube(?:-nocookie)?\.com\/watch\?[^]*?\bv=([A-Za-z0-9_-]{11})/i,
+    /youtube(?:-nocookie)?\.com\/embed\/([A-Za-z0-9_-]{11})/i,
+    /youtube(?:-nocookie)?\.com\/live\/([A-Za-z0-9_-]{11})/i,
+    /youtube(?:-nocookie)?\.com\/v\/([A-Za-z0-9_-]{11})/i,
+  ];
+  for (const re of patterns) {
+    const m = input.match(re);
+    if (m) return m[1];
+  }
+  return null;
 };
 
 const FESTIVAL_OPTIONS: { value: string; label: string }[] = [
@@ -66,6 +92,10 @@ export default function AdminContent() {
               ...defaultContent.festival,
               ...data.content?.festival,
             },
+            construction: {
+              ...defaultContent.construction,
+              ...data.content?.construction,
+            },
           });
         }
       } catch {}
@@ -73,7 +103,7 @@ export default function AdminContent() {
     })();
   }, []);
 
-  const handleSave = async (section: "hero" | "about" | "contact" | "navbar" | "festival") => {
+  const handleSave = async (section: "hero" | "about" | "contact" | "navbar" | "festival" | "construction") => {
     setSaving(true);
     try {
       const res = await authFetch(`${API_URL}/site-content`, {
@@ -116,6 +146,7 @@ export default function AdminContent() {
           <TabsTrigger value="contact">Contact</TabsTrigger>
           <TabsTrigger value="navigation">Navigation</TabsTrigger>
           <TabsTrigger value="festival">Festivals</TabsTrigger>
+          <TabsTrigger value="construction">Construction</TabsTrigger>
         </TabsList>
 
         {/* HERO */}
@@ -375,6 +406,74 @@ export default function AdminContent() {
             </CardContent>
           </Card>
         </TabsContent>
+
+        <TabsContent value="construction">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle className="flex items-center gap-2"><Video className="w-5 h-5" /> Monthly Construction Video</CardTitle>
+              {editingSection === "construction" ? (
+                <div className="flex gap-2">
+                  <Button onClick={() => handleSave("construction")} disabled={saving}>
+                    {saving ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Save className="w-4 h-4 mr-1" />} Save
+                  </Button>
+                  <Button className="bg-transparent text-foreground hover:bg-muted" onClick={() => setEditingSection(null)}><X className="w-4 h-4" /></Button>
+                </div>
+              ) : (
+                <Button className="bg-transparent border border-border text-foreground hover:bg-muted" onClick={() => setEditingSection("construction")}><Pencil className="w-4 h-4 mr-1" /> Edit</Button>
+              )}
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <label className="text-sm font-medium mb-1 block">YouTube link</label>
+                <Input
+                  value={content.construction.videoUrl}
+                  disabled={editingSection !== "construction"}
+                  onChange={(e) => setContent({ ...content, construction: { ...content.construction, videoUrl: e.target.value } })}
+                  placeholder="https://youtube.com/shorts/XXXXXXXXXXX"
+                />
+                {/* Paste feedback, before saving rather than after. */}
+                {content.construction.videoUrl.trim() !== "" && (
+                  previewYouTubeId(content.construction.videoUrl) ? (
+                    <p className="mt-1.5 text-xs text-emerald-600">
+                      Video id read as <code>{previewYouTubeId(content.construction.videoUrl)}</code> — preview below.
+                    </p>
+                  ) : (
+                    <p className="mt-1.5 text-xs text-destructive">
+                      Can&apos;t read a video id from that. Use the Share link from YouTube, e.g.
+                      https://youtube.com/shorts/XXXXXXXXXXX
+                    </p>
+                  )
+                )}
+              </div>
+
+              {(previewYouTubeId(content.construction.videoUrl) || content.construction.videoId) && (
+                <div>
+                  <p className="text-sm font-medium mb-2">
+                    {previewYouTubeId(content.construction.videoUrl) ? "Preview" : "Currently live"}
+                  </p>
+                  <div className="relative aspect-[9/16] w-full max-w-[220px] overflow-hidden rounded-xl border">
+                    <iframe
+                      key={previewYouTubeId(content.construction.videoUrl) || content.construction.videoId}
+                      src={`https://www.youtube-nocookie.com/embed/${previewYouTubeId(content.construction.videoUrl) || content.construction.videoId}?rel=0&modestbranding=1&playsinline=1`}
+                      title="Construction update preview"
+                      allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                      className="absolute inset-0 h-full w-full"
+                    />
+                  </div>
+                </div>
+              )}
+
+              <p className="text-xs text-muted-foreground">
+                This is the vertical video in the <strong>Monthly Construction Update</strong> section of the
+                Square Foot Seva and Brick Seva pages. Shorts, normal watch links, youtu.be share links and a
+                bare video id all work. Leaving it blank keeps the last known video rather than showing an
+                empty frame.
+              </p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
       </Tabs>
     </div>
   );

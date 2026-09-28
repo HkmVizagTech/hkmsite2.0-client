@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -15,12 +15,40 @@ const CONSTRUCTION_PHOTOS = [
   { src: "/assets/construction-update-5.jpg", caption: "Building Elevation" },
 ];
 
-const CONSTRUCTION_VIDEO_ID = "mPAt0gb__Hw";
+const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
+
+// Shown until the admin-managed value arrives, and kept as the fallback if
+// that request fails — the section is never left with an empty frame.
+// Changing the video is done in Admin → Content → Construction, not here.
+const FALLBACK_VIDEO_ID = "mPAt0gb__Hw";
 
 export default function ConstructionStatusSection({ scrollToDonate }: { scrollToDonate?: () => void }) {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
   useInViewVideo(sectionRef);
+
+  // The monthly update video, set by an admin. Fetched rather than baked in
+  // so swapping it each month doesn't need a code change and a deploy.
+  const [videoId, setVideoId] = useState(FALLBACK_VIDEO_ID);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(`${API_URL}/site-content`);
+        if (!res.ok) return;
+        const data = await res.json();
+        const id = data?.content?.construction?.videoId;
+        if (!cancelled && id) setVideoId(id);
+      } catch {
+        // Keep the fallback — a campaign page must not lose its video
+        // because one content request failed.
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const scrollBy = (dir: 1 | -1) => {
     scrollerRef.current?.scrollBy({ left: dir * 380, behavior: "smooth" });
@@ -42,7 +70,8 @@ export default function ConstructionStatusSection({ scrollToDonate }: { scrollTo
           >
             <div className="relative aspect-[9/16] overflow-hidden rounded-[28px] border border-border shadow-elevated">
               <iframe
-                src={`https://www.youtube-nocookie.com/embed/${CONSTRUCTION_VIDEO_ID}?enablejsapi=1&mute=1&controls=0&modestbranding=1&showinfo=0&rel=0&iv_load_policy=3&playsinline=1`}
+                key={videoId}
+                src={`https://www.youtube-nocookie.com/embed/${videoId}?enablejsapi=1&mute=1&controls=0&modestbranding=1&showinfo=0&rel=0&iv_load_policy=3&playsinline=1`}
                 title="Hare Krishna Vaikuntham Temple — Monthly Construction Update"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
