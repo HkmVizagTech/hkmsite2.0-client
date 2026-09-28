@@ -242,6 +242,78 @@ function EventCard({ event, index = 0 }: { event: VaishnavaDate; index?: number 
 }
 
 /* ────────────────────────────────────────────────────────────
+   Compact upcoming-event row (day-panel fallback)
+──────────────────────────────────────────────────────────── */
+function UpcomingItem({ event, onClick }: { event: VaishnavaDate; onClick?: () => void }) {
+  const config = typeConfig[event.type];
+  const d = new Date(`${event.date}T00:00:00`);
+  return (
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={onClick}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClick?.();
+        }
+      }}
+      className="flex w-full cursor-pointer items-center gap-2.5 rounded-xl border border-border/50 bg-card p-2.5 text-left transition-all hover:border-primary/30 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+    >
+      <div className={`flex h-9 w-9 shrink-0 flex-col items-center justify-center rounded-lg ${config.softBg}`}>
+        <span className="text-xs font-bold leading-none text-foreground">{d.getDate()}</span>
+        <span className="mt-0.5 text-[8px] font-semibold uppercase tracking-wide text-muted-foreground">
+          {d.toLocaleDateString("en-IN", { month: "short" })}
+        </span>
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-xs font-semibold text-foreground">{event.title}</p>
+        <span className={`mt-1 inline-flex rounded-full px-1.5 py-0.5 text-[9px] font-medium ${config.badge}`}>
+          {event.type}
+        </span>
+      </div>
+      <ChevronRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground/40" />
+    </div>
+  );
+}
+
+/** "No events on this day" note + the next upcoming events. */
+function NoEventsFallback({
+  events,
+  onJump,
+}: {
+  events: VaishnavaDate[];
+  onJump?: (dateStr: string) => void;
+}) {
+  return (
+    <div>
+      <div className="flex flex-col items-center justify-center py-4 text-center">
+        <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-muted/50">
+          <Calendar className="h-5 w-5 text-muted-foreground/50" />
+        </div>
+        <p className="text-xs font-medium text-muted-foreground">No notable events on this day</p>
+      </div>
+      {events.length > 0 ? (
+        <div className="mt-2 border-t border-border/50 pt-3">
+          <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+            Coming Up
+          </p>
+          <div className="space-y-2">
+            {events.map((e) => (
+              <UpcomingItem key={e.date + e.title} event={e} onClick={() => onJump?.(e.date)} />
+            ))}
+          </div>
+        </div>
+      ) : (
+        <p className="mt-2 border-t border-border/50 pt-3 text-center text-[11px] text-muted-foreground/70">
+          No upcoming events in 2026 — Hare Krishna! 🙏
+        </p>
+      )}
+    </div>
+  );
+}
+
+/* ────────────────────────────────────────────────────────────
    Day cell — tinted square, hover tooltip on desktop
 ──────────────────────────────────────────────────────────── */
 interface DayCellProps {
@@ -275,7 +347,15 @@ function DayCell({
   const button = (
     <button
       onClick={() => onSelect(dateStr)}
-      style={hasVisible ? eventCellStyle(types) : undefined}
+      style={
+        isSelected
+          ? hasVisible
+            ? { boxShadow: `0 0 0 2px ${TYPE_HEX[types[0]] ?? TYPE_HEX.Observance}55` }
+            : undefined
+          : hasVisible
+            ? eventCellStyle(types)
+            : undefined
+      }
       className={`relative flex aspect-square w-full flex-col items-center justify-center rounded-xl border text-sm transition-all duration-200 ${
         isSelected
           ? "scale-105 border-primary bg-primary font-bold text-primary-foreground shadow-md"
@@ -343,6 +423,21 @@ export default function VaishnavCalendarPage() {
     () => (sheetDate ? getEventsForDate(sheetDate) : []),
     [sheetDate]
   );
+
+  /** Fallback for the day panel: next upcoming events from today. */
+  const panelUpcomingEvents = useMemo(() => {
+    const todayStr = `${YEAR}-${pad(TODAY.getMonth() + 1)}-${pad(TODAY.getDate())}`;
+    return vaishnavaCalendar2026
+      .filter((e) => e.date >= todayStr)
+      .sort((a, b) => a.date.localeCompare(b.date))
+      .slice(0, 4);
+  }, []);
+
+  /** Select a date from the fallback list (jumps the grid to its month). */
+  const jumpToDate = (dateStr: string) => {
+    setSelectedMonth(parseInt(dateStr.slice(5, 7), 10) - 1);
+    setSelectedDate(dateStr);
+  };
 
   const calendarDays = useMemo(() => {
     const firstDay = new Date(YEAR, selectedMonth, 1).getDay();
@@ -698,13 +793,7 @@ export default function VaishnavCalendarPage() {
                           transition={{ duration: 0.2 }}
                         >
                           {currentDateEvents.length === 0 ? (
-                            <div className="flex flex-col items-center justify-center py-8 text-center">
-                              <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-muted/50">
-                                <Calendar className="h-5 w-5 text-muted-foreground/50" />
-                              </div>
-                              <p className="text-sm font-medium text-muted-foreground">No Notable Events</p>
-                              <p className="mt-1 text-xs text-muted-foreground/70">on This Day</p>
-                            </div>
+                            <NoEventsFallback events={panelUpcomingEvents} onJump={jumpToDate} />
                           ) : (
                             <div className="scrollbar-thin scrollbar-track-transparent scrollbar-thumb-primary/20 space-y-3 lg:max-h-[360px] lg:overflow-y-auto lg:pr-1">
                               {currentDateEvents.map((event, i) => (
@@ -873,13 +962,13 @@ export default function VaishnavCalendarPage() {
               ))}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-8 text-center">
-              <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-muted/50">
-                <Calendar className="h-5 w-5 text-muted-foreground/50" />
-              </div>
-              <p className="text-sm font-medium text-muted-foreground">No Notable Events</p>
-              <p className="mt-1 text-xs text-muted-foreground/70">on This Day</p>
-            </div>
+            <NoEventsFallback
+              events={panelUpcomingEvents}
+              onJump={(dateStr) => {
+                setSheetDate(null);
+                jumpToDate(dateStr);
+              }}
+            />
           )}
         </SheetContent>
       </Sheet>
