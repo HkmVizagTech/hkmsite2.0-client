@@ -213,7 +213,13 @@ export default function AdminContent() {
       </div>
 
       <Tabs defaultValue="hero" className="space-y-4">
-        <TabsList className="grid grid-cols-5 w-full max-w-xl">
+        {/* Six tabs, so this must not be a fixed column count. At 5 columns
+            the sixth wrapped to a second row that TabsList's h-10 clipped
+            away, and Construction looked like it did not exist at all. Rows
+            are now declared alongside the columns and h-auto lets the list grow
+            into them, so every tab stays visible; the column count steps down on
+            narrow screens so the labels never have to truncate. */}
+        <TabsList className="w-full max-w-2xl grid grid-cols-2 grid-rows-3 h-auto gap-1 sm:grid-cols-3 sm:grid-rows-2 md:grid-cols-6 md:grid-rows-1">
           <TabsTrigger value="hero">Hero</TabsTrigger>
           <TabsTrigger value="about">About</TabsTrigger>
           <TabsTrigger value="contact">Contact</TabsTrigger>
