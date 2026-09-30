@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Phone, Mail, Clock, Heart, ChevronDown, Home, User, Utensils, Info, ShoppingBag, Calendar, PartyPopper, Megaphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ISKLogo from "@/assets/ISKCONGambheeramLogo.jpeg";
-import HKVTLogo from "@/assets/HKVTLogo.png";
+import HKVTLogo from "@/assets/HKMV_logo.png";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
@@ -262,16 +262,16 @@ const Navbar = () => {
               height={112}
               priority
               loading="eager"
-              className="h-9 w-auto shrink-0 transition-all duration-300 md:h-[52px]"
+              className="h-8 w-auto shrink-0 transition-all duration-300 md:h-12"
             />
             <div className="flex shrink-0 items-center gap-2 md:gap-2.5">
               <span className="h-5 w-px shrink-0 bg-border md:h-6" aria-hidden />
               <Image
                 src={typeof HKVTLogo === "string" ? HKVTLogo : HKVTLogo.src}
-                alt="Hare Krishna Vaikuntam Cultural Complex"
-                width={300}
-                height={101}
-                className="h-6 w-auto shrink-0 transition-all duration-300 md:h-11"
+                alt="Hare Krishna Movement Vizag"
+                width={795}
+                height={288}
+                className="h-7 w-auto shrink-0 transition-all duration-300 md:h-12"
               />
             </div>
           </Link>
