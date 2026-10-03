@@ -1,15 +1,16 @@
 import Navbar from "@/components/Navbar";
 import TempleCarousel from "@/components/TempleCarousel";
-import TodaysDarshan from "@/components/TodaysDarshan";
-import AboutSection from "@/components/AboutSection";
-import FounderSection from "@/components/FounderSection";
-import SevasSection from "@/components/SevasSection";
-import GalleryPreview from "@/components/GalleryPreview";
-import BlogPreview from "@/components/BlogPreview";
-import SubhojanamSection from "@/components/SubhojanamSection";
-import FestivalDonationsSection from "@/components/FestivalDonationsSection";
-import ContactSection from "@/components/ContactSection";
-import WhatsAppCommunityCTA from "@/components/WhatsAppCommunityCTA";
+import DarshanCountdown from "@/components/home/DarshanCountdown";
+import WelcomeSection from "@/components/home/WelcomeSection";
+import ExploreBento from "@/components/home/ExploreBento";
+import TempleConstructionFeature from "@/components/home/TempleConstructionFeature";
+import MomentsSection from "@/components/home/MomentsSection";
+import SevaTiles from "@/components/home/SevaTiles";
+import DivineVision from "@/components/home/DivineVision";
+import ProgramsTabs from "@/components/home/ProgramsTabs";
+import LatestBlogs from "@/components/home/LatestBlogs";
+import HomeFAQ from "@/components/home/HomeFAQ";
+import JoinCTA from "@/components/home/JoinCTA";
 import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
 import Footer from "@/components/Footer";
 import type { Metadata } from "next";
@@ -22,24 +23,28 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
+// Section order follows guptvrindavandham.org: hero → live darshan /
+// countdown → welcome → explore bento → mandir nirman → moments → seva
+// tiles → founder → programs → blogs → FAQ → volunteer/donate CTAs.
 export default function Home() {
   return (
-    <div className="min-h-screen bg-white dark:bg-background pt-[88px] md:pt-[104px]">
+    <div className="min-h-screen bg-white pt-[var(--header-h)]">
       <Navbar />
       <WhatsAppFloatButton />
-      <TempleCarousel />
-      <TodaysDarshan />
-      <AboutSection />
-      <FounderSection />
-      <SevasSection />
-      <FestivalDonationsSection variant="home" />
-      <GalleryPreview />
-      {/* Upcoming Celebrations temporarily disabled — component kept intact
-          in components/EventsPreview.tsx, just not rendered here for now. */}
-      <BlogPreview />
-      <SubhojanamSection />
-      <ContactSection />
-      <WhatsAppCommunityCTA />
+      <main>
+        <TempleCarousel />
+        <DarshanCountdown />
+        <WelcomeSection />
+        <ExploreBento />
+        <TempleConstructionFeature />
+        <MomentsSection />
+        <SevaTiles />
+        <DivineVision />
+        <ProgramsTabs />
+        <LatestBlogs />
+        <HomeFAQ />
+        <JoinCTA />
+      </main>
       <Footer />
     </div>
   );

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Poppins, Playfair_Display } from "next/font/google";
+import { Poppins, Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
@@ -13,6 +13,15 @@ import { siteKeywords, ORG_ALT_NAMES } from "@/lib/seo";
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+  variable: "--font-poppins",
+});
+
+// Display face for headings: the tight geometric sans the GVD-style layout
+// uses for section titles, paired with Poppins for body copy.
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["500", "600", "700", "800"],
+  variable: "--font-jakarta",
 });
 
 const playfair = Playfair_Display({
@@ -148,7 +157,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-  <html lang="en" className={`h-full antialiased overflow-x-hidden ${playfair.variable}`} suppressHydrationWarning>
+  <html lang="en" className={`h-full antialiased overflow-x-hidden ${playfair.variable} ${poppins.variable} ${jakarta.variable}`} suppressHydrationWarning>
       <head>
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-XVDQNJK24G"

@@ -29,7 +29,7 @@ const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "
  * route was removed to keep the bundle lean, so each campaign slug must map
  * to an actual page here — add a new entry when a campaign is added.
  */
-const FESTIVAL_PAGE: Record<string, string> = {
+export const FESTIVAL_PAGE: Record<string, string> = {
   radhashtami: "/radhashtami",
   "govardhan-puja": "/govardhan-puja",
   ekadashi: "/ekadashi",

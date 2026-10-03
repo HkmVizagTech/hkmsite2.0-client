@@ -14,16 +14,34 @@ export default {
       center: true,
       padding: "2rem",
       screens: {
-        "2xl": "1400px",
+        "2xl": "1312px",
       },
     },
     extend: {
       fontFamily: {
-        sans: ['Poppins', 'sans-serif'],
-        heading: ['Poppins', 'sans-serif'],
-        body: ['Poppins', 'sans-serif'],
+        sans: ['var(--font-poppins)', 'Poppins', 'sans-serif'],
+        heading: ['var(--font-jakarta)', 'Plus Jakarta Sans', 'var(--font-poppins)', 'sans-serif'],
+        body: ['var(--font-poppins)', 'Poppins', 'sans-serif'],
       },
       colors: {
+        // Vaikuntham Blue ramp (GVD-standard redesign). Use for brand
+        // surfaces; semantic tokens (primary, muted…) stay preferred for UI.
+        vk: {
+          50: "#F5F7FF",
+          100: "#EEF2FF",
+          200: "#DCE4FF",
+          300: "#B9C8FB",
+          400: "#7F9BEF",
+          500: "#2F5BD3",
+          600: "#2448B4",
+          700: "#1E3A8A",
+          800: "#172B6E",
+          900: "#0A1233",
+        },
+        ink: {
+          DEFAULT: "#1D1B20",
+          soft: "#5C5C66",
+        },
         // Registers the gold palette with Tailwind so opacity modifiers work.
         //
         // WHY: `gold` only ever existed as hand-written utilities in
@@ -108,12 +126,27 @@ export default {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-10px)" },
         },
+        "blob": {
+          "0%, 100%": { borderRadius: "42% 58% 62% 38% / 45% 42% 58% 55%" },
+          "50%": { borderRadius: "58% 42% 38% 62% / 55% 58% 42% 45%" },
+        },
+        "marquee": {
+          from: { transform: "translateX(0)" },
+          to: { transform: "translateX(-50%)" },
+        },
+      },
+      boxShadow: {
+        card: "0 10px 15px -3px rgba(29,27,32,0.08), 0 4px 6px -4px rgba(29,27,32,0.06)",
+        lift: "0 22px 40px -18px rgba(30,58,138,0.35)",
+        nav: "0 8px 24px -12px rgba(23,23,23,0.18)",
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-up": "fade-up 0.8s ease-out",
         "float": "float 3s ease-in-out infinite",
+        "blob": "blob 12s ease-in-out infinite",
+        "marquee": "marquee 40s linear infinite",
       },
     },
   },

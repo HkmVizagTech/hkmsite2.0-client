@@ -1,67 +1,122 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Home } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import Ornament from "@/components/Ornament";
 
 interface PageHeroProps {
   title: string;
   subtitle?: string;
   breadcrumb: string;
   backgroundImage?: string;
+  /** Optional eyebrow pill above the title. */
+  eyebrow?: string;
 }
 
-const PageHero = ({ title, subtitle, breadcrumb, backgroundImage }: PageHeroProps) => {
-  return (
-    <section className="relative pt-20 min-h-[50vh] flex items-center overflow-hidden">
-      {backgroundImage && (
-        <div className="absolute inset-0">
-          <Image src={backgroundImage} alt="" fill sizes="100vw" className="object-cover" />
-          <div className="absolute inset-0 bg-[hsl(220,60%,10%,0.7)]" />
+/**
+ * GVD-standard inner-page hero.
+ * - With an image: a rounded, inset photo card (not full-bleed) with a
+ *   navy gradient and the title set inside it — the same treatment GVD
+ *   uses for its banner cards.
+ * - Without an image: a soft tinted band with a large centred ink title.
+ */
+const PageHero = ({ title, subtitle, breadcrumb, backgroundImage, eyebrow }: PageHeroProps) => {
+  const crumbs = (light: boolean) => (
+    <nav
+      aria-label="Breadcrumb"
+      className={`mb-5 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium md:text-[13px] ${
+        light ? "bg-white/15 text-white/85 backdrop-blur" : "bg-white text-ink/70 shadow-sm"
+      }`}
+    >
+      <Link href="/" className={`inline-flex items-center gap-1 transition-colors ${light ? "hover:text-white" : "hover:text-vk-700"}`}>
+        <Home className="h-3.5 w-3.5" />
+        Home
+      </Link>
+      <ChevronRight className="h-3.5 w-3.5 opacity-60" />
+      <span className={`max-w-[220px] truncate ${light ? "text-white" : "font-semibold text-vk-700"}`} aria-current="page">
+        {breadcrumb}
+      </span>
+    </nav>
+  );
+
+  if (backgroundImage) {
+    return (
+      <section className="bg-gradient-to-b from-vk-50 to-white pb-4 pt-4 md:pb-6 md:pt-6">
+        <div className="vk-container">
+          <div className="relative isolate overflow-hidden rounded-3xl bg-vk-900 shadow-[0_24px_60px_-28px_rgba(10,18,51,0.6)]">
+            <Image
+              src={backgroundImage}
+              alt=""
+              fill
+              priority
+              sizes="(min-width: 1280px) 1248px, 100vw"
+              className="-z-10 object-cover"
+            />
+            <div className="absolute inset-0 -z-10 bg-gradient-to-t from-vk-900/90 via-vk-900/55 to-vk-900/25" />
+            <div className="flex min-h-[300px] flex-col items-center justify-end px-5 pb-10 pt-16 text-center md:min-h-[400px] md:px-10 md:pb-14">
+              <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
+                {crumbs(true)}
+              </motion.div>
+              {eyebrow && <span className="vk-pill-light mb-3">{eyebrow}</span>}
+              <motion.h1
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="vk-h1 max-w-4xl !text-white"
+              >
+                {title}
+              </motion.h1>
+              {subtitle && (
+                <motion.p
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.12, duration: 0.6 }}
+                  className="mx-auto mt-4 max-w-2xl text-[15px] leading-relaxed text-white/85 md:text-lg"
+                >
+                  {subtitle}
+                </motion.p>
+              )}
+            </div>
+          </div>
         </div>
-      )}
-      {!backgroundImage && (
-        <div className="absolute inset-0 bg-gradient-hero" />
-      )}
+      </section>
+    );
+  }
 
-      <div className="relative z-10 container mx-auto px-4 py-20 text-center">
-        {
-}
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex items-center justify-center gap-2 text-sm text-white/70 mb-6"
-        >
-          <Link href="/" className="hover:text-accent transition-colors">Home</Link>
-          <ChevronRight className="w-4 h-4" />
-          <span className="text-[hsl(var(--gold))]">{breadcrumb}</span>
+  return (
+    <section className="relative overflow-hidden bg-gradient-to-b from-vk-100 via-vk-50 to-white">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-vk-300/30 blur-3xl"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -left-20 bottom-0 h-56 w-56 rounded-full bg-vk-200/50 blur-3xl"
+      />
+      <div className="vk-container relative py-12 text-center md:py-20">
+        <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
+          {crumbs(false)}
         </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.1 }}
-        >
-          <Ornament className="mb-5 text-[hsl(var(--gold))]" />
-        </motion.div>
-
+        {eyebrow && (
+          <div>
+            <span className="vk-pill mb-3">{eyebrow}</span>
+          </div>
+        )}
         <motion.h1
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="font-heading text-4xl md:text-6xl font-bold text-white mb-4"
+          transition={{ duration: 0.6 }}
+          className="vk-h1 mx-auto max-w-4xl"
         >
           {title}
         </motion.h1>
-
         {subtitle && (
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.8 }}
-            className="text-white/80 text-lg md:text-xl max-w-2xl mx-auto"
+            transition={{ delay: 0.12, duration: 0.6 }}
+            className="mx-auto mt-4 max-w-2xl text-[15px] leading-relaxed text-muted-foreground md:text-lg"
           >
             {subtitle}
           </motion.p>

@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
+import useEmblaCarousel from "embla-carousel-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const FALLBACK_IMG = "/assets/home-banner-chaitanya-bhavan.webp";
 const FALLBACK_IMG_MOBILE = "/assets/home-banner-chaitanya-bhavan-mobile.webp";
@@ -56,12 +57,18 @@ const defaultSlides: TempleCarouselSlide[] = [
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 
+/**
+ * GVD-standard hero: a centred, rounded banner card with the neighbouring
+ * slides peeking in at the sides (desktop), swipeable on touch, autoplaying
+ * every 6s and pausing while the visitor interacts. Banners come from the
+ * admin-managed /hero-banners endpoint, with bundled fallbacks.
+ */
 const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true }: TempleCarouselProps = {}) => {
   const [slides, setSlides] = useState<TempleCarouselSlide[]>(propSlides || defaultSlides);
-  const [current, setCurrent] = useState(0);
-  const [direction, setDirection] = useState(1);
   const [imgErrors, setImgErrors] = useState<Record<string, boolean>>({});
-  const [dragging, setDragging] = useState(false);
+  const [selected, setSelected] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "center", skipSnaps: false });
 
   useEffect(() => {
     if (!fetchApiBanners) return;
@@ -85,150 +92,150 @@ const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true }: TempleCa
     })();
   }, [fetchApiBanners]);
 
-  const next = useCallback(() => {
-    setDirection(1);
-    setCurrent((prev) => (prev + 1) % slides.length);
-  }, [slides.length]);
-
-  const prev = useCallback(() => {
-    setDirection(-1);
-    setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
-  }, [slides.length]);
+  // Re-measure when the slide set changes (API banners replace defaults).
+  useEffect(() => {
+    emblaApi?.reInit();
+  }, [emblaApi, slides]);
 
   useEffect(() => {
-    const interval = setInterval(next, 6000);
-    return () => clearInterval(interval);
-  }, [next]);
+    if (!emblaApi) return;
+    const onSelect = () => setSelected(emblaApi.selectedScrollSnap());
+    onSelect();
+    emblaApi.on("select", onSelect);
+    emblaApi.on("reInit", onSelect);
+    const onDown = () => setPaused(true);
+    emblaApi.on("pointerDown", onDown);
+    return () => {
+      emblaApi.off("select", onSelect);
+      emblaApi.off("reInit", onSelect);
+      emblaApi.off("pointerDown", onDown);
+    };
+  }, [emblaApi]);
 
+  // Autoplay — paused on hover / after the visitor drags.
   useEffect(() => {
-    setCurrent(0);
-  }, [slides.length]);
+    if (!emblaApi || paused || slides.length < 2) return;
+    const id = setInterval(() => emblaApi.scrollNext(), 6000);
+    return () => clearInterval(id);
+  }, [emblaApi, paused, slides.length]);
 
-  const carouselRef = useRef<HTMLDivElement>(null);
-  const pointerStartX = useRef(0);
-  const isDragging = useRef(false);
+  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
+  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
 
-  const startDrag = (clientX: number) => {
-    pointerStartX.current = clientX;
-    isDragging.current = false;
-    setDragging(false);
-  };
-
-  const moveDrag = (clientX: number) => {
-    if (!isDragging.current && Math.abs(clientX - pointerStartX.current) > 5) {
-      isDragging.current = true;
-      setDragging(true);
-    }
-  };
-
-  const endDrag = useCallback((clientX: number) => {
-    setDragging(false);
-    if (!isDragging.current) {
-      const slide = slides[current];
-      if (slide?.linkUrl) {
-        const url = slide.linkUrl;
-        if (/^https?:\/\//i.test(url)) window.open(url, "_blank", "noopener");
-        else window.location.href = url;
-      }
+  const openSlide = (slide: TempleCarouselSlide, index: number) => {
+    // Clicking a peeking neighbour brings it to centre instead of navigating.
+    if (index !== selected) {
+      emblaApi?.scrollTo(index);
       return;
     }
-    const dx = clientX - pointerStartX.current;
-    if (Math.abs(dx) > 40) {
-      if (dx < 0) next();
-      else prev();
-    }
-    isDragging.current = false;
-  }, [next, prev, slides, current]);
-
-  useEffect(() => {
-    const el = carouselRef.current;
-    if (!el) return;
-
-    const onPointerDown = (e: PointerEvent) => {
-      startDrag(e.clientX);
-      el.setPointerCapture(e.pointerId);
-    };
-
-    const onPointerMove = (e: PointerEvent) => moveDrag(e.clientX);
-
-    const onPointerUp = (e: PointerEvent) => endDrag(e.clientX);
-
-    const onPointerCancel = () => {
-      isDragging.current = false;
-      setDragging(false);
-    };
-
-    el.addEventListener("pointerdown", onPointerDown);
-    el.addEventListener("pointermove", onPointerMove);
-    el.addEventListener("pointerup", onPointerUp);
-    el.addEventListener("pointercancel", onPointerCancel);
-
-    return () => {
-      el.removeEventListener("pointerdown", onPointerDown);
-      el.removeEventListener("pointermove", onPointerMove);
-      el.removeEventListener("pointerup", onPointerUp);
-      el.removeEventListener("pointercancel", onPointerCancel);
-    };
-  }, [endDrag]);
-
-  const variants = {
-    enter: (dir: number) => ({ x: dir > 0 ? "100%" : "-100%", opacity: 0 }),
-    center: { x: 0, opacity: 1 },
-    exit: (dir: number) => ({ x: dir > 0 ? "-100%" : "100%", opacity: 0 }),
+    if (!slide.linkUrl) return;
+    if (/^https?:\/\//i.test(slide.linkUrl)) window.open(slide.linkUrl, "_blank", "noopener");
+    else window.location.href = slide.linkUrl;
   };
 
-  const currentSlide = slides[current] || slides[0];
-  const desktopBroken = imgErrors[currentSlide.src];
-  const mobileBroken = imgErrors[currentSlide.mobileSrc];
-
-  const slideImages = (
-    <>
-      <Image
-        src={mobileBroken ? FALLBACK_IMG_MOBILE : currentSlide.mobileSrc}
-        alt={currentSlide.title}
-        fill
-        sizes="100vw"
-        draggable={false}
-        className="select-none object-cover object-center md:hidden"
-        priority
-        onError={() => setImgErrors((prev) => ({ ...prev, [currentSlide.mobileSrc]: true }))}
-      />
-      <Image
-        src={desktopBroken ? FALLBACK_IMG : currentSlide.src}
-        alt={currentSlide.title}
-        fill
-        sizes="100vw"
-        draggable={false}
-        className="hidden select-none object-cover object-center md:block"
-        priority
-        onError={() => setImgErrors((prev) => ({ ...prev, [currentSlide.src]: true }))}
-      />
-    </>
-  );
-
   return (
-    <section className="w-full bg-white dark:bg-background select-none">
-      <div
-        ref={carouselRef}
-        onDragStart={(e) => e.preventDefault()}
-        className="relative w-full overflow-hidden rounded-b-3xl bg-foreground aspect-[962/1635] md:aspect-[1920/730]"
-        style={{ cursor: dragging ? "grabbing" : "grab", touchAction: "pan-y" }}
-      >
-        <AnimatePresence custom={direction} mode="popLayout">
-          <motion.div
-            key={current}
-            custom={direction}
-            variants={variants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{ duration: 0.7, ease: [0.25, 0.8, 0.25, 1] }}
-            className="absolute inset-0"
-          >
-            {slideImages}
-          </motion.div>
-        </AnimatePresence>
+    <section
+      aria-roledescription="carousel"
+      aria-label="Temple highlights"
+      className="relative select-none bg-gradient-to-b from-vk-50 via-white to-white pb-4 pt-4 md:pb-6 md:pt-6"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
+      <div className="relative">
+        <div className="overflow-hidden" ref={emblaRef}>
+          <div className="flex touch-pan-y">
+            {slides.map((slide, i) => {
+              const desktopBroken = imgErrors[slide.src];
+              const mobileBroken = imgErrors[slide.mobileSrc];
+              const isActive = i === selected;
+              return (
+                <div
+                  key={`${slide.src}-${i}`}
+                  className="min-w-0 shrink-0 grow-0 basis-[88%] px-1.5 sm:basis-[84%] md:basis-[78%] md:px-2.5 xl:basis-[70%]"
+                  aria-roledescription="slide"
+                  aria-label={`${i + 1} of ${slides.length}: ${slide.title}`}
+                >
+                  <div
+                    role={slide.linkUrl || !isActive ? "button" : undefined}
+                    tabIndex={slide.linkUrl || !isActive ? 0 : -1}
+                    onClick={() => openSlide(slide, i)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") openSlide(slide, i);
+                    }}
+                    className={`relative aspect-[962/1635] overflow-hidden rounded-[22px] bg-vk-900 transition-all duration-500 md:aspect-[1920/730] md:rounded-[28px] ${
+                      isActive
+                        ? "shadow-[0_30px_60px_-30px_rgba(10,18,51,0.55)]"
+                        : "scale-[0.94] opacity-55"
+                    } ${slide.linkUrl || !isActive ? "cursor-pointer" : ""}`}
+                  >
+                    <Image
+                      src={mobileBroken ? FALLBACK_IMG_MOBILE : slide.mobileSrc}
+                      alt={slide.title}
+                      fill
+                      sizes="88vw"
+                      draggable={false}
+                      priority={i === 0}
+                      className="object-cover object-center md:hidden"
+                      onError={() => setImgErrors((prev) => ({ ...prev, [slide.mobileSrc]: true }))}
+                    />
+                    <Image
+                      src={desktopBroken ? FALLBACK_IMG : slide.src}
+                      alt={slide.title}
+                      fill
+                      sizes="(min-width: 1280px) 70vw, 80vw"
+                      draggable={false}
+                      priority={i === 0}
+                      className="hidden object-cover object-center md:block"
+                      onError={() => setImgErrors((prev) => ({ ...prev, [slide.src]: true }))}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Arrows — desktop only, sitting over the peeking neighbours */}
+        {slides.length > 1 && (
+          <>
+            <button
+              type="button"
+              onClick={scrollPrev}
+              aria-label="Previous slide"
+              className="absolute left-3 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-vk-800 shadow-lg backdrop-blur transition hover:bg-white md:flex lg:left-[8%] xl:left-[13%]"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <button
+              type="button"
+              onClick={scrollNext}
+              aria-label="Next slide"
+              className="absolute right-3 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-vk-800 shadow-lg backdrop-blur transition hover:bg-white md:flex lg:right-[8%] xl:right-[13%]"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+          </>
+        )}
       </div>
+
+      {/* Dots */}
+      {slides.length > 1 && (
+        <div className="mt-4 flex items-center justify-center gap-1.5" role="tablist" aria-label="Choose slide">
+          {slides.map((s, i) => (
+            <button
+              key={`dot-${i}`}
+              type="button"
+              role="tab"
+              aria-selected={i === selected}
+              aria-label={`Go to slide ${i + 1}: ${s.title}`}
+              onClick={() => emblaApi?.scrollTo(i)}
+              className={`h-2 rounded-full transition-all duration-300 ${
+                i === selected ? "w-7 bg-vk-700" : "w-2 bg-vk-200 hover:bg-vk-300"
+              }`}
+            />
+          ))}
+        </div>
+      )}
     </section>
   );
 };

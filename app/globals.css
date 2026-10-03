@@ -3,62 +3,97 @@
 @tailwind utilities;
 
 @layer base {
+  /* ──────────────────────────────────────────────────────────────────
+     Vaikuntham Blue — GVD-standard design system
+     Layout language follows guptvrindavandham.org (white canvas, soft
+     tinted bands, 16–24px rounded cards, pill eyebrows, glass nav, deep
+     gradient footer); colours are re-keyed to the HKMV logo's royal navy,
+     with gold reserved for donation CTAs.
+       #1E3A8A royal navy (primary, logo)   #2F5BD3 bright blue (links)
+       #EEF2FF blue tint (bands)            #F2B41F gold (donate)
+       #172B6E → #0A1233 footer gradient    #1D1B20 ink
+     ────────────────────────────────────────────────────────────────── */
   :root {
-    --background: 210 30% 97%;
-    --foreground: 220 60% 10%;
+    --background: 0 0% 100%;
+    --foreground: 260 8% 12%;
 
-    --card: 223 47% 97%;
-    --card-foreground: 220 60% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 260 8% 12%;
 
-    --popover: 210 30% 97%;
-    --popover-foreground: 220 60% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 260 8% 12%;
 
-    --primary: 220 90% 20%;
+    --primary: 224 64% 33%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 195 80% 45%;
+    --secondary: 223 65% 51%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 20% 91%;
-    --muted-foreground: 220 15% 42%;
+    --muted: 226 60% 96%;
+    --muted-foreground: 235 8% 40%;
 
-    --accent: 190 85% 55%;
-    --accent-foreground: 220 90% 15%;
+    --accent: 226 100% 95%;
+    --accent-foreground: 224 64% 33%;
 
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 20% 88%;
-    --input: 210 20% 88%;
-    --ring: 220 90% 20%;
+    --border: 226 32% 90%;
+    --input: 226 28% 86%;
+    --ring: 223 65% 51%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
 
-    --sidebar-background: 210 25% 95%;
-    --sidebar-foreground: 220 60% 10%;
-    --sidebar-primary: 220 90% 20%;
+    --sidebar-background: 226 60% 97%;
+    --sidebar-foreground: 260 8% 12%;
+    --sidebar-primary: 224 64% 33%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 20% 91%;
-    --sidebar-accent-foreground: 220 60% 10%;
-    --sidebar-border: 210 20% 88%;
-    --sidebar-ring: 220 90% 20%;
+    --sidebar-accent: 226 100% 95%;
+    --sidebar-accent-foreground: 224 64% 33%;
+    --sidebar-border: 226 32% 90%;
+    --sidebar-ring: 223 65% 51%;
 
-    /* Custom gradient tokens — navy to cyan */
-    --gradient-hero: linear-gradient(135deg, hsl(220 90% 18%), hsl(200 80% 30%));
-    --gradient-warm: linear-gradient(180deg, hsl(210 30% 97%), hsl(210 25% 94%));
-    --gradient-navy: linear-gradient(135deg, hsl(220 90% 18%), hsl(220 70% 28%));
-    --gradient-ocean: linear-gradient(135deg, hsl(220 90% 20%), hsl(190 85% 55%));
-    --shadow-warm: 0 10px 40px -10px hsl(220 90% 20% / 0.2);
-    --shadow-elevated: 0 20px 60px -15px hsl(220 60% 10% / 0.15);
-    --shadow-glow: 0 0 30px hsl(190 85% 55% / 0.3);
+    /* Brand ramp (raw hex for gradients / overlays) */
+    --vk-50: #F5F7FF;
+    --vk-100: #EEF2FF;
+    --vk-200: #DCE4FF;
+    --vk-300: #B9C8FB;
+    --vk-400: #7F9BEF;
+    --vk-500: #2F5BD3;
+    --vk-600: #2448B4;
+    --vk-700: #1E3A8A;
+    --vk-800: #172B6E;
+    --vk-900: #0A1233;
+    --ink: #1D1B20;
+    --ink-soft: #5C5C66;
 
-    --font-body: 'Poppins', sans-serif;
+    /* Gradient tokens — royal navy family */
+    --gradient-hero: linear-gradient(135deg, #1E3A8A 0%, #2448B4 55%, #2F5BD3 100%);
+    --gradient-warm: linear-gradient(180deg, #FFFFFF 0%, #F5F7FF 100%);
+    --gradient-navy: linear-gradient(135deg, #172B6E 0%, #0A1233 100%);
+    --gradient-ocean: linear-gradient(135deg, #1E3A8A 0%, #2F5BD3 100%);
+    --gradient-band: linear-gradient(180deg, #F5F7FF 0%, #EEF2FF 100%);
+    --gradient-card-overlay: linear-gradient(to top, rgba(10, 18, 51, 0.88) 0%, rgba(10, 18, 51, 0.25) 45%, rgba(10, 18, 51, 0) 70%);
+    --gradient-blue-overlay: linear-gradient(to top, rgba(30, 58, 138, 0.92) 0%, rgba(30, 58, 138, 0.15) 55%, rgba(0, 0, 0, 0) 100%);
+    --shadow-warm: 0 10px 30px -12px rgba(30, 58, 138, 0.22);
+    --shadow-elevated: 0 18px 44px -16px rgba(23, 23, 23, 0.22);
+    --shadow-glow: 0 0 32px rgba(47, 91, 211, 0.28);
+    --shadow-card: 0 10px 15px -3px rgba(29, 27, 32, 0.08), 0 4px 6px -4px rgba(29, 27, 32, 0.06);
 
-    /* Gold accent system — devotional warmth for donation CTAs & ornaments */
-    --gold: 42 92% 56%;
-    --gold-deep: 36 85% 45%;
-    --gradient-gold: linear-gradient(135deg, hsl(42 92% 56%), hsl(32 90% 50%));
-    --shadow-gold: 0 8px 24px hsl(42 92% 46% / 0.35);
+    --font-body: var(--font-poppins), 'Poppins', system-ui, sans-serif;
+    --font-heading: var(--font-jakarta), 'Plus Jakarta Sans', var(--font-poppins), system-ui, sans-serif;
+
+    /* Gold accent system — reserved for donation CTAs & ornaments */
+    --gold: 43 89% 54%;
+    --gold-deep: 40 94% 38%;
+    --gradient-gold: linear-gradient(135deg, #F7C948 0%, #F2B41F 55%, #E39A0B 100%);
+    --shadow-gold: 0 8px 22px rgba(226, 160, 18, 0.35);
+
+    /* Fixed header height (top bar + nav) — pages pad by this. */
+    --header-h: 88px;
+  }
+  @media (min-width: 768px) {
+    :root { --header-h: 104px; }
   }
 
   .dark {
@@ -114,7 +149,7 @@
      Replaces the default bulky browser scrollbar on desktop. */
   html {
     scrollbar-width: thin;
-    scrollbar-color: hsl(220 30% 72%) hsl(210 30% 95%);
+    scrollbar-color: #B9C8FB #F5F7FF;
   }
 
   *::-webkit-scrollbar {
@@ -123,17 +158,17 @@
   }
 
   *::-webkit-scrollbar-track {
-    background: hsl(210 30% 95%);
+    background: #F5F7FF;
   }
 
   *::-webkit-scrollbar-thumb {
-    background: hsl(220 30% 72%);
+    background: #B9C8FB;
     border-radius: 9999px;
-    border: 2px solid hsl(210 30% 95%);
+    border: 2px solid #F5F7FF;
   }
 
   *::-webkit-scrollbar-thumb:hover {
-    background: hsl(42 92% 50%);
+    background: #2F5BD3;
   }
 
   *::-webkit-scrollbar-corner {
@@ -141,9 +176,25 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-body);
+    font-family: var(--font-heading);
     font-weight: 700;
     font-style: normal;
+    letter-spacing: -0.022em;
+    line-height: 1.12;
+  }
+
+  h4, h5, h6 {
+    letter-spacing: -0.01em;
+  }
+
+  ::selection {
+    background: #DCE4FF;
+    color: #1E3A8A;
+  }
+
+  :focus-visible {
+    outline: 2px solid #2F5BD3;
+    outline-offset: 2px;
   }
 
   /* Responsive safety nets: grids without an explicit mobile column count
@@ -1008,3 +1059,218 @@
 
 @keyframes slow-spin { to { transform: rotate(360deg); } }
 .animate-slow-spin { animation: slow-spin 50s linear infinite; }
+
+/* ════════════════════════════════════════════════════════════════════
+   GVD-standard component layer (Vaikuntham Blue)
+   Small, composable primitives shared by the redesigned shell, home
+   and inner pages. Prefer these over one-off utility stacks so every
+   page keeps the same rhythm.
+═══════════════════════════════════════════════════════════════════ */
+@layer components {
+  /* Page container — GVD uses max-w-7xl with 16px gutters. */
+  .vk-container {
+    @apply mx-auto w-full max-w-7xl px-4 md:px-6;
+  }
+
+  /* Vertical rhythm for home/inner sections. */
+  .vk-section {
+    @apply py-10 md:py-16;
+  }
+
+  /* Soft tinted band behind alternating sections. */
+  .vk-band {
+    background-image: var(--gradient-band);
+  }
+
+  /* Eyebrow pill above every section title ("WELCOME", "SEVA OPPORTUNITIES"). */
+  .vk-pill {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] md:text-xs;
+    background-color: #1E3A8A;
+    color: #fff;
+  }
+  .vk-pill-soft {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] md:text-xs;
+    background-color: #EEF2FF;
+    color: #1E3A8A;
+  }
+  .vk-pill-light {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] md:text-xs;
+    background-color: rgba(255, 255, 255, 0.16);
+    color: #fff;
+    backdrop-filter: blur(6px);
+  }
+
+  /* Section titles — big, tight, ink. */
+  .vk-h1 {
+    font-family: var(--font-heading);
+    @apply text-[2rem] font-extrabold leading-[1.08] tracking-[-0.03em] text-foreground sm:text-5xl lg:text-[3.4rem];
+  }
+  .vk-h2 {
+    font-family: var(--font-heading);
+    @apply text-[1.75rem] font-bold leading-[1.12] tracking-[-0.025em] text-foreground md:text-[2.5rem];
+  }
+  .vk-h3 {
+    font-family: var(--font-heading);
+    @apply text-xl font-bold leading-snug tracking-[-0.015em] text-foreground md:text-2xl;
+  }
+  .vk-lead {
+    @apply text-[15px] leading-relaxed text-muted-foreground md:text-base;
+  }
+
+  /* Buttons */
+  .vk-btn {
+    @apply inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl px-5 py-2.5 text-sm font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
+  }
+  .vk-btn-primary {
+    @apply vk-btn text-white;
+    background-color: #1E3A8A;
+    box-shadow: 0 6px 16px -6px rgba(30, 58, 138, 0.55);
+  }
+  .vk-btn-primary:hover {
+    background-color: #2448B4;
+    transform: translateY(-1px);
+  }
+  .vk-btn-gold {
+    @apply vk-btn;
+    color: #1D1B20;
+    background-image: var(--gradient-gold);
+    box-shadow: var(--shadow-gold);
+  }
+  .vk-btn-gold:hover {
+    filter: brightness(1.04);
+    transform: translateY(-1px);
+  }
+  .vk-btn-outline {
+    @apply vk-btn border bg-white;
+    border-color: #DCE4FF;
+    color: #1E3A8A;
+  }
+  .vk-btn-outline:hover {
+    border-color: #1E3A8A;
+    background-color: #F5F7FF;
+  }
+  .vk-btn-ghost-light {
+    @apply vk-btn border text-white;
+    border-color: rgba(255, 255, 255, 0.45);
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+  .vk-btn-ghost-light:hover {
+    background-color: rgba(255, 255, 255, 0.18);
+  }
+
+  /* Cards */
+  .vk-card {
+    @apply rounded-2xl border bg-white;
+    border-color: #E8ECFA;
+    box-shadow: var(--shadow-card);
+  }
+  .vk-card-hover {
+    @apply transition-all duration-300 hover:-translate-y-1;
+  }
+  .vk-card-hover:hover {
+    box-shadow: 0 22px 40px -18px rgba(30, 58, 138, 0.35);
+  }
+
+  /* Image tile with bottom gradient + caption (GVD "Explore Temple" bento). */
+  .vk-tile {
+    @apply relative isolate overflow-hidden rounded-2xl bg-[#0A1233];
+    box-shadow: 0 10px 15px -3px rgba(29, 27, 32, 0.2);
+  }
+  .vk-tile::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background-image: var(--gradient-blue-overlay);
+    pointer-events: none;
+  }
+  .vk-tile > img,
+  .vk-tile > span > img {
+    transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .vk-tile:hover > img,
+  .vk-tile:hover > span > img {
+    transform: scale(1.06);
+  }
+  .vk-tile-caption {
+    @apply absolute inset-x-0 bottom-0 z-[2] p-4 text-white md:p-5;
+  }
+
+  /* Icon chip (round tinted badge holding an icon). */
+  .vk-icon-chip {
+    @apply inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl;
+    background-color: #EEF2FF;
+    color: #1E3A8A;
+  }
+
+  /* Accent bar before a heading (GVD's "▍Grand Opening Countdown"). */
+  .vk-bar-title {
+    @apply relative pl-3.5 font-bold;
+    font-family: var(--font-heading);
+  }
+  .vk-bar-title::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.15em;
+    bottom: 0.15em;
+    width: 4px;
+    border-radius: 4px;
+    background: #2F5BD3;
+  }
+
+  /* Form inputs — consistent field look for redesigned forms. */
+  .vk-input {
+    @apply h-11 w-full rounded-xl border bg-white px-3.5 text-[15px] text-foreground outline-none transition placeholder:text-muted-foreground/70;
+    border-color: #DCE4FF;
+  }
+  .vk-input:focus {
+    border-color: #2F5BD3;
+    box-shadow: 0 0 0 3px rgba(47, 91, 211, 0.15);
+  }
+
+  /* Horizontal scroller with snap (mobile carousels). */
+  .vk-scroller {
+    @apply flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 scrollbar-hide;
+    scroll-padding-inline: 1rem;
+  }
+  .vk-scroller > * {
+    @apply snap-start;
+  }
+
+  /* Prose styling for blog/article bodies. */
+  .vk-prose {
+    @apply text-[16px] leading-[1.8] text-[#2B2930];
+  }
+  .vk-prose h2 { @apply mb-3 mt-10 text-2xl font-bold text-foreground md:text-[1.75rem]; }
+  .vk-prose h3 { @apply mb-2 mt-8 text-xl font-bold text-foreground; }
+  .vk-prose p { @apply mb-5; }
+  .vk-prose a { @apply font-medium text-[#2F5BD3] underline decoration-[#B9C8FB] underline-offset-4 hover:decoration-[#2F5BD3]; }
+  .vk-prose ul { @apply mb-5 list-disc space-y-1.5 pl-6; }
+  .vk-prose ol { @apply mb-5 list-decimal space-y-1.5 pl-6; }
+  .vk-prose blockquote { @apply my-7 rounded-r-2xl border-l-4 border-[#2F5BD3] bg-[#F5F7FF] px-5 py-4 italic text-[#1E3A8A]; }
+  .vk-prose img { @apply my-6 rounded-2xl; }
+  .vk-prose figure { @apply my-6; }
+  .vk-prose figcaption { @apply mt-2 text-center text-sm text-muted-foreground; }
+  .vk-prose table { @apply my-6 w-full border-collapse text-sm; }
+  .vk-prose th, .vk-prose td { @apply border border-[#E8ECFA] px-3 py-2 text-left; }
+  .vk-prose th { @apply bg-[#F5F7FF] font-semibold; }
+}
+
+/* Footer temple line-art backdrop */
+.vk-footer-art {
+  background-image: url("/assets/home-footer-bg.webp");
+  background-repeat: no-repeat;
+  background-position: right bottom;
+  background-size: min(720px, 70%) auto;
+  opacity: 0.08;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
