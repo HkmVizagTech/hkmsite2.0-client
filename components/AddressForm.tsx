@@ -60,9 +60,9 @@ export default function AddressForm({ address, setAddress }: AddressFormProps) {
   }, [address.pincode]);
 
   return (
-    <div className="space-y-2">
-      <p className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-        <MapPin className="h-3.5 w-3.5 shrink-0 text-gold" />
+    <div className="mt-3 space-y-2.5">
+      <p className="flex items-center gap-1.5 text-xs font-medium text-ink/70">
+        <MapPin className="h-3.5 w-3.5 shrink-0 text-vk-500" />
         Delivery address for your Maha Prasadam courier
       </p>
       <input
@@ -70,10 +70,11 @@ export default function AddressForm({ address, setAddress }: AddressFormProps) {
         required
         value={address.street}
         onChange={(e) => setAddress({ ...address, street: e.target.value })}
-        className="w-full rounded-lg border border-border bg-card px-3 py-2 text-xs outline-none focus:border-gold"
+        className="vk-input"
         placeholder="Door / flat no. & area, street *"
+        aria-label="Door / flat no. and area, street"
       />
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
         <div className="relative sm:col-span-1">
           <input
             type="text"
@@ -84,11 +85,12 @@ export default function AddressForm({ address, setAddress }: AddressFormProps) {
             onChange={(e) =>
               setAddress({ ...address, pincode: e.target.value.replace(/[^\d]/g, "").slice(0, 6) })
             }
-            className="h-9 w-full rounded-lg border border-border bg-card px-3 pr-8 text-xs outline-none focus:border-gold"
+            className="vk-input pr-9"
             placeholder="PIN code *"
+            aria-label="PIN code"
           />
           {pinLoading && (
-            <Loader2 className="absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 animate-spin text-gold" />
+            <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-vk-500" />
           )}
         </div>
         <input
@@ -96,22 +98,24 @@ export default function AddressForm({ address, setAddress }: AddressFormProps) {
           required
           value={address.city}
           onChange={(e) => setAddress({ ...address, city: e.target.value })}
-          className="h-9 w-full rounded-lg border border-border bg-card px-3 text-xs outline-none focus:border-gold"
+          className="vk-input"
           placeholder="City *"
+          aria-label="City"
         />
         <input
           type="text"
           required
           value={address.state}
           onChange={(e) => setAddress({ ...address, state: e.target.value })}
-          className="h-9 w-full rounded-lg border border-border bg-card px-3 text-xs outline-none focus:border-gold"
+          className="vk-input"
           placeholder="State *"
+          aria-label="State"
         />
       </div>
       {pinError ? (
-        <p className="text-[11px] text-red-600">{pinError}</p>
+        <p className="text-xs text-red-600">{pinError}</p>
       ) : (
-        <p className="text-[11px] text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           Enter your PIN code and we&apos;ll fill in city &amp; state automatically.
         </p>
       )}

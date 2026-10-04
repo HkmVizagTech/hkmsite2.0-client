@@ -1,12 +1,11 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
-import { Clock, Sun, Sunrise, Sunset, Moon, Music, BookOpen, Heart } from "lucide-react";
+import { Clock, Sun, Sunrise, Sunset, Moon, Music, BookOpen, Heart, Camera, Shirt, Utensils, Hourglass, Store } from "lucide-react";
 import Image from "next/image";
 import PageLayout from "@/components/PageLayout";
 import PageHero from "@/components/PageHero";
-import Ornament from "@/components/Ornament";
+import SectionHeading from "@/components/site/SectionHeading";
+import Reveal from "@/components/site/Reveal";
 
 const schedule = [
   { time: "4:30 AM", event: "Mangala Aarti", icon: Moon, desc: "The first aarti of the day, offered in the pre-dawn hours to awaken the Lord from His divine rest." },
@@ -46,168 +45,174 @@ const specialPrograms = [
   },
 ];
 
-export default function DailySchedulePage() {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-100px" });
+const visitInfo = [
+  {
+    icon: Clock,
+    title: "Temple Hours",
+    lines: ["Mangala Darshan: 4:30 AM – 5:00 AM", "Morning: 7:15 AM – 12:20 PM", "Evening: 4:15 PM – 8:15 PM"],
+  },
+  {
+    icon: Hourglass,
+    title: "Rest Period",
+    lines: ["The temple is closed for darshan between 5:00 AM and 7:15 AM, and again between 12:20 PM and 4:15 PM, while the Lord rests."],
+  },
+  {
+    icon: Shirt,
+    title: "Dress Code",
+    lines: ["Modest, traditional attire is encouraged. Please remove footwear before entering the temple hall."],
+  },
+];
 
+const guidelines = [
+  {
+    icon: Camera,
+    title: "Photography",
+    lines: ["Photography is allowed during darshan. Flash photography and video recording may be restricted during special events."],
+  },
+  {
+    icon: Utensils,
+    title: "Prasadam",
+    lines: ["Free prasadam is served after the morning Bhagavatam class and after the Sunday Love Feast program."],
+  },
+  {
+    icon: Store,
+    title: "Book Store",
+    lines: ["Sacred literature by Srila Prabhupada, devotional items, and spiritual accessories are available at the temple bookstore."],
+  },
+];
+
+function InfoColumn({ title, items }: { title: string; items: typeof visitInfo }) {
+  return (
+    <Reveal>
+      <h2 className="vk-bar-title mb-5 text-2xl text-foreground md:text-[1.75rem]">{title}</h2>
+      <div className="space-y-3">
+        {items.map((item) => (
+          <div key={item.title} className="vk-card flex gap-4 p-5">
+            <span className="vk-icon-chip">
+              <item.icon className="h-5 w-5" />
+            </span>
+            <div>
+              <h3 className="mb-1 text-[15px] font-bold text-foreground md:text-base">{item.title}</h3>
+              {item.lines.map((line) => (
+                <p key={line} className="text-sm leading-relaxed text-muted-foreground md:text-[15px]">
+                  {line}
+                </p>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </Reveal>
+  );
+}
+
+export default function DailySchedulePage() {
   return (
     <PageLayout>
-      <PageHero
-        title="Daily Schedule"
-        subtitle="Temple timings, aarti schedule & spiritual programs"
-        breadcrumb="Daily Schedule"
-        backgroundImage="/assets/gallery-aarti.jpg"
-      />
-      <section className="py-12 md:py-16 bg-white dark:bg-background" ref={ref}>
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-14">
-            <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">Temple Timings</p>
-            <Ornament className="mb-5" />
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground">
-              Daily Program Schedule
-            </h2>
-            <p className="text-muted-foreground mt-3 max-w-xl mx-auto">
-              The temple follows a sacred daily routine established by Srila Prabhupada for all ISKCON temples worldwide.
-            </p>
-          </div>
+      <div className="pt-[var(--header-h)]">
+        <PageHero
+          title="Daily Schedule"
+          subtitle="Temple timings, aarti schedule & spiritual programs"
+          breadcrumb="Daily Schedule"
+          backgroundImage="/assets/gallery-aarti.jpg"
+        />
 
-          <div className="max-w-3xl mx-auto">
-            {schedule.map((item, i) => (
-              <motion.div
-                key={item.time}
-                initial={{ opacity: 0, x: i % 2 === 0 ? -20 : 20 }}
-                animate={inView ? { opacity: 1, x: 0 } : {}}
-                transition={{ duration: 0.5, delay: i * 0.08 }}
-                className="flex gap-4 md:gap-6 mb-1"
-              >
-                <div className="w-20 md:w-24 shrink-0 text-right pt-5">
-                  <span className="text-sm font-bold text-primary font-heading">{item.time}</span>
-                </div>
-                <div className="flex flex-col items-center">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center border-2 border-[hsl(var(--gold))]/40 mt-4">
-                    <item.icon className="w-4 h-4 text-primary" />
-                  </div>
-                  {i < schedule.length - 1 && (
-                    <div className="w-0.5 flex-1 bg-border" />
-                  )}
-                </div>
-                <div className="flex-1 pb-8">
-                  <div className="bg-card rounded-xl border border-border p-5 hover:shadow-warm transition-shadow group">
-                    <h3 className="font-heading text-lg font-semibold text-foreground">{item.event}</h3>
-                    <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">{item.desc}</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-      <section className="py-12 md:py-16 bg-white dark:bg-background">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-14">
-            <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">Weekly Programs</p>
-            <Ornament className="mb-5" />
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground">
-              Special Programs
-            </h2>
-          </div>
+        {/* ── DAILY TIMELINE ────────────────────────────────────── */}
+        <section className="vk-section">
+          <div className="vk-container">
+            <SectionHeading
+              align="center"
+              eyebrow="Temple Timings"
+              title="Daily Program Schedule"
+              subtitle="The temple follows a sacred daily routine established by Srila Prabhupada for all ISKCON temples worldwide."
+            />
 
-          <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-6">
-            {specialPrograms.map((prog, i) => (
-              <motion.div
-                key={prog.title}
-                initial={{ opacity: 0, y: 30 }}
-                animate={inView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, delay: 0.3 + i * 0.15 }}
-                className="bg-background rounded-2xl border border-border overflow-hidden group hover:shadow-warm transition-shadow group"
-              >
-                <div className="h-48 overflow-hidden relative">
-                  <Image
-                    src={prog.image}
-                    alt={prog.title}
-                    fill
-                    sizes="(min-width: 768px) 33vw, 100vw"
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
-                <div className="p-6">
-                  <div className="flex items-center gap-2 text-xs text-primary font-semibold mb-2">
-                    <Clock className="w-3.5 h-3.5" />
-                    <span>{prog.day} · {prog.time}</span>
+            <ol className="relative mx-auto max-w-3xl">
+              <span aria-hidden className="absolute bottom-8 left-[21px] top-8 w-0.5 bg-vk-200 md:left-[121px]" />
+              {schedule.map((item, i) => (
+                <Reveal as="li" key={item.time} delay={Math.min(i, 6) * 0.04} className="relative pb-3 last:pb-0 md:pb-4">
+                  <div className="flex items-start gap-3 md:gap-5">
+                    <div className="hidden w-20 shrink-0 pt-5 text-right md:block">
+                      <span className="font-heading text-sm font-bold text-vk-700">{item.time}</span>
+                    </div>
+                    <span className="relative z-[1] mt-3 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-vk-100 text-vk-700 ring-4 ring-white">
+                      <item.icon className="h-[18px] w-[18px]" />
+                    </span>
+                    <div className="vk-card vk-card-hover flex-1 p-4 md:p-5">
+                      <span className="vk-pill-soft mb-2 md:hidden">{item.time}</span>
+                      <h3 className="text-base font-bold text-foreground md:text-lg">{item.event}</h3>
+                      <p className="mt-1 text-sm leading-relaxed text-muted-foreground md:text-[15px]">{item.desc}</p>
+                    </div>
                   </div>
-                  <h3 className="font-heading text-xl font-bold text-foreground mb-2">{prog.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{prog.desc}</p>
-                </div>
-              </motion.div>
-            ))}
+                </Reveal>
+              ))}
+            </ol>
           </div>
-        </div>
-      </section>
-      <section className="py-12 md:py-16 bg-white dark:bg-background">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-10">
-            <div>
-              <h2 className="font-heading text-3xl font-bold text-foreground mb-6">Visit Us</h2>
-              <div className="space-y-4">
-                <div className="bg-card rounded-xl border border-border p-5">
-                  <h3 className="font-heading font-semibold text-foreground mb-2">Temple Hours</h3>
-                  <p className="text-sm text-muted-foreground">Mangala Darshan: 4:30 AM – 5:00 AM</p>
-                  <p className="text-sm text-muted-foreground">Morning: 7:15 AM – 12:20 PM</p>
-                  <p className="text-sm text-muted-foreground">Evening: 4:15 PM – 8:15 PM</p>
-                </div>
-                <div className="bg-card rounded-xl border border-border p-5">
-                  <h3 className="font-heading font-semibold text-foreground mb-2">Rest Period</h3>
-                  <p className="text-sm text-muted-foreground">The temple is closed for darshan between 5:00 AM and 7:15 AM, and again between 12:20 PM and 4:15 PM, while the Lord rests.</p>
-                </div>
-                <div className="bg-card rounded-xl border border-border p-5">
-                  <h3 className="font-heading font-semibold text-foreground mb-2">Dress Code</h3>
-                  <p className="text-sm text-muted-foreground">Modest, traditional attire is encouraged. Please remove footwear before entering the temple hall.</p>
-                </div>
-              </div>
-            </div>
-            <div>
-              <h2 className="font-heading text-3xl font-bold text-foreground mb-6">Guidelines</h2>
-              <div className="space-y-4">
-                <div className="bg-card rounded-xl border border-border p-5">
-                  <h3 className="font-heading font-semibold text-foreground mb-2">Photography</h3>
-                  <p className="text-sm text-muted-foreground">Photography is allowed during darshan. Flash photography and video recording may be restricted during special events.</p>
-                </div>
-                <div className="bg-card rounded-xl border border-border p-5">
-                  <h3 className="font-heading font-semibold text-foreground mb-2">Prasadam</h3>
-                  <p className="text-sm text-muted-foreground">Free prasadam is served after the morning Bhagavatam class and after the Sunday Love Feast program.</p>
-                </div>
-                <div className="bg-card rounded-xl border border-border p-5">
-                  <h3 className="font-heading font-semibold text-foreground mb-2">Book Store</h3>
-                  <p className="text-sm text-muted-foreground">Sacred literature by Srila Prabhupada, devotional items, and spiritual accessories are available at the temple bookstore.</p>
-                </div>
-              </div>
+        </section>
+
+        {/* ── SPECIAL PROGRAMS ──────────────────────────────────── */}
+        <section className="vk-section vk-band">
+          <div className="vk-container">
+            <SectionHeading align="center" eyebrow="Weekly Programs" title="Special Programs" />
+            <div className="grid gap-5 md:grid-cols-3">
+              {specialPrograms.map((prog, i) => (
+                <Reveal key={prog.title} delay={i * 0.08}>
+                  <article className="vk-card vk-card-hover group flex h-full flex-col overflow-hidden">
+                    <div className="relative h-48 overflow-hidden bg-vk-100">
+                      <Image
+                        src={prog.image}
+                        alt={prog.title}
+                        fill
+                        sizes="(min-width: 768px) 33vw, 100vw"
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    </div>
+                    <div className="flex flex-1 flex-col p-5 md:p-6">
+                      <span className="vk-pill-soft mb-3 self-start !normal-case !tracking-normal">
+                        <Clock className="h-3.5 w-3.5" />
+                        {prog.day} · {prog.time}
+                      </span>
+                      <h3 className="text-xl font-bold text-foreground">{prog.title}</h3>
+                      <p className="mt-1.5 text-[15px] leading-relaxed text-muted-foreground">{prog.desc}</p>
+                    </div>
+                  </article>
+                </Reveal>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
-      <section className="py-20 bg-gradient-hero text-center">
-        <div className="container mx-auto px-4 max-w-3xl">
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1 }}
-          >
-            <p className="text-white/70 text-sm tracking-[0.2em] uppercase mb-6">The Maha Mantra</p>
-            <h2 className="font-heading text-3xl md:text-5xl font-bold text-white mb-6 leading-snug">
-              Hare Krishna Hare Krishna<br />
-              Krishna Krishna Hare Hare<br />
-              Hare Rama Hare Rama<br />
-              Rama Rama Hare Hare
-            </h2>
-            <p className="text-white/80 text-lg leading-relaxed">
-              &quot;Simply by chanting the Holy Name of the Lord, one can attain the highest perfection of life.&quot;
-              <br />
-              <span className="text-accent text-sm mt-2 inline-block">— Srila Prabhupada</span>
-            </p>
-          </motion.div>
-        </div>
-      </section>
+        </section>
+
+        {/* ── VISIT INFO + GUIDELINES ───────────────────────────── */}
+        <section className="vk-section">
+          <div className="vk-container grid gap-10 md:grid-cols-2 lg:gap-14">
+            <InfoColumn title="Visit Us" items={visitInfo} />
+            <InfoColumn title="Guidelines" items={guidelines} />
+          </div>
+        </section>
+
+        {/* ── MAHA MANTRA ───────────────────────────────────────── */}
+        <section className="pb-10 md:pb-16">
+          <div className="vk-container">
+            <Reveal>
+              <div className="relative isolate overflow-hidden rounded-3xl bg-gradient-to-br from-vk-600 via-vk-700 to-vk-900 px-6 py-12 text-center md:px-12 md:py-16">
+                <div aria-hidden className="absolute -right-16 -top-16 -z-10 h-60 w-60 rounded-full bg-white/10" />
+                <div aria-hidden className="absolute -bottom-20 -left-12 -z-10 h-52 w-52 rounded-full bg-vk-500/25" />
+                <span className="vk-pill-light mb-6">The Maha Mantra</span>
+                <h2 className="vk-h2 mx-auto max-w-3xl !leading-snug !text-white md:!text-5xl">
+                  Hare Krishna Hare Krishna<br />
+                  Krishna Krishna Hare Hare<br />
+                  Hare Rama Hare Rama<br />
+                  Rama Rama Hare Hare
+                </h2>
+                <p className="mx-auto mt-6 max-w-2xl font-serif-display text-lg italic leading-relaxed text-white/85">
+                  &quot;Simply by chanting the Holy Name of the Lord, one can attain the highest perfection of life.&quot;
+                </p>
+                <p className="mt-3 text-xs font-semibold uppercase tracking-[0.14em] text-white/65">— Srila Prabhupada</p>
+              </div>
+            </Reveal>
+          </div>
+        </section>
+      </div>
     </PageLayout>
   );
 }

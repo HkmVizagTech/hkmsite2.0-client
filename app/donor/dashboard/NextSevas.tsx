@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { Loader2, Calendar } from "lucide-react";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
@@ -55,7 +54,7 @@ export default function NextSevas() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-8 text-muted-foreground">
+      <div className="flex items-center justify-center py-8 text-vk-500">
         <Loader2 className="h-5 w-5 animate-spin" />
       </div>
     );
@@ -65,26 +64,28 @@ export default function NextSevas() {
 
   return (
     <>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
           {upcoming.map((f) => (
-            <div key={f._id} className="flex flex-col overflow-hidden rounded-lg border border-border">
+            <div key={f._id} className="flex flex-col overflow-hidden rounded-2xl border border-vk-100 bg-white">
               {f.cardImage && (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={f.cardImage} alt={f.title} className="h-28 w-full object-cover" />
+                <img src={f.cardImage} alt={f.title} className="h-32 w-full bg-vk-50 object-cover" />
               )}
-              <div className="flex flex-1 flex-col p-3">
-                <p className="font-semibold">{f.title}</p>
+              <div className="flex flex-1 flex-col p-3.5">
+                <p className="font-heading font-bold leading-snug text-ink">{f.title}</p>
                 {f.eventDate && (
-                  <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
-                    <Calendar className="h-3 w-3" />
+                  <p className="mt-1 flex items-center gap-1.5 text-xs font-medium text-vk-700">
+                    <Calendar className="h-3.5 w-3.5 text-vk-500" />
                     {new Date(f.eventDate).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}
                   </p>
                 )}
                 {f.description && <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{f.description}</p>}
                 {f.ctaHref && (
-                  <Link href={f.ctaHref} className="mt-auto">
-                    <Button size="sm" className="mt-2 w-full">{f.ctaLabel || "Donate Now"}</Button>
-                  </Link>
+                  <div className="mt-auto pt-3">
+                    <Link href={f.ctaHref} className="vk-btn-gold h-11 w-full text-[13px] font-bold">
+                      {f.ctaLabel || "Donate Now"}
+                    </Link>
+                  </div>
                 )}
               </div>
             </div>

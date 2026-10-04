@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import Ornament from "@/components/Ornament";
+import SectionHeading from "@/components/site/SectionHeading";
 
 interface GalleryItem {
   _id: string;
@@ -59,29 +59,25 @@ export default function GallerySection() {
   }, []);
 
   return (
-    <section className="bg-white dark:bg-background py-12 md:py-16">
-      <div className="container mx-auto max-w-5xl px-4">
-        <Ornament className="mb-6" />
-        <h2 className="mb-8 text-center font-heading text-2xl font-bold text-primary md:text-3xl">
-          Temple &amp; Seva Glimpses
-        </h2>
+    <section className="vk-section vk-band">
+      <div className="vk-container">
+        <SectionHeading align="center" title="Temple & Seva Glimpses" />
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="grid grid-cols-2 gap-3 md:grid-cols-3"
+          className="mx-auto grid max-w-6xl grid-cols-2 gap-3 md:grid-cols-3 md:gap-4"
         >
           {images.map((g, i) => (
-            <div key={g.src + i} className="group relative aspect-[4/3] overflow-hidden rounded-2xl">
+            <div key={g.src + i} className="vk-tile group aspect-[4/3]">
               <Image
                 src={g.src}
                 alt={g.alt}
                 fill
                 sizes="(max-width: 768px) 50vw, 33vw"
-                className="object-cover transition-all duration-500 group-hover:scale-110"
+                className="object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
             </div>
           ))}
         </motion.div>

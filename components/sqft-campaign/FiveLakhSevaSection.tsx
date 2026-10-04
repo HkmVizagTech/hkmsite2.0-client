@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Award, Building2, IndianRupee, ScrollText } from "lucide-react";
-import Ornament from "@/components/Ornament";
+import SectionHeading from "@/components/site/SectionHeading";
 import type { CampaignConfig } from "@/lib/campaignConfig";
 import { SQFT_CAMPAIGN } from "@/lib/campaignConfig";
 
@@ -21,38 +21,37 @@ export default function FiveLakhSevaSection({
   const amountLabel = `₹${SEVA_AMOUNT.toLocaleString("en-IN")}`;
 
   return (
-    <section className="bg-[radial-gradient(circle_at_top,_rgba(255,221,91,0.12),_transparent_45%)] bg-white pb-12 pt-1 dark:bg-background md:pb-16 md:pt-2">
-      <div className="container mx-auto max-w-5xl px-4">
-        <Ornament className="mb-4" />
-        <div className="mx-auto mb-8 max-w-2xl text-center">
-          <p className="mb-3 text-sm uppercase tracking-[0.3em] text-gold">
-            Premium Temple Seva
-          </p>
-          <h2 className="font-heading text-3xl font-bold text-primary md:text-4xl">
-            {amountLabel} Seva
-          </h2>
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground md:text-base">
-            Sponsor {SEVA_SQFT.toLocaleString("en-IN")} {config.unitNamePlural} of the temple
-            construction with a single offering of {amountLabel}.
-          </p>
-        </div>
+    <section className="vk-section bg-white">
+      <div className="vk-container">
+        <SectionHeading
+          align="center"
+          eyebrow="Premium Temple Seva"
+          title={`${amountLabel} Seva`}
+          subtitle={
+            <>
+              Sponsor {SEVA_SQFT.toLocaleString("en-IN")} {config.unitNamePlural} of the temple
+              construction with a single offering of {amountLabel}.
+            </>
+          }
+        />
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="overflow-hidden rounded-[32px] border border-gold/40 bg-[hsl(220,90%,12%)] shadow-elevated"
+          className="relative mx-auto max-w-5xl overflow-hidden rounded-3xl bg-gradient-to-br from-vk-900 via-vk-800 to-vk-700 shadow-[0_24px_60px_-28px_rgba(10,18,51,0.6)]"
         >
-          <div className="grid gap-8 p-6 sm:p-10 md:grid-cols-5 md:items-center">
+          <div aria-hidden className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-white/5" />
+          <div className="relative grid gap-8 p-6 sm:p-10 md:grid-cols-5 md:items-center">
             {/* Left: offering + benefits */}
             <div className="md:col-span-3">
-              <span className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-gradient-gold px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-[hsl(220,90%,12%)] shadow-gold">
-                <Award className="h-3.5 w-3.5" />
+              <span className="vk-pill-light mb-4">
+                <Award className="h-3.5 w-3.5 text-[hsl(var(--gold))]" />
                 Featured Seva
               </span>
 
-              <h3 className="font-heading text-2xl font-bold text-white md:text-3xl">
+              <h3 className="vk-h3 !text-white md:!text-3xl">
                 Your name, engraved forever on the Honor Wall
               </h3>
               <p className="mt-3 text-sm leading-relaxed text-white/80 md:text-base">
@@ -69,7 +68,7 @@ export default function FiveLakhSevaSection({
                   { icon: Award, text: "Honoured alongside the temple's most respected contributors." },
                 ].map((b) => (
                   <li key={b.text} className="flex items-start gap-3">
-                    <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gold/15 text-gold">
+                    <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10 text-[hsl(var(--gold))]">
                       <b.icon className="h-4 w-4" />
                     </span>
                     <p className="text-sm leading-relaxed text-white/85">{b.text}</p>
@@ -80,20 +79,16 @@ export default function FiveLakhSevaSection({
 
             {/* Right: amount card */}
             <div className="md:col-span-2">
-              <div className="rounded-2xl bg-white/5 p-6 text-center ring-1 ring-gold/30">
-                <p className="flex items-center justify-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-gold">
+              <div className="rounded-2xl border border-white/10 bg-white/10 p-6 text-center">
+                <p className="flex items-center justify-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-white/75">
                   <IndianRupee className="h-3.5 w-3.5" />
                   Your offering
                 </p>
                 <p className="mt-2 font-heading text-4xl font-extrabold text-white md:text-5xl">
                   {amountLabel}
                 </p>
-                <div className="my-5 flex items-center justify-center gap-3">
-                  <span className="h-px w-10 bg-gold/40" />
-                  <span className="text-gold">✦</span>
-                  <span className="h-px w-10 bg-gold/40" />
-                </div>
-                <p className="font-heading text-2xl font-bold text-gold">
+                <div aria-hidden className="mx-auto my-5 h-px w-24 bg-white/15" />
+                <p className="font-heading text-2xl font-bold text-[hsl(var(--gold))]">
                   {SEVA_SQFT.toLocaleString("en-IN")} {config.unitNamePlural}
                 </p>
                 <p className="mt-1 text-xs text-white/60">
@@ -103,7 +98,7 @@ export default function FiveLakhSevaSection({
 
               <button
                 onClick={scrollToDonate}
-                className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-gradient-gold px-8 py-4 text-base font-bold text-[hsl(220,90%,12%)] shadow-gold transition-transform hover:scale-105"
+                className="vk-btn-gold mt-6 h-12 w-full text-base"
               >
                 Donate {amountLabel} Now
               </button>

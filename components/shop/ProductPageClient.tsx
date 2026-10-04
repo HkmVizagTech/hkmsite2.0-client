@@ -21,7 +21,6 @@ import {
   Sparkles,
   BookOpen,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import ProductCard from "@/components/shop/ProductCard";
 import { showAddedToCart } from "@/components/shop/CartToast";
 import { useCart } from "@/contexts/CartContext";
@@ -105,7 +104,7 @@ export default function ProductDetailPage() {
   if (loading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        <Loader2 className="h-6 w-6 animate-spin text-vk-500" />
       </div>
     );
   }
@@ -113,10 +112,12 @@ export default function ProductDetailPage() {
   if (error || !product) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-3 px-4 text-center">
-        <PackageOpen className="h-10 w-10 text-muted-foreground/50" />
-        <p className="font-medium text-foreground">{error || "This item isn't available."}</p>
-        <Link href="/shop">
-          <Button variant="outline" size="sm">Back to the shop</Button>
+        <span className="vk-icon-chip !h-14 !w-14 !rounded-2xl">
+          <PackageOpen className="h-7 w-7" />
+        </span>
+        <p className="font-medium text-ink">{error || "This item isn't available."}</p>
+        <Link href="/shop" className="vk-btn-outline">
+          Back to the shop
         </Link>
       </div>
     );
@@ -197,18 +198,21 @@ export default function ProductDetailPage() {
   };
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-10">
+    <div className="vk-container py-6 sm:py-10">
       <Link
         href="/shop"
-        className="mb-5 inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
+        className="mb-5 inline-flex items-center gap-1 rounded-full bg-vk-50 px-3 py-1.5 text-xs font-semibold text-vk-700 transition-colors hover:bg-vk-100 sm:text-[13px]"
       >
         <ChevronLeft className="h-4 w-4" /> Back to shop
       </Link>
 
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
+      {/* Desktop: gallery + item details on the left, the purchase card on the
+          right sticks while the left column scrolls. Mobile keeps the natural
+          order gallery → purchase card → details. */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:gap-10">
         {/* Gallery */}
-        <div className="min-w-0">
-          <div className="relative overflow-hidden rounded-2xl border border-border bg-muted">
+        <div className="min-w-0 lg:col-start-1 lg:row-start-1">
+          <div className="relative overflow-hidden rounded-3xl border border-vk-100 bg-vk-50">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -235,7 +239,7 @@ export default function ProductDetailPage() {
                   />
                 </AnimatePresence>
               ) : (
-                <div className="flex h-full items-center justify-center text-muted-foreground">
+                <div className="flex h-full items-center justify-center text-vk-300">
                   <ShoppingBag className="h-10 w-10" />
                 </div>
               )}
@@ -249,7 +253,7 @@ export default function ProductDetailPage() {
                   type="button"
                   onClick={() => goImage((activeImage - 1 + imageCount) % imageCount)}
                   aria-label="Previous image"
-                  className="absolute left-3 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-background/85 text-foreground shadow-sm backdrop-blur transition-colors hover:border-gold hover:text-primary active:scale-95"
+                  className="absolute left-3 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-vk-100 bg-white/90 text-vk-800 shadow-card backdrop-blur transition-colors hover:border-vk-500 hover:text-vk-500 active:scale-95"
                 >
                   <ChevronLeft className="h-5 w-5" />
                 </button>
@@ -257,11 +261,11 @@ export default function ProductDetailPage() {
                   type="button"
                   onClick={() => goImage((activeImage + 1) % imageCount)}
                   aria-label="Next image"
-                  className="absolute right-3 top-1/2 z-10 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-background/85 text-foreground shadow-sm backdrop-blur transition-colors hover:border-gold hover:text-primary active:scale-95"
+                  className="absolute right-3 top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-vk-100 bg-white/90 text-vk-800 shadow-card backdrop-blur transition-colors hover:border-vk-500 hover:text-vk-500 active:scale-95"
                 >
                   <ChevronRight className="h-5 w-5" />
                 </button>
-                <div className="absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-black/30 px-2.5 py-1.5 backdrop-blur-sm">
+                <div className="absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-vk-900/35 px-2.5 py-1.5 backdrop-blur-sm">
                   {product.images.map((_, i) => (
                     <span
                       key={i}
@@ -276,13 +280,13 @@ export default function ProductDetailPage() {
           </div>
 
           {imageCount > 1 && (
-            <div className="mt-3 flex gap-2.5 overflow-x-auto pb-1">
+            <div className="mt-3 flex gap-2.5 overflow-x-auto pb-1 scrollbar-hide">
               {product.images.map((img, i) => (
                 <button
                   key={img + i}
                   onClick={() => goImage(i)}
-                  className={`h-16 w-16 shrink-0 overflow-hidden rounded-lg border-2 transition-colors ${
-                    i === activeImage ? "border-gold" : "border-border hover:border-muted-foreground"
+                  className={`h-16 w-16 shrink-0 overflow-hidden rounded-xl border-2 bg-vk-50 transition-colors sm:h-[72px] sm:w-[72px] ${
+                    i === activeImage ? "border-vk-500" : "border-vk-100 hover:border-vk-300"
                   }`}
                   aria-label={`View image ${i + 1}`}
                 >
@@ -293,55 +297,53 @@ export default function ProductDetailPage() {
           )}
         </div>
 
-        {/* Details */}
-        <div className="relative min-w-0">
-          <div className="mt-2 flex flex-wrap items-center gap-2 pr-12">
-            {product.category && (
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/30 bg-gold/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-gold-deep">
-                <Sparkles className="h-3 w-3" />
-                {product.category.replace(/-/g, " ")}
-              </span>
-            )}
-            {product.inStock ? (
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[11px] font-semibold text-emerald-700">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                In stock
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-rose-200 bg-rose-50 px-3 py-1 text-[11px] font-semibold text-rose-600">
-                Out of stock
-              </span>
-            )}
-          </div>
+        {/* Purchase card — sticky on desktop. */}
+        <div className="min-w-0 lg:col-start-2 lg:row-span-2 lg:row-start-1">
+          <div className="lg:sticky lg:top-[96px]">
+            <div className="vk-card relative !rounded-3xl p-5 sm:p-6">
+              <div className="flex flex-wrap items-center gap-2 pr-12">
+                {product.category && (
+                  <span className="vk-pill-soft">
+                    <Sparkles className="h-3 w-3" />
+                    {product.category.replace(/-/g, " ")}
+                  </span>
+                )}
+                {product.inStock ? (
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[11px] font-semibold text-emerald-700">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                    In stock
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-rose-200 bg-rose-50 px-3 py-1 text-[11px] font-semibold text-rose-600">
+                    Out of stock
+                  </span>
+                )}
+              </div>
 
-          {/* Save-for-later heart, aligned with the title block. */}
-          <button
-            type="button"
-            onClick={() => toggleWishlist(product._id)}
-            aria-label={wishlisted ? "Remove from wishlist" : "Save for later"}
-            aria-pressed={wishlisted}
-            className={`absolute right-0 top-0 z-10 flex h-10 w-10 items-center justify-center rounded-full border transition-colors sm:h-11 sm:w-11 ${
-              wishlisted
-                ? "border-rose-200 bg-rose-50 text-rose-500"
-                : "border-border bg-background text-muted-foreground hover:text-rose-500"
-            }`}
-          >
-            <Heart className={`h-5 w-5 ${wishlisted ? "fill-current" : ""}`} />
-          </button>
+              {/* Save-for-later heart, aligned with the title block. */}
+              <button
+                type="button"
+                onClick={() => toggleWishlist(product._id)}
+                aria-label={wishlisted ? "Remove from wishlist" : "Save for later"}
+                aria-pressed={wishlisted}
+                className={`absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full border transition-colors sm:right-5 sm:top-5 sm:h-11 sm:w-11 ${
+                  wishlisted
+                    ? "border-rose-200 bg-rose-50 text-rose-500"
+                    : "border-vk-100 bg-white text-muted-foreground hover:text-rose-500"
+                }`}
+              >
+                <Heart className={`h-5 w-5 ${wishlisted ? "fill-current" : ""}`} />
+              </button>
 
-          <h1 className="mt-3 break-words font-heading text-2xl font-bold text-foreground sm:text-3xl">{product.name}</h1>
-          <div className="mt-2 h-1 w-16 rounded-full bg-gradient-gold" />
-          {product.shortDescription && (
-            <p className="mt-3 break-words text-sm leading-relaxed text-muted-foreground">{product.shortDescription}</p>
-          )}
+              <h1 className="mt-4 break-words font-heading text-2xl font-extrabold leading-tight tracking-[-0.02em] text-ink sm:text-[2rem]">
+                {product.name}
+              </h1>
+              {product.shortDescription && (
+                <p className="mt-2.5 break-words text-sm leading-relaxed text-muted-foreground">{product.shortDescription}</p>
+              )}
 
-          {/* Buy box — price, options, stepper and the add action in one warm,
-              gold-accented card, the same visual language as the campaign pages. */}
-          <div className="mt-6 overflow-hidden rounded-2xl border border-gold/25 shadow-warm">
-            <div className="h-1.5 bg-gradient-gold" />
-            <div className="bg-gradient-to-br from-gold/10 via-card to-card p-5 sm:p-6">
-              <div className="flex flex-wrap items-end gap-x-3 gap-y-1.5">
-                <span className="text-3xl font-extrabold tracking-tight text-gold-deep sm:text-4xl">
+              <div className="mt-5 flex flex-wrap items-end gap-x-3 gap-y-1.5 border-t border-vk-100 pt-5">
+                <span className="font-heading text-3xl font-extrabold tracking-tight text-vk-700 sm:text-4xl">
                   {formatINR(currentPrice)}
                 </span>
                 {off !== null && currentMrp && (
@@ -349,10 +351,7 @@ export default function ProductDetailPage() {
                     <span className="text-base font-medium text-muted-foreground line-through sm:text-lg">
                       {formatINR(currentMrp)}
                     </span>
-                    <span
-                      className="mb-1 rounded-full px-2.5 py-1 text-xs font-bold text-white shadow-gold"
-                      style={{ background: "var(--gradient-gold)" }}
-                    >
+                    <span className="mb-1 rounded-full bg-[hsl(var(--gold))] px-2.5 py-1 text-xs font-bold text-ink">
                       {off}% OFF
                     </span>
                   </>
@@ -361,23 +360,23 @@ export default function ProductDetailPage() {
 
               {product.hasVariants && (
                 <div className="mt-5">
-                  <p className="mb-2 text-sm font-semibold text-foreground">Choose an option</p>
+                  <p className="mb-2 text-[13px] font-bold uppercase tracking-[0.08em] text-vk-700">Choose an option</p>
                   <div className="flex flex-wrap gap-2">
                     {product.variants.map((v) => (
                       <button
                         key={v._id}
                         onClick={() => v.inStock && setVariant(v)}
                         disabled={!v.inStock}
-                        className={`rounded-lg border px-3.5 py-2 text-sm font-medium transition-all ${
+                        className={`min-h-[44px] rounded-xl border px-3.5 py-2 text-sm font-semibold transition-all ${
                           variant?._id === v._id
-                            ? "border-gold bg-gold/15 text-foreground shadow-sm"
+                            ? "border-vk-500 bg-vk-50 text-vk-800 ring-2 ring-vk-500/20"
                             : v.inStock
-                              ? "border-border text-muted-foreground hover:border-muted-foreground"
-                              : "cursor-not-allowed border-border text-muted-foreground/40 line-through"
+                              ? "border-vk-200 bg-white text-ink hover:border-vk-400"
+                              : "cursor-not-allowed border-vk-100 bg-white text-muted-foreground/40 line-through"
                         }`}
                       >
                         {v.label}
-                        <span className="ml-1.5 text-xs opacity-70">{formatINR(v.price)}</span>
+                        <span className="ml-1.5 text-xs font-medium opacity-70">{formatINR(v.price)}</span>
                       </button>
                     ))}
                   </div>
@@ -385,19 +384,19 @@ export default function ProductDetailPage() {
               )}
 
               <div className="mt-5 flex flex-wrap items-center gap-3">
-                <div className="flex items-center rounded-xl border border-border bg-background">
+                <div className="flex h-11 items-center rounded-xl border border-vk-200 bg-white">
                   <button
                     type="button"
                     onClick={() => setCartQuantity(product._id, variant?._id || null, inCartForSelection - 1)}
                     disabled={!canBuy || inCartForSelection < 1}
-                    className="px-3 py-2.5 text-muted-foreground transition-colors hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
+                    className="flex h-full w-11 items-center justify-center text-vk-700 transition-colors hover:text-vk-500 disabled:cursor-not-allowed disabled:opacity-40"
                     aria-label="Decrease quantity"
                   >
                     <Minus className="h-3.5 w-3.5" />
                   </button>
                   <span
                     aria-live="polite"
-                    className="flex min-w-[36px] items-center justify-center gap-1 text-center text-sm font-semibold"
+                    className="flex min-w-[36px] items-center justify-center gap-1 text-center text-sm font-semibold text-ink"
                   >
                     {inCartForSelection > 0 && <Check className="h-3.5 w-3.5 text-emerald-600" />}
                     <span className="tabular-nums">{inCartForSelection}</span>
@@ -406,7 +405,7 @@ export default function ProductDetailPage() {
                     type="button"
                     onClick={() => setCartQuantity(product._id, variant?._id || null, Math.min(maxQty, inCartForSelection + 1))}
                     disabled={!canBuy || inCartForSelection >= maxQty}
-                    className="px-3 py-2.5 text-muted-foreground transition-colors hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
+                    className="flex h-full w-11 items-center justify-center text-vk-700 transition-colors hover:text-vk-500 disabled:cursor-not-allowed disabled:opacity-40"
                     aria-label="Increase quantity"
                   >
                     <Plus className="h-3.5 w-3.5" />
@@ -426,7 +425,7 @@ export default function ProductDetailPage() {
                   type="button"
                   onClick={handleAdd}
                   disabled={!canBuy || settings?.shopEnabled === false}
-                  className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-gradient-gold px-6 text-sm font-bold text-[hsl(220,60%,12%)] shadow-gold transition-all hover:-translate-y-0.5 hover:shadow-[0_14px_36px_hsl(42,92%,46%,0.45)] active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50"
+                  className="vk-btn-gold h-12 flex-1 text-[15px] font-bold"
                 >
                   {added ? <Check className="h-4 w-4" /> : <ShoppingBag className="h-4 w-4" />}
                   {!canBuy ? "Out of stock" : settings?.shopEnabled === false ? "Shop closed" : added ? "Added" : inCartForSelection > 0 ? "Add more" : "Add to Cart"}
@@ -440,87 +439,91 @@ export default function ProductDetailPage() {
                   <button
                     type="button"
                     onClick={openCart}
-                    className="font-semibold text-primary underline-offset-2 hover:underline"
+                    className="font-semibold text-vk-500 underline-offset-2 hover:underline"
                   >
                     View cart
                   </button>
                 </p>
               )}
+
+              {/* Delivery & trust */}
+              <div className="mt-5 space-y-2 border-t border-vk-100 pt-5">
+                {product.freeShipping && (
+                  <div className="flex items-center gap-3 rounded-xl bg-vk-50 px-3 py-2.5">
+                    <span className="vk-icon-chip !h-9 !w-9 !bg-white">
+                      <Truck className="h-4 w-4" />
+                    </span>
+                    <p className="min-w-0 text-[13px] font-semibold text-ink">Free delivery on this item</p>
+                  </div>
+                )}
+                <div className="flex items-center gap-3 rounded-xl bg-vk-50 px-3 py-2.5">
+                  <span className="vk-icon-chip !h-9 !w-9 !bg-white">
+                    <Truck className="h-4 w-4" />
+                  </span>
+                  <p className="min-w-0 text-[13px] font-semibold text-ink">
+                    {settings?.deliveryEstimate || "Usually dispatched in 3–5 working days"}
+                  </p>
+                </div>
+                {settings && settings.freeShippingAbove > 0 && (
+                  <div className="flex items-center gap-3 rounded-xl bg-vk-50 px-3 py-2.5">
+                    <span className="vk-icon-chip !h-9 !w-9 !bg-white">
+                      <PackageOpen className="h-4 w-4" />
+                    </span>
+                    <p className="min-w-0 text-[13px] font-semibold text-ink">
+                      Free delivery on orders above {formatINR(settings.freeShippingAbove)}
+                    </p>
+                  </div>
+                )}
+                <div className="flex items-center gap-3 rounded-xl bg-vk-50 px-3 py-2.5">
+                  <span className="vk-icon-chip !h-9 !w-9 !bg-white">
+                    <ShieldCheck className="h-4 w-4" />
+                  </span>
+                  <p className="min-w-0 text-[13px] font-semibold text-ink">
+                    Secure payment · Supports the temple&apos;s sevas
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
-
-          {/* Delivery & trust — tinted cards with coloured icon chips so each
-              guarantee reads at a glance, echoing the artwork on the home page. */}
-          <div className="mt-6 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-            {product.freeShipping && (
-              <div className="flex items-center gap-3 rounded-xl border border-emerald-100 bg-emerald-50/70 p-3">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-600">
-                  <Truck className="h-5 w-5" />
-                </span>
-                <p className="min-w-0 text-sm font-semibold text-emerald-800">Free delivery on this item</p>
-              </div>
-            )}
-            <div className="flex items-center gap-3 rounded-xl border border-sky-100 bg-sky-50/70 p-3">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky-500/15 text-sky-600">
-                <Truck className="h-5 w-5" />
-              </span>
-              <p className="min-w-0 text-sm font-semibold text-sky-800">
-                {settings?.deliveryEstimate || "Usually dispatched in 3–5 working days"}
-              </p>
-            </div>
-            {settings && settings.freeShippingAbove > 0 && (
-              <div className="flex items-center gap-3 rounded-xl border border-gold/30 bg-gold/10 p-3">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gold/20 text-gold-deep">
-                  <PackageOpen className="h-5 w-5" />
-                </span>
-                <p className="min-w-0 text-sm font-semibold text-gold-deep">
-                  Free delivery on orders above {formatINR(settings.freeShippingAbove)}
-                </p>
-              </div>
-            )}
-            <div className="flex items-center gap-3 rounded-xl border border-violet-100 bg-violet-50/70 p-3">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-500/15 text-violet-600">
-                <ShieldCheck className="h-5 w-5" />
-              </span>
-              <p className="min-w-0 text-sm font-semibold text-violet-800">
-                Secure payment · Supports the temple&apos;s sevas
-              </p>
-            </div>
-          </div>
-
-          {product.description && (
-            <div className="mt-6 overflow-hidden rounded-2xl border border-border bg-card p-5 sm:p-6">
-              <h2 className="flex items-center gap-2 font-heading text-base font-bold text-foreground">
-                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                  <BookOpen className="h-4 w-4" />
-                </span>
-                About this item
-              </h2>
-              <div className="mt-3 break-words whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
-                {product.description}
-              </div>
-            </div>
-          )}
-
-          {/* Product information — admin-authored rich text (label:value rows
-              like "Book Name: …" with the side headings bolded). Rendered as
-              authored HTML so the formatting an admin chose is exactly what a
-              devotee sees. */}
-          {product.productInfo && (
-            <div className="mt-6 overflow-hidden rounded-2xl border border-gold/25 bg-gradient-to-b from-gold/10 to-card p-5 sm:p-6">
-              <h2 className="flex items-center gap-2 font-heading text-base font-bold text-foreground">
-                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-gold text-[hsl(220,60%,12%)]">
-                  <ClipboardList className="h-4 w-4" />
-                </span>
-                Product information
-              </h2>
-              <div
-                className="product-info-content mt-2 break-words text-sm leading-relaxed text-foreground/90"
-                dangerouslySetInnerHTML={{ __html: product.productInfo }}
-              />
-            </div>
-          )}
         </div>
+
+        {/* Item details */}
+        {(product.description || product.productInfo) && (
+          <div className="min-w-0 space-y-4 lg:col-start-1 lg:row-start-2">
+            {product.description && (
+              <div className="vk-card p-5 sm:p-6">
+                <h2 className="flex items-center gap-2.5 font-heading text-base font-bold text-ink">
+                  <span className="vk-icon-chip !h-9 !w-9">
+                    <BookOpen className="h-4 w-4" />
+                  </span>
+                  About this item
+                </h2>
+                <div className="mt-3 break-words whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
+                  {product.description}
+                </div>
+              </div>
+            )}
+
+            {/* Product information — admin-authored rich text (label:value rows
+                like "Book Name: …" with the side headings bolded). Rendered as
+                authored HTML so the formatting an admin chose is exactly what a
+                devotee sees. */}
+            {product.productInfo && (
+              <div className="vk-card p-5 sm:p-6">
+                <h2 className="flex items-center gap-2.5 font-heading text-base font-bold text-ink">
+                  <span className="vk-icon-chip !h-9 !w-9">
+                    <ClipboardList className="h-4 w-4" />
+                  </span>
+                  Product information
+                </h2>
+                <div
+                  className="product-info-content mt-3 break-words rounded-2xl bg-vk-50 p-4 text-sm leading-relaxed text-ink/90"
+                  dangerouslySetInnerHTML={{ __html: product.productInfo }}
+                />
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* ═══ YOU MAY ALSO LIKE — same-category picks in a swipeable rail, with
@@ -529,19 +532,15 @@ export default function ProductDetailPage() {
         <section className="mt-14 sm:mt-16">
           <div className="flex items-end justify-between gap-4">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">
-                Similar to this item
-              </p>
-              <h2 className="mt-1 font-heading text-xl font-bold text-foreground sm:text-2xl">
-                You may also like
-              </h2>
+              <span className="vk-pill-soft">Similar to this item</span>
+              <h2 className="vk-h3 mt-2.5">You may also like</h2>
             </div>
             <div className="hidden items-center gap-2 sm:flex">
               <button
                 type="button"
                 onClick={() => scrollRelated(-1)}
                 aria-label="Scroll related products left"
-                className="rounded-full border border-border p-2 text-muted-foreground transition-colors hover:border-gold hover:text-primary active:scale-95"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-vk-200 bg-white text-vk-700 transition-colors hover:border-vk-700 hover:bg-vk-50 active:scale-95"
               >
                 <ChevronLeft className="h-4 w-4" />
               </button>
@@ -549,7 +548,7 @@ export default function ProductDetailPage() {
                 type="button"
                 onClick={() => scrollRelated(1)}
                 aria-label="Scroll related products right"
-                className="rounded-full border border-border p-2 text-muted-foreground transition-colors hover:border-gold hover:text-primary active:scale-95"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-vk-200 bg-white text-vk-700 transition-colors hover:border-vk-700 hover:bg-vk-50 active:scale-95"
               >
                 <ChevronRight className="h-4 w-4" />
               </button>
@@ -574,19 +573,15 @@ export default function ProductDetailPage() {
           "keep them browsing" layer modern stores place under the related
           rail. ═══ */}
       {explore.length > 0 && (
-        <section className="mt-12 border-t border-border pt-8 sm:mt-14 sm:pt-10">
+        <section className="mt-12 border-t border-vk-100 pt-8 sm:mt-14 sm:pt-10">
           <div className="flex items-end justify-between gap-4">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">
-                More from the store
-              </p>
-              <h2 className="mt-1 font-heading text-xl font-bold text-foreground sm:text-2xl">
-                You might also love
-              </h2>
+              <span className="vk-pill-soft">More from the store</span>
+              <h2 className="vk-h3 mt-2.5">You might also love</h2>
             </div>
             <Link
               href="/shop"
-              className="hidden items-center gap-1 text-sm font-semibold text-primary underline-offset-2 hover:underline sm:inline-flex"
+              className="vk-btn-outline hidden sm:inline-flex"
             >
               View all products <ChevronRight className="h-4 w-4" />
             </Link>

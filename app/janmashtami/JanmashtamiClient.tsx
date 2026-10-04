@@ -3,14 +3,15 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
-import { ArrowLeft, ArrowRight, Check, Clock, Copy, Facebook, FileCheck2, Heart, Instagram, Mail, MapPin, MessageCircle, Phone, ShieldCheck, Youtube, UtensilsCrossed, X, QrCode } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Clock, Copy, Facebook, FileCheck2, Heart, Instagram, MessageCircle, ShieldCheck, Youtube, UtensilsCrossed, X, QrCode } from "lucide-react";
 import UpiQrCard from "@/components/UpiQrCard";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
 import { useDonorPrefill } from "@/lib/donorPrefill";
 import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
 import JanmashtamiGallery from "@/components/JanmashtamiGallery";
+import SectionHeading from "@/components/site/SectionHeading";
+import Reveal from "@/components/site/Reveal";
 import JanmashtamiImportanceSection from "@/components/janmashtami/JanmashtamiImportanceSection";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
 import { useAttribution } from "@/lib/useAttribution";
@@ -72,11 +73,6 @@ const banners = [
     alt: "Offer sevas for Sri Krishna Janmashtami at HKM Vizag",
   },
 ];
-
-const DECOR_GARLAND =
-  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785481873117-1785481872052-garland-removebg-preview.png";
-const DECOR_MATKA =
-  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785481873515-1785481872176-matka-removebg-preview.png";
 
 // Which tier (0-5) shows the "Most Donated" badge, per seva — deliberately
 // varied rather than fixed at the same position for every card (which
@@ -303,6 +299,10 @@ const initialForm: CheckoutForm = {
 
 const apiBase = () => (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(/\/+$/, "");
 const formatAmount = (amount: number) => amount.toLocaleString("en-IN");
+
+// Shared field styling for the checkout modal (Vaikuntham Blue).
+const labelCls = "mb-1.5 block text-[13px] font-semibold text-ink/80";
+const fieldCls = "h-11 rounded-xl border-vk-200 bg-white text-[15px] focus-visible:ring-vk-500/40 md:text-[15px]";
 
 export interface JanmashtamiCampaigner {
   name: string;
@@ -562,154 +562,108 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
   };
 
   return (
-    <main className="min-h-screen bg-[#fefaf0] text-slate-950">
+    <main className="min-h-screen bg-white text-ink">
       <WhatsAppFloatButton />
       {campaigner && (
-        <div className="bg-gradient-to-r from-amber-600 to-amber-500 px-4 py-3 text-center text-white">
+        <div className="bg-gradient-to-r from-vk-800 via-vk-700 to-vk-600 px-4 py-3 text-center text-white">
           <p className="text-sm md:text-base">
             🙏 You are supporting <span className="font-bold">{campaigner.name}</span>&apos;s Janmashtami seva campaign
             {typeof campaigner.donorCount === "number" && campaigner.donorCount > 0 && (
-              <span> · {campaigner.donorCount} devotee{campaigner.donorCount === 1 ? "" : "s"} joined · ₹{(campaigner.raisedAmount || 0).toLocaleString("en-IN")} raised</span>
+              <span className="text-white/85"> · {campaigner.donorCount} devotee{campaigner.donorCount === 1 ? "" : "s"} joined · ₹{(campaigner.raisedAmount || 0).toLocaleString("en-IN")} raised</span>
             )}
           </p>
           {campaigner.message && (
-            <p className="mt-0.5 text-xs italic text-amber-50 md:text-sm">&ldquo;{campaigner.message}&rdquo;</p>
+            <p className="mt-0.5 font-serif-display text-xs italic text-vk-100 md:text-sm">&ldquo;{campaigner.message}&rdquo;</p>
           )}
         </div>
       )}
-      <section className="relative overflow-hidden bg-[#130922]">
-        {/* Floating golden particles */}
-        {!reduce && (
-          <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
-            {Array.from({ length: 18 }).map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute h-1.5 w-1.5 rounded-full bg-[#ffd96f]"
-                style={{
-                  left: `${(i * 7 + 3) % 100}%`,
-                  top: `${(i * 11 + 5) % 100}%`,
-                }}
-                animate={{
-                  y: [0, -30, 0],
-                  opacity: [0, 0.6, 0],
-                  scale: [0.5, 1, 0.5],
-                }}
-                transition={{
-                  duration: 3 + (i % 4),
-                  repeat: Infinity,
-                  delay: i * 0.4,
-                  ease: "easeInOut",
-                }}
-              />
+
+      {/* ---------- Hero: campaign banners in an inset rounded card ---------- */}
+      <section className="bg-gradient-to-b from-vk-50 to-white pb-4 pt-4 md:pb-6 md:pt-6">
+        <div className="vk-container">
+          <div className="relative overflow-hidden rounded-3xl bg-vk-900 shadow-[0_24px_60px_-28px_rgba(10,18,51,0.6)]">
+            {banners.map((banner, index) => (
+              <a
+                key={banner.desktop}
+                href="#offer-seva"
+                className={`block transition-opacity duration-700 ${index === activeSlide ? "relative opacity-100" : "absolute inset-0 opacity-0"}`}
+                aria-hidden={index !== activeSlide}
+              >
+                <picture>
+                  <source media="(max-width: 640px)" srcSet={banner.mobile} />
+                  <img src={banner.desktop} alt={banner.alt} className="h-auto w-full" />
+                </picture>
+              </a>
             ))}
-          </div>
-        )}
-        <div className="relative overflow-hidden rounded-b-3xl">
-          {banners.map((banner, index) => (
-            <a
-              key={banner.desktop}
-              href="#offer-seva"
-              className={`block transition-opacity duration-700 ${index === activeSlide ? "relative opacity-100" : "absolute inset-0 opacity-0"}`}
-              aria-hidden={index !== activeSlide}
+            <button
+              type="button"
+              onClick={() => moveSlide(-1)}
+              className="absolute left-3 top-1/2 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/85 text-vk-800 shadow-card backdrop-blur transition hover:bg-white md:flex"
+              aria-label="Previous banner"
             >
-              <picture>
-                <source media="(max-width: 640px)" srcSet={banner.mobile} />
-                <img src={banner.desktop} alt={banner.alt} className="h-auto w-full" />
-              </picture>
-            </a>
-          ))}
-          <button
-            type="button"
-            onClick={() => moveSlide(-1)}
-            className="absolute left-3 top-1/2 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/35 text-white backdrop-blur transition hover:bg-black/55 md:flex"
-            aria-label="Previous banner"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </button>
-          <button
-            type="button"
-            onClick={() => moveSlide(1)}
-            className="absolute right-3 top-1/2 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/35 text-white backdrop-blur transition hover:bg-black/55 md:flex"
-            aria-label="Next banner"
-          >
-            <ArrowRight className="h-5 w-5" />
-          </button>
+              <ArrowLeft className="h-5 w-5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => moveSlide(1)}
+              className="absolute right-3 top-1/2 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/85 text-vk-800 shadow-card backdrop-blur transition hover:bg-white md:flex"
+              aria-label="Next banner"
+            >
+              <ArrowRight className="h-5 w-5" />
+            </button>
+          </div>
         </div>
       </section>
 
-      <motion.section
-        initial={reduce ? undefined : { opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className="relative bg-[linear-gradient(135deg,#201244,#5b1733_58%,#8d4412)] px-4 py-12 text-white md:py-16"
-      >
-        {/* Animated shimmer overlay */}
-        {!reduce && (
-          <motion.div
-            className="pointer-events-none absolute inset-0 opacity-[0.08]"
-            aria-hidden
-            style={{
-              background: "linear-gradient(135deg, transparent 30%, #ffd96f 50%, transparent 70%)",
-              backgroundSize: "200% 200%",
-            }}
-            animate={{ backgroundPosition: ["100% 100%", "0% 0%"] }}
-            transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-          />
-        )}
-        <div className="mx-auto grid max-w-6xl gap-8 md:grid-cols-[1.35fr_0.65fr] md:items-center">
-          <div>
-            <p className="mb-3 text-sm font-semibold uppercase tracking-[0.22em] text-[#ffd96f]">Hare Krishna Movement</p>
-            <h1 className="text-3xl font-bold leading-tight text-[#ffdb68] md:text-5xl" style={{ textShadow: "0 0 40px hsl(42,92%,56%,0.3), 0 0 80px hsl(42,92%,56%,0.15)" }}>Sri Krishna Janmashtami</h1>
-            <p className="mt-5 max-w-4xl text-base leading-8 text-white/90 md:text-lg">
-              This Janmashtami, on the 4th & 5th of September, join the grand celebrations at HKM Vizag.
-              Donate towards any of the sevas listed and receive special prasadam and the unlimited blessings of Lord Krishna.
-            </p>
-            <p className="mt-5 max-w-4xl border-l-4 border-[#ffdb68] pl-4 text-sm font-medium italic leading-7 text-white/90 md:text-base">
-              "Whatever you do, whatever you eat, whatever you offer or give away... do that as an offering to Me." - Bhagavad-gita 9.27
-            </p>
-          </div>
-          <div className="rounded-lg border border-white/15 bg-white/10 p-5 shadow-2xl backdrop-blur">
-            <div className="flex items-start gap-3">
-              <ShieldCheck className="mt-1 h-6 w-6 shrink-0 text-[#ffdb68]" />
+      {/* ---------- Intro + offer card ---------- */}
+      <section className="pb-10 pt-6 md:pb-16 md:pt-10">
+        <div className="vk-container">
+          <Reveal>
+            <div className="grid gap-6 lg:grid-cols-[1.35fr_0.65fr] lg:items-center lg:gap-10">
               <div>
-                <h2 className="text-lg font-bold text-white">Offer Seva This Janmashtami</h2>
-                <p className="mt-2 text-sm leading-6 text-white/80">
-                  Your offering sustains the midnight Abhisheka, the grand Nandotsava feast, and every sacred ritual performed at HKM Vizag on Lord Krishna&apos;s appearance day.
+                <span className="vk-pill mb-4">Hare Krishna Movement</span>
+                <h1 className="vk-h1">Sri Krishna Janmashtami</h1>
+                <p className="vk-lead mt-4 max-w-3xl md:text-lg">
+                  This Janmashtami, on the 4th & 5th of September, join the grand celebrations at HKM Vizag.
+                  Donate towards any of the sevas listed and receive special prasadam and the unlimited blessings of Lord Krishna.
+                </p>
+                <p className="mt-5 max-w-3xl border-l-4 border-vk-500 pl-4 font-serif-display text-[15px] italic leading-7 text-vk-700 md:text-base">
+                  "Whatever you do, whatever you eat, whatever you offer or give away... do that as an offering to Me." - Bhagavad-gita 9.27
                 </p>
               </div>
+              <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-vk-700 via-vk-600 to-vk-500 p-6 text-white shadow-[0_24px_50px_-24px_rgba(30,58,138,0.7)]">
+                <div aria-hidden className="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-white/10" />
+                <div className="relative flex items-start gap-3">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/15">
+                    <ShieldCheck className="h-5 w-5 text-[hsl(var(--gold))]" />
+                  </span>
+                  <div>
+                    <h2 className="font-heading text-lg font-bold text-white">Offer Seva This Janmashtami</h2>
+                    <p className="mt-2 text-sm leading-6 text-white/80">
+                      Your offering sustains the midnight Abhisheka, the grand Nandotsava feast, and every sacred ritual performed at HKM Vizag on Lord Krishna&apos;s appearance day.
+                    </p>
+                  </div>
+                </div>
+                <a href="#offer-seva" className="vk-btn-gold relative mt-5 h-12 w-full text-[15px] font-bold">
+                  Offer Seva
+                </a>
+              </div>
             </div>
-            <motion.a
-              href="#offer-seva"
-              animate={reduce ? undefined : { boxShadow: ["0 0 0 0 rgba(255,219,104,0.4)", "0 0 0 16px rgba(255,219,104,0)", "0 0 0 0 rgba(255,219,104,0.4)"] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              className="mt-5 inline-flex w-full items-center justify-center rounded-md bg-[#ffcc3d] px-5 py-3 text-sm font-bold uppercase tracking-[0.08em] text-[#3b1605] shadow-lg transition hover:bg-[#ffd96f]"
-            >
-              Offer Seva
-            </motion.a>
+          </Reveal>
+
+          {/* ---------- Trust strip ---------- */}
+          <div className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-4">
+            {TRUST_BADGES.map((b) => (
+              <div key={b.label} className="vk-card flex min-w-0 items-center gap-2.5 p-3 md:gap-3 md:p-4">
+                <span className="vk-icon-chip !h-9 !w-9 md:!h-10 md:!w-10">
+                  <b.icon className="h-[18px] w-[18px]" />
+                </span>
+                <span className="min-w-0 break-words text-[12.5px] font-semibold leading-snug text-ink md:text-sm">{b.label}</span>
+              </div>
+            ))}
           </div>
         </div>
-      </motion.section>
-
-      {/* ---------- Trust strip ---------- */}
-      <motion.section
-        initial={reduce ? undefined : { opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
-        className="border-y-2 border-[#ffdb68]/60 bg-[#130922] py-3.5"
-      >
-        <div className="container mx-auto flex flex-wrap items-center justify-center gap-x-10 gap-y-2 px-4">
-          {TRUST_BADGES.map((b) => (
-            <span key={b.label} className="flex items-center gap-2 text-xs font-semibold tracking-wide text-white/90 md:text-sm">
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#ffd96f]/15 ring-1 ring-[#ffd96f]/40">
-                <b.icon className="h-3 w-3 text-[#ffd96f]" />
-              </span>
-              {b.label}
-            </span>
-          ))}
-        </div>
-      </motion.section>
+      </section>
 
       <style>{`
         .form-scroll::-webkit-scrollbar {
@@ -719,109 +673,31 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
           background: transparent;
         }
         .form-scroll::-webkit-scrollbar-thumb {
-          background: #c98a1a;
+          background: #B9C8FB;
           border-radius: 9999px;
         }
         .form-scroll::-webkit-scrollbar-thumb:hover {
-          background: #a16c12;
+          background: #2F5BD3;
         }
         .form-scroll {
           scrollbar-width: thin;
-          scrollbar-color: #c98a1a transparent;
+          scrollbar-color: #B9C8FB transparent;
         }
       `}</style>
 
-      <section id="offer-seva" className="relative overflow-hidden px-4 py-12 md:py-16">
-        {/* Krishna peacock-feather decorative background */}
-        <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-          {/* Base warm gradient */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#fffaf2] via-[#fdf5e8] to-[#f7ecd7]" />
-
-          {/* Toran garlands hanging down from the top corners */}
-          <Image
-            src={DECOR_GARLAND}
-            alt=""
-            unoptimized
-            width={145}
-            height={350}
-            draggable={false}
-            className="absolute left-0 top-0 h-[150px] w-auto opacity-40 md:h-[230px] md:opacity-50 lg:h-[310px] lg:opacity-60"
-          />
-          <Image
-            src={DECOR_GARLAND}
-            alt=""
-            unoptimized
-            width={145}
-            height={350}
-            draggable={false}
-            className="absolute right-0 top-0 h-[150px] w-auto -scale-x-100 opacity-40 md:h-[230px] md:opacity-50 lg:h-[310px] lg:opacity-60"
-          />
-
-          {/* Matka pots resting at the bottom corners */}
-          <Image
-            src={DECOR_MATKA}
-            alt=""
-            unoptimized
-            width={500}
-            height={500}
-            draggable={false}
-            className="absolute bottom-0 left-0 h-[110px] w-auto opacity-40 md:h-[180px] md:opacity-50 lg:h-[240px] lg:opacity-60"
-          />
-          <Image
-            src={DECOR_MATKA}
-            alt=""
-            unoptimized
-            width={500}
-            height={500}
-            draggable={false}
-            className="absolute bottom-0 right-0 h-[110px] w-auto opacity-40 md:h-[180px] md:opacity-50 lg:h-[240px] lg:opacity-60"
-          />
-
-          {/* Soft color glows echoing the peacock hues */}
-          <div className="absolute -left-20 top-1/3 h-72 w-72 rounded-full bg-teal-500/[0.05] blur-[90px]" />
-          <div className="absolute -right-16 top-10 h-64 w-64 rounded-full bg-amber-400/[0.06] blur-[80px]" />
-
-          {/* Top & bottom decorative borders */}
-          <div className="absolute left-0 top-0 h-px w-full bg-gradient-to-r from-transparent via-amber-500/25 to-transparent" />
-          <div className="absolute bottom-0 left-0 h-px w-full bg-gradient-to-r from-transparent via-teal-500/20 to-transparent" />
-        </div>
-
-        <div className="relative mx-auto max-w-6xl">
-          {/* Section heading */}
-          <motion.div
-            initial={reduce ? undefined : { opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="mb-12 text-center"
-          >
-            <div className="mx-auto mb-5 flex items-center justify-center gap-4">
-              <span className="h-px w-10 bg-gradient-to-r from-transparent to-amber-500/40 sm:w-16 md:w-24" />
-              <svg className="h-6 w-6 text-amber-600/50 md:h-8 md:w-8" viewBox="0 0 40 40" fill="currentColor">
-                <path d="M20 2 C24 8 26 14 20 20 C14 14 16 8 20 2Z" />
-                <path d="M20 2 C24 8 26 14 20 20 C14 14 16 8 20 2Z" transform="rotate(72 20 20)" />
-                <path d="M20 2 C24 8 26 14 20 20 C14 14 16 8 20 2Z" transform="rotate(144 20 20)" />
-                <path d="M20 2 C24 8 26 14 20 20 C14 14 16 8 20 2Z" transform="rotate(216 20 20)" />
-                <path d="M20 2 C24 8 26 14 20 20 C14 14 16 8 20 2Z" transform="rotate(288 20 20)" />
-                <circle cx="20" cy="20" r="5" />
-              </svg>
-              <span className="h-px w-10 bg-gradient-to-l from-transparent to-amber-500/40 sm:w-16 md:w-24" />
-            </div>
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-amber-700 md:text-sm">Choose Your Offering</p>
-            <h2 className="mt-2 text-3xl font-bold text-[#331447] md:text-4xl lg:text-5xl">Janmashtami Sevas</h2>
-            <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-amber-800/50 md:text-base">
-              Select a sacred seva and receive the divine blessings of Lord Krishna
-            </p>
-          </motion.div>
+      <section id="offer-seva" className="vk-section vk-band">
+        <div className="vk-container">
+          <Reveal>
+            <SectionHeading
+              eyebrow="Choose Your Offering"
+              title="Janmashtami Sevas"
+              subtitle="Select a sacred seva and receive the divine blessings of Lord Krishna"
+              align="center"
+            />
+          </Reveal>
 
           {/* Seva cards */}
-          <motion.div
-            initial={reduce ? undefined : { opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4, staggerChildren: reduce ? 0 : 0.08 }}
-            className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
-          >
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {sevas.map((seva, idx) => (
               <motion.article
                 key={seva.slug}
@@ -829,15 +705,13 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
                 initial={reduce ? undefined : { opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: reduce ? 0 : idx * 0.08 }}
-                className={`group scroll-mt-24 overflow-hidden rounded-2xl border bg-white shadow-[0_2px_20px_rgba(120,60,10,0.1)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(120,60,10,0.18)] ${
-                  highlightedSlug === seva.slug
-                    ? "border-amber-500 ring-4 ring-amber-400/50 hover:border-amber-500"
-                    : "border-amber-300/70 hover:border-amber-400"
+                transition={{ duration: 0.5, delay: reduce ? 0 : (idx % 3) * 0.08 }}
+                className={`vk-card group flex scroll-mt-24 flex-col overflow-hidden transition-shadow duration-300 hover:shadow-lift ${
+                  highlightedSlug === seva.slug ? "ring-2 ring-vk-500 ring-offset-2" : ""
                 }`}
               >
-                {/* Image with gradient overlay + title */}
-                <div className="relative h-48 overflow-hidden shadow-[inset_0_-12px_12px_-8px_rgba(0,0,0,0.12)] md:h-56">
+                {/* Image */}
+                <div className="relative h-48 overflow-hidden bg-vk-100 md:h-52">
                   <Image
                     src={seva.image}
                     alt={seva.title}
@@ -845,13 +719,13 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="object-cover transition-transform duration-700 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/35 to-transparent" />
-                  <h3 className="absolute bottom-3 left-4 right-4 text-lg font-bold tracking-wide text-white drop-shadow-md md:text-xl">{seva.title}</h3>
+                  <div className="absolute inset-0 bg-gradient-to-t from-vk-900/30 to-transparent" />
                 </div>
 
                 {/* Card body */}
-                <div className="p-4 pt-3">
-                  <p className="min-h-[52px] text-[13px] leading-relaxed text-slate-700 md:text-sm">{seva.description}</p>
+                <div className="flex flex-1 flex-col p-4 md:p-5">
+                  <h3 className="font-heading text-lg font-bold leading-snug text-ink md:text-xl">{seva.title}</h3>
+                  <p className="mt-1.5 min-h-[52px] text-[13px] leading-relaxed text-muted-foreground md:text-sm">{seva.description}</p>
 
                   {/* Elegant price buttons — "Most Donated" badge shown
                       per MOST_DONATED_INDEX lookup above: a different tier
@@ -859,7 +733,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
                       every card), so the badge lands on genuinely varied
                       amounts across the grid instead of repeating the same
                       relative position/value everywhere. */}
-                  <div className="mt-4 grid grid-cols-2 gap-x-2 gap-y-2">
+                  <div className="mt-4 grid grid-cols-2 gap-2">
                     {seva.options.map((option, optIdx) => {
                       const isCustom = !option.amount;
                       const isMostDonated = optIdx === (MOST_DONATED_INDEX[seva.slug] ?? 1);
@@ -870,36 +744,36 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
                           type="button"
                           onClick={() => openCheckout(seva, option)}
                           className={`
-                            relative overflow-hidden rounded-xl border text-center transition-all duration-300
+                            relative min-h-[48px] overflow-hidden rounded-xl border text-center transition-all duration-200
                             ${hasSubtitle ? 'flex flex-col items-center justify-center gap-1 px-3 pb-2 pt-2.5' : 'px-3 py-3'}
                             ${isCustom
-                              ? 'col-span-2 border-amber-500/70 bg-gradient-to-r from-amber-200 via-amber-200 to-orange-200 text-[13px] font-bold text-[#5c2e06] hover:border-amber-500 hover:from-amber-300 hover:to-orange-200 hover:shadow-[0_4px_16px_rgba(217,119,6,0.25)]'
+                              ? 'col-span-2 border-dashed border-vk-300 bg-white text-[13px] font-semibold text-vk-700 hover:border-vk-500 hover:bg-vk-50'
                               : isMostDonated
-                                ? 'border-amber-500/80 bg-gradient-to-br from-amber-400 via-amber-300 to-orange-300 text-[12px] font-bold text-[#3b1605] shadow-[0_2px_6px_rgba(217,119,6,0.2)] hover:border-amber-600 hover:shadow-[0_4px_16px_rgba(217,119,6,0.3)]'
-                                : 'border-amber-300/70 bg-gradient-to-b from-amber-100 to-[#fef0d4] text-[12px] font-bold text-[#5c2e06] hover:border-amber-400 hover:from-amber-200 hover:to-amber-100 hover:shadow-[0_3px_12px_rgba(217,119,6,0.18)]'
+                                ? 'border-vk-500 bg-vk-50 font-extrabold text-vk-700 ring-2 ring-vk-500/20 hover:bg-vk-100'
+                                : 'border-vk-200 bg-white font-extrabold text-vk-700 hover:border-vk-500 hover:bg-vk-50'
                             }
                           `}
                         >
                           {isMostDonated && !hasSubtitle && (
-                            <span className="absolute left-1.5 top-1.5 rounded-full bg-gradient-to-r from-[#5c1a0b] to-[#7a2e0f] px-1.5 py-0.5 text-[7px] font-bold uppercase tracking-wide text-amber-100 shadow-sm">
+                            <span className="absolute left-1.5 top-1.5 rounded-full bg-[hsl(var(--gold))] px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wide text-ink">
                               Most Donated
                             </span>
                           )}
                           <span className={`block ${isMostDonated && !hasSubtitle ? 'mt-2.5' : ''}`}>
                             {option.amount ? (
                               <span className="block leading-tight">
-                                <span className="text-[11px] font-normal text-amber-800/80">₹</span>{' '}
-                                <span className="text-[14px] md:text-[15px]">{formatAmount(option.amount)}</span>
+                                <span className="text-[11px] font-semibold text-muted-foreground">₹</span>{' '}
+                                <span className="text-[15px] md:text-base">{formatAmount(option.amount)}</span>
                               </span>
                             ) : (
                               <span className="flex items-center justify-center gap-1.5">
-                                <svg className="h-3 w-3 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                                <span className="text-[12px]">Donate Other Amount</span>
+                                <svg className="h-3 w-3 text-vk-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                <span className="text-[13px]">Donate Other Amount</span>
                               </span>
                             )}
                           </span>
                           {hasSubtitle && (
-                            <span className="inline-block rounded-full bg-gradient-to-r from-[#5c1a0b] to-[#7a2e0f] px-3 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-100 shadow-sm">
+                            <span className="inline-block rounded-full bg-vk-700 px-3 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white">
                               {option.subtitle}
                             </span>
                           )}
@@ -910,73 +784,86 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
                 </div>
               </motion.article>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      <section className="bg-[#130922] px-4 py-7 text-white">
-        <div className="mx-auto max-w-6xl text-sm leading-7 md:text-base">
-          Gentle Request! While doing Paytm/UPI App Payments or Bank (NEFT/ RTGS), please send us a screenshot along with complete address and PAN details on our Whatsapp Number{" "}
-          <a className="font-bold text-[#ffdb68]" href="tel:+918977761187">+91 89777 61187</a> or to our mail ID{" "}
-          <a className="font-bold text-[#ffdb68]" href="mailto:social@hkmvizag.org">social@hkmvizag.org</a>. You may also call on this number for other queries.
+      <section className="py-10 md:py-14">
+        <div className="vk-container">
+          <div className="flex items-start gap-3 rounded-2xl border border-vk-100 bg-vk-50 p-4 text-sm leading-7 text-ink/80 md:p-5 md:text-base">
+            <span className="vk-icon-chip hidden !bg-white sm:inline-flex">
+              <MessageCircle className="h-5 w-5" />
+            </span>
+            <p className="min-w-0">
+              Gentle Request! While doing Paytm/UPI App Payments or Bank (NEFT/ RTGS), please send us a screenshot along with complete address and PAN details on our Whatsapp Number{" "}
+              <a className="font-semibold text-vk-700 underline decoration-vk-300 underline-offset-4 hover:decoration-vk-500" href="tel:+918977761187">+91 89777 61187</a> or to our mail ID{" "}
+              <a className="break-all font-semibold text-vk-700 underline decoration-vk-300 underline-offset-4 hover:decoration-vk-500" href="mailto:social@hkmvizag.org">social@hkmvizag.org</a>. You may also call on this number for other queries.
+            </p>
+          </div>
         </div>
       </section>
 
       <JanmashtamiImportanceSection />
 
-      <section className="px-4 py-12 md:py-16">
-        <div className="mx-auto max-w-6xl rounded-lg border border-amber-900/15 bg-white p-6 shadow-[0_14px_35px_rgba(68,31,17,0.12)]">
-          <h2 className="text-xl font-bold text-[#331447]">Donation Through Bank (NEFT/ RTGS)</h2>
-          <div className="mt-4 space-y-3 text-slate-700">
-            {[
-              { label: "Beneficiary Name", value: "HARE KRISHNA MOVEMENT INDIA" },
-              { label: "Bank Name", value: "IDFC FIRST BANK LTD" },
-              { label: "A/c No", value: "10091415313" },
-              { label: "IFSC Code", value: "IDFB0080412" },
-            ].map(({ label, value }) => (
-              <div key={label} className="flex items-center gap-3">
-                <span className="font-medium">{label}:</span>
-                <span className="select-all">{value}</span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    navigator.clipboard.writeText(value);
-                    setCopiedField(label);
-                    setTimeout(() => setCopiedField(null), 1500);
-                  }}
-                  className="ml-1 inline-flex items-center rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
-                  title={`Copy ${label}`}
-                >
-                  {copiedField === label ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
-                </button>
-              </div>
-            ))}
+      <section className="vk-section">
+        <div className="vk-container">
+          <div className="vk-card p-5 md:p-6">
+            <h2 className="vk-h3">Donation Through Bank (NEFT/ RTGS)</h2>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              {[
+                { label: "Beneficiary Name", value: "HARE KRISHNA MOVEMENT INDIA" },
+                { label: "Bank Name", value: "IDFC FIRST BANK LTD" },
+                { label: "A/c No", value: "10091415313" },
+                { label: "IFSC Code", value: "IDFB0080412" },
+              ].map(({ label, value }) => (
+                <div key={label} className="flex items-center gap-3 rounded-xl bg-vk-50 p-4 text-sm">
+                  <div className="min-w-0 flex-1">
+                    <span className="block text-xs font-medium text-muted-foreground">{label}:</span>
+                    <span className="mt-0.5 block select-all break-words font-semibold text-ink">{value}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(value);
+                      setCopiedField(label);
+                      setTimeout(() => setCopiedField(null), 1500);
+                    }}
+                    className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-vk-700 transition-colors hover:bg-vk-100"
+                    title={`Copy ${label}`}
+                  >
+                    {copiedField === label ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* Scan & Pay via UPI — placed right before "Previous Year
           Celebrations", same QR/VPA pattern as annadan.harekrishnavizag.org. */}
-      <section className="bg-[#fef6e4] px-4 py-10 md:py-12">
-        <div className="mx-auto max-w-md">
-          <div className="mb-4 flex items-center justify-center gap-2 text-[#7a4a12]">
-            <QrCode className="h-5 w-5" />
-            <h2 className="font-heading text-lg font-bold">Scan & Pay via UPI</h2>
+      <section className="vk-section vk-band">
+        <div className="vk-container">
+          <div className="mx-auto max-w-md">
+            <div className="mb-4 flex items-center justify-center gap-2 text-vk-700">
+              <QrCode className="h-5 w-5" />
+              <h2 className="font-heading text-lg font-bold text-ink">Scan & Pay via UPI</h2>
+            </div>
+            <UpiQrCard note="Please share your name and mobile number to social@hkmvizag.org after paying, so we can send your receipt." />
           </div>
-          <UpiQrCard note="Please share your name and mobile number to social@hkmvizag.org after paying, so we can send your receipt." />
         </div>
       </section>
 
       <JanmashtamiGallery />
 
-      <section className="px-4 pb-16">
-        <div className="mx-auto grid max-w-6xl gap-4 md:grid-cols-2">
+      <section className="vk-section">
+        <div className="vk-container grid gap-4 md:grid-cols-2">
           {galleryImages.map((src, index) => (
             <img
               key={src}
               src={src}
               alt={`Sri Krishna Janmashtami seva activity ${index + 1}`}
-              className="h-full min-h-[220px] w-full rounded-lg object-cover shadow-[0_12px_32px_rgba(68,31,17,0.14)]"
+              className="h-full min-h-[220px] w-full rounded-2xl object-cover shadow-card"
               loading="lazy"
               decoding="async"
             />
@@ -984,21 +871,14 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
         </div>
       </section>
 
-      <footer className="relative overflow-hidden bg-[#0f0620] text-white">
-        {/* Decorative top border with gradient */}
-        <div className="h-px w-full bg-gradient-to-r from-transparent via-[#ffd96f]/60 to-transparent" />
-
-        {/* Subtle radial glow */}
-        <div className="pointer-events-none absolute -top-32 left-1/2 h-64 w-[600px] -translate-x-1/2 rounded-full bg-[#ffd96f]/[0.04] blur-[100px]" aria-hidden />
-
-        <div className="relative mx-auto max-w-6xl px-6 pt-16 pb-8">
+      <footer className="relative overflow-hidden bg-gradient-to-b from-vk-800 to-vk-900 text-white">
+        <div className="vk-container relative pb-8 pt-14 md:pt-16">
           {/* Top devotional strip */}
-          <div className="mb-14 text-center">
-            <div className="mx-auto mb-4 h-px w-24 bg-gradient-to-r from-transparent via-[#ffd96f]/50 to-transparent sm:w-48" />
-            <p className="font-heading text-lg italic leading-relaxed text-[#ffd96f]/90 md:text-xl">
+          <div className="mb-12 text-center">
+            <p className="font-serif-display text-lg italic leading-relaxed text-white/90 md:text-xl">
               &ldquo;Hare Krishna Hare Krishna, Krishna Krishna Hare Hare&rdquo;
             </p>
-            <p className="font-heading text-lg italic leading-relaxed text-[#ffd96f]/90 md:text-xl">&ldquo;Hare Rama Hare Rama, Rama Rama Hare Hare&rdquo;</p>
+            <p className="font-serif-display text-lg italic leading-relaxed text-white/90 md:text-xl">&ldquo;Hare Rama Hare Rama, Rama Rama Hare Hare&rdquo;</p>
           </div>
 
           {/* Main grid */}
@@ -1006,7 +886,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
             {/* Brand column */}
             <div className="md:col-span-4">
               <div>
-                <p className="font-heading text-xl font-bold text-[#ffdb68]" style={{ textShadow: "0 0 24px rgba(255,219,104,0.25)" }}>Hare Krishna Movement</p>
+                <p className="font-heading text-xl font-bold text-white">Hare Krishna Movement</p>
                 <p className="mt-1 text-[11px] uppercase tracking-[0.24em] text-white/50">Visakhapatnam</p>
               </div>
               <p className="mt-6 text-sm leading-7 text-white/70">
@@ -1027,7 +907,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
                     target="_blank"
                     rel="noreferrer"
                     aria-label={s.label}
-                    className="group flex h-10 w-10 items-center justify-center rounded-full border border-[#ffd96f]/20 bg-white/[0.03] text-[#ffd96f]/80 transition-all hover:-translate-y-0.5 hover:border-[#ffd96f]/60 hover:bg-[#ffd96f]/10 hover:text-[#ffd96f] hover:shadow-[0_4px_16px_rgba(255,217,111,0.15)]"
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white/80 transition-all hover:-translate-y-0.5 hover:bg-white/15 hover:text-white"
                   >
                     <s.icon className="h-4 w-4" />
                   </a>
@@ -1037,8 +917,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
 
             {/* Navigation */}
             <div className="md:col-span-3">
-              <h3 className="mb-5 flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.24em] text-[#ffd96f]">
-                <span className="h-px w-4 bg-[#ffd96f]/60" />
+              <h3 className="mb-5 text-[11px] font-bold uppercase tracking-[0.2em] text-vk-300">
                 Explore
               </h3>
               <ul className="space-y-3 text-sm text-white/70">
@@ -1051,8 +930,8 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
                   { label: "Privacy Policy", href: "/privacy-policy" },
                 ].map((link) => (
                   <li key={link.href}>
-                    <a href={link.href} className="group inline-flex items-center gap-2 transition-colors hover:text-[#ffd96f]">
-                      <span className="h-1 w-1 rounded-full bg-[#ffd96f]/40 transition-all group-hover:w-3 group-hover:bg-[#ffd96f]" />
+                    <a href={link.href} className="group inline-flex items-center gap-2 transition-colors hover:text-white">
+                      <span className="h-1 w-1 rounded-full bg-vk-400 transition-all group-hover:w-3 group-hover:bg-white" />
                       {link.label}
                     </a>
                   </li>
@@ -1060,15 +939,14 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
               </ul>
             </div>
 
-
           </div>
 
           {/* Bottom bar */}
-          <div className="mt-14 border-t border-white/10 pt-6">
-            <div className="flex flex-col items-center justify-between gap-3 text-xs text-white/45 md:flex-row">
+          <div className="mt-12 border-t border-white/10 pt-6">
+            <div className="flex flex-col items-center justify-between gap-3 text-center text-xs text-white/50 md:flex-row md:text-left">
               <p>&copy; 2026 Hare Krishna Movement Visakhapatnam. All rights reserved.</p>
               <p className="flex items-center gap-1.5">
-                Crafted with <Heart className="h-3 w-3 fill-[#ffd96f] text-[#ffd96f]" /> for Sri Krishna Janmashtami
+                Crafted with <Heart className="h-3 w-3 fill-[hsl(var(--gold))] text-[hsl(var(--gold))]" /> for Sri Krishna Janmashtami
               </p>
             </div>
           </div>
@@ -1076,7 +954,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
       </footer>
 
       {status.message && !selected && (
-        <div className={`fixed bottom-6 left-1/2 z-[120] -translate-x-1/2 rounded-lg px-5 py-3 text-sm font-semibold shadow-lg ${
+        <div className={`fixed bottom-6 left-1/2 z-[120] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 rounded-xl px-5 py-3 text-center text-sm font-semibold shadow-lift ${
           status.type === "success" ? "bg-green-700 text-white" : "bg-red-700 text-white"
         }`}>
           {status.message}
@@ -1084,38 +962,29 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
       )}
 
       {selected && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/75 p-4 backdrop-blur-sm">
-          <div
-            className="form-scroll relative max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-xl border border-amber-200/50 shadow-2xl"
-            style={{
-              background: `
-                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cg transform='translate(60,60)'%3E%3Cpath d='M0,-6 C6,-16 6,-28 0,-34 C-6,-28 -6,-16 0,-6Z' fill='%2392400e'/%3E%3Cpath d='M0,-6 C6,-16 6,-28 0,-34 C-6,-28 -6,-16 0,-6Z' fill='%2392400e' transform='rotate(45)'/%3E%3Cpath d='M0,-6 C6,-16 6,-28 0,-34 C-6,-28 -6,-16 0,-6Z' fill='%2392400e' transform='rotate(90)'/%3E%3Cpath d='M0,-6 C6,-16 6,-28 0,-34 C-6,-28 -6,-16 0,-6Z' fill='%2392400e' transform='rotate(135)'/%3E%3Cpath d='M0,-6 C6,-16 6,-28 0,-34 C-6,-28 -6,-16 0,-6Z' fill='%2392400e' transform='rotate(180)'/%3E%3Cpath d='M0,-6 C6,-16 6,-28 0,-34 C-6,-28 -6,-16 0,-6Z' fill='%2392400e' transform='rotate(225)'/%3E%3Cpath d='M0,-6 C6,-16 6,-28 0,-34 C-6,-28 -6,-16 0,-6Z' fill='%2392400e' transform='rotate(270)'/%3E%3Cpath d='M0,-6 C6,-16 6,-28 0,-34 C-6,-28 -6,-16 0,-6Z' fill='%2392400e' transform='rotate(315)'/%3E%3Ccircle r='8' fill='%23b45309'/%3E%3Ccircle r='4' fill='%23d97706'/%3E%3C/g%3E%3Cg transform='translate(0,0)'%3E%3Cellipse cx='0' cy='-5' rx='3' ry='6' fill='%23b45309'/%3E%3Cellipse cx='0' cy='-5' rx='3' ry='6' fill='%23b45309' transform='rotate(90)'/%3E%3Ccircle r='3' fill='%23d97706'/%3E%3C/g%3E%3Cg transform='translate(120,0)'%3E%3Cellipse cx='0' cy='-5' rx='3' ry='6' fill='%23b45309'/%3E%3Cellipse cx='0' cy='-5' rx='3' ry='6' fill='%23b45309' transform='rotate(90)'/%3E%3Ccircle r='3' fill='%23d97706'/%3E%3C/g%3E%3Cg transform='translate(0,120)'%3E%3Cellipse cx='0' cy='-5' rx='3' ry='6' fill='%23b45309'/%3E%3Cellipse cx='0' cy='-5' rx='3' ry='6' fill='%23b45309' transform='rotate(90)'/%3E%3Ccircle r='3' fill='%23d97706'/%3E%3C/g%3E%3Cg transform='translate(120,120)'%3E%3Cellipse cx='0' cy='-5' rx='3' ry='6' fill='%23b45309'/%3E%3Cellipse cx='0' cy='-5' rx='3' ry='6' fill='%23b45309' transform='rotate(90)'/%3E%3Ccircle r='3' fill='%23d97706'/%3E%3C/g%3E%3Cpath d='M60 6 Q72 30 60 60' stroke='%23b45309' stroke-width='0.6' fill='none'/%3E%3Cpath d='M60 60 Q48 90 60 114' stroke='%23b45309' stroke-width='0.6' fill='none'/%3E%3Cpath d='M6 60 Q30 48 60 60' stroke='%23b45309' stroke-width='0.6' fill='none'/%3E%3Cpath d='M60 60 Q90 72 114 60' stroke='%23b45309' stroke-width='0.6' fill='none'/%3E%3C/svg%3E") repeat,
-                linear-gradient(to bottom, #fefaf1, #fff5e6 50%, #ffefd0)
-              `,
-              backgroundBlendMode: 'overlay',
-            }}
-          >
+        <div className="fixed inset-0 z-[100] flex items-end justify-center bg-vk-900/70 backdrop-blur-sm sm:items-center sm:p-4">
+          <div className="form-scroll relative max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-t-3xl bg-white shadow-2xl sm:rounded-3xl">
             {/* Form content */}
             <div className="relative z-10">
-              <div className="sticky top-0 z-10 flex items-center justify-between border-b border-amber-200/50 bg-[#fefaf1]/90 px-6 py-4 backdrop-blur">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-amber-700/70">Janmashtami Checkout</p>
-                  <h2 className="text-xl font-bold text-[#331447]">{selected.seva.title}</h2>
+              <div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-vk-100 bg-white/95 px-5 py-4 backdrop-blur md:px-6">
+                <div className="min-w-0">
+                  <span className="vk-pill-soft mb-1.5">Janmashtami Checkout</span>
+                  <h2 className="vk-h3">{selected.seva.title}</h2>
                 </div>
-                <button type="button" onClick={closeCheckout} className="rounded-full border border-amber-300/60 bg-white/60 p-2 text-amber-700/60 transition hover:border-amber-400 hover:bg-white hover:text-amber-900" aria-label="Close checkout">
+                <button type="button" onClick={closeCheckout} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-vk-50 text-vk-700 transition hover:bg-vk-100" aria-label="Close checkout">
                   <X className="h-5 w-5" />
                 </button>
               </div>
 
-            <form onSubmit={submitDonation} className="space-y-5 p-6">
-              <div className="grid gap-4 rounded-lg border border-amber-200/40 bg-white/60 p-4 md:grid-cols-2">
+            <form onSubmit={submitDonation} className="space-y-5 p-5 md:p-6">
+              <div className="grid gap-4 rounded-2xl bg-vk-50 p-4 md:grid-cols-2">
                 <div>
-                  <p className="text-xs font-semibold text-amber-700/60">Seva Name</p>
-                  <p className="mt-1 font-bold text-[#331447]">{selected.seva.title}</p>
+                  <p className="text-xs font-semibold text-muted-foreground">Seva Name</p>
+                  <p className="mt-1 font-heading font-bold text-ink">{selected.seva.title}</p>
                 </div>
                 <div>
-                  <p className="text-xs font-semibold text-amber-700/60">Seva Amount</p>
-                  <p className="mt-1 font-bold text-[#331447]">
+                  <p className="text-xs font-semibold text-muted-foreground">Seva Amount</p>
+                  <p className="mt-1 font-heading text-lg font-extrabold text-vk-700">
                     {selected.option.amount ? `₹${formatAmount(selected.option.amount)}` : "Enter amount below"}
                   </p>
                 </div>
@@ -1123,31 +992,31 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
 
               {!selected.option.amount && (
                 <label className="block">
-                  <span className="text-sm font-semibold text-[#331447]">Enter Seva Amount *</span>
+                  <span className={labelCls}>Enter Seva Amount *</span>
                   <Input
                     type="number"
                     min={100}
                     value={form.customAmount}
                     onChange={(event) => updateForm({ customAmount: event.target.value, want80G: false, wantPrasadam: false })}
                     placeholder="Enter amount"
-                    className="mt-2 border-amber-200 focus-visible:ring-amber-400"
+                    className={fieldCls}
                   />
-                  <span className="mt-1 block text-xs text-amber-700/60">Amount must be at least Rs.100.</span>
+                  <span className="mt-1 block text-xs text-muted-foreground">Amount must be at least Rs.100.</span>
                 </label>
               )}
 
               <div className="grid gap-4 md:grid-cols-2">
                 <label className="block">
-                  <span className="text-sm font-semibold text-[#331447]">Donor Name *</span>
-                  <Input value={form.donorName} maxLength={39} onChange={(event) => updateForm({ donorName: event.target.value.replace(/[^a-zA-Z ]/g, "") })} placeholder="Your Name" className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
+                  <span className={labelCls}>Donor Name *</span>
+                  <Input value={form.donorName} maxLength={39} onChange={(event) => updateForm({ donorName: event.target.value.replace(/[^a-zA-Z ]/g, "") })} placeholder="Your Name" className={fieldCls} />
                 </label>
                 <label className="block">
-                  <span className="text-sm font-semibold text-[#331447]">Mobile Number *</span>
-                  <Input value={form.donorMobile} maxLength={10} onChange={(event) => updateForm({ donorMobile: event.target.value.replace(/\D/g, "") })} placeholder="Your Mobile Number" className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
+                  <span className={labelCls}>Mobile Number *</span>
+                  <Input value={form.donorMobile} maxLength={10} onChange={(event) => updateForm({ donorMobile: event.target.value.replace(/\D/g, "") })} placeholder="Your Mobile Number" className={fieldCls} />
                 </label>
                 <label className="block md:col-span-2">
-                  <span className="text-sm font-semibold text-[#331447]">E-Mail ID (optional)</span>
-                  <Input type="email" value={form.donorEmail} onChange={(event) => updateForm({ donorEmail: event.target.value.toLowerCase() })} placeholder="Your Email" className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
+                  <span className={labelCls}>E-Mail ID (optional)</span>
+                  <Input type="email" value={form.donorEmail} onChange={(event) => updateForm({ donorEmail: event.target.value.toLowerCase() })} placeholder="Your Email" className={fieldCls} />
                 </label>
               </div>
 
@@ -1158,31 +1027,30 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
                 dob={form.dob}
                 onSevakNameChange={(v) => updateForm({ sevakName: v })}
                 onDobChange={(v) => updateForm({ dob: v })}
-                variant="amber"
                 collapsible
               />
 
               <div className="space-y-3">
                 {showPrasadamField && (
-                  <label className="flex items-start gap-3 rounded-lg border border-amber-200/60 bg-white/40 p-4 text-sm text-[#331447]">
+                  <label className="flex cursor-pointer items-start gap-2.5 rounded-xl border border-vk-100 bg-vk-50/60 px-3.5 py-3 text-[13px] font-medium text-ink">
                     <input type="checkbox" checked={form.wantPrasadam} onChange={(event) => {
                     const next = event.target.checked;
                     updateForm({ wantPrasadam: next });
                     handlePrasadamToggle(next);
-                  }} className="mt-1 accent-amber-600" />
+                  }} className="mt-0.5 h-4 w-4 shrink-0 accent-vk-700" />
                     I would like to receive Maha Prasadam (Only within India)
                   </label>
                 )}
                 {showTaxField && (
-                  <label className="flex items-start gap-3 rounded-lg border border-amber-200/60 bg-white/40 p-4 text-sm text-[#331447]">
+                  <label className="flex cursor-pointer items-start gap-2.5 rounded-xl border border-vk-100 bg-vk-50/60 px-3.5 py-3 text-[13px] font-medium text-ink">
                     <input type="checkbox" checked={form.want80G} onChange={(event) => {
                     const next = event.target.checked;
                     updateForm({ want80G: next });
                     handle80GToggle(next);
-                  }} className="mt-1 accent-amber-600" />
+                  }} className="mt-0.5 h-4 w-4 shrink-0 accent-vk-700" />
                     <span>
                       I wish to receive 80G Tax Exemption
-                      <span className="mt-1 block text-xs text-amber-700/60">PAN and address are mandatory when 80G is selected.</span>
+                      <span className="mt-1 block text-xs font-normal text-muted-foreground">PAN and address are mandatory when 80G is selected.</span>
                     </span>
                   </label>
                 )}
@@ -1190,55 +1058,50 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
 
               {form.want80G && (
                 <label className="block">
-                  <span className="text-sm font-semibold text-[#331447]">PAN Number *</span>
-                  <Input value={form.panNumber} maxLength={10} onChange={(event) => updateForm({ panNumber: event.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "") })} placeholder="Eg: ABCDE1234F" className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
+                  <span className={labelCls}>PAN Number *</span>
+                  <Input value={form.panNumber} maxLength={10} onChange={(event) => updateForm({ panNumber: event.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "") })} placeholder="Eg: ABCDE1234F" className={fieldCls} />
                 </label>
               )}
 
               {needsAddress && (
-                <div className="grid gap-4 rounded-lg border border-amber-200/60 bg-white/40 p-4 md:grid-cols-2">
+                <div className="grid gap-4 rounded-2xl border border-vk-100 bg-vk-50/60 p-4 md:grid-cols-2">
                   <label className="block">
-                    <span className="text-sm font-semibold text-[#331447]">House No/Door No</span>
-                    <Input value={form.doorNo} maxLength={39} onChange={(event) => updateForm({ doorNo: event.target.value })} className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
+                    <span className={labelCls}>House No/Door No</span>
+                    <Input value={form.doorNo} maxLength={39} onChange={(event) => updateForm({ doorNo: event.target.value })} className={fieldCls} />
                   </label>
                   <label className="block">
-                    <span className="text-sm font-semibold text-[#331447]">House/Apartment/Building Name</span>
-                    <Input value={form.building} maxLength={39} onChange={(event) => updateForm({ building: event.target.value })} className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
+                    <span className={labelCls}>House/Apartment/Building Name</span>
+                    <Input value={form.building} maxLength={39} onChange={(event) => updateForm({ building: event.target.value })} className={fieldCls} />
                   </label>
                   <label className="block">
-                    <span className="text-sm font-semibold text-[#331447]">Street Name</span>
-                    <Input value={form.street} maxLength={39} onChange={(event) => updateForm({ street: event.target.value })} className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
+                    <span className={labelCls}>Street Name</span>
+                    <Input value={form.street} maxLength={39} onChange={(event) => updateForm({ street: event.target.value })} className={fieldCls} />
                   </label>
                   <label className="block">
-                    <span className="text-sm font-semibold text-[#331447]">Location/Area *</span>
-                    <Input value={form.area} maxLength={39} onChange={(event) => updateForm({ area: event.target.value })} className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
+                    <span className={labelCls}>Location/Area *</span>
+                    <Input value={form.area} maxLength={39} onChange={(event) => updateForm({ area: event.target.value })} className={fieldCls} />
                   </label>
                   <label className="block">
-                    <span className="text-sm font-semibold text-[#331447]">PIN Code *</span>
-                    <Input value={form.pincode} maxLength={6} onChange={(event) => updateForm({ pincode: event.target.value.replace(/\D/g, "") })} className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
+                    <span className={labelCls}>PIN Code *</span>
+                    <Input value={form.pincode} maxLength={6} onChange={(event) => updateForm({ pincode: event.target.value.replace(/\D/g, "") })} className={fieldCls} />
                   </label>
                   <label className="block">
-                    <span className="text-sm font-semibold text-[#331447]">City *</span>
-                    <Input value={form.city} maxLength={30} onChange={(event) => updateForm({ city: event.target.value.toUpperCase().replace(/[^A-Z ]/g, "") })} className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
+                    <span className={labelCls}>City *</span>
+                    <Input value={form.city} maxLength={30} onChange={(event) => updateForm({ city: event.target.value.toUpperCase().replace(/[^A-Z ]/g, "") })} className={fieldCls} />
                   </label>
                   <label className="block md:col-span-2">
-                    <span className="text-sm font-semibold text-[#331447]">State *</span>
-                    <Input value={form.state} maxLength={30} onChange={(event) => updateForm({ state: event.target.value.toUpperCase().replace(/[^A-Z ]/g, "") })} className="mt-2 border-amber-200 focus-visible:ring-amber-400" />
+                    <span className={labelCls}>State *</span>
+                    <Input value={form.state} maxLength={30} onChange={(event) => updateForm({ state: event.target.value.toUpperCase().replace(/[^A-Z ]/g, "") })} className={fieldCls} />
                   </label>
                 </div>
               )}
 
-              {status.type === "error" && <p className="rounded-lg bg-red-100 px-4 py-3 text-sm font-semibold text-red-700">{status.message}</p>}
+              {status.type === "error" && <p className="rounded-xl bg-red-50 px-3.5 py-2.5 text-[13px] font-medium text-red-700">{status.message}</p>}
 
-              <motion.div
-                animate={submitting || reduce ? undefined : { scale: [1, 1.02, 1] }}
-                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-              >
-                <Button type="submit" disabled={submitting} className="w-full bg-[#ffc928] py-6 text-base font-bold text-[#3a1905] hover:bg-[#ffdb68]">
-                  <Heart className="mr-2 h-5 w-5 fill-current" />
-                  {submitting ? "Opening Checkout..." : `Donate Rs. ${formatAmount(finalAmount || 0)}`}
-                </Button>
-              </motion.div>
+              <button type="submit" disabled={submitting} className="vk-btn-gold h-12 w-full text-[15px] font-bold">
+                <Heart className="h-4 w-4 fill-current" />
+                {submitting ? "Opening Checkout..." : `Donate Rs. ${formatAmount(finalAmount || 0)}`}
+              </button>
             </form>
             </div>
           </div>

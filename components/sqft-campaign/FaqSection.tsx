@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import Ornament from "@/components/Ornament";
 
 interface FaqItem {
   q: string;
@@ -11,14 +10,16 @@ interface FaqItem {
 
 interface FaqSectionProps {
   faqs: FaqItem[];
+  /**
+   * Kept for API compatibility with the festival pages. Any non-default tone
+   * now renders on the soft `vk-band` background instead of a bespoke palette.
+   */
   tone?: "default" | "mint" | "blue" | "sand";
 }
 
 export default function FaqSection({ faqs, tone = "default" }: FaqSectionProps) {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
-  const mint = tone === "mint";
-  const blue = tone === "blue";
-  const sand = tone === "sand";
+  const banded = tone !== "default";
 
   // FAQPage structured data — lets Google show these Q&As directly in
   // search results (the "People also ask"-style rich snippet), which
@@ -34,97 +35,51 @@ export default function FaqSection({ faqs, tone = "default" }: FaqSectionProps) 
   };
 
   return (
-    <section
-      className={
-        mint || blue || sand
-          ? "py-12 md:py-16"
-          : "bg-white dark:bg-background py-12 md:py-16"
-      }
-      style={
-        mint
-          ? { background: "#F2FAF7" }
-          : blue
-            ? { background: "#F2F7FC" }
-            : sand
-              ? { background: "#FFF5D9" } // Pitru Paksha banner palette — warm ivory
-              : undefined
-      }
-    >
+    <section className={`vk-section ${banded ? "vk-band" : "bg-white"}`}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
-      <div className="container mx-auto max-w-3xl px-4">
-        <Ornament className="mb-6" />
-        <h2
-          className={`mb-8 text-center font-heading text-2xl font-bold md:text-3xl ${
-            mint
-              ? "text-[#063D35]"
-              : blue
-                ? "text-[#0B2D4A]"
-                : sand
-                  ? "text-[#D24A0A]" // burnt orange headings
-                  : "text-primary"
-          }`}
-        >
-          Frequently Asked Questions
-        </h2>
-        <div className="space-y-3">
-          {faqs.map((f, i) => (
-            <div
-              key={f.q}
-              className={`overflow-hidden rounded-2xl border ${
-                mint
-                  ? "border-[#AEE4D2] bg-[#C9F3E8]"
-                  : blue
-                    ? "border-[#BFD2E6] bg-[#E6EDF6]"
-                    : sand
-                      ? "border-[#E9A62A] bg-[#FCE8B5]" // golden amber border, pale golden cream
-                      : "border-border bg-card"
-              }`}
-            >
-              <button
-                type="button"
-                onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                aria-expanded={openFaq === i}
-                className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left"
-              >
-                <span
-                  className={`text-sm font-semibold md:text-base ${
-                    mint
-                      ? "text-[#063D35]"
-                      : blue
-                        ? "text-[#0B2D4A]"
-                        : sand
-                          ? "text-[#59321F]" // warm brown
-                          : "text-foreground"
+      <div className="vk-container">
+        <div className="grid gap-8 rounded-3xl bg-gradient-to-br from-vk-100 via-vk-50 to-white p-5 md:p-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-12">
+          <div>
+            <span className="vk-pill mb-4">FAQ</span>
+            <h2 className="vk-h2">Frequently Asked Questions</h2>
+          </div>
+          <div className="space-y-3">
+            {faqs.map((f, i) => {
+              const isOpen = openFaq === i;
+              return (
+                <div
+                  key={f.q}
+                  className={`overflow-hidden rounded-2xl border bg-white transition-shadow ${
+                    isOpen ? "border-vk-200 shadow-card" : "border-vk-100"
                   }`}
                 >
-                  {f.q}
-                </span>
-                <ChevronDown
-                  className={`h-4 w-4 shrink-0 text-gold transition-transform ${
-                    openFaq === i ? "rotate-180" : ""
-                  }`}
-                />
-              </button>
-              {openFaq === i && (
-                <p
-                  className={`border-t px-5 py-4 text-sm leading-relaxed ${
-                    mint
-                      ? "border-[#AEE4D2] text-[#2C5B4E]"
-                      : blue
-                        ? "border-[#BFD2E6] text-[#2E4358]"
-                        : sand
-                          ? "border-[#E9A62A] text-[#59321F]"
-                          : "border-border text-muted-foreground"
-                  }`}
-                >
-                  {f.a}
-                </p>
-              )}
-            </div>
-          ))}
+                  <button
+                    type="button"
+                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                    aria-expanded={openFaq === i}
+                    className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left text-[15px] font-semibold text-ink"
+                  >
+                    <span>{f.q}</span>
+                    <span
+                      className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-all ${
+                        isOpen ? "rotate-180 bg-vk-700 text-white" : "bg-vk-100 text-vk-700"
+                      }`}
+                    >
+                      <ChevronDown className="h-4 w-4" />
+                    </span>
+                  </button>
+                  {isOpen && (
+                    <p className="px-5 pb-5 text-sm leading-relaxed text-muted-foreground">
+                      {f.a}
+                    </p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>

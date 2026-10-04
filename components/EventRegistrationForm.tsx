@@ -53,11 +53,6 @@ export default function EventRegistrationForm({ eventId, formSchema, event }: Pr
 
   if (!formSchema?.enabled) return null;
 
-  const heroImage =
-    formSchema.headerImage ||
-    event?.images?.[0] ||
-    "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1200";
-
   const onChange = (id: string, val: any) => {
     setState((prev) => ({ ...prev, [id]: val }));
     if (errors[id]) setErrors((prev) => { const n = { ...prev }; delete n[id]; return n; });
@@ -106,8 +101,7 @@ export default function EventRegistrationForm({ eventId, formSchema, event }: Pr
   const isFullWidth = (type: string) => ["textarea", "checkbox", "file"].includes(type);
 
   const renderField = (f: FieldDef) => {
-    const baseInput =
-      "w-full rounded-xl border border-border bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground shadow-sm outline-none transition-all duration-200 focus:border-primary focus:ring-2 focus:ring-primary/20";
+    const baseInput = "vk-input";
 
     switch (f.type) {
       case "text":
@@ -128,7 +122,7 @@ export default function EventRegistrationForm({ eventId, formSchema, event }: Pr
       case "textarea":
         return (
           <textarea
-            className={`${baseInput} min-h-[110px] resize-none`}
+            className={`${baseInput} h-auto min-h-[110px] resize-none py-3`}
             placeholder={f.placeholder || f.label}
             value={state[f.id] || ""}
             onChange={(e) => onChange(f.id, e.target.value)}
@@ -148,7 +142,7 @@ export default function EventRegistrationForm({ eventId, formSchema, event }: Pr
                 <option key={o} value={o}>{o}</option>
               ))}
             </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-vk-500" />
           </div>
         );
 
@@ -160,10 +154,10 @@ export default function EventRegistrationForm({ eventId, formSchema, event }: Pr
               return (
                 <label
                   key={o}
-                  className={`cursor-pointer rounded-full border px-4 py-2 text-sm font-medium transition-all duration-200 ${
+                  className={`inline-flex min-h-[40px] cursor-pointer items-center rounded-full border px-4 text-sm font-medium transition-all duration-200 ${
                     selected
-                      ? "border-primary bg-primary text-primary-foreground shadow-md"
-                      : "border-border bg-card text-foreground hover:border-primary/40 hover:bg-accent"
+                      ? "border-vk-700 bg-vk-700 text-white shadow-md"
+                      : "border-vk-200 bg-white text-ink/80 hover:border-vk-700 hover:bg-vk-50"
                   }`}
                 >
                   <input type="radio" className="sr-only" checked={selected} onChange={() => onChange(f.id, o)} />
@@ -182,10 +176,10 @@ export default function EventRegistrationForm({ eventId, formSchema, event }: Pr
               return (
                 <label
                   key={o}
-                  className={`cursor-pointer rounded-full border px-4 py-2 text-sm font-medium transition-all duration-200 ${
+                  className={`inline-flex min-h-[40px] cursor-pointer items-center rounded-full border px-4 text-sm font-medium transition-all duration-200 ${
                     checked
-                      ? "border-primary bg-primary text-primary-foreground shadow-md"
-                      : "border-border bg-card text-foreground hover:border-primary/40 hover:bg-accent"
+                      ? "border-vk-700 bg-vk-700 text-white shadow-md"
+                      : "border-vk-200 bg-white text-ink/80 hover:border-vk-700 hover:bg-vk-50"
                   }`}
                 >
                   <input
@@ -208,8 +202,8 @@ export default function EventRegistrationForm({ eventId, formSchema, event }: Pr
 
       case "file":
         return (
-          <label className="flex cursor-pointer items-center gap-3 rounded-xl border-2 border-dashed border-border bg-accent/50 px-4 py-4 text-sm text-muted-foreground transition-all hover:border-primary/40 hover:bg-accent">
-            <Upload className="h-5 w-5 text-primary" />
+          <label className="flex min-h-[56px] cursor-pointer items-center gap-3 rounded-xl border-2 border-dashed border-vk-200 bg-vk-50 px-4 py-3 text-sm text-muted-foreground transition-all hover:border-vk-500 hover:bg-vk-100/60">
+            <Upload className="h-5 w-5 shrink-0 text-vk-600" />
             <span>{files[f.id]?.name || `Choose ${f.label.toLowerCase()}`}</span>
             <input type="file" className="sr-only" onChange={(e) => onFile(f.id, e.target.files?.[0])} />
           </label>
@@ -223,116 +217,107 @@ export default function EventRegistrationForm({ eventId, formSchema, event }: Pr
 
   if (successMessage) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background p-4">
-        <div className="animate-fade-in text-center space-y-4">
-          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
-            <CheckCircle2 className="h-10 w-10 text-primary" />
+      <div className="vk-card px-6 py-12 text-center">
+        <div className="animate-fade-in space-y-4">
+          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-vk-100">
+            <CheckCircle2 className="h-10 w-10 text-vk-700" />
           </div>
-          <h2 className="text-2xl font-bold text-foreground">{successMessage}</h2>
-          <p className="text-muted-foreground">We'll get back to you shortly.</p>
+          <h2 className="vk-h3">{successMessage}</h2>
+          <p className="text-muted-foreground">We&apos;ll get back to you shortly.</p>
         </div>
       </div>
     );
   }
 
-
   return (
-    <div className="min-h-screen bg-background">
-     
-  <div className="relative h-[280px] sm:h-[320px] overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
-            <div className="absolute inset-0 flex flex-col items-center justify-end pb-16 px-4 text-center">
-          <h1 className="text-3xl sm:text-4xl font-bold text-white drop-shadow-lg max-w-2xl leading-tight">
-            {formSchema.title || event?.title || "Event Registration"}
-          </h1>
-          {formSchema.subtitle && (
-            <p className="mt-2 text-sm sm:text-base text-white/80 max-w-lg">{formSchema.subtitle}</p>
-          )}
+    <div className="vk-card overflow-hidden">
+      {formSchema.headerImage && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={formSchema.headerImage} alt="" className="h-40 w-full object-cover sm:h-52" />
+      )}
+      <div className="border-b border-vk-100 bg-gradient-to-b from-vk-50 to-white px-5 py-6 sm:px-8">
+        <span className="vk-pill mb-3">Registration</span>
+        <h2 className="vk-h3">
+          {formSchema.title || event?.title || "Event Registration"}
+        </h2>
+        {formSchema.subtitle && (
+          <p className="mt-2 text-sm text-muted-foreground sm:text-base">{formSchema.subtitle}</p>
+        )}
+      </div>
+
+      <form onSubmit={submit} className="space-y-6 p-5 sm:p-8">
+        <div className="flex items-center gap-2 text-ink">
+          <Sparkles className="h-5 w-5 text-vk-500" />
+          <h3 className="text-base font-semibold">Fill in your details</h3>
         </div>
-      </div>
 
-    
-      <div className="relative mx-auto max-w-2xl px-4 pb-12 -mt-10">
-        <form
-          onSubmit={submit}
-          className="rounded-2xl border border-border bg-card p-6 sm:p-8 space-y-6"
-          style={{ boxShadow: "var(--shadow-card)" }}
-        >
-          <div className="flex items-center gap-2 text-foreground">
-            <Sparkles className="h-5 w-5 text-primary" />
-            <h2 className="text-lg font-semibold">Fill in your details</h2>
-          </div>
-
-          <div className="grid gap-5 sm:grid-cols-2">
-            {formSchema.fields.map((f) => (
-              <div key={f.id} className={`space-y-1.5 ${isFullWidth(f.type) ? "sm:col-span-2" : ""}`}>
-                <label className="block text-sm font-medium text-foreground">
-                  {f.label}
-                  {f.required && <span className="ml-0.5 text-destructive">*</span>}
-                </label>
-                {renderField(f)}
-                {errors[f.id] && (
-                  <p className="text-xs text-destructive font-medium">{errors[f.id]}</p>
-                )}
-              </div>
-            ))}
-          </div>
-
-          
-          {formSchema.payment?.enabled && (
-            <div className="rounded-xl border border-primary/20 bg-accent p-5 space-y-3">
-              <h3 className="font-semibold text-foreground">Select Payment Option</h3>
-              <div className="flex flex-wrap gap-3">
-                {formSchema.payment.studentPrice != null && (
-                  <label
-                    className={`cursor-pointer rounded-xl border-2 px-5 py-3 text-sm font-medium transition-all ${
-                      paymentChoice === "student"
-                        ? "border-primary bg-primary text-primary-foreground shadow-md"
-                        : "border-border bg-card text-foreground hover:border-primary/40"
-                    }`}
-                  >
-                    <input type="radio" name="payment" className="sr-only" onChange={() => setPaymentChoice("student")} />
-                    Student — ₹{formSchema.payment.studentPrice}
-                  </label>
-                )}
-                {formSchema.payment.jobPrice != null && (
-                  <label
-                    className={`cursor-pointer rounded-xl border-2 px-5 py-3 text-sm font-medium transition-all ${
-                      paymentChoice === "job"
-                        ? "border-primary bg-primary text-primary-foreground shadow-md"
-                        : "border-border bg-card text-foreground hover:border-primary/40"
-                    }`}
-                  >
-                    <input type="radio" name="payment" className="sr-only" onChange={() => setPaymentChoice("job")} />
-                    Professional — ₹{formSchema.payment.jobPrice}
-                  </label>
-                )}
-                {formSchema.payment.price != null && (
-                  <label
-                    className={`cursor-pointer rounded-xl border-2 px-5 py-3 text-sm font-medium transition-all ${
-                      paymentChoice === "general"
-                        ? "border-primary bg-primary text-primary-foreground shadow-md"
-                        : "border-border bg-card text-foreground hover:border-primary/40"
-                    }`}
-                  >
-                    <input type="radio" name="payment" className="sr-only" onChange={() => setPaymentChoice("general")} />
-                    General — ₹{formSchema.payment.price}
-                  </label>
-                )}
-              </div>
+        <div className="grid gap-5 sm:grid-cols-2">
+          {formSchema.fields.map((f) => (
+            <div key={f.id} className={`space-y-1.5 ${isFullWidth(f.type) ? "sm:col-span-2" : ""}`}>
+              <label className="block text-sm font-medium text-ink">
+                {f.label}
+                {f.required && <span className="ml-0.5 text-destructive">*</span>}
+              </label>
+              {renderField(f)}
+              {errors[f.id] && (
+                <p className="text-xs font-medium text-destructive">{errors[f.id]}</p>
+              )}
             </div>
-          )}
+          ))}
+        </div>
 
-         
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full rounded-xl bg-primary py-4 text-base font-semibold text-primary-foreground shadow-lg transition-all duration-200 hover:shadow-xl hover:brightness-110 active:scale-[0.98] disabled:opacity-60"
-          >
-            {submitting ? "Submitting…" : "Register Now 🙏"}
-          </button>
-        </form>
-      </div>
+        {formSchema.payment?.enabled && (
+          <div className="space-y-3 rounded-2xl border border-vk-200 bg-vk-50 p-5">
+            <h3 className="font-semibold text-ink">Select Payment Option</h3>
+            <div className="flex flex-wrap gap-3">
+              {formSchema.payment.studentPrice != null && (
+                <label
+                  className={`inline-flex min-h-[44px] cursor-pointer items-center rounded-xl border-2 px-5 text-sm font-medium transition-all ${
+                    paymentChoice === "student"
+                      ? "border-vk-700 bg-vk-700 text-white shadow-md"
+                      : "border-vk-200 bg-white text-ink/80 hover:border-vk-700"
+                  }`}
+                >
+                  <input type="radio" name="payment" className="sr-only" onChange={() => setPaymentChoice("student")} />
+                  Student — ₹{formSchema.payment.studentPrice}
+                </label>
+              )}
+              {formSchema.payment.jobPrice != null && (
+                <label
+                  className={`inline-flex min-h-[44px] cursor-pointer items-center rounded-xl border-2 px-5 text-sm font-medium transition-all ${
+                    paymentChoice === "job"
+                      ? "border-vk-700 bg-vk-700 text-white shadow-md"
+                      : "border-vk-200 bg-white text-ink/80 hover:border-vk-700"
+                  }`}
+                >
+                  <input type="radio" name="payment" className="sr-only" onChange={() => setPaymentChoice("job")} />
+                  Professional — ₹{formSchema.payment.jobPrice}
+                </label>
+              )}
+              {formSchema.payment.price != null && (
+                <label
+                  className={`inline-flex min-h-[44px] cursor-pointer items-center rounded-xl border-2 px-5 text-sm font-medium transition-all ${
+                    paymentChoice === "general"
+                      ? "border-vk-700 bg-vk-700 text-white shadow-md"
+                      : "border-vk-200 bg-white text-ink/80 hover:border-vk-700"
+                  }`}
+                >
+                  <input type="radio" name="payment" className="sr-only" onChange={() => setPaymentChoice("general")} />
+                  General — ₹{formSchema.payment.price}
+                </label>
+              )}
+            </div>
+          </div>
+        )}
+
+        <button
+          type="submit"
+          disabled={submitting}
+          className="vk-btn-primary min-h-[52px] w-full text-base active:scale-[0.98]"
+        >
+          {submitting ? "Submitting…" : "Register Now 🙏"}
+        </button>
+      </form>
     </div>
   );
 }

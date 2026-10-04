@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import Ornament from "@/components/Ornament";
+import SectionHeading from "@/components/site/SectionHeading";
 import type { CampaignConfig } from "@/lib/campaignConfig";
 import { SQFT_CAMPAIGN } from "@/lib/campaignConfig";
 
@@ -60,7 +60,7 @@ function PrivilegeCarousel({ extraImage }: { extraImage?: { src: string; caption
 
   return (
     <div
-      className="relative aspect-[4/3] w-full overflow-hidden rounded-[28px] border border-border shadow-sm sm:aspect-[5/4]"
+      className="relative aspect-[4/3] w-full overflow-hidden rounded-3xl bg-vk-900 shadow-card sm:aspect-[5/4]"
       onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
       onTouchEnd={(e) => {
         const diff = e.changedTouches[0].clientX - touchStartX.current;
@@ -82,12 +82,12 @@ function PrivilegeCarousel({ extraImage }: { extraImage?: { src: string; caption
           />
         </div>
       ))}
-      <div className="absolute bottom-4 right-4 flex items-center gap-1.5">
+      <div className="absolute bottom-3 right-3 flex items-center gap-1.5 rounded-full bg-vk-900/40 px-2 py-1.5 backdrop-blur-sm">
         <button
           type="button"
           aria-label="Previous image"
           onClick={prev}
-          className="flex h-5 w-5 items-center justify-center rounded-full bg-white/60 text-foreground/70 transition hover:bg-gold hover:text-white"
+          className="flex h-6 w-6 items-center justify-center rounded-full bg-white/80 text-vk-700 transition hover:bg-white"
         >
           <ChevronLeft className="h-3 w-3" />
         </button>
@@ -98,7 +98,7 @@ function PrivilegeCarousel({ extraImage }: { extraImage?: { src: string; caption
             aria-label={`Show ${img.caption}`}
             onClick={() => setIndex(i)}
             className={`h-1.5 rounded-full transition-all ${
-              i === index ? "w-5 bg-gold" : "w-1.5 bg-white/60 hover:bg-white/80"
+              i === index ? "w-5 bg-white" : "w-1.5 bg-white/50 hover:bg-white/80"
             }`}
           />
         ))}
@@ -106,7 +106,7 @@ function PrivilegeCarousel({ extraImage }: { extraImage?: { src: string; caption
           type="button"
           aria-label="Next image"
           onClick={next}
-          className="flex h-5 w-5 items-center justify-center rounded-full bg-white/60 text-foreground/70 transition hover:bg-gold hover:text-white"
+          className="flex h-6 w-6 items-center justify-center rounded-full bg-white/80 text-vk-700 transition hover:bg-white"
         >
           <ChevronRight className="h-3 w-3" />
         </button>
@@ -123,9 +123,9 @@ function OtherPrivilegesGallery({ config = SQFT_CAMPAIGN }: { config?: CampaignC
   };
 
   return (
-    <div className="relative mt-16">
-      <div className="mb-6 flex items-end justify-between gap-4">
-        <h3 className="font-heading text-2xl font-bold text-primary md:text-3xl">
+    <div className="relative mt-14 md:mt-16">
+      <div className="mb-4 flex items-end justify-between gap-4">
+        <h3 className="vk-h3 vk-bar-title">
           Other Donor Privileges
         </h3>
         <div className="hidden gap-2 sm:flex">
@@ -133,7 +133,7 @@ function OtherPrivilegesGallery({ config = SQFT_CAMPAIGN }: { config?: CampaignC
             type="button"
             aria-label="Scroll left"
             onClick={() => scrollBy(-1)}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-border text-muted-foreground transition hover:border-gold hover:text-gold"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-vk-200 bg-white text-vk-700 transition hover:border-vk-700 hover:bg-vk-50"
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
@@ -141,25 +141,25 @@ function OtherPrivilegesGallery({ config = SQFT_CAMPAIGN }: { config?: CampaignC
             type="button"
             aria-label="Scroll right"
             onClick={() => scrollBy(1)}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-border text-muted-foreground transition hover:border-gold hover:text-gold"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-vk-200 bg-white text-vk-700 transition hover:border-vk-700 hover:bg-vk-50"
           >
             <ChevronRight className="h-5 w-5" />
           </button>
         </div>
       </div>
 
-      <p className="mb-6 text-sm font-semibold text-primary">
+      <p className="vk-lead mb-6 max-w-3xl">
         Each of our respected contributors who donate more than 1 {config.unitName} will receive the following privileges based on Donation Level.
       </p>
 
       <div
         ref={scrollerRef}
-        className="flex snap-x snap-mandatory gap-5 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="vk-scroller"
       >
         {OTHER_PRIVILEGES.map((p) => (
           <div
             key={p.caption}
-            className="relative aspect-[4/5] w-64 shrink-0 snap-start overflow-hidden rounded-2xl border border-border min-[360px]:w-80 sm:w-96"
+            className="relative aspect-[4/5] w-64 shrink-0 overflow-hidden rounded-2xl border border-vk-100 bg-vk-50 shadow-card min-[360px]:w-72 sm:w-80 lg:w-96"
           >
             <Image src={p.src} alt={p.caption} fill sizes="(max-width: 640px) 320px, 384px" className="object-cover" />
           </div>
@@ -188,35 +188,31 @@ export default function DonorPrivilegesSection({ scrollToDonate, config = SQFT_C
     : PRIVILEGES;
 
   return (
-    <section className="bg-[radial-gradient(circle_at_top,_rgba(255,221,91,0.14),_transparent_45%)] bg-white dark:bg-background py-12 md:py-16">
-      <div className="container mx-auto max-w-6xl px-4">
-        <Ornament className="mb-6" />
-        <div className="mx-auto mb-10 max-w-2xl text-center">
-          <p className="mb-3 text-sm uppercase tracking-[0.3em] text-gold">Our gratitude to every donor</p>
-          <h2 className="font-heading text-3xl font-bold text-primary md:text-4xl">Donor Privileges</h2>
-        </div>
+    <section className="vk-section bg-white">
+      <div className="vk-container">
+        <SectionHeading align="center" eyebrow="Our gratitude to every donor" title="Donor Privileges" />
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="grid items-center gap-10 lg:grid-cols-2"
+          className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12"
         >
           <PrivilegeCarousel extraImage={brickEngravingImage} />
 
           <div>
-            <p className="mb-5 text-sm leading-relaxed text-muted-foreground md:text-base">
+            <p className="vk-lead mb-5">
               Each of our respected contributors will receive these privileges as our heartfelt gratitude:
             </p>
-            <ol className="space-y-4">
+            <ol className="space-y-3">
               {privileges.map((p, i) => (
                 <li key={p.lead} className="flex gap-3">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gold/15 text-xs font-bold text-gold">
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-vk-100 text-xs font-bold text-vk-700">
                     {i + 1}
                   </span>
-                  <p className="text-sm leading-relaxed text-foreground md:text-base">
-                    <span className="font-bold text-primary">{p.lead}</span>
+                  <p className="text-sm leading-relaxed text-ink/80 md:text-[15px]">
+                    <span className="font-bold text-ink">{p.lead}</span>
                     {p.rest}
                   </p>
                 </li>
@@ -226,7 +222,7 @@ export default function DonorPrivilegesSection({ scrollToDonate, config = SQFT_C
             {scrollToDonate && (
               <button
                 onClick={scrollToDonate}
-                className="mt-8 rounded-full bg-gradient-gold px-8 py-3.5 text-sm font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)] transition-transform hover:scale-105 md:text-base"
+                className="vk-btn-gold mt-8 h-12 px-8 text-base"
               >
                 Donate Now
               </button>

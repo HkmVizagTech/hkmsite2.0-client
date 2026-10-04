@@ -3,11 +3,11 @@
 import PageLayout from "@/components/PageLayout";
 import WhatsAppCommunityCTA from "@/components/WhatsAppCommunityCTA";
 import PageHero from "@/components/PageHero";
-import Ornament from "@/components/Ornament";
-import { motion, useInView } from "framer-motion";
-import { useRef, ReactNode } from "react";
+import SectionHeading from "@/components/site/SectionHeading";
+import Reveal from "@/components/site/Reveal";
 import Image from "next/image";
-import { BookOpen, Globe, Award, Heart, Star, Users, Sparkles, Clock, MapPin, Ship, Landmark, GraduationCap } from "lucide-react";
+import { BookOpen, Globe, Award, Heart, Star, Users, Sparkles, MapPin, Ship, Landmark, GraduationCap, Quote } from "lucide-react";
+
 
 const achievements = [
   { icon: Globe, value: "108+", label: "Temples Worldwide" },
@@ -67,214 +67,192 @@ const teachings = [
   { title: "The Science of Self-Realization", desc: "A collection of articles and interviews presenting Vedic philosophy for the modern audience, addressing fundamental questions of human existence." },
 ];
 
-const SectionHeader = ({ label, title }: { label: string; title: string }) => (
-  <div className="text-center mb-16">
-    <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">{label}</p>
-            <Ornament className="mb-5" />
-    <h2 className="text-3xl md:text-5xl font-bold text-foreground">{title}</h2>
-  </div>
-);
-
-const AnimatedSection = ({ children, className = "" }: { children: ReactNode; className?: string }) => {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 40 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.8 }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  );
-};
-
 export default function FounderPage() {
   return (
     <PageLayout>
-      <PageHero
-        title="His Divine Grace Srila Prabhupada"
-        subtitle="Founder-Acharya of the Worldwide Hare Krishna Movement"
-        breadcrumb="About Founder"
-      />
+      <div className="pt-[var(--header-h)]">
+        <PageHero
+          title="His Divine Grace Srila Prabhupada"
+          subtitle="Founder-Acharya of the Worldwide Hare Krishna Movement"
+          breadcrumb="About Founder"
+        />
 
-     
-      <section className="py-12 md:py-16 bg-white dark:bg-background">
-        <div className="container mx-auto px-4">
-          <AnimatedSection>
-            <div className="max-w-6xl mx-auto grid md:grid-cols-5 gap-12 items-start">
-              <div className="md:col-span-2">
-                <div className="relative sticky top-28">
-                  <div className="absolute -inset-3 bg-primary/10 rounded-2xl -rotate-3" />
+        {/* ── BIOGRAPHY — feature split ─────────────────────────── */}
+        <section className="vk-section">
+          <div className="vk-container grid items-start gap-10 md:grid-cols-5 lg:gap-14">
+            <Reveal className="md:col-span-2 md:sticky md:top-[calc(var(--header-h)+1.5rem)]">
+              <div className="relative mx-auto max-w-sm md:max-w-none">
+                <div aria-hidden className="absolute -inset-3 -z-10 -rotate-3 rounded-[2rem] bg-gradient-to-br from-vk-200/80 via-vk-100/70 to-transparent" />
+                <div className="overflow-hidden rounded-3xl shadow-[0_30px_60px_-28px_rgba(30,58,138,0.55)]">
                   <Image
                     src="https://res.cloudinary.com/ddmzeqpkc/image/upload/prabhupada_home"
                     alt="Srila Prabhupada"
                     width={400}
                     height={500}
-                    className="relative rounded-2xl w-full object-cover shadow-elevated"
+                    className="h-auto w-full object-cover"
                   />
-                  <div className="mt-6 p-4 bg-card rounded-xl border border-border text-center">
-                    <p className="text-sm font-semibold text-foreground">A.C. Bhaktivedanta Swami Prabhupada</p>
-                    <p className="text-xs text-muted-foreground mt-1">1 September 1896 — 14 November 1977</p>
-                  </div>
+                </div>
+                <div className="vk-card relative mx-4 -mt-8 p-4 text-center">
+                  <p className="text-sm font-bold text-foreground">A.C. Bhaktivedanta Swami Prabhupada</p>
+                  <p className="mt-1 text-xs font-medium text-vk-600">1 September 1896 — 14 November 1977</p>
                 </div>
               </div>
+            </Reveal>
 
-              <div className="md:col-span-3 space-y-6">
-                <p className="text-gold text-sm tracking-[0.2em] uppercase font-medium">About Srila Prabhupada</p>
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground">
-                  The Acharya Who Changed the World
-                </h2>
-                <p className="text-muted-foreground leading-relaxed">
+            <Reveal delay={0.08} className="md:col-span-3">
+              <span className="vk-pill mb-4">About Srila Prabhupada</span>
+              <h2 className="vk-h2">The Acharya Who Changed the World</h2>
+              <div className="mt-5 space-y-4">
+                <p className="vk-lead">
                   His Divine Grace A.C. Bhaktivedanta Swami Prabhupada is the Founder-Acharya of the International Society for Krishna Consciousness (ISKCON) and the greatest ambassador of Vedic knowledge the world has ever seen. He transformed the spiritual landscape of the modern world by single-handedly carrying India&apos;s ancient wisdom to every continent.
                 </p>
-                <p className="text-muted-foreground leading-relaxed">
+                <p className="vk-lead">
                   Born on September 1, 1896, in Calcutta, one day after the auspicious festival of Janmashtami, Abhay Charan De showed early signs of spiritual inclination. His father, Gour Mohan De, raised him as a pure Vaishnava devotee. As a child, Abhay organized his own Ratha Yatra festivals, imitating the famous Jagannath procession.
                 </p>
-                <p className="text-muted-foreground leading-relaxed">
+                <p className="vk-lead">
                   In 1922, he had a life-changing encounter with his spiritual master, Srila Bhaktisiddhanta Saraswati Goswami, who recognized his potential and instructed him to spread the message of Lord Chaitanya in the English language. This instruction became the guiding force of his entire life.
                 </p>
-                <p className="text-muted-foreground leading-relaxed">
+                <p className="vk-lead">
                   After decades of preparation — studying, writing, and cultivating deep spiritual realization — Srila Prabhupada embarked on an unprecedented mission at the age of 69. With nothing but his faith, a trunk of books, and forty rupees, he boarded the cargo ship Jaladuta and set sail for America. The 35-day voyage nearly claimed his life when he suffered two heart attacks, but he was sustained by the grace of Lord Krishna.
                 </p>
-                <p className="text-muted-foreground leading-relaxed">
+                <p className="vk-lead">
                   Arriving in New York City in September 1965, he began humbly — chanting under a tree in Tompkins Square Park and giving talks in a tiny storefront on the Lower East Side. Within just eleven years, he built a worldwide confederation of more than 108 temples, rural communities, schools, and restaurants, transforming the lives of thousands.
                 </p>
               </div>
-            </div>
-          </AnimatedSection>
-        </div>
-      </section>
-
-     
-      <section className="py-20 bg-primary">
-        <div className="container mx-auto px-4">
-          <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-            {achievements.map((a) => (
-              <AnimatedSection key={a.label}>
-                <div className="text-center">
-                  <a.icon className="w-8 h-8 text-white/70 mx-auto mb-3" />
-                  <div className="text-3xl font-bold text-white mb-1">{a.value}</div>
-                  <p className="text-xs text-white/70">{a.label}</p>
-                </div>
-              </AnimatedSection>
-            ))}
+            </Reveal>
           </div>
-        </div>
-      </section>
+        </section>
 
-     
-      <section className="py-12 md:py-16 bg-white dark:bg-background">
-        <div className="container mx-auto px-4">
-          <AnimatedSection>
-            <SectionHeader label="Divine Qualities" title="The Qualities of a Pure Devotee" />
-          </AnimatedSection>
-          <div className="max-w-5xl mx-auto grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {qualities.map((q) => (
-              <AnimatedSection key={q.title}>
-                <div className="bg-background rounded-2xl p-6 border border-border hover:shadow-warm hover:-translate-y-1 transition-all duration-300 h-full">
-                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4 transition-colors group-hover:bg-gradient-gold">
-                    <Sparkles className="w-5 h-5 text-primary" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">{q.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{q.desc}</p>
-                </div>
-              </AnimatedSection>
-            ))}
-          </div>
-        </div>
-      </section>
-
-     
-      <section className="py-12 md:py-16 bg-white dark:bg-background">
-        <div className="container mx-auto px-4">
-          <AnimatedSection>
-            <SectionHeader label="Milestone Timeline" title="A Life of Extraordinary Devotion" />
-          </AnimatedSection>
-          <div className="max-w-4xl mx-auto relative">
-           
-            <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-0.5 bg-border md:-translate-x-0.5" />
-
-            {timeline.map((item, i) => {
-              const isLeft = i % 2 === 0;
-              return (
-                <AnimatedSection key={item.year}>
-                  <div className={`relative flex items-start mb-12 ${isLeft ? "md:flex-row" : "md:flex-row-reverse"}`}>
-                   
-                    <div className="absolute left-6 md:left-1/2 w-4 h-4 rounded-full bg-[hsl(var(--gold))] border-4 border-background -translate-x-2 md:-translate-x-2 z-10 mt-1" />
-
-                   
-                    <div className={`ml-16 md:ml-0 md:w-[calc(50%-2rem)] ${isLeft ? "md:pr-8 md:text-right" : "md:pl-8"}`}>
-                      <span className="text-primary font-bold text-sm">{item.year}</span>
-                      <h3 className="text-lg font-bold text-foreground mt-1">{item.title}</h3>
-                      <p className="text-sm text-muted-foreground leading-relaxed mt-2">{item.desc}</p>
+        {/* ── ACHIEVEMENTS — stat card ──────────────────────────── */}
+        <section className="pb-10 md:pb-16">
+          <div className="vk-container">
+            <Reveal>
+              <div className="relative isolate overflow-hidden rounded-3xl bg-gradient-to-br from-vk-700 via-vk-800 to-vk-900 px-5 py-8 md:px-10 md:py-12">
+                <div aria-hidden className="absolute -right-16 -top-16 -z-10 h-56 w-56 rounded-full bg-white/10" />
+                <div aria-hidden className="absolute -bottom-20 -left-10 -z-10 h-48 w-48 rounded-full bg-vk-500/20" />
+                <div className="grid grid-cols-2 gap-x-4 gap-y-7 md:grid-cols-3 lg:grid-cols-6">
+                  {achievements.map((a) => (
+                    <div key={a.label} className="text-center">
+                      <span className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-white/10 text-white">
+                        <a.icon className="h-5 w-5" />
+                      </span>
+                      <div className="font-heading text-2xl font-extrabold text-white md:text-3xl">{a.value}</div>
+                      <p className="mt-1 text-xs font-medium text-white/70 md:text-[13px]">{a.label}</p>
                     </div>
-                  </div>
-                </AnimatedSection>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      
-      <section className="py-12 md:py-16 bg-white dark:bg-background">
-        <div className="container mx-auto px-4">
-          <AnimatedSection>
-            <SectionHeader label="Amazing Facts" title="Facts About Srila Prabhupada" />
-          </AnimatedSection>
-          <div className="max-w-4xl mx-auto grid sm:grid-cols-2 gap-4">
-            {facts.map((fact, i) => (
-              <AnimatedSection key={i}>
-                <div className="flex gap-4 p-5 bg-background rounded-xl border border-border hover:border-primary/30 transition-colors">
-                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
-                    <span className="text-primary font-bold text-sm">{i + 1}</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{fact}</p>
+                  ))}
                 </div>
-              </AnimatedSection>
-            ))}
+              </div>
+            </Reveal>
           </div>
-        </div>
-      </section>
+        </section>
 
-     
-      <section className="py-12 md:py-16 bg-white dark:bg-background">
-        <div className="container mx-auto px-4">
-          <AnimatedSection>
-            <SectionHeader label="Sacred Literature" title="Timeless Teachings" />
-          </AnimatedSection>
-          <div className="max-w-5xl mx-auto grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {teachings.map((t) => (
-              <AnimatedSection key={t.title}>
-                <div className="bg-card rounded-2xl p-6 border border-border hover:shadow-warm transition-shadow h-full">
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                    <BookOpen className="w-5 h-5 text-primary" />
+        {/* ── QUALITIES ─────────────────────────────────────────── */}
+        <section className="vk-section vk-band">
+          <div className="vk-container">
+            <SectionHeading align="center" eyebrow="Divine Qualities" title="The Qualities of a Pure Devotee" />
+            <div className="grid gap-4 sm:grid-cols-2 md:gap-5 lg:grid-cols-3">
+              {qualities.map((q, i) => (
+                <Reveal key={q.title} delay={i * 0.05}>
+                  <div className="vk-card vk-card-hover h-full p-6">
+                    <span className="vk-icon-chip mb-4">
+                      <Sparkles className="h-5 w-5" />
+                    </span>
+                    <h3 className="text-lg font-bold text-foreground">{q.title}</h3>
+                    <p className="mt-1.5 text-[15px] leading-relaxed text-muted-foreground">{q.desc}</p>
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">{t.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{t.desc}</p>
-                </div>
-              </AnimatedSection>
-            ))}
+                </Reveal>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-     
-      <section className="py-24 bg-primary">
-        <div className="container mx-auto px-4 text-center max-w-3xl">
-          <AnimatedSection>
-            <p className="text-white/60 text-sm tracking-[0.2em] uppercase mb-6">His Words</p>
-            <blockquote className="text-2xl md:text-3xl font-bold text-white leading-relaxed mb-6">
-              &quot;I am not this body. I am a spirit soul, part and parcel of the Supreme Lord. My real business is to serve Him with love and devotion.&quot;
-            </blockquote>
-            <p className="text-white/70 font-medium">— Srila Prabhupada</p>
-          </AnimatedSection>
-        </div>
-      </section>
-      <WhatsAppCommunityCTA />
+        {/* ── TIMELINE ──────────────────────────────────────────── */}
+        <section className="vk-section">
+          <div className="vk-container">
+            <SectionHeading align="center" eyebrow="Milestone Timeline" title="A Life of Extraordinary Devotion" />
+            <ol className="relative mx-auto max-w-4xl">
+              <span aria-hidden className="absolute bottom-0 left-5 top-0 w-0.5 bg-gradient-to-b from-vk-200 via-vk-300 to-vk-200 md:left-1/2 md:-translate-x-1/2" />
+              {timeline.map((item, i) => {
+                const isLeft = i % 2 === 0;
+                return (
+                  <Reveal as="li" key={item.year} className="relative pb-6 last:pb-0 md:pb-8">
+                    <div className={`relative flex items-start ${isLeft ? "md:flex-row" : "md:flex-row-reverse"}`}>
+                      <span className="absolute left-5 top-4 z-[1] flex h-10 w-10 -translate-x-1/2 items-center justify-center rounded-full bg-vk-700 text-white ring-4 ring-white md:left-1/2">
+                        <item.icon className="h-4 w-4" />
+                      </span>
+                      <div className={`ml-14 w-full md:ml-0 md:w-[calc(50%-2.5rem)] ${isLeft ? "md:text-right" : ""}`}>
+                        <div className="vk-card vk-card-hover p-5">
+                          <span className="vk-pill-soft">{item.year}</span>
+                          <h3 className="mt-2.5 text-lg font-bold text-foreground">{item.title}</h3>
+                          <p className="mt-1.5 text-[15px] leading-relaxed text-muted-foreground">{item.desc}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </Reveal>
+                );
+              })}
+            </ol>
+          </div>
+        </section>
+
+        {/* ── FACTS ─────────────────────────────────────────────── */}
+        <section className="vk-section vk-band">
+          <div className="vk-container">
+            <SectionHeading align="center" eyebrow="Amazing Facts" title="Facts About Srila Prabhupada" />
+            <div className="mx-auto grid max-w-5xl gap-3 sm:grid-cols-2 md:gap-4">
+              {facts.map((fact, i) => (
+                <Reveal key={i} delay={(i % 2) * 0.05}>
+                  <div className="vk-card flex h-full gap-4 p-5">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-vk-700 text-sm font-bold text-white">
+                      {i + 1}
+                    </span>
+                    <p className="text-[15px] leading-relaxed text-muted-foreground">{fact}</p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── TEACHINGS ─────────────────────────────────────────── */}
+        <section className="vk-section">
+          <div className="vk-container">
+            <SectionHeading align="center" eyebrow="Sacred Literature" title="Timeless Teachings" />
+            <div className="grid gap-4 sm:grid-cols-2 md:gap-5 lg:grid-cols-3">
+              {teachings.map((t, i) => (
+                <Reveal key={t.title} delay={i * 0.05}>
+                  <div className="vk-card vk-card-hover h-full p-6">
+                    <span className="vk-icon-chip mb-4">
+                      <BookOpen className="h-5 w-5" />
+                    </span>
+                    <h3 className="text-lg font-bold text-foreground">{t.title}</h3>
+                    <p className="mt-1.5 text-[15px] leading-relaxed text-muted-foreground">{t.desc}</p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── QUOTE ─────────────────────────────────────────────── */}
+        <section className="pb-4">
+          <div className="vk-container">
+            <Reveal>
+              <div className="relative isolate overflow-hidden rounded-3xl bg-gradient-to-br from-vk-600 via-vk-700 to-vk-900 px-6 py-12 text-center md:px-12 md:py-16">
+                <div aria-hidden className="absolute -bottom-20 -right-16 -z-10 h-64 w-64 rounded-full bg-white/10" />
+                <Quote aria-hidden className="mx-auto mb-4 h-10 w-10 text-white/30" />
+                <span className="vk-pill-light mb-5">His Words</span>
+                <blockquote className="mx-auto max-w-3xl font-serif-display text-2xl italic leading-relaxed text-white md:text-3xl">
+                  &quot;I am not this body. I am a spirit soul, part and parcel of the Supreme Lord. My real business is to serve Him with love and devotion.&quot;
+                </blockquote>
+                <p className="mt-5 text-sm font-semibold uppercase tracking-[0.14em] text-white/70">— Srila Prabhupada</p>
+              </div>
+            </Reveal>
+          </div>
+        </section>
+
+        <WhatsAppCommunityCTA />
+      </div>
     </PageLayout>
   );
 }

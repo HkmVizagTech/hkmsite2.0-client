@@ -64,17 +64,17 @@ export default function RecurringDonationsSection({ subscriptions, donorFetch, a
 
   if (subscriptions.length === 0) {
     return (
-      <div className="ring-gold-dashed rounded-2xl py-10 text-center">
-        <span className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gold/10 text-gold">
+      <div className="rounded-2xl border-2 border-dashed border-vk-200 bg-vk-50/50 px-4 py-10 text-center">
+        <span className="vk-icon-chip mx-auto mb-3 !h-12 !w-12 !rounded-2xl">
           <Repeat className="h-6 w-6" />
         </span>
-        <p className="font-heading text-sm font-bold text-foreground">No monthly sevas yet</p>
+        <p className="font-heading text-base font-bold text-ink">No monthly sevas yet</p>
         <p className="mx-auto mt-1 max-w-xs text-sm text-muted-foreground">
           Choose a seva with monthly giving — your support renews automatically.
         </p>
         <Link
           href="/donate"
-          className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/10 px-4 py-2 text-xs font-semibold text-gold transition-colors hover:bg-gold/20"
+          className="vk-btn-outline mt-4 h-10 px-4 text-[13px]"
         >
           <Link2 className="h-3.5 w-3.5" /> Explore Sevas
         </Link>
@@ -85,7 +85,7 @@ export default function RecurringDonationsSection({ subscriptions, donorFetch, a
   return (
     <div className="space-y-3">
       {error && (
-        <div className="rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{error}</div>
+        <div className="rounded-xl bg-red-50 px-3.5 py-2.5 text-[13px] font-medium text-red-700">{error}</div>
       )}
       {subscriptions.map((sub) => {
         const meta = statusLabel[sub.status] || statusLabel.pending;
@@ -93,28 +93,25 @@ export default function RecurringDonationsSection({ subscriptions, donorFetch, a
         return (
           <div
             key={sub.subscriptionId}
-            className="flex flex-col gap-3 rounded-xl border border-border bg-background p-4 transition-all hover:border-gold/40 hover:shadow-warm sm:flex-row sm:items-center sm:justify-between"
+            className="flex flex-col gap-3 rounded-xl border border-vk-100 bg-white p-3.5 transition-all hover:border-vk-300 hover:shadow-card sm:flex-row sm:items-center sm:justify-between sm:p-4"
           >
-            <div className="flex items-start gap-3">
-              <span
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-white shadow-[var(--shadow-gold)]"
-                style={{ background: "var(--gradient-gold)" }}
-              >
+            <div className="flex min-w-0 items-start gap-3">
+              <span className="vk-icon-chip !h-10 !w-10">
                 <Repeat className="h-4 w-4" />
               </span>
-              <div>
-                <div className="flex items-center gap-2">
-                  <p className="font-semibold text-foreground">{sub.sevaName}</p>
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="break-words font-heading font-bold text-ink">{sub.sevaName}</p>
                   <Badge variant="outline" className={meta.className}>
                     {meta.text}
                   </Badge>
                 </div>
-                <p className="mt-0.5 flex items-center gap-1 text-sm text-muted-foreground">
-                  <IndianRupee className="h-3.5 w-3.5" />
+                <p className="mt-0.5 flex flex-wrap items-center gap-1 text-sm text-muted-foreground">
+                  <IndianRupee className="h-3.5 w-3.5 text-vk-500" />
                   {sub.amount.toLocaleString("en-IN")} / month · {sub.chargeCount} charge{sub.chargeCount === 1 ? "" : "s"} so far
                 </p>
-                <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
-                  <CalendarClock className="h-3 w-3" />
+                <p className="mt-0.5 flex flex-wrap items-center gap-1 text-xs text-muted-foreground">
+                  <CalendarClock className="h-3 w-3 text-vk-500" />
                   Started {format(new Date(sub.startedAt), "d MMM yyyy")}
                   {sub.lastChargedAt ? ` · Last charged ${format(new Date(sub.lastChargedAt), "d MMM yyyy")}` : ""}
                 </p>
@@ -127,7 +124,7 @@ export default function RecurringDonationsSection({ subscriptions, donorFetch, a
                     size="sm"
                     variant="outline"
                     disabled={cancellingId === sub.subscriptionId}
-                    className="shrink-0 gap-1.5 self-start text-destructive hover:bg-destructive/10 hover:text-destructive sm:self-center"
+                    className="h-10 shrink-0 gap-1.5 self-start rounded-xl border-red-200 bg-white px-4 text-red-700 hover:bg-red-50 hover:text-red-700 sm:self-center"
                   >
                     {cancellingId === sub.subscriptionId ? (
                       <Loader2 className="h-3.5 w-3.5 animate-spin" />

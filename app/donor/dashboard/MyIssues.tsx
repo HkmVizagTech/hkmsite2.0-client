@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Loader2, Plus, CheckCircle2, Clock } from "lucide-react";
 import { donorFetch } from "@/lib/donorAuthClient";
 
@@ -19,7 +17,7 @@ interface Issue {
 
 const STATUS_STYLES: Record<Issue["status"], string> = {
   open: "bg-amber-100 text-amber-800",
-  "in-progress": "bg-blue-100 text-blue-800",
+  "in-progress": "bg-vk-100 text-vk-700",
   resolved: "bg-green-100 text-green-800",
 };
 
@@ -68,53 +66,61 @@ export default function MyIssues() {
 
   return (
     <>
-        <div className="mb-3 flex items-center justify-end">
-          <Button
-            size="sm"
-            variant="outline"
+        <div className="mb-4 flex items-center justify-end">
+          <button
+            type="button"
             onClick={() => setShowForm((v) => !v)}
-            className="gap-1.5 border-gold/40 text-gold hover:bg-gold/10 hover:text-gold"
+            className="vk-btn-outline h-10 gap-1.5 px-4 text-[13px]"
           >
-            <Plus className="h-3.5 w-3.5" /> Raise an Issue
-          </Button>
+            <Plus className="h-4 w-4" /> Raise an Issue
+          </button>
         </div>
 
         {showForm && (
-          <form onSubmit={submit} className="mb-4 space-y-2 rounded-lg border border-border p-3">
-            {error && <p className="text-xs font-medium text-red-600">{error}</p>}
-            <Input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Subject" />
+          <form onSubmit={submit} className="mb-4 space-y-3 rounded-2xl border border-vk-100 bg-vk-50/60 p-4">
+            {error && (
+              <p className="rounded-xl bg-red-50 px-3.5 py-2.5 text-[13px] font-medium text-red-700">{error}</p>
+            )}
+            <input
+              value={subject}
+              onChange={(e) => setSubject(e.target.value)}
+              placeholder="Subject"
+              className="vk-input"
+            />
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Describe your question or issue..."
               rows={3}
-              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              className="vk-input h-auto min-h-[96px] py-2.5"
             />
-            <Button type="submit" size="sm" disabled={submitting} className="gap-1.5">
-              {submitting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : "Submit"}
-            </Button>
+            <button type="submit" disabled={submitting} className="vk-btn-primary h-11 w-full gap-1.5 px-6 sm:w-auto">
+              {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Submit"}
+            </button>
           </form>
         )}
 
         {loading ? (
-          <div className="flex justify-center py-4"><Loader2 className="h-4 w-4 animate-spin text-muted-foreground" /></div>
+          <div className="flex justify-center py-4"><Loader2 className="h-4 w-4 animate-spin text-vk-500" /></div>
         ) : issues.length === 0 ? (
-          <p className="py-4 text-center text-sm text-muted-foreground">No issues raised yet.</p>
+          <p className="rounded-2xl border border-dashed border-vk-200 py-6 text-center text-sm text-muted-foreground">
+            No issues raised yet.
+          </p>
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             {issues.map((i) => (
-              <div key={i._id} className="rounded-lg border border-border p-3 text-sm">
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold">{i.subject}</span>
-                  <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium capitalize ${STATUS_STYLES[i.status]}`}>
+              <div key={i._id} className="rounded-xl border border-vk-100 bg-white p-3.5 text-sm">
+                <div className="flex items-start justify-between gap-3">
+                  <span className="min-w-0 break-words font-semibold text-ink">{i.subject}</span>
+                  <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold capitalize ${STATUS_STYLES[i.status]}`}>
                     {i.status === "resolved" ? <CheckCircle2 className="mr-0.5 inline h-3 w-3" /> : <Clock className="mr-0.5 inline h-3 w-3" />}
                     {i.status}
                   </span>
                 </div>
-                <p className="mt-1 text-xs text-muted-foreground">{i.message}</p>
+                <p className="mt-1 break-words text-xs text-muted-foreground">{i.message}</p>
                 {i.adminResponse && (
-                  <div className="mt-2 rounded-md bg-muted/50 p-2 text-xs">
-                    <span className="font-semibold">Our response: </span>{i.adminResponse}
+                  <div className="mt-2.5 break-words rounded-lg bg-vk-50 p-2.5 text-xs text-ink/80">
+                    <span className="font-semibold text-vk-700">Our response: </span>{i.adminResponse}
                   </div>
                 )}
               </div>

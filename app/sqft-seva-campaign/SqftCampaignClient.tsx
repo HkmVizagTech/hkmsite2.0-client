@@ -1,20 +1,13 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useAttribution } from "@/lib/useAttribution";
 import { useRouter, useSearchParams } from "next/navigation";
-import {
-  ShieldCheck, Loader2, CheckCircle2, ChevronDown, Copy, Check,
-  Building2, Award, FileCheck2, Sparkles, UtensilsCrossed, ScrollText,
-  Landmark, HeartHandshake, Users, Share2, Megaphone, Target,
-  User, Phone, Mail, Minus, Plus,
-} from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
 import { useScrollToDonate } from "@/lib/useScrollToDonate";
 import { newEventId, getMetaBrowserData, trackPurchase } from "@/lib/metaPixel";
-import Ornament from "@/components/Ornament";
 import HeroSection from "@/components/sqft-campaign/HeroSection";
 import DonationFormSection from "@/components/sqft-campaign/DonationFormSection";
 import DonorPrivilegesSection from "@/components/sqft-campaign/DonorPrivilegesSection";
@@ -442,7 +435,7 @@ export default function SqftCampaignClient({
   return (
     <PageLayout>
       <WhatsAppFloatButton />
-      <main className="bg-white dark:bg-background">
+      <main className="bg-white pt-[var(--header-h)]">
         {/* Hero section — full‑width banner */}
         <HeroSection
           scrollToDonate={scrollToDonate}

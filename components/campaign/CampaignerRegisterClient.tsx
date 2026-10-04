@@ -9,10 +9,13 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
-  Megaphone, Loader2, Check, Copy, Share2, ExternalLink, Target, ShieldCheck, Clock, UserRound,
+  Megaphone, Loader2, Check, Copy, Share2, ExternalLink, Target, ShieldCheck, Clock, UserRound, ChevronDown,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
+
+const labelClass = "mb-1.5 block text-[13px] font-semibold text-ink/80";
+const iconClass = "pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-vk-400";
 
 const apiBase = () =>
   (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(/\/+$/, "");
@@ -134,57 +137,64 @@ export default function CampaignerRegisterClient({ campaignType }: { campaignTyp
   return (
     <PageLayout>
       <WhatsAppFloatButton />
-      <main className="bg-white dark:bg-background pt-20">
-        <section className="bg-[hsl(220,90%,12%)] py-12 text-center md:py-16">
-          <div className="container mx-auto max-w-2xl px-4">
-            <Megaphone className="mx-auto mb-3 h-10 w-10 text-gold" />
-            <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-gold">
-              {config.heroEyebrow}
-            </p>
-            <h1 className="mb-3 font-heading text-3xl font-bold text-white md:text-5xl">
-              {config.heroTitle}
-            </h1>
-            <p className="mx-auto max-w-xl text-sm text-white/80 md:text-base">
-              {config.heroSubtitle}
-            </p>
+      <main className="bg-white pt-[var(--header-h)] dark:bg-background">
+        <section className="bg-gradient-to-b from-vk-50 to-white pt-4 md:pt-6 dark:from-background dark:to-background">
+          <div className="vk-container">
+            <div className="relative isolate overflow-hidden rounded-3xl bg-gradient-navy px-5 py-10 text-center shadow-[0_24px_60px_-28px_rgba(10,18,51,0.6)] md:px-10 md:py-14">
+              <div className="mx-auto max-w-2xl">
+                <span className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/10 text-[hsl(var(--gold))]">
+                  <Megaphone className="h-7 w-7" />
+                </span>
+                <span className="vk-pill-light mb-3 max-w-full whitespace-normal text-center">
+                  {config.heroEyebrow}
+                </span>
+                <h1 className="vk-h1 !text-white">
+                  {config.heroTitle}
+                </h1>
+                <p className="mx-auto mt-4 max-w-xl text-[15px] leading-relaxed text-white/85 md:text-lg">
+                  {config.heroSubtitle}
+                </p>
+              </div>
+            </div>
           </div>
         </section>
 
-        <section className="py-12 md:py-16">
-          <div className="container mx-auto max-w-xl px-4">
+        <section className="vk-section">
+          <div className="vk-container">
+           <div className="mx-auto max-w-xl">
             {result ? (
               isApproved ? (
                 /* ---------- Already approved (existing active campaigner) ---------- */
-                <div className="rounded-2xl border-2 border-gold/40 bg-card p-6 text-center md:p-8">
-                  <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gradient-gold">
-                    <Check className="h-7 w-7 text-[hsl(220,90%,12%)]" />
+                <div className="vk-card p-6 text-center md:p-8">
+                  <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-vk-100 text-vk-700">
+                    <Check className="h-7 w-7" />
                   </div>
-                  <h2 className="mb-2 font-heading text-2xl font-bold text-primary">Welcome back!</h2>
+                  <h2 className="vk-h3 mb-2">Welcome back!</h2>
                   <p className="mb-5 text-sm text-muted-foreground">
                     Your campaign is already approved — here is your live link.
                   </p>
-                  <div className="mb-4 flex items-center gap-2 rounded-xl border border-border bg-background px-3 py-2.5">
-                    <p className="flex-1 truncate text-left text-sm font-semibold text-foreground">{shareUrl}</p>
+                  <div className="mb-4 flex items-center gap-2 rounded-xl border border-vk-100 bg-vk-50 py-1.5 pl-3.5 pr-1.5">
+                    <p className="min-w-0 flex-1 truncate text-left text-sm font-semibold text-ink">{shareUrl}</p>
                     <button
                       onClick={handleCopy}
                       aria-label="Copy campaign link"
-                      className="rounded-md p-1.5 text-muted-foreground hover:bg-gold/10 hover:text-gold"
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-vk-700 transition-colors hover:bg-vk-100"
                     >
                       {copied ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
                     </button>
                   </div>
-                  <div className="flex flex-col gap-2 sm:flex-row">
+                  <div className="flex flex-col gap-2.5 sm:flex-row">
                     <a
                       href={`https://wa.me/?text=${encodeURIComponent(config.whatsappShareText(shareUrl))}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex flex-1 items-center justify-center gap-2 rounded-full bg-gradient-gold py-3 text-sm font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)]"
+                      className="vk-btn-primary h-12 flex-1"
                     >
                       <Share2 className="h-4 w-4" /> Share on WhatsApp
                     </a>
                     <Link
                       href={`${config.campaignPathPrefix}/${result.campaigner.slug}`}
-                      className="flex flex-1 items-center justify-center gap-2 rounded-full border-2 border-gold py-3 text-sm font-bold text-gold hover:bg-gold/10"
+                      className="vk-btn-outline h-12 flex-1"
                     >
                       <ExternalLink className="h-4 w-4" /> View My Campaign Page
                     </Link>
@@ -192,14 +202,14 @@ export default function CampaignerRegisterClient({ campaignType }: { campaignTyp
                 </div>
               ) : (
                 /* ---------- Pending admin approval ---------- */
-                <div className="rounded-2xl border-2 border-amber-300 bg-amber-50 p-6 text-center md:p-8">
-                  <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-amber-100">
-                    <Clock className="h-7 w-7 text-amber-600" />
+                <div className="vk-card p-6 text-center md:p-8">
+                  <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-100 text-amber-600">
+                    <Clock className="h-7 w-7" />
                   </div>
-                  <h2 className="mb-2 font-heading text-2xl font-bold text-amber-900">
+                  <h2 className="vk-h3 mb-2">
                     {result.existing ? "Your registration is awaiting approval" : "Hare Krishna! Registration received 🙏"}
                   </h2>
-                  <p className="mx-auto max-w-md text-sm text-amber-800">
+                  <p className="mx-auto max-w-md text-sm leading-relaxed text-muted-foreground">
                     {result.existing
                       ? "You have already registered — our team is reviewing it. You will receive your personal campaign link once approved."
                       : "Thank you for stepping forward for this seva. Our team will review your registration, and once approved you will receive your personal campaign link to share with friends and family."}
@@ -208,80 +218,105 @@ export default function CampaignerRegisterClient({ campaignType }: { campaignTyp
               )
             ) : (
               /* ---------- Registration form ---------- */
-              <form onSubmit={handleSubmit} className="rounded-2xl border border-border bg-card p-5 shadow-lg md:p-8">
-                <div className="mb-4 grid gap-3">
-                  <input
-                    type="text"
-                    required
-                    placeholder="Your full name *"
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className="rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none focus:border-gold"
-                  />
-                  <input
-                    type="email"
-                    required
-                    placeholder="Email address *"
-                    value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    className="rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none focus:border-gold"
-                  />
-                  <input
-                    type="tel"
-                    required
-                    placeholder="Mobile number *"
-                    value={form.mobile}
-                    onChange={(e) => setForm({ ...form, mobile: e.target.value })}
-                    className="rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none focus:border-gold"
-                  />
-                  <div className="flex items-center gap-2 rounded-xl border border-border bg-background px-4 py-3">
-                    <UserRound className="h-4 w-4 shrink-0 text-gold" />
-                    <select
+              <form onSubmit={handleSubmit} className="vk-card p-5 md:p-8">
+                <div className="mb-5 grid gap-4">
+                  <div>
+                    <label htmlFor="campaigner-name" className={labelClass}>Full name</label>
+                    <input
+                      id="campaigner-name"
+                      type="text"
                       required
-                      value={form.devoteeId}
-                      onChange={(e) => setForm({ ...form, devoteeId: e.target.value })}
-                      className="w-full bg-transparent text-sm outline-none"
-                    >
-                      <option value="">
-                        {devoteesLoading ? "Loading devotees…" : "Select the devotee you know *"}
-                      </option>
-                      {devotees.map((d) => (
-                        <option key={d._id} value={d._id}>{d.name}</option>
-                      ))}
-                    </select>
+                      placeholder="Your full name *"
+                      value={form.name}
+                      onChange={(e) => setForm({ ...form, name: e.target.value })}
+                      className="vk-input"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="campaigner-email" className={labelClass}>Email address</label>
+                    <input
+                      id="campaigner-email"
+                      type="email"
+                      required
+                      placeholder="Email address *"
+                      value={form.email}
+                      onChange={(e) => setForm({ ...form, email: e.target.value })}
+                      className="vk-input"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="campaigner-mobile" className={labelClass}>Mobile number</label>
+                    <input
+                      id="campaigner-mobile"
+                      type="tel"
+                      required
+                      placeholder="Mobile number *"
+                      value={form.mobile}
+                      onChange={(e) => setForm({ ...form, mobile: e.target.value })}
+                      className="vk-input"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="campaigner-devotee" className={labelClass}>Devotee you know</label>
+                    <div className="relative">
+                      <UserRound className={iconClass} />
+                      <select
+                        id="campaigner-devotee"
+                        required
+                        value={form.devoteeId}
+                        onChange={(e) => setForm({ ...form, devoteeId: e.target.value })}
+                        className="vk-input appearance-none pl-10 pr-10"
+                      >
+                        <option value="">
+                          {devoteesLoading ? "Loading devotees…" : "Select the devotee you know *"}
+                        </option>
+                        {devotees.map((d) => (
+                          <option key={d._id} value={d._id}>{d.name}</option>
+                        ))}
+                      </select>
+                      <ChevronDown className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-vk-400" />
+                    </div>
                   </div>
                   {config.showGoalSqft && (
-                    <div className="flex items-center gap-2 rounded-xl border border-border bg-background px-4 py-3">
-                      <Target className="h-4 w-4 shrink-0 text-gold" />
-                      <input
-                        type="number"
-                        min={1}
-                        max={100000}
-                        placeholder="Personal goal in square feet (optional)"
-                        value={form.goalSqft}
-                        onChange={(e) => setForm({ ...form, goalSqft: e.target.value })}
-                        className="w-full bg-transparent text-sm outline-none"
-                      />
+                    <div>
+                      <label htmlFor="campaigner-goal" className={labelClass}>Personal goal (optional)</label>
+                      <div className="relative">
+                        <Target className={iconClass} />
+                        <input
+                          id="campaigner-goal"
+                          type="number"
+                          min={1}
+                          max={100000}
+                          placeholder="Personal goal in square feet (optional)"
+                          value={form.goalSqft}
+                          onChange={(e) => setForm({ ...form, goalSqft: e.target.value })}
+                          className="vk-input pl-10"
+                        />
+                      </div>
                     </div>
                   )}
-                  <textarea
-                    rows={3}
-                    maxLength={300}
-                    placeholder="A short message for your supporters (optional)"
-                    value={form.message}
-                    onChange={(e) => setForm({ ...form, message: e.target.value })}
-                    className="resize-none rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none focus:border-gold"
-                  />
+                  <div>
+                    <label htmlFor="campaigner-message" className={labelClass}>Message (optional)</label>
+                    <textarea
+                      id="campaigner-message"
+                      rows={3}
+                      maxLength={300}
+                      placeholder="A short message for your supporters (optional)"
+                      value={form.message}
+                      onChange={(e) => setForm({ ...form, message: e.target.value })}
+                      className="vk-input h-auto min-h-[96px] resize-none py-2.5"
+                    />
+                  </div>
                 </div>
 
                 {error && (
-                  <p className="mb-4 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{error}</p>
+                  <p className="mb-4 rounded-xl bg-red-50 px-3.5 py-2.5 text-[13px] font-medium text-red-700">{error}</p>
                 )}
 
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-gold py-3.5 text-base font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)] transition-transform hover:scale-[1.02] disabled:opacity-60"
+                  className="vk-btn-primary h-12 w-full text-[15px] font-bold"
                 >
                   {submitting ? (
                     <>
@@ -291,12 +326,13 @@ export default function CampaignerRegisterClient({ campaignType }: { campaignTyp
                     "Register My Campaign"
                   )}
                 </button>
-                <p className="mt-3 flex items-center justify-center gap-1.5 text-center text-xs text-muted-foreground">
-                  <ShieldCheck className="h-3.5 w-3.5 text-gold" />
+                <p className="mt-3 flex items-start justify-center gap-1.5 text-center text-[11px] leading-relaxed text-muted-foreground">
+                  <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-vk-500" />
                   Your registration will be reviewed by our team. Your email and mobile are never shown publicly.
                 </p>
               </form>
             )}
+           </div>
           </div>
         </section>
       </main>

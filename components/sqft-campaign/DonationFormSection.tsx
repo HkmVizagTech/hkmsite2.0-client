@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { ShieldCheck, Loader2, User, Phone, Mail, Check, Copy, ChevronDown, MapPin, Crown, PenLine } from "lucide-react";
-import Ornament from "@/components/Ornament";
+import SectionHeading from "@/components/site/SectionHeading";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
 import { useDonorPrefill } from "@/lib/donorPrefill";
 import type { CampaignConfig, GoldenTierConfig } from "@/lib/campaignConfig";
@@ -65,12 +65,13 @@ interface DonationFormSectionProps {
   unitNamePlural: string;
 }
 
-const inputWrapClass =
-  "relative flex items-center rounded-lg border border-slate-300 bg-white dark:bg-card focus-within:border-gold transition-colors";
-const inputClass =
-  "h-10 w-full bg-transparent pl-9 pr-3 text-sm text-foreground outline-none placeholder:text-muted-foreground";
-const labelClass = "mb-1 block text-[11px] font-medium text-muted-foreground";
-const addonBoxClass = "rounded-lg border border-slate-200 bg-white dark:bg-card px-3 py-2";
+const inputWrapClass = "relative";
+const iconClass = "pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-vk-400";
+const inputClass = "vk-input pl-10";
+const labelClass = "mb-1.5 block text-[13px] font-semibold text-ink/80";
+const addonBoxClass = "rounded-xl border border-vk-100 bg-vk-50/60 px-3.5 py-3";
+const checkLabelClass = "flex cursor-pointer items-start gap-2.5 text-[13px] font-medium text-ink";
+const checkboxClass = "mt-0.5 h-4 w-4 shrink-0 accent-vk-700";
 
 // Preset quantities: row 1 = small (1–4), row 2 = bulk (11, 21, 51, 108).
 const UNIT_PRESETS = [1, 2, 3, 4, 11, 21, 51, 108];
@@ -200,48 +201,42 @@ export default function DonationFormSection({
   };
 
   return (
-    <section id="donate" className="scroll-mt-24 bg-white dark:bg-background py-10 md:py-16">
-      <div className={`container mx-auto px-4 ${showEngravingPanel ? "max-w-6xl" : "max-w-4xl"}`}>
-        <Ornament className="mb-4" />
-        <div className="mb-6 text-center">
-          <p className="mb-1.5 text-xs font-semibold uppercase tracking-[0.25em] text-gold">
-            Temple Construction Campaign
-          </p>
-          <h2 className="mb-2 font-heading text-2xl font-bold text-primary md:text-3xl">
-            {config.formHeading}
-          </h2>
-          <p className="mx-auto max-w-xl text-sm leading-relaxed text-muted-foreground">
-            {config.formSubheading}
-          </p>
-        </div>
+    <section id="donate" className="vk-section scroll-mt-24 bg-white">
+      <div className="vk-container">
+        <SectionHeading
+          align="center"
+          eyebrow="Temple Construction Campaign"
+          title={config.formHeading}
+          subtitle={config.formSubheading}
+        />
 
         {/* Two-column on desktop (form + engraving panel); stacked on mobile
             with the panel below the form. */}
-        <div className={`grid gap-8 ${showEngravingPanel ? "xl:grid-cols-[minmax(0,1fr)_300px]" : ""} xl:items-stretch`}>
+        <div className={`mx-auto grid gap-6 ${showEngravingPanel ? "max-w-6xl xl:grid-cols-[minmax(0,1fr)_300px]" : "max-w-4xl"} xl:items-stretch`}>
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="mx-auto w-full max-w-4xl overflow-hidden rounded-[28px] border border-slate-200 bg-white dark:bg-card shadow-elevated"
+          className="vk-card mx-auto w-full max-w-4xl overflow-hidden !rounded-3xl"
         >
           {/* Amount summary strip */}
-          <div className="flex items-center justify-between gap-3 bg-gradient-gold px-6 py-4 sm:px-8">
-            <div>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[hsl(220,90%,12%)]/70">
-                {isGolden ? "Golden Brick Seva" : "You\u2019re offering"}
+          <div className="flex items-center justify-between gap-3 bg-gradient-to-br from-vk-700 via-vk-600 to-vk-500 px-5 py-4 text-white sm:px-7">
+            <div className="min-w-0">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/70">
+                {isGolden ? "Golden Brick Seva" : "You’re offering"}
               </p>
-              <p className="text-lg font-extrabold text-[hsl(220,90%,12%)] sm:text-xl">
+              <p className="text-lg font-bold text-white">
                 {useCustom ? "Custom offering" : `${sqftCount} ${sqftCount === 1 ? unitName : unitNamePlural}`}
               </p>
             </div>
-            <p className="text-2xl font-extrabold text-[hsl(220,90%,12%)] sm:text-3xl">
+            <p className="shrink-0 font-heading text-2xl font-extrabold text-[hsl(var(--gold))] sm:text-3xl">
               ₹{finalAmount > 0 ? finalAmount.toLocaleString("en-IN") : "0"}
               {monthly && <span className="text-base font-bold">/mo</span>}
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="grid gap-6 p-5 sm:p-7 lg:grid-cols-2 lg:gap-8">
+          <form onSubmit={handleSubmit} className="grid gap-6 p-4 sm:p-6 lg:grid-cols-2 lg:gap-8">
             {/* Left: amount selection */}
             <div className="space-y-3">
               {/* Tier switch — only on campaigns with a limited premium tier.
@@ -249,7 +244,7 @@ export default function DonationFormSection({
                   bricks" selection can never carry into the ₹11,000 tier. */}
               {goldenTier && (
                 <div>
-                  <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                  <p className="mb-2 text-[13px] font-bold uppercase tracking-[0.08em] text-vk-700">
                     Choose Your Seva
                   </p>
                   <div className="grid grid-cols-2 gap-2">
@@ -257,13 +252,13 @@ export default function DonationFormSection({
                       type="button"
                       onClick={() => onTierChange("standard")}
                       aria-pressed={!isGolden}
-                      className={`rounded-xl border px-3 py-3 text-left transition-colors ${
+                      className={`min-h-[52px] rounded-xl border px-3 py-2.5 text-left transition-all ${
                         !isGolden
-                          ? "border-gold bg-gold/10"
-                          : "border-slate-300 bg-white hover:border-gold/60 dark:bg-card"
+                          ? "border-vk-500 bg-vk-50 ring-2 ring-vk-500/20"
+                          : "border-vk-200 bg-white hover:border-vk-400"
                       }`}
                     >
-                      <span className="block text-sm font-bold text-primary">
+                      <span className="block text-[13px] font-semibold text-ink">
                         {config.pageTitle}
                       </span>
                       <span className="mt-0.5 block text-[11px] text-muted-foreground">
@@ -275,15 +270,15 @@ export default function DonationFormSection({
                       type="button"
                       onClick={() => onTierChange("golden")}
                       aria-pressed={isGolden}
-                      className={`relative overflow-hidden rounded-xl border px-3 py-3 text-left transition-colors ${
+                      className={`relative min-h-[52px] overflow-hidden rounded-xl border px-3 py-2.5 text-left transition-all ${
                         isGolden
-                          ? "border-gold bg-gold/10"
-                          : "border-slate-300 bg-white hover:border-gold/60 dark:bg-card"
+                          ? "border-vk-500 bg-vk-50 ring-2 ring-vk-500/20"
+                          : "border-vk-200 bg-white hover:border-vk-400"
                       }`}
                     >
                       <span className="flex items-center gap-1.5">
-                        <Crown className="h-3.5 w-3.5 text-gold" />
-                        <span className="block text-sm font-bold text-primary">
+                        <Crown className="h-3.5 w-3.5 shrink-0 text-[hsl(var(--gold-deep))]" />
+                        <span className="block text-[13px] font-semibold text-ink">
                           {goldenTier.sevaName.replace(" Seva", "")}
                         </span>
                       </span>
@@ -295,8 +290,8 @@ export default function DonationFormSection({
                   </div>
 
                   {isGolden && (
-                    <p className="mt-2 rounded-lg border border-gold/40 bg-gold/5 px-3 py-2 text-[11px] leading-relaxed text-muted-foreground">
-                      <span className="font-semibold text-gold">Garbhagudi placement.</span> Your
+                    <p className="mt-2 rounded-xl bg-vk-50 px-3.5 py-2 text-[11px] leading-relaxed text-muted-foreground">
+                      <span className="font-semibold text-vk-700">Garbhagudi placement.</span> Your
                       name is laser-engraved on one of only {goldenTier.total} gilded bricks, laid
                       in the sanctum sanctorum.
                     </p>
@@ -304,7 +299,7 @@ export default function DonationFormSection({
                 </div>
               )}
 
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+              <p className="text-[13px] font-bold uppercase tracking-[0.08em] text-vk-700">
                 Choose Amount
               </p>
               <div className="grid grid-cols-4 gap-2">
@@ -313,17 +308,17 @@ export default function DonationFormSection({
                     key={n}
                     type="button"
                     onClick={() => selectPreset(n)}
-                    className={`rounded-lg border px-2 py-2 text-center transition-colors ${
+                    className={`min-h-[52px] rounded-xl border px-1.5 py-2 text-center transition-all ${
                       !useCustom && !isCustomSqft && sqftCount === n
-                        ? "border-gold bg-gold/10"
-                        : "border-slate-300 bg-white dark:bg-card hover:border-gold/60"
+                        ? "border-vk-500 bg-vk-50 ring-2 ring-vk-500/20"
+                        : "border-vk-200 bg-white hover:border-vk-400"
                     }`}
                   >
-                    <span className="block text-base font-bold text-primary sm:text-lg">{n}</span>
-                    <span className="block text-[10px] uppercase tracking-wide text-muted-foreground">
+                    <span className="block font-heading text-base font-extrabold text-ink sm:text-lg">{n}</span>
+                    <span className="block truncate text-[10px] uppercase tracking-wide text-muted-foreground">
                       {n === 1 ? unitName : unitNamePlural}
                     </span>
-                    <span className="mt-0.5 block text-[11px] font-semibold text-gold">
+                    <span className="mt-0.5 block text-[11px] font-bold text-vk-700">
                       ₹{(n * price).toLocaleString("en-IN")}
                     </span>
                   </button>
@@ -332,11 +327,11 @@ export default function DonationFormSection({
 
               {/* Other quantity — type any number of units */}
               <div
-                className={`flex items-center gap-2 rounded-lg border px-3 transition-colors ${
-                  isCustomSqft ? "border-gold bg-gold/5" : "border-dashed border-slate-300 bg-white dark:bg-card focus-within:border-gold"
+                className={`flex h-11 items-center gap-2 rounded-xl border px-3.5 transition-all ${
+                  isCustomSqft ? "border-vk-500 bg-vk-50 ring-2 ring-vk-500/20" : "border-dashed border-vk-200 bg-white focus-within:border-vk-500"
                 }`}
               >
-                <label htmlFor="custom-sqft" className="shrink-0 text-xs font-medium text-muted-foreground">
+                <label htmlFor="custom-sqft" className="shrink-0 text-xs font-semibold text-vk-700">
                   Other {isGolden ? "bricks" : config.unitShort}
                 </label>
                 <input
@@ -354,10 +349,10 @@ export default function DonationFormSection({
                     setUseCustom(false);
                     setSqftCount(raw === "" ? 0 : Math.max(1, Math.min(100000, Number(raw))));
                   }}
-                  className="h-10 w-full min-w-0 bg-transparent text-sm font-semibold text-foreground outline-none placeholder:font-normal placeholder:text-muted-foreground/60"
+                  className="h-full w-full min-w-0 bg-transparent text-[15px] font-semibold text-foreground outline-none placeholder:text-sm placeholder:font-normal placeholder:text-muted-foreground/60"
                 />
                 {isCustomSqft && sqftCount > 0 && (
-                  <span className="shrink-0 text-xs font-semibold text-gold">
+                  <span className="shrink-0 text-xs font-bold text-vk-700">
                     ₹{(sqftCount * price).toLocaleString("en-IN")}
                   </span>
                 )}
@@ -365,14 +360,14 @@ export default function DonationFormSection({
 
               {/* Other rupee amount */}
               <div
-                className={`flex items-center gap-3 rounded-lg border px-3 transition-colors ${
-                  useCustom ? "border-gold bg-gold/5" : "border-dashed border-slate-300 bg-white dark:bg-card focus-within:border-gold"
+                className={`flex h-11 items-center gap-2 rounded-xl border px-3.5 transition-all ${
+                  useCustom ? "border-vk-500 bg-vk-50 ring-2 ring-vk-500/20" : "border-dashed border-vk-200 bg-white focus-within:border-vk-500"
                 }`}
               >
-                <label htmlFor="custom-amount" className="shrink-0 text-xs font-medium text-muted-foreground">
+                <label htmlFor="custom-amount" className="shrink-0 text-xs font-semibold text-vk-700">
                   Other amount
                 </label>
-                <span className="text-sm text-foreground">₹</span>
+                <span className="text-sm font-semibold text-vk-700">₹</span>
                 <input
                   id="custom-amount"
                   type="number"
@@ -388,17 +383,19 @@ export default function DonationFormSection({
                     setCustomSqftText("");
                     setCustomAmount(e.target.value);
                   }}
-                  className="h-10 w-full min-w-0 bg-transparent text-sm font-semibold text-foreground outline-none placeholder:font-normal placeholder:text-muted-foreground/60"
+                  className="h-full w-full min-w-0 bg-transparent text-[15px] font-semibold text-foreground outline-none placeholder:text-sm placeholder:font-normal placeholder:text-muted-foreground/60"
                 />
               </div>
 
               {/* Bank transfer — tucked under amount selection since it's an alternative to the form on the right */}
-              <details className="group rounded-lg border border-slate-200 bg-background/60 px-3 py-2">
-                <summary className="flex cursor-pointer list-none items-center justify-between text-xs font-semibold text-foreground">
+              <details className="group rounded-xl border border-vk-100 bg-vk-50/60 px-3.5 py-2.5">
+                <summary className="flex min-h-[28px] cursor-pointer list-none items-center justify-between text-[13px] font-semibold text-ink">
                   Prefer a direct bank transfer?
-                  <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" />
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-vk-100 text-vk-700 transition-all group-open:rotate-180 group-open:bg-vk-700 group-open:text-white">
+                    <ChevronDown className="h-3.5 w-3.5" />
+                  </span>
                 </summary>
-                <div className="mt-2.5 space-y-1.5">
+                <div className="mt-2.5 space-y-1.5 rounded-xl bg-white p-3">
                   {(
                     [
                       ["Beneficiary", bankDetails.beneficiaryName],
@@ -412,20 +409,20 @@ export default function DonationFormSection({
                       <button
                         type="button"
                         onClick={() => handleCopy(label, value)}
-                        className="flex items-center gap-1.5 font-semibold text-foreground hover:text-gold"
+                        className="flex min-w-0 items-center gap-1.5 text-right font-semibold text-ink hover:text-vk-600"
                       >
-                        {value}
+                        <span className="break-all">{value}</span>
                         {copiedField === label ? (
-                          <Check className="h-3 w-3 text-green-600" />
+                          <Check className="h-3 w-3 shrink-0 text-green-600" />
                         ) : (
-                          <Copy className="h-3 w-3 text-muted-foreground" />
+                          <Copy className="h-3 w-3 shrink-0 text-vk-400" />
                         )}
                       </button>
                     </div>
                   ))}
                   <p className="pt-1 text-[11px] leading-relaxed text-muted-foreground">
                     Email your transaction reference and PAN (for 80G) to{" "}
-                    <a href={`mailto:${email}`} className="font-semibold text-gold">
+                    <a href={`mailto:${email}`} className="break-all font-semibold text-vk-600 hover:underline">
                       {email}
                     </a>
                     .
@@ -436,13 +433,16 @@ export default function DonationFormSection({
 
             {/* Right: details, add-ons, submit */}
             <div className="flex flex-col space-y-3">
+              <p className="text-[13px] font-bold uppercase tracking-[0.08em] text-vk-700">
+                Your Details
+              </p>
               <div className="grid gap-3 sm:grid-cols-2">
                 <div>
                   <label htmlFor="donor-name" className={labelClass}>
                     Full name
                   </label>
                   <div className={inputWrapClass}>
-                    <User className="pointer-events-none absolute left-3 h-4 w-4 text-muted-foreground" />
+                    <User className={iconClass} />
                     <input
                       id="donor-name"
                       type="text"
@@ -459,7 +459,7 @@ export default function DonationFormSection({
                     Mobile number
                   </label>
                   <div className={inputWrapClass}>
-                    <Phone className="pointer-events-none absolute left-3 h-4 w-4 text-muted-foreground" />
+                    <Phone className={iconClass} />
                     <input
                       id="donor-mobile"
                       type="tel"
@@ -482,7 +482,7 @@ export default function DonationFormSection({
                   Email address (optional)
                 </label>
                 <div className={inputWrapClass}>
-                  <Mail className="pointer-events-none absolute left-3 h-4 w-4 text-muted-foreground" />
+                  <Mail className={iconClass} />
                   <input
                     id="donor-email"
                     type="email"
@@ -505,7 +505,7 @@ export default function DonationFormSection({
               {/* Maha Prasadam (one-time donations only) */}
               {mahaPrasadamEligible && !monthly && (
                 <div className={addonBoxClass}>
-                  <label className="flex cursor-pointer items-center gap-2 text-xs font-medium text-foreground">
+                  <label className={checkLabelClass}>
                     <input
                       type="checkbox"
                       checked={wantsMahaPrasadam}
@@ -513,14 +513,14 @@ export default function DonationFormSection({
                         setWantsMahaPrasadam(e.target.checked);
                         handlePrasadamToggle(e.target.checked);
                       }}
-                      className="h-3.5 w-3.5 shrink-0 accent-[hsl(42,92%,46%)]"
+                      className={checkboxClass}
                     />
                     🙏 I&apos;d like Maha Prasadam delivered
                   </label>
                   {wantsMahaPrasadam && (
-                    <div className="mt-2 space-y-2">
+                    <div className="mt-2.5 space-y-2">
                       <p className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                        <MapPin className="h-3.5 w-3.5 shrink-0 text-gold" />
+                        <MapPin className="h-3.5 w-3.5 shrink-0 text-vk-500" />
                         Delivery address for your Maha Prasadam courier
                       </p>
                       <input
@@ -528,8 +528,8 @@ export default function DonationFormSection({
                         required
                         value={form.addressLine}
                         onChange={(e) => setForm({ ...form, addressLine: e.target.value })}
-className="w-full rounded-lg border border-slate-300 bg-white dark:bg-card px-3 py-2 text-xs outline-none focus:border-gold"
-                          placeholder="Door / flat no. & area, street *"
+                        className="vk-input"
+                        placeholder="Door / flat no. & area, street *"
                       />
                       <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
                         <div className="relative sm:col-span-1">
@@ -542,11 +542,11 @@ className="w-full rounded-lg border border-slate-300 bg-white dark:bg-card px-3 
                             onChange={(e) =>
                               setForm({ ...form, pincode: e.target.value.replace(/[^\d]/g, "").slice(0, 6) })
                             }
-                            className="h-9 w-full rounded-lg border border-slate-300 bg-white dark:bg-card px-3 pr-8 text-xs outline-none focus:border-gold"
+                            className="vk-input pr-8"
                             placeholder="PIN code *"
                           />
                           {pinLoading && (
-                            <Loader2 className="absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 animate-spin text-gold" />
+                            <Loader2 className="absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 animate-spin text-vk-500" />
                           )}
                         </div>
                         <input
@@ -554,7 +554,7 @@ className="w-full rounded-lg border border-slate-300 bg-white dark:bg-card px-3 
                           required
                           value={form.city}
                           onChange={(e) => setForm({ ...form, city: e.target.value })}
-                          className="h-9 w-full rounded-lg border border-slate-300 bg-white dark:bg-card px-3 text-xs outline-none focus:border-gold"
+                          className="vk-input"
                           placeholder="City *"
                         />
                         <input
@@ -562,7 +562,7 @@ className="w-full rounded-lg border border-slate-300 bg-white dark:bg-card px-3 
                           required
                           value={form.state}
                           onChange={(e) => setForm({ ...form, state: e.target.value })}
-                          className="h-9 w-full rounded-lg border border-slate-300 bg-white dark:bg-card px-3 text-xs outline-none focus:border-gold"
+                          className="vk-input"
                           placeholder="State *"
                         />
                       </div>
@@ -581,7 +581,7 @@ className="w-full rounded-lg border border-slate-300 bg-white dark:bg-card px-3 
               {/* 80G */}
               {addonsEligible && (
               <div className={addonBoxClass}>
-                <label className="flex cursor-pointer items-center gap-2 text-xs font-medium text-foreground">
+                <label className={checkLabelClass}>
                   <input
                     type="checkbox"
                     checked={want80G}
@@ -589,7 +589,7 @@ className="w-full rounded-lg border border-slate-300 bg-white dark:bg-card px-3 
                       setWant80G(e.target.checked);
                       handle80GToggle(e.target.checked);
                     }}
-                    className="h-3.5 w-3.5 shrink-0 accent-[hsl(42,92%,46%)]"
+                    className={checkboxClass}
                   />
                   I need an 80G tax exemption receipt
                 </label>
@@ -600,7 +600,7 @@ className="w-full rounded-lg border border-slate-300 bg-white dark:bg-card px-3 
                     placeholder="PAN number *"
                     value={form.panNumber}
                     onChange={(e) => setForm({ ...form, panNumber: e.target.value.toUpperCase() })}
-                    className="mt-2 h-9 w-full rounded-lg border border-slate-300 bg-white dark:bg-card px-3 text-xs uppercase outline-none focus:border-gold"
+                    className="vk-input mt-2.5 uppercase"
                   />
                 )}
               </div>
@@ -616,19 +616,19 @@ className="w-full rounded-lg border border-slate-300 bg-white dark:bg-card px-3 
                     return next;
                   });
                 }}
-                className={`flex w-full items-center gap-3 rounded-lg border px-3 py-2.5 text-left transition-colors ${
-                  monthly ? "border-gold bg-gold/10" : "border-slate-300 bg-white dark:bg-card hover:border-gold/60"
+                className={`flex min-h-[52px] w-full items-center gap-3 rounded-xl border px-3.5 py-2.5 text-left transition-all ${
+                  monthly ? "border-vk-500 bg-vk-50 ring-2 ring-vk-500/20" : "border-vk-200 bg-white hover:border-vk-400"
                 }`}
               >
                 <span
                   className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border ${
-                    monthly ? "border-gold bg-gold text-white" : "border-slate-300"
+                    monthly ? "border-vk-700 bg-vk-700 text-white" : "border-vk-300 bg-white"
                   }`}
                 >
                   {monthly && <Check className="h-3.5 w-3.5" />}
                 </span>
                 <span className="flex-1">
-                  <span className="block text-sm font-bold text-primary">🔁 Make it a monthly seva</span>
+                  <span className="block text-[13px] font-semibold text-ink">🔁 Make it a monthly seva</span>
                   <span className="block text-[11px] leading-snug text-muted-foreground">
                     {monthly && finalAmount > 0
                       ? `Auto-pay ₹${finalAmount.toLocaleString("en-IN")}${!useCustom ? ` (${sqftCount} ${sqftCount === 1 ? unitName : unitNamePlural})` : ""} every month. Cancel anytime.`
@@ -639,7 +639,7 @@ className="w-full rounded-lg border border-slate-300 bg-white dark:bg-card px-3 
 
               {status && (
                 <p
-                  className={`rounded-lg px-3 py-2 text-xs font-medium ${
+                  className={`rounded-xl px-3.5 py-2.5 text-[13px] font-medium ${
                     status.type === "success" ? "bg-green-50 text-green-800" : "bg-red-50 text-red-700"
                   }`}
                 >
@@ -652,7 +652,7 @@ className="w-full rounded-lg border border-slate-300 bg-white dark:bg-card px-3 
               <button
                 type="submit"
                 disabled={submitting}
-                className="flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-gradient-gold text-sm font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)] transition-transform hover:scale-[1.01] disabled:opacity-60 disabled:hover:scale-100"
+                className="vk-btn-gold h-12 w-full text-[15px] font-bold disabled:opacity-60"
               >
                 {submitting ? (
                   <>
@@ -664,8 +664,8 @@ className="w-full rounded-lg border border-slate-300 bg-white dark:bg-card px-3 
                   <>Donate ₹{finalAmount > 0 ? finalAmount.toLocaleString("en-IN") : "—"}</>
                 )}
               </button>
-              <p className="flex items-center justify-center gap-1.5 text-center text-[11px] text-muted-foreground">
-                <ShieldCheck className="h-3.5 w-3.5 text-gold" />
+              <p className="flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1 text-center text-[11px] text-muted-foreground">
+                <ShieldCheck className="h-3.5 w-3.5 text-vk-500" />
                 Secure payment via Razorpay · UPI, cards &amp; netbanking accepted
               </p>
             </div>
@@ -704,7 +704,7 @@ function EngravingPanel({
   isGolden: boolean;
 }) {
   return (
-    <aside className="mx-auto flex w-full max-w-md flex-col overflow-hidden rounded-[28px] border border-slate-200 bg-white dark:bg-card shadow-elevated xl:mx-0 xl:h-full">
+    <aside className="vk-card mx-auto flex w-full max-w-md flex-col overflow-hidden !rounded-3xl xl:mx-0 xl:h-full">
       <div className="relative min-h-[200px] flex-1">
         <Image
           src={image}
@@ -713,13 +713,13 @@ function EngravingPanel({
           sizes="(min-width: 1280px) 300px, (min-width: 640px) 448px, 100vw"
           className="object-cover"
         />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-vk-900/60 via-transparent to-transparent" />
       </div>
       <div className="p-5">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-gold">
+        <p className="vk-pill-soft">
           {isGolden ? "Golden tier · engraving first" : "Included with every brick"}
         </p>
-        <h3 className="mt-1.5 font-heading text-lg font-bold text-primary">
+        <h3 className="mt-3 font-heading text-lg font-bold leading-snug text-ink">
           Your name, engraved on your {unitName}
         </h3>
         <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">
@@ -728,7 +728,7 @@ function EngravingPanel({
             : `For every ₹${price.toLocaleString("en-IN")} ${unitName} you sponsor, your name is laser-engraved on that very brick before it is laid in the temple.`}
         </p>
         <p className="mt-3 flex items-start gap-1.5 text-[11px] leading-relaxed text-muted-foreground">
-          <PenLine className="mt-0.5 h-3.5 w-3.5 shrink-0 text-gold" />
+          <PenLine className="mt-0.5 h-3.5 w-3.5 shrink-0 text-vk-500" />
           Engraved by laser at the temple — no paint, nothing that fades.
         </p>
       </div>

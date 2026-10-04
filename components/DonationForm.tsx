@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Check, CheckCircle2, Loader2, ShieldCheck, User, Phone, Mail } from "lucide-react";
+import { Check, CheckCircle2, Heart, Loader2, ShieldCheck, User, Phone, Mail } from "lucide-react";
 import { type Seva, unitImpact } from "@/lib/sevaConfig";
 import { newEventId, getMetaBrowserData, trackPurchase } from "@/lib/metaPixel";
 import { useAttribution } from "@/lib/useAttribution";
@@ -45,14 +45,19 @@ interface DonationFormProps {
   variant?: "stacked" | "grid";
 }
 
-// Compact two-column ("grid") layout styling, matching the Square Foot
-// campaign donation form.
-const inputWrapClass =
-  "relative flex items-center rounded-lg border border-slate-300 bg-white dark:bg-card focus-within:border-gold transition-colors";
-const inputClass =
-  "h-10 w-full bg-transparent pl-9 pr-3 text-sm text-foreground outline-none placeholder:text-muted-foreground";
-const labelClass = "mb-1 block text-[11px] font-medium text-muted-foreground";
-const addonBoxClass = "rounded-lg border border-slate-200 bg-white dark:bg-card px-3 py-2";
+// Vaikuntham Blue donation-card styling (shared by both layouts).
+const inputWrapClass = "relative";
+const inputIconClass = "pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-vk-400";
+const inputClass = "vk-input pl-10";
+const labelClass = "mb-1.5 block text-[13px] font-semibold text-ink/80";
+const stepLabelClass = "text-[13px] font-bold uppercase tracking-[0.08em] text-vk-700";
+const addonBoxClass = "rounded-xl border border-vk-100 bg-vk-50/60 px-3.5 py-3";
+const checkLabelClass = "flex cursor-pointer items-start gap-2.5 text-[13px] font-medium text-ink";
+const checkboxClass = "mt-0.5 h-4 w-4 shrink-0 accent-vk-700";
+const chipBase = "min-h-[52px] rounded-xl border px-3 py-2.5 transition-all";
+const chipOn = "border-vk-500 bg-vk-50 ring-2 ring-vk-500/20";
+const chipOff = "border-vk-200 bg-white hover:border-vk-400";
+const errorClass = "rounded-xl bg-red-50 px-3.5 py-2.5 text-[13px] font-medium text-red-700";
 
 /**
  * The full donation form used on every seva page (amount tiers, custom
@@ -288,41 +293,36 @@ export default function DonationForm({
   // Compact two-column campaign layout (Square Foot style).
   if (variant === "grid") {
     return (
-      <div className="overflow-hidden rounded-[28px] border border-slate-200 bg-white dark:bg-card shadow-elevated">
+      <div className="vk-card overflow-hidden !rounded-3xl">
         {/* Amount summary strip */}
-        <div className="flex items-center justify-between gap-3 bg-gradient-gold px-6 py-4 sm:px-8">
-          <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[hsl(220,90%,12%)]/70">
-              {monthly ? "You&apos;re offering monthly" : "You&apos;re offering"}
+        <div className="flex items-center justify-between gap-3 bg-gradient-to-br from-vk-700 via-vk-600 to-vk-500 px-5 py-4 text-white sm:px-7">
+          <div className="min-w-0">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/70">
+              {monthly ? "You're offering monthly" : "You're offering"}
             </p>
-            <p className="text-lg font-extrabold text-[hsl(220,90%,12%)] sm:text-xl">{seva.title}</p>
+            <p className="truncate text-lg font-bold text-white sm:text-xl">{seva.title}</p>
           </div>
-          <p className="text-2xl font-extrabold text-[hsl(220,90%,12%)] sm:text-3xl">
+          <p className="shrink-0 font-heading text-2xl font-extrabold text-[hsl(var(--gold))] sm:text-3xl">
             ₹{finalAmount ? finalAmount.toLocaleString("en-IN") : "0"}
             {monthly && <span className="text-base font-bold">/mo</span>}
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="grid gap-6 p-5 sm:p-7 lg:grid-cols-2 lg:gap-8">
+        <form onSubmit={handleSubmit} className="grid gap-6 p-4 sm:p-6 lg:grid-cols-2 lg:gap-8">
           {/* Left: amount selection */}
-          <div className="space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-              Choose Amount
-            </p>
-            <div className="grid grid-cols-2 gap-2">
+          <div className="min-w-0 space-y-3">
+            <p className={stepLabelClass}>Choose Amount</p>
+            <div className="grid grid-cols-2 gap-2.5">
               {seva.tiers.map((tier, i) => (
                 <button
                   key={tier.label}
                   type="button"
+                  aria-pressed={!useCustom && tierIndex === i}
                   onClick={() => { setTierIndex(i); setUseCustom(false); }}
-                  className={`rounded-lg border px-3 py-2.5 text-center transition-colors ${
-                    !useCustom && tierIndex === i
-                      ? "border-gold bg-gold/10"
-                      : "border-slate-300 bg-white dark:bg-card hover:border-gold/60"
-                  }`}
+                  className={`${chipBase} text-center ${!useCustom && tierIndex === i ? chipOn : chipOff}`}
                 >
-                  <span className="block text-[11px] font-semibold leading-snug text-muted-foreground">{tier.label}</span>
-                  <span className="mt-1 block text-base font-bold text-gold sm:text-lg">
+                  <span className="block text-[12px] font-semibold leading-snug text-ink/75">{tier.label}</span>
+                  <span className="mt-0.5 block text-base font-extrabold text-vk-700 sm:text-lg">
                     ₹{tier.amount.toLocaleString("en-IN")}
                   </span>
                 </button>
@@ -331,14 +331,14 @@ export default function DonationForm({
 
             {/* Other amount */}
             <div
-              className={`flex items-center gap-3 rounded-lg border px-3 transition-colors ${
-                useCustom ? "border-gold bg-gold/5" : "border-dashed border-slate-300 bg-white dark:bg-card focus-within:border-gold"
+              className={`flex h-11 items-center gap-2 rounded-xl border px-3.5 transition-all ${
+                useCustom ? "border-vk-500 bg-vk-50 ring-2 ring-vk-500/20" : "border-dashed border-vk-200 bg-white focus-within:border-vk-500"
               }`}
             >
-              <label htmlFor="custom-amount" className="shrink-0 text-xs font-medium text-muted-foreground">
+              <label htmlFor="custom-amount" className="shrink-0 text-[13px] font-medium text-ink/70">
                 Other amount
               </label>
-              <span className="text-sm text-foreground">₹</span>
+              <span className="text-sm font-semibold text-vk-700">₹</span>
               <input
                 id="custom-amount"
                 type="number"
@@ -350,21 +350,22 @@ export default function DonationForm({
                   setUseCustom(true);
                   setCustomAmount(e.target.value);
                 }}
-                className="h-10 w-full min-w-0 bg-transparent text-sm font-semibold text-foreground outline-none placeholder:font-normal placeholder:text-muted-foreground/60"
+                className="h-full w-full min-w-0 bg-transparent text-[15px] font-semibold text-ink outline-none placeholder:font-normal placeholder:text-muted-foreground/60"
               />
-              {customImpact && (
-                <span className="shrink-0 text-[11px] font-semibold text-gold">🙏 {customImpact}</span>
-              )}
             </div>
+            {customImpact && (
+              <p className="rounded-xl bg-vk-50 px-3.5 py-2 text-xs font-semibold text-vk-700">🙏 {customImpact}</p>
+            )}
           </div>
 
           {/* Right: details, add-ons, submit */}
-          <div className="flex flex-col space-y-3">
+          <div className="flex min-w-0 flex-col space-y-3">
+            <p className={stepLabelClass}>Your Details</p>
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
                 <label htmlFor="donor-name" className={labelClass}>Full name</label>
                 <div className={inputWrapClass}>
-                  <User className="pointer-events-none absolute left-3 h-4 w-4 text-muted-foreground" />
+                  <User className={inputIconClass} />
                   <input
                     id="donor-name"
                     type="text"
@@ -379,28 +380,28 @@ export default function DonationForm({
               <div>
                 <label htmlFor="donor-mobile" className={labelClass}>Mobile number</label>
                 <div className={inputWrapClass}>
-                  <Phone className="pointer-events-none absolute left-3 h-4 w-4 text-muted-foreground" />
-<input
-                      id="donor-mobile"
-                      type="tel"
-                      required
-                      maxLength={10}
-                      inputMode="numeric"
-                      placeholder="10-digit mobile"
-                      value={form.mobile}
-                      onChange={(e) => setForm({ ...form, mobile: e.target.value.replace(/[^\d]/g, "").slice(0, 10) })}
-                      className={inputClass}
-                    />
-                  </div>
+                  <Phone className={inputIconClass} />
+                  <input
+                    id="donor-mobile"
+                    type="tel"
+                    required
+                    maxLength={10}
+                    inputMode="numeric"
+                    placeholder="10-digit mobile"
+                    value={form.mobile}
+                    onChange={(e) => setForm({ ...form, mobile: e.target.value.replace(/[^\d]/g, "").slice(0, 10) })}
+                    className={inputClass}
+                  />
                 </div>
               </div>
+            </div>
 
             {lookupHint}
 
             <div>
               <label htmlFor="donor-email" className={labelClass}>Email address (optional)</label>
               <div className={inputWrapClass}>
-                <Mail className="pointer-events-none absolute left-3 h-4 w-4 text-muted-foreground" />
+                <Mail className={inputIconClass} />
                 <input
                   id="donor-email"
                   type="email"
@@ -423,7 +424,7 @@ export default function DonationForm({
             {/* Maha Prasadam (one-time donations only) */}
             {finalAmount > 999 && !monthly && (
               <div className={addonBoxClass}>
-                <label className="flex cursor-pointer items-center gap-2 text-xs font-medium text-foreground">
+                <label className={checkLabelClass}>
                   <input
                     type="checkbox"
                     checked={wantsMahaPrasadam}
@@ -431,7 +432,7 @@ export default function DonationForm({
                       setWantsMahaPrasadam(e.target.checked);
                       handlePrasadamToggle(e.target.checked);
                     }}
-                    className="h-3.5 w-3.5 shrink-0 accent-[hsl(42,92%,46%)]"
+                    className={checkboxClass}
                   />
                   🙏 I&apos;d like Maha Prasadam delivered
                 </label>
@@ -442,7 +443,7 @@ export default function DonationForm({
             {/* 80G */}
             {finalAmount > 999 && (
               <div className={addonBoxClass}>
-                <label className="flex cursor-pointer items-center gap-2 text-xs font-medium text-foreground">
+                <label className={checkLabelClass}>
                   <input
                     type="checkbox"
                     checked={want80G}
@@ -450,7 +451,7 @@ export default function DonationForm({
                       setWant80G(e.target.checked);
                       handle80GToggle(e.target.checked);
                     }}
-                    className="h-3.5 w-3.5 shrink-0 accent-[hsl(42,92%,46%)]"
+                    className={checkboxClass}
                   />
                   I need an 80G tax exemption receipt
                 </label>
@@ -459,9 +460,10 @@ export default function DonationForm({
                     id="donor-pan"
                     type="text"
                     placeholder="PAN number *"
+                    aria-label="PAN number"
                     value={form.panNumber}
                     onChange={(e) => setForm({ ...form, panNumber: e.target.value.toUpperCase() })}
-                    className="mt-2 h-9 w-full rounded-lg border border-slate-300 bg-white dark:bg-card px-3 text-xs uppercase outline-none focus:border-gold"
+                    className="vk-input mt-2.5 uppercase"
                   />
                 )}
               </div>
@@ -470,6 +472,7 @@ export default function DonationForm({
             {/* Monthly autopay toggle */}
             <button
               type="button"
+              aria-pressed={monthly}
               onClick={() => {
                 setMonthly((m) => {
                   const next = !m;
@@ -477,20 +480,18 @@ export default function DonationForm({
                   return next;
                 });
               }}
-              className={`flex w-full items-center gap-3 rounded-lg border px-3 py-2.5 text-left transition-colors ${
-                monthly ? "border-gold bg-gold/10" : "border-slate-300 bg-white dark:bg-card hover:border-gold/60"
-              }`}
+              className={`flex w-full items-center gap-3 rounded-xl border px-3.5 py-3 text-left transition-all ${monthly ? chipOn : chipOff}`}
             >
               <span
                 className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border ${
-                  monthly ? "border-gold bg-gold text-white" : "border-slate-300"
+                  monthly ? "border-vk-700 bg-vk-700 text-white" : "border-vk-300 bg-white"
                 }`}
               >
                 {monthly && <Check className="h-3.5 w-3.5" />}
               </span>
               <span className="flex-1">
-                <span className="block text-sm font-bold text-primary">🔁 Make it a monthly donation</span>
-                <span className="block text-[11px] leading-snug text-muted-foreground">
+                <span className="block text-sm font-bold text-vk-800">🔁 Make it a monthly donation</span>
+                <span className="block text-xs leading-snug text-muted-foreground">
                   {monthly && finalAmount
                     ? `Auto-pay ₹${finalAmount.toLocaleString("en-IN")}${monthlyImpact ? ` (${monthlyImpact})` : ""} every month. Cancel anytime.`
                     : "Give this amount automatically every month."}
@@ -499,7 +500,7 @@ export default function DonationForm({
             </button>
 
             {status?.type === "error" && (
-              <p className="rounded-lg bg-red-50 px-3 py-2 text-xs text-red-600">{status.message}</p>
+              <p role="alert" className={errorClass}>{status.message}</p>
             )}
 
             <div className="flex-1" />
@@ -507,18 +508,18 @@ export default function DonationForm({
             <button
               type="submit"
               disabled={submitting}
-              className="flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-gradient-gold text-sm font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)] transition-transform hover:scale-[1.01] disabled:opacity-60 disabled:hover:scale-100"
+              className="vk-btn-gold h-12 w-full text-[15px] font-bold"
             >
               {submitting ? (
                 <><Loader2 className="h-4 w-4 animate-spin" /> Processing…</>
               ) : monthly ? (
                 <>🔁 Donate ₹{finalAmount ? finalAmount.toLocaleString("en-IN") : "0"} / month</>
               ) : (
-                <>🪔 Donate ₹{finalAmount ? finalAmount.toLocaleString("en-IN") : "0"} Now</>
+                <><Heart className="h-4 w-4 fill-current" /> Donate ₹{finalAmount ? finalAmount.toLocaleString("en-IN") : "0"} Now</>
               )}
             </button>
             <p className="flex items-center justify-center gap-1.5 text-center text-[11px] text-muted-foreground">
-              <ShieldCheck className="h-3.5 w-3.5 text-gold" />
+              <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-vk-500" />
               Secure payment via Razorpay · UPI, cards &amp; netbanking accepted
             </p>
           </div>
@@ -538,34 +539,48 @@ export default function DonationForm({
   }, []);
 
   return (
-    <div id="donate" className="scroll-mt-20 rounded-3xl border border-border bg-card p-6 shadow-elevated">
+    <div id="donate" className="vk-card scroll-mt-28 overflow-hidden !rounded-3xl">
       {status?.type === "success" ? (
-        <div className="flex flex-col items-center py-6 text-center">
+        <div className="flex flex-col items-center px-6 py-10 text-center">
           <CheckCircle2 className="mb-3 h-12 w-12 text-green-500" />
           <h3 className="mb-2 font-heading text-lg font-bold">Thank You!</h3>
           <p className="mb-6 text-sm text-muted-foreground">{status.message}</p>
           <button
             onClick={() => { setStatus(null); router.push("/"); }}
-            className="rounded-full bg-gradient-gold px-6 py-2.5 text-sm font-bold text-[hsl(220,60%,12%)]"
+            className="vk-btn-primary"
           >
             Back to Home
           </button>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <h3 className="text-sm font-bold uppercase tracking-wide text-muted-foreground">
+        <>
+          {/* Amount summary strip */}
+          <div className="bg-gradient-to-br from-vk-700 via-vk-600 to-vk-500 px-5 py-4 text-white sm:px-6">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/70">
+              {monthly ? "You are donating monthly" : "You are donating"}
+            </p>
+            <div className="mt-0.5 flex items-end justify-between gap-3">
+              <p className="min-w-0 truncate text-base font-bold text-white">{seva.title}</p>
+              <p className="shrink-0 font-heading text-3xl font-extrabold text-[hsl(var(--gold))]">
+                ₹{finalAmount ? finalAmount.toLocaleString("en-IN") : "0"}
+                {monthly && <span className="text-lg font-bold">/mo</span>}
+              </p>
+            </div>
+          </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4 p-4 sm:p-6">
+          <h3 className={stepLabelClass}>
             Choose an Amount
           </h3>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-2">
             {seva.tiers.map((tier, i) => (
               <button
                 key={tier.label}
                 type="button"
+                aria-pressed={!useCustom && tierIndex === i}
                 onClick={() => { setTierIndex(i); setUseCustom(false); }}
-                className={`rounded-xl border-[1.5px] px-3 py-3 text-center text-sm font-semibold transition-all ${
-                  !useCustom && tierIndex === i
-                    ? "border-[hsl(var(--gold-deep))] bg-[hsl(42,92%,56%,0.12)] text-gold"
-                    : "border-border hover:border-[hsl(var(--gold-deep))]"
+                className={`${chipBase} text-center text-sm font-bold ${
+                  !useCustom && tierIndex === i ? `${chipOn} text-vk-800` : `${chipOff} text-ink`
                 }`}
               >
                 {tier.label}
@@ -574,30 +589,40 @@ export default function DonationForm({
           </div>
           <button
             type="button"
+            aria-pressed={useCustom}
             onClick={() => setUseCustom(true)}
-            className={`w-full rounded-xl border-[1.5px] px-3 py-3 text-sm font-semibold transition-all ${
-              useCustom ? "border-[hsl(var(--gold-deep))] bg-[hsl(42,92%,56%,0.12)] text-gold" : "border-border hover:border-[hsl(var(--gold-deep))]"
+            className={`${chipBase} w-full text-center text-sm font-semibold ${
+              useCustom ? `${chipOn} text-vk-800` : "border-dashed border-vk-200 bg-white text-ink/80 hover:border-vk-400"
             }`}
           >
             Enter a custom amount
           </button>
 
-          <div className="rounded-2xl bg-gradient-gold p-[2px] shadow-gold">
-            <div className="rounded-[calc(1rem-2px)] bg-card p-4 text-center">
-              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                {monthly ? "You are donating monthly" : "You are donating"}
-              </p>
-              <p className="font-heading text-4xl font-extrabold text-gold drop-shadow-sm">
-                ₹{finalAmount ? finalAmount.toLocaleString("en-IN") : "0"}
-                {monthly && <span className="text-xl font-bold">/mo</span>}
-              </p>
-              <p className="text-xs font-semibold text-muted-foreground">{seva.title}</p>
+          {useCustom && (
+            <div>
+              <label htmlFor="df-custom-amount" className={labelClass}>Amount (₹)</label>
+              <input
+                id="df-custom-amount"
+                type="number"
+                min={1}
+                required
+                value={customAmount}
+                onChange={(e) => setCustomAmount(e.target.value)}
+                className="vk-input font-semibold"
+                placeholder="Enter amount"
+              />
+              {customImpact && (
+                <p className="mt-2 rounded-xl bg-vk-50 px-3.5 py-2 text-xs font-semibold text-vk-700">
+                  🙏 {customImpact}
+                </p>
+              )}
             </div>
-          </div>
+          )}
 
           {/* Monthly autopay toggle */}
           <button
             type="button"
+            aria-pressed={monthly}
             onClick={() => {
               setMonthly((m) => {
                 const next = !m;
@@ -605,21 +630,17 @@ export default function DonationForm({
                 return next;
               });
             }}
-            className={`flex w-full items-center gap-3 rounded-xl border-[1.5px] px-4 py-3 text-left transition-all ${
-              monthly
-                ? "border-[hsl(var(--gold-deep))] bg-[hsl(42,92%,56%,0.12)]"
-                : "border-border hover:border-[hsl(var(--gold-deep))]"
-            }`}
+            className={`flex w-full items-center gap-3 rounded-xl border px-3.5 py-3 text-left transition-all ${monthly ? chipOn : chipOff}`}
           >
             <span
               className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border ${
-                monthly ? "border-gold bg-gold text-white" : "border-border"
+                monthly ? "border-vk-700 bg-vk-700 text-white" : "border-vk-300 bg-white"
               }`}
             >
               {monthly && <Check className="h-3.5 w-3.5" />}
             </span>
             <span className="flex-1">
-              <span className="block text-sm font-bold text-primary">🔁 Make it a monthly donation</span>
+              <span className="block text-sm font-bold text-vk-800">🔁 Make it a monthly donation</span>
               <span className="block text-xs text-muted-foreground">
                 {monthly && finalAmount
                   ? `Auto-pay ₹${finalAmount.toLocaleString("en-IN")}${monthlyImpact ? ` (${monthlyImpact})` : ""} every month. Cancel anytime.`
@@ -628,56 +649,40 @@ export default function DonationForm({
             </span>
           </button>
 
-          {useCustom && (
-            <div>
-              <label className="mb-1 block text-xs font-semibold text-muted-foreground">Amount (₹)</label>
-              <input
-                type="number"
-                min={1}
-                required
-                value={customAmount}
-                onChange={(e) => setCustomAmount(e.target.value)}
-                className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus:border-primary"
-                placeholder="Enter amount"
-              />
-              {customImpact && (
-                <p className="mt-1.5 text-xs font-semibold text-gold">
-                  🙏 {customImpact}
-                </p>
-              )}
-            </div>
-          )}
-
+          <h3 className={`${stepLabelClass} pt-2`}>Your Details</h3>
           <div>
-            <label className="mb-1 block text-xs font-semibold text-muted-foreground">Full Name</label>
+            <label htmlFor="df-name" className={labelClass}>Full Name</label>
             <input
+              id="df-name"
               required
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus:border-primary"
+              className="vk-input"
               placeholder="Your name"
             />
           </div>
           <div>
-            <label className="mb-1 block text-xs font-semibold text-muted-foreground">Email (optional)</label>
+            <label htmlFor="df-email" className={labelClass}>Email (optional)</label>
             <input
+              id="df-email"
               type="email"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
-              className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus:border-primary"
+              className="vk-input"
               placeholder="you@example.com"
             />
           </div>
           <div>
-            <label className="mb-1 block text-xs font-semibold text-muted-foreground">Phone Number</label>
+            <label htmlFor="df-mobile" className={labelClass}>Phone Number</label>
             <input
+              id="df-mobile"
               type="tel"
               required
               maxLength={10}
               inputMode="numeric"
               value={form.mobile}
               onChange={(e) => setForm({ ...form, mobile: e.target.value.replace(/[^\d]/g, "").slice(0, 10) })}
-              className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus:border-primary"
+              className="vk-input"
               placeholder="10-digit mobile number"
             />
           </div>
@@ -693,8 +698,8 @@ export default function DonationForm({
           />
 
           {finalAmount > 999 && (
-            <>
-              <label className="flex items-center gap-2 text-sm">
+            <div className={addonBoxClass}>
+              <label className={checkLabelClass}>
                 <input
                   type="checkbox"
                   checked={want80G}
@@ -702,29 +707,30 @@ export default function DonationForm({
                     setWant80G(e.target.checked);
                     handle80GToggle(e.target.checked);
                   }}
-                  className="rounded"
+                  className={checkboxClass}
                 />
                 I want an 80G tax exemption receipt
               </label>
               {want80G && (
-                <div>
-                  <label className="mb-1 block text-xs font-semibold text-muted-foreground">PAN Number</label>
+                <div className="mt-2.5">
+                  <label htmlFor="df-pan" className={labelClass}>PAN Number</label>
                   <input
+                    id="df-pan"
                     required
                     value={form.panNumber}
                     onChange={(e) => setForm({ ...form, panNumber: e.target.value.toUpperCase() })}
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm uppercase outline-none focus:border-primary"
+                    className="vk-input uppercase"
                     placeholder="ABCDE1234F"
                     maxLength={10}
                   />
                 </div>
               )}
-            </>
+            </div>
           )}
 
           {finalAmount > 999 && !monthly && (
-            <div className="rounded-lg border border-border bg-background/60 px-3 py-2">
-              <label className="flex cursor-pointer items-center gap-2 text-sm font-medium text-foreground">
+            <div className={addonBoxClass}>
+              <label className={checkLabelClass}>
                 <input
                   type="checkbox"
                   checked={wantsMahaPrasadam}
@@ -732,7 +738,7 @@ export default function DonationForm({
                     setWantsMahaPrasadam(e.target.checked);
                     handlePrasadamToggle(e.target.checked);
                   }}
-                  className="h-4 w-4 shrink-0 rounded accent-[hsl(42,92%,46%)]"
+                  className={checkboxClass}
                 />
                 🙏 I&apos;d like Maha Prasadam delivered
               </label>
@@ -741,26 +747,27 @@ export default function DonationForm({
           )}
 
           {status?.type === "error" && (
-            <p className="rounded-lg bg-red-50 px-3 py-2 text-xs text-red-600">{status.message}</p>
+            <p role="alert" className={errorClass}>{status.message}</p>
           )}
 
           <button
             type="submit"
             disabled={submitting}
-            className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-gold py-3.5 text-[15px] font-bold text-[hsl(220,60%,12%)] shadow-gold transition-transform hover:scale-[1.02] disabled:opacity-60"
+            className="vk-btn-gold h-12 w-full text-[15px] font-bold"
           >
             {submitting ? (
               <><Loader2 className="h-4 w-4 animate-spin" /> Processing…</>
             ) : monthly ? (
               <>🔁 Donate ₹{finalAmount ? finalAmount.toLocaleString("en-IN") : "0"} / month</>
             ) : (
-              <>🪔 Donate ₹{finalAmount ? finalAmount.toLocaleString("en-IN") : "0"} Now</>
+              <><Heart className="h-4 w-4 fill-current" /> Donate ₹{finalAmount ? finalAmount.toLocaleString("en-IN") : "0"} Now</>
             )}
           </button>
           <p className="flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground">
-            <ShieldCheck className="h-3.5 w-3.5" /> Secured by Razorpay
+            <ShieldCheck className="h-3.5 w-3.5 text-vk-500" /> Secured by Razorpay
           </p>
         </form>
+        </>
       )}
     </div>
   );

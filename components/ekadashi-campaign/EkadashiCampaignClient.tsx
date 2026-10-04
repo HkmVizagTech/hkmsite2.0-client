@@ -12,7 +12,8 @@ import {
   ChevronDown, ChevronRight, type LucideIcon,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
-import Ornament from "@/components/Ornament";
+import SectionHeading from "@/components/site/SectionHeading";
+import Reveal from "@/components/site/Reveal";
 import AddressForm from "@/components/AddressForm";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
 import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
@@ -42,11 +43,14 @@ const CARD_ICONS: Record<string, LucideIcon> = {
   flower: Flower2,
 };
 
-const inputWrapClass =
-  "relative flex items-center rounded-lg border border-slate-300 bg-white dark:bg-card focus-within:border-gold transition-colors";
-const inputClass =
-  "h-10 w-full bg-transparent pl-9 pr-3 text-sm text-foreground outline-none placeholder:text-muted-foreground";
-const labelClass = "mb-1 block text-[11px] font-medium text-muted-foreground";
+const inputWrapClass = "relative";
+const inputIconClass =
+  "pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-vk-400";
+const inputClass = "vk-input pl-10";
+const labelClass = "mb-1.5 block text-[13px] font-semibold text-ink/80";
+const stepLabelClass = "mb-2 text-[13px] font-bold uppercase tracking-[0.08em] text-vk-700";
+const addOnBoxClass = "rounded-xl border border-vk-100 bg-vk-50/60 px-3.5 py-3";
+const addOnLabelClass = "flex cursor-pointer items-start gap-2.5 text-[13px] font-medium text-ink";
 
 // The tier pre-selected when a seva is first shown. Falls back to the first
 // tier when none is explicitly flagged as the default.
@@ -277,75 +281,67 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
   return (
     <PageLayout>
       <WhatsAppFloatButton />
-      <main className="bg-white dark:bg-background">
+      <main className="bg-white pt-[var(--header-h)] dark:bg-background">
         {/* ── Hero Banner ── */}
-        <section className="bg-white dark:bg-background pt-[88px] md:pt-[104px]">
-          <button
-            type="button"
-            onClick={scrollToDonate}
-            aria-label="Donate — go to the donation form"
-            className="block w-full cursor-pointer overflow-hidden rounded-b-3xl"
-          >
-            <picture>
-              <source
-                media="(max-width: 767px)"
-                srcSet={campaign.heroImageMobile}
-              />
-              <source srcSet={campaign.heroImage} />
-              <img
-                src={campaign.heroImage}
-                alt={`${campaign.campaignName} Seva — Hare Krishna Vaikuntham Temple`}
-                fetchPriority="high"
-                className="h-auto w-full"
-              />
-            </picture>
-          </button>
+        <section className="bg-gradient-to-b from-vk-50 to-white pb-4 pt-4 md:pb-6 md:pt-6">
+          <div className="vk-container">
+            <div className="overflow-hidden rounded-3xl bg-vk-900 shadow-[0_24px_60px_-28px_rgba(10,18,51,0.6)]">
+              <button
+                type="button"
+                onClick={scrollToDonate}
+                aria-label="Donate — go to the donation form"
+                className="block w-full cursor-pointer"
+              >
+                <picture>
+                  <source
+                    media="(max-width: 767px)"
+                    srcSet={campaign.heroImageMobile}
+                  />
+                  <source srcSet={campaign.heroImage} />
+                  <img
+                    src={campaign.heroImage}
+                    alt={`${campaign.campaignName} Seva — Hare Krishna Vaikuntham Temple`}
+                    fetchPriority="high"
+                    className="block h-auto w-full"
+                  />
+                </picture>
+              </button>
+            </div>
+          </div>
         </section>
 
         {/* ── Donation Form (right after banner) ── */}
-        <section id="donate" className="scroll-mt-24 bg-white dark:bg-background py-8 md:py-12">
-          <div className="container mx-auto max-w-4xl px-4">
-            <Ornament className="mb-4" />
-            <div className="mb-5 text-center">
-              <p className="mb-1.5 text-xs font-semibold uppercase tracking-[0.25em] text-gold">
-                Ekadashi Seva
-              </p>
-              <h2 className="mb-2 font-heading text-2xl font-bold text-primary md:text-3xl">
-                {campaign.formHeading}
-              </h2>
-              <p className="mx-auto max-w-xl text-sm leading-relaxed text-muted-foreground">
-                {campaign.formSubheading}
-              </p>
-            </div>
+        <section id="donate" className="vk-section scroll-mt-24 !pt-6 md:!pt-10">
+          <div className="vk-container max-w-5xl">
+            <SectionHeading
+              align="center"
+              eyebrow="Ekadashi Seva"
+              title={campaign.formHeading}
+              subtitle={campaign.formSubheading}
+            />
 
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="overflow-hidden rounded-[28px] border border-slate-200 bg-white dark:bg-card shadow-elevated"
-            >
+            <Reveal className="vk-card overflow-hidden !rounded-3xl">
               {/* Amount summary strip */}
-              <div className="flex items-center justify-between gap-3 bg-gradient-gold px-6 py-4 sm:px-8">
-                <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[hsl(220,90%,12%)]/70">
+              <div className="flex items-center justify-between gap-3 bg-gradient-to-br from-vk-700 via-vk-600 to-vk-500 px-5 py-4 text-white sm:px-7">
+                <div className="min-w-0">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/70">
                     You&apos;re offering
                   </p>
-                  <p className="text-lg font-extrabold text-[hsl(220,90%,12%)] sm:text-xl">
+                  <p className="text-lg font-bold text-white">
                     {selectedSeva.label}
                   </p>
                 </div>
-                <p className="text-2xl font-extrabold text-[hsl(220,90%,12%)] sm:text-3xl">
+                <p className="shrink-0 font-heading text-2xl font-extrabold text-[hsl(var(--gold))] sm:text-3xl">
                   ₹{finalAmount > 0 ? finalAmount.toLocaleString("en-IN") : "0"}
                 </p>
               </div>
 
-              <form onSubmit={handleSubmit} className="grid gap-6 p-5 sm:p-7 lg:grid-cols-2 lg:gap-8">
+              <form onSubmit={handleSubmit} className="grid gap-6 p-4 sm:p-6 lg:grid-cols-2 lg:gap-8">
                 {/* Left: seva + amount selection */}
-                <div className="space-y-4">
+                <div className="min-w-0 space-y-5">
                   {/* Step 1 — Choose Seva */}
                   <div>
-                    <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                    <p className={stepLabelClass}>
                       Choose Seva
                     </p>
                     <div className="grid grid-cols-3 gap-2">
@@ -355,14 +351,14 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
                           type="button"
                           onClick={() => selectSeva(i)}
                           aria-pressed={sevaIndex === i}
-                          className={`flex flex-col items-center justify-center gap-1.5 rounded-xl border px-1.5 py-3 text-center transition-colors ${
+                          className={`flex min-h-[52px] flex-col items-center justify-center gap-1.5 rounded-xl border px-1.5 py-3 text-center transition-all ${
                             sevaIndex === i
-                              ? "border-gold bg-gold/10"
-                              : "border-slate-300 bg-white dark:bg-card hover:border-gold/60"
+                              ? "border-vk-500 bg-vk-50 ring-2 ring-vk-500/20"
+                              : "border-vk-200 bg-white hover:border-vk-400"
                           }`}
                         >
                           <span className="text-2xl leading-none">{seva.icon}</span>
-                          <span className="text-[11px] font-bold leading-tight text-primary">
+                          <span className="text-[11px] font-bold leading-tight text-vk-800">
                             {seva.label}
                           </span>
                         </button>
@@ -372,7 +368,7 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
 
                   {/* Step 2 — Choose Amount */}
                   <div>
-                    <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                    <p className={stepLabelClass}>
                       Choose Amount
                     </p>
                     {!customOnly && (
@@ -383,13 +379,13 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
                             type="button"
                             onClick={() => { setUseCustom(false); setTierIndex(i); }}
                             aria-pressed={!useCustom && tierIndex === i}
-                            className={`rounded-lg border px-3 py-2.5 text-left transition-colors ${
+                            className={`min-h-[52px] rounded-xl border px-3 py-2.5 text-left transition-all ${
                               !useCustom && tierIndex === i
-                                ? "border-gold bg-gold/10"
-                                : "border-slate-300 bg-white dark:bg-card hover:border-gold/60"
+                                ? "border-vk-500 bg-vk-50 ring-2 ring-vk-500/20"
+                                : "border-vk-200 bg-white hover:border-vk-400"
                             }`}
                           >
-                            <span className="block text-base font-extrabold text-gold">
+                            <span className="block text-base font-extrabold text-vk-700">
                               ₹{tier.amount.toLocaleString("en-IN")}
                             </span>
                             {(selectedSeva.unit
@@ -402,7 +398,7 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
                               </span>
                             )}
                             {tier.popular && (
-                              <span className="mt-1 inline-block rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                              <span className="mt-1 inline-block rounded-full bg-[hsl(var(--gold))] px-2 py-0.5 text-[10px] font-bold text-ink">
                                 Most Donated
                               </span>
                             )}
@@ -412,18 +408,18 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
                     )}
 
                     {/* Custom / open amount */}
-                    <div
-                      className={`${customOnly ? "" : "mt-3"} overflow-hidden rounded-xl border-2 transition-all ${
-                        useCustom || customOnly
-                          ? "border-gold/60 bg-gradient-to-r from-gold/5 to-gold/10 shadow-[0_0_0_1px_rgba(214,158,46,0.15)]"
-                          : "border-slate-300 bg-white dark:bg-card hover:border-gold/30"
-                      }`}
-                    >
-                      <label htmlFor="custom-amount" className="flex items-center gap-2 px-3.5 pt-2.5 pb-1 text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">
+                    <div className={customOnly ? "" : "mt-3"}>
+                      <label htmlFor="custom-amount" className={labelClass}>
                         {customOnly ? "Enter amount" : "Enter custom amount"}
                       </label>
-                      <div className="flex items-center gap-2 px-3.5 pb-3">
-                        <span className="text-lg font-bold text-gold">₹</span>
+                      <div
+                        className={`flex h-11 items-center gap-2 rounded-xl border px-3.5 transition-all ${
+                          useCustom || customOnly
+                            ? "border-vk-500 bg-vk-50 ring-2 ring-vk-500/20"
+                            : "border-dashed border-vk-200 bg-white focus-within:border-vk-500"
+                        }`}
+                      >
+                        <span className="text-sm font-semibold text-vk-700">₹</span>
                         <input
                           id="custom-amount"
                           type="number"
@@ -435,44 +431,46 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
                             setUseCustom(true);
                             setCustomAmount(e.target.value);
                           }}
-                          className="h-10 w-full min-w-0 bg-transparent text-xl font-bold text-foreground outline-none placeholder:text-base placeholder:font-normal placeholder:text-muted-foreground"
+                          className="h-full w-full min-w-0 bg-transparent text-[15px] font-semibold text-foreground outline-none placeholder:font-normal placeholder:text-muted-foreground"
                         />
                       </div>
                     </div>
                     {customImpact && (
-                      <p className="mt-2 text-xs font-semibold text-gold">
+                      <p className="mt-2 rounded-xl bg-vk-50 px-3.5 py-2 text-xs font-semibold text-vk-700">
                         🙏 {customImpact}
                       </p>
                     )}
                   </div>
 
                   {/* Bank transfer */}
-                  <details className="group rounded-lg border border-border bg-white/60 px-3 py-2">
-                    <summary className="flex cursor-pointer list-none items-center justify-between text-xs font-semibold text-foreground">
+                  <details className="group rounded-xl border border-vk-100 bg-vk-50/60 px-3.5 py-3">
+                    <summary className="flex cursor-pointer list-none items-center justify-between gap-2 text-[13px] font-semibold text-ink">
                       Prefer a direct bank transfer?
-                      <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" />
+                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-vk-100 text-vk-700 transition-transform group-open:rotate-180">
+                        <ChevronDown className="h-3.5 w-3.5" />
+                      </span>
                     </summary>
-                    <div className="mt-2.5 space-y-1.5">
+                    <div className="mt-3 space-y-2 rounded-xl bg-white p-3">
                       {bankLabelValues.map(([label, value]) => (
                         <div key={label} className="flex items-center justify-between gap-2 text-xs">
-                          <span className="text-muted-foreground">{label}</span>
+                          <span className="shrink-0 text-muted-foreground">{label}</span>
                           <button
                             type="button"
                             onClick={() => handleCopy(label, value)}
-                            className="flex items-center gap-1.5 font-semibold text-foreground hover:text-gold"
+                            className="flex min-w-0 items-center gap-1.5 break-all text-right font-semibold text-ink hover:text-vk-600"
                           >
                             {value}
                             {copiedField === label ? (
-                              <Check className="h-3 w-3 text-green-600" />
+                              <Check className="h-3 w-3 shrink-0 text-green-600" />
                             ) : (
-                              <Copy className="h-3 w-3 text-muted-foreground" />
+                              <Copy className="h-3 w-3 shrink-0 text-vk-400" />
                             )}
                           </button>
                         </div>
                       ))}
                       <p className="pt-1 text-[11px] leading-relaxed text-muted-foreground">
                         Email your transaction reference and PAN (for 80G) to{" "}
-                        <a href={`mailto:${campaign.email}`} className="font-semibold text-gold">
+                        <a href={`mailto:${campaign.email}`} className="break-all font-semibold text-vk-600 hover:underline">
                           {campaign.email}
                         </a>
                         .
@@ -482,12 +480,13 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
                 </div>
 
                 {/* Right: details, add-ons, submit */}
-                <div className="flex flex-col space-y-3">
+                <div className="flex min-w-0 flex-col space-y-3">
+                  <p className={`${stepLabelClass} !mb-0`}>Your Details</p>
                   <div className="grid gap-3 sm:grid-cols-2">
                     <div>
                       <label htmlFor="donor-name" className={labelClass}>Full name</label>
                       <div className={inputWrapClass}>
-                        <User className="pointer-events-none absolute left-3 h-4 w-4 text-muted-foreground" />
+                        <User className={inputIconClass} />
                         <input
                           id="donor-name"
                           type="text"
@@ -502,7 +501,7 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
                     <div>
                       <label htmlFor="donor-mobile" className={labelClass}>Mobile number</label>
                       <div className={inputWrapClass}>
-                        <Phone className="pointer-events-none absolute left-3 h-4 w-4 text-muted-foreground" />
+                        <Phone className={inputIconClass} />
                         <input
                           id="donor-mobile"
                           type="tel"
@@ -523,7 +522,7 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
                   <div>
                     <label htmlFor="donor-email" className={labelClass}>Email address (optional)</label>
                     <div className={inputWrapClass}>
-                      <Mail className="pointer-events-none absolute left-3 h-4 w-4 text-muted-foreground" />
+                      <Mail className={inputIconClass} />
                       <input
                         id="donor-email"
                         type="email"
@@ -545,8 +544,8 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
 
                   {/* 80G */}
                   {finalAmount > 999 && (
-                    <div className="rounded-lg border border-border bg-background/60 px-3 py-2">
-                      <label className="flex cursor-pointer items-center gap-2 text-xs font-medium text-foreground">
+                    <div className={addOnBoxClass}>
+                      <label className={addOnLabelClass}>
                         <input
                           type="checkbox"
                           checked={want80G}
@@ -554,7 +553,7 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
                             setWant80G(e.target.checked);
                             handle80GToggle(e.target.checked);
                           }}
-                          className="h-3.5 w-3.5 shrink-0 accent-[hsl(42,92%,46%)]"
+                          className="mt-0.5 h-4 w-4 shrink-0 accent-vk-700"
                         />
                         I need an 80G tax exemption receipt
                       </label>
@@ -565,7 +564,7 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
                           placeholder="PAN number *"
                           value={form.panNumber}
                           onChange={(e) => setForm({ ...form, panNumber: e.target.value.toUpperCase() })}
-                          className="mt-2 h-9 w-full rounded-lg border border-slate-300 bg-white dark:bg-card px-3 text-xs uppercase outline-none focus:border-gold"
+                          className="vk-input mt-2.5 uppercase"
                         />
                       )}
                     </div>
@@ -573,8 +572,8 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
 
                   {/* Maha Prasadam */}
                   {finalAmount > 999 && (
-                    <div className="rounded-lg border border-border bg-background/60 px-3 py-2">
-                      <label className="flex cursor-pointer items-center gap-2 text-xs font-medium text-foreground">
+                    <div className={addOnBoxClass}>
+                      <label className={addOnLabelClass}>
                         <input
                           type="checkbox"
                           checked={wantsMahaPrasadam}
@@ -582,7 +581,7 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
                             setWantsMahaPrasadam(e.target.checked);
                             handlePrasadamToggle(e.target.checked);
                           }}
-                          className="h-3.5 w-3.5 shrink-0 accent-[hsl(42,92%,46%)]"
+                          className="mt-0.5 h-4 w-4 shrink-0 accent-vk-700"
                         />
                         🙏 I&apos;d like Maha Prasadam delivered
                       </label>
@@ -592,7 +591,7 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
 
                   {status && (
                     <p
-                      className={`rounded-lg px-3 py-2 text-xs font-medium ${
+                      className={`rounded-xl px-3.5 py-2.5 text-[13px] font-medium ${
                         status.type === "success" ? "bg-green-50 text-green-800" : "bg-red-50 text-red-700"
                       }`}
                     >
@@ -605,7 +604,7 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-gradient-gold text-sm font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)] transition-transform hover:scale-[1.01] disabled:opacity-60 disabled:hover:scale-100"
+                    className="vk-btn-gold h-12 w-full text-[15px] font-bold disabled:opacity-60"
                   >
                     {submitting ? (
                       <>
@@ -615,114 +614,93 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
                       <>Donate ₹{finalAmount > 0 ? finalAmount.toLocaleString("en-IN") : "—"}</>
                     )}
                   </button>
-                  <p className="flex items-center justify-center gap-1.5 text-center text-[11px] text-muted-foreground">
-                    <ShieldCheck className="h-3.5 w-3.5 text-gold" />
+                  <p className="flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1 text-center text-[11px] text-muted-foreground">
+                    <ShieldCheck className="h-3.5 w-3.5 text-vk-500" />
                     Secure payment via Razorpay · UPI, cards &amp; netbanking accepted
                   </p>
                 </div>
               </form>
-            </motion.div>
+            </Reveal>
           </div>
         </section>
 
         {/* ── Spiritual Significance ── */}
-        <section className="bg-white dark:bg-background py-8 md:py-12">
-          <div className="container mx-auto max-w-4xl px-4">
-            <Ornament className="mb-4" />
-            <div className="text-center">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-gold">
-                The divine occasion
-              </p>
-              <h2 className="mb-6 font-heading text-2xl font-bold text-primary md:text-3xl">
-                Spiritual Significance of {campaign.campaignName}
-              </h2>
-            </div>
+        <section className="vk-section vk-band">
+          <div className="vk-container max-w-4xl">
+            <SectionHeading
+              align="center"
+              eyebrow="The divine occasion"
+              title={<>Spiritual Significance of {campaign.campaignName}</>}
+            />
 
             {/* Shloka */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="mb-6 rounded-2xl border border-gold/20 bg-primary/5 p-6 text-center md:p-8"
-            >
-              <p className="mb-4 font-heading text-lg leading-relaxed text-primary md:text-xl">
+            <Reveal className="vk-card mb-6 p-6 text-center md:p-8">
+              <p className="mb-4 font-heading text-lg leading-relaxed text-vk-800 md:text-xl">
                 {campaign.shloka.sanskrit}
               </p>
-              <p className="mb-2 text-sm italic leading-relaxed text-muted-foreground md:text-base">
+              <p className="mb-2 font-serif-display text-[15px] italic leading-relaxed text-ink/75 md:text-base">
                 &ldquo;{campaign.shloka.translation}&rdquo;
               </p>
-              <p className="text-xs font-semibold text-gold">— {campaign.shloka.reference}</p>
-            </motion.div>
+              <p className="text-xs font-semibold text-vk-600">— {campaign.shloka.reference}</p>
+            </Reveal>
 
-            <motion.p
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="mx-auto max-w-2xl text-center text-sm leading-relaxed text-muted-foreground md:text-base"
-            >
-              Contributing to {campaign.campaignName} is one of the most meaningful ways to serve the Lord
-              on this most sacred of days. Your donation supports special puja arrangements, sacred bhog,
-              and temple seva performed at the Hare Krishna Vaikuntham Temple on Ekadashi.
-            </motion.p>
+            <Reveal delay={0.1}>
+              <p className="vk-lead mx-auto max-w-2xl text-center">
+                Contributing to {campaign.campaignName} is one of the most meaningful ways to serve the Lord
+                on this most sacred of days. Your donation supports special puja arrangements, sacred bhog,
+                and temple seva performed at the Hare Krishna Vaikuntham Temple on Ekadashi.
+              </p>
+            </Reveal>
           </div>
         </section>
 
         {/* ── Ekadashi Daan ── */}
-        <section className="bg-white dark:bg-background py-8 md:py-12">
-          <div className="container mx-auto max-w-6xl px-4">
-            <Ornament className="mb-4" />
-            <div className="mb-6 text-center">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-gold">
-                Sacred offerings
-              </p>
-              <h2 className="font-heading text-2xl font-bold text-primary md:text-3xl">
-                {campaign.campaignName} Daan
-              </h2>
-            </div>
+        <section className="vk-section">
+          <div className="vk-container max-w-6xl">
+            <SectionHeading
+              align="center"
+              eyebrow="Sacred offerings"
+              title={<>{campaign.campaignName} Daan</>}
+            />
 
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {campaign.sevaCards.map((seva, i) => {
                 const Icon = CARD_ICONS[seva.icon || "flower"] || Flower2;
                 return (
-                  <motion.div
+                  <Reveal
                     key={seva.title + i}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.1, duration: 0.5 }}
-                    className="group overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all hover:shadow-md hover:border-gold/40"
+                    delay={i * 0.08}
+                    className="vk-card vk-card-hover group flex flex-col overflow-hidden"
                   >
-                    <div className="relative aspect-[4/3] overflow-hidden">
+                    <div className="relative aspect-[4/3] overflow-hidden bg-vk-900">
                       <Image
                         src={seva.image}
                         alt={seva.title}
                         fill
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                        className="object-cover transition-transform duration-500 group-hover:scale-110"
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                      <div className="absolute bottom-3 left-3">
-                        <Icon className="h-6 w-6 text-gold" />
-                      </div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-vk-900/60 to-transparent" />
+                      <span className="absolute bottom-3 left-3 inline-flex h-9 w-9 items-center justify-center rounded-xl bg-white/95 text-vk-700 shadow">
+                        <Icon className="h-5 w-5" />
+                      </span>
                     </div>
-                    <div className="p-4">
-                      <h3 className="mb-2 font-heading text-base font-bold text-primary">
+                    <div className="flex flex-1 flex-col p-5">
+                      <h3 className="mb-2 font-heading text-base font-bold text-ink md:text-lg">
                         {seva.title}
                       </h3>
-                      <p className="mb-4 text-xs leading-relaxed text-muted-foreground">
+                      <p className="mb-4 text-[13px] leading-relaxed text-muted-foreground">
                         {seva.description}
                       </p>
                       <Link
                         href={seva.href}
-                        className="inline-flex items-center gap-2 rounded-full border border-gold/40 px-4 py-2 text-xs font-semibold text-gold transition-colors hover:bg-gold/10"
+                        className="vk-btn-gold mt-auto self-start px-4 py-2"
                       >
                         Donate
-                        <ChevronRight className="h-3 w-3" />
+                        <ChevronRight className="h-4 w-4" />
                       </Link>
                     </div>
-                  </motion.div>
+                  </Reveal>
                 );
               })}
             </div>
@@ -730,87 +708,73 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
         </section>
 
         {/* ── Significance Points ── */}
-        <section className="bg-white dark:bg-background py-8 md:py-12">
-          <div className="container mx-auto max-w-4xl px-4">
-            <Ornament className="mb-4" />
-            <div className="mb-6 text-center">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-gold">
-                Why this day matters
-              </p>
-              <h2 className="font-heading text-2xl font-bold text-primary md:text-3xl">
-                Significance of {campaign.campaignName}
-              </h2>
-            </div>
+        <section className="vk-section vk-band">
+          <div className="vk-container max-w-4xl">
+            <SectionHeading
+              align="center"
+              eyebrow="Why this day matters"
+              title={<>Significance of {campaign.campaignName}</>}
+            />
 
             <div className="space-y-3">
               {campaign.significancePoints.map((point, i) => (
-                <motion.div
+                <Reveal
                   key={point.title + i}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1, duration: 0.5 }}
-                  className="rounded-2xl border border-border bg-card p-5 md:p-6"
+                  delay={i * 0.08}
+                  className="vk-card p-5 md:p-6"
                 >
                   <div className="flex items-start gap-4">
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gold/10 text-gold">
-                      <span className="text-sm font-bold">{i + 1}</span>
-                    </div>
-                    <div>
-                      <h3 className="mb-2 font-heading text-base font-bold text-primary md:text-lg">
+                    <span className="vk-icon-chip !h-9 !w-9 !rounded-full font-heading text-sm font-bold">
+                      {i + 1}
+                    </span>
+                    <div className="min-w-0">
+                      <h3 className="mb-1.5 font-heading text-base font-bold text-ink md:text-lg">
                         {point.title}
                       </h3>
-                      <p className="text-sm leading-relaxed text-muted-foreground">
+                      <p className="text-sm leading-relaxed text-muted-foreground md:text-[15px]">
                         {point.text}
                       </p>
                     </div>
                   </div>
-                </motion.div>
+                </Reveal>
               ))}
             </div>
           </div>
         </section>
 
         {/* ── Why Donate on Ekadashi ── */}
-        <section className="bg-white dark:bg-background py-8 md:py-12">
-          <div className="container mx-auto max-w-4xl px-4">
-            <Ornament className="mb-4" />
-            <div className="mb-6 text-center">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-gold">
-                The divine merit
-              </p>
-              <h2 className="font-heading text-2xl font-bold text-primary md:text-3xl">
-                Why Donate on {campaign.campaignName}?
-              </h2>
-            </div>
+        <section className="vk-section">
+          <div className="vk-container max-w-4xl">
+            <SectionHeading
+              align="center"
+              eyebrow="The divine merit"
+              title={<>Why Donate on {campaign.campaignName}?</>}
+            />
 
             <div className="space-y-4">
               {campaign.whyDonateSections.map((section, i) => (
-                <motion.div
+                <Reveal
                   key={section.title + i}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1, duration: 0.5 }}
-                  className="rounded-2xl border border-border bg-card p-6 md:p-8"
+                  delay={i * 0.08}
+                  className="vk-card p-6 md:p-8"
                 >
-                  <h3 className="mb-4 font-heading text-lg font-bold text-primary md:text-xl">
+                  <h3 className="vk-h3 mb-3">
                     {section.title}
                   </h3>
-                  <p className="text-sm leading-relaxed text-muted-foreground md:text-base">
+                  <p className="vk-lead">
                     {section.text}
                   </p>
-                </motion.div>
+                </Reveal>
               ))}
             </div>
 
-            <div className="mt-6 text-center">
+            <div className="mt-8 text-center">
               <Link
                 href="/sqft-seva-campaign"
-                className="inline-flex items-center gap-2 rounded-full border border-gold/40 px-6 py-3 text-sm font-semibold text-gold transition-colors hover:bg-gold/10"
+                className="vk-btn-gold h-auto min-h-12 whitespace-normal px-6 py-3 text-center"
               >
                 Donate for Construction of Radha Krishna Temple
-                <ChevronRight className="h-4 w-4" />
+                <ChevronRight className="h-4 w-4 shrink-0" />
               </Link>
             </div>
           </div>
@@ -828,15 +792,23 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
             initial={{ y: 80, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ type: "spring", stiffness: 320, damping: 30 }}
-            className="fixed inset-x-0 bottom-0 z-40 flex justify-center px-3 pb-3 pt-1 md:hidden"
+            className="fixed bottom-[calc(64px+env(safe-area-inset-bottom))] left-3 right-[76px] z-40 lg:hidden"
           >
-            <button
-              onClick={scrollToDonate}
-              aria-label="Donate — go to the donation form"
-              className="inline-flex items-center gap-2 rounded-full bg-gradient-gold px-6 py-3 text-sm font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)] transition-transform active:scale-95"
-            >
-              Donate Now
-            </button>
+            <div className="flex items-center justify-between gap-3 rounded-2xl border border-vk-100 bg-white/95 p-2 pl-4 shadow-lift backdrop-blur">
+              <div className="min-w-0">
+                <p className="truncate text-[11px] font-medium text-muted-foreground">{selectedSeva.label}</p>
+                <p className="font-heading text-base font-extrabold text-vk-700">
+                  ₹{finalAmount > 0 ? finalAmount.toLocaleString("en-IN") : "0"}
+                </p>
+              </div>
+              <button
+                onClick={scrollToDonate}
+                aria-label="Donate — go to the donation form"
+                className="vk-btn-gold h-11 shrink-0 px-5"
+              >
+                Donate Now
+              </button>
+            </div>
           </motion.div>
         )}
       </main>

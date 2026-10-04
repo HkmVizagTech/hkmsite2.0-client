@@ -3,7 +3,7 @@
 import PageLayout from "@/components/PageLayout";
 import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
-import Ornament from "@/components/Ornament";
+import SectionHeading from "@/components/site/SectionHeading";
 import { motion, useInView } from "framer-motion";
 import { useRef, useState } from "react";
 import Image from "next/image";
@@ -12,7 +12,7 @@ import TouchstoneCharitiesLogo from "@/assets/TouchstoneCharitiesLogo.png";
 import HKMLogoBlack from "@/assets/HKMLogoBlack.jpg";
 import {
   Utensils, Hospital, Users, Clock, Heart, Phone, Mail,
-  ChevronRight, ShieldCheck, X, CheckCircle2, Loader2, Quote
+  ChevronRight, ShieldCheck, X, CheckCircle2, Loader2, Quote, User
 } from "lucide-react";
 import { newEventId, getMetaBrowserData, trackInitiateCheckout, trackPurchase } from "@/lib/metaPixel";
 import { useAttribution } from "@/lib/useAttribution";
@@ -151,63 +151,69 @@ export default function SubhojanamPage() {
       <WhatsAppFloatButton />
 
       {/* ── HERO ─────────────────────────────────────────────────── */}
-      <section className="relative min-h-[92vh] flex flex-col justify-end overflow-hidden pt-20">
-        <div className="absolute inset-0">
-          <Image
-            src="https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677363792-1783677363601-462395264797134589073566144398536696847591n.jpg"
-            alt="Subhojanam meal distribution at hospital"
-            fill priority sizes="100vw"
-            className="object-cover object-center"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[hsl(220,85%,6%)] via-[hsl(220,85%,8%,0.6)] to-transparent" />
-        </div>
-        {/* Floating trust badge */}
-        <div className="absolute top-28 right-6 md:right-10 z-10 flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 backdrop-blur-md">
-          <ShieldCheck className="h-4 w-4 text-green-400" />
-          <span className="text-xs font-semibold text-white/90">Under Touchstone Charities</span>
-        </div>
-        <div className="relative z-10 container mx-auto px-4 pb-16 md:pb-24">
-          <nav className="mb-6 flex items-center gap-1.5 text-xs text-white/60">
-            <Link href="/" className="hover:text-white">Home</Link>
-            <ChevronRight className="h-3 w-3" />
-            <span className="text-white/90">Subhojanam</span>
-          </nav>
-          <div className="max-w-3xl">
-            <p className="mb-4 text-sm font-semibold uppercase tracking-[0.25em] text-gold">Free Hospital Meal Programme</p>
-            <h1 className="font-heading text-4xl font-bold leading-tight text-white md:text-6xl mb-6">
-              No patient should<br />choose between<br />
-              <span className="text-gold">food and medicine.</span>
-            </h1>
-            <p className="mb-8 max-w-lg text-base leading-relaxed text-white/75">
-              Subhojanam provides free, hygienic, and nutritious meals every day to patients
-              and their attendants at government hospitals in Visakhapatnam, Kakinada and at the
-              Homi Bhabha Cancer Hospital &amp; Research Centre, Visakhapatnam.
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <button
-                onClick={() => document.getElementById("donate-section")?.scrollIntoView({ behavior: "smooth" })}
-                className="rounded-full bg-gradient-gold px-7 py-3.5 text-sm font-bold text-[hsl(220,60%,12%)] shadow-gold transition hover:opacity-90"
-              >
-                Sponsor a Meal
-              </button>
-              <button
-                onClick={() => document.getElementById("about-section")?.scrollIntoView({ behavior: "smooth" })}
-                className="rounded-full border border-white/30 bg-white/10 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/20"
-              >
-                Learn More
-              </button>
+      <section className="bg-gradient-to-b from-vk-50 to-white pt-[var(--header-h)]">
+        <div className="vk-container pb-2 pt-4 md:pt-6">
+          <div className="relative isolate overflow-hidden rounded-3xl bg-vk-900 shadow-[0_24px_60px_-28px_rgba(10,18,51,0.6)]">
+            <Image
+              src="https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677363792-1783677363601-462395264797134589073566144398536696847591n.jpg"
+              alt="Subhojanam meal distribution at hospital"
+              fill priority sizes="(min-width: 1280px) 1248px, 100vw"
+              className="-z-10 object-cover object-center"
+            />
+            <div className="absolute inset-0 -z-10 bg-gradient-to-t from-vk-900/95 via-vk-900/65 to-vk-900/25" />
+            <div className="flex min-h-[520px] flex-col justify-end px-5 pb-10 pt-8 md:min-h-[600px] md:px-12 md:pb-14">
+              <div className="mb-auto flex flex-wrap items-center justify-between gap-3 pb-10">
+                <nav aria-label="Breadcrumb" className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1.5 text-xs font-medium text-white/85 backdrop-blur md:text-[13px]">
+                  <Link href="/" className="hover:text-white">Home</Link>
+                  <ChevronRight className="h-3.5 w-3.5 opacity-60" />
+                  <span className="text-white" aria-current="page">Subhojanam</span>
+                </nav>
+                {/* Trust badge */}
+                <span className="vk-pill-light !normal-case !tracking-normal">
+                  <ShieldCheck className="h-4 w-4 text-[hsl(var(--gold))]" />
+                  Under Touchstone Charities
+                </span>
+              </div>
+              <div className="max-w-3xl">
+                <span className="vk-pill-light mb-4">Free Hospital Meal Programme</span>
+                <h1 className="vk-h1 mb-5 !text-white">
+                  No patient should<br />choose between<br />
+                  <span className="text-vk-300">food and medicine.</span>
+                </h1>
+                <p className="mb-7 max-w-lg text-[15px] leading-relaxed text-white/80 md:text-base">
+                  Subhojanam provides free, hygienic, and nutritious meals every day to patients
+                  and their attendants at government hospitals in Visakhapatnam, Kakinada and at the
+                  Homi Bhabha Cancer Hospital &amp; Research Centre, Visakhapatnam.
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    onClick={() => document.getElementById("donate-section")?.scrollIntoView({ behavior: "smooth" })}
+                    className="vk-btn-gold h-12 px-7 text-[15px] font-bold"
+                  >
+                    <Heart className="h-4 w-4 fill-current" />
+                    Sponsor a Meal
+                  </button>
+                  <button
+                    onClick={() => document.getElementById("about-section")?.scrollIntoView({ behavior: "smooth" })}
+                    className="vk-btn-ghost-light h-12 px-7"
+                  >
+                    Learn More
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Stats bar */}
-        <div className="relative z-10 border-t border-white/10 bg-white/5 backdrop-blur-md">
-          <div className="container mx-auto grid grid-cols-2 divide-x divide-white/10 md:grid-cols-4">
+          {/* Stats */}
+          <div className="mt-4 grid grid-cols-2 gap-3 md:mt-5 md:grid-cols-4 md:gap-4">
             {stats.map((s) => (
-              <div key={s.label} className="flex flex-col items-center px-4 py-5 text-center">
-                <span className="font-heading text-2xl font-bold text-gold md:text-3xl">{s.value}</span>
-                <span className="mt-0.5 text-xs font-semibold text-white">{s.label}</span>
-                <span className="text-[10px] text-white/50">{s.sub}</span>
+              <div key={s.label} className="vk-card flex flex-col items-center p-4 text-center md:p-5">
+                <span className="vk-icon-chip mb-2.5">
+                  <s.icon className="h-5 w-5" />
+                </span>
+                <span className="font-heading text-2xl font-extrabold text-vk-700 md:text-3xl">{s.value}</span>
+                <span className="mt-0.5 text-[13px] font-semibold text-ink">{s.label}</span>
+                <span className="mt-0.5 text-[11px] leading-snug text-muted-foreground">{s.sub}</span>
               </div>
             ))}
           </div>
@@ -215,43 +221,42 @@ export default function SubhojanamPage() {
       </section>
 
       {/* ── ABOUT THE PROGRAMME ──────────────────────────────────── */}
-      <section id="about-section" className="py-12 md:py-16 bg-white dark:bg-background" ref={ref1}>
-        <div className="container mx-auto px-4">
-          <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-14 items-center">
+      <section id="about-section" className="vk-section scroll-mt-[var(--header-h)]" ref={ref1}>
+        <div className="vk-container">
+          <div className="mx-auto grid max-w-5xl items-center gap-10 md:grid-cols-2 md:gap-14">
             <motion.div
               initial={{ opacity: 0, x: -30 }} animate={inView1 ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.8 }}
             >
-              <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">The Programme</p>
-              <Ornament className="mb-5 !justify-start" />
-              <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-6">Feeding Hope, One Meal at a Time</h2>
-              <p className="text-muted-foreground leading-relaxed mb-4">
+              <span className="vk-pill mb-3">The Programme</span>
+              <h2 className="vk-h2 mb-5">Feeding Hope, One Meal at a Time</h2>
+              <p className="vk-lead mb-4">
                 Annadana is one of the greatest forms of charity. Our Subhojanam Programme provides free, hygienic,
                 and nutritious meals to underprivileged patients and their attendants in government hospitals.
               </p>
-              <p className="text-muted-foreground leading-relaxed mb-6">
+              <p className="vk-lead mb-6">
                 Many families stay hungry to save money for medicine. Our programme ensures they never have
                 to make that impossible choice. Every meal is prepared with love in hygienic kitchens following
                 strict quality standards, and served with devotion.
               </p>
               <div className="flex flex-col gap-3">
-                <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-4">
-                  <Hospital className="h-5 w-5 shrink-0 text-primary" />
-                  <div>
-                    <p className="text-sm font-semibold text-foreground">KGH Hospital, Visakhapatnam</p>
+                <div className="vk-card flex items-center gap-3 p-4">
+                  <span className="vk-icon-chip"><Hospital className="h-5 w-5" /></span>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-ink">KGH Hospital, Visakhapatnam</p>
                     <p className="text-xs text-muted-foreground">1,700+ meals served daily</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-4">
-                  <Hospital className="h-5 w-5 shrink-0 text-primary" />
-                  <div>
-                    <p className="text-sm font-semibold text-foreground">GGH Hospital, Kakinada</p>
+                <div className="vk-card flex items-center gap-3 p-4">
+                  <span className="vk-icon-chip"><Hospital className="h-5 w-5" /></span>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-ink">GGH Hospital, Kakinada</p>
                     <p className="text-xs text-muted-foreground">Up to 500 meals served daily</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-4">
-                  <Hospital className="h-5 w-5 shrink-0 text-primary" />
-                  <div>
-                    <p className="text-sm font-semibold text-foreground">Homi Bhabha Cancer Hospital &amp; Research Centre, Visakhapatnam</p>
+                <div className="vk-card flex items-center gap-3 p-4">
+                  <span className="vk-icon-chip"><Hospital className="h-5 w-5" /></span>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-ink">Homi Bhabha Cancer Hospital &amp; Research Centre, Visakhapatnam</p>
                     <p className="text-xs text-muted-foreground">Tata Memorial Centre · Up to 500 meals served daily</p>
                   </div>
                 </div>
@@ -261,15 +266,15 @@ export default function SubhojanamPage() {
               initial={{ opacity: 0, x: -30 }} animate={inView1 ? { opacity: 1, x: 0 } : {}} transition={{ duration: 0.8, delay: 0.2 }}
               className="relative"
             >
-              <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-primary/10 to-gold/10 -rotate-1" />
+              <div className="absolute -inset-2 -rotate-1 rounded-3xl bg-gradient-to-br from-vk-100 to-vk-50 md:-inset-4" />
               <Image
                 src="https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677363792-1783677363601-462395264797134589073566144398536696847591n.jpg"
                 alt="Volunteers serving meals at hospital" width={600} height={440}
-                className="relative rounded-2xl shadow-elevated w-full object-cover"
+                className="relative w-full rounded-3xl object-cover shadow-lift"
               />
-              <div className="absolute -bottom-4 -right-4 rounded-2xl bg-gradient-gold px-5 py-4 shadow-gold text-center">
-                <p className="font-heading text-3xl font-bold text-[hsl(220,60%,12%)]">365</p>
-                <p className="text-xs font-semibold text-[hsl(220,60%,20%)] uppercase tracking-wide">Days a Year</p>
+              <div className="absolute -bottom-4 right-3 rounded-2xl bg-vk-700 px-5 py-4 text-center text-white shadow-lift md:-right-4">
+                <p className="font-heading text-3xl font-extrabold">365</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-white/80">Days a Year</p>
               </div>
             </motion.div>
           </div>
@@ -277,27 +282,24 @@ export default function SubhojanamPage() {
       </section>
 
       {/* ── HOW IT WORKS ─────────────────────────────────────────── */}
-      <section className="py-12 md:py-16 bg-white dark:bg-background" ref={ref2}>
-        <div className="container mx-auto px-4">
+      <section className="vk-section vk-band" ref={ref2}>
+        <div className="vk-container">
           <motion.div
             initial={{ opacity: 0, y: 30 }} animate={inView2 ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8 }}
-            className="text-center mb-16"
           >
-            <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">Our Process</p>
-            <Ornament className="mb-5" />
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground">From Kitchen to Patient</h2>
+            <SectionHeading align="center" eyebrow="Our Process" title="From Kitchen to Patient" />
           </motion.div>
-          <div className="max-w-5xl mx-auto grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="mx-auto grid max-w-5xl gap-4 sm:grid-cols-2 md:gap-5 lg:grid-cols-4">
             {mealProcess.map((p, i) => (
               <motion.div
                 key={p.step}
                 initial={{ opacity: 0, y: 30 }} animate={inView2 ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.6, delay: 0.15 * i }}
-                className="relative bg-background rounded-2xl border border-border p-6"
+                className="vk-card relative overflow-hidden p-6"
               >
-                <span className="font-heading text-5xl font-bold text-primary/10 absolute top-4 right-5 select-none">{p.step}</span>
-                <p className="font-heading text-xs font-bold uppercase tracking-widest text-gold mb-3">{p.step}</p>
-                <h3 className="font-heading text-base font-bold text-foreground mb-2">{p.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
+                <span className="absolute right-5 top-4 select-none font-heading text-5xl font-extrabold text-vk-100">{p.step}</span>
+                <span className="vk-pill-soft relative mb-4">{p.step}</span>
+                <h3 className="relative mb-2 text-base font-bold text-ink">{p.title}</h3>
+                <p className="relative text-sm leading-relaxed text-muted-foreground">{p.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -305,28 +307,25 @@ export default function SubhojanamPage() {
       </section>
 
       {/* ── TESTIMONIALS ─────────────────────────────────────────── */}
-      <section className="py-12 md:py-16 bg-white dark:bg-background" ref={ref3}>
-        <div className="container mx-auto px-4">
+      <section className="vk-section" ref={ref3}>
+        <div className="vk-container">
           <motion.div
             initial={{ opacity: 0, y: 30 }} animate={inView3 ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8 }}
-            className="text-center mb-16"
           >
-            <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">Real Stories</p>
-            <Ornament className="mb-5" />
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground">Voices of Gratitude</h2>
+            <SectionHeading align="center" eyebrow="Real Stories" title="Voices of Gratitude" />
           </motion.div>
-          <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-6">
+          <div className="mx-auto grid max-w-5xl gap-4 md:grid-cols-3 md:gap-5">
             {testimonials.map((t, i) => (
               <motion.div
                 key={t.name}
                 initial={{ opacity: 0, y: 20 }} animate={inView3 ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.2 + i * 0.15 }}
-                className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-6"
+                className="vk-card flex flex-col gap-4 p-6"
               >
-                <Quote className="h-8 w-8 text-gold/40" />
-                <p className="text-sm leading-relaxed text-muted-foreground italic flex-1">{t.quote}</p>
-                <div className="pt-4 border-t border-border">
-                  <p className="font-heading font-semibold text-foreground text-sm">{t.name}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">{t.role}</p>
+                <span className="vk-icon-chip"><Quote className="h-5 w-5" /></span>
+                <p className="flex-1 font-serif-display text-[15px] italic leading-relaxed text-ink/80">{t.quote}</p>
+                <div className="border-t border-vk-100 pt-4">
+                  <p className="text-sm font-semibold text-ink">{t.name}</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">{t.role}</p>
                 </div>
               </motion.div>
             ))}
@@ -335,79 +334,79 @@ export default function SubhojanamPage() {
       </section>
 
       {/* ── DONATE ───────────────────────────────────────────────── */}
-      <section id="donate-section" className="py-24 bg-[hsl(220,60%,10%)]" ref={ref4}>
-        <div className="container mx-auto px-4">
+      <section id="donate-section" className="vk-section vk-band scroll-mt-[var(--header-h)]" ref={ref4}>
+        <div className="vk-container">
           <motion.div
             initial={{ opacity: 0, y: 30 }} animate={inView4 ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8 }}
-            className="text-center mb-16"
           >
-            <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">Support Us</p>
-            <Ornament className="mb-5" />
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-white mb-4">Choose Your Contribution</h2>
-            <p className="text-white/60 max-w-xl mx-auto">
-              Every rupee you donate goes directly to providing nutritious meals for patients and their families.
-              ₹25 sponsors one meal. Your generosity saves families from impossible choices.
-            </p>
+            <SectionHeading
+              align="center"
+              eyebrow="Support Us"
+              title="Choose Your Contribution"
+              subtitle="Every rupee you donate goes directly to providing nutritious meals for patients and their families. ₹25 sponsors one meal. Your generosity saves families from impossible choices."
+            />
           </motion.div>
-          <div className="max-w-4xl mx-auto grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+          <div className="mx-auto grid max-w-5xl gap-3 lg:grid-cols-5 lg:gap-4">
             {donationTiers.map((tier, i) => (
               <motion.button
                 key={tier.meals}
                 onClick={() => { setCheckoutTier({ meals: tier.meals, amountValue: tier.amountValue }); trackInitiateCheckout({ value: tier.amountValue, content_name: "Subhojanam" }); }}
                 initial={{ opacity: 0, y: 20 }} animate={inView4 ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.5, delay: 0.1 * i }}
-                whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
-                className={`relative flex flex-col items-center rounded-2xl border p-5 text-center transition-all ${
+                whileHover={{ y: -3 }} whileTap={{ scale: 0.98 }}
+                className={`relative flex min-h-[52px] items-center gap-3 rounded-xl border px-4 py-3.5 text-left transition-all lg:flex-col lg:items-start lg:rounded-2xl lg:p-5 ${
                   tier.popular
-                    ? "bg-gradient-gold border-transparent shadow-gold text-[hsl(220,60%,12%)]"
-                    : "bg-white/5 border-white/10 text-white hover:bg-white/10"
+                    ? "border-vk-500 bg-vk-50 ring-2 ring-vk-500/20"
+                    : "border-vk-200 bg-white hover:border-vk-400"
                 }`}
               >
                 {tier.popular && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[hsl(220,60%,12%)] px-3 py-0.5 text-[10px] font-bold uppercase tracking-wider text-gold whitespace-nowrap">
+                  <span className="absolute -top-2.5 left-4 whitespace-nowrap rounded-full bg-[hsl(var(--gold))] px-2 py-0.5 text-[10px] font-bold text-ink">
                     Most Popular
                   </span>
                 )}
-                <span className="text-2xl mb-2 mt-1">{tier.icon}</span>
-                <p className={`font-heading text-xl font-bold ${tier.popular ? "" : "text-gold"}`}>{tier.amount}</p>
-                <p className={`text-xs mt-1 ${tier.popular ? "opacity-75" : "text-white/60"}`}>for {tier.meals}</p>
-                <div className={`mt-4 w-full rounded-full py-2 text-xs font-bold ${
-                  tier.popular ? "bg-[hsl(220,60%,12%)] text-gold" : "bg-gold/20 text-gold"
-                }`}>
+                <span className="text-2xl lg:mt-1" aria-hidden>{tier.icon}</span>
+                <span className="min-w-0 flex-1">
+                  <span className="block font-heading text-xl font-extrabold text-vk-700">{tier.amount}</span>
+                  <span className="mt-0.5 block text-[13px] text-muted-foreground">for {tier.meals}</span>
+                </span>
+                <span className="vk-btn-gold h-10 shrink-0 px-4 text-[13px] font-bold lg:mt-2 lg:w-full">
                   Donate Now
-                </div>
+                </span>
               </motion.button>
             ))}
           </div>
-          <p className="text-center text-xs text-white/40 mt-8">
+          <p className="mt-8 text-center text-xs text-muted-foreground">
             ₹25 = 1 Meal · All donations go to Touchstone Charities for Subhojanam
           </p>
         </div>
       </section>
 
       {/* ── TRUST & TRANSPARENCY ─────────────────────────────────── */}
-      <section className="py-12 md:py-16 border-y border-border bg-white dark:bg-background" ref={ref5}>
-        <div className="container mx-auto px-4">
+      <section className="vk-section" ref={ref5}>
+        <div className="vk-container">
           <motion.div
             initial={{ opacity: 0, y: 20 }} animate={inView5 ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7 }}
-            className="max-w-3xl mx-auto"
+            className="mx-auto max-w-3xl"
           >
-            <p className="text-center text-gold text-xs tracking-[0.2em] uppercase font-medium mb-8">Run Under</p>
-            <div className="flex flex-wrap items-center justify-center gap-10 mb-8">
-              <Image src={TouchstoneCharitiesLogo} alt="Touchstone Charities" width={220} height={220} className="h-20 w-auto object-contain" />
-              <span className="hidden h-14 w-px bg-border sm:block" aria-hidden />
-              <Image src={HKMLogoBlack} alt="Srila Prabhupada's Hare Krishna Movement Visakhapatnam" width={300} height={162} className="h-14 w-auto object-contain" />
+            <div className="mb-6 text-center">
+              <span className="vk-pill-soft">Run Under</span>
             </div>
-            <div className="rounded-2xl border border-border bg-background p-6 text-center">
+            <div className="mb-8 flex flex-wrap items-center justify-center gap-8 md:gap-10">
+              <Image src={TouchstoneCharitiesLogo} alt="Touchstone Charities" width={220} height={220} className="h-20 w-auto object-contain" />
+              <span className="hidden h-14 w-px bg-vk-100 sm:block" aria-hidden />
+              <Image src={HKMLogoBlack} alt="Srila Prabhupada's Hare Krishna Movement Visakhapatnam" width={300} height={162} className="h-14 w-auto max-w-full object-contain" />
+            </div>
+            <div className="vk-card p-6 text-center">
               <p className="text-sm leading-relaxed text-muted-foreground">
                 Subhojanam is a charitable programme run under{" "}
-                <span className="font-semibold text-foreground">Touchstone Charities</span>, an initiative
-                by <span className="font-semibold text-foreground">Hare Krishna Movement Visakhapatnam</span> —
+                <span className="font-semibold text-ink">Touchstone Charities</span>, an initiative
+                by <span className="font-semibold text-ink">Hare Krishna Movement Visakhapatnam</span> —
                 one of the trusts of Srila Prabhupada&apos;s ISKCON Gambheeram Visakhapatnam.
               </p>
-              <div className="mt-4 flex flex-wrap justify-center gap-6 text-xs text-muted-foreground">
-                <span className="flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-green-500" /> FCRA Registered Trust</span>
-                <span className="flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-green-500" /> 80G Tax Exemption Available</span>
-                <span className="flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-green-500" /> Serving since 2018</span>
+              <div className="mt-4 flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs text-muted-foreground">
+                <span className="flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-vk-500" /> FCRA Registered Trust</span>
+                <span className="flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-vk-500" /> 80G Tax Exemption Available</span>
+                <span className="flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5 text-vk-500" /> Serving since 2018</span>
               </div>
             </div>
           </motion.div>
@@ -415,22 +414,19 @@ export default function SubhojanamPage() {
       </section>
 
       {/* ── GET INVOLVED ─────────────────────────────────────────── */}
-      <section className="py-12 md:py-16 bg-white dark:bg-background" ref={ref6}>
-        <div className="container mx-auto px-4">
+      <section className="vk-section vk-band" ref={ref6}>
+        <div className="vk-container">
           <motion.div
             initial={{ opacity: 0, y: 30 }} animate={inView6 ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8 }}
-            className="max-w-4xl mx-auto"
+            className="mx-auto max-w-4xl"
           >
-            <div className="text-center mb-12">
-              <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">Get Involved</p>
-              <Ornament className="mb-5" />
-              <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-4">You Can Make a Difference</h2>
-              <p className="text-muted-foreground max-w-xl mx-auto">
-                Shoulder the social responsibility of providing nutritious food to those battling health issues.
-                Your generosity earns their prayers and brings immense happiness to your family.
-              </p>
-            </div>
-            <div className="grid sm:grid-cols-3 gap-6">
+            <SectionHeading
+              align="center"
+              eyebrow="Get Involved"
+              title="You Can Make a Difference"
+              subtitle="Shoulder the social responsibility of providing nutritious food to those battling health issues. Your generosity earns their prayers and brings immense happiness to your family."
+            />
+            <div className="grid gap-4 sm:grid-cols-3 md:gap-5">
               {[
                 { icon: Heart, title: "Donate", desc: "Sponsor meals directly. Every ₹25 feeds one person.", cta: "Donate Now", action: () => document.getElementById("donate-section")?.scrollIntoView({ behavior: "smooth" }) },
                 { icon: Users, title: "Volunteer", desc: "Join our kitchen or distribution team. No experience needed.", cta: "Join Us", action: () => window.location.href = "/contact" },
@@ -439,16 +435,16 @@ export default function SubhojanamPage() {
                 <motion.div
                   key={item.title}
                   initial={{ opacity: 0, y: 20 }} animate={inView6 ? { opacity: 1, y: 0 } : {}} transition={{ delay: 0.2 + i * 0.15 }}
-                  className="flex flex-col rounded-2xl border border-border bg-card p-6 text-center"
+                  className="vk-card flex flex-col p-6 text-center"
                 >
-                  <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
-                    <item.icon className="h-6 w-6 text-primary" />
-                  </div>
-                  <h3 className="font-heading font-bold text-foreground mb-2">{item.title}</h3>
-                  <p className="text-sm text-muted-foreground mb-5 flex-1">{item.desc}</p>
+                  <span className="vk-icon-chip mx-auto mb-4">
+                    <item.icon className="h-5 w-5" />
+                  </span>
+                  <h3 className="mb-2 text-base font-bold text-ink">{item.title}</h3>
+                  <p className="mb-5 flex-1 break-words text-sm text-muted-foreground">{item.desc}</p>
                   <button
                     onClick={item.action}
-                    className="mt-auto rounded-full border border-primary/30 bg-primary/5 px-4 py-2 text-xs font-semibold text-primary transition hover:bg-primary/10"
+                    className={`${item.title === "Donate" ? "vk-btn-gold" : "vk-btn-outline"} mt-auto h-11 w-full`}
                   >
                     {item.cta}
                   </button>
@@ -461,45 +457,75 @@ export default function SubhojanamPage() {
 
       {/* ── CHECKOUT MODAL ───────────────────────────────────────── */}
       {checkoutTier && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/60 p-4 backdrop-blur-sm" onClick={closeCheckout}>
-          <div className="w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-elevated" onClick={(e) => e.stopPropagation()}>
-            <div className="mb-4 flex items-center justify-between">
-              <div>
-                <h3 className="font-heading text-lg font-bold">Sponsor {checkoutTier.meals}</h3>
-                <p className="text-xs text-muted-foreground">Touchstone Charities · Subhojanam</p>
+        <div className="fixed inset-0 z-[60] flex items-end justify-center bg-vk-900/60 p-3 backdrop-blur-sm sm:items-center sm:p-4" onClick={closeCheckout}>
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Sponsor ${checkoutTier.meals}`}
+            className="vk-card max-h-[calc(100dvh-1.5rem)] w-full max-w-md overflow-y-auto overscroll-contain !rounded-3xl shadow-lift sm:max-h-[calc(100dvh-2rem)]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="bg-gradient-to-br from-vk-700 via-vk-600 to-vk-500 px-5 py-4 text-white sm:px-7">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/70">Touchstone Charities · Subhojanam</p>
+                  <h3 className="text-lg font-bold text-white">Sponsor {checkoutTier.meals}</h3>
+                </div>
+                <button onClick={closeCheckout} aria-label="Close" className="-mr-2 -mt-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-white/80 transition hover:bg-white/10 hover:text-white">
+                  <X className="h-5 w-5" />
+                </button>
               </div>
-              <button onClick={closeCheckout} aria-label="Close"><X className="h-5 w-5 text-muted-foreground" /></button>
+              <div className="mt-3 flex items-end justify-between gap-3 rounded-xl bg-white/10 px-3.5 py-2.5">
+                <div className="min-w-0">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/70">You are donating</p>
+                  <p className="text-xs text-white/80">for {checkoutTier.meals}</p>
+                </div>
+                <p className="shrink-0 font-heading text-2xl font-extrabold text-[hsl(var(--gold))] sm:text-3xl">₹{checkoutTier.amountValue.toLocaleString("en-IN")}</p>
+              </div>
             </div>
             {status?.type === "success" ? (
-              <div className="flex flex-col items-center py-8 text-center">
+              <div className="flex flex-col items-center p-6 py-8 text-center">
                 <CheckCircle2 className="mb-3 h-14 w-14 text-green-500" />
-                <h4 className="font-heading font-bold text-foreground mb-1">Hare Krishna! 🙏</h4>
-                <p className="text-sm text-muted-foreground mb-6">{status.message}</p>
-                <button onClick={closeCheckout} className="rounded-full bg-gradient-gold px-6 py-2.5 text-sm font-bold text-[hsl(220,60%,12%)]">Close</button>
+                <h4 className="mb-1 font-heading font-bold text-ink">Hare Krishna! 🙏</h4>
+                <p className="mb-6 text-sm text-muted-foreground">{status.message}</p>
+                <button onClick={closeCheckout} className="vk-btn-primary h-11 px-6">Close</button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="rounded-xl bg-gradient-gold p-[2px] shadow-gold">
-                  <div className="rounded-[calc(0.75rem-2px)] bg-card px-4 py-3 text-center">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">You are donating</p>
-                    <p className="font-heading text-3xl font-extrabold text-gold">₹{checkoutTier.amountValue.toLocaleString("en-IN")}</p>
-                    <p className="text-xs text-muted-foreground">for {checkoutTier.meals}</p>
+              <form onSubmit={handleSubmit} className="space-y-4 p-4 sm:p-6">
+                <p className="text-[13px] font-bold uppercase tracking-[0.08em] text-vk-700">Your Details</p>
+                <div className="grid grid-cols-1 gap-3">
+                  <div>
+                    <label htmlFor="sj-name" className="mb-1.5 block text-[13px] font-semibold text-ink/80">Full Name <span className="text-red-600">*</span></label>
+                    <div className="relative">
+                      <User className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-vk-400" />
+                      <input id="sj-name" type="text" required value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} className="vk-input pl-10" placeholder="Full Name" />
+                    </div>
+                  </div>
+                  <div>
+                    <label htmlFor="sj-email" className="mb-1.5 block text-[13px] font-semibold text-ink/80">Email Address <span className="font-normal text-muted-foreground">(optional)</span></label>
+                    <div className="relative">
+                      <Mail className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-vk-400" />
+                      <input id="sj-email" type="email" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} className="vk-input pl-10" placeholder="Email Address (optional)" />
+                    </div>
+                  </div>
+                  <div>
+                    <label htmlFor="sj-mobile" className="mb-1.5 block text-[13px] font-semibold text-ink/80">Mobile Number <span className="text-red-600">*</span></label>
+                    <div className="relative">
+                      <Phone className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-vk-400" />
+                      <input id="sj-mobile" type="tel" required maxLength={10} inputMode="numeric" value={form.mobile} onChange={(e) => setForm((f) => ({ ...f, mobile: e.target.value.replace(/[^\d]/g, "").slice(0, 10) }))} className="vk-input pl-10" placeholder="10-digit Mobile Number" />
+                    </div>
                   </div>
                 </div>
-                <div className="grid grid-cols-1 gap-3">
-                  <input type="text" required value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm" placeholder="Full Name" />
-                  <input type="email" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm" placeholder="Email Address (optional)" />
-                  <input type="tel" required maxLength={10} inputMode="numeric" value={form.mobile} onChange={(e) => setForm((f) => ({ ...f, mobile: e.target.value.replace(/[^\d]/g, "").slice(0, 10) }))} className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm" placeholder="10-digit Mobile Number" />
-                </div>
                 {lookupHint}
-                {status?.type === "error" && <p className="text-sm text-destructive">{status.message}</p>}
-                <button type="submit" disabled={submitting} className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-gold py-3.5 text-sm font-bold text-[hsl(220,60%,12%)] disabled:opacity-60">
-                  {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                {status?.type === "error" && <p className="rounded-xl bg-red-50 px-3.5 py-2.5 text-[13px] font-medium text-red-700">{status.message}</p>}
+                <button type="submit" disabled={submitting} className="vk-btn-gold h-12 w-full text-[15px] font-bold">
+                  {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Heart className="h-4 w-4 fill-current" />}
                   {submitting ? "Processing..." : `Donate ₹${checkoutTier.amountValue.toLocaleString("en-IN")} Now`}
                 </button>
-                <div className="flex items-center justify-center gap-1.5 text-center text-xs text-muted-foreground">
-                  <ShieldCheck className="h-3.5 w-3.5 text-green-500" />
-                  <span>Secured by Razorpay · Funds go to Touchstone Charities</span>
+                <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-center text-[11px] text-muted-foreground">
+                  <span className="inline-flex items-center gap-1"><ShieldCheck className="h-3.5 w-3.5 text-vk-500" /> Secured by Razorpay</span>
+                  <span aria-hidden>·</span>
+                  <span>Funds go to Touchstone Charities</span>
                 </div>
               </form>
             )}

@@ -7,10 +7,10 @@ import { motion } from "framer-motion";
 import {
   Loader2, ShieldCheck, User, Phone, Mail, Check, Copy, CheckCircle2,
   UtensilsCrossed, Sparkles, FileCheck2, Landmark,
-  ChevronDown, ChevronLeft, ChevronRight,
+  ChevronDown, ChevronLeft, ChevronRight, Heart,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
-import Ornament from "@/components/Ornament";
+import SectionHeading from "@/components/site/SectionHeading";
 import DonorPrivilegesSection from "@/components/sqft-campaign/DonorPrivilegesSection";
 import ImportanceSection from "@/components/sqft-campaign/ImportanceSection";
 import FaqSection from "@/components/sqft-campaign/FaqSection";
@@ -136,11 +136,15 @@ const DEITY_PHOTOS = [
 /* Component                                                           */
 /* ------------------------------------------------------------------ */
 
-const inputWrapClass =
-  "relative flex items-center rounded-lg border border-slate-300 bg-white dark:bg-card focus-within:border-gold transition-colors";
-const inputClass =
-  "h-10 w-full bg-transparent pl-9 pr-3 text-sm text-foreground outline-none placeholder:text-muted-foreground";
-const labelClass = "mb-1 block text-[11px] font-medium text-muted-foreground";
+const inputWrapClass = "relative";
+const inputIconClass =
+  "pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-vk-400";
+const inputClass = "vk-input pl-10";
+const labelClass = "mb-1.5 block text-[13px] font-semibold text-ink/80";
+const stepLabelClass = "text-[13px] font-bold uppercase tracking-[0.08em] text-vk-700";
+const addonBoxClass = "rounded-xl border border-vk-100 bg-vk-50/60 px-3.5 py-3";
+const checkboxLabelClass = "flex cursor-pointer items-start gap-2.5 text-[13px] font-medium text-ink";
+const checkboxClass = "mt-0.5 h-4 w-4 shrink-0 accent-vk-700";
 
 export default function AlankaraVastraClient() {
   const attribution = useAttribution("/alankara-vastra-seva");
@@ -367,12 +371,13 @@ export default function AlankaraVastraClient() {
       <main className="bg-white dark:bg-background">
         {/* ── Hero Banner ── */}
         {config.bannerImage ? (
-          <section className="bg-white dark:bg-background pt-[88px] md:pt-[104px]">
+          <section className="bg-gradient-to-b from-vk-50 to-white pt-[var(--header-h)] dark:from-background dark:to-background">
+            <div className="vk-container pt-4 md:pt-6">
             <button
               type="button"
               onClick={scrollToDonate}
               aria-label="Donate — go to the donation form"
-              className="block w-full cursor-pointer overflow-hidden rounded-b-3xl"
+              className="block w-full cursor-pointer overflow-hidden rounded-3xl bg-vk-900 shadow-[0_24px_60px_-28px_rgba(10,18,51,0.6)]"
             >
               <Image
                 src={config.bannerImageMobile || config.bannerImage}
@@ -389,10 +394,11 @@ export default function AlankaraVastraClient() {
                 width={1920}
                 height={730}
                 priority
-                sizes="100vw"
+                sizes="(min-width: 1280px) 1248px, 100vw"
                 className="hidden h-auto w-full md:block"
               />
             </button>
+            </div>
           </section>
         ) : (
           <section className="relative min-h-[85vh] overflow-hidden bg-[hsl(220,90%,12%)]">
@@ -445,66 +451,61 @@ export default function AlankaraVastraClient() {
         )}
 
         {/* ── Donation Form ── */}
-        <section id="donate" ref={formRef} className="scroll-mt-24 bg-white dark:bg-background py-8 md:py-12">
-          <div className="container mx-auto max-w-4xl px-4">
-            <Ornament className="mb-4" />
-            <div className="mb-6 text-center">
-              <p className="mb-1.5 text-xs font-semibold uppercase tracking-[0.25em] text-gold">
-                Temple Service Campaign
-              </p>
-              <h2 className="mb-2 font-heading text-2xl font-bold text-primary md:text-3xl">
-                {config.formHeading}
-              </h2>
-              <p className="mx-auto max-w-xl text-sm leading-relaxed text-muted-foreground">
-                {config.formSubheading}
-              </p>
-            </div>
+        <section id="donate" ref={formRef} className="vk-section scroll-mt-24 bg-white dark:bg-background">
+          <div className="vk-container">
+           <div className="mx-auto max-w-4xl">
+            <SectionHeading
+              eyebrow="Temple Service Campaign"
+              title={config.formHeading}
+              subtitle={config.formSubheading}
+              align="center"
+            />
 
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="overflow-hidden rounded-[28px] border border-slate-200 bg-white dark:bg-card shadow-elevated"
+              className="vk-card overflow-hidden !rounded-3xl"
             >
               {/* Amount summary strip */}
-              <div className="flex items-center justify-between gap-3 bg-gradient-gold px-6 py-4 sm:px-8">
-                <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[hsl(220,90%,12%)]/70">
+              <div className="flex items-center justify-between gap-3 bg-gradient-to-br from-vk-700 via-vk-600 to-vk-500 px-5 py-4 text-white sm:px-7">
+                <div className="min-w-0">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/70">
                     You&apos;re offering
                   </p>
-                  <p className="text-lg font-extrabold text-[hsl(220,90%,12%)] sm:text-xl">
+                  <p className="text-lg font-bold text-white">
                     {useCustom ? "Custom offering" : TIERS[tierIndex]?.label || "Select a tier"}
                   </p>
                 </div>
-                <p className="text-2xl font-extrabold text-[hsl(220,90%,12%)] sm:text-3xl">
+                <p className="shrink-0 font-heading text-2xl font-extrabold text-[hsl(var(--gold))] sm:text-3xl">
                   ₹{finalAmount > 0 ? finalAmount.toLocaleString("en-IN") : "0"}
                 </p>
               </div>
 
-              <form onSubmit={handleSubmit} className="grid gap-6 p-5 sm:p-7 lg:grid-cols-2 lg:gap-8">
+              <form onSubmit={handleSubmit} className="grid gap-6 p-4 sm:p-6 lg:grid-cols-2 lg:gap-8">
                 {/* Left: amount selection */}
-                <div className="space-y-3">
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                <div className="min-w-0 space-y-3">
+                  <p className={stepLabelClass}>
                     Choose Your Offering
                   </p>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-2 gap-2.5">
                     {TIERS.map((tier, i) => (
                       <button
                         key={tier.amount}
                         type="button"
                         onClick={() => { setUseCustom(false); setTierIndex(i); }}
-                        className={`rounded-lg border px-3 py-3 text-left transition-colors ${
+                        className={`min-h-[52px] rounded-xl border px-3 py-2.5 text-left transition-all ${
                           !useCustom && tierIndex === i
-                            ? "border-gold bg-gold/10"
-                            : "border-slate-300 bg-white dark:bg-card hover:border-gold/60"
+                            ? "border-vk-500 bg-vk-50 ring-2 ring-vk-500/20"
+                            : "border-vk-200 bg-white hover:border-vk-400"
                         }`}
                       >
-                        <span className="mb-1 block text-sm font-bold text-primary">{tier.label}</span>
+                        <span className="mb-1 block text-[13px] font-semibold text-ink">{tier.label}</span>
                         <span className="mb-1 block text-[11px] leading-snug text-muted-foreground">
                           {tier.description}
                         </span>
-                        <span className="block text-base font-extrabold text-gold">
+                        <span className="block text-base font-extrabold text-vk-700">
                           ₹{tier.amount.toLocaleString("en-IN")}
                         </span>
                       </button>
@@ -513,14 +514,16 @@ export default function AlankaraVastraClient() {
 
                   {/* Custom amount */}
                   <div
-                    className={`flex items-center gap-3 rounded-lg border px-3 transition-colors ${
-                      useCustom ? "border-gold bg-gold/5" : "border-slate-300 bg-white dark:bg-card"
+                    className={`flex h-11 items-center gap-2 rounded-xl border px-3.5 transition-all ${
+                      useCustom
+                        ? "border-vk-500 bg-vk-50 ring-2 ring-vk-500/20"
+                        : "border-dashed border-vk-200 bg-white focus-within:border-vk-500"
                     }`}
                   >
-                    <label htmlFor="custom-amount" className="shrink-0 text-xs font-medium text-muted-foreground">
+                    <label htmlFor="custom-amount" className="shrink-0 text-[13px] font-medium text-muted-foreground">
                       Other amount
                     </label>
-                    <span className="text-sm text-foreground">₹</span>
+                    <span className="text-sm font-semibold text-vk-700">₹</span>
                     <input
                       id="custom-amount"
                       type="number"
@@ -532,17 +535,22 @@ export default function AlankaraVastraClient() {
                         setUseCustom(true);
                         setCustomAmount(e.target.value);
                       }}
-                      className="h-10 w-full min-w-0 bg-transparent text-sm font-semibold text-foreground outline-none placeholder:font-normal placeholder:text-muted-foreground"
+                      className="h-full w-full min-w-0 bg-transparent text-[15px] font-semibold text-ink outline-none placeholder:font-normal placeholder:text-muted-foreground"
                     />
                   </div>
 
                   {/* Bank transfer */}
-                  <details className="group rounded-lg border border-border bg-background/60 px-3 py-2">
-                    <summary className="flex cursor-pointer list-none items-center justify-between text-xs font-semibold text-foreground">
-                      Prefer a direct bank transfer?
-                      <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform group-open:rotate-180" />
+                  <details className="group rounded-xl border border-vk-100 bg-white px-3.5 py-1">
+                    <summary className="flex min-h-[40px] cursor-pointer list-none items-center justify-between gap-2 text-[13px] font-semibold text-ink">
+                      <span className="flex items-center gap-2">
+                        <Landmark className="h-4 w-4 shrink-0 text-vk-500" />
+                        Prefer a direct bank transfer?
+                      </span>
+                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-vk-100 text-vk-700 transition-transform group-open:rotate-180">
+                        <ChevronDown className="h-3.5 w-3.5" />
+                      </span>
                     </summary>
-                    <div className="mt-2.5 space-y-1.5">
+                    <div className="mb-2.5 mt-1.5 space-y-2 rounded-xl bg-vk-50 p-4 text-sm">
                       {(
                         [
                           ["Beneficiary", BANK_DETAILS.beneficiaryName],
@@ -551,25 +559,25 @@ export default function AlankaraVastraClient() {
                           ["IFSC", BANK_DETAILS.ifsc],
                         ] as const
                       ).map(([label, value]) => (
-                        <div key={label} className="flex items-center justify-between gap-2 text-xs">
-                          <span className="text-muted-foreground">{label}</span>
+                        <div key={label} className="flex items-center justify-between gap-3 text-xs">
+                          <span className="shrink-0 text-muted-foreground">{label}</span>
                           <button
                             type="button"
                             onClick={() => handleCopy(label, value)}
-                            className="flex items-center gap-1.5 font-semibold text-foreground hover:text-gold"
+                            className="flex min-w-0 items-center gap-1.5 text-right font-semibold text-ink hover:text-vk-700"
                           >
-                            {value}
+                            <span className="min-w-0 break-all">{value}</span>
                             {copiedField === label ? (
-                              <Check className="h-3 w-3 text-green-600" />
+                              <Check className="h-3.5 w-3.5 shrink-0 text-green-600" />
                             ) : (
-                              <Copy className="h-3 w-3 text-muted-foreground" />
+                              <Copy className="h-3.5 w-3.5 shrink-0 text-vk-400" />
                             )}
                           </button>
                         </div>
                       ))}
-                      <p className="pt-1 text-[11px] leading-relaxed text-muted-foreground">
+                      <p className="border-t border-vk-100 pt-2 text-[11px] leading-relaxed text-muted-foreground">
                         Email your transaction reference and PAN (for 80G) to{" "}
-                        <a href={`mailto:${config.email}`} className="font-semibold text-gold">
+                        <a href={`mailto:${config.email}`} className="break-all font-semibold text-vk-700 hover:underline">
                           {config.email}
                         </a>
                         .
@@ -579,12 +587,13 @@ export default function AlankaraVastraClient() {
                 </div>
 
                 {/* Right: details, add-ons, submit */}
-                <div className="flex flex-col space-y-3">
+                <div className="flex min-w-0 flex-col space-y-3">
+                  <p className={stepLabelClass}>Your Details</p>
                   <div className="grid gap-3 sm:grid-cols-2">
                     <div>
                       <label htmlFor="donor-name" className={labelClass}>Full name</label>
                       <div className={inputWrapClass}>
-                        <User className="pointer-events-none absolute left-3 h-4 w-4 text-muted-foreground" />
+                        <User className={inputIconClass} />
                         <input
                           id="donor-name"
                           type="text"
@@ -599,7 +608,7 @@ export default function AlankaraVastraClient() {
                     <div>
                       <label htmlFor="donor-mobile" className={labelClass}>Mobile number</label>
                       <div className={inputWrapClass}>
-                        <Phone className="pointer-events-none absolute left-3 h-4 w-4 text-muted-foreground" />
+                        <Phone className={inputIconClass} />
                         <input
                           id="donor-mobile"
                           type="tel"
@@ -620,7 +629,7 @@ export default function AlankaraVastraClient() {
                   <div>
                     <label htmlFor="donor-email" className={labelClass}>Email address (optional)</label>
                     <div className={inputWrapClass}>
-                      <Mail className="pointer-events-none absolute left-3 h-4 w-4 text-muted-foreground" />
+                      <Mail className={inputIconClass} />
                       <input
                         id="donor-email"
                         type="email"
@@ -642,8 +651,8 @@ export default function AlankaraVastraClient() {
 
                   {/* 80G */}
                   {finalAmount > 999 && (
-                  <div className="rounded-lg border border-border bg-background/60 px-3 py-2">
-                    <label className="flex cursor-pointer items-center gap-2 text-xs font-medium text-foreground">
+                  <div className={addonBoxClass}>
+                    <label className={checkboxLabelClass}>
                       <input
                         type="checkbox"
                         checked={want80G}
@@ -651,7 +660,7 @@ export default function AlankaraVastraClient() {
                           setWant80G(e.target.checked);
                           handle80GToggle(e.target.checked);
                         }}
-                        className="h-3.5 w-3.5 shrink-0 accent-[hsl(42,92%,46%)]"
+                        className={checkboxClass}
                       />
                       I need an 80G tax exemption receipt
                     </label>
@@ -662,7 +671,7 @@ export default function AlankaraVastraClient() {
                         placeholder="PAN number *"
                         value={form.panNumber}
                         onChange={(e) => setForm({ ...form, panNumber: e.target.value.toUpperCase() })}
-                        className="mt-2 h-9 w-full rounded-lg border border-slate-300 bg-white dark:bg-card px-3 text-xs uppercase outline-none focus:border-gold"
+                        className="vk-input mt-2.5 uppercase"
                       />
                     )}
                   </div>
@@ -670,8 +679,8 @@ export default function AlankaraVastraClient() {
 
                   {/* Maha Prasadam (one-time donations only) */}
                   {finalAmount > 999 && !monthly && (
-                    <div className="rounded-lg border border-border bg-background/60 px-3 py-2">
-                      <label className="flex cursor-pointer items-center gap-2 text-xs font-medium text-foreground">
+                    <div className={addonBoxClass}>
+                      <label className={checkboxLabelClass}>
                         <input
                           type="checkbox"
                           checked={wantsMahaPrasadam}
@@ -679,7 +688,7 @@ export default function AlankaraVastraClient() {
                             setWantsMahaPrasadam(e.target.checked);
                             handlePrasadamToggle(e.target.checked);
                           }}
-                          className="h-3.5 w-3.5 shrink-0 accent-[hsl(42,92%,46%)]"
+                          className={checkboxClass}
                         />
                         🙏 I&apos;d like Maha Prasadam delivered
                       </label>
@@ -697,19 +706,21 @@ export default function AlankaraVastraClient() {
                         return next;
                       });
                     }}
-                    className={`flex w-full items-center gap-3 rounded-lg border px-3 py-2.5 text-left transition-colors ${
-                      monthly ? "border-gold bg-gold/10" : "border-slate-300 bg-white dark:bg-card hover:border-gold/60"
+                    className={`flex min-h-[52px] w-full items-center gap-3 rounded-xl border px-3.5 py-2.5 text-left transition-all ${
+                      monthly
+                        ? "border-vk-500 bg-vk-50 ring-2 ring-vk-500/20"
+                        : "border-vk-200 bg-white hover:border-vk-400"
                     }`}
                   >
                     <span
                       className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border ${
-                        monthly ? "border-gold bg-gold text-white" : "border-border"
+                        monthly ? "border-vk-700 bg-vk-700 text-white" : "border-vk-300 bg-white"
                       }`}
                     >
                       {monthly && <Check className="h-3.5 w-3.5" />}
                     </span>
-                    <span className="flex-1">
-                      <span className="block text-sm font-bold text-primary">🔁 Make it a monthly seva</span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-[13px] font-semibold text-ink">🔁 Make it a monthly seva</span>
                       <span className="block text-[11px] leading-snug text-muted-foreground">
                         {monthly && finalAmount > 0
                           ? `Auto-pay ₹${finalAmount.toLocaleString("en-IN")} every month. Cancel anytime.`
@@ -720,7 +731,7 @@ export default function AlankaraVastraClient() {
 
                   {status && (
                     <p
-                      className={`rounded-lg px-3 py-2 text-xs font-medium ${
+                      className={`rounded-xl px-3.5 py-2.5 text-[13px] font-medium ${
                         status.type === "success" ? "bg-green-50 text-green-800" : "bg-red-50 text-red-700"
                       }`}
                     >
@@ -733,7 +744,7 @@ export default function AlankaraVastraClient() {
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-gradient-gold text-sm font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)] transition-transform hover:scale-[1.01] disabled:opacity-60 disabled:hover:scale-100"
+                    className="vk-btn-gold h-12 w-full text-[15px] font-bold"
                   >
                     {submitting ? (
                       <>
@@ -745,13 +756,16 @@ export default function AlankaraVastraClient() {
                       <>Donate ₹{finalAmount > 0 ? finalAmount.toLocaleString("en-IN") : "—"}</>
                     )}
                   </button>
-                  <p className="flex items-center justify-center gap-1.5 text-center text-[11px] text-muted-foreground">
-                    <ShieldCheck className="h-3.5 w-3.5 text-gold" />
-                    Secure payment via Razorpay · UPI, cards &amp; netbanking accepted
+                  <p className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-center text-[11px] text-muted-foreground">
+                    <span className="inline-flex items-center gap-1.5">
+                      <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-vk-500" />
+                      Secure payment via Razorpay · UPI, cards &amp; netbanking accepted
+                    </span>
                   </p>
                 </div>
               </form>
             </motion.div>
+           </div>
           </div>
         </section>
 
@@ -759,28 +773,21 @@ export default function AlankaraVastraClient() {
         <DonorPrivilegesSection scrollToDonate={scrollToDonate} config={config} />
 
         {/* ── Deity Alankara Photos ── */}
-        <section className="bg-white dark:bg-background py-12 md:py-16">
-          <div className="container mx-auto max-w-6xl px-4">
-            <Ornament className="mb-6" />
-            <div className="mb-8 flex items-end justify-between gap-4">
-              <div>
-                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-gold">
-                  Divine beauty in every detail
-                </p>
-                <h2 className="font-heading text-2xl font-bold text-primary md:text-3xl">
-                  Deity Alankara Gallery
-                </h2>
-                <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground md:text-base">
-                  Witness the exquisite daily dressing and ornamentation of Sri Sri Radha Madan Mohan —
-                  each alankara a labour of love offered with devotion.
-                </p>
-              </div>
-              <div className="hidden gap-2 sm:flex">
+        <section className="vk-section vk-band">
+          <div className="vk-container">
+            <div className="mb-8 flex items-end justify-between gap-4 md:mb-10">
+              <SectionHeading
+                eyebrow="Divine beauty in every detail"
+                title="Deity Alankara Gallery"
+                subtitle="Witness the exquisite daily dressing and ornamentation of Sri Sri Radha Madan Mohan — each alankara a labour of love offered with devotion."
+                className="!mb-0"
+              />
+              <div className="hidden shrink-0 gap-2 sm:flex">
                 <button
                   type="button"
                   aria-label="Scroll left"
                   onClick={() => galleryRef.current?.scrollBy({ left: -galleryRef.current.offsetWidth, behavior: "smooth" })}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-border text-muted-foreground transition hover:border-gold hover:text-gold"
+                  className="flex h-11 w-11 items-center justify-center rounded-full border border-vk-200 bg-white text-vk-700 transition hover:border-vk-500 hover:bg-vk-50"
                 >
                   <ChevronLeft className="h-5 w-5" />
                 </button>
@@ -788,7 +795,7 @@ export default function AlankaraVastraClient() {
                   type="button"
                   aria-label="Scroll right"
                   onClick={() => galleryRef.current?.scrollBy({ left: galleryRef.current.offsetWidth, behavior: "smooth" })}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-border text-muted-foreground transition hover:border-gold hover:text-gold"
+                  className="flex h-11 w-11 items-center justify-center rounded-full border border-vk-200 bg-white text-vk-700 transition hover:border-vk-500 hover:bg-vk-50"
                 >
                   <ChevronRight className="h-5 w-5" />
                 </button>
@@ -797,7 +804,7 @@ export default function AlankaraVastraClient() {
 
             <div
               ref={galleryRef}
-              className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              className="vk-scroller [scroll-padding-inline:0px]"
             >
               {galleryPages.map((page, pageIndex) => (
                 <div
@@ -812,18 +819,17 @@ export default function AlankaraVastraClient() {
                           whileInView={{ opacity: 1, y: 0 }}
                           viewport={{ once: true }}
                           transition={{ delay: i * 0.06, duration: 0.5 }}
-                          className="group relative aspect-[4/5] overflow-hidden rounded-2xl border border-border shadow-sm"
+                          className="vk-tile aspect-[4/5]"
                         >
                           <Image
                             src={photo.src}
                             alt={photo.caption}
                             fill
                             sizes="(max-width: 768px) 50vw, 33vw"
-                            className="object-cover transition-transform duration-500 group-hover:scale-110"
+                            className="object-cover"
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                          <div className="absolute inset-x-0 bottom-0 p-3 translate-y-full transition-transform duration-300 group-hover:translate-y-0 md:p-4">
-                            <p className="text-xs font-semibold text-white md:text-sm">{photo.caption}</p>
+                          <div className="vk-tile-caption !p-3 md:!p-4">
+                            <p className="text-xs font-semibold leading-snug text-white md:text-sm">{photo.caption}</p>
                           </div>
                         </motion.div>
                     ))}
@@ -833,7 +839,7 @@ export default function AlankaraVastraClient() {
             </div>
 
             {/* Mobile scroll hint */}
-            <div className="mt-4 flex justify-center gap-1.5 sm:hidden">
+            <div className="mt-3 flex justify-center gap-1.5 sm:hidden">
               {galleryPages.map((_, i) => (
                 <button
                   key={i}
@@ -845,9 +851,11 @@ export default function AlankaraVastraClient() {
                       container.scrollTo({ left: i * container.offsetWidth, behavior: "smooth" });
                     }
                   }}
-                  className="h-1.5 rounded-full bg-border transition-all hover:bg-gold/50"
+                  className="group flex h-8 items-center"
                   style={{ width: 24 }}
-                />
+                >
+                  <span className="block h-1.5 w-full rounded-full bg-vk-200 transition-colors group-hover:bg-vk-400" />
+                </button>
               ))}
             </div>
           </div>
@@ -864,13 +872,24 @@ export default function AlankaraVastraClient() {
 
         {/* ── Sticky mobile donate bar ── */}
         {showSticky && (
-        <div className="fixed inset-x-0 bottom-0 z-40 flex justify-center px-3 pb-3 pt-1 md:hidden">
-          <button
-            onClick={scrollToDonate}
-            className="inline-flex items-center gap-1.5 rounded-full bg-gradient-gold px-5 py-2 text-xs font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)]"
-          >
-            🪔 Donate Now
-          </button>
+        <div className="fixed left-3 right-[76px] bottom-[calc(64px+env(safe-area-inset-bottom))] z-40 lg:hidden">
+          <div className="flex items-center justify-between gap-3 rounded-2xl border border-vk-100 bg-white/95 p-2 pl-4 shadow-lift backdrop-blur">
+            <div className="min-w-0">
+              <p className="truncate text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                You&apos;re offering
+              </p>
+              <p className="truncate font-heading text-base font-extrabold text-vk-700">
+                ₹{finalAmount > 0 ? finalAmount.toLocaleString("en-IN") : "0"}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={scrollToDonate}
+              className="vk-btn-gold h-11 shrink-0 px-5"
+            >
+              <Heart className="h-4 w-4 fill-current" /> Donate Now
+            </button>
+          </div>
         </div>
         )}
       </main>

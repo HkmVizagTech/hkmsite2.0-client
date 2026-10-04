@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, ChevronRight, Home } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
+import SectionHeading from "@/components/site/SectionHeading";
 
 interface Blog {
   _id: string;
@@ -80,106 +81,133 @@ export default async function CategoryPage({
 
   return (
     <PageLayout>
-    <main className="bg-white dark:bg-background pt-20">
-      <div className="container mx-auto px-4 py-8 md:py-12">
-        {/* Breadcrumb */}
-        <nav className="text-xs md:text-sm text-muted-foreground mb-6 flex items-center gap-1.5 flex-wrap">
-          <Link href="/" className="hover:text-foreground transition">Home</Link>
-          <ChevronRight className="w-3.5 h-3.5" />
-          <Link href="/blogs" className="hover:text-foreground transition">Blogs</Link>
-          <ChevronRight className="w-3.5 h-3.5" />
-          <span className="text-foreground/90">{cat.name}</span>
-        </nav>
-
-        <header className="mb-10 max-w-3xl">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-2">
-            Category
-          </p>
-          <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-3">
-            {cat.name}
-          </h1>
-          <p className="text-muted-foreground">
-            {cat.count} {cat.count === 1 ? "post" : "posts"} in this category
-          </p>
-        </header>
-
-        {blogs.length === 0 ? (
-          <div className="text-center py-16 bg-muted/30 rounded-2xl">
-            <p className="text-muted-foreground">No posts in this category yet.</p>
-            <Link
-              href="/blogs"
-              className="inline-block mt-4 text-primary font-semibold hover:underline"
-            >
-              ← Back to all blogs
+    <main className="overflow-x-hidden bg-white pt-[var(--header-h)]">
+      {/* ─── Tinted hero ─── */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-vk-100 via-vk-50 to-white">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-vk-300/30 blur-3xl"
+        />
+        <div className="vk-container relative pb-8 pt-8 md:pb-12 md:pt-14">
+          {/* Breadcrumb */}
+          <nav
+            aria-label="Breadcrumb"
+            className="mb-5 inline-flex max-w-full items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-medium text-ink/70 shadow-sm md:text-[13px]"
+          >
+            <Link href="/" className="inline-flex shrink-0 items-center gap-1 transition-colors hover:text-vk-700">
+              <Home className="h-3.5 w-3.5" />
+              Home
             </Link>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-            {blogs.map((b) => (
-              <Link
-                key={b._id}
-                href={`/blogs/${b.slug}`}
-                className="group block bg-card rounded-2xl overflow-hidden border hover:shadow-md transition"
-              >
-                <div
-                  className="aspect-[16/10] bg-cover bg-center"
-                  style={{
-                    backgroundImage: b.coverImage
-                      ? `url(${b.coverImage})`
-                      : "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))",
-                  }}
-                />
-                <div className="p-5">
-                  <h3 className="font-bold text-base leading-snug group-hover:text-primary transition line-clamp-2 mb-2">
-                    {b.title}
-                  </h3>
-                  {b.excerpt && (
-                    <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
-                      {b.excerpt}
-                    </p>
-                  )}
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    {b.author?.avatar ? (
+            <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-60" />
+            <Link href="/blogs" className="shrink-0 transition-colors hover:text-vk-700">Blogs</Link>
+            <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-60" />
+            <span className="truncate font-semibold text-vk-700" aria-current="page">{cat.name}</span>
+          </nav>
+
+          <header className="max-w-3xl">
+            <span className="vk-pill mb-3">Category</span>
+            <h1 className="vk-h1">{cat.name}</h1>
+            <p className="vk-lead mt-3">
+              {cat.count} {cat.count === 1 ? "post" : "posts"} in this category
+            </p>
+          </header>
+        </div>
+      </section>
+
+      <section className="pb-12 pt-4 md:pb-16">
+        <div className="vk-container">
+          {blogs.length === 0 ? (
+            <div className="vk-card mx-auto max-w-md p-10 text-center">
+              <p className="text-muted-foreground">No posts in this category yet.</p>
+              <Link href="/blogs" className="vk-btn-outline mt-5">
+                <ArrowLeft className="h-4 w-4" /> Back to all blogs
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:gap-6 lg:grid-cols-3">
+              {blogs.map((b) => (
+                <Link
+                  key={b._id}
+                  href={`/blogs/${b.slug}`}
+                  className="vk-card vk-card-hover group flex h-full flex-col overflow-hidden"
+                >
+                  <div className="relative aspect-[16/10] overflow-hidden bg-vk-100">
+                    {b.coverImage ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
-                        src={b.author.avatar}
-                        alt=""
-                        className="w-6 h-6 rounded-full object-cover"
+                        src={b.coverImage}
+                        alt={b.title}
+                        loading="lazy"
+                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
                     ) : (
-                      <div className="w-6 h-6 rounded-full bg-primary/15 grid place-items-center text-[10px] font-bold text-primary">
-                        {(b.author?.name || "A").charAt(0)}
-                      </div>
+                      <div className="absolute inset-0 bg-gradient-to-br from-vk-700 via-vk-600 to-vk-400" />
                     )}
-                    <span>By {b.author?.name || "Admin"}</span>
-                    <span>·</span>
-                    <span>{fmtDate(b.publishedAt || b.createdAt)}</span>
+                    <span className="absolute left-3 top-3 max-w-[85%] truncate rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-vk-800 shadow">
+                      {b.category || cat.name}
+                    </span>
                   </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
+                  <div className="flex flex-1 flex-col p-5">
+                    <h3 className="mb-2 line-clamp-2 text-base font-bold leading-snug text-ink transition-colors group-hover:text-vk-700 md:text-lg">
+                      {b.title}
+                    </h3>
+                    {b.excerpt && (
+                      <p className="mb-3 line-clamp-2 text-sm text-muted-foreground">
+                        {b.excerpt}
+                      </p>
+                    )}
+                    <div className="mt-auto flex items-center gap-2 pt-1 text-xs text-muted-foreground">
+                      {b.author?.avatar ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={b.author.avatar}
+                          alt=""
+                          className="h-6 w-6 rounded-full object-cover"
+                        />
+                      ) : (
+                        <div className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-vk-100 text-[10px] font-bold text-vk-700">
+                          {(b.author?.name || "A").charAt(0)}
+                        </div>
+                      )}
+                      <span className="truncate">By {b.author?.name || "Admin"}</span>
+                      <span aria-hidden>·</span>
+                      <span className="whitespace-nowrap">{fmtDate(b.publishedAt || b.createdAt)}</span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
 
-        {/* Other categories — small nav */}
-        {otherCats.length > 0 && (
-          <section className="border-t pt-12">
-            <h2 className="text-lg font-bold mb-4">Other Categories</h2>
+      {/* Other categories — chips */}
+      {otherCats.length > 0 && (
+        <section className="vk-section vk-band">
+          <div className="vk-container">
+            <SectionHeading
+              eyebrow="Keep Exploring"
+              title="Other Categories"
+              action={{ href: "/blogs", label: "All Blogs" }}
+            />
             <div className="flex flex-wrap gap-2">
               {otherCats.map((c) => (
                 <Link
                   key={c.slug}
                   href={`/blogs/categories/${c.slug}`}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted hover:bg-primary/10 hover:text-primary transition text-sm font-medium"
+                  className="group inline-flex min-h-[44px] items-center gap-2 rounded-full border border-vk-200 bg-white px-4 text-sm font-medium text-ink/85 shadow-sm transition-colors hover:border-vk-700 hover:text-vk-700"
                 >
                   {c.name}
-                  <span className="text-xs text-muted-foreground">({c.count})</span>
+                  <span className="rounded-full bg-vk-100 px-1.5 py-0.5 text-[11px] font-bold text-vk-700">
+                    {c.count}
+                  </span>
+                  <ArrowRight className="h-3.5 w-3.5 opacity-0 transition-opacity group-hover:opacity-100" />
                 </Link>
               ))}
             </div>
-          </section>
-        )}
-      </div>
+          </div>
+        </section>
+      )}
     </main>
     </PageLayout>
   );

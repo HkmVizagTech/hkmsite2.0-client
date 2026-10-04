@@ -199,117 +199,131 @@ export default function ShopCatalogPage() {
     if (!loadingMore && page < pages) load(page + 1, true);
   };
 
+  // Shared pill styles for the filter row (GVD rounded-full chips).
+  const chipCls =
+    "inline-flex h-10 shrink-0 items-center gap-2 rounded-full border px-4 text-xs font-semibold transition-colors sm:text-sm";
+  const chipIdle = "border-vk-200 bg-white text-ink hover:border-vk-500 hover:text-vk-700";
+  const arrowCls =
+    "flex h-10 w-10 items-center justify-center rounded-full border border-vk-200 bg-white text-vk-700 transition-colors hover:border-vk-700 hover:bg-vk-50";
+
   return (
-    <div>
+    <div className="bg-white">
       {/* ═══ HERO BANNER — replaced by a slim results band while searching so
           the matches are visible the moment the devotee types. ═══ */}
       {searchActive ? (
-        <section className="mx-auto max-w-[1440px] px-4 pt-5 sm:px-6 lg:px-8">
-          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-border pb-4">
-            <div className="flex min-w-0 flex-wrap items-baseline gap-x-2.5 gap-y-1">
-              <h1 className="truncate font-heading text-xl font-bold text-foreground sm:text-2xl">
-                Results for <span className="text-primary">“{search}”</span>
-              </h1>
-              <span className="shrink-0 text-xs text-muted-foreground sm:text-sm">
-                {loading ? "Searching…" : `${total} item${total === 1 ? "" : "s"}`}
-              </span>
+        <section className="bg-gradient-to-b from-vk-50 to-white">
+          <div className="vk-container pt-5">
+            <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-vk-100 pb-4">
+              <div className="flex min-w-0 flex-wrap items-baseline gap-x-2.5 gap-y-1">
+                <h1 className="truncate font-heading text-xl font-extrabold tracking-[-0.02em] text-ink sm:text-2xl">
+                  Results for <span className="text-vk-700">“{search}”</span>
+                </h1>
+                <span className="shrink-0 text-xs text-muted-foreground sm:text-sm">
+                  {loading ? "Searching…" : `${total} item${total === 1 ? "" : "s"}`}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSearch("")}
+                className={`${chipCls} ${chipIdle} !h-9 !px-3.5 !text-xs`}
+              >
+                <X className="h-3.5 w-3.5" /> Clear search
+              </button>
             </div>
-            <button
-              type="button"
-              onClick={() => setSearch("")}
-              className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full border border-border bg-background px-3.5 text-xs font-semibold text-foreground transition-colors hover:border-gold hover:text-primary"
-            >
-              <X className="h-3.5 w-3.5" /> Clear search
-            </button>
           </div>
         </section>
       ) : (
-        <section id="shop-hero" className="relative">
+        <section id="shop-hero" className="bg-gradient-to-b from-vk-50 to-white pt-4 md:pt-6">
           {/* The banner itself comes in two crops — a wide desktop frame and a
-              taller mobile one that still breathes on a small screen. Like the
-              festival pages, its bottom edge curves. */}
-          <div className="overflow-hidden rounded-b-[2rem] md:rounded-b-[2.5rem]">
-            <picture>
-              <source media="(max-width: 640px)" srcSet={SHOP_BANNER_MOBILE} />
-              <img
-                src={SHOP_BANNER_DESKTOP}
-                alt="The Hare Krishna temple shop — books, puja items & sacred gifts"
-                className="block h-auto w-full"
-              />
-            </picture>
+              taller mobile one that still breathes on a small screen — shown
+              as an inset rounded card, GVD-style. */}
+          <div className="vk-container">
+            <div className="overflow-hidden rounded-3xl bg-vk-900 shadow-[0_24px_60px_-28px_rgba(10,18,51,0.6)]">
+              <picture>
+                <source media="(max-width: 640px)" srcSet={SHOP_BANNER_MOBILE} />
+                <img
+                  src={SHOP_BANNER_DESKTOP}
+                  alt="The Hare Krishna temple shop — books, puja items & sacred gifts"
+                  className="block h-auto w-full"
+                />
+              </picture>
+            </div>
           </div>
 
           {/* A real H1 + short intro. The shop is the temple store, so both
               matter for search: one clear heading, then who we are and what
               every purchase funds. */}
-          <section className="mx-auto max-w-[1440px] px-4 pt-6 sm:px-6 lg:px-8">
-            <h1 className="font-heading text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-              ISKCON Vizag Shop — <span className="text-gradient-gold">Matchless Gifts</span>
+          <div className="vk-container pt-7 md:pt-9">
+            <h1 className="vk-h2">
+              ISKCON Vizag Shop — <span className="text-vk-700">Matchless Gifts</span>
             </h1>
-            <div className="mt-3 h-1 w-16 rounded-full bg-gradient-gold" />
-            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+            <p className="vk-lead mt-3 max-w-3xl">
               Welcome to the online store of the ISKCON Visakhapatnam temple — the
               Hare Krishna Movement, Gambheeram. Here you&apos;ll find
               Bhagavad Gita As It Is and Srila Prabhupada&apos;s books, puja
               essentials, japa malas, murtis and devotional gifts. Every purchase
               supports the temple&apos;s daily sevas, annadanam and Go-seva.
             </p>
-          </section>
+          </div>
         </section>
       )}
 
       {/* ═══ ANNOUNCEMENT + CLOSED BANNERS ═══ */}
       {settings?.announcement && (
-        <div className="flex items-center justify-center gap-2 bg-gold/10 px-4 py-2.5 text-center text-xs font-medium text-gold-deep sm:text-sm">
-          <Megaphone className="h-3.5 w-3.5 shrink-0" />
-          {settings.announcement}
+        <div className="vk-container mt-4">
+          <div className="flex items-center justify-center gap-2 rounded-2xl bg-vk-50 px-4 py-2.5 text-center text-xs font-semibold text-vk-700 sm:text-sm">
+            <Megaphone className="h-3.5 w-3.5 shrink-0" />
+            {settings.announcement}
+          </div>
         </div>
       )}
 
       {settings && !settings.shopEnabled && (
-        <div className="bg-amber-50 px-4 py-3 text-center text-sm font-medium text-amber-800">
-          The shop is temporarily closed for orders. You can still browse — please check back soon.
+        <div className="vk-container mt-4">
+          <div className="rounded-2xl bg-amber-50 px-4 py-3 text-center text-sm font-medium text-amber-800">
+            The shop is temporarily closed for orders. You can still browse — please check back soon.
+          </div>
         </div>
       )}
 
       {/* ═══ STICKY FILTERS ═══ */}
-      <div className="sticky top-16 z-30 border-b border-border bg-background/95 backdrop-blur-md sm:top-[72px]">
+      <div className="sticky top-16 z-30 mt-4 border-b border-vk-100 bg-white/95 backdrop-blur-md sm:top-[72px]">
         {/* On mobile the filters live in one swipeable row (the pattern the
             big storefronts use) rather than wrapping onto two lines. */}
-        <div className="mx-auto flex max-w-[1440px] items-center gap-2 overflow-x-auto px-4 py-3 sm:px-6 lg:px-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="vk-container flex items-center gap-2 overflow-x-auto py-3 scrollbar-hide">
           {/* Category selector */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
-                className="inline-flex h-10 shrink-0 items-center gap-2 rounded-full border border-border bg-background px-4 text-xs font-semibold text-foreground transition-colors hover:border-gold sm:text-sm"
+                className={`${chipCls} ${category !== "all" ? "border-vk-700 bg-vk-700 text-white" : chipIdle}`}
                 aria-label="Filter by category"
               >
-                <LayoutGrid className="h-4 w-4 text-muted-foreground" />
+                <LayoutGrid className={`h-4 w-4 ${category !== "all" ? "text-white/80" : "text-vk-500"}`} />
                 {activeCategoryName ?? "All categories"}
-                <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+                <ChevronDown className={`h-3.5 w-3.5 ${category !== "all" ? "text-white/80" : "text-muted-foreground"}`} />
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="max-h-96 w-64 overflow-y-auto p-1.5">
+            <DropdownMenuContent align="start" className="max-h-96 w-64 overflow-y-auto rounded-2xl p-1.5">
               <DropdownMenuLabel className="px-2 py-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Category
               </DropdownMenuLabel>
-              <DropdownMenuItem onSelect={() => setCategory("all")}>
+              <DropdownMenuItem onSelect={() => setCategory("all")} className="rounded-lg">
                 <span className="flex w-full items-center justify-between gap-3">
                   All categories
-                  {category === "all" && <Check className="h-4 w-4 text-primary" />}
+                  {category === "all" && <Check className="h-4 w-4 text-vk-700" />}
                 </span>
               </DropdownMenuItem>
               {categories.map((c) => (
-                <DropdownMenuItem key={c._id} onSelect={() => setCategory(c.slug)}>
+                <DropdownMenuItem key={c._id} onSelect={() => setCategory(c.slug)} className="rounded-lg">
                   <span className="flex w-full items-center justify-between gap-3">
                     {c.name}
                     <span className="flex items-center gap-2">
                       {c.productCount > 0 && (
-                        <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
+                        <span className="rounded-full bg-vk-100 px-1.5 py-0.5 text-[10px] font-semibold text-vk-700">
                           {c.productCount}
                         </span>
                       )}
-                      {category === c.slug && <Check className="h-4 w-4 text-primary" />}
+                      {category === c.slug && <Check className="h-4 w-4 text-vk-700" />}
                     </span>
                   </span>
                 </DropdownMenuItem>
@@ -320,23 +334,20 @@ export default function ShopCatalogPage() {
           {/* Sort selector */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button
-                className="inline-flex h-10 shrink-0 items-center gap-2 rounded-full border border-border bg-background px-4 text-xs font-semibold text-foreground transition-colors hover:border-gold sm:text-sm"
-                aria-label="Sort products"
-              >
-                <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground" />
+              <button className={`${chipCls} ${chipIdle}`} aria-label="Sort products">
+                <ArrowUpDown className="h-3.5 w-3.5 text-vk-500" />
                 {SORTS.find((s) => s.value === sort)?.label ?? "Sort"}
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-56 p-1.5">
+            <DropdownMenuContent align="start" className="w-56 rounded-2xl p-1.5">
               <DropdownMenuLabel className="px-2 py-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Sort by
               </DropdownMenuLabel>
               {SORTS.map((s) => (
-                <DropdownMenuItem key={s.value} onSelect={() => setSort(s.value)}>
+                <DropdownMenuItem key={s.value} onSelect={() => setSort(s.value)} className="rounded-lg">
                   <span className="flex w-full items-center justify-between gap-3">
                     {s.label}
-                    {sort === s.value && <Check className="h-4 w-4 text-primary" />}
+                    {sort === s.value && <Check className="h-4 w-4 text-vk-700" />}
                   </span>
                 </DropdownMenuItem>
               ))}
@@ -348,22 +359,18 @@ export default function ShopCatalogPage() {
             type="button"
             onClick={() => setInStockOnly((v) => !v)}
             aria-pressed={inStockOnly}
-            className={`inline-flex h-10 shrink-0 items-center gap-2 rounded-full border px-4 text-xs font-semibold transition-colors sm:text-sm ${
-              inStockOnly
-                ? "border-gold bg-gold/10 text-gold-deep"
-                : "border-border bg-background text-foreground hover:border-gold"
-            }`}
+            className={`${chipCls} ${inStockOnly ? "border-vk-700 bg-vk-700 text-white" : chipIdle}`}
           >
-            <Check className={`h-3.5 w-3.5 ${inStockOnly ? "text-gold-deep" : "text-muted-foreground"}`} />
+            <Check className={`h-3.5 w-3.5 ${inStockOnly ? "text-white" : "text-muted-foreground"}`} />
             In stock only
           </button>
         </div>
 
         {/* Active filter chips */}
         {(category !== "all" || search || inStockOnly) && (
-          <div className="mx-auto flex max-w-[1440px] flex-wrap items-center gap-2 px-4 pb-3 sm:px-6 lg:px-8">
+          <div className="vk-container flex flex-wrap items-center gap-2 pb-3">
             {category !== "all" && (
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-xs font-semibold text-gold-deep">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-vk-100 px-3 py-1 text-xs font-semibold text-vk-700">
                 {activeCategoryName ?? "Category"}
                 <button onClick={() => setCategory("all")} aria-label="Remove category filter">
                   <X className="h-3 w-3" />
@@ -371,7 +378,7 @@ export default function ShopCatalogPage() {
               </span>
             )}
             {inStockOnly && (
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-xs font-semibold text-gold-deep">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-vk-100 px-3 py-1 text-xs font-semibold text-vk-700">
                 In stock only
                 <button onClick={() => setInStockOnly(false)} aria-label="Remove in-stock filter">
                   <X className="h-3 w-3" />
@@ -384,7 +391,7 @@ export default function ShopCatalogPage() {
                 setSearch("");
                 setInStockOnly(false);
               }}
-              className="text-xs font-medium text-muted-foreground underline-offset-2 hover:text-primary hover:underline"
+              className="text-xs font-medium text-muted-foreground underline-offset-2 hover:text-vk-700 hover:underline"
             >
               Clear all filters
             </button>
@@ -394,57 +401,56 @@ export default function ShopCatalogPage() {
 
       {/* ═══ FEATURED RAIL — hidden while searching so results lead. */}
       {!searchActive && featured.length > 0 && (
-        <section className="mx-auto max-w-[1440px] px-4 py-10 sm:px-6 lg:px-8">
-          <div className="mb-5 flex items-end justify-between gap-4">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">Curated for you</p>
-              <h2 className="mt-1 font-heading text-2xl font-bold text-foreground sm:text-3xl">Featured</h2>
-            </div>
-            <div className="hidden items-center gap-2 sm:flex">
-              <button
-                type="button"
-                onClick={() => scrollFeatured(-1)}
-                aria-label="Scroll featured left"
-                className="rounded-full border border-border p-2 text-muted-foreground transition-colors hover:border-gold hover:text-primary"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => scrollFeatured(1)}
-                aria-label="Scroll featured right"
-                className="rounded-full border border-border p-2 text-muted-foreground transition-colors hover:border-gold hover:text-primary"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
-          <div
-            ref={featuredRef}
-            className="featured-rail -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0"
-            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-          >
-            {/* Hide webkit scrollbar for the rail */}
-            <style>{`.featured-rail::-webkit-scrollbar { display: none; }`}</style>
-            {featured.map((p, i) => (
-              <div key={p._id} className="w-[220px] shrink-0 snap-start sm:w-[240px]">
-                <ProductCard product={p} index={i} categoryName={categoryName(p.category)} />
+        <section className="vk-band">
+          <div className="vk-container py-10">
+            <div className="mb-6 flex items-end justify-between gap-4">
+              <div>
+                <span className="vk-pill">Curated for you</span>
+                <h2 className="vk-h2 mt-3">Featured</h2>
               </div>
-            ))}
+              <div className="hidden items-center gap-2 sm:flex">
+                <button
+                  type="button"
+                  onClick={() => scrollFeatured(-1)}
+                  aria-label="Scroll featured left"
+                  className={arrowCls}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => scrollFeatured(1)}
+                  aria-label="Scroll featured right"
+                  className={arrowCls}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+            <div
+              ref={featuredRef}
+              className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-3 pt-1 scrollbar-hide sm:mx-0 sm:px-0"
+            >
+              {featured.map((p, i) => (
+                <div key={p._id} className="w-[220px] shrink-0 snap-start sm:w-[240px]">
+                  <ProductCard product={p} index={i} categoryName={categoryName(p.category)} />
+                </div>
+              ))}
+            </div>
           </div>
         </section>
       )}
 
       {/* ═══ MAIN GRID ═══ */}
-      <section className="mx-auto max-w-[1440px] px-4 py-10 sm:px-6 lg:px-8">
+      <section className="vk-container py-10">
         {loading ? (
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
             {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="overflow-hidden rounded-2xl border border-border">
-                <div className="aspect-square animate-pulse bg-muted" />
+              <div key={i} className="overflow-hidden rounded-2xl border border-[#E8ECFA] bg-white">
+                <div className="aspect-square animate-pulse bg-vk-50" />
                 <div className="space-y-2 p-4">
-                  <div className="h-3.5 w-3/4 animate-pulse rounded bg-muted" />
-                  <div className="h-3 w-1/2 animate-pulse rounded bg-muted" />
+                  <div className="h-3.5 w-3/4 animate-pulse rounded bg-vk-100" />
+                  <div className="h-3 w-1/2 animate-pulse rounded bg-vk-100" />
                 </div>
               </div>
             ))}
@@ -452,14 +458,16 @@ export default function ShopCatalogPage() {
         ) : error ? (
           <div className="py-16 text-center">
             <p className="text-sm font-medium text-destructive">{error}</p>
-            <button onClick={() => load(1)} className="mt-3 text-sm font-semibold text-primary underline">
+            <button onClick={() => load(1)} className="vk-btn-outline mt-4">
               Try again
             </button>
           </div>
         ) : products.length === 0 ? (
-          <div className="py-16 text-center">
-            <PackageOpen className="mx-auto mb-3 h-10 w-10 text-muted-foreground/50" />
-            <p className="font-medium text-foreground">
+          <div className="mx-auto max-w-md rounded-3xl bg-vk-50 px-6 py-14 text-center">
+            <span className="vk-icon-chip mx-auto mb-4 !h-14 !w-14 !rounded-2xl !bg-white">
+              <PackageOpen className="h-7 w-7" />
+            </span>
+            <p className="font-heading text-lg font-bold text-ink">
               {search ? `Nothing matches “${search}”` : "Nothing here yet"}
             </p>
             <p className="mt-1 text-sm text-muted-foreground">
@@ -475,7 +483,7 @@ export default function ShopCatalogPage() {
                   setSearch("");
                   setCategory("all");
                 }}
-                className="mt-4 rounded-full border border-border px-4 py-2 text-sm font-semibold text-primary transition-colors hover:border-gold"
+                className="vk-btn-primary mt-5"
               >
                 Show everything
               </button>
@@ -483,13 +491,16 @@ export default function ShopCatalogPage() {
           </div>
         ) : (
           <>
-            <div className="mb-4 flex items-center justify-between">
+            <div className="mb-5 flex items-center justify-between gap-3">
+              <h2 className="vk-bar-title text-lg text-ink sm:text-xl">
+                {activeCategoryName ?? "All items"}
+              </h2>
               <p className="text-xs text-muted-foreground">
                 Showing {products.length} of {total} item{total === 1 ? "" : "s"}
                 {activeCategoryName ? ` in ${activeCategoryName}` : ""}
               </p>
             </div>
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
               {products.map((p, i) => (
                 <ProductCard key={p._id} product={p} index={i} categoryName={categoryName(p.category)} />
               ))}
@@ -500,7 +511,7 @@ export default function ShopCatalogPage() {
                   type="button"
                   onClick={loadMore}
                   disabled={loadingMore}
-                  className="inline-flex items-center gap-2 rounded-full bg-gradient-gold px-6 py-3 text-sm font-bold text-[hsl(220,60%,12%)] shadow-gold transition-all hover:-translate-y-0.5 hover:shadow-[0_14px_36px_hsl(42,92%,46%,0.45)] disabled:opacity-60"
+                  className="vk-btn-primary h-12 px-7"
                 >
                   {loadingMore ? (
                     <>
@@ -520,15 +531,13 @@ export default function ShopCatalogPage() {
 
       {/* ═══ SAVED FOR LATER ═══ */}
       {saved.length > 0 && (
-        <section className="border-t border-border bg-card/50">
-          <div className="mx-auto max-w-[1440px] px-4 py-10 sm:px-6 lg:px-8">
-            <div className="mb-5 flex items-end justify-between gap-4">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">Your wishlist</p>
-                <h2 className="mt-1 font-heading text-2xl font-bold text-foreground sm:text-3xl">Saved for later</h2>
-              </div>
+        <section className="vk-band">
+          <div className="vk-container py-10">
+            <div className="mb-6">
+              <span className="vk-pill">Your wishlist</span>
+              <h2 className="vk-h2 mt-3">Saved for later</h2>
             </div>
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-5">
               {saved.slice(0, 5).map((p, i) => (
                 <ProductCard key={p._id} product={p} index={i} categoryName={categoryName(p.category)} />
               ))}
@@ -539,13 +548,13 @@ export default function ShopCatalogPage() {
 
       {/* ═══ RECENTLY VIEWED ═══ */}
       {recent.length > 0 && (
-        <section className="border-t border-border">
-          <div className="mx-auto max-w-[1440px] px-4 py-10 sm:px-6 lg:px-8">
-            <div className="mb-5">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">Pick up where you left off</p>
-              <h2 className="mt-1 font-heading text-2xl font-bold text-foreground sm:text-3xl">Recently viewed</h2>
+        <section>
+          <div className="vk-container py-10">
+            <div className="mb-6">
+              <span className="vk-pill">Pick up where you left off</span>
+              <h2 className="vk-h2 mt-3">Recently viewed</h2>
             </div>
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
               {recent.slice(0, 4).map((p, i) => (
                 <ProductCard key={p._id} product={p} index={i} categoryName={categoryName(p.category)} />
               ))}
@@ -554,25 +563,24 @@ export default function ShopCatalogPage() {
         </section>
       )}
 
-      {/* ═══ TRUST STRIP — tinted cards with coloured icon chips, the same
-          multi-colour language as the home page cards. ═══ */}
-      <section className="border-t border-border bg-card">
-        <div className="mx-auto grid max-w-[1440px] grid-cols-1 gap-3 px-4 py-8 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8">
-          <div className="flex items-center gap-3 rounded-xl border border-gold/30 bg-gradient-to-br from-gold/15 to-gold/5 p-3.5">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-gold text-[hsl(220,60%,12%)] shadow-gold">
+      {/* ═══ TRUST STRIP — white cards with tinted icon chips. ═══ */}
+      <section className="vk-band">
+        <div className="vk-container grid grid-cols-1 gap-3 py-8 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="vk-card flex items-center gap-3 p-4">
+            <span className="vk-icon-chip">
               <ShieldCheck className="h-5 w-5" />
             </span>
             <div className="min-w-0">
-              <p className="text-sm font-bold text-foreground">Secure payments</p>
+              <p className="text-sm font-bold text-ink">Secure payments</p>
               <p className="text-xs text-muted-foreground">PCI-DSS Razorpay checkout</p>
             </div>
           </div>
-          <div className="flex items-center gap-3 rounded-xl border border-emerald-100 bg-gradient-to-br from-emerald-50/80 to-emerald-50/40 p-3.5">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-600">
+          <div className="vk-card flex items-center gap-3 p-4">
+            <span className="vk-icon-chip">
               <Truck className="h-5 w-5" />
             </span>
             <div className="min-w-0">
-              <p className="text-sm font-bold text-foreground">
+              <p className="text-sm font-bold text-ink">
                 {settings
                   ? `Free shipping above ₹${settings.freeShippingAbove.toLocaleString("en-IN")}`
                   : "Pan-India shipping"}
@@ -580,21 +588,21 @@ export default function ShopCatalogPage() {
               <p className="text-xs text-muted-foreground">{settings?.deliveryEstimate || "Carefully packed & shipped"}</p>
             </div>
           </div>
-          <div className="flex items-center gap-3 rounded-xl border border-rose-100 bg-gradient-to-br from-rose-50/80 to-rose-50/40 p-3.5">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-rose-500/15 text-rose-500">
+          <div className="vk-card flex items-center gap-3 p-4">
+            <span className="vk-icon-chip">
               <HeartHandshake className="h-5 w-5" />
             </span>
             <div className="min-w-0">
-              <p className="text-sm font-bold text-foreground">Every purchase gives</p>
+              <p className="text-sm font-bold text-ink">Every purchase gives</p>
               <p className="text-xs text-muted-foreground">Funds daily temple sevas</p>
             </div>
           </div>
-          <div className="flex items-center gap-3 rounded-xl border border-sky-100 bg-gradient-to-br from-sky-50/80 to-sky-50/40 p-3.5">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-sky-500/15 text-sky-600">
+          <div className="vk-card flex items-center gap-3 p-4">
+            <span className="vk-icon-chip">
               <Sparkles className="h-5 w-5" />
             </span>
             <div className="min-w-0">
-              <p className="text-sm font-bold text-foreground">Blessed & sanctified</p>
+              <p className="text-sm font-bold text-ink">Blessed & sanctified</p>
               <p className="text-xs text-muted-foreground">Items offered to the Lordships</p>
             </div>
           </div>

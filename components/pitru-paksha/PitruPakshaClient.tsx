@@ -1,15 +1,16 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import {
   Check, Copy, ShieldCheck,
   FileCheck2, UtensilsCrossed, Clock, Heart,
   X, Leaf,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import SectionHeading from "@/components/site/SectionHeading";
+import Reveal from "@/components/site/Reveal";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
 import { useDonorPrefill } from "@/lib/donorPrefill";
 import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
@@ -90,8 +91,6 @@ const DESKTOP_BANNER =
   "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1790235076658-1790235074922-pitru-paksha-desk.webp";
 const MOBILE_BANNER =
   "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1790235075802-1790235074751-pitru-paksha-mob.webp";
-const DECOR_GARLAND =
-  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785481873117-1785481872052-garland-removebg-preview.png";
 
 // Imagery for the "Honour Your Ancestors" daan section. The final Annadana /
 // Sadhu Bhojan / Gau Seva photos will replace these placeholders — sent by
@@ -299,47 +298,11 @@ const apiBase = () =>
   );
 const formatAmount = (amount: number) => amount.toLocaleString("en-IN");
 
-// ─── Color tokens (Pitru Paksha banner palette: warm ivory · burnt saffron · golden amber) ─
-// Matches the campaign banner art exactly — same HEX values, same roles.
-// Distinct from Radhashtami (green), Govardhan (blue) and Janmashtami (purple).
-// Main title / headings = Burnt Orange #D24A0A · body text = Warm Terracotta #C95718 ·
-// primary CTA = Deep Saffron Orange #D83B05 (hover #B92F03) with white labels ·
-// page bg = Warm Ivory #FFF5D9 · section bg = Pale Golden Cream #FCE8B5 ·
-// alt section = Soft Peach Cream #F7D9A3 · decor = Golden Amber #E9A62A ·
-// dark body text = Warm Brown #59321F · white button text = #FFFFFF
-
+// Page styling now uses the Vaikuntham Blue vk-* classes. The original banner
+// saffron is kept only for the Razorpay checkout theme so the payment sheet
+// is unchanged.
 const C = {
-  // Banner palette — canonical values from the campaign design.
-  ivory: "#FFF5D9", // page background
-  cream: "#FCE8B5", // section background
-  peach: "#F7D9A3", // alternate section background
-  amber: "#E9A62A", // decorative gold
-  saffron: "#D83B05", // primary CTA
-  saffronDark: "#B92F03", // CTA hover
-  heading: "#D24A0A", // headings / main title
-  accent: "#C95718", // body / highlighted text
-  text: "#59321F", // dark body text
-  white: "#FFFFFF", // white text on buttons
-
-  // Muted inks for secondary prose — #C95718 (#C95718 ≈ 4.0:1 on ivory) sits
-  // just under the 4.5:1 minimum for long paragraphs, so large bodies use
-  // this warmer brown (~7.5:1) instead.
-  muted: "#7A4A26",
-
-  // Legacy alias names (deepGreen/emerald/teal/mint/gold/softGold/magenta/pink/
-  // yellow) were repurposed from the Radhashtami template and are kept so the
-  // existing style declarations keep compiling. Each maps to the closest
-  // banner colour; NEW code should use the canonical banner names above.
-  deepGreen: "#59321F", // darkest ink (was deep espresso)
-  emerald: "#C93F05", // deep burnt saffron (main title colour)
-  teal: "#C95718", // warm terracotta (was sandalwood)
-  mint: "#F7D9A3", // soft peach cream (was warm sand)
-  lightMint: "#FFF5D9", // warm ivory page bg (was page cream)
-  gold: "#E9A62A", // golden amber (was marigold)
-  softGold: "#F2C15E", // light amber tint for gradients
-  magenta: "#D24A0A", // burnt orange (was ember terracotta)
-  pink: "#F2C15E",
-  yellow: "#E9A62A",
+  saffron: "#D83B05", // Razorpay checkout theme colour
 } as const;
 
 // ─── Component ───────────────────────────────────────────────────────────────
@@ -599,172 +562,61 @@ export default function PitruPakshaClient() {
     }
   };
 
+  // Shared field look for the checkout's shadcn <Input>s (tailwind-merge lets
+  // these override the component defaults).
+  const fieldCls =
+    "mt-1.5 h-11 rounded-xl border-vk-200 bg-white text-[15px] focus-visible:border-vk-500 focus-visible:ring-2 focus-visible:ring-vk-500/20 focus-visible:ring-offset-0";
+  const labelCls = "block text-[13px] font-semibold text-ink/80";
+
   return (
     <PageLayout>
-      <main className="min-h-screen text-slate-950" style={{ background: C.lightMint }}>
+      <main className="min-h-screen bg-white pt-[var(--header-h)] text-ink">
         <WhatsAppFloatButton />
 
       {/* ═══════════════════════════════════════════════════════════════════
-          HERO SECTION
+          HERO SECTION — campaign banner in an inset rounded card
       ═══════════════════════════════════════════════════════════════════ */}
-      <section className="relative overflow-hidden pt-[88px] md:pt-[104px]" style={{ background: C.lightMint }}>
-        {/* Floating ember particles */}
-        {!reduce && (
-          <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
-            {Array.from({ length: 20 }).map((_, i) => (
-              <motion.div
-                key={i}
-                className="absolute h-1.5 w-1.5 rounded-full"
-                style={{
-                  background: i % 3 === 0 ? C.gold : i % 3 === 1 ? C.pink : C.yellow,
-                  left: `${(i * 7 + 3) % 100}%`,
-                  top: `${(i * 11 + 5) % 100}%`,
-                }}
-                animate={{
-                  y: [0, -35, 0],
-                  opacity: [0, 0.6, 0],
-                  scale: [0.5, 1, 0.5],
-                }}
-                transition={{
-                  duration: 3 + (i % 4),
-                  repeat: Infinity,
-                  delay: i * 0.35,
-                  ease: "easeInOut",
-                }}
-              />
-            ))}
+      <section className="bg-gradient-to-b from-vk-50 to-white pb-4 pt-4 md:pb-6 md:pt-6">
+        <div className="vk-container">
+          <div className="overflow-hidden rounded-3xl bg-vk-900 shadow-[0_24px_60px_-28px_rgba(10,18,51,0.6)]">
+            <a href="#offer-seva" className="block">
+              <picture>
+                <source media="(max-width: 640px)" srcSet={MOBILE_BANNER} />
+                <img
+                  src={DESKTOP_BANNER}
+                  alt="Pitru Paksha seva at Hare Krishna Movement Vizag"
+                  className="h-auto w-full"
+                />
+              </picture>
+            </a>
           </div>
-        )}
-
-        <div className="relative overflow-hidden rounded-b-[2rem] md:rounded-b-[2.5rem]">
-          <a href="#offer-seva" className="block">
-            <picture>
-              <source media="(max-width: 640px)" srcSet={MOBILE_BANNER} />
-              <img
-                src={DESKTOP_BANNER}
-                alt="Pitru Paksha seva at Hare Krishna Movement Vizag"
-                className="h-auto w-full"
-              />
-            </picture>
-          </a>
         </div>
       </section>
+
       {/* ═══════════════════════════════════════════════════════════════════
           SEVA CARDS
       ═══════════════════════════════════════════════════════════════════ */}
-      <section id="offer-seva" className="relative overflow-hidden px-4 py-12 md:py-16"
-        style={{ background: `linear-gradient(180deg, ${C.ivory}, ${C.cream} 50%, ${C.ivory})` }}
-      >
-        {/* Decorative background elements */}
-        <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-          {/* Toran garlands hanging from the top corners */}
-          <Image
-            src={DECOR_GARLAND}
-            alt=""
-            unoptimized
-            width={145}
-            height={350}
-            draggable={false}
-            className="absolute left-0 top-0 h-[140px] w-auto opacity-30 md:h-[220px] md:opacity-40 lg:h-[300px] lg:opacity-50"
+      <section id="offer-seva" className="vk-section">
+        <div className="vk-container">
+          <SectionHeading
+            align="center"
+            eyebrow="Choose Your Offering"
+            title="Pitru Paksha Sevas"
+            subtitle="Honour your ancestors with sacred seva and receive their blessings"
           />
-          <Image
-            src={DECOR_GARLAND}
-            alt=""
-            unoptimized
-            width={145}
-            height={350}
-            draggable={false}
-            className="absolute right-0 top-0 h-[140px] w-auto -scale-x-100 opacity-30 md:h-[220px] md:opacity-40 lg:h-[300px] lg:opacity-50"
-          />
-          <div
-            className="absolute -left-20 top-1/4 h-72 w-72 rounded-full blur-[90px]"
-            style={{ background: `${C.teal}10` }}
-          />
-          <div
-            className="absolute -right-16 top-10 h-64 w-64 rounded-full blur-[80px]"
-            style={{ background: `${C.gold}10` }}
-          />
-          <div
-            className="absolute bottom-20 left-1/3 h-48 w-48 rounded-full blur-[70px]"
-            style={{ background: `${C.magenta}08` }}
-          />
-        </div>
-
-        <div className="relative mx-auto max-w-6xl">
-          {/* Section heading */}
-          <motion.div
-            initial={reduce ? undefined : { opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="mb-12 text-center"
-          >
-            <div className="mx-auto mb-5 flex items-center justify-center gap-4">
-              <span
-                className="h-px w-10 sm:w-16 md:w-24"
-                style={{
-                  background: `linear-gradient(to right, transparent, ${C.gold}80)`,
-                }}
-              />
-              <Leaf className="h-6 w-6 md:h-8 md:w-8" style={{ color: C.gold }} strokeWidth={1.5} />
-              <span
-                className="h-px w-10 sm:w-16 md:w-24"
-                style={{
-                  background: `linear-gradient(to left, transparent, ${C.gold}80)`,
-                }}
-              />
-            </div>
-            <p
-              className="text-xs font-bold uppercase tracking-[0.28em] md:text-sm"
-              style={{ color: C.accent }}
-            >
-              Choose Your Offering
-            </p>
-            <h2
-              className="mt-2 text-3xl font-bold md:text-4xl lg:text-5xl"
-              style={{ color: C.heading }}
-            >
-              Pitru Paksha Sevas
-            </h2>
-            <p
-              className="mx-auto mt-4 max-w-xl text-[15px] leading-8 md:text-lg"
-              style={{ color: C.muted }}
-            >
-              Honour your ancestors with sacred seva and receive their blessings
-            </p>
-          </motion.div>
 
           {/* Seva cards grid */}
-          <motion.div
-            initial={reduce ? undefined : { opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4 }}
-            className="flex flex-wrap justify-center gap-6"
-          >
-            {sevas.map((seva, idx) => (
-              <motion.article
+          <div className="mx-auto flex max-w-6xl flex-wrap justify-center gap-5 md:gap-6">
+            {sevas.map((seva) => (
+              <article
                 key={seva.slug}
                 id={`seva-card-${seva.slug}`}
-                initial={reduce ? undefined : { opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: reduce ? 0 : idx * 0.08 }}
-                className="group w-full scroll-mt-24 overflow-hidden rounded-2xl border bg-white transition-all duration-500 hover:-translate-y-1 sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)]"
-                style={{
-                  borderColor:
-                    highlightedSlug === seva.slug ? C.gold : `${C.teal}40`,
-                  boxShadow:
-                    highlightedSlug === seva.slug
-                      ? `0 0 0 4px ${C.gold}50, 0 8px 30px ${C.teal}18`
-                      : `0 2px 20px ${C.teal}12`,
-                  ...(highlightedSlug === seva.slug && {
-                    ringColor: C.gold,
-                  }),
-                }}
+                className={`vk-card vk-card-hover group flex w-full scroll-mt-24 flex-col overflow-hidden sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] ${
+                  highlightedSlug === seva.slug ? "ring-2 ring-vk-500 ring-offset-2" : ""
+                }`}
               >
-                {/* Card image with gradient overlay + title */}
-                <div className="relative h-44 overflow-hidden md:h-48">
+                {/* Card image with navy scrim + title */}
+                <div className="relative h-44 overflow-hidden bg-vk-900 md:h-48">
                   <Image
                     src={seva.image}
                     alt={seva.title}
@@ -773,29 +625,18 @@ export default function PitruPakshaClient() {
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="object-cover transition-transform duration-700 group-hover:scale-105"
                   />
-                  <div
-                    className="absolute inset-0"
-                    style={{
-                      background: `linear-gradient(to top, ${C.deepGreen}ee, rgba(89,50,31,0.35) 55%, rgba(89,50,31,0.05))`,
-                    }}
-                  />
-                  <div className="absolute bottom-2.5 left-4 right-4 flex items-center gap-2">
+                  <div className="absolute inset-0 bg-gradient-to-t from-vk-900/90 via-vk-900/30 to-transparent" />
+                  <div className="absolute bottom-3 left-4 right-4 flex items-center gap-2">
                     <span className="text-2xl drop-shadow">{seva.icon}</span>
-                    <h3 className="text-lg font-bold tracking-wide text-white drop-shadow-md md:text-xl">
+                    <h3 className="text-lg font-bold text-white drop-shadow-md md:text-xl">
                       {seva.title}
                     </h3>
                   </div>
                 </div>
 
                 {/* Card body */}
-                <div className="p-4 pt-3">
-                  <div
-                    className="mb-3 h-[3px] w-full rounded-full"
-                    style={{
-                      background: `linear-gradient(to right, transparent, ${C.gold} 20%, ${C.softGold} 60%, transparent)`,
-                    }}
-                  />
-                  <p className="min-h-[40px] text-[13px] leading-relaxed md:text-sm" style={{ color: C.text }}>
+                <div className="flex flex-1 flex-col p-4 sm:p-5">
+                  <p className="min-h-[40px] text-[13px] leading-relaxed text-muted-foreground md:text-sm">
                     {seva.description}
                   </p>
                   <div className="mt-4 space-y-2.5">
@@ -810,31 +651,13 @@ export default function PitruPakshaClient() {
                                 key={t.legacySevaId}
                                 type="button"
                                 onClick={() => openCheckout(seva, t)}
-                                className="flex min-h-[52px] flex-col items-center justify-center rounded-lg border px-1 py-1.5 text-center transition-all duration-300 sm:min-h-[56px] sm:px-1.5 sm:py-2"
-                                style={{
-                                  borderColor: `${C.amber}45`,
-                                  background: C.ivory,
-                                  color: C.text,
-                                }}
-                                onMouseEnter={(e) => {
-                                  e.currentTarget.style.borderColor = C.saffron;
-                                  e.currentTarget.style.background = C.peach;
-                                  e.currentTarget.style.boxShadow = `0 3px 10px ${C.amber}30`;
-                                }}
-                                onMouseLeave={(e) => {
-                                  e.currentTarget.style.borderColor = `${C.amber}45`;
-                                  e.currentTarget.style.background = C.ivory;
-                                  e.currentTarget.style.boxShadow = "none";
-                                }}
+                                className="flex min-h-[52px] flex-col items-center justify-center rounded-xl border border-vk-200 bg-white px-1 py-1.5 text-center text-vk-800 transition-all duration-200 hover:border-vk-500 hover:bg-vk-50 sm:min-h-[56px] sm:px-1.5 sm:py-2"
                               >
-                                <span className="block text-[13px] font-bold leading-none sm:text-sm">
+                                <span className="block text-[13px] font-extrabold leading-none text-vk-700 sm:text-sm">
                                   ₹{t.amount != null ? formatAmount(t.amount) : "—"}
                                 </span>
                                 {t.impact && (
-                                  <span
-                                    className="mt-0.5 block text-[9px] font-medium leading-[1.2] sm:text-[10px]"
-                                    style={{ color: C.muted }}
-                                  >
+                                  <span className="mt-1 block text-[9px] font-medium leading-[1.2] text-muted-foreground sm:text-[10px]">
                                     {t.impact}
                                   </span>
                                 )}
@@ -846,16 +669,10 @@ export default function PitruPakshaClient() {
                             <button
                               type="button"
                               onClick={() => openCheckout(seva, custom)}
-                              className="flex w-full items-center justify-center gap-1.5 rounded-xl border px-3 py-3 text-[13px] font-bold transition-all duration-300"
-                              style={{
-                                borderColor: `${C.amber}90`,
-                                background: C.peach,
-                                color: C.text,
-                              }}
+                              className="flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-vk-300 bg-vk-50 px-3 py-3 text-[13px] font-bold text-vk-800 transition-all duration-200 hover:border-vk-500 hover:bg-vk-100"
                             >
                               <svg
-                                className="h-3 w-3"
-                                style={{ color: C.accent }}
+                                className="h-3 w-3 text-vk-600"
                                 viewBox="0 0 24 24"
                                 fill="none"
                                 stroke="currentColor"
@@ -873,219 +690,138 @@ export default function PitruPakshaClient() {
                     })()}
                   </div>
                 </div>
-              </motion.article>
+              </article>
             ))}
-          </motion.div>
+          </div>
         </div>
       </section>
+
       {/* ═══════════════════════════════════════════════════════════════════
           INTRO / ABOUT STRIP
       ═══════════════════════════════════════════════════════════════════ */}
-      <motion.section
-        initial={reduce ? undefined : { opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-        className="relative px-4 py-12 md:py-16"
-        style={{
-          background: `linear-gradient(135deg, ${C.peach}, ${C.cream} 60%, ${C.ivory})`,
-        }}
-      >
-        {!reduce && (
-          <motion.div
-            className="pointer-events-none absolute inset-0 opacity-[0.09]"
-            aria-hidden
-            style={{
-              background: `linear-gradient(135deg, transparent 30%, ${C.saffron} 50%, transparent 70%)`,
-              backgroundSize: "200% 200%",
-            }}
-            animate={{ backgroundPosition: ["100% 100%", "0% 0%"] }}
-            transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-          />
-        )}
-        <div className="relative mx-auto grid max-w-6xl gap-8 md:grid-cols-[1.35fr_0.65fr] md:items-center">
-          <div>
-            <p
-              className="mb-3 text-sm font-semibold uppercase tracking-[0.22em]"
-              style={{ color: C.accent }}
-            >
-              Hare Krishna Movement
-            </p>
-            <h1
-              className="text-3xl font-bold leading-tight md:text-5xl"
-              style={{
-                color: C.emerald,
-                textShadow: `0 0 40px ${C.amber}30, 0 0 80px ${C.amber}18`,
-              }}
-            >
-              Pitru Paksha
-            </h1>
-            {/* Opacity modifiers only exist in steps of 5 — text-white/92 was
-                generating no CSS at all, so this paragraph fell back to the
-                page's default foreground (dark navy) on top of the banner. */}
-            <p className="mt-5 max-w-4xl text-base leading-8 md:text-lg" style={{ color: C.text }}>
-              The sacred fortnight to honour our ancestors. During Pitru Paksha,
-              we offer shraddha, tarpan and charity — feeding devotees, serving
-              sacred cows and glorifying the Lord — so the departed souls may
-              attain peace and our families may receive their blessings.
-            </p>
-            <p
-              className="mt-5 max-w-4xl border-l-4 pl-4 text-sm font-medium italic leading-7 md:text-base"
-              style={{ borderColor: C.saffron, color: C.text }}
-            >
-              &ldquo;The scriptures declare that whatever is offered with devotion
-              during this fortnight — food, water or charity — reaches the
-              ancestors directly. Gratitude, given in the form of seva, is the
-              greatest homage we can offer.&rdquo;
-            </p>
-          </div>
-          <div
-            className="rounded-lg border p-5 shadow-2xl"
-            style={{ borderColor: `${C.amber}55`, background: "rgba(255,255,255,0.55)" }}
-          >
-            <div className="flex items-start gap-3">
-              <ShieldCheck
-                className="mt-1 h-6 w-6 shrink-0"
-                style={{ color: C.saffron }}
-              />
-              <div>
-                <h2 className="text-lg font-bold" style={{ color: C.heading }}>
-                  Offer Seva This Pitru Paksha
-                </h2>
-                <p className="mt-2 text-sm leading-6" style={{ color: C.text }}>
-                  Your offering sustains Annadana, Sadhu Bhojan, sacred cow care
-                  and every divine ritual performed at HKM Vizag — carrying your
-                  gratitude to the ancestors you remember.
-                </p>
-              </div>
+      <section className="vk-section vk-band">
+        <div className="vk-container">
+          <Reveal className="mx-auto grid max-w-6xl gap-8 md:grid-cols-[1.35fr_0.65fr] md:items-center">
+            <div>
+              <span className="vk-pill mb-4">Hare Krishna Movement</span>
+              <h1 className="vk-h1">Pitru Paksha</h1>
+              <p className="vk-lead mt-5 max-w-4xl md:text-lg md:leading-8">
+                The sacred fortnight to honour our ancestors. During Pitru Paksha,
+                we offer shraddha, tarpan and charity — feeding devotees, serving
+                sacred cows and glorifying the Lord — so the departed souls may
+                attain peace and our families may receive their blessings.
+              </p>
+              <p className="mt-5 max-w-4xl border-l-4 border-vk-300 pl-4 font-serif-display text-[15px] italic leading-7 text-vk-800 md:text-base">
+                &ldquo;The scriptures declare that whatever is offered with devotion
+                during this fortnight — food, water or charity — reaches the
+                ancestors directly. Gratitude, given in the form of seva, is the
+                greatest homage we can offer.&rdquo;
+              </p>
             </div>
-            <motion.a
-              href="#offer-seva"
-              animate={
-                reduce
-                  ? undefined
-                  : {
-                      boxShadow: [
-                        `0 0 0 0 ${C.saffron}66`,
-                        `0 0 0 16px ${C.saffron}00`,
-                        `0 0 0 0 ${C.saffron}66`,
-                      ],
-                    }
-              }
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              className="mt-5 inline-flex w-full items-center justify-center rounded-md px-5 py-3 text-sm font-bold uppercase tracking-[0.08em] shadow-lg transition"
-              style={{
-                background: C.saffron,
-                color: C.white,
-              }}
-            >
-              Offer Seva
-            </motion.a>
-          </div>
+            <div className="vk-card p-5 md:p-6">
+              <div className="flex items-start gap-3">
+                <span className="vk-icon-chip">
+                  <ShieldCheck className="h-5 w-5" />
+                </span>
+                <div>
+                  <h2 className="vk-h3 !text-lg">Offer Seva This Pitru Paksha</h2>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                    Your offering sustains Annadana, Sadhu Bhojan, sacred cow care
+                    and every divine ritual performed at HKM Vizag — carrying your
+                    gratitude to the ancestors you remember.
+                  </p>
+                </div>
+              </div>
+              <a href="#offer-seva" className="vk-btn-gold mt-5 h-12 w-full text-[15px] font-bold">
+                Offer Seva
+              </a>
+            </div>
+          </Reveal>
         </div>
-      </motion.section>
+      </section>
 
       {/* ═══════════════════════════════════════════════════════════════════
           TRUST BADGES
       ═══════════════════════════════════════════════════════════════════ */}
-      <motion.section
-        initial={reduce ? undefined : { opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
-        className="border-y-2 py-3.5"
-        style={{
-          borderColor: `${C.amber}99`,
-          background: C.peach,
-        }}
-      >
-        <div className="container mx-auto flex flex-wrap items-center justify-center gap-x-10 gap-y-2 px-4">
+      <section className="border-y border-vk-100 bg-white py-4">
+        <div className="vk-container flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
           {TRUST_BADGES.map((b) => (
             <span
               key={b.label}
-              className="flex items-center gap-2 text-xs font-semibold tracking-wide md:text-sm"
-              style={{ color: C.text }}
+              className="flex items-center gap-2 text-xs font-semibold text-ink/80 md:text-sm"
             >
-              <span
-                className="flex h-6 w-6 items-center justify-center rounded-full"
-                style={{
-                  background: `${C.amber}22`,
-                  boxShadow: `inset 0 0 0 1px ${C.amber}66`,
-                }}
-              >
-                <b.icon className="h-3 w-3" style={{ color: C.saffron }} />
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-vk-100 text-vk-700">
+                <b.icon className="h-3.5 w-3.5" />
               </span>
               {b.label}
             </span>
           ))}
         </div>
-      </motion.section>
+      </section>
 
       {/* ═══════════════════════════════════════════════════════════════════
           BANK TRANSFER + NOTE
       ═══════════════════════════════════════════════════════════════════ */}
-      <section className="px-4 py-6" style={{ background: `linear-gradient(180deg, ${C.gold} 0%, ${C.softGold} 100%)` }}>
-        <div className="mx-auto max-w-6xl text-sm leading-7 md:text-base" style={{ color: C.text }}>
-          While making UPI/Bank payments, please send a screenshot with your
-          name, mobile, address and PAN details to our WhatsApp{" "}
-          <a
-            className="font-bold"
-            href="tel:+918977761187"
-            style={{ color: C.saffron }}
-          >
-            +91 89777 61187
-          </a>{" "}
-          or email{" "}
-          <a
-            className="font-bold"
-            href="mailto:social@hkmvizag.org"
-            style={{ color: C.saffron }}
-          >
-            social@hkmvizag.org
-          </a>
-          .
+      <section className="pt-10 md:pt-16">
+        <div className="vk-container">
+          <div className="mx-auto max-w-6xl rounded-2xl border border-vk-100 bg-vk-50 px-5 py-4 text-sm leading-7 text-ink/80 md:text-base">
+            While making UPI/Bank payments, please send a screenshot with your
+            name, mobile, address and PAN details to our WhatsApp{" "}
+            <a className="font-bold text-vk-700 hover:text-vk-500" href="tel:+918977761187">
+              +91 89777 61187
+            </a>{" "}
+            or email{" "}
+            <a
+              className="break-all font-bold text-vk-700 hover:text-vk-500"
+              href="mailto:social@hkmvizag.org"
+            >
+              social@hkmvizag.org
+            </a>
+            .
+          </div>
         </div>
       </section>
 
-      <section className="px-4 py-12 md:py-16" style={{ background: C.peach }}>
-        <div
-          className="mx-auto max-w-6xl overflow-hidden rounded-2xl border bg-white p-6 shadow-lg md:p-8"
-          style={{ borderColor: `${C.amber}45` }}
-        >
-          <h2
-            className="text-xl font-bold"
-            style={{ color: C.heading }}
-          >
-            Donation Through Bank (NEFT / RTGS)
-          </h2>
-          <div className="mt-4 space-y-3" style={{ color: C.text }}>
-            {[
-              { label: "Beneficiary Name", value: "HARE KRISHNA MOVEMENT INDIA" },
-              { label: "Bank Name", value: "IDFC FIRST BANK LTD" },
-              { label: "A/c No", value: "10091415313" },
-              { label: "IFSC Code", value: "IDFB0080412" },
-            ].map(({ label, value }) => (
-              <div key={label} className="flex items-center gap-3">
-                <span className="font-medium">{label}:</span>
-                <span className="select-all">{value}</span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    navigator.clipboard.writeText(value);
-                    setCopiedField(label);
-                    setTimeout(() => setCopiedField(null), 1500);
-                  }}
-                  className="ml-1 inline-flex items-center rounded p-1 transition-colors hover:bg-slate-100"
-                  title={`Copy ${label}`}
+      <section className="pb-10 pt-5 md:pb-16 md:pt-6">
+        <div className="vk-container">
+          <div className="vk-card mx-auto max-w-6xl p-5 md:p-8">
+            <h2 className="vk-bar-title text-lg text-ink md:text-xl">
+              Donation Through Bank (NEFT / RTGS)
+            </h2>
+            <div className="mt-4 grid gap-2.5 sm:grid-cols-2">
+              {[
+                { label: "Beneficiary Name", value: "HARE KRISHNA MOVEMENT INDIA" },
+                { label: "Bank Name", value: "IDFC FIRST BANK LTD" },
+                { label: "A/c No", value: "10091415313" },
+                { label: "IFSC Code", value: "IDFB0080412" },
+              ].map(({ label, value }) => (
+                <div
+                  key={label}
+                  className="flex items-center gap-3 rounded-xl bg-vk-50 p-4 text-sm text-ink"
                 >
-                  {copiedField === label ? (
-                    <Check className="h-4 w-4 text-green-600" />
-                  ) : (
-                    <Copy className="h-4 w-4 text-slate-400" />
-                  )}
-                </button>
-              </div>
-            ))}
+                  <div className="min-w-0 flex-1">
+                    <span className="block text-xs font-medium text-muted-foreground">{label}:</span>
+                    <span className="mt-0.5 block select-all break-words font-semibold">{value}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(value);
+                      setCopiedField(label);
+                      setTimeout(() => setCopiedField(null), 1500);
+                    }}
+                    className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-vk-500 transition-colors hover:bg-white hover:text-vk-700"
+                    title={`Copy ${label}`}
+                  >
+                    {copiedField === label ? (
+                      <Check className="h-4 w-4 text-green-600" />
+                    ) : (
+                      <Copy className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -1093,67 +829,17 @@ export default function PitruPakshaClient() {
       {/* ═══════════════════════════════════════════════════════════════════
           ABOUT PITRU PAKSHA — HONOUR YOUR ANCESTORS
       ═══════════════════════════════════════════════════════════════════ */}
-      <section className="relative overflow-hidden px-4 py-16 md:py-24" style={{ background: C.ivory }}>
-        {/* The cream background was a flat slab edge to edge. These give it
-            depth without competing with the photography below: warmth pooling
-            behind the heading, and a faint dotted weave for texture. */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 h-[520px]"
-          style={{
-            background: `radial-gradient(ellipse 70% 100% at 50% 0%, ${C.amber}1f, transparent 70%)`,
-          }}
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.05]"
-          style={{
-            backgroundImage: `radial-gradient(${C.saffron} 1px, transparent 1px)`,
-            backgroundSize: "22px 22px",
-          }}
-        />
-
-        <div className="relative mx-auto max-w-6xl">
-          <div className="mx-auto max-w-3xl text-center">
-            <div className="mx-auto mb-5 flex items-center justify-center gap-4">
-              <span
-                className="h-px w-16 md:w-24"
-                style={{
-                  background: `linear-gradient(to right, transparent, ${C.gold}80)`,
-                }}
-              />
-              <Leaf className="h-6 w-6 md:h-8 md:w-8" style={{ color: C.gold }} strokeWidth={1.5} />
-              <span
-                className="h-px w-16 md:w-24"
-                style={{
-                  background: `linear-gradient(to left, transparent, ${C.gold}80)`,
-                }}
-              />
-            </div>
-            <p
-              className="text-xs font-bold uppercase tracking-[0.28em] md:text-sm"
-              style={{ color: C.accent }}
-            >
-              Pitru Paksha Daan
-            </p>
-            <h2
-              className="mt-3 text-3xl font-bold md:text-4xl lg:text-[2.75rem] lg:leading-[1.15]"
-              style={{ color: C.heading }}
-            >
-              Honour Your Ancestors Through Pitru Paksha Daan Online
-            </h2>
-            <p
-              className="mx-auto mt-5 max-w-2xl text-[15px] leading-8 md:text-lg"
-              style={{ color: C.muted }}
-            >
-              The daans that most deeply satisfy the departed souls — offered
-              with devotion at the temple, they carry your gratitude directly
-              to the ancestors you remember.
-            </p>
-          </div>
+      <section className="vk-section vk-band">
+        <div className="vk-container">
+          <SectionHeading
+            align="center"
+            eyebrow="Pitru Paksha Daan"
+            title="Honour Your Ancestors Through Pitru Paksha Daan Online"
+            subtitle="The daans that most deeply satisfy the departed souls — offered with devotion at the temple, they carry your gratitude directly to the ancestors you remember."
+          />
 
           {/* The three supreme daans */}
-          <div className="mt-14 grid gap-7 md:grid-cols-3 md:gap-6 lg:gap-7">
+          <div className="mx-auto grid max-w-6xl gap-5 md:grid-cols-3 md:gap-6">
             {[
               {
                 slug: "annadana",
@@ -1183,129 +869,53 @@ export default function PitruPakshaClient() {
                   "Serving a sanctified meal to sadhus and Vaishnavas draws their blessings — carrying the offering to the pitrs.",
               },
             ].map((c, i) => (
-              <motion.a
-                key={c.slug}
-                href={`#seva-card-${c.slug}`}
-                initial={reduce ? undefined : { opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: reduce ? 0 : i * 0.1 }}
-                className="group flex flex-col overflow-hidden rounded-3xl border bg-white transition-all duration-500 hover:-translate-y-1.5"
-                style={{
-                  borderColor: `${C.amber}33`,
-                  boxShadow: `0 4px 24px ${C.amber}20`,
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = `0 26px 60px -28px ${C.saffron}70`;
-                  e.currentTarget.style.borderColor = `${C.saffron}80`;
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = `0 4px 24px ${C.amber}20`;
-                  e.currentTarget.style.borderColor = `${C.amber}33`;
-                }}
-              >
-                <div className="relative h-60 overflow-hidden md:h-64">
-                  <Image
-                    src={c.image}
-                    alt={c.title}
-                    fill
-                    unoptimized
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    className="object-cover transition-transform duration-700 group-hover:scale-[1.06]"
-                  />
-                  <div
-                    className="absolute inset-0"
-                    style={{
-                      background: `linear-gradient(to top, ${C.deepGreen}F0 0%, rgba(89,50,31,0.62) 38%, rgba(89,50,31,0.2) 70%, transparent 100%)`,
-                    }}
-                  />
-                  <div
-                    aria-hidden
-                    className="absolute inset-x-0 top-0 h-[3px] origin-left scale-x-0 transition-transform duration-500 group-hover:scale-x-100"
-                    style={{ background: `linear-gradient(to right, ${C.gold}, ${C.softGold})` }}
-                  />
-
-                  {/* Numeral in the corner, so the three read as an ordered set
-                      of the supreme daans rather than three loose cards. */}
-                  <span
-                    aria-hidden
-                    className="absolute right-5 top-4 font-serif text-4xl font-bold leading-none text-white/25 transition-colors duration-500 group-hover:text-white/40"
-                  >
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-
-                  <div className="absolute inset-x-5 bottom-4">
-                    <p
-                      className="text-[10px] font-bold uppercase tracking-[0.2em]"
-                      style={{ color: C.softGold, textShadow: "0 2px 8px rgba(0,0,0,0.6)" }}
-                    >
-                      {c.kicker}
-                    </p>
-                    <h3 className="mt-1 text-xl font-bold leading-snug tracking-wide text-white [text-shadow:0_2px_12px_rgba(0,0,0,0.6)] md:text-2xl">
-                      {c.title}
-                    </h3>
+              <Reveal key={c.slug} delay={i * 0.08}>
+                <a
+                  href={`#seva-card-${c.slug}`}
+                  className="vk-card vk-card-hover group flex h-full flex-col overflow-hidden"
+                >
+                  <div className="relative h-56 overflow-hidden bg-vk-900 md:h-60">
+                    <Image
+                      src={c.image}
+                      alt={c.title}
+                      fill
+                      unoptimized
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover transition-transform duration-700 group-hover:scale-[1.06]"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-vk-900/90 via-vk-900/35 to-transparent" />
+                    <div className="absolute inset-x-5 bottom-4">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/75">
+                        {c.kicker}
+                      </p>
+                      <h3 className="mt-1 text-xl font-bold leading-snug text-white md:text-2xl">
+                        {c.title}
+                      </h3>
+                    </div>
                   </div>
-                </div>
 
-                <div className="relative flex flex-1 flex-col p-6 pt-8">
-                  {/* Icon medallion straddling the image edge — the detail that
-                      separates a considered card from a photo with a caption. */}
-                  <span
-                    className="absolute -top-6 left-6 flex h-12 w-12 items-center justify-center rounded-full border-4 border-white transition-transform duration-500 group-hover:scale-110"
-                    style={{
-                      background: `linear-gradient(135deg, ${C.saffron}, ${C.amber})`,
-                      boxShadow: `0 10px 24px -10px ${C.saffron}80`,
-                    }}
-                  >
-                    <c.icon className="h-5 w-5" style={{ color: C.white }} strokeWidth={2} />
-                  </span>
+                  <div className="flex flex-1 flex-col p-5 md:p-6">
+                    <div className="flex items-start gap-3">
+                      <span className="vk-icon-chip">
+                        <c.icon className="h-5 w-5" strokeWidth={2} />
+                      </span>
+                      <p className="text-sm leading-7 text-muted-foreground">{c.text}</p>
+                    </div>
 
-                  <p className="text-sm leading-7" style={{ color: C.text }}>
-                    {c.text}
-                  </p>
-
-                  <span
-                    className="mt-5 inline-flex w-fit items-center gap-1.5 border-b-2 border-transparent pb-0.5 text-xs font-bold uppercase tracking-[0.14em] transition-all duration-300 group-hover:gap-2.5"
-                    style={{ color: C.accent, borderBottomColor: `${C.gold}00` }}
-                    onMouseEnter={(e) => { e.currentTarget.style.borderBottomColor = C.gold; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.borderBottomColor = `${C.gold}00`; }}
-                  >
-                    Offer this seva
-                    <span aria-hidden>→</span>
-                  </span>
-                </div>
-              </motion.a>
+                    <span className="mt-auto inline-flex w-fit items-center gap-1.5 pt-5 text-sm font-semibold text-vk-700 transition-all duration-300 group-hover:gap-2.5 group-hover:text-vk-500">
+                      Offer this seva
+                      <span aria-hidden>→</span>
+                    </span>
+                  </div>
+                </a>
+              </Reveal>
             ))}
           </div>
 
-          {/* Three equal paragraphs stacked full-width read as a wall of text
-              and were the last thing on the page anyone finished. Same words,
-              given an editorial shape: a lead paragraph that carries the
-              section, then the detail in two columns that the eye can graze. */}
-          <div
-            className="relative mx-auto mt-14 max-w-4xl overflow-hidden rounded-3xl border px-6 py-9 md:px-10 md:py-11"
-            style={{
-              borderColor: `${C.amber}40`,
-              background: `linear-gradient(135deg, #FFFFFF 0%, ${C.peach}55 100%)`,
-              boxShadow: `0 20px 50px -34px ${C.saffron}70`,
-            }}
-          >
-            <span
-              aria-hidden
-              className="pointer-events-none absolute -right-6 -top-10 select-none font-serif text-[8rem] leading-none opacity-[0.07]"
-              style={{ color: C.saffron }}
-            >
-              ॐ
-            </span>
-
-            <p
-              className="relative text-base leading-8 md:text-lg md:leading-9"
-              style={{ color: C.heading }}
-            >
-              <span
-                className="float-left mr-3 mt-1 font-serif text-5xl font-bold leading-[0.85] md:text-6xl"
-                style={{ color: C.saffron }}
-              >
+          {/* Editorial body — a lead paragraph, then the detail in two columns. */}
+          <Reveal className="vk-card mx-auto mt-10 max-w-4xl px-5 py-8 md:mt-14 md:px-10 md:py-10">
+            <p className="text-base leading-8 text-ink md:text-lg md:leading-9">
+              <span className="float-left mr-3 mt-1 font-serif-display text-5xl font-bold leading-[0.85] text-vk-700 md:text-6xl">
                 P
               </span>
               itru Paksha is the fortnight of the Vedic calendar set aside for
@@ -1316,14 +926,10 @@ export default function PitruPakshaClient() {
               elders.
             </p>
 
-            <div
-              className="my-7 h-px w-full"
-              style={{ background: `linear-gradient(to right, transparent, ${C.amber}66, transparent)` }}
-              aria-hidden
-            />
+            <div className="my-7 h-px w-full bg-vk-100" aria-hidden />
 
             <div className="grid gap-6 md:grid-cols-2 md:gap-8">
-              <p className="text-sm leading-7 md:text-[15px]" style={{ color: C.text }}>
+              <p className="text-sm leading-7 text-muted-foreground md:text-[15px]">
                 The scriptures tell us that whatever is given with love during
                 this period — food, water, clothing or service — reaches the
                 ancestors directly and brings them peace. Among all offerings,
@@ -1332,14 +938,14 @@ export default function PitruPakshaClient() {
                 as supremely pleasing, for they serve the Lord&apos;s own
                 dependents.
               </p>
-              <p className="text-sm leading-7 md:text-[15px]" style={{ color: C.text }}>
+              <p className="text-sm leading-7 text-muted-foreground md:text-[15px]">
                 By offering seva this Pitru Paksha, you transform grief into
                 grace. Every offering — no matter the amount — carries your love
                 for those who came before you and returns as blessings upon your
                 family.
               </p>
             </div>
-          </div>
+          </Reveal>
         </div>
       </section>
 
@@ -1359,7 +965,7 @@ export default function PitruPakshaClient() {
       {/* ═══════════════════════════════════════════════════════════════════
           FAQS
       ═══════════════════════════════════════════════════════════════════ */}
-      <FaqSection faqs={FAQS} tone="sand" />
+      <FaqSection faqs={FAQS} tone="blue" />
 
       {/* ═══════════════════════════════════════════════════════════════════
           OTHER DONATIONS — carousel of the temple's other seva pages
@@ -1371,7 +977,7 @@ export default function PitruPakshaClient() {
       ═══════════════════════════════════════════════════════════════════ */}
       {status.message && !selected && (
         <div
-          className={`fixed bottom-6 left-1/2 z-[120] -translate-x-1/2 rounded-lg px-5 py-3 text-sm font-semibold shadow-lg ${
+          className={`fixed bottom-6 left-1/2 z-[120] -translate-x-1/2 rounded-xl px-5 py-3 text-sm font-semibold shadow-lg ${
             status.type === "success" ? "bg-green-700 text-white" : "bg-red-700 text-white"
           }`}
         >
@@ -1383,106 +989,50 @@ export default function PitruPakshaClient() {
           CHECKOUT MODAL
       ═══════════════════════════════════════════════════════════════════ */}
       {selected && (
-        <div            className="fixed inset-0 z-[100] flex items-center justify-center bg-[#2A1608]/80 p-4">
-          <div
-            className="pitru-form-scroll relative max-h-[92vh] w-full max-w-2xl overflow-x-hidden overflow-y-auto rounded-2xl border shadow-2xl"
-            style={{
-              borderColor: `${C.amber}50`,
-              background: `linear-gradient(180deg, ${C.ivory}, white 40%)`,
-            }}
-          >
+        <div className="fixed inset-0 z-[100] flex items-end justify-center bg-vk-900/70 backdrop-blur-sm sm:items-center sm:p-4">
+          <div className="pitru-form-scroll relative max-h-[92vh] w-full max-w-2xl overflow-x-hidden overflow-y-auto rounded-t-3xl bg-white shadow-2xl sm:rounded-3xl">
             <style>{`
               .pitru-form-scroll::-webkit-scrollbar { width: 6px; }
               .pitru-form-scroll::-webkit-scrollbar-track { background: transparent; }
-              .pitru-form-scroll::-webkit-scrollbar-thumb { background: ${C.saffron}; border-radius: 9999px; }
-              .pitru-form-scroll::-webkit-scrollbar-thumb:hover { background: ${C.saffronDark}; }
-              .pitru-form-scroll { scrollbar-width: thin; scrollbar-color: ${C.saffron} transparent; }
+              .pitru-form-scroll::-webkit-scrollbar-thumb { background: #B9C8FB; border-radius: 9999px; }
+              .pitru-form-scroll::-webkit-scrollbar-thumb:hover { background: #2F5BD3; }
+              .pitru-form-scroll { scrollbar-width: thin; scrollbar-color: #B9C8FB transparent; }
             `}</style>
-
-            {/* Saffron accent bar */}
-            <div
-              className="h-1.5 w-full"
-              style={{
-                background: `linear-gradient(to right, ${C.emerald}, ${C.saffron}, ${C.amber}, ${C.accent})`,
-              }}
-            />
 
             <div className="relative z-10">
               {/* Sticky header */}
-              <div
-                className="sticky top-0 z-10 flex items-center justify-between border-b px-6 py-4 backdrop-blur"
-                style={{
-                  borderColor: `${C.amber}25`,
-                  background: `${C.ivory}ee`,
-                }}
-              >
-                <div className="flex items-center gap-3">
-                  <span
-                    className="flex h-11 w-11 items-center justify-center rounded-full text-2xl shadow-sm"
-                    style={{
-                      background: `linear-gradient(135deg, ${C.saffron}, ${C.amber})`,
-                    }}
-                  >
-                    <span className="drop-shadow">{selected.seva.icon}</span>
+              <div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-vk-100 bg-white/95 px-5 py-4 backdrop-blur md:px-6">
+                <div className="flex min-w-0 items-center gap-3">
+                  <span className="vk-icon-chip text-2xl">
+                    <span>{selected.seva.icon}</span>
                   </span>
-                  <div>
-                    <p
-                      className="text-[10px] font-semibold uppercase tracking-[0.18em]"
-                      style={{ color: C.accent }}
-                    >
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-vk-600">
                       Pitru Paksha Seva
                     </p>
-                    <h2
-                      className="text-lg font-bold leading-tight"
-                      style={{ color: C.heading }}
-                    >
-                      {selected.seva.title}
-                    </h2>
+                    <h2 className="vk-h3 !text-lg">{selected.seva.title}</h2>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={closeCheckout}
-                  className="rounded-full border p-2 transition hover:scale-105"
-                  style={{
-                    borderColor: `${C.amber}40`,
-                    background: "white",
-                    color: C.text,
-                  }}
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-vk-200 bg-white text-vk-800 transition hover:border-vk-500 hover:bg-vk-50"
                   aria-label="Close checkout"
                 >
                   <X className="h-5 w-5" />
                 </button>
               </div>
 
-              <form onSubmit={submitDonation} className="space-y-5 p-5 md:p-6">
+              <form onSubmit={submitDonation} className="space-y-5 p-4 sm:p-6">
                 {/* Summary */}
-                <div
-                  className="grid gap-4 rounded-lg border p-4 md:grid-cols-2"
-                  style={{
-                    borderColor: `${C.teal}20`,
-                    background: "white",
-                  }}
-                >
+                <div className="grid gap-4 rounded-2xl bg-vk-50 p-4 md:grid-cols-2">
                   <div>
-                    <p className="text-xs font-semibold" style={{ color: `${C.teal}aa` }}>
-                      Seva Name
-                    </p>
-                    <p
-                      className="mt-1 font-bold"
-                      style={{ color: C.heading }}
-                    >
-                      {selected.seva.title}
-                    </p>
+                    <p className="text-xs font-semibold text-muted-foreground">Seva Name</p>
+                    <p className="mt-1 font-bold text-vk-800">{selected.seva.title}</p>
                   </div>
                   <div>
-                    <p className="text-xs font-semibold" style={{ color: `${C.teal}aa` }}>
-                      Seva Amount
-                    </p>
-                    <p
-                      className="mt-1 font-bold"
-                      style={{ color: C.heading }}
-                    >
+                    <p className="text-xs font-semibold text-muted-foreground">Seva Amount</p>
+                    <p className="mt-1 font-heading text-lg font-extrabold text-vk-700">
                       {selected.option.amount
                         ? `₹${formatAmount(selected.option.amount)}`
                         : "Enter amount below"}
@@ -1493,12 +1043,7 @@ export default function PitruPakshaClient() {
                 {/* Custom amount */}
                 {!selected.option.amount && (
                   <label className="block max-w-sm">
-                    <span
-                      className="text-sm font-semibold"
-                      style={{ color: C.heading }}
-                    >
-                      Enter Seva Amount *
-                    </span>
+                    <span className={labelCls}>Enter Seva Amount *</span>
                     <Input
                       type="number"
                       min={100}
@@ -1511,13 +1056,9 @@ export default function PitruPakshaClient() {
                         })
                       }
                       placeholder="Enter amount"
-                      className="mt-2"
-                      style={{ borderColor: `${C.teal}40` }}
+                      className={fieldCls}
                     />
-                    <span
-                      className="mt-1 block text-xs"
-                      style={{ color: `${C.teal}80` }}
-                    >
+                    <span className="mt-1 block text-xs text-muted-foreground">
                       Amount must be at least Rs.100.
                     </span>
                   </label>
@@ -1526,12 +1067,7 @@ export default function PitruPakshaClient() {
                 {/* Donor fields */}
                 <div className="grid gap-4 md:grid-cols-2">
                   <label className="block">
-                    <span
-                      className="text-sm font-semibold"
-                      style={{ color: C.heading }}
-                    >
-                      Donor Name *
-                    </span>
+                    <span className={labelCls}>Donor Name *</span>
                     <Input
                       value={form.donorName}
                       maxLength={39}
@@ -1541,16 +1077,11 @@ export default function PitruPakshaClient() {
                         })
                       }
                       placeholder="Your Name"
-                      className="mt-2"
+                      className={fieldCls}
                     />
                   </label>
                   <label className="block">
-                    <span
-                      className="text-sm font-semibold"
-                      style={{ color: C.heading }}
-                    >
-                      Mobile Number *
-                    </span>
+                    <span className={labelCls}>Mobile Number *</span>
                     <Input
                       value={form.donorMobile}
                       maxLength={10}
@@ -1560,16 +1091,11 @@ export default function PitruPakshaClient() {
                         })
                       }
                       placeholder="Your Mobile Number"
-                      className="mt-2"
+                      className={fieldCls}
                     />
                   </label>
                   <label className="block md:col-span-2">
-                    <span
-                      className="text-sm font-semibold"
-                      style={{ color: C.heading }}
-                    >
-                      E-Mail ID (optional)
-                    </span>
+                    <span className={labelCls}>E-Mail ID (optional)</span>
                     <Input
                       type="email"
                       value={form.donorEmail}
@@ -1577,7 +1103,7 @@ export default function PitruPakshaClient() {
                         updateForm({ donorEmail: e.target.value.toLowerCase() })
                       }
                       placeholder="Your Email"
-                      className="mt-2"
+                      className={fieldCls}
                     />
                   </label>
                 </div>
@@ -1589,21 +1115,13 @@ export default function PitruPakshaClient() {
                   dob={form.dob}
                   onSevakNameChange={(v) => updateForm({ sevakName: v })}
                   onDobChange={(v) => updateForm({ dob: v })}
-                  variant="amber"
                   collapsible
                 />
 
                 {/* Add-ons */}
                 <div className="space-y-3">
                   {showPrasadamField && (
-                    <label
-                      className="flex items-start gap-3 rounded-lg border p-4 text-sm"
-                      style={{
-                        borderColor: `${C.teal}30`,
-                        color: C.heading,
-                        background: "white",
-                      }}
-                    >
+                    <label className="flex cursor-pointer items-start gap-2.5 rounded-xl border border-vk-100 bg-vk-50/60 px-3.5 py-3 text-[13px] font-medium text-ink">
                       <input
                         type="checkbox"
                         checked={form.wantPrasadam}
@@ -1612,21 +1130,14 @@ export default function PitruPakshaClient() {
                           updateForm({ wantPrasadam: next });
                           handlePrasadamToggle(next);
                         }}
-                        className="mt-1 accent-amber-600"
+                        className="mt-0.5 h-4 w-4 shrink-0 accent-vk-700"
                       />
                       I would like to receive Maha Prasadam (Only within
                       India)
                     </label>
                   )}
                   {showTaxField && (
-                    <label
-                      className="flex items-start gap-3 rounded-lg border p-4 text-sm"
-                      style={{
-                        borderColor: `${C.teal}30`,
-                        color: C.heading,
-                        background: "white",
-                      }}
-                    >
+                    <label className="flex cursor-pointer items-start gap-2.5 rounded-xl border border-vk-100 bg-vk-50/60 px-3.5 py-3 text-[13px] font-medium text-ink">
                       <input
                         type="checkbox"
                         checked={form.want80G}
@@ -1635,14 +1146,11 @@ export default function PitruPakshaClient() {
                           updateForm({ want80G: next });
                           handle80GToggle(next);
                         }}
-                        className="mt-1 accent-amber-600"
+                        className="mt-0.5 h-4 w-4 shrink-0 accent-vk-700"
                       />
                       <span>
                         I wish to receive 80G Tax Exemption
-                        <span
-                          className="mt-1 block text-xs"
-                          style={{ color: `${C.teal}80` }}
-                        >
+                        <span className="mt-1 block text-xs font-normal text-muted-foreground">
                           PAN and address are mandatory when 80G is selected.
                         </span>
                       </span>
@@ -1652,12 +1160,7 @@ export default function PitruPakshaClient() {
 
                 {form.want80G && (
                   <label className="block max-w-sm">
-                    <span
-                      className="text-sm font-semibold"
-                      style={{ color: C.heading }}
-                    >
-                      PAN Number *
-                    </span>
+                    <span className={labelCls}>PAN Number *</span>
                     <Input
                       value={form.panNumber}
                       maxLength={10}
@@ -1669,26 +1172,15 @@ export default function PitruPakshaClient() {
                         })
                       }
                       placeholder="Eg: ABCDE1234F"
-                      className="mt-2"
+                      className={fieldCls}
                     />
                   </label>
                 )}
 
                 {needsAddress && (
-                  <div
-                    className="grid gap-4 rounded-lg border p-4 md:grid-cols-2"
-                    style={{
-                      borderColor: `${C.teal}30`,
-                      background: "white",
-                    }}
-                  >
+                  <div className="grid gap-4 rounded-2xl border border-vk-100 bg-vk-50/60 p-4 md:grid-cols-2">
                     <label className="block md:col-span-2">
-                      <span
-                        className="text-sm font-semibold"
-                        style={{ color: C.heading }}
-                      >
-                        Full Address *
-                      </span>
+                      <span className={labelCls}>Full Address *</span>
                       <Input
                         value={form.address}
                         maxLength={80}
@@ -1696,16 +1188,11 @@ export default function PitruPakshaClient() {
                           updateForm({ address: e.target.value })
                         }
                         placeholder="Door No, Street, Area"
-                        className="mt-2"
+                        className={fieldCls}
                       />
                     </label>
                     <label className="block">
-                      <span
-                        className="text-sm font-semibold"
-                        style={{ color: C.heading }}
-                      >
-                        City *
-                      </span>
+                      <span className={labelCls}>City *</span>
                       <Input
                         value={form.city}
                         maxLength={30}
@@ -1714,16 +1201,11 @@ export default function PitruPakshaClient() {
                             city: e.target.value.toUpperCase().replace(/[^A-Z ]/g, ""),
                           })
                         }
-                        className="mt-2"
+                        className={fieldCls}
                       />
                     </label>
                     <label className="block">
-                      <span
-                        className="text-sm font-semibold"
-                        style={{ color: C.heading }}
-                      >
-                        State *
-                      </span>
+                      <span className={labelCls}>State *</span>
                       <Input
                         value={form.state}
                         maxLength={30}
@@ -1732,16 +1214,11 @@ export default function PitruPakshaClient() {
                             state: e.target.value.toUpperCase().replace(/[^A-Z ]/g, ""),
                           })
                         }
-                        className="mt-2"
+                        className={fieldCls}
                       />
                     </label>
                     <label className="block">
-                      <span
-                        className="text-sm font-semibold"
-                        style={{ color: C.heading }}
-                      >
-                        PIN Code *
-                      </span>
+                      <span className={labelCls}>PIN Code *</span>
                       <Input
                         value={form.pincode}
                         maxLength={6}
@@ -1750,45 +1227,39 @@ export default function PitruPakshaClient() {
                             pincode: e.target.value.replace(/\D/g, ""),
                           })
                         }
-                        className="mt-2"
+                        className={fieldCls}
                       />
                     </label>
                   </div>
                 )}
 
                 {status.type === "error" && (
-                  <p className="rounded-lg bg-red-100 px-4 py-3 text-sm font-semibold text-red-700">
+                  <p className="rounded-xl bg-red-50 px-3.5 py-2.5 text-[13px] font-medium text-red-700">
                     {status.message}
                   </p>
                 )}
 
-                <motion.div
-                  animate={
-                    reduce
-                      ? undefined
-                      : { scale: [1, 1.02, 1] }
-                  }
-                  transition={{
-                    duration: 1.5,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="vk-btn-gold h-12 w-full text-[15px] font-bold"
                 >
-                  <Button
-                    type="submit"
-                    disabled={submitting}
-                    className="w-full py-6 text-base font-bold"
-                    style={{
-                      background: C.saffron,
-                      color: C.white,
-                    }}
-                  >
-                    <Heart className="mr-2 h-5 w-5 fill-current" />
-                    {submitting
-                      ? "Opening Checkout..."
-                      : `Donate Rs. ${formatAmount(finalAmount || 0)}`}
-                  </Button>
-                </motion.div>
+                  <Heart className="h-4 w-4 fill-current" />
+                  {submitting
+                    ? "Opening Checkout..."
+                    : `Donate Rs. ${formatAmount(finalAmount || 0)}`}
+                </button>
+
+                <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
+                  <span className="inline-flex items-center gap-1">
+                    <ShieldCheck className="h-3.5 w-3.5 text-vk-500" />
+                    Secure Razorpay Checkout
+                  </span>
+                  <span className="inline-flex items-center gap-1">
+                    <FileCheck2 className="h-3.5 w-3.5 text-vk-500" />
+                    80G Tax Exemption
+                  </span>
+                </div>
               </form>
             </div>
           </div>
@@ -1799,18 +1270,16 @@ export default function PitruPakshaClient() {
           STICKY MOBILE DONATE BAR
       ═══════════════════════════════════════════════════════════════════ */}
       {!selected && (
-        <div className="fixed inset-x-0 bottom-0 z-40 flex justify-center px-3 pb-3 pt-1 md:hidden">
-          <a
-            href="#offer-seva"
-            className="inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 text-xs font-bold shadow-lg"
-            style={{
-              background: C.saffron,
-              color: C.white,
-              boxShadow: `0 8px 24px ${C.saffron}55`,
-            }}
-          >
-            🪔 Donate Now
-          </a>
+        <div className="fixed bottom-[calc(64px+env(safe-area-inset-bottom))] left-3 right-[76px] z-40 lg:hidden">
+          <div className="flex items-center justify-between gap-3 rounded-2xl border border-vk-100 bg-white/95 p-2 pl-4 shadow-lift backdrop-blur">
+            <span className="min-w-0 truncate text-[13px] font-semibold text-vk-800">
+              Pitru Paksha Seva
+            </span>
+            <a href="#offer-seva" className="vk-btn-gold h-11 shrink-0 px-5">
+              <Heart className="h-4 w-4 fill-current" />
+              Donate Now
+            </a>
+          </div>
         </div>
       )}
     </main>

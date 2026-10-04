@@ -16,7 +16,6 @@ import {
   Search,
   X,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 export interface Donation {
@@ -106,19 +105,15 @@ export default function DonationHistorySection({ donations, downloadingId, onDow
 
   if (donations.length === 0) {
     return (
-      <div className="ring-gold-dashed rounded-2xl py-12 text-center">
-        <span className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gold/10 text-gold">
+      <div className="rounded-2xl border-2 border-dashed border-vk-200 bg-vk-50/50 px-4 py-12 text-center">
+        <span className="vk-icon-chip mx-auto mb-3 !h-12 !w-12 !rounded-2xl">
           <HeartHandshake className="h-6 w-6" />
         </span>
-        <p className="font-heading text-sm font-bold text-foreground">Your seva journey hasn&apos;t begun yet</p>
+        <p className="font-heading text-base font-bold text-ink">Your seva journey hasn&apos;t begun yet</p>
         <p className="mx-auto mt-1 max-w-xs text-sm text-muted-foreground">
           Every offering, big or small, nourishes the temple&apos;s services.
         </p>
-        <Link
-          href="/donate"
-          className="mt-5 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-[hsl(220_90%_18%)] shadow-[var(--shadow-gold)] transition-transform hover:scale-[1.03]"
-          style={{ background: "var(--gradient-gold)" }}
-        >
+        <Link href="/donate" className="vk-btn-gold mt-5 h-11 px-6">
           <HeartHandshake className="h-4 w-4" /> Begin Your Seva
         </Link>
       </div>
@@ -129,8 +124,8 @@ export default function DonationHistorySection({ donations, downloadingId, onDow
     <div className="space-y-5">
       {/* ── Find a donation ──────────────────────────────────────── */}
       <div className="space-y-3">
-        <div className="relative flex items-center rounded-xl border border-border bg-background transition-colors focus-within:border-gold">
-          <Search className="pointer-events-none absolute left-3 h-4 w-4 text-muted-foreground" />
+        <div className="relative flex items-center rounded-xl border border-vk-200 bg-white transition focus-within:border-vk-500 focus-within:shadow-[0_0_0_3px_rgba(47,91,211,0.15)]">
+          <Search className="pointer-events-none absolute left-3.5 h-4 w-4 text-vk-400" />
           <input
             type="search"
             value={query}
@@ -139,14 +134,14 @@ export default function DonationHistorySection({ donations, downloadingId, onDow
               setVisible(PAGE_SIZE);
             }}
             placeholder="Search by seva, receipt number, amount or month"
-            className="h-11 w-full bg-transparent pl-10 pr-10 text-sm text-foreground outline-none placeholder:text-muted-foreground"
+            className="h-11 w-full min-w-0 bg-transparent pl-10 pr-11 text-[15px] text-ink outline-none placeholder:text-sm placeholder:text-muted-foreground/70"
           />
           {query && (
             <button
               type="button"
               onClick={() => setQuery("")}
               aria-label="Clear search"
-              className="absolute right-3 text-muted-foreground transition-colors hover:text-foreground"
+              className="absolute right-1 flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-vk-50 hover:text-vk-700"
             >
               <X className="h-4 w-4" />
             </button>
@@ -155,7 +150,7 @@ export default function DonationHistorySection({ donations, downloadingId, onDow
 
         {/* Year + receipt filters. Horizontally scrollable on a phone so a
             donor with many years of history never gets a wrapped, jumbled row. */}
-        <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
+        <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 scrollbar-hide">
           <FilterChip active={year === "all"} onClick={() => { setYear("all"); setVisible(PAGE_SIZE); }}>
             All years
           </FilterChip>
@@ -176,12 +171,12 @@ export default function DonationHistorySection({ donations, downloadingId, onDow
           <span>
             {filtering ? (
               <>
-                <span className="font-semibold text-foreground">{filtered.length}</span> of {donations.length}{" "}
+                <span className="font-semibold text-ink">{filtered.length}</span> of {donations.length}{" "}
                 donations
               </>
             ) : (
               <>
-                <span className="font-semibold text-foreground">{donations.length}</span> donation
+                <span className="font-semibold text-ink">{donations.length}</span> donation
                 {donations.length === 1 ? "" : "s"} · ₹
                 {donations
                   .reduce((sum, d) => (d.status === "completed" ? sum + d.amount : sum), 0)
@@ -191,7 +186,7 @@ export default function DonationHistorySection({ donations, downloadingId, onDow
             )}
           </span>
           {filtering && (
-            <button type="button" onClick={resetFilters} className="font-medium text-primary hover:underline">
+            <button type="button" onClick={resetFilters} className="font-semibold text-vk-700 underline-offset-4 hover:underline">
               Clear filters
             </button>
           )}
@@ -199,12 +194,12 @@ export default function DonationHistorySection({ donations, downloadingId, onDow
       </div>
 
       {filtered.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-border py-10 text-center">
-          <p className="text-sm font-medium text-foreground">No donations match that search</p>
+        <div className="rounded-2xl border border-dashed border-vk-200 bg-vk-50/50 px-4 py-10 text-center">
+          <p className="text-sm font-semibold text-ink">No donations match that search</p>
           <p className="mt-1 text-xs text-muted-foreground">
             Try a seva name, a year, or part of the receipt number.
           </p>
-          <button type="button" onClick={resetFilters} className="mt-3 text-sm font-medium text-primary hover:underline">
+          <button type="button" onClick={resetFilters} className="vk-btn-outline mt-4 h-10 px-4 text-[13px]">
             Clear filters
           </button>
         </div>
@@ -214,9 +209,9 @@ export default function DonationHistorySection({ donations, downloadingId, onDow
             {groupedByYear.map(([y, items]) => (
               <div key={y}>
                 <div className="mb-3 flex items-center gap-3">
-                  <h3 className="font-heading text-sm font-bold text-primary">{y}</h3>
-                  <div className="h-px flex-1 bg-gradient-to-r from-gold/40 to-border" />
-                  <span className="text-xs text-muted-foreground">
+                  <h3 className="vk-bar-title text-sm text-vk-700">{y}</h3>
+                  <div className="h-px flex-1 bg-gradient-to-r from-vk-200 to-vk-50" />
+                  <span className="shrink-0 text-xs text-muted-foreground">
                     {items.length} donation{items.length > 1 ? "s" : ""} · ₹
                     {items
                       .reduce((sum, d) => (d.status === "completed" ? sum + d.amount : sum), 0)
@@ -233,7 +228,7 @@ export default function DonationHistorySection({ donations, downloadingId, onDow
                         initial={{ opacity: 0, y: 6 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.2, delay: Math.min(i, 6) * 0.03 }}
-                        className="flex items-center justify-between gap-3 rounded-xl border border-border bg-background p-3.5 transition-all hover:border-gold/50 hover:shadow-warm sm:p-4"
+                        className="flex items-center justify-between gap-3 rounded-xl border border-vk-100 bg-white p-3 transition-all hover:border-vk-300 hover:shadow-card sm:p-4"
                       >
                         <div className="flex min-w-0 items-center gap-3">
                           <span
@@ -243,12 +238,12 @@ export default function DonationHistorySection({ donations, downloadingId, onDow
                           </span>
                           <div className="min-w-0">
                             <div className="flex flex-wrap items-center gap-1.5">
-                              <span className="flex items-center gap-0.5 font-semibold text-foreground">
+                              <span className="flex items-center gap-0.5 font-heading font-bold text-ink">
                                 <IndianRupee className="h-3.5 w-3.5" />
                                 {d.amount.toLocaleString("en-IN")}
                               </span>
                               {d.isRecurring && (
-                                <Badge variant="secondary" className="gap-1 px-1.5 py-0 text-[10px]">
+                                <Badge variant="secondary" className="gap-1 bg-vk-100 px-1.5 py-0 text-[10px] text-vk-700 hover:bg-vk-100">
                                   <Repeat className="h-2.5 w-2.5" /> Monthly
                                 </Badge>
                               )}
@@ -267,12 +262,12 @@ export default function DonationHistorySection({ donations, downloadingId, onDow
                           </div>
                         </div>
                         {d.status === "completed" && d.receiptNumber ? (
-                          <Button
-                            size="sm"
-                            variant="outline"
+                          <button
+                            type="button"
                             disabled={downloadingId === d._id}
                             onClick={() => onDownload(d._id, d.receiptNumber)}
-                            className="shrink-0 gap-1.5"
+                            aria-label="Download receipt"
+                            className="vk-btn-outline h-10 w-10 shrink-0 gap-1.5 px-0 sm:w-auto sm:px-3.5"
                           >
                             {downloadingId === d._id ? (
                               <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -280,7 +275,7 @@ export default function DonationHistorySection({ donations, downloadingId, onDow
                               <Download className="h-3.5 w-3.5" />
                             )}
                             <span className="hidden sm:inline">Receipt</span>
-                          </Button>
+                          </button>
                         ) : (
                           <span className="shrink-0 text-xs capitalize text-muted-foreground">{d.status}</span>
                         )}
@@ -296,7 +291,7 @@ export default function DonationHistorySection({ donations, downloadingId, onDow
             <button
               type="button"
               onClick={() => setVisible((v) => v + PAGE_SIZE)}
-              className="w-full rounded-xl border border-border bg-background py-3 text-sm font-medium text-primary transition-colors hover:border-gold/50"
+              className="vk-btn-outline h-11 w-full whitespace-normal text-sm"
             >
               Show {Math.min(PAGE_SIZE, filtered.length - visible)} more
               <span className="text-muted-foreground"> · {filtered.length - visible} remaining</span>
@@ -322,10 +317,10 @@ function FilterChip({
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`shrink-0 rounded-full border px-3.5 py-1.5 text-xs font-medium transition-colors ${
+      className={`min-h-[40px] shrink-0 rounded-full border px-4 py-2 text-xs font-semibold transition-all ${
         active
-          ? "border-gold bg-gold/10 text-foreground"
-          : "border-border bg-background text-muted-foreground hover:border-gold/50 hover:text-foreground"
+          ? "border-vk-500 bg-vk-50 text-vk-700 ring-2 ring-vk-500/20"
+          : "border-vk-200 bg-white text-muted-foreground hover:border-vk-400 hover:text-vk-700"
       }`}
     >
       {children}

@@ -3,13 +3,10 @@
 import PageLayout from "@/components/PageLayout";
 import WhatsAppCommunityCTA from "@/components/WhatsAppCommunityCTA";
 import PageHero from "@/components/PageHero";
-import Ornament from "@/components/Ornament";
-import { motion, useInView } from "framer-motion";
-import { useRef, useState } from "react";
-import { MapPin, Phone, Mail, Clock, Send, Facebook, Instagram, Youtube, Building } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
+import SectionHeading from "@/components/site/SectionHeading";
+import Reveal from "@/components/site/Reveal";
+import { useState } from "react";
+import { MapPin, Phone, Mail, Clock, Send, Facebook, Instagram, Youtube, Building, ChevronDown, BadgeCheck } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 
@@ -28,14 +25,6 @@ const faqs = [
 ];
 
 export default function ContactPage() {
-  const ref1 = useRef(null);
-  const ref2 = useRef(null);
-  const ref3 = useRef(null);
-  const ref4 = useRef(null);
-  const inView1 = useInView(ref1, { once: true, margin: "-80px" });
-  const inView2 = useInView(ref2, { once: true, margin: "-80px" });
-  const inView3 = useInView(ref3, { once: true, margin: "-80px" });
-  const inView4 = useInView(ref4, { once: true, margin: "-80px" });
   const { toast } = useToast();
   const [sending, setSending] = useState(false);
   const [form, setForm] = useState({ name: "", phone: "", email: "", subject: "", message: "" });
@@ -76,196 +65,203 @@ export default function ContactPage() {
       setSending(false);
     }
   };
+  // Accordion UI state for the FAQ list (presentation only).
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   return (
     <PageLayout>
-      <PageHero
-        title="Contact Us"
-        subtitle="We'd love to hear from you. Reach out to us for any queries or assistance."
-        breadcrumb="Contact"
-      />
+      <div className="pt-[var(--header-h)]">
+        <PageHero
+          title="Contact Us"
+          subtitle="We'd love to hear from you. Reach out to us for any queries or assistance."
+          breadcrumb="Contact"
+        />
 
-      <section className="py-12 md:py-16 bg-white dark:bg-background" ref={ref1}>
-        <div className="container mx-auto px-4">
-          <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={inView1 ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.8 }}
-              className="space-y-5"
-            >
-              <p className="text-gold text-sm tracking-[0.2em] uppercase font-medium">Reach Out</p>
-              <h2 className="font-heading text-3xl font-bold text-foreground mb-6">Get In Touch</h2>
-              {contactInfo.map((info, i) => (
-                <motion.div
-                  key={info.title}
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={inView1 ? { opacity: 1, y: 0 } : {}}
-                  transition={{ delay: 0.2 + i * 0.1 }}
-                  className="flex gap-4 items-start"
-                >
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                    <info.icon className="w-5 h-5 text-primary" />
+        {/* ── CONTACT INFO + FORM ──────────────────────────────── */}
+        <section className="vk-section">
+          <div className="vk-container grid items-start gap-8 lg:grid-cols-[1fr_1.1fr] lg:gap-12">
+            <Reveal>
+              <span className="vk-pill mb-4">Reach Out</span>
+              <h2 className="vk-h2">Get In Touch</h2>
+              <div className="mt-7 grid gap-3 sm:grid-cols-2 md:gap-4">
+                {contactInfo.map((info) => (
+                  <div
+                    key={info.title}
+                    className={`vk-card flex gap-4 p-5 ${info.title === "Address" ? "sm:col-span-2" : ""}`}
+                  >
+                    <span className="vk-icon-chip">
+                      <info.icon className="h-5 w-5" />
+                    </span>
+                    <div className="min-w-0">
+                      <h3 className="mb-1 text-[15px] font-bold text-foreground">{info.title}</h3>
+                      {info.lines.map((line) => (
+                        <p key={line} className="break-words text-sm leading-relaxed text-muted-foreground">
+                          {line}
+                        </p>
+                      ))}
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-heading font-semibold text-foreground mb-1">{info.title}</h3>
-                    {info.lines.map((line) => (
-                      <p key={line} className="text-muted-foreground text-sm">{line}</p>
-                    ))}
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
+                ))}
+              </div>
+            </Reveal>
 
-            <motion.form
-              onSubmit={handleSubmit}
-              initial={{ opacity: 0, x: -30 }}
-              animate={inView1 ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="bg-card rounded-2xl p-8 border border-border space-y-5"
-            >
-              <h3 className="font-heading text-xl font-bold text-foreground mb-2">Send a Message</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <Input placeholder="Your Name" required value={form.name} onChange={handleChange("name")} className="bg-background" />
-                <Input placeholder="Phone Number" value={form.phone} onChange={handleChange("phone")} className="bg-background" />
-              </div>
-              <Input placeholder="Email Address" type="email" required value={form.email} onChange={handleChange("email")} className="bg-background" />
-              <Input placeholder="Subject" required value={form.subject} onChange={handleChange("subject")} className="bg-background" />
-              <Textarea placeholder="Your Message" rows={5} required value={form.message} onChange={handleChange("message")} className="bg-background resize-none" />
-              <label className="flex items-start gap-2.5 text-sm text-muted-foreground cursor-pointer select-none">
-                <Checkbox
-                  checked={authorization}
-                  onCheckedChange={(v) => setAuthorization(!!v)}
-                  className="mt-0.5"
-                  required
-                />
-                <span>
-                  I hereby authorize to send the notifications on SMS / Messages / Promotional / Informational Messages
-                </span>
-              </label>
-              <Button type="submit" className="w-full" disabled={sending}>
-                <Send className="w-4 h-4 mr-2" />
-                {sending ? "Sending..." : "Send Message"}
-              </Button>
-            </motion.form>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-12 md:py-16 bg-white dark:bg-background" ref={ref2}>
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={inView2 ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-16"
-          >
-            <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">Bank Transfer</p>
-            <Ornament className="mb-5" />
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground">Donation Details</h2>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={inView2 ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: 0.3 }}
-            className="max-w-lg mx-auto bg-background rounded-2xl p-8 border border-border"
-          >
-            <Building className="w-10 h-10 text-primary mb-4" />
-            <h3 className="font-heading text-lg font-bold text-foreground mb-4">Hare Krishna Movement India</h3>
-            <div className="space-y-3 text-sm">
-              <div className="flex justify-between py-2 border-b border-border">
-                <span className="text-muted-foreground">Account Number</span>
-                <span className="font-medium text-foreground">10091415313</span>
-              </div>
-              <div className="flex justify-between py-2 border-b border-border">
-                <span className="text-muted-foreground">IFSC Code</span>
-                <span className="font-medium text-foreground">IDFB0080412</span>
-              </div>
-              <div className="flex justify-between py-2 border-b border-border">
-                <span className="text-muted-foreground">Bank</span>
-                <span className="font-medium text-foreground">IDFC First Bank Ltd</span>
-              </div>
-              <div className="flex justify-between py-2">
-                <span className="text-muted-foreground">Branch</span>
-                <span className="font-medium text-foreground">Daba Gardens, Vizag</span>
-              </div>
-            </div>
-            <p className="text-xs text-primary mt-4 font-medium">
-              ✓ Avail 80G tax benefits on all donations
-            </p>
-          </motion.div>
-        </div>
-      </section>
-
-      <section className="py-12 md:py-16 bg-white dark:bg-background" ref={ref3}>
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={inView3 ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-12"
-          >
-            <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">Stay Connected</p>
-            <Ornament className="mb-5" />
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground mb-4">Follow Us</h2>
-            <p className="text-muted-foreground max-w-lg mx-auto">
-              Stay updated with our latest events, festivals, and seva activities through our social media channels.
-            </p>
-          </motion.div>
-          <div className="max-w-lg mx-auto grid grid-cols-3 gap-4">
-            {[
-              { icon: Facebook, name: "Facebook", color: "bg-primary/10" },
-              { icon: Instagram, name: "Instagram", color: "bg-primary/10" },
-              { icon: Youtube, name: "YouTube", color: "bg-primary/10" },
-            ].map((social, i) => (
-              <motion.a
-                key={social.name}
-                href="#"
-                initial={{ opacity: 0, y: 20 }}
-                animate={inView3 ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: 0.3 + i * 0.1 }}
-                whileHover={{ scale: 1.05 }}
-                className="bg-card rounded-2xl p-6 border border-border text-center hover:shadow-warm transition-shadow group"
-              >
-                <div className={`w-14 h-14 rounded-xl ${social.color} flex items-center justify-center mx-auto mb-3`}>
-                  <social.icon className="w-7 h-7 text-primary" />
+            <Reveal delay={0.08}>
+              <form onSubmit={handleSubmit} className="vk-card space-y-4 p-5 md:p-8">
+                <div>
+                  <h3 className="vk-bar-title text-xl text-foreground">Send a Message</h3>
                 </div>
-                <p className="font-heading font-semibold text-foreground text-sm">{social.name}</p>
-              </motion.a>
-            ))}
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <input placeholder="Your Name" required value={form.name} onChange={handleChange("name")} className="vk-input" />
+                  <input placeholder="Phone Number" value={form.phone} onChange={handleChange("phone")} className="vk-input" />
+                </div>
+                <input placeholder="Email Address" type="email" required value={form.email} onChange={handleChange("email")} className="vk-input" />
+                <input placeholder="Subject" required value={form.subject} onChange={handleChange("subject")} className="vk-input" />
+                <textarea
+                  placeholder="Your Message"
+                  rows={5}
+                  required
+                  value={form.message}
+                  onChange={handleChange("message")}
+                  className="vk-input h-auto resize-none py-3"
+                />
+                <label className="flex cursor-pointer select-none items-start gap-3 rounded-xl bg-vk-50 p-3 text-sm leading-relaxed text-muted-foreground">
+                  <Checkbox
+                    checked={authorization}
+                    onCheckedChange={(v) => setAuthorization(!!v)}
+                    className="mt-0.5 h-5 w-5 rounded-md border-vk-400 data-[state=checked]:border-vk-700 data-[state=checked]:bg-vk-700"
+                    required
+                  />
+                  <span>
+                    I hereby authorize to send the notifications on SMS / Messages / Promotional / Informational Messages
+                  </span>
+                </label>
+                <button type="submit" className="vk-btn-primary w-full py-3" disabled={sending}>
+                  <Send className="h-4 w-4" />
+                  {sending ? "Sending..." : "Send Message"}
+                </button>
+              </form>
+            </Reveal>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="py-12 md:py-16 bg-white dark:bg-background" ref={ref4}>
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={inView4 ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-16"
-          >
-            <p className="text-gold text-sm tracking-[0.2em] uppercase mb-4 font-medium">Common Questions</p>
-            <Ornament className="mb-5" />
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-foreground">FAQs</h2>
-          </motion.div>
-          <div className="max-w-3xl mx-auto space-y-4">
-            {faqs.map((faq, i) => (
-              <motion.div
-                key={faq.q}
-                initial={{ opacity: 0, y: 15 }}
-                animate={inView4 ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: 0.2 + i * 0.1 }}
-                className="bg-background rounded-2xl p-6 border border-border"
-              >
-                <h3 className="font-heading font-semibold text-foreground mb-2">{faq.q}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{faq.a}</p>
-              </motion.div>
-            ))}
+        {/* ── BANK DETAILS + SOCIAL ────────────────────────────── */}
+        <section className="vk-section vk-band">
+          <div className="vk-container grid gap-6 lg:grid-cols-2 lg:gap-8">
+            <Reveal>
+              <div className="vk-card h-full p-6 md:p-8">
+                <span className="vk-pill mb-4">Bank Transfer</span>
+                <h2 className="vk-h3">Donation Details</h2>
+                <div className="mt-5 flex items-center gap-3">
+                  <span className="vk-icon-chip">
+                    <Building className="h-5 w-5" />
+                  </span>
+                  <h3 className="text-base font-bold text-foreground md:text-lg">Hare Krishna Movement India</h3>
+                </div>
+                <dl className="mt-5 divide-y divide-vk-100 rounded-2xl border border-vk-100 bg-vk-50/60 px-4 text-sm">
+                  <div className="flex flex-wrap justify-between gap-x-4 gap-y-0.5 py-3">
+                    <dt className="text-muted-foreground">Account Number</dt>
+                    <dd className="font-semibold tabular-nums text-foreground">10091415313</dd>
+                  </div>
+                  <div className="flex flex-wrap justify-between gap-x-4 gap-y-0.5 py-3">
+                    <dt className="text-muted-foreground">IFSC Code</dt>
+                    <dd className="font-semibold text-foreground">IDFB0080412</dd>
+                  </div>
+                  <div className="flex flex-wrap justify-between gap-x-4 gap-y-0.5 py-3">
+                    <dt className="text-muted-foreground">Bank</dt>
+                    <dd className="font-semibold text-foreground">IDFC First Bank Ltd</dd>
+                  </div>
+                  <div className="flex flex-wrap justify-between gap-x-4 gap-y-0.5 py-3">
+                    <dt className="text-muted-foreground">Branch</dt>
+                    <dd className="font-semibold text-foreground">Daba Gardens, Vizag</dd>
+                  </div>
+                </dl>
+                <p className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-vk-700">
+                  <BadgeCheck className="h-4 w-4" />
+                  Avail 80G tax benefits on all donations
+                </p>
+              </div>
+            </Reveal>
+
+            <Reveal delay={0.08}>
+              <div className="vk-card flex h-full flex-col p-6 md:p-8">
+                <span className="vk-pill mb-4 self-start">Stay Connected</span>
+                <h2 className="vk-h3">Follow Us</h2>
+                <p className="vk-lead mt-2">
+                  Stay updated with our latest events, festivals, and seva activities through our social media channels.
+                </p>
+                <div className="mt-6 grid grid-cols-3 gap-3">
+                  {[
+                    { icon: Facebook, name: "Facebook" },
+                    { icon: Instagram, name: "Instagram" },
+                    { icon: Youtube, name: "YouTube" },
+                  ].map((social) => (
+                    <a
+                      key={social.name}
+                      href="#"
+                      className="group flex flex-col items-center rounded-2xl border border-vk-100 bg-vk-50 p-4 text-center transition-all hover:-translate-y-0.5 hover:border-vk-300 hover:bg-white hover:shadow-card"
+                    >
+                      <span className="mb-2 flex h-12 w-12 items-center justify-center rounded-xl bg-white text-vk-700 shadow-sm transition-colors group-hover:bg-vk-700 group-hover:text-white">
+                        <social.icon className="h-6 w-6" />
+                      </span>
+                      <span className="text-sm font-semibold text-foreground">{social.name}</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </Reveal>
           </div>
-        </div>
-      </section>
-      <WhatsAppCommunityCTA />
+        </section>
+
+        {/* ── FAQ ──────────────────────────────────────────────── */}
+        <section className="vk-section">
+          <div className="vk-container">
+            <SectionHeading align="center" eyebrow="Common Questions" title="FAQs" />
+            <div className="mx-auto max-w-3xl space-y-3">
+              {faqs.map((faq, i) => {
+                const isOpen = openFaq === i;
+                return (
+                  <div
+                    key={faq.q}
+                    className={`overflow-hidden rounded-2xl border bg-white transition-shadow ${
+                      isOpen ? "border-vk-200 shadow-card" : "border-vk-100"
+                    }`}
+                  >
+                    <h3>
+                      <button
+                        type="button"
+                        aria-expanded={isOpen}
+                        aria-controls={`contact-faq-${i}`}
+                        onClick={() => setOpenFaq(isOpen ? null : i)}
+                        className="flex min-h-[52px] w-full items-center justify-between gap-4 px-5 py-4 text-left text-[15px] font-semibold text-ink"
+                      >
+                        <span>{faq.q}</span>
+                        <span
+                          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-all ${
+                            isOpen ? "rotate-180 bg-vk-700 text-white" : "bg-vk-100 text-vk-700"
+                          }`}
+                        >
+                          <ChevronDown className="h-4 w-4" />
+                        </span>
+                      </button>
+                    </h3>
+                    <div
+                      id={`contact-faq-${i}`}
+                      role="region"
+                      className={`grid transition-[grid-template-rows] duration-300 ${isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
+                    >
+                      <div className="overflow-hidden">
+                        <p className="px-5 pb-5 text-[15px] leading-relaxed text-muted-foreground">{faq.a}</p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        <WhatsAppCommunityCTA />
+      </div>
     </PageLayout>
   );
 }

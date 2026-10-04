@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import {
   Loader2,
@@ -156,11 +155,12 @@ export default function DonorLoginPage() {
   return (
     <PageLayout>
       {/* pt clears the fixed site navbar, matching the campaign pages. */}
-      <main className="bg-background pt-[88px] md:pt-[104px]">
-        <section className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-14 lg:py-16">
+      <main className="bg-white pt-[var(--header-h)]">
+        <section className="vk-band">
+          <div className="vk-container grid gap-6 py-10 md:py-16 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-14">
           {/* ── Left: why an account is worth having ──────────────── */}
-          <div className="order-2 lg:order-1">
-            <div className="relative overflow-hidden rounded-3xl p-7 text-white shadow-[var(--shadow-elevated)] sm:p-9">
+          <div className="order-2 min-w-0 lg:order-1">
+            <div className="relative overflow-hidden rounded-3xl p-6 text-white shadow-[0_24px_50px_-24px_rgba(30,58,138,0.7)] sm:p-9">
               <Image
                 src="/assets/hero-temple.jpg"
                 alt=""
@@ -169,30 +169,25 @@ export default function DonorLoginPage() {
                 sizes="(min-width: 1024px) 50vw, 100vw"
                 className="object-cover"
               />
-              <div className="absolute inset-0" style={{ background: "var(--gradient-hero)", opacity: 0.92 }} />
-              <div
-                className="pointer-events-none absolute -left-20 -top-20 h-64 w-64 rounded-full blur-3xl"
-                style={{ background: "var(--gradient-gold)", opacity: 0.25 }}
-              />
+              <div className="absolute inset-0 bg-gradient-to-br from-vk-800/95 via-vk-700/90 to-vk-600/85" />
+              <div aria-hidden className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-white/10" />
 
               <div className="relative z-10">
-                <span className="inline-flex items-center rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-gold">
-                  Donor Portal
-                </span>
-                <h1 className="mt-4 font-heading text-2xl font-bold leading-tight sm:text-3xl">
+                <span className="vk-pill-light">Donor Portal</span>
+                <h1 className="mt-4 font-heading text-2xl font-extrabold leading-tight tracking-[-0.02em] text-white sm:text-3xl">
                   Welcome back to your seva journey
                 </h1>
-                <p className="mt-2.5 max-w-md text-sm leading-relaxed text-white/75">
+                <p className="mt-2.5 max-w-md text-sm leading-relaxed text-white/80">
                   Log in with the mobile number you&apos;ve donated with — no password to remember.
                 </p>
 
-                <ul className="mt-7 grid gap-3.5 sm:grid-cols-2 lg:grid-cols-1">
+                <ul className="mt-7 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-1">
                   {FEATURES.map(({ icon: Icon, text }) => (
-                    <li key={text} className="flex items-start gap-3">
-                      <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/10 text-gold">
+                    <li key={text} className="flex items-start gap-3 rounded-xl bg-white/10 px-3 py-2.5">
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/10 text-[hsl(var(--gold))]">
                         <Icon className="h-4 w-4" />
                       </span>
-                      <span className="text-sm leading-relaxed text-white/85">{text}</span>
+                      <span className="text-sm leading-relaxed text-white/90">{text}</span>
                     </li>
                   ))}
                 </ul>
@@ -201,16 +196,13 @@ export default function DonorLoginPage() {
           </div>
 
           {/* ── Right: the actual login ───────────────────────────── */}
-          <div className="order-1 mx-auto w-full max-w-sm lg:order-2 lg:mx-0 lg:max-w-md">
-            <div className="rounded-3xl border border-border bg-card p-6 shadow-[var(--shadow-elevated)] sm:p-8">
+          <div className="order-1 mx-auto w-full min-w-0 max-w-md lg:order-2 lg:mx-0">
+            <div className="vk-card !rounded-3xl p-5 sm:p-8">
               <div className="mb-6 flex flex-col items-center text-center">
-                <span
-                  className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl text-white shadow-[var(--shadow-gold)]"
-                  style={{ background: "var(--gradient-gold)" }}
-                >
+                <span className="vk-icon-chip mb-4 !h-14 !w-14 !rounded-2xl">
                   {step === "mobile" ? <Phone className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
                 </span>
-                <h2 className="font-heading text-xl font-bold text-primary">
+                <h2 className="font-heading text-xl font-bold text-ink">
                   {step === "mobile" ? "Donor Login" : "Enter your code"}
                 </h2>
                 <p className="mt-1.5 text-sm text-muted-foreground">
@@ -219,7 +211,7 @@ export default function DonorLoginPage() {
                   ) : (
                     <>
                       Sent on WhatsApp to{" "}
-                      <span className="font-semibold text-foreground">+91 {mobile}</span>
+                      <span className="font-semibold text-ink">+91 {mobile}</span>
                     </>
                   )}
                 </p>
@@ -232,7 +224,7 @@ export default function DonorLoginPage() {
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: "auto" }}
                     exit={{ opacity: 0, height: 0 }}
-                    className="mb-4 overflow-hidden rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive"
+                    className="mb-4 overflow-hidden rounded-xl bg-red-50 px-3.5 py-2.5 text-[13px] font-medium text-red-700"
                   >
                     {error}
                   </motion.div>
@@ -253,24 +245,30 @@ export default function DonorLoginPage() {
                     }}
                     className="space-y-4"
                   >
-                    <div className="relative flex items-center rounded-xl border border-border bg-background transition-colors focus-within:border-gold">
-                      <Phone className="pointer-events-none absolute left-3 h-4 w-4 text-muted-foreground" />
-                      <span className="pointer-events-none border-r border-border py-3 pl-9 pr-2.5 text-sm text-muted-foreground">
-                        +91
-                      </span>
-                      <input
-                        type="tel"
-                        inputMode="numeric"
-                        autoComplete="tel-national"
-                        value={mobile}
-                        onChange={(e) => setMobile(e.target.value.replace(/\D/g, "").slice(0, 10))}
-                        placeholder="10-digit mobile number"
-                        maxLength={10}
-                        autoFocus
-                        className="h-12 w-full bg-transparent px-3 text-base text-foreground outline-none placeholder:text-sm placeholder:text-muted-foreground"
-                      />
+                    <div>
+                      <label htmlFor="donor-login-mobile" className="mb-1.5 block text-[13px] font-semibold text-ink/80">
+                        Mobile number
+                      </label>
+                      <div className="relative flex h-12 items-center rounded-xl border border-vk-200 bg-white transition focus-within:border-vk-500 focus-within:shadow-[0_0_0_3px_rgba(47,91,211,0.15)]">
+                        <Phone className="pointer-events-none absolute left-3.5 h-4 w-4 text-vk-400" />
+                        <span className="pointer-events-none border-r border-vk-200 py-2.5 pl-10 pr-2.5 text-sm font-semibold text-vk-700">
+                          +91
+                        </span>
+                        <input
+                          id="donor-login-mobile"
+                          type="tel"
+                          inputMode="numeric"
+                          autoComplete="tel-national"
+                          value={mobile}
+                          onChange={(e) => setMobile(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                          placeholder="10-digit mobile number"
+                          maxLength={10}
+                          autoFocus
+                          className="h-full w-full min-w-0 bg-transparent px-3 text-base text-ink outline-none placeholder:text-sm placeholder:text-muted-foreground/70"
+                        />
+                      </div>
                     </div>
-                    <Button type="submit" disabled={sending} className="w-full gap-2" size="lg">
+                    <button type="submit" disabled={sending} className="vk-btn-primary h-12 w-full text-[15px] font-bold">
                       {sending ? (
                         <>
                           <Loader2 className="h-4 w-4 animate-spin" /> Sending code…
@@ -280,7 +278,7 @@ export default function DonorLoginPage() {
                           <MessageCircle className="h-4 w-4" /> Send code on WhatsApp
                         </>
                       )}
-                    </Button>
+                    </button>
                   </motion.form>
                 ) : (
                   <motion.form
@@ -299,7 +297,7 @@ export default function DonorLoginPage() {
                             <InputOTPSlot
                               key={i}
                               index={i}
-                              className="h-12 w-10 rounded-lg border border-border text-lg font-semibold sm:h-14 sm:w-12 sm:text-xl"
+                              className="h-12 w-10 rounded-xl border border-vk-200 bg-white text-lg font-bold text-ink first:rounded-l-xl last:rounded-r-xl sm:h-14 sm:w-12 sm:text-xl"
                             />
                           ))}
                         </InputOTPGroup>
@@ -319,11 +317,11 @@ export default function DonorLoginPage() {
                       ) : null}
                     </p>
 
-                    <Button type="submit" disabled={loading || otp.length !== 6} className="w-full" size="lg">
+                    <button type="submit" disabled={loading || otp.length !== 6} className="vk-btn-primary h-12 w-full text-[15px] font-bold">
                       {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Verify & Log In"}
-                    </Button>
+                    </button>
 
-                    <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center justify-between gap-3 text-sm">
                       <button
                         type="button"
                         onClick={() => {
@@ -331,7 +329,7 @@ export default function DonorLoginPage() {
                           setError(null);
                           setSent(false);
                         }}
-                        className="flex items-center gap-1 text-muted-foreground transition-colors hover:text-foreground"
+                        className="flex min-h-[44px] items-center gap-1 font-medium text-muted-foreground transition-colors hover:text-vk-700"
                       >
                         <ArrowLeft className="h-3.5 w-3.5" /> Change number
                       </button>
@@ -339,7 +337,7 @@ export default function DonorLoginPage() {
                         type="button"
                         disabled={cooldown > 0 || sending || loading}
                         onClick={() => requestOtp({ resend: true })}
-                        className="font-medium text-primary transition-colors disabled:cursor-not-allowed disabled:text-muted-foreground"
+                        className="min-h-[44px] font-semibold text-vk-700 transition-colors hover:text-vk-500 disabled:cursor-not-allowed disabled:text-muted-foreground"
                       >
                         {cooldown > 0 ? `Resend in ${cooldown}s` : "Resend code"}
                       </button>
@@ -348,18 +346,19 @@ export default function DonorLoginPage() {
                 )}
               </AnimatePresence>
 
-              <div className="mt-6 flex items-center justify-center gap-1.5 border-t border-border pt-5 text-center text-xs text-muted-foreground">
-                <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-gold" />
+              <div className="mt-6 flex items-center justify-center gap-1.5 border-t border-vk-100 pt-5 text-center text-[11px] text-muted-foreground">
+                <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-vk-500" />
                 Secured with one-time WhatsApp verification — no password needed.
               </div>
             </div>
 
-            <p className="mt-4 text-center text-xs text-muted-foreground">
+            <p className="mt-4 text-center text-[13px] text-muted-foreground">
               Haven&apos;t donated yet?{" "}
-              <Link href="/donate" className="font-semibold text-primary hover:underline">
+              <Link href="/donate" className="font-semibold text-vk-700 underline-offset-4 hover:underline">
                 Begin your seva
               </Link>
             </p>
+          </div>
           </div>
         </section>
       </main>

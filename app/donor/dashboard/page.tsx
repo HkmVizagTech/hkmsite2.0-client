@@ -52,8 +52,8 @@ interface Stats {
   donorSince: string;
 }
 
-/* Section card — matches the site's content blocks: gold uppercase eyebrow,
-   icon chip, and a white rounded-3xl card with the warm site shadow. */
+/* Section card — Vaikuntham Blue content block: tinted icon chip, small blue
+   eyebrow + bar title, white vk-card. */
 function SectionCard({
   icon: Icon,
   eyebrow,
@@ -78,22 +78,19 @@ function SectionCard({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.45 }}
-      className={`scroll-mt-28 overflow-hidden rounded-3xl border border-border bg-card shadow-warm ${className}`}
+      className={`vk-card min-w-0 scroll-mt-[calc(var(--header-h)+1rem)] overflow-hidden !rounded-3xl ${className}`}
     >
-      <div className="flex items-center gap-3 border-b border-border/70 bg-gradient-to-r from-gold/10 via-transparent to-transparent px-5 py-4 sm:px-7">
-        <span
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-white shadow-[var(--shadow-gold)]"
-          style={{ background: "var(--gradient-gold)" }}
-        >
-          <Icon className="h-4 w-4" />
+      <div className="flex items-center gap-3 border-b border-vk-100 bg-gradient-to-r from-vk-50 via-white to-white px-4 py-4 sm:px-6">
+        <span className="vk-icon-chip !h-10 !w-10">
+          <Icon className="h-[18px] w-[18px]" />
         </span>
         <div className="min-w-0 flex-1">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-gold">{eyebrow}</p>
-          <h2 className="truncate font-heading text-lg font-bold text-foreground">{title}</h2>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-vk-500">{eyebrow}</p>
+          <h2 className="truncate font-heading text-lg font-bold tracking-[-0.01em] text-ink">{title}</h2>
         </div>
         {action}
       </div>
-      <div className="p-5 sm:p-7">{children}</div>
+      <div className="p-4 sm:p-6">{children}</div>
     </motion.section>
   );
 }
@@ -113,13 +110,13 @@ function DetailRow({
 }) {
   return (
     <div className="flex items-start gap-2.5">
-      <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gold/10 text-gold">
+      <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-vk-100 text-vk-700">
         <Icon className="h-4 w-4" />
       </span>
       <div className="min-w-0">
-        <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</p>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">{label}</p>
         {value ? (
-          <p className="truncate text-sm font-medium text-foreground">{value}</p>
+          <p className="truncate text-sm font-semibold text-ink">{value}</p>
         ) : (
           <p className="truncate text-sm text-muted-foreground/70">{missing}</p>
         )}
@@ -216,14 +213,8 @@ export default function DonorDashboardPage() {
   if (loading) {
     return (
       <PageLayout>
-        <div
-          className="flex min-h-[70vh] flex-col items-center justify-center gap-4 pt-[88px] md:pt-[104px]"
-          style={{ background: "var(--gradient-warm)" }}
-        >
-          <span
-            className="flex h-14 w-14 items-center justify-center rounded-2xl text-white shadow-[var(--shadow-gold)]"
-            style={{ background: "var(--gradient-gold)" }}
-          >
+        <div className="vk-band flex min-h-[70vh] flex-col items-center justify-center gap-4 pt-[var(--header-h)]">
+          <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-vk-700 text-white shadow-lift">
             <Loader2 className="h-6 w-6 animate-spin" />
           </span>
           <p className="text-sm font-medium text-muted-foreground">Preparing your seva journey…</p>
@@ -240,7 +231,7 @@ export default function DonorDashboardPage() {
   return (
     <PageLayout>
       {/* pt clears the fixed site navbar. */}
-      <div className="pt-[88px] md:pt-[104px]" style={{ background: "var(--gradient-warm)" }}>
+      <div className="bg-white pt-[var(--header-h)]">
         <DonorHero
           name={profile?.name || "Devotee"}
           donorId={profile?.donorId || ""}
@@ -252,9 +243,9 @@ export default function DonorDashboardPage() {
           onLogout={logout}
         />
 
-        <main className="mx-auto max-w-6xl px-4 pb-20 sm:px-6">
+        <main className="vk-container pb-20">
           {error && (
-            <div className="mt-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+            <div className="mt-6 rounded-xl bg-red-50 px-3.5 py-2.5 text-[13px] font-medium text-red-700">
               {error}
             </div>
           )}
@@ -262,15 +253,15 @@ export default function DonorDashboardPage() {
           {/* ── Quick jump ─────────────────────────────────────────── */}
           <nav
             aria-label="Jump to section"
-            className="-mx-4 mt-6 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0"
+            className="-mx-4 mt-6 flex gap-2 overflow-x-auto px-4 pb-1 scrollbar-hide sm:mx-0 sm:px-0"
           >
             {JUMP_LINKS.map(({ href, label, icon: Icon }) => (
               <Link
                 key={href}
                 href={href}
-                className="flex shrink-0 items-center gap-1.5 rounded-full border border-border bg-card px-3.5 py-2 text-xs font-medium text-muted-foreground shadow-sm transition-colors hover:border-gold/50 hover:text-foreground"
+                className="flex min-h-[40px] shrink-0 items-center gap-1.5 rounded-full border border-vk-200 bg-white px-4 py-2 text-xs font-semibold text-vk-700 shadow-sm transition-colors hover:border-vk-500 hover:bg-vk-50"
               >
-                <Icon className="h-3.5 w-3.5 text-gold" />
+                <Icon className="h-3.5 w-3.5 text-vk-500" />
                 {label}
               </Link>
             ))}
@@ -288,7 +279,7 @@ export default function DonorDashboardPage() {
                   type="button"
                   onClick={() => setEditingProfile((v) => !v)}
                   aria-expanded={editingProfile}
-                  className="flex shrink-0 items-center gap-1.5 rounded-full border border-border px-3.5 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-gold/50 hover:text-foreground"
+                  className="vk-btn-outline h-10 shrink-0 gap-1.5 px-3.5 text-xs"
                 >
                   {editingProfile ? "Close" : "Edit details"}
                   <ChevronDown
@@ -320,7 +311,7 @@ export default function DonorDashboardPage() {
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
-                  className="mt-6 overflow-hidden border-t border-border pt-6"
+                  className="mt-6 overflow-hidden border-t border-vk-100 pt-6"
                 >
                   <DonorProfileSection
                     profile={profile}
@@ -335,7 +326,7 @@ export default function DonorDashboardPage() {
 
           {/* ── Everything else ────────────────────────────────────── */}
           <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start">
-            <div className="space-y-6">
+            <div className="min-w-0 space-y-6">
               <SectionCard id="history" icon={History} eyebrow="Your Sevas" title="Donation History">
                 <DonationHistorySection
                   donations={donations}
@@ -362,7 +353,7 @@ export default function DonorDashboardPage() {
               </SectionCard>
             </div>
 
-            <div className="space-y-6 lg:sticky lg:top-28">
+            <div className="min-w-0 space-y-6 lg:sticky lg:top-[calc(var(--header-h)+1rem)]">
               <SectionCard id="festivals" icon={CalendarDays} eyebrow="Festivals & Occasions" title="Upcoming Sevas">
                 <NextSevas />
               </SectionCard>
@@ -372,36 +363,26 @@ export default function DonorDashboardPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-40px" }}
                 transition={{ duration: 0.45, delay: 0.05 }}
-                className="relative overflow-hidden rounded-3xl text-white shadow-[var(--shadow-elevated)]"
-                style={{ background: "var(--gradient-navy)" }}
+                className="bg-gradient-navy relative overflow-hidden rounded-3xl text-white shadow-[0_24px_50px_-24px_rgba(30,58,138,0.7)]"
               >
-                <div
-                  className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full blur-3xl"
-                  style={{ background: "var(--gradient-gold)", opacity: 0.25 }}
-                />
+                <div aria-hidden className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-white/10" />
                 <div className="relative z-10 p-6 sm:p-7">
-                  <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-gold">
-                    Continue Your Seva
-                  </p>
-                  <h3 className="font-heading text-xl font-bold leading-snug">
+                  <span className="vk-pill-light mb-3">Continue Your Seva</span>
+                  <h3 className="font-heading text-xl font-bold leading-snug text-white">
                     Every offering nurtures the temple&apos;s service
                   </h3>
-                  <p className="mt-2 text-sm text-white/75">
+                  <p className="mt-2 text-sm text-white/80">
                     Support the deities, cows, and community — your seva continues to bloom.
                   </p>
-                  <Link
-                    href="/donate"
-                    className="mt-5 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-[hsl(220_90%_18%)] shadow-[var(--shadow-gold)] transition-transform hover:scale-[1.03]"
-                    style={{ background: "var(--gradient-gold)" }}
-                  >
-                    <Heart className="h-4 w-4" /> Donate Now
+                  <Link href="/donate" className="vk-btn-gold mt-5 h-11 w-full px-5 sm:w-auto">
+                    <Heart className="h-4 w-4 fill-current" /> Donate Now
                   </Link>
                 </div>
               </motion.div>
 
-              <div className="rounded-2xl border border-border bg-card p-5">
-                <p className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
-                  <Check className="h-3.5 w-3.5 text-emerald-600" /> Every completed offering has a receipt
+              <div className="vk-card p-5">
+                <p className="flex items-center gap-1.5 text-[13px] font-semibold text-ink">
+                  <Check className="h-4 w-4 text-vk-500" /> Every completed offering has a receipt
                 </p>
                 <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
                   Search your history by seva, month or receipt number, then download the PDF — all donations
@@ -411,8 +392,8 @@ export default function DonorDashboardPage() {
             </div>
           </div>
 
-          <p className="mt-10 flex items-center justify-center gap-1.5 text-center text-xs text-muted-foreground">
-            <ShieldCheck className="h-3.5 w-3.5 text-gold" />
+          <p className="mt-10 flex items-center justify-center gap-1.5 text-center text-[11px] text-muted-foreground sm:text-xs">
+            <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-vk-500" />
             All donations are 80G tax-exempt · Receipts are available instantly for every completed offering.
           </p>
         </main>

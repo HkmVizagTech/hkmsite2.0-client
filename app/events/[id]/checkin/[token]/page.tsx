@@ -32,32 +32,38 @@ export default function CheckinPage({ params }: any) {
 
   return (
     <PageLayout>
-      <section className="py-20">
-        <div className="container mx-auto px-4 max-w-2xl">
-          <div className="bg-card rounded-2xl p-8 text-center">
-            {loading ? (
-              <div>Processing check-in...</div>
-            ) : (
-              <div className="space-y-4">
-                <h2 className="text-2xl font-bold">{status}</h2>
-                {registration && (
-                  <div className="text-left mt-4">
-                    <h3 className="font-semibold">Registrant details</h3>
-                    <div className="mt-2 space-y-2">
-                      {Object.entries(registration.data || {}).map(([k, v]) => (
-                        <div key={k} className="flex justify-between border-b pb-2">
-                          <div className="text-sm text-muted-foreground">{k}</div>
-                          <div className="text-sm font-medium">{String(v)}</div>
-                        </div>
-                      ))}
+      <div className="bg-white pt-[var(--header-h)]">
+        <section className="bg-gradient-to-b from-vk-100 via-vk-50 to-white py-12 md:py-20">
+          <div className="vk-container">
+            <div className="vk-card mx-auto max-w-2xl p-6 text-center md:p-10">
+              <span className="vk-pill mb-4">Event Check-in</span>
+              {loading ? (
+                <div className="flex flex-col items-center gap-3 py-4 text-muted-foreground">
+                  <span className="h-8 w-8 animate-spin rounded-full border-[3px] border-vk-200 border-t-vk-700" aria-hidden />
+                  <div>Processing check-in...</div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <h2 className="vk-h3">{status}</h2>
+                  {registration && (
+                    <div className="mt-4 rounded-2xl border border-vk-100 bg-vk-50 p-4 text-left md:p-5">
+                      <h3 className="font-semibold text-ink">Registrant details</h3>
+                      <div className="mt-3 space-y-2">
+                        {Object.entries(registration.data || {}).map(([k, v]) => (
+                          <div key={k} className="flex justify-between gap-4 border-b border-vk-100 pb-2 last:border-0">
+                            <div className="text-sm text-muted-foreground">{k}</div>
+                            <div className="break-all text-right text-sm font-medium text-ink">{String(v)}</div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
-            )}
+                  )}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
     </PageLayout>
   );
 }

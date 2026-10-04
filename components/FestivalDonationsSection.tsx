@@ -18,9 +18,9 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import SectionHeading from "@/components/site/SectionHeading";
 import { Sparkles, CalendarDays, ArrowRight } from "lucide-react";
-import Ornament from "@/components/Ornament";
+import Reveal from "@/components/site/Reveal";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 
@@ -108,50 +108,25 @@ export default function FestivalDonationsSection({
       .map((o) => ({ label: o.label as string, amount: o.amount }));
 
   return (
-    <section
-      className={`${isHome ? "bg-gradient-navy" : "bg-white dark:bg-background"} py-12 md:py-16`}
-    >
-      <div className="container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6 }}
-          className="mb-10 text-center"
-        >
-          <p className={`mb-2.5 text-xs font-semibold uppercase tracking-[0.2em] ${isHome ? "text-gold" : "text-primary"}`}>
-            Festival Donations
-          </p>
-          <Ornament className="mb-4" />
-          <h2
-            className={`font-heading text-[27px] font-extrabold tracking-tight md:text-[34px] ${
-              isHome ? "text-white" : "text-foreground"
-            }`}
-          >
-            Festival Sevas
-          </h2>
-          <p className={`mx-auto mt-2.5 max-w-xl text-sm md:text-[15px] ${isHome ? "text-white/70" : "text-muted-foreground"}`}>
-            Offer your seva during the festivals being celebrated and become part of the divine pastime.
-          </p>
-        </motion.div>
+    <section className={`vk-section ${isHome ? "bg-gradient-navy" : "vk-band"}`}>
+      <div className="vk-container">
+        <SectionHeading
+          align="center"
+          light={isHome}
+          eyebrow="Festival Donations"
+          title="Festival Sevas"
+          subtitle="Offer your seva during the festivals being celebrated and become part of the divine pastime."
+        />
 
-        <div className="mx-auto grid max-w-6xl gap-5 sm:grid-cols-2 md:gap-6 lg:grid-cols-3">
+        <div className="mx-auto grid max-w-6xl gap-4 sm:grid-cols-2 md:gap-5 lg:grid-cols-3">
           {visible.map((c, i) => (
-            <motion.div
-              key={c.slug}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ delay: Math.min(i, 5) * 0.06, duration: 0.45 }}
-            >
+            <Reveal key={c.slug} delay={Math.min(i, 5) * 0.06}>
               <Link
                 href={FESTIVAL_PAGE[c.slug]}
-                className={`group block overflow-hidden rounded-3xl border bg-card shadow-warm transition-all duration-300 hover:-translate-y-2 hover:shadow-elevated ${
-                  isHome ? "border-white/15" : "border-border"
-                }`}
+                className="vk-card vk-card-hover group block h-full overflow-hidden"
               >
                 {/* Banner — the photo sits on top, uncluttered by text. */}
-                <div className="relative aspect-[3/2] overflow-hidden">
+                <div className="relative aspect-[3/2] overflow-hidden bg-vk-100">
                   {c.images?.[0] ? (
                     /* eslint-disable-next-line @next/next/no-img-element */
                     <img
@@ -161,60 +136,53 @@ export default function FestivalDonationsSection({
                       className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-muted">
-                      <Sparkles className="h-10 w-10 text-primary/30" />
+                    <div className="flex h-full w-full items-center justify-center bg-vk-50">
+                      <Sparkles className="h-10 w-10 text-vk-300" />
                     </div>
                   )}
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-vk-900/45 via-transparent to-transparent" />
 
                   {/* Top chips */}
-                  <div className="absolute inset-x-0 top-0 flex items-start justify-between p-3 md:p-4">
-                    <span className="inline-flex items-center gap-1 rounded-full bg-black/45 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white/90 backdrop-blur-sm">
+                  <div className="absolute inset-x-0 top-0 flex items-start justify-between gap-2 p-3">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-vk-800 shadow">
                       <CalendarDays className="h-3 w-3" />
                       {(() => {
                         const d = formatEventDate(c.meta?.eventDate);
                         return d ? `${d.day} ${d.month} ${d.year}` : "Save the date";
                       })()}
                     </span>
-                    <span className="rounded-full bg-gold px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[hsl(220,60%,12%)]">
-                      Festival Seva
-                    </span>
-                  </div>
-
-                  {/* Hover donate pill — appears over the banner on hover. */}
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-gradient-gold px-5 py-2.5 text-[13px] font-bold text-[hsl(220,60%,12%)] shadow-gold">
-                      Donate Now <ArrowRight className="h-3.5 w-3.5" />
+                    <span className="vk-pill !px-2.5 !py-1 !text-[10px]">
+                      <Sparkles className="h-3 w-3" /> Festival Seva
                     </span>
                   </div>
                 </div>
 
                 {/* Content below the banner. */}
-                <div className="p-4 md:p-5">
-                  <h3 className="line-clamp-2 font-heading text-lg font-bold leading-snug text-foreground md:text-xl">
-                    {c.title}
-                  </h3>
+                <div className="flex flex-col p-4 md:p-5">
+                  <h3 className="line-clamp-2 text-lg font-bold leading-snug text-ink md:text-xl">{c.title}</h3>
                   {c.description && (
-                    <p className="mt-1 line-clamp-2 text-[12px] leading-relaxed text-muted-foreground">
+                    <p className="mt-1.5 line-clamp-2 text-[13px] leading-relaxed text-muted-foreground">
                       {c.description}
                     </p>
                   )}
                   {sevas(c).length > 0 && (
-                    <div className="mt-2.5 flex flex-wrap gap-1.5">
+                    <div className="mt-3 flex flex-wrap gap-1.5">
                       {sevas(c).map((s) => (
                         <span
                           key={s.label}
-                          className="rounded-full bg-gold/10 px-2.5 py-1 text-[10px] font-semibold text-gold-deep"
+                          className="rounded-full bg-vk-100 px-2.5 py-1 text-[11px] font-semibold text-vk-700"
                         >
-                          {s.amount
-                            ? `${s.label} · ₹${s.amount.toLocaleString("en-IN")}`
-                            : s.label}
+                          {s.amount ? `${s.label} · ₹${s.amount.toLocaleString("en-IN")}` : s.label}
                         </span>
                       ))}
                     </div>
                   )}
+                  <span className="vk-btn-gold mt-4 w-full">
+                    Donate Now <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                  </span>
                 </div>
               </Link>
-            </motion.div>
+            </Reveal>
           ))}
         </div>
       </div>

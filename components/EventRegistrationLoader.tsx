@@ -61,15 +61,18 @@ export default function EventRegistrationLoader({ eventId, initialFormSchema, in
   // on-page registration form.
   if (externalLink) {
     return (
-      <div className="flex flex-col items-center gap-3 py-6 text-center">
-        <p className="text-sm text-muted-foreground">
-          Registrations for this event are handled on its landing page.
-        </p>
+      <div className="vk-card flex flex-col items-start gap-4 p-5 sm:flex-row sm:items-center sm:justify-between md:p-6">
+        <div>
+          <span className="vk-pill-soft mb-2">Registration</span>
+          <p className="text-sm text-muted-foreground">
+            Registrations for this event are handled on its landing page.
+          </p>
+        </div>
         <a
           href={externalLink}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-2 rounded-full bg-gradient-gold px-7 py-3 text-sm font-bold text-[hsl(220,60%,12%)] shadow-gold transition-transform hover:-translate-y-0.5"
+          className="vk-btn-primary min-h-[44px] w-full shrink-0 sm:w-auto"
         >
           Register on the event page
           <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

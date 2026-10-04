@@ -96,19 +96,19 @@ function ShopHeader() {
   }, [hydrated, itemCount]);
 
   const linkCls = (active: boolean) =>
-    `relative inline-flex items-center gap-1.5 text-sm font-medium transition-colors after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-gradient-gold after:transition-all after:duration-300 hover:after:w-full ${
-      active ? "text-gold after:w-full" : "text-white/70 hover:text-white"
+    `relative inline-flex items-center gap-1.5 text-sm font-medium transition-colors after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-0 after:rounded-full after:bg-vk-500 after:transition-all after:duration-300 hover:after:w-full ${
+      active ? "text-vk-700 after:w-full" : "text-ink/75 hover:text-vk-700"
     }`;
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/10 bg-gradient-navy text-white">
-      <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between gap-2 px-4 sm:h-[72px] sm:px-6 lg:gap-6 lg:px-8">
+    <header className="sticky top-0 z-40 border-b border-vk-100 bg-white/95 text-ink shadow-nav backdrop-blur-md">
+      <div className="vk-container flex h-16 items-center justify-between gap-2 sm:h-[72px] lg:gap-6">
         {/* Brand wordmark only — no logo image. */}
         <Link href="/shop" className="group flex shrink-0 flex-col leading-none">
-          <span className="font-heading text-[17px] font-semibold tracking-tight sm:text-2xl">
-            Matchless <span className="text-gradient-gold">Gifts</span>
+          <span className="font-heading text-[17px] font-extrabold tracking-[-0.02em] text-ink sm:text-2xl">
+            Matchless <span className="text-vk-700">Gifts</span>
           </span>
-          <span className="mt-1 text-[9px] font-semibold uppercase tracking-[0.28em] text-white/60">
+          <span className="mt-1 text-[9px] font-semibold uppercase tracking-[0.28em] text-muted-foreground">
             HKM Visakhapatnam
           </span>
         </Link>
@@ -124,13 +124,13 @@ function ShopHeader() {
             className="hidden w-full max-w-md lg:block"
           >
             <div className="relative">
-              <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-white/60" />
+              <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-vk-400" />
               <input
                 type="search"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search products…"
-                className="h-10 w-full rounded-full border border-white/20 bg-white/10 pl-10 pr-4 text-sm text-white outline-none transition-colors placeholder:text-white/50 focus:border-gold"
+                className="h-10 w-full rounded-full border border-vk-200 bg-vk-50 pl-10 pr-4 text-sm text-ink outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-vk-500 focus:bg-white focus:ring-[3px] focus:ring-vk-500/15"
               />
             </div>
           </form>
@@ -143,7 +143,7 @@ function ShopHeader() {
               setHintVisible(false);
             }}
             aria-label="Search products"
-            className="relative grid h-9 w-9 place-items-center rounded-full border border-white/20 bg-white/10 text-white transition-colors hover:border-gold/60 hover:bg-white/15 lg:hidden"
+            className="relative grid h-10 w-10 place-items-center rounded-full border border-vk-200 bg-vk-50 text-vk-700 transition-colors hover:border-vk-500 lg:hidden"
           >
             <Search className="h-4 w-4" />
             <AnimatePresence>
@@ -153,10 +153,10 @@ function ShopHeader() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 6 }}
                   transition={{ duration: 0.2 }}
-                  className="absolute right-0 top-full z-50 mt-2 w-max max-w-[220px] rounded-xl bg-white px-3 py-1.5 text-[11px] font-semibold text-foreground shadow-elevated"
+                  className="absolute right-0 top-full z-50 mt-2 w-max max-w-[220px] rounded-xl bg-vk-900 px-3 py-1.5 text-[11px] font-semibold text-white shadow-lift"
                 >
                   Click here to search products
-                  <span className="absolute -top-1 right-4 h-2 w-2 rotate-45 bg-white" />
+                  <span className="absolute -top-1 right-4 h-2 w-2 rotate-45 bg-vk-900" />
                 </motion.span>
               )}
             </AnimatePresence>
@@ -177,11 +177,11 @@ function ShopHeader() {
           </Link>
           <button
             onClick={openCart}
-            className="group relative flex h-10 items-center gap-2 rounded-full border border-white/25 bg-white/10 pl-2.5 pr-2.5 transition-colors hover:border-gold/60 hover:bg-white/15 sm:pr-3.5"
+            className="group relative flex h-10 items-center gap-2 rounded-full border border-vk-200 bg-white pl-2.5 pr-2.5 transition-colors hover:border-vk-700 hover:bg-vk-50 sm:pr-3.5"
             aria-label="Open cart"
           >
             <span className="relative flex h-6 w-6 items-center justify-center">
-              <ShoppingBag className="h-[18px] w-[18px] text-white" />
+              <ShoppingBag className="h-[18px] w-[18px] text-vk-700" />
               {/* Hidden until hydration so the badge never flashes a stale or
                   zero count before localStorage has been read. */}
               {hydrated && itemCount > 0 && (
@@ -190,14 +190,13 @@ function ShopHeader() {
                   initial={{ scale: 0.5, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ type: "spring", stiffness: 520, damping: 20 }}
-                  className="absolute -right-1.5 -top-1.5 flex h-4 min-w-[16px] items-center justify-center rounded-full px-1 text-[9px] font-bold text-[hsl(220,60%,12%)] shadow-sm"
-                  style={{ background: "var(--gradient-gold)" }}
+                  className="absolute -right-1.5 -top-1.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-vk-700 px-1 text-[9px] font-bold text-white shadow-sm"
                 >
                   {itemCount}
                 </motion.span>
               )}
             </span>
-            <span className="hidden text-xs font-semibold text-white sm:inline">
+            <span className="hidden text-xs font-semibold text-ink sm:inline">
               Cart{cartTotal !== null ? ` · ${formatINR(cartTotal)}` : ""}
             </span>
           </button>
@@ -212,11 +211,11 @@ function ShopHeader() {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.22, ease: "easeInOut" }}
-            className="overflow-hidden border-t border-white/10 lg:hidden"
+            className="overflow-hidden border-t border-vk-100 lg:hidden"
           >
-            <div className="mx-auto max-w-[1440px] px-4 py-2.5 sm:px-6">
+            <div className="vk-container py-2.5">
               <div className="relative">
-                <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-white/60" />
+                <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-vk-400" />
                 <input
                   autoFocus
                   type="search"
@@ -229,13 +228,13 @@ function ShopHeader() {
                     }
                   }}
                   placeholder="Search products…"
-                  className="h-11 w-full rounded-full border border-white/20 bg-white/10 pl-10 pr-12 text-sm text-white outline-none transition-colors placeholder:text-white/50 focus:border-gold"
+                  className="h-11 w-full rounded-full border border-vk-200 bg-vk-50 pl-10 pr-12 text-sm text-ink outline-none transition-colors placeholder:text-muted-foreground/70 focus:border-vk-500 focus:bg-white focus:ring-[3px] focus:ring-vk-500/15"
                 />
                 <button
                   type="button"
                   onClick={() => setMobileSearchOpen(false)}
                   aria-label="Close search"
-                  className="absolute right-1.5 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+                  className="absolute right-1.5 top-1/2 grid h-8 w-8 -translate-y-1/2 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-vk-100 hover:text-vk-700"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -245,8 +244,6 @@ function ShopHeader() {
         )}
       </AnimatePresence>
 
-      {/* Gold hairline that grounds the header. */}
-      <div className="h-px w-full bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
     </header>
   );
 }
@@ -265,35 +262,35 @@ function ShopFooter() {
   ];
 
   return (
-    <footer className="mt-16 border-t border-border bg-gradient-to-b from-card to-background">
-      <div className="mx-auto max-w-[1440px] px-4 py-12 sm:px-6 lg:px-8">
+    <footer className="mt-16 bg-gradient-navy text-white">
+      <div className="vk-container py-12">
         <div className="grid gap-10 md:grid-cols-[1.5fr_1fr_1fr]">
           <div>
-            <span className="font-heading text-xl font-semibold tracking-tight text-foreground">
-              Matchless <span className="text-gradient-gold">Gifts</span>
+            <span className="font-heading text-xl font-extrabold tracking-[-0.02em] text-white">
+              Matchless <span className="text-vk-300">Gifts</span>
             </span>
-            <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">
+            <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/70">
               Sacred books, puja essentials and devotional gifts — every purchase supports the
               temple&apos;s daily sevas, annadanam and Go-seva.
             </p>
             <div className="mt-4 flex flex-wrap gap-2">
-              <span className="rounded-full bg-gold/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-gold-deep">
+              <span className="vk-pill-light">
                 Blessed items
               </span>
-              <span className="rounded-full bg-gold/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-gold-deep">
+              <span className="vk-pill-light">
                 Pan-India shipping
               </span>
             </div>
           </div>
 
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-[0.18em] text-foreground">Shop</h3>
+            <h3 className="text-xs font-bold uppercase tracking-[0.18em] text-white">Shop</h3>
             <ul className="mt-4 space-y-2.5">
               {shopLinks.map((l) => (
                 <li key={l.href}>
                   <Link
                     href={l.href}
-                    className="text-sm text-muted-foreground transition-colors hover:text-primary"
+                    className="text-sm text-white/70 transition-colors hover:text-white"
                   >
                     {l.label}
                   </Link>
@@ -303,13 +300,13 @@ function ShopFooter() {
           </div>
 
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-[0.18em] text-foreground">Support</h3>
+            <h3 className="text-xs font-bold uppercase tracking-[0.18em] text-white">Support</h3>
             <ul className="mt-4 space-y-2.5">
               {supportLinks.map((l) => (
                 <li key={l.href}>
                   <Link
                     href={l.href}
-                    className="text-sm text-muted-foreground transition-colors hover:text-primary"
+                    className="text-sm text-white/70 transition-colors hover:text-white"
                   >
                     {l.label}
                   </Link>
@@ -319,7 +316,7 @@ function ShopFooter() {
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row">
+        <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-6 text-xs text-white/60 sm:flex-row">
           <p>© {new Date().getFullYear()} Hare Krishna Movement, Visakhapatnam. All rights reserved.</p>
           <p>All proceeds support the temple&apos;s sevas.</p>
         </div>
@@ -332,7 +329,7 @@ export default function ShopLayout({ children }: { children: React.ReactNode }) 
   return (
     <CartProvider>
       <ShopSearchProvider>
-        <div className="flex min-h-screen flex-col bg-background">
+        <div className="flex min-h-screen flex-col bg-white">
           <ShopHeader />
           <main className="flex-1">{children}</main>
           <CartDrawer />

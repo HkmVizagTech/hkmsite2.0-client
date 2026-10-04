@@ -66,19 +66,16 @@ export default function MiniCartBar() {
           transition={{ type: "spring", stiffness: 380, damping: 32 }}
           className="pointer-events-none fixed inset-x-0 bottom-0 z-50 flex justify-center px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:pb-5"
         >
-          <div className="pointer-events-auto flex w-full max-w-md items-center gap-3 rounded-2xl border border-gold/40 bg-background/95 p-2.5 pl-4 shadow-elevated backdrop-blur-xl">
+          <div className="pointer-events-auto flex w-full max-w-md items-center gap-3 rounded-2xl border border-vk-100 bg-white/95 p-2 pl-4 shadow-lift backdrop-blur-xl">
             <span className="relative shrink-0">
-              <ShoppingBag className="h-5 w-5 text-primary" />
-              <span
-                className="absolute -right-1.5 -top-1.5 flex h-4 min-w-[16px] items-center justify-center rounded-full px-1 text-[9px] font-bold text-[hsl(220,60%,12%)]"
-                style={{ background: "var(--gradient-gold)" }}
-              >
+              <ShoppingBag className="h-5 w-5 text-vk-700" />
+              <span className="absolute -right-1.5 -top-1.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-vk-700 px-1 text-[9px] font-bold text-white">
                 {itemCount}
               </span>
             </span>
 
             <div className="min-w-0 flex-1 leading-tight">
-              <p className="text-xs font-bold text-foreground">
+              <p className="text-xs font-bold text-ink">
                 {itemCount} item{itemCount === 1 ? "" : "s"} in cart
               </p>
               <p className="text-[11px] text-muted-foreground">
@@ -86,7 +83,7 @@ export default function MiniCartBar() {
                   <Loader2 className="inline h-3 w-3 animate-spin align-[-2px]" />
                 ) : (
                   <>
-                    Total <span className="font-semibold text-primary">{formatINR(subtotal)}</span>
+                    Total <span className="font-semibold text-vk-700">{formatINR(subtotal)}</span>
                   </>
                 )}
               </p>
@@ -95,15 +92,14 @@ export default function MiniCartBar() {
             <button
               type="button"
               onClick={openCart}
-              className="hidden shrink-0 rounded-full border border-border px-3.5 py-2 text-xs font-semibold text-foreground transition-colors hover:border-gold hover:text-primary sm:block"
+              className="vk-btn-outline hidden h-10 shrink-0 px-3.5 text-xs sm:inline-flex"
             >
               View cart
             </button>
 
             <Link
               href="/shop/checkout"
-              className="inline-flex shrink-0 items-center gap-1.5 rounded-full px-4 py-2.5 text-xs font-bold text-[hsl(220,60%,12%)] shadow-gold transition-transform hover:-translate-y-0.5"
-              style={{ background: "var(--gradient-gold)" }}
+              className="vk-btn-gold h-11 shrink-0 px-4 text-xs font-bold"
             >
               Proceed to Checkout <ArrowRight className="h-3.5 w-3.5" />
             </Link>

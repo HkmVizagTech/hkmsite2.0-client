@@ -10,17 +10,17 @@ interface FinalCtaSectionProps {
 
 export default function FinalCtaSection({ scrollToDonate, config = SQFT_CAMPAIGN }: FinalCtaSectionProps) {
   return (
-    <section className="bg-[hsl(220,90%,12%)] py-16 text-center md:py-24">
-      <div className="container mx-auto max-w-3xl px-4">
-        <h2 className="mb-6 font-heading text-2xl font-bold text-white md:text-4xl">
-          Every {config.unitName} you offer becomes part of the Lord&apos;s eternal home.
-        </h2>
-        <button
-          onClick={scrollToDonate}
-          className="rounded-full bg-gradient-gold px-10 py-4 text-base font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)] transition-all hover:scale-105 hover:shadow-[0_12px_32px_hsl(42,92%,46%,0.4)] md:text-lg"
-        >
-          Donate Now
-        </button>
+    <section className="vk-section bg-white">
+      <div className="vk-container">
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-vk-900 via-vk-800 to-vk-700 px-6 py-12 text-center shadow-[0_24px_60px_-28px_rgba(10,18,51,0.6)] md:px-12 md:py-16">
+          <div aria-hidden className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-white/5" />
+          <h2 className="vk-h2 relative mx-auto mb-6 max-w-3xl !text-white">
+            Every {config.unitName} you offer becomes part of the Lord&apos;s eternal home.
+          </h2>
+          <button type="button" onClick={scrollToDonate} className="vk-btn-gold relative h-12 px-8 text-base">
+            Donate Now
+          </button>
+        </div>
       </div>
     </section>
   );

@@ -119,15 +119,15 @@ export default function ProductCard({ product, index = 0, categoryName }: Props)
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: Math.min(index, 8) * 0.04 }}
-      className={`group flex min-w-0 flex-col overflow-hidden rounded-2xl border bg-card transition-all duration-300 hover:-translate-y-1 hover:border-gold/40 hover:shadow-[var(--shadow-warm)] ${
-        inCartAny > 0 ? "border-gold/40 ring-1 ring-gold/20" : "border-border"
+      className={`group flex min-w-0 flex-col overflow-hidden rounded-2xl border bg-white shadow-card transition-all duration-300 hover:-translate-y-1 hover:border-vk-200 hover:shadow-lift ${
+        inCartAny > 0 ? "border-vk-300 ring-1 ring-vk-500/20" : "border-[#E8ECFA]"
       }`}
     >
       <div className="relative">
       <Link
         href={`/shop/${product.slug}`}
         onClick={handleCardClick}
-        className="block aspect-square overflow-hidden bg-muted"
+        className="block aspect-square overflow-hidden bg-vk-50"
         onPointerEnter={(e) => {
           if (e.pointerType === "mouse") setCarouselHovered(true);
         }}
@@ -176,22 +176,19 @@ export default function ProductCard({ product, index = 0, categoryName }: Props)
             )}
           </motion.div>
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-muted-foreground">
+          <div className="flex h-full w-full items-center justify-center text-vk-300">
             <ShoppingBag className="h-8 w-8" />
           </div>
         )}
 
         {product.featured && (
-          <span className="absolute right-3 top-3 rounded-full bg-primary/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-primary-foreground shadow-sm">
+          <span className="absolute right-3 top-3 rounded-full bg-vk-700 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white shadow-sm">
             Best seller
           </span>
         )}
 
         {off !== null && (
-          <span
-            className="absolute left-3 top-3 rounded-full px-2.5 py-1 text-[11px] font-bold text-white shadow-sm"
-            style={{ background: "var(--gradient-gold)" }}
-          >
+          <span className="absolute left-3 top-3 rounded-full bg-[hsl(var(--gold))] px-2.5 py-1 text-[11px] font-bold text-ink shadow-sm">
             {off}% OFF
           </span>
         )}
@@ -199,14 +196,14 @@ export default function ProductCard({ product, index = 0, categoryName }: Props)
         {/* In-cart marker on the image — a discreet, modern cue that this
             item is already in the bag even before you reach the button. */}
         {inCartAny > 0 && (
-          <span className="absolute bottom-3 left-3 inline-flex items-center gap-1 rounded-full bg-primary/90 px-2.5 py-1 text-[10px] font-bold text-primary-foreground shadow-sm backdrop-blur-sm">
+          <span className="absolute bottom-3 left-3 inline-flex items-center gap-1 rounded-full bg-vk-700/90 px-2.5 py-1 text-[10px] font-bold text-white shadow-sm backdrop-blur-sm">
             <Check className="h-3 w-3" /> In cart{inCartAny > 1 ? ` · ${inCartAny}` : ""}
           </span>
         )}
 
         {!product.inStock && (
-          <div className="absolute inset-0 flex items-center justify-center bg-background/70 backdrop-blur-[2px]">
-            <span className="rounded-full bg-foreground/80 px-3 py-1.5 text-xs font-semibold text-background">
+          <div className="absolute inset-0 flex items-center justify-center bg-white/70 backdrop-blur-[2px]">
+            <span className="rounded-full bg-vk-900/85 px-3 py-1.5 text-xs font-semibold text-white">
               Out of stock
             </span>
           </div>
@@ -222,12 +219,12 @@ export default function ProductCard({ product, index = 0, categoryName }: Props)
         onClick={() => toggleWishlist(product._id)}
         aria-label={wishlisted ? `Remove ${product.name} from wishlist` : `Save ${product.name} for later`}
         aria-pressed={wishlisted}
-        className={`absolute right-3 z-10 flex h-8 w-8 items-center justify-center rounded-full border shadow-sm backdrop-blur transition-colors ${
+        className={`absolute right-3 z-10 flex h-9 w-9 items-center justify-center rounded-full border shadow-sm backdrop-blur transition-colors ${
           product.featured ? "top-12" : "top-3"
         } ${
           wishlisted
             ? "border-rose-200 bg-rose-50 text-rose-500"
-            : "border-border bg-background/85 text-muted-foreground hover:text-rose-500"
+            : "border-vk-100 bg-white/90 text-muted-foreground hover:text-rose-500"
         }`}
       >
         <Heart className={`h-4 w-4 ${wishlisted ? "fill-current" : ""}`} />
@@ -236,13 +233,13 @@ export default function ProductCard({ product, index = 0, categoryName }: Props)
 
       <div className="flex flex-1 flex-col p-3.5 sm:p-4">
         {categoryName && (
-          <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+          <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-vk-500">
             {categoryName}
           </p>
         )}
 
         <Link href={`/shop/${product.slug}`} className="flex-1">
-          <h3 className="break-words line-clamp-2 text-sm font-semibold text-foreground transition-colors group-hover:text-primary sm:text-[15px]">
+          <h3 className="break-words line-clamp-2 font-heading text-sm font-bold leading-snug text-ink transition-colors group-hover:text-vk-700 sm:text-[15px]">
             {product.name}
           </h3>
           {product.shortDescription && (
@@ -251,7 +248,7 @@ export default function ProductCard({ product, index = 0, categoryName }: Props)
         </Link>
 
         <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
-          <p className="text-base font-bold text-primary">{displayPrice(product)}</p>
+          <p className="font-heading text-base font-extrabold text-vk-700 sm:text-lg">{displayPrice(product)}</p>
           {off !== null && product.mrp && (
             <p className="text-xs text-muted-foreground line-through">{formatINR(product.mrp)}</p>
           )}
@@ -279,25 +276,25 @@ export default function ProductCard({ product, index = 0, categoryName }: Props)
             needsChoice ? (
               <Link
                 href={`/shop/${product.slug}`}
-                className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-primary px-3 py-2.5 text-xs font-semibold text-primary-foreground transition-all hover:bg-primary/90 active:scale-[0.98]"
+                className="vk-btn-outline h-10 w-full px-3 text-xs active:scale-[0.98]"
               >
                 <ShoppingBag className="h-3.5 w-3.5" /> Choose variant
               </Link>
             ) : inCartQty > 0 ? (
               // Once added, the button becomes an inline quantity stepper —
               // the pattern shoppers expect from modern stores.
-              <div className="flex w-full items-center justify-between rounded-xl border border-gold/50 bg-gold/5 p-1">
+              <div className="flex h-10 w-full items-center justify-between rounded-xl border border-vk-300 bg-vk-50 p-1">
                 <button
                   type="button"
                   onClick={decrease}
                   aria-label={`Decrease quantity of ${product.name}`}
-                  className="flex h-8 w-9 items-center justify-center rounded-lg text-primary transition-colors hover:bg-gold/15 active:scale-95"
+                  className="flex h-8 w-9 items-center justify-center rounded-lg text-vk-700 transition-colors hover:bg-vk-100 active:scale-95"
                 >
                   <Minus className="h-3.5 w-3.5" />
                 </button>
                 <span
                   aria-live="polite"
-                  className="flex items-center gap-1.5 text-xs font-bold text-primary"
+                  className="flex items-center gap-1.5 text-xs font-bold text-vk-700"
                 >
                   <Check className="h-3.5 w-3.5 text-emerald-600" />
                   <span className="tabular-nums">{inCartQty}</span>
@@ -307,7 +304,7 @@ export default function ProductCard({ product, index = 0, categoryName }: Props)
                   onClick={increase}
                   disabled={inCartQty >= maxQty}
                   aria-label={`Increase quantity of ${product.name}`}
-                  className="flex h-8 w-9 items-center justify-center rounded-lg text-primary transition-colors hover:bg-gold/15 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
+                  className="flex h-8 w-9 items-center justify-center rounded-lg text-vk-700 transition-colors hover:bg-vk-100 active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   <Plus className="h-3.5 w-3.5" />
                 </button>
@@ -316,7 +313,7 @@ export default function ProductCard({ product, index = 0, categoryName }: Props)
               <button
                 onClick={quickAdd}
                 aria-label={`Add ${product.name} to cart`}
-                className="flex w-full items-center justify-center gap-1.5 rounded-xl bg-primary px-3 py-2.5 text-xs font-semibold text-primary-foreground transition-all hover:bg-primary/90 active:scale-[0.98]"
+                className="vk-btn-primary h-10 w-full px-3 text-xs active:scale-[0.98]"
               >
                 {justAdded ? (
                   <>
@@ -332,7 +329,7 @@ export default function ProductCard({ product, index = 0, categoryName }: Props)
           ) : (
             <button
               disabled
-              className="w-full cursor-not-allowed rounded-xl bg-muted px-3 py-2.5 text-xs font-semibold text-muted-foreground"
+              className="h-10 w-full cursor-not-allowed rounded-xl bg-vk-50 px-3 text-xs font-semibold text-muted-foreground"
             >
               Sold out
             </button>

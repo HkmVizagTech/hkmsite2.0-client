@@ -46,7 +46,7 @@ export function AppStoreButtons({
   // grow on narrow screens so the pair splits the row evenly (or each takes a
   // full row when they can't fit); fixed width once there's space for both.
   const base =
-    "inline-flex grow items-center justify-center gap-2.5 rounded-xl bg-white text-left text-[hsl(220,60%,12%)] transition-transform hover:-translate-y-0.5 sm:grow-0 sm:justify-start";
+    "inline-flex grow items-center justify-center gap-2.5 min-h-[44px] rounded-xl bg-white text-left text-vk-900 shadow-sm transition-transform hover:-translate-y-0.5 sm:grow-0 sm:justify-start";
   const pad = sm ? "px-4 py-2.5" : "px-6 py-3.5 rounded-2xl";
   const icon = sm ? "h-5 w-5 shrink-0" : "h-7 w-7 shrink-0";
   const cap = sm ? "text-[9px]" : "text-[10px]";
@@ -92,17 +92,17 @@ export function AppStoreButtons({
 export default function VaikunthamAppPromo({ className = "" }: { className?: string }) {
   return (
     <div
-      className={`flex flex-col gap-5 rounded-2xl border border-white/10 bg-white/[0.06] p-5 md:flex-row md:items-center md:justify-between md:gap-6 md:px-6 ${className}`}
+      className={`flex flex-col gap-5 rounded-2xl border border-white/10 bg-white/[0.07] p-5 backdrop-blur-sm md:flex-row md:items-center md:justify-between md:gap-6 md:px-6 ${className}`}
     >
       <div className="flex items-start gap-4">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-gold text-[hsl(220,60%,12%)] shadow-gold">
+        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-vk-500 text-white shadow-[0_8px_20px_-8px_rgba(47,91,211,0.8)]">
           <Smartphone className="h-6 w-6" />
         </div>
         <div>
-          <p className="text-base font-bold leading-tight text-[hsl(210,30%,97%)]">
+          <p className="text-base font-bold leading-tight text-white">
             Get the Vaikuntham App
           </p>
-          <p className="mt-1 max-w-md text-sm leading-relaxed text-[hsl(210,30%,97%)]/55">
+          <p className="mt-1 max-w-md text-sm leading-relaxed text-white/70">
             Register for volunteer seva, follow festival updates and stay connected with
             the temple — all in one place.
           </p>

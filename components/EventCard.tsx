@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import { Calendar, Clock, MapPin } from "lucide-react";
 import Link from "next/link";
@@ -41,12 +43,18 @@ function Countdown({ targetDate }: { targetDate: string }) {
   }, [targetDate]);
   if (new Date(targetDate).getTime() < Date.now()) return null;
   return (
-    <div className="mt-2 text-xs text-primary font-semibold flex flex-wrap gap-2 justify-center">
-      <span>Starts in:</span>
-      <span>{timeLeft.days}d</span>
-      <span>{timeLeft.hours}h</span>
-      <span>{timeLeft.mins}m</span>
-      <span>{timeLeft.secs}s</span>
+    <div className="mt-3 flex flex-wrap items-center gap-1.5 text-xs font-semibold text-vk-700">
+      <span className="mr-0.5 text-muted-foreground">Starts in:</span>
+      {[
+        `${timeLeft.days}d`,
+        `${timeLeft.hours}h`,
+        `${timeLeft.mins}m`,
+        `${timeLeft.secs}s`,
+      ].map((v, i) => (
+        <span key={i} className="rounded-lg bg-vk-100 px-2 py-1 tabular-nums">
+          {v}
+        </span>
+      ))}
     </div>
   );
 }
@@ -57,69 +65,73 @@ export default function EventCard({ event, href, smallCard, external }: EventCar
   const eventTime = event.date ? new Date(event.date).getTime() : 0;
   const isCompleted = eventTime < now;
   const Tag: any = external ? "a" : Link;
+  const d = event.date ? new Date(event.date) : null;
+  const validDate = d && !Number.isNaN(d.getTime()) ? d : null;
   return (
     <Tag
       href={href || "/events"}
       {...(external ? { target: "_blank", rel: "noreferrer" } : {})}
-      className={smallCard ? "block group focus:outline-none" : "block group focus:outline-none col-span-full"}
+      className={smallCard ? "group block h-full focus:outline-none" : "group col-span-full block focus:outline-none"}
     >
       <div
         className={
           smallCard
-            ? "bg-card rounded-xl p-3 border border-border hover:border-primary/40 hover:bg-primary/5 hover:ring-2 hover:ring-primary/10 transition-colors group flex flex-col items-start min-h-[240px] h-full pb-6"
-            : "bg-card rounded-2xl p-6 md:p-8 border border-border hover:border-primary/40 hover:ring-2 hover:ring-primary/10 transition-colors group flex flex-col md:flex-row md:items-center gap-6 min-h-[180px]"
+            ? "vk-card vk-card-hover flex h-full min-h-[240px] flex-col items-start overflow-hidden p-2 pb-5"
+            : "vk-card vk-card-hover flex flex-col gap-5 overflow-hidden p-3 md:flex-row md:items-center md:gap-6 md:p-4"
         }
       >
         <div
           className={
             smallCard
-              ? "w-full h-36 md:h-44 bg-primary/10 rounded-lg flex items-center justify-center overflow-hidden relative mb-2"
-              : "shrink-0 w-32 h-32 md:w-40 md:h-40 bg-primary/10 rounded-2xl flex items-center justify-center overflow-hidden relative"
+              ? "relative mb-3 flex h-36 w-full items-center justify-center overflow-hidden rounded-xl bg-vk-100 md:h-44"
+              : "relative flex aspect-[16/10] w-full shrink-0 items-center justify-center overflow-hidden rounded-xl bg-vk-100 md:aspect-square md:h-44 md:w-44"
           }
         >
           {event.image && (
-            <Image src={event.image} alt={event.title} fill sizes="(max-width: 640px) 100vw, 200px" className="rounded-2xl object-cover" style={{ objectPosition: "center" }} />
+            <Image src={event.image} alt={event.title} fill sizes="(max-width: 640px) 100vw, 200px" className="object-cover transition-transform duration-700 group-hover:scale-105" style={{ objectPosition: "center" }} />
           )}
           {event.featured && (
-            <div className="absolute top-2 left-2 bg-accent text-accent-foreground px-2.5 py-1 rounded-full text-xs font-semibold z-10">
+            <div className="absolute left-2 top-2 z-10 rounded-full bg-vk-700 px-2.5 py-1 text-xs font-semibold text-white shadow">
               Featured
             </div>
           )}
-          {
-}
-          {(event as any).registrationForm?.enabled && (
-            <div className="absolute bottom-3 right-3 z-10">
-              <span className="px-3 py-1 rounded-full bg-primary text-primary-foreground text-sm font-semibold">Register</span>
+          {!event.featured && validDate && (
+            <div className="absolute left-2 top-2 z-10 min-w-[48px] rounded-xl bg-white/95 px-2 py-1.5 text-center leading-none shadow-md">
+              <span className="block text-[10px] font-bold uppercase tracking-[0.1em] text-vk-500">
+                {validDate.toLocaleDateString("en-IN", { month: "short" })}
+              </span>
+              <span className="mt-0.5 block text-base font-extrabold text-vk-800">{validDate.getDate()}</span>
             </div>
           )}
-          {
-}
-          <div className="absolute top-2 right-2">
-            <span className={`px-2 py-1 rounded-full text-xs font-bold ${isCompleted ? "bg-gray-200 text-gray-700" : "bg-green-200 text-green-800 animate-pulse"}`}>
+          {(event as any).registrationForm?.enabled && (
+            <div className="absolute bottom-3 right-3 z-10">
+              <span className="rounded-full bg-vk-700 px-3 py-1 text-sm font-semibold text-white shadow">Register</span>
+            </div>
+          )}
+          <div className="absolute right-2 top-2 z-10">
+            <span className={`rounded-full px-2 py-1 text-xs font-bold shadow-sm ${isCompleted ? "bg-white/95 text-ink/60" : "animate-pulse bg-vk-500 text-white"}`}>
               {isCompleted ? "Completed" : "Soon"}
             </span>
           </div>
         </div>
-        <div className={smallCard ? "w-full flex-1 flex flex-col justify-between items-start text-left pl-2" : "grow flex flex-col justify-center"}>
-          <h3 className={smallCard ? "font-heading text-sm md:text-base font-semibold text-foreground mb-1" : "font-heading text-2xl font-semibold text-foreground mb-2"}>{event.title}</h3>
-          <p className={smallCard ? "text-muted-foreground text-xs mb-1 line-clamp-2" : "text-muted-foreground text-sm mb-3 line-clamp-2"}>{event.description}</p>
-          <div className={smallCard ? "flex flex-wrap gap-2 text-sm text-muted-foreground justify-center" : "flex flex-wrap gap-4 text-sm text-muted-foreground"}>
-            <span className="flex items-center gap-1">
-              <Calendar className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" /> {formattedDate}
+        <div className={smallCard ? "flex w-full flex-1 flex-col items-start justify-between px-2 text-left" : "flex grow flex-col justify-center px-2 pb-2 md:px-0 md:pb-0"}>
+          <h3 className={smallCard ? "mb-1 text-sm font-bold text-ink transition-colors group-hover:text-vk-700 md:text-base" : "mb-2 text-xl font-bold text-ink transition-colors group-hover:text-vk-700 md:text-2xl"}>{event.title}</h3>
+          <p className={smallCard ? "mb-2 line-clamp-2 text-xs text-muted-foreground" : "mb-3 line-clamp-2 text-sm text-muted-foreground"}>{event.description}</p>
+          <div className={smallCard ? "flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground" : "flex flex-wrap gap-x-4 gap-y-1.5 text-sm text-muted-foreground"}>
+            <span className="flex items-center gap-1.5">
+              <Calendar className="h-4 w-4 text-vk-500" /> {formattedDate}
             </span>
             {event.time && (
-              <span className="flex items-center gap-1">
-                <Clock className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" /> {event.time}
+              <span className="flex items-center gap-1.5">
+                <Clock className="h-4 w-4 text-vk-500" /> {event.time}
               </span>
             )}
             {event.location && (
-              <span className="flex items-center gap-1">
-                <MapPin className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" /> {event.location}
+              <span className="flex items-center gap-1.5">
+                <MapPin className="h-4 w-4 text-vk-500" /> {event.location}
               </span>
             )}
           </div>
-          {
-}
           {event.date && <Countdown targetDate={event.date} />}
         </div>
       </div>

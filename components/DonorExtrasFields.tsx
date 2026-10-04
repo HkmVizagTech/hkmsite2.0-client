@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import { User, Calendar } from "lucide-react";
 
 interface Props {
@@ -27,32 +27,37 @@ export default function DonorExtrasFields({
 }: Props) {
   const [expanded, setExpanded] = useState(!collapsible || Boolean(sevakName || dob));
   const isAmber = variant === "amber";
+  const uid = useId();
 
   const wrapperCls = isAmber
     ? "relative flex items-center rounded-lg border border-amber-300 bg-white/90 shadow-sm focus-within:border-amber-500 transition-colors"
-    : "relative flex items-center rounded-lg border border-border bg-white dark:bg-card focus-within:border-gold transition-colors";
+    : "relative";
   const labelCls = isAmber
     ? "mb-1 block text-[11px] font-semibold text-amber-900"
-    : "mb-1 block text-[11px] font-medium text-muted-foreground";
+    : "mb-1.5 block text-[13px] font-semibold text-ink/80";
   const iconCls = isAmber
     ? "pointer-events-none absolute left-3 h-4 w-4 text-amber-600/60"
-    : "pointer-events-none absolute left-3 h-4 w-4 text-muted-foreground";
+    : "pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-vk-400";
   const inputCls = isAmber
     ? "h-10 w-full bg-transparent pl-9 pr-3 text-sm text-foreground outline-none placeholder:text-amber-800/50"
-    : "h-10 w-full bg-transparent pl-9 pr-3 text-sm text-foreground outline-none placeholder:text-muted-foreground";
+    : "vk-input pl-10";
   const checkboxLabelCls = isAmber
     ? "flex cursor-pointer items-start gap-2.5 text-sm text-amber-900"
-    : "flex cursor-pointer items-start gap-2.5 text-sm text-foreground";
+    : "flex cursor-pointer items-start gap-2.5 text-[13px] font-medium leading-snug text-ink";
+  const checkboxCls = isAmber
+    ? "mt-0.5 h-4 w-4 shrink-0 rounded border-border text-primary focus:ring-primary"
+    : "mt-0.5 h-4 w-4 shrink-0 rounded accent-vk-700";
 
   const fields = (
     <div className="grid gap-3 sm:grid-cols-2">
       <div>
-        <label className={labelCls}>
+        <label htmlFor={`${uid}-sevak`} className={labelCls}>
           Sevak Name <span className="font-normal">(optional)</span>
         </label>
         <div className={wrapperCls}>
           <User className={iconCls} />
           <input
+            id={`${uid}-sevak`}
             type="text"
             placeholder="Name for seva dedication"
             value={sevakName}
@@ -62,12 +67,13 @@ export default function DonorExtrasFields({
         </div>
       </div>
       <div>
-        <label className={labelCls}>
+        <label htmlFor={`${uid}-dob`} className={labelCls}>
           Date of Birth <span className="font-normal">(optional)</span>
         </label>
         <div className={wrapperCls}>
           <Calendar className={iconCls} />
           <input
+            id={`${uid}-dob`}
             type="date"
             value={dob}
             onChange={(e) => onDobChange(e.target.value)}
@@ -95,7 +101,7 @@ export default function DonorExtrasFields({
               onDobChange("");
             }
           }}
-          className="mt-0.5 h-4 w-4 shrink-0 rounded border-border text-primary focus:ring-primary"
+          className={checkboxCls}
         />
         <span>This Donation is in the memory/honor of someone or performed on a specific occasion</span>
       </label>

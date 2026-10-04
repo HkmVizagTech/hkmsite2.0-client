@@ -1,5 +1,7 @@
 "use client";
 
+import { Heart } from "lucide-react";
+
 interface StickyMobileBarProps {
   scrollToDonate: () => void;
   visible?: boolean;
@@ -8,13 +10,12 @@ interface StickyMobileBarProps {
 export default function StickyMobileBar({ scrollToDonate, visible = true }: StickyMobileBarProps) {
   if (!visible) return null;
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 flex justify-center px-3 pb-3 pt-1 md:hidden">
-      <button
-        onClick={scrollToDonate}
-        className="inline-flex items-center gap-1.5 rounded-full bg-gradient-gold px-5 py-2 text-xs font-bold text-[hsl(220,90%,12%)] shadow-[var(--shadow-gold)]"
-      >
-        🪔 Donate Now
-      </button>
+    <div className="fixed bottom-[calc(64px+env(safe-area-inset-bottom))] left-3 right-[76px] z-40 lg:hidden">
+      <div className="rounded-2xl border border-vk-100 bg-white/95 p-2 shadow-lift backdrop-blur">
+        <button type="button" onClick={scrollToDonate} className="vk-btn-gold h-11 w-full px-5">
+          <Heart className="h-4 w-4 fill-current" /> Donate Now
+        </button>
+      </div>
     </div>
   );
 }
