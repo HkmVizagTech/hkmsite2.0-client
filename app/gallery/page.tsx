@@ -11,6 +11,15 @@ import DailyDarshanGallery from "@/components/DailyDarshanGallery";
 import { getGalleryImages, GALLERY_CATEGORIES } from "@/lib/galleryApi";
 import { getRecentDarshan, type DarshanPhoto } from "@/lib/darshanApi";
 
+// Album dates are stored as midnight UTC ("2026-08-18T00:00:00.000Z"); show
+// just the calendar day, e.g. "18 Aug 2026".
+const formatGalleryDate = (value?: string) => {
+  if (!value) return "";
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return value;
+  return d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+};
+
 type GalleryImage = {
   title: string;
   date: string;
@@ -205,7 +214,7 @@ export default function GalleryPage() {
                           <span className="line-clamp-2 block text-[13px] font-semibold leading-snug text-white md:text-[15px]">
                             {group.title}
                           </span>
-                          <span className="mt-0.5 block text-xs text-white/70">{group.date}</span>
+                          <span className="mt-0.5 block text-xs text-white/70">{formatGalleryDate(group.date)}</span>
                         </span>
                         <span className="absolute right-3 top-3 z-[2] flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100">
                           <ZoomIn className="h-4 w-4" />
@@ -320,7 +329,7 @@ export default function GalleryPage() {
                 {lightbox.group ? lightbox.group.title : ""}
               </p>
               <p className="mt-1 text-sm text-white/60 md:text-base">
-                {lightbox.group ? lightbox.group.date : ""}
+                {lightbox.group ? formatGalleryDate(lightbox.group.date) : ""}
               </p>
             </div>
           </motion.div>

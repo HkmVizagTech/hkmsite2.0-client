@@ -204,7 +204,7 @@ const Navbar = () => {
   // Desktop top-level link styling (GVD: ink text, brand colour when active,
   // with a small underline dot).
   const topLinkCls = (active: boolean) =>
-    `relative inline-flex items-center gap-1 whitespace-nowrap rounded-lg px-2 py-2 text-[13px] font-medium transition-colors min-[1440px]:px-3 min-[1440px]:text-[14px] ${
+    `relative inline-flex items-center gap-1 whitespace-nowrap rounded-lg px-2 py-2 text-[13px] font-medium transition-colors ${
       active ? "text-vk-700" : "text-ink/80 hover:text-vk-700"
     }`;
 
@@ -351,7 +351,7 @@ const Navbar = () => {
               height={112}
               priority
               loading="eager"
-              className="h-8 w-auto shrink-0 md:h-11 lg:h-9 min-[1440px]:h-11"
+              className="h-8 w-auto shrink-0 md:h-11 lg:h-9"
             />
             <div className="flex shrink-0 items-center gap-2 md:gap-3">
               <span className="h-6 w-px shrink-0 bg-vk-200 md:h-8" aria-hidden />
@@ -360,7 +360,7 @@ const Navbar = () => {
                 alt="Hare Krishna Movement Vizag"
                 width={795}
                 height={288}
-                className="h-7 w-auto shrink-0 md:h-11 lg:h-9 min-[1440px]:h-11"
+                className="h-7 w-auto shrink-0 md:h-11 lg:h-9"
               />
             </div>
           </Link>
@@ -443,7 +443,7 @@ const Navbar = () => {
 
           {/* ── Desktop right actions (Donate) ─────── */}
           <div className="hidden items-center gap-2 lg:flex">
-            <Link href="/donate" className="vk-btn-gold !rounded-xl !px-4 min-[1440px]:!px-5">
+            <Link href="/donate" className="vk-btn-gold !rounded-xl !px-4">
               <Heart className="h-4 w-4 fill-current" />
               Donate Now
             </Link>
