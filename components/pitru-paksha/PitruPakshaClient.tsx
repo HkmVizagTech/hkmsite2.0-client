@@ -651,13 +651,17 @@ export default function PitruPakshaClient() {
                                 key={t.legacySevaId}
                                 type="button"
                                 onClick={() => openCheckout(seva, t)}
-                                className="flex min-h-[52px] flex-col items-center justify-center rounded-xl border border-vk-200 bg-white px-1 py-1.5 text-center text-vk-800 transition-all duration-200 hover:border-vk-500 hover:bg-vk-50 sm:min-h-[56px] sm:px-1.5 sm:py-2"
+                                className="group/amt flex min-h-[64px] flex-col items-center justify-center rounded-xl border-[1.5px] border-[hsl(var(--gold)/0.6)] bg-[hsl(var(--gold)/0.1)] px-1 py-2 text-center shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-transparent hover:bg-gradient-gold hover:shadow-gold sm:min-h-[68px] sm:px-1.5"
                               >
-                                <span className="block text-[13px] font-extrabold leading-none text-vk-700 sm:text-sm">
-                                  ₹{t.amount != null ? formatAmount(t.amount) : "—"}
+                                <span
+                                  className="block whitespace-nowrap text-[17px] font-extrabold leading-none tracking-tight text-ink sm:text-lg"
+                                  style={{ fontFamily: "var(--font-heading)" }}
+                                >
+                                  <span className="mr-px text-[0.85em] text-[hsl(var(--gold-deep))] group-hover/amt:text-ink">₹</span>
+                                  {t.amount != null ? formatAmount(t.amount) : "—"}
                                 </span>
                                 {t.impact && (
-                                  <span className="mt-1 block text-[9px] font-medium leading-[1.2] text-muted-foreground sm:text-[10px]">
+                                  <span className="mt-1.5 block text-[10.5px] font-semibold leading-[1.2] text-ink/60 group-hover/amt:text-ink/80 sm:text-[11px]">
                                     {t.impact}
                                   </span>
                                 )}
@@ -1030,9 +1034,9 @@ export default function PitruPakshaClient() {
                     <p className="text-xs font-semibold text-muted-foreground">Seva Name</p>
                     <p className="mt-1 font-bold text-vk-800">{selected.seva.title}</p>
                   </div>
-                  <div>
+                  <div className="rounded-xl border border-[hsl(var(--gold)/0.6)] bg-[hsl(var(--gold)/0.12)] px-3 py-2">
                     <p className="text-xs font-semibold text-muted-foreground">Seva Amount</p>
-                    <p className="mt-1 font-heading text-lg font-extrabold text-vk-700">
+                    <p className="mt-0.5 font-heading text-2xl font-extrabold tracking-tight text-ink">
                       {selected.option.amount
                         ? `₹${formatAmount(selected.option.amount)}`
                         : "Enter amount below"}

@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Menu, X, Phone, Mail, Heart, ChevronDown, Home, User, Utensils, Info,
-  ShoppingBag, Calendar, PartyPopper, Megaphone, Youtube, Instagram, Facebook,
+  ShoppingBag, Calendar, PartyPopper, Megaphone, Youtube, Instagram, Facebook, Sparkles,
 } from "lucide-react";
 import ISKLogo from "@/assets/ISKCONGambheeramLogo.jpeg";
 import HKVTLogo from "@/assets/HKMV_logo.png";
@@ -21,12 +21,17 @@ import { resolveCustomNavLink, type CustomNavLink } from "@/lib/customNavLink";
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 
 // ── Mobile bottom bar (matches production site) ────────────────────
-const bottomNavItems = [
+// Two links either side of a raised centre button (Darshan) — the layout
+// devotees know from temple apps. About Us lives in the More sheet.
+const bottomNavLeft = [
   { label: "Home", href: "/", icon: Home },
   { label: "Founder", href: "/founder", icon: User },
-  { label: "Subhojanam", href: "/subhojanam", icon: Utensils },
-  { label: "About Us", href: "/about", icon: Info },
 ];
+const bottomNavRight = [
+  { label: "Subhojanam", href: "/subhojanam", icon: Utensils },
+];
+// Today's darshan (photos come from the community app).
+const DARSHAN_HREF = "/gallery#darshan";
 
 const socialLinks = [
   { icon: Youtube, href: "https://www.youtube.com/user/harekrishnavizag", label: "YouTube" },
@@ -125,6 +130,16 @@ const Navbar = () => {
   // ── Close mobile menu on navigation ───────────────────────────────
   useEffect(() => {
     setMobileOpen(false);
+    // Respect #anchor links (e.g. the bottom bar's /gallery#darshan, seva
+    // pages' #donate): scroll to the target once the page has rendered,
+    // instead of always jumping back to the top.
+    const hash = window.location.hash.slice(1);
+    if (hash) {
+      const t = window.setTimeout(() => {
+        document.getElementById(decodeURIComponent(hash))?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 500);
+      return () => window.clearTimeout(t);
+    }
     window.scrollTo(0, 0);
   }, [pathname]);
 
@@ -196,6 +211,31 @@ const Navbar = () => {
   const activeDot = (
     <span className="absolute -bottom-0.5 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-vk-500" aria-hidden />
   );
+
+  // One bottom-bar link: icon in a pill that fills when active, label below.
+  const renderBottomLink = (item: { label: string; href: string; icon: typeof Home }) => {
+    const Icon = item.icon;
+    const active = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
+    return (
+      <Link
+        key={item.href}
+        href={item.href}
+        aria-current={active ? "page" : undefined}
+        className={`flex flex-1 flex-col items-center justify-center gap-1 pb-1.5 pt-2 text-[10.5px] transition-colors active:scale-95 ${
+          active ? "font-bold text-vk-700" : "font-medium text-ink/55"
+        }`}
+      >
+        <span
+          className={`flex h-8 w-14 items-center justify-center rounded-full transition-all duration-300 ${
+            active ? "bg-vk-100" : ""
+          }`}
+        >
+          <Icon className={`h-[20px] w-[20px] ${active ? "stroke-[2.4px]" : "stroke-[1.9px]"}`} />
+        </span>
+        {item.label}
+      </Link>
+    );
+  };
 
   // ── Render ────────────────────────────────────────────────────────
   return (
@@ -469,6 +509,10 @@ const Navbar = () => {
                     <ShoppingBag className="h-4 w-4 text-vk-500" />
                     Shop
                   </Link>
+                  <Link href="/about" className={mobileLinkCls(pathname === "/about")}>
+                    <Info className="h-4 w-4 text-vk-500" />
+                    About Us
+                  </Link>
                   <Link href="/donor/login" className={mobileLinkCls(pathname === "/donor/login")}>
                     <User className="h-4 w-4 text-vk-500" />
                     Donor Login
@@ -619,46 +663,51 @@ const Navbar = () => {
             animate={{ y: 0 }}
             exit={{ y: 100 }}
             transition={{ duration: 0.25, ease: "easeInOut" }}
-            className="fixed inset-x-0 bottom-0 z-50 border-t border-vk-100 bg-white/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-6px_20px_-8px_rgba(10,18,51,0.18)] backdrop-blur-lg lg:hidden"
+            className="fixed inset-x-0 bottom-0 z-50 rounded-t-[22px] border-t border-vk-100 bg-white/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-10px_30px_-12px_rgba(10,18,51,0.28)] backdrop-blur-xl lg:hidden"
           >
-            <div className="flex items-stretch">
-              {bottomNavItems.map((item) => {
-                const Icon = item.icon;
-                const active = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={`relative flex flex-1 flex-col items-center justify-center gap-0.5 py-2 text-[10.5px] font-medium transition-colors ${
-                      active ? "text-vk-700" : "text-ink/55"
-                    }`}
-                  >
-                    <span
-                      className={`flex h-7 w-12 items-center justify-center rounded-full transition-colors ${
-                        active ? "bg-vk-100" : ""
-                      }`}
-                    >
-                      <Icon className={`h-[18px] w-[18px] ${active ? "stroke-[2.4px]" : "stroke-[1.75px]"}`} />
-                    </span>
-                    {item.label}
-                  </Link>
-                );
-              })}
+            <div className="relative mx-auto flex max-w-md items-end px-1">
+              {bottomNavLeft.map((item) => renderBottomLink(item))}
 
-              {/* More — opens/closes the hamburger menu */}
+              {/* Raised centre button — today's darshan from the community app */}
+              <div className="flex flex-1 justify-center">
+                <Link
+                  href={DARSHAN_HREF}
+                  aria-label="Today's darshan"
+                  className="group -mt-6 flex flex-col items-center gap-1 pb-1.5"
+                >
+                  <span className="relative flex h-[58px] w-[58px] items-center justify-center rounded-full bg-gradient-to-br from-vk-600 to-vk-800 text-white shadow-[0_10px_22px_-8px_rgba(30,58,138,0.75)] ring-4 ring-white transition-transform duration-200 group-active:scale-95">
+                    <Sparkles className="h-6 w-6" />
+                    <span className="absolute right-1 top-1 flex h-3 w-3">
+                      {darshanStatus.isOpen && (
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                      )}
+                      <span
+                        className={`relative inline-flex h-3 w-3 rounded-full ring-2 ring-white ${
+                          darshanStatus.isOpen ? "bg-emerald-500" : "bg-[hsl(var(--gold))]"
+                        }`}
+                      />
+                    </span>
+                  </span>
+                  <span className="text-[10.5px] font-bold text-vk-800">Darshan</span>
+                </Link>
+              </div>
+
+              {bottomNavRight.map((item) => renderBottomLink(item))}
+
+              {/* More — opens/closes the full menu sheet */}
               <button
                 type="button"
                 onClick={toggleMobile}
                 aria-expanded={mobileOpen}
-                className={`flex flex-1 flex-col items-center justify-center gap-0.5 py-2 text-[10.5px] font-medium transition-colors ${
-                  mobileOpen ? "text-vk-700" : "text-ink/55"
+                className={`flex flex-1 flex-col items-center justify-center gap-1 pb-1.5 pt-2 text-[10.5px] transition-colors active:scale-95 ${
+                  mobileOpen ? "font-bold text-vk-700" : "font-medium text-ink/55"
                 }`}
               >
-                <span className="flex h-7 w-12 items-center justify-center rounded-full">
+                <span className="flex h-8 w-14 items-center justify-center rounded-full">
                   {mobileOpen ? (
-                    <X className="h-[18px] w-[18px] stroke-[2.4px]" />
+                    <X className="h-[20px] w-[20px] stroke-[2.4px]" />
                   ) : (
-                    <Menu className="h-[18px] w-[18px] stroke-[1.75px]" />
+                    <Menu className="h-[20px] w-[20px] stroke-[1.9px]" />
                   )}
                 </span>
                 More

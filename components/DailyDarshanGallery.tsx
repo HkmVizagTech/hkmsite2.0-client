@@ -99,7 +99,7 @@ const DailyDarshanGallery = ({ selectedDate: externalSelectedDate, onDateChange,
   const formatted = formatDate(selectedDate);
 
   return (
-    <section className="vk-section">
+    <section id="darshan" className="vk-section scroll-mt-[calc(var(--header-h)+8px)]">
       <div className="vk-container">
         <SectionHeading
           align="center"
