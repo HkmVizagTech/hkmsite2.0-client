@@ -1030,7 +1030,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
 
         {/* ── Sticky mobile donate bar ── */}
         {showSticky && (
-          <div className="fixed bottom-[calc(64px+env(safe-area-inset-bottom))] left-3 right-[76px] z-40 lg:hidden">
+          <div className="fixed bottom-[calc(var(--bottom-nav-space)+4px+env(safe-area-inset-bottom))] left-3 right-[76px] z-40 lg:hidden">
             <div className="flex items-center justify-between gap-3 rounded-2xl border border-vk-100 bg-white/95 p-2 pl-4 shadow-lift backdrop-blur">
               <div className="min-w-0">
                 <p className="truncate text-[11px] font-medium text-muted-foreground">{config.pageTitle}</p>

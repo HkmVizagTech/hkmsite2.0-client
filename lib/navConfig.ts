@@ -124,3 +124,36 @@ export function isGroupActive(group: NavGroup, pathname: string): boolean {
     (item) => pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href))
   );
 }
+
+// ── Pages without the mobile bottom bar ─────────────────────────────
+// Donation / checkout pages keep the screen for the seva form and their own
+// sticky "Donate" bar, so the bottom bar would only get in the way. Pages
+// that don't render the site Navbar at all (shop, standalone campaign and
+// thank-you pages) are listed too so no empty space is reserved for it.
+export const HIDE_BOTTOM_NAV_PREFIXES = [
+  "/donate",
+  "/donations",
+  "/gau-seva",
+  "/anna-daan-seva",
+  "/gita-daan-seva",
+  "/alankara-vastra-seva",
+  "/sqft-seva-campaign",
+  "/brick-seva-campaign",
+  "/ekadashi",
+  "/shayani-ekadashi",
+  "/pitru-paksha",
+  "/govardhan-puja",
+  "/radhashtami",
+  "/chaturmas",
+  "/special-occasion",
+  "/subhojanam",
+  "/janmashtami",
+  "/janmashtami3",
+  "/payment",
+  "/shop",
+];
+
+export function shouldHideBottomNav(pathname: string | null | undefined): boolean {
+  if (!pathname) return false;
+  return HIDE_BOTTOM_NAV_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+}

@@ -1274,3 +1274,13 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* Space reserved for the fixed mobile bottom bar. BottomNavSpace sets
+   <html data-bottom-nav="off"> on routes without the bar (donation pages,
+   shop) so body padding, sticky donate bars and the WhatsApp button drop
+   to the screen edge instead of floating above an empty gap. */
+:root { --bottom-nav-space: 60px; }
+html[data-bottom-nav="off"] { --bottom-nav-space: 0px; }
+@media (min-width: 1024px) {
+  :root { --bottom-nav-space: 0px; }
+}

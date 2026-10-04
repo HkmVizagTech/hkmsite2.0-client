@@ -1186,7 +1186,7 @@ export default function GovardhanPujaClient() {
           leaving room for the WhatsApp button on the right)
       ═══════════════════════════════════════════════════════════════════ */}
       {!selected && (
-        <div className="fixed bottom-[calc(64px+env(safe-area-inset-bottom))] left-3 right-[76px] z-40 lg:hidden">
+        <div className="fixed bottom-[calc(var(--bottom-nav-space)+4px+env(safe-area-inset-bottom))] left-3 right-[76px] z-40 lg:hidden">
           <div className="flex items-center justify-between gap-3 rounded-2xl border border-vk-100 bg-white/95 p-2 pl-4 shadow-lift backdrop-blur">
             <span className="min-w-0 text-[13px] font-semibold leading-tight text-ink">
               Govardhan Puja Sevas

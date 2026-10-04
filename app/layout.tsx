@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/toaster";
 import ReduxProvider from "@/components/ReduxProvider";
 import MetaPixel from "@/components/MetaPixel";
 import ThemeProvider from "@/components/ThemeProvider";
+import BottomNavSpace from "@/components/BottomNavSpace";
 import { siteKeywords, ORG_ALT_NAMES } from "@/lib/seo";
 
 
@@ -172,8 +173,9 @@ export default function RootLayout({
           `}
         </Script>
       </head>
-      <body className={`${poppins.className} min-h-full flex flex-col overflow-x-clip pb-[60px] lg:pb-0`}>
+      <body className={`${poppins.className} min-h-full flex flex-col overflow-x-clip pb-[var(--bottom-nav-space)]`}>
         <MetaPixel />
+        <BottomNavSpace />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}

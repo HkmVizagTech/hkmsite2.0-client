@@ -13,7 +13,7 @@ import { usePathname } from "next/navigation";
 import Image from "next/image";
 import WhatsAppIcon from "@/components/WhatsAppIcon";
 
-import { navEntries, isGroupActive } from "@/lib/navConfig";
+import { navEntries, isGroupActive, shouldHideBottomNav } from "@/lib/navConfig";
 import { NavListItem } from "@/components/NavListItem";
 import { resolveMajorFestival, type MajorFestival } from "@/lib/majorFestival";
 import { resolveCustomNavLink, type CustomNavLink } from "@/lib/customNavLink";
@@ -656,7 +656,7 @@ const Navbar = () => {
 
       {/* ── Fixed bottom navigation bar — mobile only ──────────────── */}
       <AnimatePresence>
-        {!mobileOpen && (
+        {!mobileOpen && !shouldHideBottomNav(pathname) && (
           <motion.nav
             aria-label="Quick links"
             initial={false}

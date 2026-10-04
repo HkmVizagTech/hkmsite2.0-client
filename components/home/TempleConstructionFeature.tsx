@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Building2, Gift, IndianRupee, Users } from "lucide-react";
+import { ArrowRight, Building2, Gift, Users } from "lucide-react";
 import Reveal from "@/components/site/Reveal";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
@@ -76,8 +76,8 @@ export default function TempleConstructionFeature() {
               </div>
               <div className="relative min-h-[260px] md:min-h-full">
                 <Image
-                  src="/assets/home-temple-construction-banner.webp"
-                  alt="Hare Krishna Vaikuntham Temple under construction, Visakhapatnam"
+                  src="/assets/vizag-temple-1.jpeg"
+                  alt="Hare Krishna Vaikuntham Temple, Visakhapatnam"
                   fill
                   sizes="(min-width: 1024px) 460px, 100vw"
                   className="object-cover"
@@ -119,11 +119,6 @@ export default function TempleConstructionFeature() {
                   <span className="ml-auto font-semibold">{inr(goal)} sq.ft</span>
                 </div>
                 <div className="flex items-center gap-3 rounded-xl bg-white/10 px-3 py-2.5">
-                  <IndianRupee className="h-4 w-4 text-[hsl(var(--gold))]" />
-                  <span className="text-white/80">Raised</span>
-                  <span className="ml-auto font-semibold">₹{inr(stats?.totalAmount ?? 0)}</span>
-                </div>
-                <div className="flex items-center gap-3 rounded-xl bg-white/10 px-3 py-2.5">
                   <Users className="h-4 w-4 text-[hsl(var(--gold))]" />
                   <span className="text-white/80">Devotees</span>
                   <span className="ml-auto font-semibold">{inr(stats?.donorCount ?? 0)}</span>
@@ -132,9 +127,6 @@ export default function TempleConstructionFeature() {
               <Link href="/sqft-seva-campaign" className="vk-btn mt-5 w-full bg-white text-vk-800 hover:bg-vk-50">
                 Donate Now
               </Link>
-              <p className="mt-2 text-center text-[11px] text-white/65">
-                ₹{inr(stats?.pricePerSqft ?? 6000)} sponsors one square foot
-              </p>
             </div>
           </div>
         </Reveal>

@@ -339,7 +339,7 @@ function DonateSevaPageInner({ params }: { params: Promise<{ seva: string }> }) 
 
       {/* Sticky mobile donate bar — the form sits below the fold on phones */}
       {showSticky && (
-      <div className="fixed bottom-[calc(64px+env(safe-area-inset-bottom))] left-3 right-[76px] z-40 lg:hidden">
+      <div className="fixed bottom-[calc(var(--bottom-nav-space)+4px+env(safe-area-inset-bottom))] left-3 right-[76px] z-40 lg:hidden">
         <div className="flex items-center justify-between gap-3 rounded-2xl border border-vk-100 bg-white/95 p-2 pl-4 shadow-lift backdrop-blur">
           <p className="min-w-0 truncate text-[13px] font-semibold text-ink">{seva.title}</p>
           <button
