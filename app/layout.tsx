@@ -157,7 +157,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-  <html lang="en" className={`h-full antialiased overflow-x-hidden ${playfair.variable} ${poppins.variable} ${jakarta.variable}`} suppressHydrationWarning>
+  <html lang="en" className={`h-full antialiased overflow-x-clip ${playfair.variable} ${poppins.variable} ${jakarta.variable}`} suppressHydrationWarning>
       <head>
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-XVDQNJK24G"
@@ -172,7 +172,7 @@ export default function RootLayout({
           `}
         </Script>
       </head>
-      <body className={`${poppins.className} min-h-full flex flex-col overflow-x-hidden pb-[60px] lg:pb-0`}>
+      <body className={`${poppins.className} min-h-full flex flex-col overflow-x-clip pb-[60px] lg:pb-0`}>
         <MetaPixel />
         <script
           type="application/ld+json"
