@@ -2,11 +2,14 @@ import Link from "next/link";
 import { CheckCircle2, Home, Megaphone } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { getCampaignConfig } from "@/lib/campaignConfig";
+import { pageSeo } from "@/lib/seo";
 
-export const metadata = {
-  title: "Thank You for Your Seva | Hare Krishna Vaikuntham Temple",
-  robots: { index: false },
-};
+export const metadata = pageSeo({
+  title: "Thank You for Your Seva",
+  description: "Thank you for supporting the temple construction of ISKCON Gambheeram Visakhapatnam. Hare Krishna!",
+  path: "/sqft-seva-campaign/thank-you",
+  noindex: true
+});
 
 export default async function ThankYouPage({
   searchParams,

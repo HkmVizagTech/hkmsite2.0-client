@@ -1,14 +1,22 @@
+import type { ReactNode } from "react";
 import type { Metadata } from "next";
-import { pageSeo, siteKeywords } from "@/lib/seo";
+import { pageSeo, siteKeywords, breadcrumbJsonLd } from "@/lib/seo";
+import JsonLd from "@/components/seo/JsonLd";
 
 export const metadata: Metadata = pageSeo({
-  title: "Volunteer at ISKCON Vizag | Hare Krishna Movement Visakhapatnam",
+  title: "Volunteer at the Temple",
   description:
-    "Join the seva of the Hare Krishna Movement Visakhapatnam (ISKCON Vizag) — volunteer for temple programs, festivals and community service.",
+    "Volunteer at ISKCON Gambheeram Visakhapatnam — help with festivals, prasadam distribution, Subhojanam and temple services. Register online.",
   path: "/volunteer",
-  keywords: ["volunteer ISKCON Vizag", "ISKCON seva", "temple volunteer Visakhapatnam", ...siteKeywords],
+  keywords: ["volunteer ISKCON Vizag", "temple volunteer Visakhapatnam", "seva volunteer", ...siteKeywords],
+  image: "/assets/janmashtami-sk1.webp",
 });
 
-export default function VolunteerLayout({ children }: { children: React.ReactNode }) {
-  return children;
+export default function VolunteerLayout({ children }: { children: ReactNode }) {
+  return (
+    <>
+      <JsonLd data={breadcrumbJsonLd([{ name: "Volunteer", path: "/volunteer" }])} />
+      {children}
+    </>
+  );
 }

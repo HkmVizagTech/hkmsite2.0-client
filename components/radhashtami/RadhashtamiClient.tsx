@@ -638,7 +638,7 @@ export default function RadhashtamiClient() {
                   Celebrate the divine appearance of Srimati Radharani — the supreme
                   goddess of devotion and the most beloved of Lord Krishna. Offer
                   sacred sevas and receive the unlimited blessings of Radha Rani at
-                  HKM Vizag.
+                  ISKCON Gambheeram Visakhapatnam.
                 </p>
                 <p className="mt-5 max-w-3xl border-l-4 border-pink-300 pl-4 font-serif-display text-[15px] italic leading-7 text-vk-700 md:text-base">
                   &ldquo;The divinity of Radharani is that She is the only one who
@@ -659,7 +659,7 @@ export default function RadhashtamiClient() {
                     <p className="mt-2 text-sm leading-6 text-white/80">
                       Your offering sustains the sacred Abhishekam, flower
                       decorations, Annadana and every divine ritual performed at
-                      HKM Vizag on Srimati Radharani&apos;s appearance day.
+                      ISKCON Gambheeram Visakhapatnam on Srimati Radharani&apos;s appearance day.
                     </p>
                   </div>
                 </div>

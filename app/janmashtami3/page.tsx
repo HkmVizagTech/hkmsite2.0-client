@@ -1,11 +1,14 @@
 import { Suspense } from "react";
 import JanmashtamiClient from "./JanmashtamiClient";
+import { pageSeo } from "@/lib/seo";
 
-export const metadata = {
-  title: "Sri Krishna Janmashtami Seva 2026 | Hare Krishna Movement Vizag",
-  description:
-    "Offer Sri Krishna Janmashtami sevas online — Vastrabharana, Chappan Bhog, Mandapa, Abhisheka, Annadana, Makhan Mishri, Go Seva, Tulasi Archana, Pushpalankara, Naivedhya, Japa Yagna and more.",
-};
+export const metadata = pageSeo({
+  title: "Janmashtami Sevas",
+  description: "Offer Sri Krishna Janmashtami sevas online at ISKCON Gambheeram Visakhapatnam.",
+  path: "/janmashtami3",
+  canonical: "/janmashtami",
+  noindex: true
+});
 
 export default function JanmashtamiPage() {
   // Suspense is required: JanmashtamiClient calls useSearchParams() for the

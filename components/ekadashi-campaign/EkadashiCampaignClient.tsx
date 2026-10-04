@@ -76,7 +76,7 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
   const name = campaign.campaignName || "Ekadashi";
 
   useEffect(() => {
-    document.title = `${name} Seva | Hare Krishna Vaikuntham Temple, Visakhapatnam`;
+    document.title = `${name} Seva & Annadanam | ISKCON Gambheeram Visakhapatnam`;
   }, [name]);
 
   const sevas = campaign.sevas.length > 0

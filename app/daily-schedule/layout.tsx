@@ -1,20 +1,22 @@
+import type { ReactNode } from "react";
 import type { Metadata } from "next";
-import { pageSeo, siteKeywords } from "@/lib/seo";
+import { pageSeo, siteKeywords, breadcrumbJsonLd } from "@/lib/seo";
+import JsonLd from "@/components/seo/JsonLd";
 
 export const metadata: Metadata = pageSeo({
-  title: "Temple Schedule & Darshan Timings | ISKCON Vizag — Hare Krishna Movement",
+  title: "Darshan & Aarti Timings",
   description:
-    "Daily temple schedule and darshan timings at ISKCON Visakhapatnam (Hare Krishna Vaikuntham Cultural Centre, Gambheeram) — morning and evening programs, aarti timings and prasadam.",
+    "Daily darshan and aarti timings at ISKCON Gambheeram Visakhapatnam — Mangala Aarti 4:30 AM, darshan 7:15 AM–12:20 PM and 4:15 PM–8:15 PM.",
   path: "/daily-schedule",
-  keywords: [
-    "ISKCON Vizag darshan timings",
-    "ISKCON temple schedule",
-    "Hare Krishna temple timings Vizag",
-    "temple aarti timing Visakhapatnam",
-    ...siteKeywords,
-  ],
+  keywords: ["ISKCON Vizag darshan timings", "ISKCON Gambheeram temple timings", "aarti timings Visakhapatnam", "temple schedule Vizag", ...siteKeywords],
+  image: "/assets/home-gallery-aarti.webp",
 });
 
-export default function DailyScheduleLayout({ children }: { children: React.ReactNode }) {
-  return children;
+export default function DailyScheduleLayout({ children }: { children: ReactNode }) {
+  return (
+    <>
+      <JsonLd data={breadcrumbJsonLd([{ name: "Daily Schedule", path: "/daily-schedule" }])} />
+      {children}
+    </>
+  );
 }

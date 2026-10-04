@@ -116,7 +116,7 @@ const labelCls = "mb-1.5 block text-[13px] font-semibold text-ink/80";
 const apiBase = () => (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(/\/+$/, "");
 
 const defaultSettings: DonationPageSettings = {
-  heroEyebrow: "Hare Krishna Movement Vizag",
+  heroEyebrow: "ISKCON Gambheeram Visakhapatnam",
   heroTitle: "Donate Annadaan and Gau Seva Online",
   heroSubtitle: "Support Narasimha Jayanthi meals for hungry and needy people.",
   bannerImage: "/assets/donations-nsj-annadan-web.jpeg",
@@ -568,7 +568,7 @@ export default function DonationsClient() {
                 <img
                   src={src}
                   alt={[
-                    "Supporters of Hare Krishna Movement Vizag charity seva",
+                    "Supporters of ISKCON Gambheeram Visakhapatnam charity seva",
                     "Well-wishers supporting Annadaan and Gau Seva donations",
                     "Daily Annadaan food distribution service in Visakhapatnam",
                     "Children receiving Annadaan meal support",

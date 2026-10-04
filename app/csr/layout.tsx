@@ -1,33 +1,22 @@
+import type { ReactNode } from "react";
 import type { Metadata } from "next";
-import { siteKeywords } from "@/lib/seo";
+import { pageSeo, siteKeywords, breadcrumbJsonLd } from "@/lib/seo";
+import JsonLd from "@/components/seo/JsonLd";
 
-export const metadata: Metadata = {
-  title: {
-    absolute: "CSR — ISKCON Vizag | Hare Krishna Movement Visakhapatnam",
-  },
+export const metadata: Metadata = pageSeo({
+  title: "CSR Partnership",
   description:
-    "Partner with Hare Krishna Movement Visakhapatnam (ISKCON Vizag) for your CSR initiatives — Annadaan food distribution, Subhojanam hospital meals, Gau Seva cow protection, Gita Daan and value education programs. 80G tax exemption available.",
-  keywords: [
-    "ISKCON Vizag CSR",
-    "Hare Krishna Movement Vizag CSR",
-    "CSR partner India",
-    "Annadaan CSR",
-    "Subhojanam hospital meals",
-    "Gau Seva",
-    "Gita Daan",
-    ...siteKeywords,
-  ],
-  alternates: { canonical: "/csr" },
-  openGraph: {
-    title: "CSR — ISKCON Vizag | Hare Krishna Movement Visakhapatnam",
-    description:
-      "Feed the hungry, care for cows, educate children and uplift society. Partner with Hare Krishna Movement Visakhapatnam for Annadaan, Subhojanam, Gau Seva, Gita Daan and value education CSR programs.",
-    images: [
-      "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677363792-1783677363601-462395264797134589073566144398536696847591n.jpg",
-    ],
-  },
-};
+    "Partner with ISKCON Gambheeram Visakhapatnam on CSR: Subhojanam hospital meals, Annadaan, Gau Seva, Gita Daan and value education. 80G available.",
+  path: "/csr",
+  keywords: ["ISKCON Vizag CSR", "CSR partner Visakhapatnam", "Annadaan CSR", "Subhojanam hospital meals CSR", ...siteKeywords],
+  image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677363792-1783677363601-462395264797134589073566144398536696847591n.jpg",
+});
 
-export default function CsrLayout({ children }: { children: React.ReactNode }) {
-  return children;
+export default function CsrLayout({ children }: { children: ReactNode }) {
+  return (
+    <>
+      <JsonLd data={breadcrumbJsonLd([{ name: "CSR Partnership", path: "/csr" }])} />
+      {children}
+    </>
+  );
 }

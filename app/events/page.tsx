@@ -534,7 +534,7 @@ export default function EventsPage() {
             <h2 className="vk-h2 mb-3">Never Miss a Festival</h2>
             <p className="vk-lead mx-auto mb-7 max-w-xl">
               Follow our social channels to stay updated on festivals, special darshan timings,
-              and spiritual events at Hare Krishna Movement Vizag.
+              and spiritual events at ISKCON Gambheeram Visakhapatnam.
             </p>
             <div className="flex flex-col justify-center gap-3 sm:flex-row">
               <a

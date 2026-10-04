@@ -11,6 +11,8 @@ import {
   DEFAULT_FESTIVAL_LOCATION,
   type FestivalShowcase,
 } from "@/lib/festivalShowcase";
+import { pageSeo, stripBrand, clampDescription, breadcrumbJsonLd } from "@/lib/seo";
+import JsonLd from "@/components/seo/JsonLd";
 
 export const revalidate = 0;
 
@@ -21,18 +23,13 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const f = await fetchFestivalShowcase(slug);
-  if (!f) return { title: "Festival not found" };
-  return {
-    title: f.title,
-    description: f.subtitle || f.description,
-    openGraph: {
-      title: f.title,
-      description: f.subtitle || f.description,
-      images: f.heroImage
-        ? [{ url: f.heroImage }]
-        : undefined,
-    },
-  };
+  if (!f) return { title: "Festival not found", robots: { index: false, follow: true } };
+  return pageSeo({
+    title: stripBrand(f.title),
+    description: clampDescription(f.subtitle || f.description) || `${f.title} at ISKCON Gambheeram Visakhapatnam.`,
+    path: `/festivals/${slug}`,
+    image: f.heroImage || undefined,
+  });
 }
 
 const fmtLong = (s?: string) => {
@@ -97,6 +94,12 @@ export default async function FestivalShowcasePage({
 
   return (
     <PageLayout>
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Festivals", path: "/festival" },
+          { name: f.title, path: `/festivals/${f.slug || ""}` },
+        ])}
+      />
       <div className="overflow-x-hidden bg-white pt-[var(--header-h)]">
       {/* ── Hero — rounded inset photo card ───────────────────────── */}
       <section className="bg-gradient-to-b from-vk-50 to-white pb-4 pt-4 md:pb-6 md:pt-6">
@@ -178,7 +181,7 @@ export default async function FestivalShowcasePage({
               align="center"
               eyebrow="Festival Recap"
               title="A Divine Celebration"
-              subtitle="Photos and memories from this year's festival at Hare Krishna Movement Vizag."
+              subtitle="Photos and memories from this year's festival at ISKCON Gambheeram Visakhapatnam."
             />
             <div className="mx-auto max-w-5xl space-y-10 md:space-y-14">
               {f.details?.map((section, i) => (

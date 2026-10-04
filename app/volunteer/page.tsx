@@ -101,7 +101,7 @@ export default function VolunteerPage() {
               title="Volunteer Through the Vaikuntham App"
               subtitle={
                 <>
-                  All volunteer sign-ups for Hare Krishna Movement Vizag now happen in our official{" "}
+                  All volunteer sign-ups for ISKCON Gambheeram Visakhapatnam now happen in our official{" "}
                   <strong className="text-foreground">Vaikuntham</strong> app. Install it once to see every upcoming
                   seva opportunity, register in a tap, and receive your duty reminders directly on your phone.
                 </>

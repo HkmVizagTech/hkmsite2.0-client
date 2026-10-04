@@ -731,7 +731,7 @@ export default function PitruPakshaClient() {
                   <h2 className="vk-h3 !text-lg">Offer Seva This Pitru Paksha</h2>
                   <p className="mt-2 text-sm leading-6 text-muted-foreground">
                     Your offering sustains Annadana, Sadhu Bhojan, sacred cow care
-                    and every divine ritual performed at HKM Vizag — carrying your
+                    and every divine ritual performed at ISKCON Gambheeram Visakhapatnam — carrying your
                     gratitude to the ancestors you remember.
                   </p>
                 </div>

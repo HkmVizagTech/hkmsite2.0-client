@@ -1,10 +1,13 @@
 import PageLayout from "@/components/PageLayout";
 import PageHero from "@/components/PageHero";
+import { pageSeo } from "@/lib/seo";
 
-export const metadata = {
-  title: "Refund & Cancellation Policy · Hare Krishna Movement Visakhapatnam",
-  description: "Refund and cancellation policy for donations and event registrations at Hare Krishna Movement Visakhapatnam.",
-};
+export const metadata = pageSeo({
+  title: "Refund & Cancellation Policy",
+  description:
+    "Refund and cancellation policy for donations, event registrations and store orders at ISKCON Gambheeram Visakhapatnam.",
+  path: "/refund-policy",
+});
 
 const sections = [
   {

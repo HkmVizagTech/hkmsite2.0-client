@@ -3,6 +3,8 @@ import Link from "next/link";
 import { ArrowLeft, ArrowRight, ChevronRight, Home } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import SectionHeading from "@/components/site/SectionHeading";
+import { pageSeo, clampDescription, breadcrumbJsonLd } from "@/lib/seo";
+import JsonLd from "@/components/seo/JsonLd";
 
 interface Blog {
   _id: string;
@@ -60,10 +62,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const categories = await getCategories();
   const cat = categories.find((c) => c.slug === slug);
-  return {
-    title: cat ? `${cat.name} · Blogs · Hare Krishna Vaikuntham` : "Category · Blogs",
-    description: cat ? `Read all blog posts in the ${cat.name} category.` : undefined,
-  };
+  if (!cat) return { title: "Blog Category", robots: { index: false, follow: true } };
+  return pageSeo({
+    title: `${cat.name} — Blog`,
+    description: clampDescription(
+      `Read ${cat.name} articles from ISKCON Gambheeram Visakhapatnam — Krishna katha, festivals and Srila Prabhupada's teachings.`
+    ),
+    path: `/blogs/categories/${cat.slug}`,
+  });
 }
 
 export default async function CategoryPage({
@@ -81,6 +87,12 @@ export default async function CategoryPage({
 
   return (
     <PageLayout>
+    <JsonLd
+      data={breadcrumbJsonLd([
+        { name: "Blog", path: "/blogs" },
+        { name: cat.name, path: `/blogs/categories/${cat.slug}` },
+      ])}
+    />
     <main className="overflow-x-hidden bg-white pt-[var(--header-h)]">
       {/* ─── Tinted hero ─── */}
       <section className="relative overflow-hidden bg-gradient-to-b from-vk-100 via-vk-50 to-white">

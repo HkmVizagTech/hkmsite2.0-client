@@ -24,7 +24,7 @@ async function fetchCampaigner(slug: string): Promise<JanmashtamiCampaigner | nu
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const campaigner = await fetchCampaigner(slug);
-  if (!campaigner) return { title: "Sri Krishna Janmashtami | HKM Vizag" };
+  if (!campaigner) return { title: "Sri Krishna Janmashtami" };
   return {
     title: `${campaigner.name}'s Janmashtami Seva Campaign | ISKCON Gambheeram Visakhapatnam`,
     description:

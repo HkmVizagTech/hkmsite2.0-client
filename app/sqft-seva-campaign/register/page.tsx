@@ -1,10 +1,11 @@
 import CampaignerRegisterClient from "@/components/campaign/CampaignerRegisterClient";
+import { pageSeo } from "@/lib/seo";
 
-export const metadata = {
-  title: "Start Your Fundraising Campaign | Square Foot Seva",
-  description:
-    "Create your personal Square Foot Seva fundraising campaign for the Hare Krishna Vaikuntham Temple and share it with friends and family.",
-};
+export const metadata = pageSeo({
+  title: "Square Foot Seva Fundraiser",
+  description: "Create your own Square Foot Seva fundraising page and invite family and friends to help build the temple of ISKCON Gambheeram Visakhapatnam.",
+  path: "/sqft-seva-campaign/register"
+});
 
 export default function CampaignerRegisterPage() {
   return <CampaignerRegisterClient campaignType="SQFT" />;

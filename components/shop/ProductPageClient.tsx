@@ -37,7 +37,13 @@ import {
   formatINR,
 } from "@/lib/shopApi";
 
-export default function ProductDetailPage() {
+/** Server-known basics so the loading state still carries the product's h1. */
+export interface ProductSeoPreview {
+  name: string;
+  description?: string;
+}
+
+export default function ProductDetailPage({ seoPreview }: { seoPreview?: ProductSeoPreview } = {}) {
   const params = useParams<{ slug: string }>();
   const slug = params?.slug as string;
   const { addItem, setQuantity: setCartQuantity, openCart, lines } = useCart();
@@ -103,7 +109,13 @@ export default function ProductDetailPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[60vh] items-center justify-center">
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 px-4 text-center">
+        {seoPreview && (
+          <div className="max-w-2xl">
+            <h1 className="font-heading text-2xl font-extrabold text-ink sm:text-[2rem]">{seoPreview.name}</h1>
+            {seoPreview.description && <p className="vk-lead mt-3">{seoPreview.description}</p>}
+          </div>
+        )}
         <Loader2 className="h-6 w-6 animate-spin text-vk-500" />
       </div>
     );

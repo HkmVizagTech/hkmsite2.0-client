@@ -481,7 +481,7 @@ export default function ChaturmasClient() {
               align="center"
               eyebrow="Support the Temple"
               title="Offer a Seva During Chaturmas"
-              subtitle="Every charity performed in these holy months yields manifold benefits. Support the ongoing worship, prasadam distribution and cow protection at HKM Vizag."
+              subtitle="Every charity performed in these holy months yields manifold benefits. Support the ongoing worship, prasadam distribution and cow protection at ISKCON Gambheeram Visakhapatnam."
             />
           </motion.div>
 

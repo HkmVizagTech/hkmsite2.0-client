@@ -675,7 +675,7 @@ export default function GovardhanPujaClient() {
                     <p className="mt-2 text-sm leading-6 text-white/80">
                       Your offering sustains the sacred worship of Govardhan Hill,
                       the grand Annakoot feast, bhog preparations and every divine
-                      ritual performed at HKM Vizag on this auspicious day.
+                      ritual performed at ISKCON Gambheeram Visakhapatnam on this auspicious day.
                     </p>
                   </div>
                 </div>

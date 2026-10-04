@@ -1,10 +1,13 @@
 import PageLayout from "@/components/PageLayout";
 import PageHero from "@/components/PageHero";
+import { pageSeo } from "@/lib/seo";
 
-export const metadata = {
-  title: "Terms & Conditions · Hare Krishna Movement Visakhapatnam",
-  description: "Terms governing the use of the Hare Krishna Movement Visakhapatnam website, donations, and event registrations.",
-};
+export const metadata = pageSeo({
+  title: "Terms & Conditions",
+  description:
+    "Terms for using the ISKCON Gambheeram Visakhapatnam website, donations, event registrations and the Matchless Gifts store.",
+  path: "/terms-and-conditions",
+});
 
 const sections = [
   {

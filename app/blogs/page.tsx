@@ -144,8 +144,14 @@ export default function BlogsListPage() {
   if (loading) {
     return (
       <PageLayout>
-        <div className="flex min-h-[60vh] items-center justify-center bg-white pt-[var(--header-h)] text-muted-foreground">
-          <span className="vk-pill-soft">Loading blogs…</span>
+        <div className="bg-white pt-[var(--header-h)]">
+          <div className="vk-container py-12 text-center md:py-16">
+            <h1 className="vk-h1 mx-auto max-w-3xl">Nourish Your Soul Daily — with Spiritual Teachings</h1>
+            <p className="vk-lead mx-auto mt-4 max-w-2xl">
+              Krishna katha, festival insights and the teachings of Srila Prabhupada from ISKCON Gambheeram Visakhapatnam.
+            </p>
+            <span className="vk-pill-soft mt-8">Loading blogs…</span>
+          </div>
         </div>
       </PageLayout>
     );

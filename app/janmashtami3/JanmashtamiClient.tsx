@@ -61,12 +61,12 @@ const banners = [
   {
     desktop: "/assets/janmashtami-skj26_1.webp",
     mobile: "/assets/janmashtami-skj26_m1.webp",
-    alt: "Sri Krishna Janmashtami celebrations at Hare Krishna Movement Vizag",
+    alt: "Sri Krishna Janmashtami celebrations at ISKCON Gambheeram Visakhapatnam",
   },
   {
     desktop: "/assets/janmashtami-skj26_2.webp",
     mobile: "/assets/janmashtami-skj26_m2.webp",
-    alt: "Offer sevas for Sri Krishna Janmashtami at HKM Vizag",
+    alt: "Offer sevas for Sri Krishna Janmashtami at ISKCON Gambheeram Visakhapatnam",
   },
 ];
 
@@ -212,7 +212,7 @@ const sevas: Seva[] = [
   {
     slug: "mandapa",
     title: "Mandapa Seva",
-    description: "Sponsor the sacred Mandapa decoration for the grand Janmashtami celebrations at HKM Vizag.",
+    description: "Sponsor the sacred Mandapa decoration for the grand Janmashtami celebrations at ISKCON Gambheeram Visakhapatnam.",
     image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1785833231776-1785833231103-ChatGPTImageAug42026021053PM.webp",
     options: [
       { legacySevaId: 228, label: "Donate Rs. 55,555", amount: 55555 },
@@ -597,10 +597,10 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
           <Reveal>
             <div className="grid gap-6 lg:grid-cols-[1.35fr_0.65fr] lg:items-center lg:gap-10">
               <div>
-                <span className="vk-pill mb-4">Hare Krishna Movement Vizag</span>
+                <span className="vk-pill mb-4">ISKCON Gambheeram Visakhapatnam</span>
                 <h1 className="vk-h1">Sri Krishna Janmashtami</h1>
                 <p className="vk-lead mt-4 max-w-3xl md:text-lg">
-                  This Janmashtami, on the 4th & 5th of September, join the grand celebrations at HKM Vizag.
+                  This Janmashtami, on the 4th & 5th of September, join the grand celebrations at ISKCON Gambheeram Visakhapatnam.
                   Donate towards any of the sevas listed and receive special prasadam and the unlimited blessings of Lord Krishna.
                 </p>
                 <p className="mt-5 max-w-3xl border-l-4 border-vk-500 pl-4 font-serif-display text-[15px] italic leading-7 text-vk-700 md:text-base">
@@ -616,7 +616,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
                   <div>
                     <h2 className="font-heading text-lg font-bold text-white">Offer Seva This Janmashtami</h2>
                     <p className="mt-2 text-sm leading-6 text-white/80">
-                      Your offering sustains the midnight Abhisheka, the grand Nandotsava feast, and every sacred ritual performed at HKM Vizag on Lord Krishna&apos;s appearance day.
+                      Your offering sustains the midnight Abhisheka, the grand Nandotsava feast, and every sacred ritual performed at ISKCON Gambheeram Visakhapatnam on Lord Krishna&apos;s appearance day.
                     </p>
                   </div>
                 </div>

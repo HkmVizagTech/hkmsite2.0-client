@@ -1,14 +1,21 @@
+import type { ReactNode } from "react";
 import type { Metadata } from "next";
-import { pageSeo, siteKeywords } from "@/lib/seo";
+import { pageSeo, siteKeywords, breadcrumbJsonLd } from "@/lib/seo";
+import JsonLd from "@/components/seo/JsonLd";
 
 export const metadata: Metadata = pageSeo({
-  title: "Vaishnava Calendar — Ekadashi & Festival Dates | ISKCON Vizag",
+  title: "Vaishnava Calendar 2026",
   description:
-    "The Vaishnava calendar with Ekadashi dates and festival days for the Hare Krishna Movement Visakhapatnam (ISKCON Vizag, Hare Krishna Vaikuntham Temple).",
+    "Ekadashi dates, festivals and appearance days for 2026 from the Gaudiya Vaishnava calendar, from ISKCON Gambheeram Visakhapatnam.",
   path: "/vaishnav-calendar",
-  keywords: ["Ekadashi dates", "Vaishnava calendar", "ISKCON festival calendar", ...siteKeywords],
+  keywords: ["Vaishnava calendar 2026", "Ekadashi dates 2026", "ISKCON calendar 2026", "Hindu festival dates 2026", ...siteKeywords],
 });
 
-export default function VaishnavCalendarLayout({ children }: { children: React.ReactNode }) {
-  return children;
+export default function VaishnavCalendarLayout({ children }: { children: ReactNode }) {
+  return (
+    <>
+      <JsonLd data={breadcrumbJsonLd([{ name: "Vaishnava Calendar", path: "/vaishnav-calendar" }])} />
+      {children}
+    </>
+  );
 }

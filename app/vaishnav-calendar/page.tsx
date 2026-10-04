@@ -907,7 +907,7 @@ export default function VaishnavCalendarPage() {
         {/* ── Discover Section ── */}
         <section className="vk-section vk-band">
           <div className="vk-container">
-            <SectionHeading eyebrow="Explore" title="Discover HKM Vizag" subtitle="Learn more about what you can do." />
+            <SectionHeading eyebrow="Explore" title="Discover ISKCON Gambheeram" subtitle="Learn more about what you can do." />
             <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-6">
               {discoverCards.map((card, i) => (
                 <motion.div

@@ -71,26 +71,91 @@ export const shopMetadata = {
     "The devotional store of the Hare Krishna Movement Visakhapatnam — books, puja items and sacred gifts, with every purchase supporting the temple's sevas.",
 };
 
-// Consistent per-page metadata — title/description/canonical/OG in one shape.
+// Brand shown after every page title (via the root layout's title template)
+// and in social cards. Pages pass only their topic, e.g. "Darshan & Aarti
+// Timings" → "Darshan & Aarti Timings | ISKCON Gambheeram Visakhapatnam".
+export const BRAND = ORG_NAME;
+export const TITLE_TEMPLATE = `%s | ${BRAND}`;
+export const withBrand = (topic: string) => `${topic} | ${BRAND}`;
+
+// Default social-share image (the Hare Krishna Vaikuntham temple).
+export const DEFAULT_OG_IMAGE = "/assets/vizag-temple-1.jpeg";
+
+export const absUrl = (u: string) => (/^https?:\/\//.test(u) ? u : `${SITE_URL}${u.startsWith("/") ? "" : "/"}${u}`);
+
+/**
+ * Consistent per-page metadata: topic title (the brand is appended by the
+ * root template), description (keep ≤155 chars), canonical, Open Graph and
+ * Twitter cards with an image. `noindex` is for private / transactional
+ * pages (checkout, donor area, thank-you pages).
+ */
 export function pageSeo(page: {
   title: string;
   description: string;
   path: string;
   keywords?: string[];
+  image?: string;
+  noindex?: boolean;
+  /** Canonical override (e.g. a duplicate campaign page pointing at the main one). */
+  canonical?: string;
+  /**
+   * Set on a layout whose child pages define their own titles (blogs,
+   * events): Next applies only the nearest parent's title template, so the
+   * layout must pass the brand template on.
+   */
+  childTemplate?: boolean;
 }): Metadata {
+  const image = absUrl(page.image || DEFAULT_OG_IMAGE);
+  const full = withBrand(page.title);
   return {
-    title: { absolute: page.title },
+    title: page.childTemplate ? { default: page.title, template: TITLE_TEMPLATE } : page.title,
     description: page.description,
     keywords: page.keywords || siteKeywords,
-    alternates: { canonical: page.path },
+    alternates: { canonical: page.canonical || page.path },
     openGraph: {
-      title: page.title,
+      title: full,
       description: page.description,
       type: "website",
       locale: "en_IN",
       siteName: ORG_NAME,
       url: `${SITE_URL}${page.path}`,
+      images: [{ url: image, alt: full }],
     },
-    robots: { index: true, follow: true },
+    twitter: { card: "summary_large_image", title: full, description: page.description, images: [image] },
+    robots: page.noindex ? { index: false, follow: true } : { index: true, follow: true },
   };
+}
+
+/** schema.org BreadcrumbList for a page (Home is added automatically). */
+export function breadcrumbJsonLd(trail: { name: string; path: string }[]) {
+  const items = [{ name: "Home", path: "/" }, ...trail];
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((it, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: it.name,
+      item: `${SITE_URL}${it.path}`,
+    })),
+  };
+}
+
+/**
+ * Remove a trailing brand an editor may have typed into a title
+ * ("Indira Ekadashi · ISKCON Vizag", "… | Hare Krishna Movement Vizag") so
+ * the root template doesn't append the brand a second time.
+ */
+export function stripBrand(title: string): string {
+  return title
+    .replace(/\s*[|·—–-]\s*(ISKCON|Hare Krishna|HKM)[^|·—–]*$/i, "")
+    .trim();
+}
+
+/** Trim a description to ≤160 chars on a word boundary. */
+export function clampDescription(text: string | undefined | null, max = 160): string {
+  const t = (text || "").replace(/\s+/g, " ").trim();
+  if (t.length <= max) return t;
+  const cut = t.slice(0, max - 1);
+  return `${cut.slice(0, cut.lastIndexOf(" ") > 80 ? cut.lastIndexOf(" ") : cut.length).replace(/[,;:.\s]+$/, "")}…`;
 }

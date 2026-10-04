@@ -1,14 +1,22 @@
+import type { ReactNode } from "react";
 import type { Metadata } from "next";
-import { pageSeo, siteKeywords } from "@/lib/seo";
+import { pageSeo, siteKeywords, breadcrumbJsonLd } from "@/lib/seo";
+import JsonLd from "@/components/seo/JsonLd";
 
 export const metadata: Metadata = pageSeo({
-  title: "Gallery — ISKCON Vizag Temple Photos | Hare Krishna Movement Visakhapatnam",
+  title: "Darshan Photo Gallery",
   description:
-    "Photos from ISKCON Visakhapatnam (Hare Krishna Movement, Vizag) — the deities, festivals, temple programs and community seva at Hare Krishna Vaikuntham Cultural Centre.",
+    "Daily darshan photos of Sri Sri Radha Madan Mohan and moments from festivals, seva and community life at ISKCON Gambheeram Visakhapatnam.",
   path: "/gallery",
-  keywords: ["ISKCON Vizag photos", "Hare Krishna temple photos", "ISKCON temple pictures", ...siteKeywords],
+  keywords: ["ISKCON Vizag gallery", "daily darshan photos", "Radha Madan Mohan darshan", "ISKCON Gambheeram photos", ...siteKeywords],
+  image: "/assets/home-gallery-radha-krishna.webp",
 });
 
-export default function GalleryLayout({ children }: { children: React.ReactNode }) {
-  return children;
+export default function GalleryLayout({ children }: { children: ReactNode }) {
+  return (
+    <>
+      <JsonLd data={breadcrumbJsonLd([{ name: "Gallery", path: "/gallery" }])} />
+      {children}
+    </>
+  );
 }

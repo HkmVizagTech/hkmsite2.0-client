@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
-import { SITE_URL, ORG_NAME } from "@/lib/seo";
+import { SITE_URL, ORG_NAME, withBrand } from "@/lib/seo";
 import { ANNA_DAAN_CAMPAIGN, GAU_CAMPAIGN, GITA_DAAN_CAMPAIGN } from "@/lib/sevaCampaignConfig";
 import { SQFT_CAMPAIGN, BRICK_CAMPAIGN } from "@/lib/campaignConfig";
 import { DEFAULT_CAMPAIGN as EKADASHI_DEFAULT } from "@/lib/ekadashiCampaign";
 
 /**
  * Search setup for the donation / seva pages, in one place:
- *  - `title` (≤60 chars, used absolute so the root template doesn't repeat
- *    the brand) and `description` (≤155 chars) written for what people
- *    actually search ("annadanam donation Visakhapatnam", "pitru paksha
+ *  - `title` is the topic only (the root template appends
+ *    " | ISKCON Gambheeram Visakhapatnam"), and `description` (≤160 chars)
+ *    is written for what people actually search ("annadanam donation Visakhapatnam", "pitru paksha
  *    seva Vizag" …), with the price facts taken from each page's own tiers;
  *  - `sevas` / `intro` feed the server-rendered fallback, so crawlers and
  *    no-JS visitors get a real heading, text and the seva options before the
@@ -37,7 +37,7 @@ export interface DonationSeoEntry {
   event?: { name: string; startDate: string; endDate?: string; description: string };
 }
 
-const LOCAL = ["ISKCON Vizag", "ISKCON Visakhapatnam", "Hare Krishna Movement Vizag", "Hare Krishna Vaikuntham"];
+const LOCAL = ["ISKCON Gambheeram Visakhapatnam", "ISKCON Visakhapatnam", "ISKCON Vizag", "Hare Krishna Movement Vizag", "Hare Krishna Vaikuntham"];
 const BENEFIT = "All donations are eligible for 80G tax benefit; receipts are sent on WhatsApp.";
 
 const tiers = (t: { amount: number }[]) => t.map((x) => x.amount);
@@ -45,9 +45,9 @@ const tiers = (t: { amount: number }[]) => t.map((x) => x.amount);
 export const DONATION_SEO = {
   "anna-daan-seva": {
     path: "/anna-daan-seva",
-    title: "Annadanam Donation in Visakhapatnam | ISKCON Vizag",
+    title: "Annadanam Seva Donation",
     description:
-      "Sponsor Annadanam at ISKCON Vizag (Hare Krishna Movement). Feed devotees and the needy with sanctified prasadam — every ₹25 feeds one person. 80G benefit.",
+      "Sponsor Annadanam at ISKCON Gambheeram Visakhapatnam. Feed devotees and the needy with sanctified prasadam — ₹25 feeds one person. 80G tax benefit.",
     keywords: ["annadanam donation Visakhapatnam", "anna daan seva Vizag", "food donation Vizag", "annadanam ISKCON Vizag", "donate meals Visakhapatnam", "prasadam distribution", ...LOCAL],
     ogImage: ANNA_DAAN_CAMPAIGN.ogImage,
     breadcrumb: "Anna Daan Seva",
@@ -57,9 +57,9 @@ export const DONATION_SEO = {
   },
   "gau-seva": {
     path: "/gau-seva",
-    title: "Gau Seva Donation in Visakhapatnam | ISKCON Vizag Goshala",
+    title: "Gau Seva Donation",
     description:
-      "Serve the sacred cows at ISKCON Vizag — sponsor fodder, green grass, medicines and shelter. ₹1,500 feeds 10 cows for a day. 80G tax benefit on every gift.",
+      "Serve the sacred cows at ISKCON Gambheeram Visakhapatnam — fodder, green grass, medicines and shelter. ₹1,500 feeds 10 cows for a day. 80G benefit.",
     keywords: ["gau seva donation Visakhapatnam", "cow seva Vizag", "goshala donation Vizag", "gau seva ISKCON", "donate for cows Visakhapatnam", ...LOCAL],
     ogImage: GAU_CAMPAIGN.ogImage,
     breadcrumb: "Gau Seva",
@@ -69,9 +69,9 @@ export const DONATION_SEO = {
   },
   "gita-daan-seva": {
     path: "/gita-daan-seva",
-    title: "Gita Daan Seva | Donate Bhagavad Gita in Visakhapatnam",
+    title: "Gita Daan Seva",
     description:
-      "Sponsor Bhagavad-gita As It Is for students and seekers through ISKCON Vizag. ₹250 gifts one Gita and shares Lord Krishna's wisdom. 80G tax benefit.",
+      "Sponsor Bhagavad-gita As It Is for students and seekers through ISKCON Gambheeram Visakhapatnam. ₹250 gifts one Gita. 80G tax benefit.",
     keywords: ["gita daan", "donate Bhagavad Gita", "Bhagavad Gita distribution Vizag", "gita daan seva Visakhapatnam", "Bhagavad-gita As It Is", ...LOCAL],
     ogImage: GITA_DAAN_CAMPAIGN.ogImage,
     breadcrumb: "Gita Daan Seva",
@@ -81,9 +81,9 @@ export const DONATION_SEO = {
   },
   "pitru-paksha": {
     path: "/pitru-paksha",
-    title: "Pitru Paksha 2026 Sevas for Ancestors | ISKCON Vizag",
+    title: "Pitru Paksha 2026 Sevas",
     description:
-      "Honour your ancestors this Pitru Paksha (26 Sep – 10 Oct 2026). Offer Annadana, Sadhu Bhojan, Gau Seva or temple seva online at ISKCON Visakhapatnam. 80G.",
+      "Honour your ancestors this Pitru Paksha (26 Sep–10 Oct 2026) with Annadana, Sadhu Bhojan or Gau Seva at ISKCON Gambheeram Visakhapatnam. 80G.",
     keywords: ["pitru paksha 2026", "pitru paksha seva", "pitru paksha donation", "mahalaya amavasya 2026", "shraddh seva Visakhapatnam", "pitru paksha annadanam", "ancestors seva Vizag", ...LOCAL],
     ogImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1790235076658-1790235074922-pitru-paksha-desk.webp",
     breadcrumb: "Pitru Paksha",
@@ -109,9 +109,9 @@ export const DONATION_SEO = {
   },
   "govardhan-puja": {
     path: "/govardhan-puja",
-    title: "Govardhan Puja 2026 & Annakoot Seva | ISKCON Vizag",
+    title: "Govardhan Puja 2026 Seva",
     description:
-      "Celebrate Govardhan Puja on 10 Nov 2026 at ISKCON Visakhapatnam. Sponsor Annakoot, Govardhan, Gau, Bhog, Alankar or Vaishnav Bhojan seva online. 80G benefit.",
+      "Celebrate Govardhan Puja on 10 Nov 2026 at ISKCON Gambheeram Visakhapatnam. Sponsor Annakoot, Govardhan, Gau, Bhog or Vaishnav Bhojan seva online.",
     keywords: ["govardhan puja 2026", "govardhan puja Visakhapatnam", "annakoot seva", "govardhan puja donation", "annakut ISKCON Vizag", "govardhan puja date 2026", ...LOCAL],
     ogImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1789476038584-1789476037499-govardhan-desk.webp",
     breadcrumb: "Govardhan Puja",
@@ -137,9 +137,9 @@ export const DONATION_SEO = {
   },
   radhashtami: {
     path: "/radhashtami",
-    title: "Radhashtami Sevas | Sri Radha's Appearance | ISKCON Vizag",
+    title: "Radhashtami Sevas",
     description:
-      "Offer seva on Sri Radhashtami at Hare Krishna Vaikuntham, Visakhapatnam — Abhishekam, Pushpalankara, Naivedya, Annadana and Gau Seva online. 80G benefit.",
+      "Offer Radhashtami seva at ISKCON Gambheeram Visakhapatnam — Abhishekam, Pushpalankara, Naivedya, Annadana and Gau Seva online. 80G benefit.",
     keywords: ["radhashtami", "radhashtami seva", "radhashtami Visakhapatnam", "radha ashtami donation", "radhashtami ISKCON Vizag", ...LOCAL],
     ogImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1788946765218-1788946764659-Radhashtamidesk.webp",
     breadcrumb: "Radhashtami",
@@ -159,9 +159,9 @@ export const DONATION_SEO = {
   },
   ekadashi: {
     path: "/ekadashi",
-    title: "Ekadashi Seva & Annadanam | ISKCON Vizag Temple",
+    title: "Ekadashi Seva & Annadanam",
     description:
-      "Offer seva on every Ekadashi at Hare Krishna Vaikuntham Temple, Visakhapatnam — sponsor Annadanam, Gau Seva, Vastra and temple offerings online. 80G benefit.",
+      "Offer seva on every Ekadashi at ISKCON Gambheeram Visakhapatnam — sponsor Annadanam, Gau Seva, deity vastra and temple offerings. 80G benefit.",
     keywords: ["ekadashi seva", "ekadashi donation", "ekadashi annadanam", "ekadashi Visakhapatnam", "ekadashi 2026", ...LOCAL],
     ogImage: EKADASHI_DEFAULT.ogImage,
     breadcrumb: "Ekadashi Seva",
@@ -179,9 +179,9 @@ export const DONATION_SEO = {
   },
   "alankara-vastra-seva": {
     path: "/alankara-vastra-seva",
-    title: "Vastra & Alankara Seva | Deity Dress Seva in Vizag",
+    title: "Vastra & Alankara Seva",
     description:
-      "Offer new garments, ornaments and decorations for Sri Sri Radha Madan Mohan at Hare Krishna Vaikuntham, Visakhapatnam. Sponsor from ₹501. 80G tax benefit.",
+      "Offer garments, ornaments and decorations for Sri Sri Radha Madan Mohan at ISKCON Gambheeram Visakhapatnam. Sponsor from ₹501. 80G benefit.",
     keywords: ["vastra seva", "alankara seva", "deity dress seva", "vastra daan", "Radha Madan Mohan seva", ...LOCAL],
     ogImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677419371-1783677418690-DietyPhotos.jpeg",
     breadcrumb: "Vastra & Alankara Seva",
@@ -199,9 +199,9 @@ export const DONATION_SEO = {
   },
   "sqft-seva-campaign": {
     path: "/sqft-seva-campaign",
-    title: "Square Foot Seva | Build the Vaikuntham Temple, Vizag",
+    title: "Square Foot Seva",
     description:
-      "Sponsor square feet of the Hare Krishna Vaikuntham Temple rising in Visakhapatnam — ₹2,100 per sq ft. Be part of building the Lord's home. 80G tax benefit.",
+      "Sponsor square feet of the Hare Krishna Vaikuntham Temple of ISKCON Gambheeram Visakhapatnam — ₹2,100 per sq ft. 80G tax benefit.",
     keywords: ["square foot seva", "temple construction donation Visakhapatnam", "Hare Krishna Vaikuntham temple", "donate to build temple Vizag", "mandir nirman seva", ...LOCAL],
     ogImage: "https://res.cloudinary.com/ddmzeqpkc/image/upload/f_auto,q_auto/phase_1",
     breadcrumb: "Square Foot Seva",
@@ -211,9 +211,9 @@ export const DONATION_SEO = {
   },
   "brick-seva-campaign": {
     path: "/brick-seva-campaign",
-    title: "Brick Seva | Sponsor a Temple Brick in Visakhapatnam",
+    title: "Brick Seva for the Temple",
     description:
-      "Sponsor a sacred brick for the Hare Krishna Vaikuntham Temple in Visakhapatnam — ₹1,500 per brick. Be part of building the Lord's home. 80G tax benefit.",
+      "Sponsor a sacred brick for the temple of ISKCON Gambheeram Visakhapatnam — ₹1,500 per brick. Be part of building the Lord’s home. 80G benefit.",
     keywords: ["brick seva", "sponsor a brick temple", "temple brick donation Vizag", "Hare Krishna Vaikuntham temple construction", "mandir nirman", ...LOCAL],
     ogImage: BRICK_CAMPAIGN.ogImage,
     breadcrumb: "Brick Seva",
@@ -223,9 +223,9 @@ export const DONATION_SEO = {
   },
   subhojanam: {
     path: "/subhojanam",
-    title: "Subhojanam | Free Hospital Meals in Visakhapatnam",
+    title: "Subhojanam Hospital Meals",
     description:
-      "Subhojanam serves fresh, hygienic meals to patients and attendants at KGH Visakhapatnam, GGH Kakinada and Homi Bhabha Hospital, 365 days a year. ₹25 feeds one.",
+      "ISKCON Gambheeram Visakhapatnam serves fresh meals to patients and attendants at KGH Vizag, GGH Kakinada and Homi Bhabha Hospital daily. ₹25 feeds one.",
     keywords: ["subhojanam", "hospital meals Visakhapatnam", "KGH free food", "feed patients Vizag", "food donation hospital", "Touchstone Charities", ...LOCAL],
     ogImage: "/assets/donations-annadana-real.jpg",
     breadcrumb: "Subhojanam",
@@ -238,9 +238,9 @@ export const DONATION_SEO = {
   },
   chaturmas: {
     path: "/chaturmas",
-    title: "Chaturmas 2026: Dates, Food Rules & Fasting | ISKCON Vizag",
+    title: "Chaturmas 2026 Dates & Rules",
     description:
-      "Chaturmas 2026 runs from July 29 to November 24 (Utthana Ekadashi). Learn the four sacred months, month-wise food restrictions and fasting rules.",
+      "Chaturmas 2026 runs July 29 – November 24. The four sacred months, month-wise food restrictions and fasting rules — ISKCON Gambheeram Visakhapatnam.",
     keywords: ["chaturmas 2026", "chaturmas dates 2026", "chaturmas food restrictions", "chaturmasya vrat", "chaturmas fasting rules", ...LOCAL],
     ogImage: "/assets/chaturmas-main-visual.jpg",
     breadcrumb: "Chaturmas",
@@ -252,9 +252,9 @@ export const DONATION_SEO = {
   },
   "special-occasion": {
     path: "/special-occasion",
-    title: "Special Occasion Seva | Birthday & Anniversary Seva, Vizag",
+    title: "Special Occasion Seva",
     description:
-      "Celebrate a birthday, anniversary or any special day with a seva at Hare Krishna Vaikuntham Temple, Visakhapatnam, and receive the Lord's blessings. 80G.",
+      "Celebrate a birthday, anniversary or special day with a seva at ISKCON Gambheeram Visakhapatnam and receive the blessings of Sri Sri Radha Madan Mohan.",
     keywords: ["birthday seva temple", "anniversary seva", "special occasion puja Vizag", "birthday annadanam", ...LOCAL],
     ogImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1784005845291-1784005844212-ChatGPTImageJul142026104033AM.png",
     breadcrumb: "Special Occasion Seva",
@@ -271,16 +271,17 @@ export type DonationSeoKey = keyof typeof DONATION_SEO;
 
 const absUrl = (u: string) => (/^https?:\/\//.test(u) ? u : `${SITE_URL}${u.startsWith("/") ? "" : "/"}${u}`);
 
-/** Page metadata for a donation page (absolute title, canonical, OG, Twitter). */
+/** Page metadata for a donation page (topic title + brand template, canonical, OG, Twitter). */
 export function donationMetadata(key: DonationSeoKey): Metadata {
   const e: DonationSeoEntry = DONATION_SEO[key];
+  const full = withBrand(e.title);
   return {
-    title: { absolute: e.title },
+    title: e.title,
     description: e.description,
     keywords: e.keywords,
     alternates: { canonical: e.path },
     openGraph: {
-      title: e.title,
+      title: full,
       description: e.description,
       url: e.path,
       type: "website",
@@ -290,7 +291,7 @@ export function donationMetadata(key: DonationSeoKey): Metadata {
     },
     twitter: {
       card: "summary_large_image",
-      title: e.title,
+      title: full,
       description: e.description,
       images: [absUrl(e.ogImage)],
     },
@@ -307,7 +308,7 @@ export function donationJsonLd(key: DonationSeoKey) {
       "@type": "WebPage",
       "@id": `${url}#webpage`,
       url,
-      name: e.title,
+      name: withBrand(e.title),
       description: e.description,
       inLanguage: "en-IN",
       primaryImageOfPage: { "@type": "ImageObject", url: absUrl(e.ogImage) },

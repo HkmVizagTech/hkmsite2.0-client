@@ -1,10 +1,13 @@
 import PageLayout from "@/components/PageLayout";
 import PageHero from "@/components/PageHero";
+import { pageSeo } from "@/lib/seo";
 
-export const metadata = {
-  title: "Privacy Policy · Hare Krishna Movement Visakhapatnam",
-  description: "How Hare Krishna Movement Visakhapatnam collects, uses, and protects your personal information.",
-};
+export const metadata = pageSeo({
+  title: "Privacy Policy",
+  description:
+    "How ISKCON Gambheeram Visakhapatnam (Hare Krishna Movement India, Visakhapatnam) collects, uses and protects your personal information.",
+  path: "/privacy-policy",
+});
 
 const sections = [
   {

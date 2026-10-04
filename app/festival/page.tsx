@@ -313,6 +313,8 @@ export default function FestivalsPage() {
         </div>
       </section>
 
+      <h1 className="sr-only">Festivals at ISKCON Gambheeram Visakhapatnam</h1>
+
       {/* ── Featured festivals ─────────────────────────────────────── */}
       {!loading && spotlights.length > 0 && (
         <section
@@ -321,7 +323,6 @@ export default function FestivalsPage() {
           className="vk-section scroll-mt-[var(--header-h)]"
         >
           <div className="vk-container">
-            <h1 className="sr-only">Festivals at ISKCON Gambheeram Visakhapatnam</h1>
             <SectionHeading
               eyebrow="Spotlight"
               title={spotlights.length > 1 ? "Featured Festivals" : "Featured Festival"}

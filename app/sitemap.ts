@@ -41,18 +41,54 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/volunteer`, changeFrequency: "monthly", priority: 0.6 },
   ];
 
-  // Dynamic: published blog posts
+  // Dynamic: published blog posts. The API caps a page at 50, so walk the
+  // pages until a short one comes back.
   let blogPages: MetadataRoute.Sitemap = [];
   try {
-    const res = await fetch(`${API_URL}/blogs?limit=50`, { next: { revalidate: 3600 } });
+    for (let page = 1; page <= 20; page++) {
+      const res = await fetch(`${API_URL}/blogs?limit=50&page=${page}`, { next: { revalidate: 3600 } });
+      if (!res.ok) break;
+      const list: any[] = (await res.json()).blogs || [];
+      blogPages.push(
+        ...list.map((b: any) => ({
+          url: `${SITE_URL}/blogs/${b.slug}`,
+          lastModified: b.updatedAt ? new Date(b.updatedAt) : undefined,
+          changeFrequency: "monthly" as const,
+          priority: 0.6,
+        }))
+      );
+      if (list.length < 50) break;
+    }
+  } catch {}
+
+  // Dynamic: blog category pages that have posts
+  let blogCategoryPages: MetadataRoute.Sitemap = [];
+  try {
+    const res = await fetch(`${API_URL}/blogs/categories`, { next: { revalidate: 3600 } });
     if (res.ok) {
       const data = await res.json();
-      blogPages = (data.blogs || []).map((b: any) => ({
-        url: `${SITE_URL}/blogs/${b.slug}`,
-        lastModified: b.updatedAt ? new Date(b.updatedAt) : undefined,
-        changeFrequency: "monthly" as const,
-        priority: 0.6,
-      }));
+      const cats: any[] = data.categories || (Array.isArray(data) ? data : []);
+      blogCategoryPages = cats
+        .filter((c) => c?.slug && (c.count ?? 1) > 0)
+        .map((c) => ({ url: `${SITE_URL}/blogs/categories/${c.slug}`, changeFrequency: "weekly" as const, priority: 0.5 }));
+    }
+  } catch {}
+
+  // Dynamic: event detail pages
+  let eventPages: MetadataRoute.Sitemap = [];
+  try {
+    const res = await fetch(`${API_URL}/events`, { next: { revalidate: 3600 } });
+    if (res.ok) {
+      const data = await res.json();
+      const list: any[] = data.events || data.data || (Array.isArray(data) ? data : []);
+      eventPages = list
+        .filter((e) => e?._id)
+        .map((e) => ({
+          url: `${SITE_URL}/events/${e._id}`,
+          lastModified: e.updatedAt ? new Date(e.updatedAt) : undefined,
+          changeFrequency: "weekly" as const,
+          priority: 0.6,
+        }));
     }
   } catch {}
 
@@ -91,5 +127,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   } catch {}
 
-  return [...staticPages, ...blogPages, ...productPages, ...festivalPages];
+  return [...staticPages, ...blogPages, ...blogCategoryPages, ...eventPages, ...productPages, ...festivalPages];
 }

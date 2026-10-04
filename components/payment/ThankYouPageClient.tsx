@@ -124,7 +124,7 @@ export default function ThankYouPageClient() {
   const shareNative = async () => {
     if (navigator.share) {
       try {
-        await navigator.share({ title: "I offered a seva at HKM Vizag", text: shareMessage });
+        await navigator.share({ title: "I offered a seva at ISKCON Gambheeram Visakhapatnam", text: shareMessage });
       } catch {}
     } else {
       await navigator.clipboard.writeText(shareMessage);

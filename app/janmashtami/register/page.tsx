@@ -1,10 +1,11 @@
 import CampaignerRegisterClient from "@/components/campaign/CampaignerRegisterClient";
+import { pageSeo } from "@/lib/seo";
 
-export const metadata = {
-  title: "Become a Janmashtami Seva Campaigner | HKM Vizag",
-  description:
-    "Register as a Sri Krishna Janmashtami seva campaigner for ISKCON Gambheeram Visakhapatnam. Get your personal link upon approval and invite friends and family to offer sevas.",
-};
+export const metadata = pageSeo({
+  title: "Become a Janmashtami Seva Campaigner",
+  description: "Create your Janmashtami seva campaign page and invite friends and family to offer seva at ISKCON Gambheeram Visakhapatnam.",
+  path: "/janmashtami/register"
+});
 
 export default function JanmashtamiCampaignerRegisterPage() {
   return <CampaignerRegisterClient campaignType="JANMASHTAMI" />;

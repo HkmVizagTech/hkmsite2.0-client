@@ -4,6 +4,8 @@ import Image from "next/image";
 import PageLayout from "@/components/PageLayout";
 import SectionHeading from "@/components/site/SectionHeading";
 import { Calendar, Clock, ArrowRight, Tag, ChevronRight, Home } from "lucide-react";
+import { stripBrand, clampDescription, withBrand, absUrl, BRAND, DEFAULT_OG_IMAGE, SITE_URL, breadcrumbJsonLd } from "@/lib/seo";
+import JsonLd from "@/components/seo/JsonLd";
 
 interface Blog {
   _id: string;
@@ -78,19 +80,26 @@ const fmtDate = (s?: string) => {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const blog = await getBlog(slug);
-  if (!blog) return { title: "Blog · ISKCON Gambheeram Visakhapatnam" };
+  if (!blog) return { title: "Blog", robots: { index: false, follow: true } };
+  const title = stripBrand(blog.metaTitle || blog.title);
+  const description = clampDescription(blog.metaDescription || blog.excerpt);
+  const image = blog.coverImage || absUrl(DEFAULT_OG_IMAGE);
   return {
-    title: blog.metaTitle || `${blog.title} · ISKCON Gambheeram Visakhapatnam Blog`,
-    description: blog.metaDescription || blog.excerpt,
+    title,
+    description,
     alternates: { canonical: `/blogs/${blog.slug}` },
     openGraph: {
-      title: blog.title,
-      description: blog.excerpt,
-      images: blog.coverImage ? [blog.coverImage] : [],
+      title: withBrand(title),
+      description,
+      images: [image],
       type: "article",
+      siteName: BRAND,
+      locale: "en_IN",
+      url: `/blogs/${blog.slug}`,
       publishedTime: blog.publishedAt,
-      authors: [blog.author?.name || "Admin"],
+      authors: [blog.author?.name || BRAND],
     },
+    twitter: { card: "summary_large_image", title: withBrand(title), description, images: [image] },
   };
 }
 
@@ -125,12 +134,14 @@ export default async function BlogPostPage({
     datePublished: blog.publishedAt,
     dateModified: blog.updatedAt || blog.publishedAt,
     author: {
-      "@type": "Person",
-      name: blog.author?.name || "Admin",
+      "@type": blog.author?.name && blog.author.name !== "Admin" ? "Person" : "Organization",
+      name: blog.author?.name && blog.author.name !== "Admin" ? blog.author.name : BRAND,
     },
     publisher: {
       "@type": "Organization",
-      name: "ISKCON Gambheeram Visakhapatnam",
+      "@id": `${SITE_URL}/#organization`,
+      name: BRAND,
+      logo: { "@type": "ImageObject", url: `${SITE_URL}/assets/iskcon-gambheeram-logo.jpeg` },
     },
     mainEntityOfPage: {
       "@type": "WebPage",
@@ -143,9 +154,12 @@ export default async function BlogPostPage({
 
   return (
     <PageLayout>
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostingJsonLd) }}
+    <JsonLd data={blogPostingJsonLd} />
+    <JsonLd
+      data={breadcrumbJsonLd([
+        { name: "Blog", path: "/blogs" },
+        { name: blog.title, path: `/blogs/${blog.slug}` },
+      ])}
     />
     <main className="overflow-x-hidden bg-white pt-[var(--header-h)]">
       {/* ─── Tinted header band ─── */}

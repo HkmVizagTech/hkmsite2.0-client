@@ -1,23 +1,22 @@
+import type { ReactNode } from "react";
 import type { Metadata } from "next";
-import { pageSeo, siteKeywords, shopKeywords } from "@/lib/seo";
+import { pageSeo, siteKeywords, breadcrumbJsonLd } from "@/lib/seo";
+import JsonLd from "@/components/seo/JsonLd";
 
 export const metadata: Metadata = pageSeo({
-  title: "Donate to ISKCON Vizag | Hare Krishna Movement Visakhapatnam — Donations & Seva",
+  title: "Donate to the Temple",
   description:
-    "Donate online to the Hare Krishna Movement Visakhapatnam (ISKCON, Gambheeram, Vizag). Support annadanam, Gau Seva cow protection, Gita distribution, temple construction and daily temple sevas — with 80G tax exemption.",
+    "Donate online to ISKCON Gambheeram Visakhapatnam — Annadanam, Gau Seva, Gita Daan, temple construction and festival sevas. 80G tax benefit.",
   path: "/donate",
-  keywords: [
-    "Donate ISKCON Vizag",
-    "donate to hare krishna temple",
-    "ISKCON donation",
-    "Hare Krishna Movement donation",
-    "temple donation Vizag",
-    "annadanam donation",
-    ...siteKeywords,
-    ...shopKeywords,
-  ],
+  keywords: ["donate ISKCON Gambheeram Visakhapatnam", "ISKCON Vizag donation", "temple donation Vizag", "annadanam donation", "80G donation", ...siteKeywords],
+  image: "https://res.cloudinary.com/ddmzeqpkc/image/upload/f_auto,q_auto/phase_1",
 });
 
-export default function DonateLayout({ children }: { children: React.ReactNode }) {
-  return children;
+export default function DonateLayout({ children }: { children: ReactNode }) {
+  return (
+    <>
+      <JsonLd data={breadcrumbJsonLd([{ name: "Donate", path: "/donate" }])} />
+      {children}
+    </>
+  );
 }

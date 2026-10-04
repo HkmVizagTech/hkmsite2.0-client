@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import ProductPageClient from "@/components/shop/ProductPageClient";
-import { SITE_URL, SHOP_NAME, ORG_NAME } from "@/lib/seo";
+import JsonLd from "@/components/seo/JsonLd";
+import { SITE_URL, SHOP_NAME, ORG_NAME, pageSeo, clampDescription } from "@/lib/seo";
 
 const SHOP_API = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 
@@ -39,32 +40,18 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const product = await getProduct(slug);
   if (!product) {
-    return {
-      title: "Product · ISKCON Vizag Shop — Matchless Gifts",
-      robots: { index: false, follow: true },
-    };
+    return { title: `Product — ${SHOP_NAME}`, robots: { index: false, follow: true } };
   }
-  const description = product.shortDescription || product.description || "";
+  const description = clampDescription(product.shortDescription || product.description) ||
+    `${product.name} from ${SHOP_NAME}, the store of ${ORG_NAME}.`;
   return {
-    title: `${product.name} — ISKCON Vizag Shop`,
-    description: description.slice(0, 160),
-    keywords: ["ISKCON Vizag shop", "Hare Krishna Movement shop", product.category || "", "temple shop", "devotional gifts"].filter(Boolean),
-    alternates: { canonical: `/shop/${product.slug}` },
-    openGraph: {
-      title: `${product.name} — ${SHOP_NAME} · ${ORG_NAME}`,
-      description: description.slice(0, 200),
-      type: "website",
-      locale: "en_IN",
-      siteName: `${SHOP_NAME} — ISKCON Vizag Shop`,
-      url: `${SITE_URL}/shop/${product.slug}`,
-      images: product.images?.length ? [product.images[0]] : [],
-    },
-    twitter: {
-      card: "summary_large_image",
+    ...pageSeo({
       title: product.name,
-      description: description.slice(0, 200),
-    },
-    robots: { index: true, follow: true },
+      description,
+      path: `/shop/${product.slug}`,
+      image: product.images?.[0],
+      keywords: [product.name, product.category || "", SHOP_NAME, "ISKCON Gambheeram Visakhapatnam shop", "devotional gifts"].filter(Boolean),
+    }),
   };
 }
 
@@ -109,7 +96,7 @@ const breadcrumbJsonLd = (product: Product) => ({
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   itemListElement: [
-    { "@type": "ListItem", position: 1, name: "ISKCON Vizag Shop", item: `${SITE_URL}/shop` },
+    { "@type": "ListItem", position: 1, name: SHOP_NAME, item: `${SITE_URL}/shop` },
     ...(product.category
       ? [
           {
@@ -131,11 +118,17 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     <>
       {product && (
         <>
-          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd(product)) }} />
-          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd(product)) }} />
+          <JsonLd data={breadcrumbJsonLd(product)} />
+          <JsonLd data={productJsonLd(product)} />
         </>
       )}
-      <ProductPageClient />
+      <ProductPageClient
+        seoPreview={
+          product
+            ? { name: product.name, description: clampDescription(product.shortDescription || product.description, 220) }
+            : undefined
+        }
+      />
     </>
   );
 }

@@ -1,33 +1,19 @@
 import type { Metadata } from "next";
 import ShopCatalogPageClient from "@/components/shop/ShopCatalogPageClient";
 import { SITE_URL, SHOP_NAME, shopKeywords, shopMetadata } from "@/lib/seo";
+import { pageSeo } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: { absolute: shopMetadata.title },
-  description: shopMetadata.description,
-  keywords: shopKeywords,
-  alternates: { canonical: "/shop" },
-  openGraph: {
-    title: shopMetadata.ogTitle,
-    description: shopMetadata.ogDescription,
-    type: "website",
-    locale: "en_IN",
-    siteName: `${SHOP_NAME} — Hare Krishna Movement Visakhapatnam`,
-    url: `${SITE_URL}/shop`,
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: shopMetadata.ogTitle,
-    description: shopMetadata.ogDescription,
-  },
-  robots: { index: true, follow: true },
-};
+export const metadata = pageSeo({
+  title: "Matchless Gifts Store",
+  description: "Shop Bhagavad-gita As It Is, Srila Prabhupada's books, japa malas, puja items and devotional gifts from ISKCON Gambheeram Visakhapatnam's store.",
+  path: "/shop"
+});
 
 const storeJsonLd = {
   "@context": "https://schema.org",
   "@type": "Store",
   "@id": `${SITE_URL}/shop#store`,
-  name: "Matchless Gifts — ISKCON Vizag Shop",
+  name: "Matchless Gifts — ISKCON Gambheeram Visakhapatnam",
   alternateName: ["Hare Krishna Movement Vizag Shop", "Hare Krishna Movement Visakhapatnam Store", "ISKCON Visakhapatnam Temple Store"],
   url: `${SITE_URL}/shop`,
   description: shopMetadata.description,

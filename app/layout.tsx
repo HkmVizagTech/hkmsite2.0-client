@@ -8,7 +8,7 @@ import ReduxProvider from "@/components/ReduxProvider";
 import MetaPixel from "@/components/MetaPixel";
 import ThemeProvider from "@/components/ThemeProvider";
 import BottomNavSpace from "@/components/BottomNavSpace";
-import { siteKeywords, ORG_ALT_NAMES } from "@/lib/seo";
+import { siteKeywords, ORG_ALT_NAMES, TITLE_TEMPLATE, DEFAULT_OG_IMAGE } from "@/lib/seo";
 
 
 const poppins = Poppins({
@@ -36,12 +36,14 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.harekrishnaviz
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
+  // Every page title reads "Topic | ISKCON Gambheeram Visakhapatnam";
+  // pages pass only their topic (see pageSeo in lib/seo.ts).
   title: {
-    default: "ISKCON Gambheeram Visakhapatnam | Hare Krishna Movement Vizag",
-    template: "%s · ISKCON Gambheeram Visakhapatnam",
+    default: "ISKCON Gambheeram Visakhapatnam | Hare Krishna Temple, Vizag",
+    template: TITLE_TEMPLATE,
   },
   description:
-    "ISKCON Gambheeram Visakhapatnam (Hare Krishna Movement, Gambheeram) — a Hare Krishna temple and Vaikuntham cultural centre in Vizag spreading the timeless message of Lord Krishna through devotion, service, and community since 2008. Daily darshan, prasadam, festivals, spiritual programs, temple seva and an online devotional store.",
+    "ISKCON Gambheeram Visakhapatnam — Hare Krishna temple and Vaikuntham cultural centre in Vizag. Daily darshan, prasadam, festivals and seva since 2008.",
   keywords: siteKeywords,
   // NOTE: no sitewide `alternates.canonical` here on purpose. It was
   // previously set to "/" at this root level, which Next.js's metadata
@@ -52,17 +54,19 @@ export const metadata: Metadata = {
   // multiple pages before this fix. Canonical is now set per-page
   // instead (see app/page.tsx for the homepage's own).
   openGraph: {
-    title: "ISKCON Gambheeram Visakhapatnam | Hare Krishna Movement Vizag",
-    description: "ISKCON Gambheeram Visakhapatnam (Hare Krishna Movement, Gambheeram) — daily darshan, prasadam, festivals, and spiritual programs in Vizag since 2008.",
+    title: "ISKCON Gambheeram Visakhapatnam | Hare Krishna Temple, Vizag",
+    description: "ISKCON Gambheeram Visakhapatnam — daily darshan, prasadam, festivals, and spiritual programs in Vizag since 2008.",
     type: "website",
     locale: "en_IN",
     siteName: "ISKCON Gambheeram Visakhapatnam",
     url: SITE_URL,
+    images: [{ url: DEFAULT_OG_IMAGE, width: 1280, height: 720, alt: "Hare Krishna Vaikuntham Temple — ISKCON Gambheeram Visakhapatnam" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "ISKCON Gambheeram Visakhapatnam | Hare Krishna Movement Vizag",
+    title: "ISKCON Gambheeram Visakhapatnam | Hare Krishna Temple, Vizag",
     description: "Spreading the timeless message of Lord Krishna through devotion, service, and community.",
+    images: [DEFAULT_OG_IMAGE],
   },
   robots: { index: true, follow: true },
 };
@@ -73,6 +77,8 @@ const organizationJsonLd = {
   "@id": `${SITE_URL}/#organization`,
   name: "ISKCON Gambheeram Visakhapatnam",
   alternateName: ORG_ALT_NAMES,
+  logo: `${SITE_URL}/assets/iskcon-gambheeram-logo.jpeg`,
+  image: `${SITE_URL}/assets/vizag-temple-1.jpeg`,
   description: "ISKCON Gambheeram Visakhapatnam, also known as Hare Krishna Movement Vizag, is a center of the International Society for Krishna Consciousness serving the Gambheeram area of Visakhapatnam since 2008.",
   url: SITE_URL,
   foundingDate: "2008",
@@ -114,9 +120,11 @@ const webSiteJsonLd = {
   "@type": "WebSite",
   "@id": `${SITE_URL}/#website`,
   url: SITE_URL,
-  name: "ISKCON Gambheeram Visakhapatnam — Hare Krishna Movement Vizag",
+  // Google shows this as the site name in search results.
+  name: "ISKCON Gambheeram Visakhapatnam",
+  alternateName: ["Hare Krishna Movement Vizag", "ISKCON Visakhapatnam"],
   description:
-    "Hare Krishna temple, Vaikuntham cultural centre and online devotional store of the Hare Krishna Movement Visakhapatnam (ISKCON Vizag).",
+    "Hare Krishna temple, Vaikuntham cultural centre and online devotional store of ISKCON Gambheeram Visakhapatnam.",
   publisher: { "@id": `${SITE_URL}/#organization` },
   inLanguage: "en-IN",
   potentialAction: {

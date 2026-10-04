@@ -1,6 +1,8 @@
 import PageLayout from "@/components/PageLayout";
 import EventDetailClient, { EventDetailView } from "@/components/EventDetailClient";
 import type { Metadata } from "next";
+import { pageSeo, stripBrand, clampDescription, breadcrumbJsonLd } from "@/lib/seo";
+import JsonLd from "@/components/seo/JsonLd";
 
 async function fetchEvent(id: string): Promise<any> {
   const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:3000";
@@ -17,19 +19,14 @@ async function fetchEvent(id: string): Promise<any> {
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params;
   const event = await fetchEvent(id);
-  if (!event?.title) return { title: "Event · ISKCON Vizag" };
-  const image = event.bannerImage || (event.images && event.images[0]);
-  return {
-    title: `${event.title} — ISKCON Vizag`,
-    description: (event.description || "").slice(0, 160),
-    alternates: { canonical: `/events/${id}` },
-    openGraph: {
-      title: event.title,
-      description: (event.description || "").slice(0, 200),
-      type: "article",
-      images: image ? [image] : [],
-    },
-  };
+  if (!event?.title) return { title: "Event", robots: { index: false, follow: true } };
+  const image = event.bannerImage || (event.images && event.images[0]) || undefined;
+  return pageSeo({
+    title: stripBrand(event.title),
+    description: clampDescription(event.description) || `${event.title} at ISKCON Gambheeram Visakhapatnam.`,
+    path: `/events/${id}`,
+    image,
+  });
 }
 
 export default async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
@@ -47,6 +44,12 @@ export default async function EventDetail({ params }: { params: Promise<{ id: st
 
   return (
     <PageLayout>
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Events", path: "/events" },
+          { name: event.title, path: `/events/${id}` },
+        ])}
+      />
       <EventDetailView event={event} id={id} />
     </PageLayout>
   );
