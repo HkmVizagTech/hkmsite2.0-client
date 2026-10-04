@@ -1,9 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Heart, X } from "lucide-react";
+import { Building2, Heart, Milk, ShieldCheck, Utensils, X } from "lucide-react";
 import { newEventId, getMetaBrowserData, trackPurchase } from "@/lib/metaPixel";
 import { captureTracking, getStoredTracking } from "@/lib/tracking";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
@@ -112,6 +110,8 @@ const initialForm: CheckoutForm = {
 };
 
 const formatAmount = (amount: number) => amount.toLocaleString("en-IN");
+
+const labelCls = "mb-1.5 block text-[13px] font-semibold text-ink/80";
 
 const apiBase = () => (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(/\/+$/, "");
 
@@ -418,44 +418,44 @@ export default function DonationsClient() {
   };
 
   const renderOptions = (options: DonationOption[], kind: "annadaan" | "gau") => (
-    <div className="donation-grid">
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {options.map((option) => {
         const isCustom = !option.amount;
+        const Icon = kind === "annadaan" ? Utensils : Milk;
         return (
         <article
           key={option.id}
-          className={`donation-card-exact ${isCustom ? "donation-card-full " : ""}${kind === "annadaan" ? "donation-card-annadaan" : "donation-card-gau"}`}
+          className={`vk-card vk-card-hover flex flex-col p-4 md:p-5 ${isCustom ? "sm:col-span-2 lg:col-span-3 xl:col-span-4" : ""}`}
         >
-          <div className="donation-card-head">
-            <div className={`seva-icon ${kind === "annadaan" ? "seva-icon-annadaan" : "seva-icon-gau"}`} aria-hidden="true">
-              <span className={kind === "annadaan" ? "plate-icon" : "cow-icon"}>{kind === "annadaan" ? "A" : "G"}</span>
-            </div>
+          <div className="mb-3 flex items-center gap-3">
+            <span className="vk-icon-chip" aria-hidden="true">
+              <Icon className="h-5 w-5" />
+            </span>
+            <h3 className="min-w-0 text-[15px] font-bold leading-snug text-ink">{option.title}</h3>
           </div>
-          <h3>{option.title}</h3>
-          <div className={`donation-card-row ${isCustom ? "single" : ""}`}>
+          <div className={`mt-auto flex items-center gap-2.5 ${isCustom ? "sm:justify-end" : ""}`}>
             {!isCustom && (
-              <div className={`donation-amount ${kind === "annadaan" ? "donation-amount-annadaan" : "donation-amount-gau"}`}>
-                <span className="donation-amount-inner">
-                  <span className="donation-amount-symbol">₹</span>
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    className="donation-amount-input"
-                    value={cardAmounts[option.id] ?? String(option.amount)}
-                    size={Math.max(4, String(cardAmounts[option.id] ?? option.amount).length)}
-                    onClick={(e) => e.stopPropagation()}
-                    onChange={(e) => setCardAmounts((prev) => ({ ...prev, [option.id]: e.target.value }))}
-                    aria-label={`Amount for ${option.title}`}
-                  />
-                </span>
-              </div>
+              <label className="flex h-11 min-w-0 flex-1 items-center gap-1.5 rounded-xl border border-vk-200 bg-vk-50 px-3 focus-within:border-vk-500 focus-within:ring-2 focus-within:ring-vk-500/20">
+                <span className="text-sm font-semibold text-vk-700">₹</span>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  className="h-full w-full min-w-0 bg-transparent text-[15px] font-bold text-ink outline-none"
+                  value={cardAmounts[option.id] ?? String(option.amount)}
+                  size={Math.max(4, String(cardAmounts[option.id] ?? option.amount).length)}
+                  onClick={(e) => e.stopPropagation()}
+                  onChange={(e) => setCardAmounts((prev) => ({ ...prev, [option.id]: e.target.value }))}
+                  aria-label={`Amount for ${option.title}`}
+                />
+              </label>
             )}
             <button
               type="button"
               onClick={() => openCheckout(option)}
-              className={`donate-button ${kind === "annadaan" ? "donate-button-annadaan" : "donate-button-gau"}`}
+              className={`vk-btn-gold h-11 shrink-0 px-4 text-[13px] font-bold ${isCustom ? "w-full sm:w-auto sm:px-8" : ""}`}
             >
+              <Heart className="h-4 w-4 fill-current" />
               DONATE NOW
             </button>
           </div>
@@ -467,7 +467,7 @@ export default function DonationsClient() {
 
   return (
     <>
-      <main className="exact-page" id="top">
+      <main className="min-h-screen bg-white" id="top">
         {/* Floating WhatsApp contact — this page is intentionally a
             distraction-free checkout flow without the full site nav, so a
             quick way to ask a question stays available. */}
@@ -476,70 +476,83 @@ export default function DonationsClient() {
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Chat with us on WhatsApp"
-          className="fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-elevated transition-transform hover:scale-105"
+          className="fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-elevated ring-4 ring-white/90 transition-transform hover:scale-105"
         >
           <svg viewBox="0 0 32 32" className="h-8 w-8" fill="currentColor" aria-hidden>
             <path d="M16.004 0C7.163 0 0 7.163 0 16c0 2.82.737 5.566 2.137 7.98L0 32l8.223-2.113A15.9 15.9 0 0 0 16.004 32C24.84 32 32 24.837 32 16S24.84 0 16.004 0Zm0 29.09a13.03 13.03 0 0 1-6.643-1.82l-.477-.283-4.878 1.253 1.303-4.755-.31-.488a13.06 13.06 0 0 1-2.005-6.997c0-7.226 5.879-13.106 13.014-13.106 3.477 0 6.745 1.355 9.202 3.815a12.94 12.94 0 0 1 3.808 9.204c0 7.226-5.879 13.177-13.014 13.177Zm7.13-9.78c-.39-.196-2.302-1.137-2.66-1.266-.357-.13-.617-.196-.877.196-.26.39-1.006 1.266-1.234 1.526-.227.26-.454.293-.844.098-.39-.196-1.647-.607-3.137-1.936-1.16-1.034-1.943-2.312-2.171-2.702-.227-.39-.024-.6.172-.795.176-.176.39-.454.585-.682.195-.227.26-.39.39-.65.13-.26.065-.487-.033-.682-.098-.196-.877-2.113-1.202-2.893-.316-.759-.638-.656-.877-.668-.227-.01-.487-.012-.747-.012-.26 0-.682.098-1.04.487-.357.39-1.364 1.333-1.364 3.25 0 1.917 1.397 3.77 1.592 4.03.195.26 2.75 4.2 6.663 5.888.931.402 1.658.642 2.225.822.935.298 1.786.256 2.459.155.75-.112 2.302-.941 2.627-1.85.325-.909.325-1.688.227-1.85-.098-.163-.357-.26-.747-.455Z" />
           </svg>
         </a>
-        <section className="hero-slider">
-          <div className="container-hero">
-            <div className="carousel-shell carousel-fallback">
-              <a href="#annadaan" className="carousel-slide">
-                <picture>
-                  <source media="(max-width: 640px)" srcSet={settings.bannerMobileImage || settings.bannerImage} />
-                  <img src={settings.bannerImage} alt="Narasimha Jayanthi Annadaan donation banner for ISKCON Charity Vizag" className="carousel-image" />
-                </picture>
-              </a>
+
+        {/* Hero banner — inset rounded card */}
+        <section className="bg-gradient-to-b from-vk-50 to-white pb-2 pt-4 md:pt-6">
+          <div className="vk-container">
+            <a
+              href="#annadaan"
+              className="block overflow-hidden rounded-3xl bg-vk-900 shadow-[0_24px_60px_-28px_rgba(10,18,51,0.6)]"
+            >
+              <picture>
+                <source media="(max-width: 640px)" srcSet={settings.bannerMobileImage || settings.bannerImage} />
+                <img src={settings.bannerImage} alt="Narasimha Jayanthi Annadaan donation banner for ISKCON Charity Vizag" className="block h-auto w-full" />
+              </picture>
+            </a>
+          </div>
+        </section>
+
+        <section className="vk-container py-8 text-center md:py-10">
+          <span className="vk-pill mb-3">{settings.heroEyebrow}</span>
+          <h1 className="vk-h1 mx-auto max-w-4xl">{settings.heroTitle}</h1>
+          <h2 className="vk-lead mx-auto mt-3 max-w-2xl md:text-lg">{settings.heroSubtitle}</h2>
+          <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
+            <a href="#annadaan" className="vk-btn-primary h-12 px-8">
+              <Utensils className="h-4 w-4" /> ANNADAAN
+            </a>
+            <a href="#goseva" className="vk-btn-outline h-12 px-8">
+              <Milk className="h-4 w-4" /> GO SEVA
+            </a>
+          </div>
+        </section>
+
+        <section className="vk-container pb-4">
+          <div className="overflow-hidden rounded-3xl bg-gradient-navy p-2 shadow-card md:p-3">
+            <img src={settings.trusteeBannerImage} alt="Festival trustee banner" className="block h-auto w-full rounded-2xl" />
+          </div>
+        </section>
+
+        <section className="vk-section">
+          <div className="vk-container">
+            <h2 className="vk-h3 mb-8 text-center md:mb-10">We are thankful for your kind gesture!</h2>
+
+            <div className="mb-5 flex items-center gap-3">
+              <h2 className="vk-bar-title scroll-mt-6 text-xl text-ink md:text-2xl" id="annadaan">{settings.annadaanTitle.toUpperCase()}</h2>
             </div>
+            {renderOptions(annadaan, "annadaan")}
+
+            <div className="mb-5 mt-12 flex items-center gap-3">
+              <h2 className="vk-bar-title scroll-mt-6 text-xl text-ink md:text-2xl" id="goseva">{settings.goSevaTitle.toUpperCase()}</h2>
+            </div>
+            {renderOptions(goSeva, "gau")}
           </div>
         </section>
 
-        <section className="headline-wrap container-narrow">
-          <div className="headline-block">
-            <h1>{settings.heroTitle}</h1>
-            <h2>{settings.heroSubtitle}</h2>
-          </div>
-          <div className="headline-actions">
-            <a href="#annadaan" className="cta-yellow">ANNADAAN</a>
-            <a href="#goseva" className="cta-green">GO SEVA</a>
-          </div>
-        </section>
-
-        <section className="blue-banner">
-          <div className="container-narrow blue-banner-inner">
-            <img src={settings.trusteeBannerImage} alt="Festival trustee banner" />
-          </div>
-        </section>
-
-        <section className="donation-section container-wide">
-          <div className="headline-block thanks">
-            <h2>We are thankful for your kind gesture!</h2>
-          </div>
-          <div className="section-title-wrap">
-            <h2 className="section-title annadaan-title" id="annadaan">{settings.annadaanTitle.toUpperCase()}</h2>
-          </div>
-          {renderOptions(annadaan, "annadaan")}
-          <div className="section-title-wrap">
-            <h2 className="section-title goseva-title" id="goseva">{settings.goSevaTitle.toUpperCase()}</h2>
-          </div>
-          {renderOptions(goSeva, "gau")}
-        </section>
-
-        <section className="black-strip">
-          <div className="container-wide">
-            <p>
+        <section className="vk-container">
+          <div className="rounded-3xl border border-vk-100 bg-vk-50 p-5 md:p-6">
+            <p className="text-sm leading-relaxed text-ink/80 md:text-[15px]">
               {settings.contact.note} on our Whatsapp Number{" "}
-              <a href={`tel:${phoneHref}`}>+91 {settings.contact.phone}</a> or to our mail ID{" "}
-              <a href={`mailto:${settings.contact.email}`}>{settings.contact.email}</a>. You may also call on this number for other queries.
+              <a href={`tel:${phoneHref}`} className="font-semibold text-vk-700 underline underline-offset-2">+91 {settings.contact.phone}</a> or to our mail ID{" "}
+              <a href={`mailto:${settings.contact.email}`} className="break-all font-semibold text-vk-700 underline underline-offset-2">{settings.contact.email}</a>. You may also call on this number for other queries.
             </p>
           </div>
         </section>
 
-        <section className="bank-section container-wide">
-          <div className="bank-box">
-            <h4>Donation Through Bank (NEFT/ RTGS)</h4>
-            <p>
+        <section className="vk-container py-8 md:py-10">
+          <div className="vk-card mx-auto max-w-xl p-5 md:p-6">
+            <h4 className="mb-3 flex items-center gap-2.5 text-lg font-bold text-ink">
+              <span className="vk-icon-chip !h-9 !w-9">
+                <Building2 className="h-4 w-4" />
+              </span>
+              Donation Through Bank (NEFT/ RTGS)
+            </h4>
+            <p className="break-words rounded-xl bg-vk-50 p-4 text-sm leading-7 text-ink">
               Beneficiary Name : {settings.bankDetails.beneficiaryName}<br />
               Bank Name: {settings.bankDetails.bankName}<br />
               A/c No: {settings.bankDetails.accountNumber}<br />
@@ -548,10 +561,10 @@ export default function DonationsClient() {
           </div>
         </section>
 
-        <section className="gallery-section container-wide">
-          <div className="gallery-grid">
+        <section className="vk-container pb-12 md:pb-16">
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
             {galleryImages.slice(0, 4).map((src, index) => (
-              <figure key={`${src}-${index}`} className="gallery-tile">
+              <figure key={`${src}-${index}`} className="vk-tile aspect-square">
                 <img
                   src={src}
                   alt={[
@@ -562,29 +575,29 @@ export default function DonationsClient() {
                   ][index] || "Hare Krishna charity seva"}
                   loading="lazy"
                   decoding="async"
-                  className={`gallery-image gallery-image-${index + 1}`}
+                  className="h-full w-full object-cover"
                 />
               </figure>
             ))}
           </div>
         </section>
 
-        <footer className="site-footer">
-          <div className="footer-grid container-wide">
+        <footer className="bg-gradient-navy text-white">
+          <div className="vk-container grid gap-8 py-10 md:grid-cols-3 md:py-14">
             <div>
-              <h3>ABOUT US</h3>
-              <p>We are trying to give human society an opportunity for a life of happiness, good health, peace of mind and all good qualities through God Consciousness.</p>
-              <h3>SOCIAL CONNECT</h3>
-              <div className="social-links">
-                <a href="https://www.facebook.com/hkm.vizag" target="_blank" rel="noreferrer">Facebook</a>
-                <a href="https://www.youtube.com/user/harekrishnavizag" target="_blank" rel="noreferrer">YouTube</a>
-                <a href="https://www.instagram.com/harekrishnavizag/" target="_blank" rel="noreferrer">Instagram</a>
+              <h3 className="mb-3 text-sm font-bold uppercase tracking-[0.08em] text-white">ABOUT US</h3>
+              <p className="text-sm leading-relaxed text-white/75">We are trying to give human society an opportunity for a life of happiness, good health, peace of mind and all good qualities through God Consciousness.</p>
+              <h3 className="mb-3 mt-6 text-sm font-bold uppercase tracking-[0.08em] text-white">SOCIAL CONNECT</h3>
+              <div className="flex flex-wrap gap-2">
+                <a href="https://www.facebook.com/hkm.vizag" target="_blank" rel="noreferrer" className="rounded-full border border-white/25 px-3.5 py-1.5 text-xs font-medium text-white/85 transition hover:bg-white/10">Facebook</a>
+                <a href="https://www.youtube.com/user/harekrishnavizag" target="_blank" rel="noreferrer" className="rounded-full border border-white/25 px-3.5 py-1.5 text-xs font-medium text-white/85 transition hover:bg-white/10">YouTube</a>
+                <a href="https://www.instagram.com/harekrishnavizag/" target="_blank" rel="noreferrer" className="rounded-full border border-white/25 px-3.5 py-1.5 text-xs font-medium text-white/85 transition hover:bg-white/10">Instagram</a>
               </div>
             </div>
             <div>
-              <h3>ADDRESS</h3>
-              <p>
-                <strong>Sri Radha Madan Mohan Mandir</strong><br />
+              <h3 className="mb-3 text-sm font-bold uppercase tracking-[0.08em] text-white">ADDRESS</h3>
+              <p className="text-sm leading-relaxed text-white/75">
+                <strong className="text-white">Sri Radha Madan Mohan Mandir</strong><br />
                 Hare Krishna Movement<br />
                 IIM Rd, opp. Akshaya Patra Foundation,<br />
                 Gambhiram,<br />
@@ -593,16 +606,16 @@ export default function DonationsClient() {
               </p>
             </div>
             <div>
-              <h3>CONTACT INFO</h3>
-              <ul className="footer-links">
-                <li><a href={`tel:${phoneHref}`}>{settings.contact.phone}</a></li>
-                <li><a href={`mailto:${settings.contact.email}`}>{settings.contact.email}</a></li>
-                <li><a href={`https://wa.me/${phoneHref.replace(/\D/g, "")}`} target="_blank" rel="noreferrer">WhatsApp {settings.contact.phone}</a></li>
+              <h3 className="mb-3 text-sm font-bold uppercase tracking-[0.08em] text-white">CONTACT INFO</h3>
+              <ul className="space-y-2 text-sm text-white/75">
+                <li><a href={`tel:${phoneHref}`} className="hover:text-white">{settings.contact.phone}</a></li>
+                <li><a href={`mailto:${settings.contact.email}`} className="break-all hover:text-white">{settings.contact.email}</a></li>
+                <li><a href={`https://wa.me/${phoneHref.replace(/\D/g, "")}`} target="_blank" rel="noreferrer" className="hover:text-white">WhatsApp {settings.contact.phone}</a></li>
               </ul>
             </div>
           </div>
-          <div className="copyright-row">
-            <div className="container-wide copyright-inner">
+          <div className="border-t border-white/10">
+            <div className="vk-container py-4 text-center text-xs text-white/60">
               <p>Copyright &copy; 2026 Hare Krishna Movement India.</p>
             </div>
           </div>
@@ -610,7 +623,7 @@ export default function DonationsClient() {
       </main>
 
       {status.message && !selected && (
-        <div className={`fixed bottom-6 left-1/2 z-[120] -translate-x-1/2 rounded-lg px-5 py-3 text-sm font-semibold shadow-lg ${
+        <div role="alert" className={`fixed bottom-6 left-1/2 z-[120] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 rounded-xl px-5 py-3 text-center text-sm font-semibold shadow-lg ${
           status.type === "success" ? "bg-green-700 text-white" : "bg-red-700 text-white"
         }`}>
           {status.message}
@@ -618,31 +631,31 @@ export default function DonationsClient() {
       )}
 
       {selected && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/70 p-4 backdrop-blur-sm">
-          <div className="max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-lg bg-background shadow-elevated">
-            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-background px-6 py-4">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Donation Checkout</p>
-                <h2 className="text-xl font-bold text-foreground">{selected.title}</h2>
+        <div className="fixed inset-0 z-[100] flex items-end justify-center bg-vk-900/70 backdrop-blur-sm sm:items-center sm:p-4">
+          <div className="max-h-[92dvh] w-full max-w-3xl overflow-y-auto overscroll-contain rounded-t-3xl bg-white shadow-elevated sm:rounded-3xl">
+            <div className="sticky top-0 z-10 flex items-center justify-between gap-3 bg-gradient-to-br from-vk-700 via-vk-600 to-vk-500 px-5 py-4 text-white sm:px-6">
+              <div className="min-w-0">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/70">Donation Checkout</p>
+                <h2 className="truncate text-lg font-bold text-white sm:text-xl">{selected.title}</h2>
               </div>
-              <button type="button" onClick={closeCheckout} className="rounded-full border border-border p-2 text-muted-foreground hover:text-foreground">
+              <button type="button" onClick={closeCheckout} aria-label="Close" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/15 text-white transition hover:bg-white/25">
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            <form onSubmit={submitDonation} className="space-y-5 p-6">
-              <div className="grid gap-4 rounded-lg bg-muted p-4 md:grid-cols-3">
-                <div>
-                  <p className="text-xs font-semibold text-muted-foreground">Seva Name</p>
-                  <p className="mt-1 font-bold text-foreground">{selected.title}</p>
+            <form onSubmit={submitDonation} className="space-y-5 p-4 sm:p-6">
+              <div className="grid grid-cols-2 gap-3 rounded-2xl bg-vk-50 p-4 md:grid-cols-3">
+                <div className="min-w-0">
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Seva Name</p>
+                  <p className="mt-1 text-sm font-bold text-ink">{selected.title}</p>
                 </div>
-                <div>
-                  <p className="text-xs font-semibold text-muted-foreground">Seva Type</p>
-                  <p className="mt-1 font-bold text-foreground">{selected.category}</p>
+                <div className="min-w-0">
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Seva Type</p>
+                  <p className="mt-1 text-sm font-bold text-ink">{selected.category}</p>
                 </div>
-                <div>
-                  <p className="text-xs font-semibold text-muted-foreground">Seva Amount</p>
-                  <p className="mt-1 font-bold text-foreground">
+                <div className="col-span-2 min-w-0 md:col-span-1">
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Seva Amount</p>
+                  <p className="mt-1 font-heading text-xl font-extrabold text-vk-700">
                     {selected.amount ? `₹${formatAmount(selected.amount)}` : "Enter amount"}
                   </p>
                 </div>
@@ -650,33 +663,33 @@ export default function DonationsClient() {
 
               {!selected.amount && (
                 <label className="block">
-                  <span className="text-sm font-semibold text-foreground">Enter Seva Amount *</span>
-                  <Input
+                  <span className={labelCls}>Enter Seva Amount *</span>
+                  <input
                     type="number"
                     min={100}
                     value={form.customAmount}
                     onChange={(event) => updateForm({ customAmount: event.target.value, want80G: false, wantPrasadam: false })}
                     placeholder="Enter amount"
-                    className="mt-2"
+                    className="vk-input font-semibold"
                   />
-                  <span className="mt-1 block text-xs text-muted-foreground">Amount must be at least ₹100.</span>
+                  <span className="mt-1.5 block text-xs text-muted-foreground">Amount must be at least ₹100.</span>
                 </label>
               )}
 
               <div className="grid gap-4 md:grid-cols-2">
                 <label className="block">
-                  <span className="text-sm font-semibold text-foreground">Donor Name *</span>
-                  <Input value={form.donorName} maxLength={39} onChange={(event) => updateForm({ donorName: event.target.value.replace(/[^a-zA-Z ]/g, "") })} placeholder="Your Name" className="mt-2" />
+                  <span className={labelCls}>Donor Name *</span>
+                  <input value={form.donorName} maxLength={39} onChange={(event) => updateForm({ donorName: event.target.value.replace(/[^a-zA-Z ]/g, "") })} placeholder="Your Name" className="vk-input" />
                 </label>
                 <label className="block">
-                  <span className="text-sm font-semibold text-foreground">Mobile Number *</span>
-                  <Input value={form.donorMobile} maxLength={10} onChange={(event) => updateForm({ donorMobile: event.target.value.replace(/\D/g, "") })} placeholder="Your Mobile Number" className="mt-2" />
+                  <span className={labelCls}>Mobile Number *</span>
+                  <input value={form.donorMobile} maxLength={10} onChange={(event) => updateForm({ donorMobile: event.target.value.replace(/\D/g, "") })} placeholder="Your Mobile Number" className="vk-input" />
                 </label>
                 <label className="block md:col-span-2">
-                  <span className="text-sm font-semibold text-foreground">
+                  <span className={labelCls}>
                     E-Mail ID <span className="font-normal text-muted-foreground">(optional)</span>
                   </span>
-                  <Input type="email" value={form.donorEmail} onChange={(event) => updateForm({ donorEmail: event.target.value.toLowerCase() })} placeholder="Your Email (optional)" className="mt-2" />
+                  <input type="email" value={form.donorEmail} onChange={(event) => updateForm({ donorEmail: event.target.value.toLowerCase() })} placeholder="Your Email (optional)" className="vk-input" />
                 </label>
               </div>
 
@@ -689,12 +702,12 @@ export default function DonationsClient() {
                 onDobChange={(v) => updateForm({ dob: v })}
               />
 
-              <fieldset className="rounded-lg border border-border p-4">
-                <legend className="px-2 text-sm font-semibold text-foreground">Payment Option *</legend>
-                <div className="mt-2 flex flex-wrap gap-4">
+              <fieldset className="rounded-xl border border-vk-100 bg-vk-50/60 px-4 pb-4 pt-2">
+                <legend className="px-1.5 text-[13px] font-semibold text-ink/80">Payment Option *</legend>
+                <div className="mt-1 flex flex-wrap gap-x-6 gap-y-2">
                   {(["Indian Citizen", "Foreign Citizen"] as const).map((value) => (
-                    <label key={value} className="flex items-center gap-2 text-sm text-foreground">
-                      <input type="radio" checked={form.nationality === value} onChange={() => updateForm({ nationality: value })} />
+                    <label key={value} className="flex min-h-[32px] cursor-pointer items-center gap-2 text-sm font-medium text-ink">
+                      <input type="radio" checked={form.nationality === value} onChange={() => updateForm({ nationality: value })} className="h-4 w-4 accent-vk-700" />
                       {value}
                     </label>
                   ))}
@@ -703,25 +716,25 @@ export default function DonationsClient() {
 
               <div className="space-y-3">
                 {showPrasadamField && (
-                  <label className="flex items-start gap-3 rounded-lg border border-border p-4 text-sm text-foreground">
+                  <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-vk-100 bg-vk-50/60 px-4 py-3 text-sm font-medium text-ink">
                     <input type="checkbox" checked={form.wantPrasadam} onChange={(event) => {
                     const next = event.target.checked;
                     updateForm({ wantPrasadam: next });
                     handlePrasadamToggle(next);
-                  }} className="mt-1" />
+                  }} className="mt-0.5 h-4 w-4 shrink-0 accent-vk-700" />
                     I would like to receive Maha Prasadam (Only within India)
                   </label>
                 )}
                 {showTaxField && (
-                  <label className="flex items-start gap-3 rounded-lg border border-border p-4 text-sm text-foreground">
+                  <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-vk-100 bg-vk-50/60 px-4 py-3 text-sm font-medium text-ink">
                     <input type="checkbox" checked={form.want80G} onChange={(event) => {
                     const next = event.target.checked;
                     updateForm({ want80G: next });
                     handle80GToggle(next);
-                  }} className="mt-1" />
+                  }} className="mt-0.5 h-4 w-4 shrink-0 accent-vk-700" />
                     <span>
                       I wish to receive 80G Tax Exemption
-                      <span className="mt-1 block text-xs text-muted-foreground">PAN and address are mandatory when 80G is selected.</span>
+                      <span className="mt-1 block text-xs font-normal text-muted-foreground">PAN and address are mandatory when 80G is selected.</span>
                     </span>
                   </label>
                 )}
@@ -729,50 +742,53 @@ export default function DonationsClient() {
 
               {form.want80G && (
                 <label className="block">
-                  <span className="text-sm font-semibold text-foreground">PAN Number *</span>
-                  <Input value={form.panNumber} maxLength={10} onChange={(event) => updateForm({ panNumber: event.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "") })} placeholder="Eg: ABCDE1234F" className="mt-2" />
+                  <span className={labelCls}>PAN Number *</span>
+                  <input value={form.panNumber} maxLength={10} onChange={(event) => updateForm({ panNumber: event.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "") })} placeholder="Eg: ABCDE1234F" className="vk-input uppercase" />
                 </label>
               )}
 
               {needsAddress && (
-                <div className="grid gap-4 rounded-lg border border-border p-4 md:grid-cols-2">
+                <div className="grid gap-4 rounded-2xl border border-vk-100 p-4 md:grid-cols-2">
                   <label className="block">
-                    <span className="text-sm font-semibold text-foreground">House No/Door No</span>
-                    <Input value={form.doorNo} maxLength={39} onChange={(event) => updateForm({ doorNo: event.target.value })} className="mt-2" />
+                    <span className={labelCls}>House No/Door No</span>
+                    <input value={form.doorNo} maxLength={39} onChange={(event) => updateForm({ doorNo: event.target.value })} className="vk-input" />
                   </label>
                   <label className="block">
-                    <span className="text-sm font-semibold text-foreground">House/Apartment/Building Name</span>
-                    <Input value={form.building} maxLength={39} onChange={(event) => updateForm({ building: event.target.value })} className="mt-2" />
+                    <span className={labelCls}>House/Apartment/Building Name</span>
+                    <input value={form.building} maxLength={39} onChange={(event) => updateForm({ building: event.target.value })} className="vk-input" />
                   </label>
                   <label className="block">
-                    <span className="text-sm font-semibold text-foreground">Street Name</span>
-                    <Input value={form.street} maxLength={39} onChange={(event) => updateForm({ street: event.target.value })} className="mt-2" />
+                    <span className={labelCls}>Street Name</span>
+                    <input value={form.street} maxLength={39} onChange={(event) => updateForm({ street: event.target.value })} className="vk-input" />
                   </label>
                   <label className="block">
-                    <span className="text-sm font-semibold text-foreground">Location/Area *</span>
-                    <Input value={form.area} maxLength={39} onChange={(event) => updateForm({ area: event.target.value })} className="mt-2" />
+                    <span className={labelCls}>Location/Area *</span>
+                    <input value={form.area} maxLength={39} onChange={(event) => updateForm({ area: event.target.value })} className="vk-input" />
                   </label>
                   <label className="block">
-                    <span className="text-sm font-semibold text-foreground">PIN Code *</span>
-                    <Input value={form.pincode} maxLength={6} onChange={(event) => updateForm({ pincode: event.target.value.replace(/\D/g, "") })} className="mt-2" />
+                    <span className={labelCls}>PIN Code *</span>
+                    <input value={form.pincode} maxLength={6} onChange={(event) => updateForm({ pincode: event.target.value.replace(/\D/g, "") })} className="vk-input" />
                   </label>
                   <label className="block">
-                    <span className="text-sm font-semibold text-foreground">City *</span>
-                    <Input value={form.city} maxLength={30} onChange={(event) => updateForm({ city: event.target.value.toUpperCase().replace(/[^A-Z ]/g, "") })} className="mt-2" />
+                    <span className={labelCls}>City *</span>
+                    <input value={form.city} maxLength={30} onChange={(event) => updateForm({ city: event.target.value.toUpperCase().replace(/[^A-Z ]/g, "") })} className="vk-input" />
                   </label>
                   <label className="block md:col-span-2">
-                    <span className="text-sm font-semibold text-foreground">State *</span>
-                    <Input value={form.state} maxLength={30} onChange={(event) => updateForm({ state: event.target.value.toUpperCase().replace(/[^A-Z ]/g, "") })} className="mt-2" />
+                    <span className={labelCls}>State *</span>
+                    <input value={form.state} maxLength={30} onChange={(event) => updateForm({ state: event.target.value.toUpperCase().replace(/[^A-Z ]/g, "") })} className="vk-input" />
                   </label>
                 </div>
               )}
 
-              {status.type === "error" && <p className="rounded-lg bg-red-100 px-4 py-3 text-sm font-semibold text-red-700">{status.message}</p>}
+              {status.type === "error" && <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm font-semibold text-red-700">{status.message}</p>}
 
-              <Button type="submit" disabled={submitting} className="w-full bg-amber-500 py-6 text-base font-bold text-amber-950 hover:bg-amber-400">
-                <Heart className="mr-2 h-5 w-5 fill-current" />
+              <button type="submit" disabled={submitting} className="vk-btn-gold h-12 w-full text-base font-bold">
+                <Heart className="h-5 w-5 fill-current" />
                 {submitting ? "Opening Checkout..." : `Donate ₹${formatAmount(finalAmount || 0)}`}
-              </Button>
+              </button>
+              <p className="flex items-center justify-center gap-1.5 pb-[env(safe-area-inset-bottom)] text-[11px] text-muted-foreground">
+                <ShieldCheck className="h-3.5 w-3.5 text-vk-500" /> Secure Razorpay checkout
+              </p>
             </form>
           </div>
         </div>

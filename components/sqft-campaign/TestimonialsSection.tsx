@@ -3,7 +3,6 @@
 import { useRef } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
-import Ornament from "@/components/Ornament";
 import type { CampaignConfig } from "@/lib/campaignConfig";
 import { SQFT_CAMPAIGN } from "@/lib/campaignConfig";
 
@@ -72,24 +71,19 @@ export default function TestimonialsSection({ config = SQFT_CAMPAIGN }: { config
   };
 
   return (
-    <section className="bg-white dark:bg-background py-12 md:py-16">
-      <div className="container mx-auto max-w-7xl px-4">
-        <Ornament className="mb-6" />
-        <div className="mb-10 flex items-end justify-between gap-4">
-          <div className="max-w-2xl">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.3em] text-gold">
-              What Our Devotees Say
-            </p>
-            <h2 className="font-heading text-2xl font-bold text-primary md:text-3xl">
-              Voices of Devotion
-            </h2>
+    <section className="vk-section vk-band">
+      <div className="vk-container">
+        <div className="mb-8 flex items-end justify-between gap-4 md:mb-10">
+          <div className="max-w-3xl">
+            <span className="vk-pill mb-3">What Our Devotees Say</span>
+            <h2 className="vk-h2">Voices of Devotion</h2>
           </div>
-          <div className="hidden gap-2 sm:flex">
+          <div className="hidden shrink-0 gap-2 sm:flex">
             <button
               type="button"
               aria-label="Scroll left"
               onClick={() => scrollBy(-1)}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-border text-muted-foreground transition hover:border-gold hover:text-gold"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-vk-200 bg-white text-vk-700 transition hover:border-vk-700 hover:bg-vk-50"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
@@ -97,7 +91,7 @@ export default function TestimonialsSection({ config = SQFT_CAMPAIGN }: { config
               type="button"
               aria-label="Scroll right"
               onClick={() => scrollBy(1)}
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-border text-muted-foreground transition hover:border-gold hover:text-gold"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-vk-200 bg-white text-vk-700 transition hover:border-vk-700 hover:bg-vk-50"
             >
               <ChevronRight className="h-5 w-5" />
             </button>
@@ -110,19 +104,21 @@ export default function TestimonialsSection({ config = SQFT_CAMPAIGN }: { config
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
           ref={scrollerRef}
-          className="flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="vk-scroller pb-4"
         >
           {TESTIMONIALS(config).map((t) => (
             <div
               key={t.name}
-              className="w-80 shrink-0 snap-start rounded-2xl border border-border bg-card p-6 shadow-sm transition-shadow hover:shadow-md sm:w-96"
+              className="vk-card flex w-[85%] max-w-[24rem] shrink-0 flex-col p-6 sm:w-96"
             >
-              <Quote className="mb-4 h-7 w-7 text-gold/40" />
-              <p className="mb-6 text-sm leading-relaxed text-foreground/85 md:text-base">
+              <span className="vk-icon-chip mb-4">
+                <Quote className="h-5 w-5" />
+              </span>
+              <p className="mb-6 flex-1 font-serif-display text-[15px] italic leading-relaxed text-ink/85 md:text-base">
                 &ldquo;{t.quote}&rdquo;
               </p>
-              <div className="flex items-center gap-3 border-t border-border pt-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gold/15 text-sm font-bold text-gold">
+              <div className="flex items-center gap-3 border-t border-vk-100 pt-4">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-vk-700 text-sm font-bold text-white">
                   {t.name
                     .split(" ")
                     .map((w) => w[0])
@@ -130,7 +126,7 @@ export default function TestimonialsSection({ config = SQFT_CAMPAIGN }: { config
                     .slice(0, 2)}
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-primary">{t.name}</p>
+                  <p className="text-sm font-semibold text-ink">{t.name}</p>
                   <p className="text-xs text-muted-foreground">{t.role}</p>
                 </div>
               </div>

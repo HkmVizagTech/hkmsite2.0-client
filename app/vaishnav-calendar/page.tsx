@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import PageLayout from "@/components/PageLayout";
+import PageHero from "@/components/PageHero";
+import SectionHeading from "@/components/site/SectionHeading";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import {
@@ -358,14 +360,14 @@ function DayCell({
       }
       className={`relative flex aspect-square w-full flex-col items-center justify-center rounded-xl border text-sm transition-all duration-200 ${
         isSelected
-          ? "scale-105 border-primary bg-primary font-bold text-primary-foreground shadow-md"
+          ? "scale-105 border-vk-700 bg-vk-700 font-bold text-white shadow-md"
           : today
-            ? "border-transparent bg-muted/60 font-bold text-foreground ring-2 ring-[hsl(var(--gold))] ring-offset-1 ring-offset-background"
+            ? "border-transparent bg-vk-50 font-bold text-vk-800 ring-2 ring-vk-500 ring-offset-1 ring-offset-background"
             : hasVisible
               ? "border font-semibold text-foreground hover:scale-105 hover:shadow-md"
               : dimmed
                 ? "border-transparent text-muted-foreground/35"
-                : "border-transparent text-muted-foreground hover:bg-muted/50"
+                : "border-transparent text-muted-foreground hover:bg-vk-50"
       } ${hasVisible && !isSelected && !today ? (dimmed ? "opacity-50" : "") : ""}`}
       aria-label={`${day} ${MONTHS[parseInt(dateStr.slice(5, 7), 10) - 1]} ${dateStr.slice(0, 4)}${hasAny ? ", has events" : ""}`}
     >
@@ -488,110 +490,102 @@ export default function VaishnavCalendarPage() {
       .sort((a, b) => a.date.localeCompare(b.date));
   }, [typeFilter]);
 
+
   return (
     <PageLayout>
-      {/* ── Hero with countdown ─────────────────────────── */}
-      <section className="relative overflow-hidden bg-gradient-hero pt-20">
-        {/* decorative glows */}
-        <div className="pointer-events-none absolute -top-24 left-1/4 h-72 w-72 rounded-full bg-[hsl(var(--gold))]/10 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-32 right-1/4 h-72 w-72 rounded-full bg-primary/20 blur-3xl" />
+      <div className="pt-[var(--header-h)]">
+        <PageHero
+          eyebrow="Gaudiya Vaishnava Almanac"
+          title="Vaishnava Calendar 2026"
+          subtitle="Ekadashis, festivals & sacred observances — computed for Mayapur (IST)"
+          breadcrumb="Vaishnava Calendar"
+        />
 
-        <div className="relative z-10 container mx-auto px-4 py-16 md:py-20">
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="mx-auto max-w-3xl text-center"
-          >
-            <span className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-[hsl(var(--gold))] ring-1 ring-white/15">
-              <CalendarDays className="h-3 w-3" /> Gaudiya Vaishnava Almanac
-            </span>
-            <h1 className="font-heading text-4xl font-bold text-white md:text-5xl">
-              Vaishnava Calendar 2026
-            </h1>
-            <p className="mt-3 text-sm text-white/70 md:text-base">
-              Ekadashis, festivals &amp; sacred observances — computed for Mayapur (IST)
-            </p>
-          </motion.div>
-
-          {/* Countdown card */}
-          {nextEvent && (
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15, duration: 0.6 }}
-              className="mx-auto mt-8 max-w-2xl rounded-2xl border border-white/10 bg-white/[0.06] p-5 backdrop-blur-md md:p-6"
-            >
-              <div className="flex flex-col items-center gap-4 md:flex-row md:justify-between">
-                <div className="text-center md:text-left">
-                  <p className="text-[10px] font-semibold uppercase tracking-widest text-[hsl(var(--gold))]">
-                    Next Upcoming
-                  </p>
-                  <p className="mt-1 font-heading text-lg font-bold text-white md:text-xl">
-                    {nextEvent.title}
-                  </p>
-                  <p className="mt-0.5 text-xs text-white/60">
-                    {new Date(`${nextEvent.date}T00:00:00`).toLocaleDateString("en-IN", {
-                      weekday: "long", day: "numeric", month: "long",
-                    })}
-                    {nextEvent.fastUntilNoon && !nextEvent.completeFast && " · Fast until noon"}
-                    {nextEvent.completeFast && " · Complete fast"}
-                  </p>
+        {/* ── Next-upcoming countdown card ────────────────── */}
+        {nextEvent && (
+          <section className="pb-2">
+            <div className="vk-container">
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15, duration: 0.6 }}
+                className="relative isolate mx-auto max-w-4xl overflow-hidden rounded-3xl bg-gradient-to-br from-vk-600 via-vk-700 to-vk-900 p-5 md:p-7"
+              >
+                <div aria-hidden className="absolute -right-16 -top-16 -z-10 h-48 w-48 rounded-full bg-white/10" />
+                <div className="flex flex-col items-center gap-5 md:flex-row md:justify-between">
+                  <div className="text-center md:text-left">
+                    <span className="vk-pill-light">
+                      <CalendarDays className="h-3.5 w-3.5" /> Next Upcoming
+                    </span>
+                    <p className="mt-3 font-heading text-xl font-bold text-white md:text-2xl">
+                      {nextEvent.title}
+                    </p>
+                    <p className="mt-1 text-sm text-white/70">
+                      {new Date(`${nextEvent.date}T00:00:00`).toLocaleDateString("en-IN", {
+                        weekday: "long", day: "numeric", month: "long",
+                      })}
+                      {nextEvent.fastUntilNoon && !nextEvent.completeFast && " · Fast until noon"}
+                      {nextEvent.completeFast && " · Complete fast"}
+                    </p>
+                  </div>
+                  <Countdown targetDate={nextEvent.date} />
                 </div>
-                <Countdown targetDate={nextEvent.date} />
-              </div>
-            </motion.div>
-          )}
-        </div>
-      </section>
-
-      {/* ── Main section ────────────────────────────────── */}
-      <section className="bg-white py-8 dark:bg-background md:py-12">
-        <div className="container mx-auto max-w-6xl px-4">
-          {/* Toolbar: view switcher + type filter */}
-          <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="inline-flex self-start rounded-xl border border-border bg-muted/40 p-1">
-              {([
-                { key: "calendar" as const, label: "Calendar", icon: CalendarDays },
-                { key: "list" as const, label: "Upcoming", icon: List },
-              ]).map(({ key, label, icon: Icon }) => (
-                <button
-                  key={key}
-                  onClick={() => setView(key)}
-                  className={`relative flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-all ${
-                    view === key
-                      ? "bg-primary text-primary-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  <Icon className="h-3.5 w-3.5" />
-                  {label}
-                </button>
-              ))}
+              </motion.div>
             </div>
+          </section>
+        )}
 
-            {/* Type filter pills */}
-            <div className="flex flex-wrap items-center gap-1.5">
-              {(["All", "Ekadashi", "Festival", "Appearance", "Disappearance"] as const).map((t) => {
-                const active = typeFilter === t;
-                const dotClass = t === "All" ? "bg-primary" : typeConfig[t].dot;
-                return (
+        {/* ── Main section ────────────────────────────────── */}
+        <section className="pb-10 pt-6 md:pb-16 md:pt-10">
+          <div className="vk-container max-w-6xl">
+            {/* Toolbar: view switcher + type filter */}
+            <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="inline-flex self-start rounded-xl border border-vk-100 bg-vk-50 p-1">
+                {([
+                  { key: "calendar" as const, label: "Calendar", icon: CalendarDays },
+                  { key: "list" as const, label: "Upcoming", icon: List },
+                ]).map(({ key, label, icon: Icon }) => (
                   <button
-                    key={t}
-                    onClick={() => setTypeFilter(t)}
-                    className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium transition-all ${
-                      active
-                        ? "border-primary bg-primary/10 text-primary"
-                        : "border-border text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                    key={key}
+                    type="button"
+                    onClick={() => setView(key)}
+                    aria-pressed={view === key}
+                    className={`relative flex min-h-[40px] items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-semibold transition-all ${
+                      view === key
+                        ? "bg-vk-700 text-white shadow-sm"
+                        : "text-ink/60 hover:text-vk-700"
                     }`}
                   >
-                    <span className={`h-1.5 w-1.5 rounded-full ${dotClass}`} />
-                    {t}
+                    <Icon className="h-4 w-4" />
+                    {label}
                   </button>
-                );
-              })}
+                ))}
+              </div>
+
+              {/* Type filter pills — scroll sideways on narrow phones */}
+              <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 scrollbar-hide sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0">
+                {(["All", "Ekadashi", "Festival", "Appearance", "Disappearance"] as const).map((t) => {
+                  const active = typeFilter === t;
+                  const dotClass = t === "All" ? "bg-vk-700" : typeConfig[t].dot;
+                  return (
+                    <button
+                      key={t}
+                      type="button"
+                      onClick={() => setTypeFilter(t)}
+                      aria-pressed={active}
+                      className={`inline-flex min-h-[40px] shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-all ${
+                        active
+                          ? "border-vk-700 bg-vk-100 text-vk-800"
+                          : "border-vk-200 bg-white text-ink/65 hover:border-vk-400 hover:text-vk-700"
+                      }`}
+                    >
+                      <span className={`h-2 w-2 rounded-full ${dotClass}`} />
+                      {t}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          </div>
 
           <AnimatePresence mode="wait">
             {view === "calendar" ? (
@@ -603,10 +597,10 @@ export default function VaishnavCalendarPage() {
                 transition={{ duration: 0.25 }}
               >
                 {/* ── 3-Panel Calendar Card ── */}
-                <div className="overflow-hidden rounded-2xl border border-border bg-primary/[0.03] shadow-sm dark:bg-primary/[0.06]">
+                <div className="vk-card overflow-hidden rounded-3xl">
                   <div className="flex flex-col lg:flex-row">
                     {/* Left: Month sidebar */}
-                    <div className="hidden min-w-[200px] max-w-[200px] flex-col bg-primary p-4 text-primary-foreground lg:flex">
+                    <div className="hidden min-w-[210px] max-w-[210px] flex-col bg-gradient-to-b from-vk-700 to-vk-800 p-4 text-white lg:flex">
                       <h3 className="mb-3 text-xs font-bold uppercase tracking-widest opacity-70">2026</h3>
                       <div className="flex flex-col gap-0.5">
                         {MONTHS.map((month, i) => {
@@ -626,7 +620,7 @@ export default function VaishnavCalendarPage() {
                               <span className="flex items-center gap-2">
                                 {month}
                                 {isCurrent && !isSelected && (
-                                  <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--gold))]" />
+                                  <span className="h-1.5 w-1.5 rounded-full bg-vk-300" />
                                 )}
                               </span>
                               {count > 0 && (
@@ -641,7 +635,7 @@ export default function VaishnavCalendarPage() {
                     </div>
 
                     {/* Mobile: month pills */}
-                    <div className="bg-primary p-3 lg:hidden">
+                    <div className="bg-gradient-to-r from-vk-700 to-vk-800 p-3 lg:hidden">
                       <div className="overflow-x-auto scrollbar-hide">
                         <div className="flex min-w-max gap-1.5">
                           {MONTHS.map((month, i) => {
@@ -651,7 +645,7 @@ export default function VaishnavCalendarPage() {
                               <button
                                 key={month}
                                 onClick={() => { setSelectedMonth(i); setSelectedDate(null); }}
-                                className={`relative whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-medium transition-all ${
+                                className={`relative min-h-[36px] whitespace-nowrap rounded-full px-3.5 py-2 text-[13px] font-medium transition-all ${
                                   isSelected
                                     ? "bg-white/25 text-white"
                                     : "text-white/60 hover:bg-white/10 hover:text-white"
@@ -659,7 +653,7 @@ export default function VaishnavCalendarPage() {
                               >
                                 {month.slice(0, 3)}
                                 {isCurrent && !isSelected && (
-                                  <span className="absolute -right-0.5 -top-0.5 h-1.5 w-1.5 rounded-full bg-[hsl(var(--gold))]" />
+                                  <span className="absolute -right-0.5 -top-0.5 h-1.5 w-1.5 rounded-full bg-vk-300" />
                                 )}
                               </button>
                             );
@@ -669,12 +663,12 @@ export default function VaishnavCalendarPage() {
                     </div>
 
                     {/* Center: grid */}
-                    <div className="flex-1 p-4 md:p-6 lg:border-r lg:border-primary/10">
+                    <div className="min-w-0 flex-1 p-3 sm:p-4 md:p-6 lg:border-r lg:border-vk-100">
                       {/* Month nav */}
                       <div className="mb-4 flex items-center justify-between">
                         <button
                           onClick={() => { setSelectedMonth((p) => (p - 1 + 12) % 12); setSelectedDate(null); }}
-                          className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                          className="flex h-10 w-10 items-center justify-center rounded-full border border-vk-200 bg-white text-vk-700 transition-colors hover:border-vk-700 hover:bg-vk-50"
                           aria-label="Previous month"
                         >
                           <ChevronLeft className="h-4 w-4" />
@@ -686,14 +680,14 @@ export default function VaishnavCalendarPage() {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -6 }}
                             transition={{ duration: 0.18 }}
-                            className="font-heading text-lg font-bold text-foreground"
+                            className="font-heading text-lg font-bold text-foreground md:text-xl"
                           >
                             {MONTHS[selectedMonth]} 2026
                           </motion.h2>
                         </AnimatePresence>
                         <button
                           onClick={() => { setSelectedMonth((p) => (p + 1) % 12); setSelectedDate(null); }}
-                          className="flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                          className="flex h-10 w-10 items-center justify-center rounded-full border border-vk-200 bg-white text-vk-700 transition-colors hover:border-vk-700 hover:bg-vk-50"
                           aria-label="Next month"
                         >
                           <ChevronRight className="h-4 w-4" />
@@ -755,7 +749,7 @@ export default function VaishnavCalendarPage() {
                           </div>
                         ))}
                         <div className="flex items-center gap-1.5">
-                          <span className="h-3 w-3 rounded-[4px] border-2 border-[hsl(var(--gold))] bg-muted/60" />
+                          <span className="h-3 w-3 rounded-[4px] border-2 border-vk-500 bg-vk-50" />
                           <span className="text-[11px] text-muted-foreground">Today</span>
                         </div>
                         <div className="flex items-center gap-1.5">
@@ -771,13 +765,13 @@ export default function VaishnavCalendarPage() {
                     </div>
 
                     {/* Right: day detail panel (desktop only — mobile uses the bottom sheet) */}
-                    <div className="hidden border-border/30 p-4 md:p-6 lg:block lg:min-w-[300px] lg:max-w-[340px] lg:border-l lg:border-t-0">
+                    <div className="hidden border-vk-100 bg-vk-50/50 p-4 md:p-6 lg:block lg:min-w-[300px] lg:max-w-[340px] lg:border-l lg:border-t-0">
                       <div className="mb-4 flex items-center justify-between">
                         <h3 className="font-heading text-sm font-bold text-foreground">{formatSelectedDate()}</h3>
                         {selectedDate && (
                           <button
                             onClick={() => setSelectedDate(null)}
-                            className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground hover:text-primary"
+                            className="min-h-[32px] rounded-full bg-white px-3 text-[11px] font-semibold uppercase tracking-wider text-vk-700 shadow-sm hover:bg-vk-100"
                           >
                             Today
                           </button>
@@ -815,7 +809,7 @@ export default function VaishnavCalendarPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.25 }}
-                className="rounded-2xl border border-border bg-card p-4 md:p-6"
+                className="vk-card rounded-3xl p-3 sm:p-4 md:p-6"
               >
                 {upcomingEvents.length === 0 ? (
                   <div className="py-12 text-center">
@@ -844,8 +838,8 @@ export default function VaishnavCalendarPage() {
                           transition={{ delay: Math.min(i * 0.03, 0.4) }}
                           className={`group relative flex items-start gap-3 rounded-xl border p-3 pl-3 transition-all sm:pl-11 hover:shadow-sm ${
                             isNext
-                              ? "border-primary/40 bg-primary/[0.06]"
-                              : "border-transparent hover:border-border hover:bg-muted/30"
+                              ? "border-vk-300 bg-vk-50"
+                              : "border-transparent hover:border-vk-100 hover:bg-vk-50/60"
                           }`}
                         >
                           {/* timeline node (desktop) */}
@@ -903,11 +897,14 @@ export default function VaishnavCalendarPage() {
             )}
           </AnimatePresence>
 
-          {/* ── Discover Section ── */}
-          <div className="mt-10">
-            <h2 className="mb-2 font-heading text-xl font-bold text-foreground">Discover HKM Vizag</h2>
-            <p className="mb-5 text-sm text-muted-foreground">Learn more about what you can do.</p>
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
+          </div>
+        </section>
+
+        {/* ── Discover Section ── */}
+        <section className="vk-section vk-band">
+          <div className="vk-container">
+            <SectionHeading eyebrow="Explore" title="Discover HKM Vizag" subtitle="Learn more about what you can do." />
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-6">
               {discoverCards.map((card, i) => (
                 <motion.div
                   key={card.href}
@@ -918,23 +915,23 @@ export default function VaishnavCalendarPage() {
                 >
                   <Link
                     href={card.href}
-                    className="group block rounded-xl border border-border bg-card p-4 transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md"
+                    className="vk-card vk-card-hover group flex h-full flex-col p-4 md:p-5"
                   >
-                    <h4 className="text-sm font-semibold text-foreground transition-colors group-hover:text-primary">
+                    <h3 className="text-[15px] font-bold text-foreground transition-colors group-hover:text-vk-700">
                       {card.title}
-                    </h4>
-                    <p className="mt-1 line-clamp-2 text-[11px] leading-snug text-muted-foreground">{card.subtitle}</p>
-                    <span className="mt-3 inline-flex items-center gap-1 text-[11px] font-semibold text-primary">
+                    </h3>
+                    <p className="mt-1 line-clamp-2 flex-1 text-[13px] leading-snug text-muted-foreground">{card.subtitle}</p>
+                    <span className="mt-3 inline-flex items-center gap-1 text-[13px] font-semibold text-vk-500">
                       {card.cta}
-                      <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+                      <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
                     </span>
                   </Link>
                 </motion.div>
               ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
 
       {/* ── Mobile bottom sheet: day events ─────────────── */}
       <Sheet open={sheetDate !== null} onOpenChange={(open) => !open && setSheetDate(null)}>

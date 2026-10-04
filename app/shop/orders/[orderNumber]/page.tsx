@@ -15,7 +15,6 @@ import {
   XCircle,
   ExternalLink,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { ShopOrder, fetchMyOrder, formatINR } from "@/lib/shopApi";
 import { getDonorToken } from "@/lib/donorAuthClient";
 
@@ -88,7 +87,7 @@ export default function OrderDetailPage() {
   if (loading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        <Loader2 className="h-6 w-6 animate-spin text-vk-500" />
       </div>
     );
   }
@@ -96,9 +95,9 @@ export default function OrderDetailPage() {
   if (error || !order) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-3 px-4 text-center">
-        <p className="font-medium text-foreground">{error || "Order not found."}</p>
-        <Link href="/shop/orders">
-          <Button variant="outline" size="sm">My orders</Button>
+        <p className="font-medium text-ink">{error || "Order not found."}</p>
+        <Link href="/shop/orders" className="vk-btn-outline">
+          My orders
         </Link>
       </div>
     );
@@ -116,10 +115,10 @@ export default function OrderDetailPage() {
     .map((h) => h.note!.replace(/^Auto: /, ""));
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
+    <div className="vk-container max-w-3xl py-8 md:py-10">
       <Link
         href="/shop/orders"
-        className="mb-5 inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
+        className="mb-5 inline-flex items-center gap-1 rounded-full bg-vk-50 px-3 py-1.5 text-xs font-semibold text-vk-700 transition-colors hover:bg-vk-100 sm:text-[13px]"
       >
         <ChevronLeft className="h-4 w-4" /> All orders
       </Link>
@@ -151,17 +150,17 @@ export default function OrderDetailPage() {
         </div>
       )}
 
-      <div className="rounded-2xl border border-border bg-card p-5 sm:p-6">
+      <div className="vk-card p-5 sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">Reference number</p>
-            <p className="font-mono text-lg font-bold text-foreground">{order.orderNumber}</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-vk-500">Reference number</p>
+            <p className="font-mono text-lg font-bold text-ink">{order.orderNumber}</p>
             <p className="text-sm text-muted-foreground">
               Placed {format(new Date(order.createdAt), "d MMM yyyy, h:mm a")}
             </p>
           </div>
           <div className="text-right">
-            <p className="text-lg font-bold text-primary">{formatINR(order.total)}</p>
+            <p className="font-heading text-xl font-extrabold text-vk-700">{formatINR(order.total)}</p>
             <p className={`text-xs font-medium ${order.paymentStatus === "paid" ? "text-emerald-600" : "text-amber-600"}`}>
               {order.paymentStatus === "paid"
                 ? "Paid"
@@ -174,7 +173,7 @@ export default function OrderDetailPage() {
 
         {/* Progress */}
         {cancelled ? (
-          <div className="mt-5 flex items-center gap-2 rounded-lg bg-muted px-3 py-2.5 text-sm text-muted-foreground">
+          <div className="mt-5 flex items-center gap-2 rounded-xl bg-vk-50 px-3.5 py-2.5 text-sm text-muted-foreground">
             <XCircle className="h-4 w-4 shrink-0" />
             This order was cancelled. If you were charged, the refund is processed by the temple office.
           </div>
@@ -188,17 +187,17 @@ export default function OrderDetailPage() {
                   <div className="flex flex-col items-center gap-1.5">
                     <span
                       className={`flex h-8 w-8 items-center justify-center rounded-full ${
-                        done ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                        done ? "bg-vk-700 text-white" : "bg-vk-100 text-vk-400"
                       }`}
                     >
                       <Icon className="h-4 w-4" />
                     </span>
-                    <span className={`text-[10px] font-medium sm:text-xs ${done ? "text-foreground" : "text-muted-foreground"}`}>
+                    <span className={`text-[10px] font-medium sm:text-xs ${done ? "text-ink" : "text-muted-foreground"}`}>
                       {step.label}
                     </span>
                   </div>
                   {i < STEPS.length - 1 && (
-                    <div className={`mx-1 h-0.5 flex-1 rounded ${i < currentStep ? "bg-primary" : "bg-border"}`} />
+                    <div className={`mx-1 h-1 flex-1 rounded-full ${i < currentStep ? "bg-vk-500" : "bg-vk-100"}`} />
                   )}
                 </div>
               );
@@ -207,8 +206,8 @@ export default function OrderDetailPage() {
         )}
 
         {order.tracking?.trackingNumber && (
-          <div className="mt-5 rounded-lg border border-border p-3 text-sm">
-            <p className="font-semibold text-foreground">Tracking</p>
+          <div className="mt-5 rounded-2xl bg-vk-50 p-4 text-sm">
+            <p className="font-semibold text-ink">Tracking</p>
             <p className="text-muted-foreground">
               {order.tracking.courier ? `${order.tracking.courier} · ` : ""}
               <span className="font-mono">{order.tracking.trackingNumber}</span>
@@ -218,7 +217,7 @@ export default function OrderDetailPage() {
                 href={order.tracking.url}
                 target="_blank"
                 rel="noreferrer"
-                className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-primary underline"
+                className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-vk-500 underline"
               >
                 Track shipment <ExternalLink className="h-3 w-3" />
               </a>
@@ -237,51 +236,54 @@ export default function OrderDetailPage() {
       </div>
 
       {/* Items */}
-      <div className="mt-5 rounded-2xl border border-border bg-card p-5 sm:p-6">
-        <h2 className="mb-3 font-semibold text-foreground">Items</h2>
+      <div className="vk-card mt-5 p-5 sm:p-6">
+        <h2 className="vk-bar-title mb-4 text-base text-ink">Items</h2>
         <div className="space-y-3">
           {order.items.map((item, i) => (
             <div key={i} className="flex gap-3">
-              <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-muted">
+              <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-vk-50">
                 {item.image && <img src={item.image} alt="" className="h-full w-full object-cover" />}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-foreground">{item.productName}</p>
+                <p className="text-sm font-medium text-ink">{item.productName}</p>
                 <p className="text-xs text-muted-foreground">
                   {item.variantLabel ? `${item.variantLabel} · ` : ""}
                   {formatINR(item.unitPrice)} × {item.quantity}
                 </p>
               </div>
-              <p className="text-sm font-semibold text-foreground">{formatINR(item.lineTotal)}</p>
+              <p className="text-sm font-semibold text-ink">{formatINR(item.lineTotal)}</p>
             </div>
           ))}
         </div>
 
-        <div className="mt-4 space-y-1.5 border-t border-border pt-3 text-sm">
+        <div className="mt-4 space-y-1.5 rounded-2xl bg-vk-50 p-4 text-sm">
           <div className="flex justify-between text-muted-foreground">
             <span>Subtotal</span>
-            <span className="font-medium text-foreground">{formatINR(order.subtotal)}</span>
+            <span className="font-medium text-ink">{formatINR(order.subtotal)}</span>
           </div>
           <div className="flex justify-between text-muted-foreground">
             <span>Delivery</span>
-            <span className="font-medium text-foreground">
+            <span className="font-medium text-ink">
               {order.shippingCharge === 0 ? "Free" : formatINR(order.shippingCharge)}
             </span>
           </div>
-          <div className="flex justify-between border-t border-border pt-2 font-bold">
+          <div className="flex justify-between border-t border-vk-200 pt-2 font-bold text-ink">
             <span>Total</span>
-            <span className="text-primary">{formatINR(order.total)}</span>
+            <span className="text-vk-700">{formatINR(order.total)}</span>
           </div>
         </div>
       </div>
 
       {/* Address */}
-      <div className="mt-5 rounded-2xl border border-border bg-card p-5 sm:p-6">
-        <h2 className="mb-2 flex items-center gap-1.5 font-semibold text-foreground">
-          <MapPin className="h-4 w-4 text-gold" /> Delivery address
+      <div className="vk-card mt-5 p-5 sm:p-6">
+        <h2 className="mb-3 flex items-center gap-2 font-heading text-base font-bold text-ink">
+          <span className="vk-icon-chip !h-9 !w-9">
+            <MapPin className="h-4 w-4" />
+          </span>
+          Delivery address
         </h2>
         <p className="text-sm text-muted-foreground">
-          <span className="font-medium text-foreground">{order.customerName}</span>
+          <span className="font-medium text-ink">{order.customerName}</span>
           <br />
           {order.shippingAddress?.street}
           <br />

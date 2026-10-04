@@ -314,6 +314,7 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
         <section id="donate" className="vk-section scroll-mt-24 !pt-6 md:!pt-10">
           <div className="vk-container max-w-5xl">
             <SectionHeading
+              as="h1"
               align="center"
               eyebrow="Ekadashi Seva"
               title={campaign.formHeading}

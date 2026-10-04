@@ -5,7 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { CalendarDays, MapPin, ArrowRight, Sparkles } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
-import Ornament from "@/components/Ornament";
+import SectionHeading from "@/components/site/SectionHeading";
 import WhatsAppCommunityCTA from "@/components/WhatsAppCommunityCTA";
 import {
   fetchFestivalShowcases,
@@ -41,33 +41,6 @@ const fmtLong = (s?: string) => {
       })
     : "";
 };
-
-function SectionHead({
-  eyebrow,
-  title,
-  sub,
-}: {
-  eyebrow: string;
-  title: string;
-  sub?: string;
-}) {
-  return (
-    <div className="mb-10 text-center md:mb-12">
-      <p className="mb-2.5 text-xs font-semibold uppercase tracking-[0.2em] text-primary">
-        {eyebrow}
-      </p>
-      <Ornament className="mb-4" />
-      <h2 className="font-heading text-[27px] font-extrabold tracking-tight text-foreground md:text-[34px]">
-        {title}
-      </h2>
-      {sub && (
-        <p className="mx-auto mt-2.5 max-w-xl text-sm text-muted-foreground md:text-[15px]">
-          {sub}
-        </p>
-      )}
-    </div>
-  );
-}
 
 const imageOf = (f: FestivalShowcase) =>
   f.cardImage || f.heroImage || FALLBACK_IMAGE;
@@ -112,20 +85,20 @@ function CTALink({
 function StatusChip({ status, featured }: { status?: string; featured?: boolean }) {
   if (status === "upcoming") {
     return (
-      <span className="rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-gold shadow-md">
+      <span className="rounded-full bg-vk-500 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white shadow-md">
         Upcoming
       </span>
     );
   }
   if (featured) {
     return (
-      <span className="rounded-full bg-accent/95 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-primary shadow-md">
+      <span className="rounded-full bg-vk-700 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white shadow-md">
         Grand Celebration
       </span>
     );
   }
   return (
-    <span className="rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-primary shadow-md">
+    <span className="rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-vk-700 shadow-md">
       {festivalStatusLabel[status || ""] || "Annual"}
     </span>
   );
@@ -300,39 +273,44 @@ export default function FestivalsPage() {
 
   return (
     <PageLayout>
-      {/* ── Hero — full-bleed banner like every other page (title baked in) ── */}
+      <div className="overflow-x-hidden bg-white pt-[var(--header-h)]">
+      {/* ── Hero — admin banner (title baked in) in a rounded inset card ── */}
       {/* Tapping it glides down to the festivals below. */}
-      <section
-        className="relative w-full cursor-pointer overflow-hidden rounded-b-3xl pt-[88px] md:pt-[104px]"
-        onClick={() =>
-          document
-            .getElementById("festivals-sections")
-            ?.scrollIntoView({ behavior: "smooth", block: "start" })
-        }
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            document
-              .getElementById("festivals-sections")
-              ?.scrollIntoView({ behavior: "smooth", block: "start" });
-          }
-        }}
-        aria-label="Scroll to festivals below"
-      >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={banners.mobile}
-          alt="Festivals & Celebrations"
-          className="block h-auto w-full md:hidden"
-        />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={banners.desktop}
-          alt="Festivals & Celebrations"
-          className="hidden h-auto w-full md:block"
-        />
+      <section className="bg-gradient-to-b from-vk-50 to-white pb-4 pt-4 md:pb-6 md:pt-6">
+        <div className="vk-container">
+          <div
+            className="relative w-full cursor-pointer overflow-hidden rounded-3xl bg-vk-100 shadow-[0_24px_60px_-28px_rgba(10,18,51,0.6)] transition-transform duration-300 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vk-500 focus-visible:ring-offset-2"
+            onClick={() =>
+              document
+                .getElementById("festivals-sections")
+                ?.scrollIntoView({ behavior: "smooth", block: "start" })
+            }
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                document
+                  .getElementById("festivals-sections")
+                  ?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }
+            }}
+            aria-label="Scroll to festivals below"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={banners.mobile}
+              alt="Festivals & Celebrations"
+              className="block h-auto w-full md:hidden"
+            />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={banners.desktop}
+              alt="Festivals & Celebrations"
+              className="hidden h-auto w-full md:block"
+            />
+          </div>
+        </div>
       </section>
 
       {/* ── Featured festivals ─────────────────────────────────────── */}
@@ -340,15 +318,16 @@ export default function FestivalsPage() {
         <section
           id="festival-spotlight"
           ref={spotlightRef}
-          className="scroll-mt-[88px] bg-white py-14 dark:bg-background md:scroll-mt-[104px] md:py-16"
+          className="vk-section scroll-mt-[var(--header-h)]"
         >
-          <div className="container mx-auto px-4">
-            <SectionHead
+          <div className="vk-container">
+            <h1 className="sr-only">Festivals at ISKCON Gambheeram Visakhapatnam</h1>
+            <SectionHeading
               eyebrow="Spotlight"
               title={spotlights.length > 1 ? "Featured Festivals" : "Featured Festival"}
             />
 
-            <div className="mx-auto max-w-6xl space-y-8">
+            <div className="space-y-6 md:space-y-8">
               {spotlights.map((featured) => {
                 const featuredUpcoming =
                   featured.status === "upcoming" &&
@@ -357,9 +336,9 @@ export default function FestivalsPage() {
                 return (
                   <div
                     key={elementId(featured)}
-                    className="relative mx-auto grid overflow-hidden rounded-3xl bg-gradient-navy shadow-elevated md:grid-cols-12"
+                    className="relative grid overflow-hidden rounded-3xl bg-gradient-to-br from-vk-800 via-vk-700 to-vk-900 shadow-[0_24px_60px_-28px_rgba(10,18,51,0.6)] md:grid-cols-12"
                   >
-                    <div className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-accent/20 blur-3xl" />
+                    <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-vk-500/30 blur-3xl" />
 
                     <div className="relative min-h-[220px] md:col-span-5 md:min-h-[380px]">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -368,25 +347,25 @@ export default function FestivalsPage() {
                         alt={featured.title}
                         className="absolute inset-0 h-full w-full object-cover"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[hsl(220,90%,18%)] via-transparent to-transparent md:bg-gradient-to-r md:from-transparent md:via-transparent md:to-[hsl(220,90%,18%)]" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-vk-900/85 via-transparent to-transparent md:bg-gradient-to-r md:from-transparent md:via-transparent md:to-vk-800/90" />
                     </div>
 
-                    <div className="relative z-10 flex flex-col justify-center gap-3.5 p-7 text-white md:col-span-7 md:p-11">
-                      <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-gold">
+                    <div className="relative z-10 flex flex-col justify-center gap-4 p-6 text-white md:col-span-7 md:p-10">
+                      <span className="vk-pill-light w-fit max-w-full">
                         {featured.subtitle || (featured.featured ? "Featured Festival" : "Festival")}
                       </span>
-                      <h3 className="font-heading text-2xl font-extrabold leading-tight tracking-tight md:text-[34px]">
+                      <h3 className="text-2xl font-extrabold leading-tight tracking-tight text-white md:text-[2.1rem]">
                         {featured.title}
                       </h3>
-                      <div className="flex flex-col gap-2 text-[13.5px] text-white/85 sm:flex-row sm:flex-wrap sm:gap-5">
+                      <div className="flex flex-col gap-2 text-[14px] text-white/85 sm:flex-row sm:flex-wrap sm:gap-5">
                         {asDate(featured.eventDate) && (
                           <span className="inline-flex items-center gap-2">
-                            <CalendarDays className="h-4 w-4" />
+                            <CalendarDays className="h-4 w-4 shrink-0 text-vk-300" />
                             {fmtLong(featured.eventDate)}
                           </span>
                         )}
                         <span className="inline-flex items-center gap-2">
-                          <MapPin className="h-4 w-4" />
+                          <MapPin className="h-4 w-4 shrink-0 text-vk-300" />
                           {featured.location || DEFAULT_FESTIVAL_LOCATION}
                         </span>
                       </div>
@@ -396,14 +375,14 @@ export default function FestivalsPage() {
                         </p>
                       )}
                       {featuredUpcoming && (
-                        <div className="mt-1 space-y-1.5">
-                          <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-gold">
+                        <div className="mt-1 space-y-2">
+                          <span className="block text-[11px] font-bold uppercase tracking-[0.2em] text-vk-300">
                             Celebrating in
                           </span>
                           <Countdown targetDate={featured.eventDate!} />
                         </div>
                       )}
-                      <div className="mt-1 flex flex-wrap gap-2">
+                      <div className="flex flex-wrap gap-2">
                         {!!featured.gallery?.length && (
                           <span className="rounded-full bg-white/10 px-3 py-1.5 text-[11px] font-semibold text-white/85">
                             {featured.gallery.length} photos
@@ -420,10 +399,10 @@ export default function FestivalsPage() {
                           </span>
                         )}
                       </div>
-                      <div className="mt-2 flex flex-wrap gap-3">
+                      <div className="mt-1 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                         <CTALink
                           href={hrefOf(featured)}
-                          className="inline-flex w-fit items-center gap-2 rounded-full bg-gradient-gold px-6 py-3 text-sm font-bold text-[hsl(220,60%,12%)] shadow-gold transition-transform hover:-translate-y-0.5"
+                          className="vk-btn min-h-[44px] bg-white text-vk-800 shadow-lg hover:-translate-y-0.5 hover:bg-vk-50"
                         >
                           Explore Festival
                           <ArrowRight className="h-4 w-4" />
@@ -433,7 +412,7 @@ export default function FestivalsPage() {
                             href={featured.ctaHref}
                             target="_blank"
                             rel="noreferrer"
-                            className="inline-flex w-fit items-center gap-2 rounded-full border border-white/30 bg-white/10 px-6 py-3 text-sm font-bold text-white backdrop-blur-sm transition-transform hover:-translate-y-0.5 hover:bg-white/20"
+                            className="vk-btn-gold min-h-[44px]"
                           >
                             {featured.ctaLabel || "Donate"}
                           </a>
@@ -451,23 +430,30 @@ export default function FestivalsPage() {
       {/* ── Festivals grid ────────────────────────────────────────── */}
       <section
         id="festivals-sections"
-        className="scroll-mt-[88px] bg-white pb-14 pt-4 dark:bg-background md:scroll-mt-[104px] md:pb-16"
+        className="vk-section vk-band scroll-mt-[var(--header-h)]"
       >
-        <div className="container mx-auto px-4">
-          <SectionHead
+        <div className="vk-container">
+          <SectionHeading
             eyebrow="Festival Archive"
             title="All Festivals"
-            sub="What's coming up next, and every grand celebration we've had so far."
+            subtitle="What's coming up next, and every grand celebration we've had so far."
           />
 
           {loading && (
-            <p className="py-10 text-center text-muted-foreground">Loading festivals…</p>
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {[0, 1, 2].map((k) => (
+                <div key={k} className="vk-card h-[320px] animate-pulse bg-white/70" />
+              ))}
+              <span className="sr-only">Loading festivals…</span>
+            </div>
           )}
 
           {!loading && festivals.length === 0 && (
-            <div className="mx-auto max-w-md rounded-2xl border border-border bg-card p-10 text-center">
-              <Sparkles className="mx-auto mb-4 h-12 w-12 text-muted-foreground/40" />
-              <h3 className="mb-2 text-lg font-semibold text-foreground">
+            <div className="vk-card mx-auto max-w-md p-8 text-center md:p-10">
+              <span className="vk-icon-chip mx-auto mb-4 h-14 w-14 rounded-2xl">
+                <Sparkles className="h-7 w-7" />
+              </span>
+              <h3 className="mb-2 text-lg font-bold text-ink">
                 Festivals coming soon
               </h3>
               <p className="text-sm text-muted-foreground">
@@ -477,9 +463,9 @@ export default function FestivalsPage() {
           )}
 
           {!loading && upcomingGrid.length > 0 && (
-            <div className="mx-auto max-w-6xl">
-              <h3 className="mb-5 flex items-center gap-2 text-sm font-bold uppercase tracking-[0.2em] text-primary">
-                <Sparkles className="h-4 w-4" /> Upcoming Festivals
+            <div>
+              <h3 className="vk-bar-title mb-5 flex items-center gap-2 text-lg text-ink">
+                <Sparkles className="h-4 w-4 text-vk-500" /> Upcoming Festivals
               </h3>
               <div className="grid gap-5 sm:grid-cols-2 md:gap-6 lg:grid-cols-3">
                 {upcomingGrid.map((f, i) => festivalCard(f, i))}
@@ -488,9 +474,9 @@ export default function FestivalsPage() {
           )}
 
           {!loading && pastGrid.length > 0 && (
-            <div className={`mx-auto max-w-6xl ${upcomingGrid.length > 0 ? "mt-12" : ""}`}>
-              <h3 className="mb-5 flex items-center gap-2 text-sm font-bold uppercase tracking-[0.2em] text-muted-foreground">
-                <CalendarDays className="h-4 w-4" /> Completed Festivals
+            <div className={upcomingGrid.length > 0 ? "mt-12" : ""}>
+              <h3 className="vk-bar-title mb-5 flex items-center gap-2 text-lg text-ink/70">
+                <CalendarDays className="h-4 w-4 text-vk-500" /> Completed Festivals
               </h3>
               <div className="grid gap-5 sm:grid-cols-2 md:gap-6 lg:grid-cols-3">
                 {pastGrid.map((f, i) => festivalCard(f, i))}
@@ -501,6 +487,7 @@ export default function FestivalsPage() {
       </section>
 
       <WhatsAppCommunityCTA />
+      </div>
     </PageLayout>
   );
 }
@@ -511,71 +498,79 @@ function festivalCard(f: FestivalCardItem, i: number) {
   return (
     <motion.div
       key={f._id}
+      className="h-full"
       initial={{ opacity: 0, y: 18 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ delay: Math.min(i, 5) * 0.06, duration: 0.45 }}
     >
-      <div className="group flex h-full flex-col overflow-hidden rounded-[20px] border border-border bg-card transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/35 hover:shadow-elevated">
-                      <CTALink href={hrefOf(f)} className="relative block aspect-[16/10] overflow-hidden bg-primary/5">
-                        <img
-                          src={imageOf(f)}
-                          alt={f.title}
-                          loading="lazy"
-                          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
-                        />
-                        <div className="absolute left-3 top-3">
-                          <StatusChip status={f.status} featured={f.featured} />
-                        </div>
-                        {d && (
-                          <div className="absolute right-3 top-3 rounded-2xl bg-white/95 px-2.5 py-1.5 text-center leading-none shadow-md">
-                            <span className="block text-[10px] font-extrabold uppercase tracking-[0.1em] text-gold">
-                              {d.toLocaleDateString("en-IN", { month: "short" })}
-                            </span>
-                            <span className="mt-0.5 block text-lg font-extrabold text-primary">
-                              {d.getDate()}
-                            </span>
-                          </div>
-                        )}
-                      </CTALink>
+      <div className="vk-card vk-card-hover group flex h-full flex-col overflow-hidden">
+        <CTALink href={hrefOf(f)} className="relative m-2 mb-0 block aspect-[16/10] overflow-hidden rounded-xl bg-vk-100">
+          <img
+            src={imageOf(f)}
+            alt={f.title}
+            loading="lazy"
+            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-vk-900/40 via-transparent to-transparent" />
+          <div className="absolute left-3 top-3">
+            <StatusChip status={f.status} featured={f.featured} />
+          </div>
+          {d && (
+            <div className="absolute right-3 top-3 min-w-[52px] rounded-2xl bg-white/95 px-2.5 py-1.5 text-center leading-none shadow-md">
+              <span className="block text-[10px] font-bold uppercase tracking-[0.1em] text-vk-500">
+                {d.toLocaleDateString("en-IN", { month: "short" })}
+              </span>
+              <span className="mt-0.5 block text-lg font-extrabold text-vk-800">
+                {d.getDate()}
+              </span>
+            </div>
+          )}
+        </CTALink>
 
-                      <div className="flex flex-1 flex-col gap-2 p-5">
-                        <CTALink href={hrefOf(f)}>
-                          <h3 className="line-clamp-2 min-h-[43px] font-heading text-[16.5px] font-bold leading-snug text-foreground hover:text-primary transition-colors">
-                            {f.title}
-                          </h3>
-                        </CTALink>
-                        {f.subtitle && (
-                          <p className="text-[11.5px] font-semibold uppercase tracking-wider text-primary/70">
-                            {f.subtitle}
-                          </p>
-                        )}
-                        {f.description && (
-                          <p className="line-clamp-2 text-[12.5px] leading-relaxed text-muted-foreground">
-                            {f.description}
-                          </p>
-                        )}
-                        <div className="mt-auto flex items-center justify-between border-t border-border pt-3.5">
-                          <span className="inline-flex items-center gap-1.5 text-[11.5px] text-muted-foreground">
-                            <MapPin className="h-3.5 w-3.5" />
-                            {f.location || DEFAULT_FESTIVAL_LOCATION}
-                          </span>
-                          <div className="flex items-center gap-2">
-                            {donateOn(f) && (
-                              <a
-                                href={f.ctaHref}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="rounded-full bg-gradient-gold px-3 py-1 text-[11px] font-bold text-[hsl(220,60%,12%)] shadow-sm transition-transform hover:-translate-y-0.5"
-                              >
-                                {f.ctaLabel || "Donate"}
-                              </a>
-                            )}
-                            <ArrowRight className="h-4 w-4 text-primary transition-transform group-hover:translate-x-1" />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-  </motion.div>
+        <div className="flex flex-1 flex-col gap-2 p-5">
+          <CTALink href={hrefOf(f)}>
+            <h3 className="line-clamp-2 text-[17px] font-bold leading-snug text-ink transition-colors hover:text-vk-700 group-hover:text-vk-700">
+              {f.title}
+            </h3>
+          </CTALink>
+          {f.subtitle && (
+            <p className="text-[11.5px] font-semibold uppercase tracking-wider text-vk-500">
+              {f.subtitle}
+            </p>
+          )}
+          {f.description && (
+            <p className="line-clamp-2 text-[13px] leading-relaxed text-muted-foreground">
+              {f.description}
+            </p>
+          )}
+          <div className="mt-auto flex items-center justify-between gap-3 border-t border-vk-100 pt-3.5">
+            <span className="inline-flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground">
+              <MapPin className="h-3.5 w-3.5 shrink-0 text-vk-500" />
+              <span className="truncate">{f.location || DEFAULT_FESTIVAL_LOCATION}</span>
+            </span>
+            <div className="flex shrink-0 items-center gap-2">
+              {donateOn(f) && (
+                <a
+                  href={f.ctaHref}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="vk-btn-gold min-h-[36px] !px-3 !py-1.5 text-xs"
+                >
+                  {f.ctaLabel || "Donate"}
+                </a>
+              )}
+              <CTALink
+                href={hrefOf(f)}
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-vk-100 text-vk-700 transition-colors group-hover:bg-vk-700 group-hover:text-white"
+              >
+                <ArrowRight className="h-4 w-4" />
+                <span className="sr-only">{f.title}</span>
+              </CTALink>
+            </div>
+          </div>
+        </div>
+      </div>
+    </motion.div>
   );
 }

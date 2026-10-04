@@ -9,6 +9,7 @@ import PageHero from "@/components/PageHero";
 import SectionHeading from "@/components/site/SectionHeading";
 import DailyDarshanGallery from "@/components/DailyDarshanGallery";
 import { getGalleryImages, GALLERY_CATEGORIES } from "@/lib/galleryApi";
+import { getRecentDarshan, type DarshanPhoto } from "@/lib/darshanApi";
 
 type GalleryImage = {
   title: string;
@@ -30,6 +31,9 @@ export default function GalleryPage() {
   const [lightbox, setLightbox] = useState<LightboxState>(null);
   const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  // Daily darshan from the community app — merged into the date strip so the
+  // gallery shows the same darshan days devotees see in the app.
+  const [appDarshan, setAppDarshan] = useState<DarshanPhoto[]>([]);
 
   function groupImages(images: GalleryImage[]): GalleryImage[] {
     const map = new Map<string, GalleryImage>();
@@ -51,11 +55,12 @@ export default function GalleryPage() {
   }
 
   useEffect(() => {
-    getGalleryImages({ status: "active" }).then((items) => {
+    Promise.all([getGalleryImages({ status: "active" }), getRecentDarshan(14)]).then(([items, darshan]) => {
       setGalleryImages(items);
+      setAppDarshan(darshan);
 
-      if (items && items.length > 0) {
-        const raw = items.map((it: GalleryImage) => ((it.date || "").slice(0, 10)) as string);
+      if ((items && items.length > 0) || darshan.length > 0) {
+        const raw = [...(items || []).map((it: GalleryImage) => ((it.date || "").slice(0, 10)) as string), ...darshan.map((d) => d.date || "")];
         const datesSet = new Set<string>(raw.filter(Boolean));
         const dates: string[] = Array.from(datesSet).sort((a, b) => b.localeCompare(a));
         if (dates.length > 0) setActiveDate(dates[0]);
@@ -98,6 +103,14 @@ export default function GalleryPage() {
     if (!dateData[dateKey]) dateData[dateKey] = { images: [], festival: undefined };
     for (const src of item.images || []) {
       dateData[dateKey].images.push({ src, title: item.title || "" });
+    }
+  }
+  for (const d of appDarshan) {
+    const dateKey = d.date || "";
+    if (!dateKey) continue;
+    if (!dateData[dateKey]) dateData[dateKey] = { images: [], festival: undefined };
+    if (!dateData[dateKey].images.some((im) => im.src === d.imageUrl)) {
+      dateData[dateKey].images.push({ src: d.imageUrl, title: "Daily Darshan" });
     }
   }
 

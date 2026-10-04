@@ -187,8 +187,9 @@ const JanmashtamiGallery = () => {
             {yearGroups.map(({ year }) => (
               <button
                 key={year}
+                type="button"
                 onClick={() => setSelectedYear(year)}
-                className={`rounded-full px-5 py-2 text-sm font-semibold transition-all duration-200 ${
+                className={`min-h-[40px] rounded-full px-5 py-2 text-sm font-semibold transition-all duration-200 ${
                   selectedYear === year
                     ? "bg-[#331447] text-[#ffdb68] shadow-md"
                     : "border border-[#331447]/15 text-[#331447]/70 hover:border-[#331447]/40 hover:text-[#331447]"
@@ -204,28 +205,31 @@ const JanmashtamiGallery = () => {
         <div className="relative">
           {/* Arrows */}
           <button
+            type="button"
+            aria-label="Previous photos"
             onClick={scrollPrev}
-            className="absolute -left-3 top-1/2 z-10 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full border border-amber-200 bg-white text-[#331447]/70 shadow-sm transition-all hover:bg-[#331447] hover:text-white hover:shadow-md md:-left-5 md:h-10 md:w-10"
+            className="absolute -left-2 top-1/2 z-10 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full border border-amber-200 bg-white text-[#331447]/70 shadow-sm transition-all hover:bg-[#331447] hover:text-white hover:shadow-md md:-left-5 md:h-10 md:w-10"
           >
             <ChevronLeft className="h-4 w-4 md:h-5 md:w-5" />
           </button>
           <button
+            type="button"
+            aria-label="Next photos"
             onClick={scrollNext}
-            className="absolute -right-3 top-1/2 z-10 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full border border-amber-200 bg-white text-[#331447]/70 shadow-sm transition-all hover:bg-[#331447] hover:text-white hover:shadow-md md:-right-5 md:h-10 md:w-10"
+            className="absolute -right-2 top-1/2 z-10 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full border border-amber-200 bg-white text-[#331447]/70 shadow-sm transition-all hover:bg-[#331447] hover:text-white hover:shadow-md md:-right-5 md:h-10 md:w-10"
           >
             <ChevronRight className="h-4 w-4 md:h-5 md:w-5" />
           </button>
 
-          <div ref={emblaRef} className="overflow-hidden rounded-2xl">
+          <div ref={emblaRef} className="overflow-hidden rounded-3xl">
             <div className="flex">
               {currentImages.map((img, i) => (
                 <div
                   key={img.src + i}
-                  className="min-w-0 shrink-0 grow-0 pl-3 first:pl-0"
-                  style={{ flex: "0 0 48%" }}
+                  className="min-w-0 shrink-0 grow-0 basis-[85%] pl-3 first:pl-0 sm:basis-[48%]"
                 >
                   <div
-                    className="group relative cursor-pointer overflow-hidden rounded-xl bg-white shadow-sm transition-shadow duration-300 hover:shadow-lg"
+                    className="group relative cursor-pointer overflow-hidden rounded-2xl bg-white shadow-sm transition-shadow duration-300 hover:shadow-lg"
                     onClick={() => setLightboxIndex(i)}
                   >
                     <div className="relative aspect-[4/3]">
@@ -256,6 +260,8 @@ const JanmashtamiGallery = () => {
             {currentImages.map((_, i) => (
               <button
                 key={i}
+                type="button"
+                aria-label={`Go to photo ${i + 1}`}
                 onClick={() => emblaApi?.scrollTo(i)}
                 className={`rounded-full transition-all duration-300 ${
                   i === activeIndex
@@ -279,6 +285,8 @@ const JanmashtamiGallery = () => {
             onClick={() => setLightboxIndex(null)}
           >
             <button
+              type="button"
+              aria-label="Close"
               className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white/80 transition-colors hover:bg-white/20 hover:text-white md:right-6 md:top-6"
               onClick={() => setLightboxIndex(null)}
             >

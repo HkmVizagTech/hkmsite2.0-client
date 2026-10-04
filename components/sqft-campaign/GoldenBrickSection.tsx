@@ -8,15 +8,13 @@
 // out. Everything else (price, engraving, placement) supports that.
 //
 // Visually it deliberately breaks from the white sections around it: deep
-// navy, gold hairlines and a warm glow, so a donor scrolling the brick page
+// navy, soft gold accents and a warm glow, so a donor scrolling the brick page
 // cannot miss that this is a different order of offering.
 
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Crown, Flame, ScrollText, Sparkles, Check, ArrowRight } from "lucide-react";
 import type { GoldenTierConfig } from "@/lib/campaignConfig";
-
-const NAVY = "hsl(220,90%,12%)";
 
 interface GoldenBrickSectionProps {
   tier: GoldenTierConfig;
@@ -171,8 +169,7 @@ export default function GoldenBrickSection({ tier, onOffer }: GoldenBrickSection
                       <span className="relative mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10">
                         <s.icon className="h-4 w-4 text-[hsl(var(--gold))]" />
                         <span
-                          className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-bold"
-                          style={{ backgroundColor: "hsl(42 92% 56%)", color: NAVY }}
+                          className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-[hsl(var(--gold))] text-[9px] font-bold text-vk-900"
                         >
                           {i + 1}
                         </span>

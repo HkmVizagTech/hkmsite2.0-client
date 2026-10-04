@@ -1,8 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Users } from "lucide-react";
-import Ornament from "@/components/Ornament";
+import { Building2, Users } from "lucide-react";
 import type { CampaignConfig } from "@/lib/campaignConfig";
 
 interface ProgressSectionProps {
@@ -29,53 +27,67 @@ export default function ProgressSection({
   donorCount,
   config,
 }: ProgressSectionProps) {
-  const gridSquares = 40;
-  const filledSquares = Math.round((percent / 100) * gridSquares);
+  // Goal ring geometry (GVD goal card). Always show a sliver of progress so
+  // the ring never reads as "broken".
+  const R = 52;
+  const C = 2 * Math.PI * R;
+  const dash = Math.max(C * 0.015, (C * Math.min(100, Math.max(0, percent))) / 100);
 
   return (
-    <section className="bg-[hsl(220,90%,12%)] py-12 md:py-16">
-      <div className="container mx-auto max-w-4xl px-4 text-center">
-        <Ornament className="mb-6" />
-        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-gold">
-          Our heartfelt gratitude for your kind support
-        </p>
-        <h2 className="mb-8 font-heading text-2xl font-bold text-white md:text-4xl">
-          <CountUp value={sqftRaised} />{" "}
-            <span className="text-gold">{config.unitNamePlural}</span> offered so far
-        </h2>
+    <section className="vk-section bg-white">
+      <div className="vk-container">
+        <div className="relative mx-auto max-w-4xl overflow-hidden rounded-3xl bg-gradient-to-br from-vk-700 via-vk-600 to-vk-500 p-6 text-white shadow-[0_24px_50px_-24px_rgba(30,58,138,0.7)] md:p-10">
+          <div aria-hidden className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-white/10" />
+          <div className="relative grid items-center gap-8 md:grid-cols-[auto_1fr]">
+            <div
+              className="relative mx-auto h-40 w-40"
+              role="img"
+              aria-label={`${percent}% of the campaign goal raised`}
+            >
+              <svg viewBox="0 0 120 120" className="h-full w-full -rotate-90" aria-hidden>
+                <circle cx="60" cy="60" r={R} fill="none" stroke="rgba(255,255,255,0.18)" strokeWidth="10" />
+                <circle
+                  cx="60"
+                  cy="60"
+                  r={R}
+                  fill="none"
+                  stroke="#F2B41F"
+                  strokeWidth="10"
+                  strokeLinecap="round"
+                  strokeDasharray={`${dash} ${C}`}
+                  className="transition-[stroke-dasharray] duration-1000"
+                />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <p className="font-heading text-3xl font-extrabold">{percent}%</p>
+                <p className="text-[11px] text-white/75">raised</p>
+              </div>
+            </div>
 
-        {/* Foundation grid */}
-        <div
-          className="mx-auto mb-4 grid max-w-2xl gap-1 sm:gap-1.5"
-          style={{ gridTemplateColumns: "repeat(20, minmax(0, 1fr))" }}
-          role="img"
-          aria-label={`${percent}% of the campaign goal raised`}
-        >
-          {Array.from({ length: gridSquares }).map((_, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, scale: 0.6 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.02, duration: 0.3 }}
-              className={`aspect-square rounded-[3px] ${
-                i < filledSquares
-                  ? "bg-gradient-gold shadow-[0_0_6px_hsl(42,92%,56%,0.35)]"
-                  : "border border-white/15 bg-white/5"
-              }`}
-            />
-          ))}
+            <div className="text-center md:text-left">
+              <span className="vk-pill-light mb-3">Our heartfelt gratitude for your kind support</span>
+              <h2 className="vk-h2 !text-white">
+                <CountUp value={sqftRaised} />{" "}
+                <span className="text-[hsl(var(--gold))]">{config.unitNamePlural}</span> offered so far
+              </h2>
+              <div className="mt-5 space-y-2.5 text-sm">
+                <div className="flex items-center gap-3 rounded-xl bg-white/10 px-3 py-2.5 text-left">
+                  <Building2 className="h-4 w-4 shrink-0 text-[hsl(var(--gold))]" />
+                  <span className="text-white/85">
+                    {sqftRaised.toLocaleString("en-IN")} {config.unitNamePlural} raised of a goal of{" "}
+                    {goalSqft.toLocaleString("en-IN")} {config.unitNamePlural}
+                  </span>
+                </div>
+                <div className="flex items-center gap-3 rounded-xl bg-white/10 px-3 py-2.5 text-left">
+                  <Users className="h-4 w-4 shrink-0 text-[hsl(var(--gold))]" />
+                  <span className="text-white/85">
+                    {donorCount.toLocaleString("en-IN")} devotees have contributed
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-
-        <p className="mb-1 font-heading text-xl font-bold text-gold md:text-2xl">{percent}% raised</p>
-        <p className="text-sm text-white/75">
-          {sqftRaised.toLocaleString("en-IN")} {config.unitNamePlural} raised of a goal of{" "}
-          {goalSqft.toLocaleString("en-IN")} {config.unitNamePlural}
-        </p>
-        <p className="mt-3 flex items-center justify-center gap-1.5 text-xs text-white/60">
-          <Users className="h-3.5 w-3.5" />
-          {donorCount.toLocaleString("en-IN")} devotees have contributed
-        </p>
       </div>
     </section>
   );

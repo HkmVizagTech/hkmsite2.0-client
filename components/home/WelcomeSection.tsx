@@ -47,13 +47,13 @@ export default function WelcomeSection() {
       <div className="vk-container grid items-center gap-12 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
         <Reveal>
           <span className="vk-pill mb-4">Welcome to Hare Krishna Vaikuntham</span>
-          <h2 className="vk-h1 !text-[2rem] md:!text-[2.9rem]">
+          <h1 className="vk-h1 !text-[2rem] md:!text-[2.9rem]">
             {heading || (
               <>
                 ISKCON Gambheeram — <span className="text-vk-600">Visakhapatnam&apos;s home</span> of Krishna bhakti
               </>
             )}
-          </h2>
+          </h1>
           <p className="vk-lead mt-5">{body || DEFAULT_BODY}</p>
           <p className="vk-lead mt-3">
             HKMI draws on the timeless wisdom of the Vedic scriptures to answer life&apos;s deepest questions —

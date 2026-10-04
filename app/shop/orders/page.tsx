@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { Loader2, Package, ChevronRight, LogIn, ShoppingBag } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { getDonorToken } from "@/lib/donorAuthClient";
 import { ShopOrder, fetchMyOrders, formatINR } from "@/lib/shopApi";
@@ -14,7 +13,7 @@ const fulfilmentLabel: Record<string, { text: string; className: string }> = {
   packed: { text: "Packed", className: "border-indigo-200 bg-indigo-50 text-indigo-700" },
   shipped: { text: "Shipped", className: "border-amber-200 bg-amber-50 text-amber-700" },
   delivered: { text: "Delivered", className: "border-emerald-200 bg-emerald-50 text-emerald-700" },
-  cancelled: { text: "Cancelled", className: "border-border bg-muted text-muted-foreground" },
+  cancelled: { text: "Cancelled", className: "border-vk-100 bg-vk-50 text-muted-foreground" },
 };
 
 export default function ShopOrdersPage() {
@@ -39,7 +38,7 @@ export default function ShopOrdersPage() {
   if (loading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        <Loader2 className="h-6 w-6 animate-spin text-vk-500" />
       </div>
     );
   }
@@ -47,40 +46,40 @@ export default function ShopOrdersPage() {
   if (!authed) {
     return (
       <div className="mx-auto flex min-h-[60vh] max-w-md flex-col items-center justify-center gap-4 px-4 text-center">
-        <span
-          className="flex h-14 w-14 items-center justify-center rounded-2xl text-white"
-          style={{ background: "var(--gradient-gold)" }}
-        >
+        <span className="vk-icon-chip !h-14 !w-14 !rounded-2xl">
           <LogIn className="h-6 w-6" />
         </span>
         <div>
-          <h1 className="font-heading text-xl font-bold text-foreground">Log in to see your orders</h1>
+          <h1 className="vk-h3">Log in to see your orders</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Use the same mobile number you ordered with — we&apos;ll send a code on WhatsApp.
           </p>
         </div>
-        <Link href="/donor/login?redirect=/shop/orders">
-          <Button>Log in with WhatsApp OTP</Button>
+        <Link href="/donor/login?redirect=/shop/orders" className="vk-btn-primary h-11">
+          Log in with WhatsApp OTP
         </Link>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
-      <h1 className="font-heading text-2xl font-bold text-foreground">My Orders</h1>
+    <div className="vk-container max-w-3xl py-8 md:py-10">
+      <span className="vk-pill mb-3">Matchless Gifts</span>
+      <h1 className="vk-h2">My Orders</h1>
 
       {error && (
-        <div className="mt-4 rounded-lg bg-destructive/10 px-4 py-3 text-sm font-medium text-destructive">{error}</div>
+        <div className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-[13px] font-medium text-red-700">{error}</div>
       )}
 
       {orders.length === 0 ? (
-        <div className="mt-8 rounded-2xl border border-dashed border-border py-14 text-center">
-          <ShoppingBag className="mx-auto mb-3 h-9 w-9 text-muted-foreground/50" />
-          <p className="font-medium text-foreground">No orders yet</p>
+        <div className="mt-8 rounded-3xl bg-vk-50 px-6 py-14 text-center">
+          <span className="vk-icon-chip mx-auto mb-4 !h-14 !w-14 !rounded-2xl !bg-white">
+            <ShoppingBag className="h-7 w-7" />
+          </span>
+          <p className="font-heading text-lg font-bold text-ink">No orders yet</p>
           <p className="mt-1 text-sm text-muted-foreground">Anything you order from Matchless Gifts will appear here.</p>
-          <Link href="/shop" className="mt-4 inline-block">
-            <Button variant="outline">Browse the shop</Button>
+          <Link href="/shop" className="vk-btn-outline mt-5">
+            Browse the shop
           </Link>
         </div>
       ) : (
@@ -91,15 +90,15 @@ export default function ShopOrdersPage() {
               <Link
                 key={order._id}
                 href={`/shop/orders/${order.orderNumber}`}
-                className="flex items-center gap-4 rounded-2xl border border-border bg-card p-4 transition-colors hover:border-gold/40"
+                className="vk-card vk-card-hover flex items-center gap-4 p-4"
               >
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-muted">
-                  <Package className="h-5 w-5 text-primary" />
+                <span className="vk-icon-chip">
+                  <Package className="h-5 w-5" />
                 </span>
 
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
-                    <p className="font-mono text-sm font-semibold text-foreground">{order.orderNumber}</p>
+                    <p className="font-mono text-sm font-semibold text-ink">{order.orderNumber}</p>
                     <Badge variant="outline" className={meta.className}>
                       {meta.text}
                     </Badge>
@@ -115,7 +114,7 @@ export default function ShopOrdersPage() {
                   </p>
                 </div>
 
-                <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
+                <ChevronRight className="h-4 w-4 shrink-0 text-vk-500" />
               </Link>
             );
           })}

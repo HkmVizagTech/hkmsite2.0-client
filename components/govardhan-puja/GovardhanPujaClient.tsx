@@ -259,10 +259,10 @@ const inputCls =
 // ─── Color tokens ────────────────────────────────────────────────────────────
 // Page chrome is styled with the Vaikuntham Blue vk-* classes; these hexes are
 // only for places that need a raw colour (Razorpay theme, modal scrollbar).
-// deepGreen = vk-700 · teal = vk-300
+// deepGreen = original palette value (Razorpay theme) · teal = vk-300
 
 const C = {
-  deepGreen: "#1E3A8A",
+  deepGreen: "#0B2D4A", // kept: Razorpay checkout theme colour
   teal: "#B9C8FB",
 } as const;
 

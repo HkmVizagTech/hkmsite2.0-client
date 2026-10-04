@@ -135,8 +135,8 @@ export default function ThankYouPageClient() {
 
   return (
     <main
-      className="relative min-h-screen overflow-hidden text-slate-900"
-      style={{ background: T ? T.pageBg : "#fefaf0" }}
+      className={`relative min-h-screen overflow-hidden text-ink ${T ? "" : "bg-gradient-to-b from-vk-100 via-vk-50 to-white"}`}
+      style={T ? { background: T.pageBg } : undefined}
     >
       {/* Falling petals */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
@@ -157,13 +157,13 @@ export default function ThankYouPageClient() {
       </div>
 
       {/* Top lotus motif strip */}
-      <div className="h-1.5 w-full bg-gradient-to-r from-amber-500 via-orange-400 to-amber-500" />
+      <div className={`h-1.5 w-full bg-gradient-to-r ${T ? "from-amber-500 via-orange-400 to-amber-500" : "from-vk-700 via-vk-500 to-vk-700"}`} />
 
-      <div className="relative mx-auto max-w-2xl px-4 py-14 md:py-20">
+      <div className="relative mx-auto max-w-2xl px-4 py-10 md:py-20">
 
         {/* Main card */}
         <div
-          className="relative overflow-hidden rounded-3xl border shadow-2xl"
+          className={`relative overflow-hidden rounded-3xl border ${T ? "shadow-2xl" : "border-vk-100 bg-white shadow-lift"}`}
           style={
             T
               ? { borderColor: T.cardBorder, background: T.cardBg, boxShadow: `0 25px 60px -25px ${T.cta}45` }
@@ -176,24 +176,24 @@ export default function ThankYouPageClient() {
             style={{
               background: T
                 ? `linear-gradient(90deg, ${T.cta}, ${T.cardBorder}, ${T.cta})`
-                : "linear-gradient(90deg, #fbbf24, #fde047, #fbbf24)",
+                : "var(--gradient-gold)",
             }}
           />
 
           {/* OM symbol watermark */}
           <div
-            className="pointer-events-none absolute right-4 top-4 select-none font-serif text-7xl font-bold leading-none md:text-9xl"
+            className={`pointer-events-none absolute right-4 top-4 select-none font-serif text-7xl font-bold leading-none md:text-9xl ${T ? "" : "text-vk-100"}`}
             style={{ color: T ? `${T.cardBorder}30` : undefined }}
             aria-hidden
           >
             ॐ
           </div>
 
-          <div className="relative px-8 py-10 text-center md:px-12 md:py-14">
+          <div className="relative px-5 py-9 text-center sm:px-8 md:px-12 md:py-14">
 
             {/* Success icon */}
             <div
-              className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full shadow-lg"
+              className={`mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full shadow-lg ${T ? "" : "bg-gradient-to-br from-vk-700 to-vk-500 shadow-lift"}`}
               style={{
                 background: T ? `linear-gradient(135deg, ${T.cta}, ${T.cardBorder})` : undefined,
                 boxShadow: T ? `0 10px 24px -8px ${T.cta}70` : undefined,
@@ -206,7 +206,7 @@ export default function ThankYouPageClient() {
 
             {/* Eyebrow */}
             <p
-              className="mb-2 text-xs font-bold uppercase tracking-[0.35em]"
+              className={`mb-2 text-xs font-bold uppercase tracking-[0.35em] ${T ? "" : "text-vk-600"}`}
               style={{ color: T ? T.eyebrow : undefined }}
             >
               Hare Krishna 🙏
@@ -214,12 +214,12 @@ export default function ThankYouPageClient() {
 
             {/* Headline */}
             <h1
-              className="mb-2 font-heading text-3xl font-bold md:text-4xl"
+              className={`mb-2 font-heading text-3xl font-bold md:text-4xl ${T ? "" : "vk-h2 !text-3xl md:!text-4xl"}`}
               style={{ color: T ? T.heading : undefined }}
             >
               Your Seva Is Offered
             </h1>
-            <p className="mb-7 text-base md:text-lg" style={{ color: T ? T.subtle : undefined }}>
+            <p className={`mb-7 text-base md:text-lg ${T ? "" : "text-muted-foreground"}`} style={{ color: T ? T.subtle : undefined }}>
               {recurring
                 ? "Your monthly seva has been set up. May Krishna bless you every month."
                 : "Thank you for your heartfelt offering to Sri Sri Radha Damodar."}
@@ -228,7 +228,7 @@ export default function ThankYouPageClient() {
             {/* Summary card */}
             {(formattedAmount || sevaName) && (
               <div
-                className="mb-8 rounded-2xl border px-6 py-5 text-left"
+                className={`mb-8 rounded-2xl border px-4 py-5 text-left sm:px-6 ${T ? "" : "border-vk-100 bg-vk-50"}`}
                 style={
                   T
                     ? { borderColor: T.summaryBorder, background: T.summaryBg }
@@ -236,27 +236,27 @@ export default function ThankYouPageClient() {
                 }
               >
                 <p
-                  className="mb-3 text-xs font-bold uppercase tracking-widest"
+                  className={`mb-3 text-xs font-bold uppercase tracking-widest ${T ? "" : "text-vk-700"}`}
                   style={{ color: T ? T.cta : undefined }}
                 >
                   Offering Summary
                 </p>
                 <div className="space-y-2">
                   {sevaName && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm" style={{ color: T ? T.subtle : undefined }}>Seva</span>
-                      <span className="text-sm font-semibold" style={{ color: T ? T.body : undefined }}>{sevaName}</span>
+                    <div className="flex items-center justify-between gap-3">
+                      <span className={`shrink-0 text-sm ${T ? "" : "text-muted-foreground"}`} style={{ color: T ? T.subtle : undefined }}>Seva</span>
+                      <span className={`min-w-0 text-right text-sm font-semibold ${T ? "" : "text-ink"}`} style={{ color: T ? T.body : undefined }}>{sevaName}</span>
                     </div>
                   )}
                   {formattedAmount && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm" style={{ color: T ? T.subtle : undefined }}>Amount</span>
-                      <span className="text-lg font-bold" style={{ color: T ? T.cta : undefined }}>{formattedAmount}</span>
+                    <div className="flex items-center justify-between gap-3">
+                      <span className={`shrink-0 text-sm ${T ? "" : "text-muted-foreground"}`} style={{ color: T ? T.subtle : undefined }}>Amount</span>
+                      <span className={`text-lg font-bold ${T ? "" : "font-heading text-xl font-extrabold text-vk-700"}`} style={{ color: T ? T.cta : undefined }}>{formattedAmount}</span>
                     </div>
                   )}
                   {recurring && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-slate-500">Frequency</span>
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-sm text-muted-foreground">Frequency</span>
                       <span className="text-sm font-semibold text-green-700">Monthly</span>
                     </div>
                   )}
@@ -276,7 +276,7 @@ export default function ThankYouPageClient() {
 
             {/* Sanskrit verse */}
             <div
-              className="mb-8 rounded-2xl border border-amber-200 px-6 py-5"
+              className={`mb-8 rounded-2xl border px-4 py-5 sm:px-6 ${T ? "border-amber-200" : "border-vk-100 bg-white"}`}
               style={
                 T
                   ? {
@@ -287,24 +287,25 @@ export default function ThankYouPageClient() {
               }
             >
               <p
-                className="mb-2 font-serif text-base italic leading-relaxed md:text-lg"
+                className={`mb-2 font-serif text-base italic leading-relaxed md:text-lg ${T ? "" : "text-vk-800"}`}
                 style={{ color: T ? T.body : undefined }}
               >
                 "{verse.verse}"
               </p>
-              <p className="mb-1 text-sm" style={{ color: T ? T.subtle : undefined }}>{verse.translation}</p>
-              <p className="text-xs font-medium" style={{ color: T ? T.cta : undefined }}>{verse.attribution}</p>
+              <p className={`mb-1 text-sm ${T ? "" : "text-muted-foreground"}`} style={{ color: T ? T.subtle : undefined }}>{verse.translation}</p>
+              <p className={`text-xs font-semibold ${T ? "" : "text-vk-600"}`} style={{ color: T ? T.cta : undefined }}>{verse.attribution}</p>
             </div>
 
             {/* Share section */}
             <div className="mb-8">
-              <p className="mb-3 text-sm font-medium" style={{ color: T ? T.subtle : undefined }}>
+              <p className={`mb-3 text-sm font-medium ${T ? "" : "text-ink/70"}`} style={{ color: T ? T.subtle : undefined }}>
                 Inspire others to offer seva too
               </p>
               <div className="flex flex-wrap items-center justify-center gap-3">
                 <button
                   onClick={shareWhatsApp}
-                  className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#1da851]"
+                  type="button"
+                  className="inline-flex h-11 items-center gap-2 rounded-xl bg-[#25D366] px-5 text-sm font-semibold text-white transition hover:bg-[#1da851]"
                 >
                   <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4">
                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
@@ -314,7 +315,8 @@ export default function ThankYouPageClient() {
                 </button>
                 <button
                   onClick={shareNative}
-                  className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                  type="button"
+                  className="vk-btn-outline h-11"
                 >
                   {copied ? (
                     <><RefreshCw className="h-4 w-4 text-green-600" /><span className="text-green-700">Copied!</span></>
@@ -329,7 +331,7 @@ export default function ThankYouPageClient() {
             <div className="flex flex-wrap items-center justify-center gap-3">
               <Link
                 href="/"
-                className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold shadow-md transition"
+                className={T ? "inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold shadow-md transition" : "vk-btn-primary h-12 px-6"}
                 style={
                   T
                     ? {
@@ -359,7 +361,7 @@ export default function ThankYouPageClient() {
               </Link>
               <Link
                 href="/donate"
-                className="inline-flex items-center gap-2 rounded-full border bg-white px-6 py-3 text-sm font-semibold transition"
+                className={T ? "inline-flex items-center gap-2 rounded-full border bg-white px-6 py-3 text-sm font-semibold transition" : "vk-btn-gold h-12 px-6"}
                 style={
                   T
                     ? { borderColor: T.ctaSecondaryBorder, color: T.ctaSecondaryText }
@@ -367,7 +369,7 @@ export default function ThankYouPageClient() {
                 }
               >
                 <Heart
-                  className="h-4 w-4"
+                  className={T ? "h-4 w-4" : "h-4 w-4 fill-current"}
                   style={
                     T
                       ? { fill: T.ctaSecondaryText, color: T.ctaSecondaryText }
@@ -381,7 +383,7 @@ export default function ThankYouPageClient() {
         </div>
 
         {/* Footer note */}
-        <p className="mt-8 text-center text-xs text-slate-400">
+        <p className="mt-8 text-center text-xs text-muted-foreground">
           Hare Krishna Movement Visakhapatnam · ISKCON Gambheeram ·{" "}
           <a href="mailto:social@hkmvizag.org" className="underline underline-offset-2">
             social@hkmvizag.org

@@ -22,7 +22,7 @@ export default function FestivalGallery({ images }: { images: string[] }) {
             key={`${src}-${i}`}
             type="button"
             onClick={() => setActive(i)}
-            className={`group relative overflow-hidden rounded-2xl border border-border ${
+            className={`group relative overflow-hidden rounded-2xl bg-vk-100 shadow-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vk-500 focus-visible:ring-offset-2 ${
               i === 0 ? "col-span-2 sm:col-span-2 row-span-2" : ""
             } ${i === 1 ? "sm:col-span-1" : ""} aspect-[4/3]`}
             aria-label={`View photo ${i + 1}`}
@@ -34,7 +34,7 @@ export default function FestivalGallery({ images }: { images: string[] }) {
               loading={i > 2 ? "lazy" : "eager"}
               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]"
             />
-            <span className="absolute inset-0 bg-foreground/0 transition-colors duration-300 group-hover:bg-foreground/15" />
+            <span className="absolute inset-0 bg-gradient-to-t from-vk-900/0 to-vk-900/0 transition-colors duration-300 group-hover:from-vk-900/45" />
           </button>
         ))}
       </div>
@@ -45,12 +45,12 @@ export default function FestivalGallery({ images }: { images: string[] }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/90 p-4 backdrop-blur-sm"
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-vk-900/95 p-4 backdrop-blur-sm"
             onClick={() => setActive(null)}
           >
             <button
               type="button"
-              className="absolute right-4 top-4 rounded-full bg-white/10 p-2 text-white hover:bg-white/20"
+              className="absolute right-4 top-4 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
               onClick={() => setActive(null)}
               aria-label="Close"
             >
@@ -58,7 +58,7 @@ export default function FestivalGallery({ images }: { images: string[] }) {
             </button>
             <button
               type="button"
-              className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-2 text-white hover:bg-white/20"
+              className="absolute left-3 top-1/2 -translate-y-1/2 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
               onClick={(e) => {
                 e.stopPropagation();
                 prev();
@@ -82,7 +82,7 @@ export default function FestivalGallery({ images }: { images: string[] }) {
             </AnimatePresence>
             <button
               type="button"
-              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-2 text-white hover:bg-white/20"
+              className="absolute right-3 top-1/2 -translate-y-1/2 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
               onClick={(e) => {
                 e.stopPropagation();
                 next();

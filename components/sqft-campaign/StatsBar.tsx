@@ -36,20 +36,22 @@ export default function StatsBar({ stats, campaigner, price, config }: StatsBarP
   ];
 
   return (
-    <section className="relative z-10 -mt-12 pb-8 md:-mt-16">
-      <div className="container mx-auto max-w-5xl px-4">
-        <div className="grid divide-x divide-gold/20 overflow-hidden rounded-[24px] border border-gold/20 bg-gradient-to-br from-card to-background shadow-lg md:grid-cols-3">
-          {items.map((item) => (
-            <div key={item.label} className="flex items-center gap-4 p-5 md:p-6">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gold/10">
-                <item.icon className="h-6 w-6 text-gold" />
+    <section className="relative z-10 pb-8 pt-2">
+      <div className="vk-container">
+        <div className="mx-auto max-w-5xl overflow-hidden rounded-3xl bg-gradient-to-br from-vk-700 via-vk-600 to-vk-500 p-3 shadow-[0_24px_50px_-24px_rgba(30,58,138,0.7)] md:p-4">
+          <div className="grid gap-2.5 md:grid-cols-3 md:gap-3">
+            {items.map((item) => (
+              <div key={item.label} className="flex items-center gap-3 rounded-2xl bg-white/10 px-4 py-3.5 text-white">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/10">
+                  <item.icon className="h-5 w-5 text-[hsl(var(--gold))]" />
+                </span>
+                <div className="min-w-0">
+                  <p className="font-heading text-xl font-extrabold leading-tight">{item.value}</p>
+                  <p className="text-xs text-white/75">{item.label}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-xs uppercase tracking-wider text-muted-foreground">{item.label}</p>
-                <p className="text-lg font-bold text-primary">{item.value}</p>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </section>

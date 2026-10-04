@@ -300,7 +300,7 @@ export default function DonationForm({
             <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/70">
               {monthly ? "You're offering monthly" : "You're offering"}
             </p>
-            <p className="truncate text-lg font-bold text-white sm:text-xl">{seva.title}</p>
+            <p className="text-base font-bold leading-snug text-white sm:text-xl">{seva.title}</p>
           </div>
           <p className="shrink-0 font-heading text-2xl font-extrabold text-[hsl(var(--gold))] sm:text-3xl">
             ₹{finalAmount ? finalAmount.toLocaleString("en-IN") : "0"}

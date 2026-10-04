@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { Play } from "lucide-react";
-import Ornament from "@/components/Ornament";
+import SectionHeading from "@/components/site/SectionHeading";
 import useInViewVideo from "@/hooks/useInViewVideo";
 
 const INTRO_VIDEO_ID = "IJTMCgGBriw";
@@ -61,26 +61,14 @@ export default function TempleFeaturesSection() {
   useInViewVideo(sectionRef);
 
   return (
-    <section
-      ref={sectionRef}
-      className="bg-[radial-gradient(circle_at_top,_rgba(255,215,0,0.08),_transparent_50%)] bg-white py-12 dark:bg-background md:py-16"
-    >
-      <div className="container mx-auto max-w-6xl px-4">
-        <Ornament className="mb-6" />
-        <div className="mb-12 text-center">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-gold">
-            Inside the temple
-          </p>
-          <h2 className="mb-3 font-heading text-3xl font-bold text-primary md:text-5xl">
-            Inside Hare Krishna{" "}
-            <span className="bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-500 bg-clip-text text-transparent">
-              Vaikuntam
-            </span>
-          </h2>
-          <p className="text-sm text-muted-foreground md:text-base">
-            Each contribution helps build sacred spaces that uplift hearts.
-          </p>
-        </div>
+    <section ref={sectionRef} className="vk-section vk-band">
+      <div className="vk-container">
+        <SectionHeading
+          align="center"
+          eyebrow="Inside the temple"
+          title="Inside Hare Krishna Vaikuntam"
+          subtitle="Each contribution helps build sacred spaces that uplift hearts."
+        />
 
         {/* Featured hall — the Divine Altar */}
         <motion.div
@@ -88,10 +76,10 @@ export default function TempleFeaturesSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="mb-8 overflow-hidden rounded-3xl border border-border shadow-xl md:grid md:grid-cols-2"
+          className="vk-card mb-6 overflow-hidden !rounded-3xl md:grid md:grid-cols-2"
         >
           {/* Portrait image in a square frame — no more heavy cropping */}
-          <div className="group relative aspect-[4/5] w-full md:aspect-auto md:min-h-[460px]">
+          <div className="group relative aspect-[4/5] w-full overflow-hidden md:aspect-auto md:min-h-[460px]">
             <Image
               src={FEATURED_HALL.image}
               alt={FEATURED_HALL.title}
@@ -100,34 +88,16 @@ export default function TempleFeaturesSection() {
               sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-primary/25 to-transparent md:bg-gradient-to-r md:from-transparent md:to-primary/10" />
           </div>
 
-          {/* Themed text panel */}
-          <div className="relative flex flex-col justify-center bg-primary p-8 text-primary-foreground md:p-12">
-            <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-gold/10 blur-2xl" />
-            <div className="pointer-events-none absolute -bottom-20 -left-16 h-56 w-56 rounded-full bg-gold/5 blur-3xl" />
-
-            <span className="relative mb-5 inline-flex w-fit items-center rounded-full border border-gold/40 bg-gold/15 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.2em] text-gold">
-              {FEATURED_HALL.tag}
-            </span>
-            <h3 className="relative bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-500 bg-clip-text font-heading text-3xl font-bold text-transparent md:text-4xl">
-              {FEATURED_HALL.title}
-            </h3>
-
-            <div className="relative my-5 flex items-center gap-3" aria-hidden>
-              <span className="h-px w-10 bg-gold/50" />
-              <svg viewBox="0 0 80 16" className="h-3.5 w-8 text-gold/70" fill="none">
-                <path d="M8 8 Q20 0 40 8 Q60 16 72 8" stroke="currentColor" strokeWidth="1.5" />
-                <circle cx="40" cy="8" r="3" fill="currentColor" />
-              </svg>
-              <span className="h-px w-10 bg-gold/50" />
-            </div>
-
-            <p className="relative max-w-md text-sm leading-relaxed text-primary-foreground/85 md:text-base">
+          {/* Text panel */}
+          <div className="relative flex flex-col justify-center bg-gradient-to-br from-vk-900 via-vk-800 to-vk-700 p-6 text-white md:p-12">
+            <span className="vk-pill-light mb-4 w-fit">{FEATURED_HALL.tag}</span>
+            <h3 className="vk-h2 !text-white">{FEATURED_HALL.title}</h3>
+            <p className="mt-4 max-w-md text-[15px] leading-relaxed text-white/85 md:text-base">
               {FEATURED_HALL.desc}
             </p>
-            <p className="relative mt-5 max-w-md text-sm leading-relaxed text-primary-foreground/60 md:text-base">
+            <p className="mt-4 max-w-md text-[15px] leading-relaxed text-white/65 md:text-base">
               Every offering brings this sacred altar closer to life.
             </p>
           </div>
@@ -139,32 +109,26 @@ export default function TempleFeaturesSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
+          className="grid gap-4 sm:grid-cols-2 md:gap-5 lg:grid-cols-3"
         >
           {OTHER_HALLS.map((hall, i) => (
-            <div
-              key={hall.title}
-              className="group relative aspect-[4/3] overflow-hidden rounded-2xl border border-border shadow-sm transition-shadow duration-300 hover:shadow-[0_16px_40px_hsl(220,90%,20%,0.18)]"
-            >
+            <div key={hall.title} className="vk-tile group aspect-[4/3]">
               <Image
                 src={hall.image}
                 alt={hall.title}
                 fill
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                className="object-cover transition-transform duration-700 group-hover:scale-110"
+                className="object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
 
               {/* Editorial index number */}
-              <span className="absolute right-4 top-3 font-heading text-4xl font-bold text-white/25 transition-colors duration-300 group-hover:text-gold/60">
+              <span className="absolute right-4 top-3 z-[2] font-heading text-3xl font-extrabold text-white/30">
                 {String(i + 2).padStart(2, "0")}
               </span>
 
-              <div className="absolute inset-x-0 bottom-0 p-5">
-                <h3 className="bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-500 bg-clip-text font-heading text-lg font-bold text-transparent md:text-xl">
-                  {hall.title}
-                </h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-white/80">{hall.desc}</p>
+              <div className="vk-tile-caption">
+                <h3 className="font-heading text-lg font-bold text-white md:text-xl">{hall.title}</h3>
+                <p className="mt-1 text-sm leading-relaxed text-white/80">{hall.desc}</p>
               </div>
             </div>
           ))}
@@ -176,14 +140,15 @@ export default function TempleFeaturesSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="relative mx-auto mt-14 max-w-4xl"
+          className="relative mx-auto mt-12 max-w-4xl md:mt-14"
         >
-          <div className="mb-4 flex items-center justify-center gap-2 text-sm font-semibold text-primary">
-            <Play className="h-4 w-4 fill-current text-gold" />
-            A cinematic glimpse of the vision
+          <div className="mb-4 flex justify-center">
+            <span className="vk-pill-soft">
+              <Play className="h-3.5 w-3.5 fill-current" />
+              A cinematic glimpse of the vision
+            </span>
           </div>
-          <div className="absolute -inset-4 rounded-[32px] bg-primary/20 blur-3xl opacity-30" />
-          <div className="relative overflow-hidden rounded-2xl border border-border shadow-2xl ring-1 ring-white/10 sm:rounded-3xl">
+          <div className="relative overflow-hidden rounded-3xl bg-vk-900 shadow-[0_24px_60px_-28px_rgba(10,18,51,0.6)]">
             <div className="relative aspect-video w-full">
               <iframe
                 src={`https://www.youtube.com/embed/${INTRO_VIDEO_ID}?enablejsapi=1&mute=1&controls=0&modestbranding=1&showinfo=0&rel=0&iv_load_policy=3&playsinline=1&logo=0`}

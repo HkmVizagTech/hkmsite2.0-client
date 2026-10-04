@@ -78,7 +78,7 @@ export default function FounderPage() {
         />
 
         {/* ── BIOGRAPHY — feature split ─────────────────────────── */}
-        <section className="vk-section">
+        <section className="vk-section overflow-x-clip">
           <div className="vk-container grid items-start gap-10 md:grid-cols-5 lg:gap-14">
             <Reveal className="md:col-span-2 md:sticky md:top-[calc(var(--header-h)+1.5rem)]">
               <div className="relative mx-auto max-w-sm md:max-w-none">

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { CheckCircle2, Loader2, Mail, User, CreditCard } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import AddressForm, { PrasadamAddress } from "@/components/AddressForm";
 
 interface DonorProfile {
@@ -64,67 +63,70 @@ export default function DonorProfileSection({ profile, donorFetch, apiUrl, onSav
 
   return (
     <form onSubmit={save} className="space-y-6">
-      {error && <div className="rounded-lg bg-destructive/10 px-3 py-2 text-sm font-medium text-destructive">{error}</div>}
+      {error && <div role="alert" className="rounded-xl bg-red-50 px-3.5 py-2.5 text-[13px] font-medium text-red-700">{error}</div>}
 
-      <div className="grid grid-cols-1 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className="mb-1 block text-xs font-medium text-muted-foreground">Full Name</label>
-          <div className="relative flex items-center rounded-lg border border-border bg-background focus-within:border-gold">
-            <User className="pointer-events-none absolute left-3 h-4 w-4 text-muted-foreground" />
+          <label htmlFor="dp-name" className="mb-1.5 block text-[13px] font-semibold text-ink/80">Full Name</label>
+          <div className="relative">
+            <User className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-vk-400" />
             <input
               type="text"
+              id="dp-name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
-              className="h-10 w-full bg-transparent pl-9 pr-3 text-sm text-foreground outline-none"
+              className="vk-input pl-10"
             />
           </div>
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-muted-foreground">Mobile Number</label>
-          <div className="flex h-10 items-center rounded-lg border border-border bg-muted px-3 text-sm text-muted-foreground">
+          <p className="mb-1.5 block text-[13px] font-semibold text-ink/80">Mobile Number</p>
+          <div className="flex h-11 items-center rounded-xl border border-vk-100 bg-vk-50 px-3.5 text-[15px] text-ink/70">
             +91 {profile.mobile}
           </div>
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-muted-foreground">Email (optional)</label>
-          <div className="relative flex items-center rounded-lg border border-border bg-background focus-within:border-gold">
-            <Mail className="pointer-events-none absolute left-3 h-4 w-4 text-muted-foreground" />
+          <label htmlFor="dp-email" className="mb-1.5 block text-[13px] font-semibold text-ink/80">Email (optional)</label>
+          <div className="relative">
+            <Mail className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-vk-400" />
             <input
+              id="dp-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
-              className="h-10 w-full bg-transparent pl-9 pr-3 text-sm text-foreground outline-none"
+              className="vk-input pl-10"
             />
           </div>
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-muted-foreground">PAN (for 80G certificates)</label>
-          <div className="relative flex items-center rounded-lg border border-border bg-background focus-within:border-gold">
-            <CreditCard className="pointer-events-none absolute left-3 h-4 w-4 text-muted-foreground" />
+          <label htmlFor="dp-pan" className="mb-1.5 block text-[13px] font-semibold text-ink/80">PAN (for 80G certificates)</label>
+          <div className="relative">
+            <CreditCard className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-vk-400" />
             <input
               type="text"
               value={panNumber}
+              id="dp-pan"
               onChange={(e) => setPanNumber(e.target.value.toUpperCase().slice(0, 10))}
               placeholder="ABCDE1234F"
-              className="h-10 w-full bg-transparent pl-9 pr-3 text-sm uppercase text-foreground outline-none placeholder:normal-case"
+              className="vk-input pl-10 uppercase placeholder:normal-case"
             />
           </div>
         </div>
       </div>
 
-      <div className="ring-gold-dashed rounded-xl bg-background/60 p-4">
-        <p className="mb-3 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-foreground">
-          <span className="h-1.5 w-1.5 rounded-full bg-gold" /> Saved Prasadam Delivery Address
+      <div className="rounded-2xl border border-vk-100 bg-vk-50/60 p-4">
+        <p className="flex items-center gap-1.5 text-[13px] font-bold uppercase tracking-[0.08em] text-vk-700">
+          <span className="h-1.5 w-1.5 rounded-full bg-vk-500" /> Saved Prasadam Delivery Address
         </p>
         <AddressForm address={address} setAddress={setAddress} />
       </div>
 
       <div className="flex items-center gap-3">
-        <Button type="submit" disabled={saving} className="gap-2">
+        <button type="submit" disabled={saving} className="vk-btn-primary h-11 min-w-[140px] px-6">
           {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save Changes"}
-        </Button>
+        </button>
         {saved && (
           <span className="flex items-center gap-1.5 text-sm font-medium text-emerald-600">
             <CheckCircle2 className="h-4 w-4" /> Saved
