@@ -18,6 +18,10 @@ interface Program {
   images: { src: string; caption: string }[];
 }
 
+// Real photos of our own programmes from the site's media library (R2) —
+// keep this section free of AI-generated imagery.
+const MEDIA = "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library";
+
 const programs: Program[] = [
   {
     key: "food",
@@ -28,9 +32,9 @@ const programs: Program[] = [
     href: "/subhojanam",
     cta: "Support Subhojanam",
     images: [
-      { src: "/assets/subhojanam.jpg", caption: "Subhojanam" },
-      { src: "/assets/gallery-annadaan-1.jpg", caption: "Anna Daan" },
-      { src: "/assets/home-gallery-annadana.webp", caption: "Prasadam seva" },
+      { src: `${MEDIA}/1783677363792-1783677363601-462395264797134589073566144398536696847591n.jpg`, caption: "Subhojanam" },
+      { src: `${MEDIA}/1786100757954-1786100756855-annadan2.jpg`, caption: "Anna Daan" },
+      { src: `${MEDIA}/1786100757417-1786100756787-annadan4.jpg`, caption: "Prasadam distribution" },
     ],
   },
   {
@@ -43,7 +47,6 @@ const programs: Program[] = [
     cta: "Offer Gau Seva",
     images: [
       { src: "/assets/donations-gau-seva-real.jpeg", caption: "Temple cows" },
-      { src: "/assets/temple-seva.jpg", caption: "Daily care" },
     ],
   },
   {
@@ -55,8 +58,8 @@ const programs: Program[] = [
     href: "/gita-daan-seva",
     cta: "Sponsor Gita Daan",
     images: [
-      { src: "/assets/gallery-class.jpg", caption: "Gita class" },
-      { src: "/assets/tilak.jpg", caption: "Vaishnava culture" },
+      { src: `${MEDIA}/1789641526855-1789641525984-GlimpsesfromthemostexcitingVanabhojanameventconductedatourHareKrishnaVaikunthamte1.jpg`, caption: "Spiritual discourse" },
+      { src: `${MEDIA}/1789641526472-1789641525685-GlimpsesfromKrishnaPulseYouthFestivalKrishnaPulsebroughttogether1200studentsfor.jpg`, caption: "Krishna Pulse youth festival" },
     ],
   },
   {
@@ -70,7 +73,7 @@ const programs: Program[] = [
     images: [
       { src: "/assets/home-event-janmashtami.webp", caption: "Janmashtami" },
       { src: "/assets/home-event-radhashtami.webp", caption: "Radhashtami" },
-      { src: "/assets/gallery-festival-2.jpg", caption: "Kirtan" },
+      { src: `${MEDIA}/1788955236457-1788955235882-HighlightsoftheGrandAbhishekamatGadirajuPalacejanmashtamiSriKrishnaJanmashtamiLord.jpg`, caption: "Grand Abhishekam" },
     ],
   },
   {
@@ -82,8 +85,8 @@ const programs: Program[] = [
     href: "/volunteer",
     cta: "Become a volunteer",
     images: [
-      { src: "/assets/about-community.jpg", caption: "Devotee community" },
-      { src: "/assets/gallery-festival-1.jpg", caption: "Festival seva" },
+      { src: `${MEDIA}/1789641527236-1789641526047-GlimpsesfromthemostexcitingVanabhojanameventconductedatourHareKrishnaVaikunthamte.jpg`, caption: "Vanabhojanam" },
+      { src: `${MEDIA}/1786100757653-1786100756788-annadan3.jpg`, caption: "Seva volunteers" },
     ],
   },
   {

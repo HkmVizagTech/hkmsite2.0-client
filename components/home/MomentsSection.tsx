@@ -16,11 +16,11 @@ interface Moment {
 }
 
 const FALLBACK: Moment[] = [
-  { src: "/assets/gallery-festival-1.jpg", title: "Festival celebrations", category: "Festivals" },
-  { src: "/assets/gallery-darshan-1.jpg", title: "Darshan", category: "Deities" },
-  { src: "/assets/gallery-festival-2.jpg", title: "Kirtan & festivities", category: "Festivals" },
-  { src: "/assets/gallery-annadaan-1.jpg", title: "Anna Daan", category: "Seva" },
-  { src: "/assets/gallery-class.jpg", title: "Bhagavad-gita class", category: "Community" },
+  { src: "/assets/janmashtami-sk2.webp", title: "Janmashtami altar", category: "Festivals" },
+  { src: "/assets/home-event-janmashtami.webp", title: "Darshan", category: "Deities" },
+  { src: "/assets/janmashtami-sk6.webp", title: "Aarti", category: "Festivals" },
+  { src: "/assets/donations-annadana-real.jpg", title: "Anna Daan", category: "Seva" },
+  { src: "/assets/janmashtami-sk1.webp", title: "Prasadam seva", category: "Community" },
   { src: "/assets/vizag-temple-1.jpeg", title: "The temple", category: "Temple" },
 ];
 
@@ -41,7 +41,7 @@ const features = [
     title: "Programs & Events",
     text: "Bhagavad-gita classes, youth programs and kirtans that bring the community together.",
     href: "/events",
-    img: "/assets/gallery-class.jpg",
+    img: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1789641526472-1789641525685-GlimpsesfromKrishnaPulseYouthFestivalKrishnaPulsebroughttogether1200studentsfor.jpg",
   },
 ];
 

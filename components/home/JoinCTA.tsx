@@ -43,7 +43,7 @@ export default function JoinCTA() {
         <Reveal delay={0.08}>
           <div className="relative isolate h-full min-h-[320px] overflow-hidden rounded-3xl bg-vk-900">
             <Image
-              src="/assets/hero-temple.jpg"
+              src="https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1784644186447-1784644185742-WhatsAppImage2026-07-03at1.56.13PM1.jpeg"
               alt="Hare Krishna Vaikuntham Temple, Visakhapatnam"
               fill
               sizes="(min-width: 1024px) 720px, 100vw"
