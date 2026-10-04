@@ -129,28 +129,6 @@ const webSiteJsonLd = {
   },
 };
 
-const faqJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: [
-    {
-      "@type": "Question",
-      name: "Is this ISKCON Gambheeram Visakhapatnam?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Yes. This is ISKCON Gambheeram Visakhapatnam, also known as Hare Krishna Movement Vizag, located in Gambheeram, Visakhapatnam. We are a center of the International Society for Krishna Consciousness (ISKCON), serving the community since 2008.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Where is ISKCON Gambheeram Visakhapatnam located?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "ISKCON Gambheeram Visakhapatnam is located at Chaitanya Bhavan, Hare Krishna Vaikuntam Cultural Centre, IIM Road, opposite Akshaya Patra Foundation, Gambhiram, Visakhapatnam, Andhra Pradesh 531163.",
-      },
-    },
-  ],
-};
 
 export default function RootLayout({
   children,
@@ -183,10 +161,6 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteJsonLd) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
         />
         <ReduxProvider>
           <ThemeProvider>

@@ -455,6 +455,7 @@ export default function AlankaraVastraClient() {
           <div className="vk-container">
            <div className="mx-auto max-w-4xl">
             <SectionHeading
+              as="h1"
               eyebrow="Temple Service Campaign"
               title={config.formHeading}
               subtitle={config.formSubheading}

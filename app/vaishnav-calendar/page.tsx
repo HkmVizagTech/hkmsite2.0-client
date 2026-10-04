@@ -133,9 +133,12 @@ function useIsCompactView() {
   return isCompact;
 }
 
+// Current time, ticking. Starts as null so the server-rendered HTML and the
+// first client render match (the clock only starts in the browser).
 function useNow(intervalMs = 1000) {
-  const [now, setNow] = useState(Date.now());
+  const [now, setNow] = useState<number | null>(null);
   useEffect(() => {
+    setNow(Date.now());
     const id = setInterval(() => setNow(Date.now()), intervalMs);
     return () => clearInterval(id);
   }, [intervalMs]);
@@ -145,14 +148,15 @@ function useNow(intervalMs = 1000) {
 function Countdown({ targetDate }: { targetDate: string }) {
   const now = useNow(1000);
   const target = new Date(`${targetDate}T00:00:00`).getTime();
-  const diff = Math.max(0, target - now);
+  const diff = now === null ? null : Math.max(0, target - now);
 
-  const days = Math.floor(diff / 86400000);
-  const hours = Math.floor((diff % 86400000) / 3600000);
-  const mins = Math.floor((diff % 3600000) / 60000);
-  const secs = Math.floor((diff % 60000) / 1000);
+  const part = (fn: (d: number) => number) => (diff === null ? null : fn(diff));
+  const days = part((d) => Math.floor(d / 86400000));
+  const hours = part((d) => Math.floor((d % 86400000) / 3600000));
+  const mins = part((d) => Math.floor((d % 3600000) / 60000));
+  const secs = part((d) => Math.floor((d % 60000) / 1000));
 
-  const units: { value: number; label: string }[] = [
+  const units: { value: number | null; label: string }[] = [
     { value: days, label: "Days" },
     { value: hours, label: "Hours" },
     { value: mins, label: "Mins" },
@@ -165,7 +169,7 @@ function Countdown({ targetDate }: { targetDate: string }) {
         <div key={u.label} className="flex items-center gap-2">
           <div className="flex flex-col items-center rounded-xl bg-white/10 px-2.5 py-1.5 backdrop-blur-sm ring-1 ring-white/15">
             <span className="font-heading text-lg font-bold leading-none text-white tabular-nums md:text-2xl">
-              {String(u.value).padStart(2, "0")}
+              {u.value === null ? "--" : String(u.value).padStart(2, "0")}
             </span>
             <span className="mt-0.5 text-[8px] font-semibold uppercase tracking-widest text-white/60 md:text-[9px]">
               {u.label}

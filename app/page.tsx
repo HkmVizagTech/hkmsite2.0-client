@@ -13,6 +13,8 @@ import HomeFAQ from "@/components/home/HomeFAQ";
 import JoinCTA from "@/components/home/JoinCTA";
 import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
 import Footer from "@/components/Footer";
+import JsonLd from "@/components/seo/JsonLd";
+import { homeFaq } from "@/lib/faq";
 import type { Metadata } from "next";
 
 // Homepage's own canonical — previously this was inherited from a
@@ -23,12 +25,25 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
+// FAQ rich results belong on the page that shows the FAQ (the HomeFAQ
+// section), not on every page of the site.
+const homeFaqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: homeFaq.map((f) => ({
+    "@type": "Question",
+    name: f.q,
+    acceptedAnswer: { "@type": "Answer", text: f.a },
+  })),
+};
+
 // Section order follows guptvrindavandham.org: hero → live darshan /
 // countdown → welcome → explore bento → mandir nirman → moments → seva
 // tiles → founder → programs → blogs → FAQ → volunteer/donate CTAs.
 export default function Home() {
   return (
     <div className="min-h-screen bg-white pt-[var(--header-h)]">
+      <JsonLd data={homeFaqJsonLd} />
       <Navbar />
       <WhatsAppFloatButton />
       <main>

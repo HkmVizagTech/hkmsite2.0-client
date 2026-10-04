@@ -1,25 +1,18 @@
 import { Suspense } from "react";
+import { donationMetadata, donationJsonLd } from "@/lib/donationSeo";
+import JsonLd from "@/components/seo/JsonLd";
+import DonationSeoFallback from "@/components/seo/DonationSeoFallback";
 import PitruPakshaClient from "@/components/pitru-paksha/PitruPakshaClient";
 
-export const metadata = {
-  title: "Pitru Paksha Sevas | Hare Krishna Movement Vizag",
-  description:
-    "Honour your ancestors this Pitru Paksha — offer Annadana, Sadhu Bhojan, Gau Seva and other sacred sevas online at Hare Krishna Vaikuntham Temple, Visakhapatnam.",
-  alternates: { canonical: "/pitru-paksha" },
-  openGraph: {
-    title: "Pitru Paksha Sevas — Hare Krishna Movement Vizag",
-    description:
-      "Pay homage to your forefathers this Pitru Paksha. Offer Annadana, Sadhu Bhojan, Gau Seva and more with devotion at HKM Vizag.",
-    images: [
-      "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1790235076658-1790235074922-pitru-paksha-desk.webp",
-    ],
-  },
-};
+export const metadata = donationMetadata("pitru-paksha");
 
 export default function PitruPakshaPage() {
   return (
-    <Suspense fallback={null}>
-      <PitruPakshaClient />
-    </Suspense>
+    <>
+      <JsonLd data={donationJsonLd("pitru-paksha")} />
+      <Suspense fallback={<DonationSeoFallback page="pitru-paksha" />}>
+        <PitruPakshaClient />
+      </Suspense>
+    </>
   );
 }

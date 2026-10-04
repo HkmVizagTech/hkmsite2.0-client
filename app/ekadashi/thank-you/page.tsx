@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import ThankYouClient from "@/components/ekadashi-campaign/ThankYouClient";
 
 export const metadata: Metadata = {
@@ -14,5 +15,10 @@ export const metadata: Metadata = {
 };
 
 export default function ThankYouPage() {
-  return <ThankYouClient />;
+  // ThankYouClient reads the seva/amount from the URL (useSearchParams).
+  return (
+    <Suspense fallback={null}>
+      <ThankYouClient />
+    </Suspense>
+  );
 }

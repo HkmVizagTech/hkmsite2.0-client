@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { usePathname } from "next/navigation";
 import { authFetch, setToken, clearToken } from "@/lib/authClient";
 
 interface AuthContextType {
@@ -16,6 +17,12 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<{ email: string; name: string; role: string; mustChangePassword?: boolean; allowedModules?: string[] } | null>(null);
   const [loading, setLoading] = useState(true);
+  const pathname = usePathname() || "";
+  // Only admin screens wait for the login check (they redirect to /admin/login
+  // on mount when not authenticated). Public pages render immediately so their
+  // content is in the server-rendered HTML that search engines index, instead
+  // of an empty body until /users/profile answers.
+  const needsAuthGate = pathname.startsWith("/admin") || pathname.startsWith("/donations/admin");
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -66,7 +73,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AuthContext.Provider value={{ isAuthenticated: !!user, user, login, logout }}>
-      {!loading && children}
+      {(!loading || !needsAuthGate) && children}
     </AuthContext.Provider>
   );
 };
