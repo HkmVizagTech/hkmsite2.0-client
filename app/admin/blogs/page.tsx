@@ -6,6 +6,7 @@
 export const dynamic = "force-dynamic";
 
 import { authFetch } from "@/lib/authClient";
+import BlogBulkImport from "@/components/admin/BlogBulkImport";
 import { useAuth } from "@/contexts/AuthContext";
 
 import { useState, useEffect, useRef } from "react";
@@ -77,6 +78,7 @@ const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "
 export default function AdminBlogs() {
   const { user } = useAuth();
   const isBlogsAdmin = user?.role === "blogs_admin";
+  const [showImport, setShowImport] = useState(false);
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -314,9 +316,21 @@ export default function AdminBlogs() {
             Write and publish blog articles. Uses a rich-text editor with image upload.
           </p>
         </div>
-        <Button onClick={openCreate} className="rounded-md">
-          <Plus className="w-4 h-4 mr-2" /> New Post
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" onClick={() => setShowImport(true)} className="rounded-md">
+            <Upload className="w-4 h-4 mr-2" /> Bulk import
+          </Button>
+          <Button onClick={openCreate} className="rounded-md">
+            <Plus className="w-4 h-4 mr-2" /> New Post
+          </Button>
+        </div>
+        <BlogBulkImport
+          open={showImport}
+          onOpenChange={setShowImport}
+          apiUrl={API_URL}
+          validCategories={CATEGORIES}
+          onImported={fetchBlogs}
+        />
       </div>
 
       <Card className="mb-5">
