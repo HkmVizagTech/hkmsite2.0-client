@@ -1,7 +1,6 @@
 ﻿"use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { Loader2 } from "lucide-react";
 import { getDonorToken, donorFetch } from "@/lib/donorAuthClient";
 import type { PrasadamAddress } from "@/components/AddressForm";
 
@@ -14,8 +13,8 @@ export interface DonorPrefillProfile {
   email: string;
   panNumber: string;
   savedAddress?: PrasadamAddress | null;
-  /** "login" = logged-in donor's own profile; "lookup" = phone lookup. */
-  source: "login" | "lookup";
+  /** Always "login": the logged-in donor's own profile. */
+  source: "login";
 }
 
 // Full donor profile for a logged-in donor (donor token present). Returns
@@ -42,34 +41,10 @@ export async function fetchLoggedInDonorProfile(): Promise<DonorPrefillProfile |
   }
 }
 
-// Public phone lookup for a donor who donated before but isn't logged in.
-// If the number has a Donor record, returns their saved identity details so
-// the form can fill name/email (and lazily the PAN/address when 80G/prasadam
-// are selected). Returns null for unknown numbers or lookup failures.
-export async function lookupDonorByMobile(mobile: string): Promise<DonorPrefillProfile | null> {
-  const clean = String(mobile || "").replace(/\D/g, "").slice(-10);
-  if (clean.length !== 10) return null;
-  try {
-    const res = await fetch(`${apiBase()}/donor-auth/lookup`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ mobile: clean }),
-    });
-    const data = await res.json();
-    if (!res.ok || !data.success || !data.donor) return null;
-    const d = data.donor;
-    return {
-      name: d.name || "",
-      mobile: d.mobile || "",
-      email: d.email || "",
-      panNumber: d.panNumber || "",
-      savedAddress: d.savedAddress || null,
-      source: "lookup",
-    };
-  } catch {
-    return null;
-  }
-}
+// Note: there is intentionally NO lookup by mobile number. A public
+// "find donor by phone" call exposed saved names, emails, PAN and addresses
+// to anyone who typed a number, so it was removed (Oct 2026). Details are
+// pre-filled only for a donor who has logged in with OTP.
 
 // Minimal shape every donation form's donor details share — enough for the
 // prefill logic to work regardless of the form's extra fields (address,
@@ -102,9 +77,6 @@ interface UseDonorPrefillOptions<TForm extends object> {
       the form's address fields are still blank — lets each form map the
       shared saved-address shape onto its own address inputs. */
   onMahaPrasadamSelect?: (address: PrasadamAddress) => void;
-  /** When true, the phone-lookup helper strip is suppressed (e.g. forms with
-      no standalone mobile field). Defaults to false. */
-  disablePhoneLookup?: boolean;
 }
 
 const PRASADAM_BLANK_KEYS: (keyof PrasadamAddress)[] = ["street", "city", "state", "pincode"];
@@ -128,15 +100,9 @@ export function useDonorPrefill<TForm extends object>({
   setForm,
   fieldMap,
   onMahaPrasadamSelect,
-  disablePhoneLookup = false,
 }: UseDonorPrefillOptions<TForm>) {
   const [prefill, setPrefill] = useState<DonorPrefillProfile | null>(null);
   const [loggedIn, setLoggedIn] = useState(false);
-  const [lookupState, setLookupState] = useState<"idle" | "loading" | "found" | "notfound">("idle");
-  const [lookupMobile, setLookupMobile] = useState("");
-  // Guards against a phone lookup querying a mobile we already know from a
-  // more authoritative source (the logged-in donor's own profile).
-  const appliedLoginRef = useRef(false);
   // Keep the latest setForm without making it an effect dependency (the
   // useState setter is stable in practice, but this stays correct even for
   // wrapped setters).
@@ -154,7 +120,6 @@ export function useDonorPrefill<TForm extends object>({
     let cancelled = false;
     fetchLoggedInDonorProfile().then((profile) => {
       if (cancelled || !profile) return;
-      appliedLoginRef.current = true;
       setLoggedIn(true);
       setPrefill(profile);
       setFormRef.current?.(f => ({
@@ -171,40 +136,6 @@ export function useDonorPrefill<TForm extends object>({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const mobileValue = readField(form, key.mobile)?.trim() ?? "";
-
-  useEffect(() => {
-    if (disablePhoneLookup) return;
-    const mobile = mobileValue;
-    if (!/^[6-9]\d{9}$/.test(mobile)) {
-      setLookupState("idle");
-      setLookupMobile("");
-      return;
-    }
-    if (appliedLoginRef.current) return; // already filled from the donor's own login
-    if (lookupMobile === mobile) return; // already asked about this number
-    setLookupMobile(mobile);
-    setLookupState("loading");
-    const timer = setTimeout(async () => {
-      const profile = await lookupDonorByMobile(mobile);
-      if (!profile) {
-        setLookupState("notfound");
-        return;
-      }
-      setLookupState("found");
-      // Fill in blanks only — never overwrite something the donor typed.
-      setPrefill((prev) => (prev && prev.source === "login" ? prev : profile));
-      setFormRef.current?.(f => ({
-        ...f,
-        [key.name]: readField(f, key.name) || profile.name,
-        [key.email]: readField(f, key.email) || profile.email,
-        [key.mobile]: readField(f, key.mobile) || profile.mobile,
-      } as TForm));
-    }, 600);
-    return () => clearTimeout(timer);
-  // Key names never change for a given form instance.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mobileValue, lookupMobile, disablePhoneLookup]);
 
   // PAN is filled only AFTER the donor opts into an 80G receipt.
   const handle80GToggle = (checked: boolean) => {
@@ -222,8 +153,7 @@ export function useDonorPrefill<TForm extends object>({
     }
   };
 
-  // Compact helper strip shown while/after a phone lookup — lets a returning
-  // donor know their details were auto-filled (or that none were found).
+  // Helper strip for a donor who is logged in — their details are pre-filled.
   let hint: ReactNode | null = null;
   if (loggedIn && prefill) {
     hint = (
@@ -231,26 +161,6 @@ export function useDonorPrefill<TForm extends object>({
         ✓ Donating as <span className="font-semibold">{prefill.name}</span> — your details are pre-filled.
       </p>
     );
-  } else if (!disablePhoneLookup && lookupState !== "idle") {
-    if (lookupState === "loading") {
-      hint = (
-        <p className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-          <Loader2 className="h-3 w-3 animate-spin" /> Finding your details…
-        </p>
-      );
-    } else if (lookupState === "found" && prefill) {
-      hint = (
-        <p className="rounded-lg bg-emerald-50 px-3 py-2 text-[11px] font-medium text-emerald-700">
-          ✓ Welcome back! We&apos;ve filled your details from your previous donation.
-        </p>
-      );
-    } else if (lookupState === "notfound") {
-      hint = (
-        <p className="text-[11px] text-muted-foreground">
-          No donation found on this number — you can still donate, just fill in your details below.
-        </p>
-      );
-    }
   }
 
   return {
