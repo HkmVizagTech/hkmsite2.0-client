@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import JanmashtamiClient from "./JanmashtamiClient";
 import { pageSeo } from "@/lib/seo";
 
@@ -11,8 +10,6 @@ export const metadata = pageSeo({
 
 export default function JanmashtamiPage() {
   return (
-    <Suspense fallback={null}>
-      <JanmashtamiClient />
-    </Suspense>
+    <JanmashtamiClient />
   );
 }

@@ -4,7 +4,7 @@ import Image from "next/image";
 import PageLayout from "@/components/PageLayout";
 import SectionHeading from "@/components/site/SectionHeading";
 import { Calendar, Clock, ArrowRight, Tag, ChevronRight, Home } from "lucide-react";
-import { stripBrand, clampDescription, withBrand, absUrl, BRAND, DEFAULT_OG_IMAGE, SITE_URL, breadcrumbJsonLd } from "@/lib/seo";
+import { stripBrand, clampDescription, htmlToText, withBrand, absUrl, BRAND, DEFAULT_OG_IMAGE, SITE_URL, breadcrumbJsonLd } from "@/lib/seo";
 import JsonLd from "@/components/seo/JsonLd";
 
 interface Blog {
@@ -72,6 +72,10 @@ const catSlug = (name: string) =>
     .replace(/-+/g, "-")
     .replace(/^-+|-+$/g, "");
 
+// The post title is the page's only <h1>; headings typed as H1 inside the
+// article body are shown as <h2> (same look via .blog-content h2).
+const demoteH1 = (html: string) => (html || "").replace(/<(\/?)h1(\b[^>]*)>/gi, "<$1h2$2>");
+
 const fmtDate = (s?: string) => {
   if (!s) return "";
   return new Date(s).toLocaleDateString("en-IN", { month: "long", day: "numeric", year: "numeric" });
@@ -82,7 +86,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const blog = await getBlog(slug);
   if (!blog) return { title: "Blog", robots: { index: false, follow: true } };
   const title = stripBrand(blog.metaTitle || blog.title);
-  const description = clampDescription(blog.metaDescription || blog.excerpt);
+  // Older posts have no excerpt or meta description; fall back to the opening
+  // of the article so every post still has a real snippet.
+  const description = clampDescription(blog.metaDescription || blog.excerpt || htmlToText(blog.content));
   const image = blog.coverImage || absUrl(DEFAULT_OG_IMAGE);
   return {
     title,
@@ -116,7 +122,7 @@ export default async function BlogPostPage({
   const populatedCats = categories.filter((c) => c.count > 0).slice(0, 6);
 
   // Build share URLs
-  const fullUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/blogs/${blog.slug}`;
+  const fullUrl = `${SITE_URL}/blogs/${blog.slug}`;
   const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(
     `Click here & start reading now! ${fullUrl}`
   )}`;
@@ -129,7 +135,7 @@ export default async function BlogPostPage({
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     headline: blog.title,
-    description: blog.excerpt,
+    description: clampDescription(blog.metaDescription || blog.excerpt || htmlToText(blog.content)),
     image: blog.coverImage ? [blog.coverImage] : undefined,
     datePublished: blog.publishedAt,
     dateModified: blog.updatedAt || blog.publishedAt,
@@ -252,7 +258,7 @@ export default async function BlogPostPage({
             {/* HTML content from CKEditor */}
             <div
               className="blog-content vk-prose"
-              dangerouslySetInnerHTML={{ __html: blog.content }}
+              dangerouslySetInnerHTML={{ __html: demoteH1(blog.content) }}
             />
 
             {/* Share */}

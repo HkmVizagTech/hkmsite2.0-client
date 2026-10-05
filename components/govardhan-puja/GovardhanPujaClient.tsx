@@ -18,7 +18,7 @@ import FaqSection from "@/components/sqft-campaign/FaqSection";
 import PageLayout from "@/components/PageLayout";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
 import { useAttribution } from "@/lib/useAttribution";
-import { useSearchParams } from "next/navigation";
+import SearchParamsWatcher from "@/components/SearchParamsWatcher";
 import { usePaymentStatusPoller } from "@/lib/usePaymentStatusPoller";
 import { useScrollToDonate } from "@/lib/useScrollToDonate";
 import {
@@ -272,7 +272,7 @@ export default function GovardhanPujaClient() {
   const reduce = useReducedMotion();
   const attribution = useAttribution("govardhan-puja");
   const razorpayReady = useRazorpayPreload();
-  const searchParams = useSearchParams();
+  const [searchParams, setSearchParams] = useState<URLSearchParams>(() => new URLSearchParams());
   const { startPolling, stopPolling } = usePaymentStatusPoller({
     onCompleted: (result) => {
       window.location.assign(
@@ -518,6 +518,7 @@ export default function GovardhanPujaClient() {
 
   return (
     <PageLayout>
+      <SearchParamsWatcher onChange={setSearchParams} />
       <main className="min-h-screen bg-white pt-[var(--header-h)] text-ink">
         <WhatsAppFloatButton />
 

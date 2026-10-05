@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
 import JanmashtamiClient, { type JanmashtamiCampaigner } from "../../JanmashtamiClient";
 
 export const dynamic = "force-dynamic";
@@ -42,8 +41,6 @@ export default async function JanmashtamiCampaignerPage({ params }: { params: Pr
   const campaigner = await fetchCampaigner(slug);
   if (!campaigner) notFound();
   return (
-    <Suspense fallback={null}>
-      <JanmashtamiClient campaigner={campaigner} />
-    </Suspense>
+    <JanmashtamiClient campaigner={campaigner} />
   );
 }

@@ -15,7 +15,7 @@ import Reveal from "@/components/site/Reveal";
 import JanmashtamiImportanceSection from "@/components/janmashtami/JanmashtamiImportanceSection";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
 import { useAttribution } from "@/lib/useAttribution";
-import { useSearchParams } from "next/navigation";
+import SearchParamsWatcher from "@/components/SearchParamsWatcher";
 import { newEventId, getMetaBrowserData, trackInitiateCheckout, trackPurchase } from "@/lib/metaPixel";
 import { usePaymentStatusPoller } from "@/lib/usePaymentStatusPoller";
 import { useScrollToDonate } from "@/lib/useScrollToDonate";
@@ -316,7 +316,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
   const reduce = useReducedMotion();
   const attribution = useAttribution(campaigner ? `/janmashtami/c/${campaigner.slug}` : "janmashtami");
   const razorpayReady = useRazorpayPreload();
-  const searchParams = useSearchParams();
+  const [searchParams, setSearchParams] = useState<URLSearchParams>(() => new URLSearchParams());
   const { startPolling, stopPolling } = usePaymentStatusPoller({
     onCompleted: (result) => {
       window.location.assign(`/payment/thank-you?type=seva&seva=${encodeURIComponent(result.sevaName || "Janmashtami Seva")}&amount=${result.amount}&source=${encodeURIComponent("the Janmashtami seva programme")}`);
@@ -563,6 +563,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
 
   return (
     <main className="min-h-screen bg-white text-ink">
+      <SearchParamsWatcher onChange={setSearchParams} />
       <WhatsAppFloatButton />
       {campaigner && (
         <div className="bg-gradient-to-r from-vk-800 via-vk-700 to-vk-600 px-4 py-3 text-center text-white">

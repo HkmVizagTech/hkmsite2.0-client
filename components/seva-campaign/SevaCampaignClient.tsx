@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useAttribution } from "@/lib/useAttribution";
-import { useSearchParams } from "next/navigation";
+import SearchParamsWatcher from "@/components/SearchParamsWatcher";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import {
@@ -70,7 +70,7 @@ function unitImpact(amount: number, config: SevaCampaignConfig): string | null {
 
 export default function SevaCampaignClient({ slug }: { slug: string }) {
   const config: SevaCampaignConfig = getSevaCampaignConfig(slug) ?? GAU_CAMPAIGN;
-  const searchParams = useSearchParams();
+  const [searchParams, setSearchParams] = useState<URLSearchParams>(() => new URLSearchParams());
   const attribution = useAttribution(config.path);
   const razorpayReady = useRazorpayPreload();
   useScrollToDonate();
@@ -321,6 +321,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
 
   return (
     <PageLayout>
+      <SearchParamsWatcher onChange={setSearchParams} />
       <WhatsAppFloatButton />
       <main className="bg-white pt-[var(--header-h)] dark:bg-background">
         {/* ── Hero Banner (plain banner image — no content overlay) ── */}

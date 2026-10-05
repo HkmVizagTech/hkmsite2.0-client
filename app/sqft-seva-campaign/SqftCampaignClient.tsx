@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useAttribution } from "@/lib/useAttribution";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+import SearchParamsWatcher from "@/components/SearchParamsWatcher";
 import PageLayout from "@/components/PageLayout";
 import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
@@ -97,7 +98,7 @@ export default function SqftCampaignClient({
 }) {
   const config = getCampaignConfig(campaignType);
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const [searchParams, setSearchParams] = useState<URLSearchParams>(() => new URLSearchParams());
   const attribution = useAttribution(
     campaigner
       ? `/sqft-seva-campaign/c/${campaigner.slug}`
@@ -434,6 +435,7 @@ export default function SqftCampaignClient({
 
   return (
     <PageLayout>
+      <SearchParamsWatcher onChange={setSearchParams} />
       <WhatsAppFloatButton />
       <main className="bg-white pt-[var(--header-h)]">
         {/* Hero section — full‑width banner */}

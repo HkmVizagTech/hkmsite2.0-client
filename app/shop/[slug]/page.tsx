@@ -42,8 +42,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!product) {
     return { title: `Product — ${SHOP_NAME}`, robots: { index: false, follow: true } };
   }
-  const description = clampDescription(product.shortDescription || product.description) ||
-    `${product.name} from ${SHOP_NAME}, the store of ${ORG_NAME}.`;
+  // Language editions of one book share the same blurb, so lead with the
+  // product name when the blurb doesn't already mention it.
+  const blurb = product.shortDescription || product.description || "";
+  const description = blurb
+    ? clampDescription(blurb.toLowerCase().includes(product.name.toLowerCase()) ? blurb : `${product.name}: ${blurb}`)
+    : `${product.name} from ${SHOP_NAME}, the store of ${ORG_NAME}.`;
   return {
     ...pageSeo({
       title: product.name,

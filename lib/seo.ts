@@ -159,3 +159,20 @@ export function clampDescription(text: string | undefined | null, max = 160): st
   const cut = t.slice(0, max - 1);
   return `${cut.slice(0, cut.lastIndexOf(" ") > 80 ? cut.lastIndexOf(" ") : cut.length).replace(/[,;:.\s]+$/, "")}…`;
 }
+
+/** Plain text from rich-text HTML (CKEditor content), for meta descriptions. */
+export function htmlToText(html: string | undefined | null): string {
+  return (html || "")
+    .replace(/<(script|style)[\s\S]*?<\/\1>/gi, " ")
+    // End of a heading/paragraph becomes a sentence break, so a heading
+    // doesn't run straight into the paragraph after it.
+    .replace(/<\/(p|h[1-6]|li|div|blockquote)>/gi, ". ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;|&rsquo;/g, "’")
+    .replace(/&[a-z]+;/gi, " ")
+    .replace(/([.!?:])\s*\.(\s*\.)*/g, "$1")
+    .replace(/\s+\./g, ".")
+    .replace(/\s+/g, " ")
+    .replace(/^[\s.]+/, "")
+    .trim();
+}

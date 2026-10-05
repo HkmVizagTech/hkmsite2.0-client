@@ -26,7 +26,13 @@ export async function generateMetadata({
   if (!f) return { title: "Festival not found", robots: { index: false, follow: true } };
   return pageSeo({
     title: stripBrand(f.title),
-    description: clampDescription(f.subtitle || f.description) || `${f.title} at ISKCON Gambheeram Visakhapatnam.`,
+    // Some showcases only have a one-line subtitle; pad short ones so the
+    // search snippet still says where and what the festival is.
+    description: clampDescription(
+      [f.subtitle || f.description, (f.subtitle || f.description || "").length < 90 ? `Celebrate ${f.title} at ISKCON Gambheeram Visakhapatnam with darshan, kirtan, abhishekam and prasadam.` : ""]
+        .filter(Boolean)
+        .join(" ")
+    ),
     path: `/festivals/${slug}`,
     image: f.heroImage || undefined,
   });
