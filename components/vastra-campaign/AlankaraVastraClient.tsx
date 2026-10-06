@@ -24,6 +24,7 @@ import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
 import { useScrollToDonate } from "@/lib/useScrollToDonate";
 import { newEventId, getMetaBrowserData, trackPurchase } from "@/lib/metaPixel";
 import { type CampaignConfig } from "@/lib/campaignConfig";
+import { useUpiFallback } from "@/components/UpiFallbackDialog";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 
@@ -149,6 +150,7 @@ const checkboxClass = "mt-0.5 h-4 w-4 shrink-0 accent-vk-700";
 export default function AlankaraVastraClient() {
   const attribution = useAttribution("/alankara-vastra-seva");
   const razorpayReady = useRazorpayPreload();
+  const { offerUpi, upiFallbackDialog } = useUpiFallback();
   useScrollToDonate();
   const [tierIndex, setTierIndex] = useState(0);
   const [customAmount, setCustomAmount] = useState("");
@@ -314,7 +316,10 @@ export default function AlankaraVastraClient() {
 
       await razorpayReady();
       const win = window as unknown as { Razorpay?: RazorpayConstructor };
-      if (!win.Razorpay) throw new Error("Razorpay checkout is unavailable.");
+      if (!win.Razorpay) {
+        offerUpi({ donationId: created.donationId, orderId: created.orderId, amount: monthly ? 0 : finalAmount, campaign: config.pageTitle, donorName: form.name });
+        return;
+      }
 
       const checkoutOptions: Record<string, unknown> = {
         key: created.key,
@@ -347,7 +352,12 @@ export default function AlankaraVastraClient() {
             setSubmitting(false);
           }
         },
-        modal: { ondismiss: () => setSubmitting(false) },
+        modal: {
+          ondismiss: () => {
+            setSubmitting(false);
+            offerUpi({ donationId: created.donationId, orderId: created.orderId, amount: monthly ? 0 : finalAmount, campaign: config.pageTitle, donorName: form.name });
+          },
+        },
         theme: { color: "#D69E2E" },
       };
       // Subscriptions authorise via subscription_id (no amount/order_id);
@@ -369,6 +379,7 @@ export default function AlankaraVastraClient() {
 
   return (
     <PageLayout>
+      {upiFallbackDialog}
       <WhatsAppFloatButton />
       <main className="bg-white dark:bg-background">
         {/* ── Hero Banner ── */}

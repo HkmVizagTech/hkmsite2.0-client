@@ -26,6 +26,7 @@ import FaqSection from "@/components/sqft-campaign/FaqSection";
 import FounderSection from "@/components/sqft-campaign/FounderSection";
 import { unitImpact } from "@/lib/sevaConfig";
 import type { EkadashiCampaign, EkadashiSeva } from "@/lib/ekadashiCampaign";
+import { useUpiFallback } from "@/components/UpiFallbackDialog";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 
@@ -67,6 +68,7 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
   const router = useRouter();
   const attribution = useAttribution(SOURCE_PAGE);
   const razorpayReady = useRazorpayPreload();
+  const { offerUpi, upiFallbackDialog } = useUpiFallback();
   useScrollToDonate();
 
   // This is the permanent, festival-agnostic Ekadashi page. It always
@@ -229,7 +231,10 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
 
       await razorpayReady();
       const win = window as unknown as { Razorpay?: RazorpayConstructor };
-      if (!win.Razorpay) throw new Error("Razorpay checkout is unavailable.");
+      if (!win.Razorpay) {
+        offerUpi({ donationId: order.donationId, orderId: order.orderId, amount: finalAmount, campaign: `Ekadashi — ${selectedSeva.sevaName}`, donorName: form.name });
+        return;
+      }
 
       new win.Razorpay({
         key: order.key,
@@ -264,7 +269,12 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
             setSubmitting(false);
           }
         },
-        modal: { ondismiss: () => setSubmitting(false) },
+        modal: {
+          ondismiss: () => {
+            setSubmitting(false);
+            offerUpi({ donationId: order.donationId, orderId: order.orderId, amount: finalAmount, campaign: `Ekadashi — ${selectedSeva.sevaName}`, donorName: form.name });
+          },
+        },
         theme: { color: "#D69E2E" },
       }).open();
     } catch (err) {
@@ -282,6 +292,7 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
 
   return (
     <PageLayout>
+      {upiFallbackDialog}
       <WhatsAppFloatButton />
       <main className="bg-white pt-[var(--header-h)] dark:bg-background">
         {/* ── Hero Banner ── */}

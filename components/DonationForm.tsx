@@ -12,6 +12,7 @@ import AddressForm from "@/components/AddressForm";
 import type { PrasadamAddress } from "@/components/AddressForm";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
 import { useDonorPrefill } from "@/lib/donorPrefill";
+import { useUpiFallback } from "@/components/UpiFallbackDialog";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 
@@ -82,6 +83,7 @@ export default function DonationForm({
   const router = useRouter();
   const attribution = useAttribution(sourcePage);
   const razorpayReady = useRazorpayPreload();
+  const { offerUpi, upiFallbackDialog } = useUpiFallback();
   const { startPolling, stopPolling } = usePaymentStatusPoller({
     onCompleted: (result) => {
       router.push(`/payment/thank-you?type=${thankYouType}&seva=${encodeURIComponent(result.sevaName || seva.title)}&amount=${result.amount}&source=${encodeURIComponent(thankYouSource)}`);
@@ -225,7 +227,10 @@ export default function DonationForm({
 
       await razorpayReady();
       const win = window as unknown as { Razorpay?: RazorpayConstructor };
-      if (!win.Razorpay) throw new Error("Razorpay checkout is unavailable.");
+      if (!win.Razorpay) {
+        offerUpi({ donationId: created.donationId, orderId: created.orderId, amount: monthly ? 0 : finalAmount, campaign: seva.title, donorName: form.name });
+        return;
+      }
 
       const checkoutOptions: Record<string, unknown> = {
         key: created.key,
@@ -264,6 +269,7 @@ export default function DonationForm({
         },
         modal: {
           ondismiss: () => {
+            offerUpi({ donationId: created.donationId, orderId: created.orderId, amount: monthly ? 0 : finalAmount, campaign: seva.title, donorName: form.name });
             // Keep submitting=true while the poller is active so Donate button
             // stays disabled — the donor may have paid in their UPI app.
             // Clearing status shows a gentle message instead of a spinner.
@@ -545,6 +551,7 @@ export default function DonationForm({
 
   return (
     <div id="donate" className="vk-card scroll-mt-28 overflow-hidden !rounded-3xl">
+      {upiFallbackDialog}
       {status?.type === "success" ? (
         <div className="flex flex-col items-center px-6 py-10 text-center">
           <CheckCircle2 className="mb-3 h-12 w-12 text-green-500" />

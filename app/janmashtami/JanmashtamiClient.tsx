@@ -19,6 +19,7 @@ import { newEventId, getMetaBrowserData, trackInitiateCheckout, trackPurchase } 
 import { usePaymentStatusPoller } from "@/lib/usePaymentStatusPoller";
 import { useScrollToDonate } from "@/lib/useScrollToDonate";
 import PhonePeUpiCard from "@/components/PhonePeUpiCard";
+import { useUpiFallback } from "@/components/UpiFallbackDialog";
 
 type SevaOption = {
   legacySevaId: number;
@@ -316,6 +317,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
   const reduce = useReducedMotion();
   const attribution = useAttribution(campaigner ? `/janmashtami/c/${campaigner.slug}` : "janmashtami");
   const razorpayReady = useRazorpayPreload();
+  const { offerUpi, upiFallbackDialog } = useUpiFallback();
   const [searchParams, setSearchParams] = useState<URLSearchParams>(() => new URLSearchParams());
   const { startPolling, stopPolling } = usePaymentStatusPoller({
     onCompleted: (result) => {
@@ -490,7 +492,10 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
       await razorpayReady();
 
       const win = window as unknown as { Razorpay?: RazorpayConstructor };
-      if (!win.Razorpay) throw new Error("Razorpay checkout is unavailable.");
+      if (!win.Razorpay) {
+        offerUpi({ donationId: order.donationId, orderId: order.orderId, amount: finalAmount, campaign: `Janmashtami — ${selectedSummary}`, donorName: form.donorName });
+        return;
+      }
 
       new win.Razorpay({
         key: order.key,
@@ -540,6 +545,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
         },
         modal: {
           ondismiss: () => {
+            offerUpi({ donationId: order.donationId, orderId: order.orderId, amount: finalAmount, campaign: `Janmashtami — ${selectedSummary}`, donorName: form.donorName });
             setStatus({ type: "idle", message: "If you completed the payment, your receipt will arrive on WhatsApp shortly." });
           },
         },
@@ -565,6 +571,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
 
   return (
     <main className="min-h-screen bg-white text-ink">
+      {upiFallbackDialog}
       <SearchParamsWatcher onChange={setSearchParams} />
       <WhatsAppFloatButton />
       {campaigner && (

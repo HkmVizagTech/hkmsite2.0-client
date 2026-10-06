@@ -23,6 +23,7 @@ import type { PrasadamAddress } from "@/components/AddressForm";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
 import { getSevaCampaignConfig, GAU_CAMPAIGN, type SevaCampaignConfig } from "@/lib/sevaCampaignConfig";
 import { useDonorPrefill } from "@/lib/donorPrefill";
+import { useUpiFallback } from "@/components/UpiFallbackDialog";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 
@@ -73,6 +74,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
   const [searchParams, setSearchParams] = useState<URLSearchParams>(() => new URLSearchParams());
   const attribution = useAttribution(config.path);
   const razorpayReady = useRazorpayPreload();
+  const { offerUpi, upiFallbackDialog } = useUpiFallback();
   useScrollToDonate();
 
   const [tierIndex, setTierIndex] = useState(0);
@@ -268,7 +270,10 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
 
       await razorpayReady();
       const win = window as unknown as { Razorpay?: RazorpayConstructor };
-      if (!win.Razorpay) throw new Error("Razorpay checkout is unavailable.");
+      if (!win.Razorpay) {
+        offerUpi({ donationId: created.donationId, orderId: created.orderId, amount: monthly ? 0 : finalAmount, campaign: config.pageTitle, donorName: form.name });
+        return;
+      }
 
       const checkoutOptions: Record<string, unknown> = {
         key: created.key,
@@ -301,7 +306,12 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
             setSubmitting(false);
           }
         },
-        modal: { ondismiss: () => setSubmitting(false) },
+        modal: {
+          ondismiss: () => {
+            setSubmitting(false);
+            offerUpi({ donationId: created.donationId, orderId: created.orderId, amount: monthly ? 0 : finalAmount, campaign: config.pageTitle, donorName: form.name });
+          },
+        },
         theme: { color: "#D69E2E" },
       };
       // Subscriptions authorise via subscription_id (no amount/order_id);
@@ -323,6 +333,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
 
   return (
     <PageLayout>
+      {upiFallbackDialog}
       <SearchParamsWatcher onChange={setSearchParams} />
       <WhatsAppFloatButton />
       <main className="bg-white pt-[var(--header-h)] dark:bg-background">

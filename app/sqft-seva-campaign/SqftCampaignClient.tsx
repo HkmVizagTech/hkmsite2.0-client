@@ -28,6 +28,7 @@ import FinalCtaSection from "@/components/sqft-campaign/FinalCtaSection";
 import StickyMobileBar from "@/components/sqft-campaign/StickyMobileBar";
 import CampaignerCard from "@/components/sqft-campaign/CampaignerCard";
 import { getCampaignConfig, type CampaignConfig, type CampaignerData, type DonorEntry } from "@/lib/campaignConfig";
+import { useUpiFallback } from "@/components/UpiFallbackDialog";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 
@@ -105,6 +106,7 @@ export default function SqftCampaignClient({
       : `/${campaignType === "BRICK" ? "brick-seva-campaign" : "sqft-seva-campaign"}`
   );
   const razorpayReady = useRazorpayPreload();
+  const { offerUpi, upiFallbackDialog } = useUpiFallback();
   useScrollToDonate();
   const [copiedShare, setCopiedShare] = useState(false);
   const [stats, setStats] = useState<CampaignStats | null>(null);
@@ -352,7 +354,10 @@ export default function SqftCampaignClient({
 
       await razorpayReady();
       const win = window as unknown as { Razorpay?: RazorpayConstructor };
-      if (!win.Razorpay) throw new Error("Razorpay checkout is unavailable.");
+      if (!win.Razorpay) {
+        offerUpi({ donationId: created.donationId, orderId: created.orderId, amount: monthly ? 0 : finalAmount, campaign: sevaName, donorName: form.name });
+        return;
+      }
 
       const checkoutOptions: Record<string, unknown> = {
         key: created.key,
@@ -402,7 +407,12 @@ export default function SqftCampaignClient({
             setSubmitting(false);
           }
         },
-        modal: { ondismiss: () => setSubmitting(false) },
+        modal: {
+          ondismiss: () => {
+            setSubmitting(false);
+            offerUpi({ donationId: created.donationId, orderId: created.orderId, amount: monthly ? 0 : finalAmount, campaign: sevaName, donorName: form.name });
+          },
+        },
         theme: { color: "#D69E2E" },
       };
       // Subscriptions authorise via subscription_id (no amount/order_id);
@@ -437,6 +447,7 @@ export default function SqftCampaignClient({
 
   return (
     <PageLayout>
+      {upiFallbackDialog}
       <SearchParamsWatcher onChange={setSearchParams} />
       <WhatsAppFloatButton />
       <main className="bg-white pt-[var(--header-h)]">

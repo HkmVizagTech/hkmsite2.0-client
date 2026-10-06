@@ -19,8 +19,16 @@ export const UPI_QR_IMAGE = "/assets/upi-qr-hkm.png";
 // WhatsApp number donors send their payment screenshot to (for the receipt).
 export const RECEIPT_WHATSAPP = "918977761187";
 
+// Optional fixed amount (₹) — used by the checkout fallback so the UPI app
+// opens with the exact seva amount instead of asking the donor to type it.
+const withAmount = (amount?: number) =>
+  amount && amount > 0 ? `${UPI_QUERY}&am=${amount.toFixed(2)}` : UPI_QUERY;
+
 /** Generic intent: any UPI app (Android shows the app chooser). Same as the QR. */
-export const upiLink = () => `upi://pay?${UPI_QUERY}`;
+export const upiLink = (amount?: number) => `upi://pay?${withAmount(amount)}`;
 
 /** Opens PhonePe directly (Android and iOS) with the payee filled in. */
-export const phonePeLink = () => `phonepe://pay?${UPI_QUERY}`;
+export const phonePeLink = (amount?: number) => `phonepe://pay?${withAmount(amount)}`;
+
+/** API base for the public UPI-fallback endpoints. */
+export const UPI_API_BASE = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";

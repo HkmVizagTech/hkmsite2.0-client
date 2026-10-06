@@ -32,6 +32,7 @@ import {
   trackInitiateCheckout,
   trackPurchase,
 } from "@/lib/metaPixel";
+import { useUpiFallback } from "@/components/UpiFallbackDialog";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -312,6 +313,7 @@ export default function PitruPakshaClient() {
   const reduce = useReducedMotion();
   const attribution = useAttribution("pitru-paksha");
   const razorpayReady = useRazorpayPreload();
+  const { offerUpi, upiFallbackDialog } = useUpiFallback();
   const [searchParams, setSearchParams] = useState<URLSearchParams>(() => new URLSearchParams());
   const { startPolling, stopPolling } = usePaymentStatusPoller({
     onCompleted: (result) => {
@@ -483,7 +485,10 @@ export default function PitruPakshaClient() {
       await razorpayReady();
 
       const win = window as unknown as { Razorpay?: RazorpayConstructor };
-      if (!win.Razorpay) throw new Error("Razorpay checkout is unavailable.");
+      if (!win.Razorpay) {
+        offerUpi({ donationId: order.donationId, orderId: order.orderId, amount: finalAmount, campaign: `Pitru Paksha — ${selected.seva.title}`, donorName: form.donorName });
+        return;
+      }
 
       new win.Razorpay({
         key: order.key,
@@ -541,6 +546,7 @@ export default function PitruPakshaClient() {
         },
         modal: {
           ondismiss: () => {
+            offerUpi({ donationId: order.donationId, orderId: order.orderId, amount: finalAmount, campaign: `Pitru Paksha — ${selected.seva.title}`, donorName: form.donorName });
             setStatus({
               type: "idle",
               message:
@@ -573,6 +579,7 @@ export default function PitruPakshaClient() {
 
   return (
     <PageLayout>
+      {upiFallbackDialog}
       <SearchParamsWatcher onChange={setSearchParams} />
       <main className="min-h-screen bg-white pt-[var(--header-h)] text-ink">
         <WhatsAppFloatButton />

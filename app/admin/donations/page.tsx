@@ -27,6 +27,7 @@ import ReportsTab from "./ReportsTab";
 import NeedsManualReceiptTab from "./NeedsManualReceiptTab";
 import NeedsWhatsAppTab from "./NeedsWhatsAppTab";
 import PrasadamTab from "./PrasadamTab";
+import UpiMatchTab from "./UpiMatchTab";
 
 const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:3003";
 
@@ -154,6 +155,7 @@ export default function AdminDonations() {
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="reports">Reports</TabsTrigger>
           <TabsTrigger value="manual-entry">Manual Entry</TabsTrigger>
+          <TabsTrigger value="upi-match">UPI to Match</TabsTrigger>
           <TabsTrigger value="needs-receipt">Needs Manual Receipt</TabsTrigger>
           <TabsTrigger value="needs-whatsapp">Needs WhatsApp</TabsTrigger>
           <TabsTrigger value="prasadam">Prasadam</TabsTrigger>
@@ -446,6 +448,10 @@ export default function AdminDonations() {
 
         <TabsContent value="manual-entry" className="mt-6">
           <ManualEntryTab />
+        </TabsContent>
+
+        <TabsContent value="upi-match" className="mt-6">
+          <UpiMatchTab />
         </TabsContent>
 
         <TabsContent value="needs-receipt" className="mt-6">

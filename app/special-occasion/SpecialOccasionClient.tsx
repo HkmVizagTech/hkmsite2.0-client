@@ -29,6 +29,7 @@ import { useDonorPrefill } from "@/lib/donorPrefill";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
 import { useScrollToDonate } from "@/lib/useScrollToDonate";
 import { newEventId, getMetaBrowserData, trackInitiateCheckout, trackPurchase } from "@/lib/metaPixel";
+import { useUpiFallback } from "@/components/UpiFallbackDialog";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 
@@ -135,6 +136,7 @@ export default function SpecialOccasionClient() {
   const reduce = useReducedMotion();
   const attribution = useAttribution("/special-occasion");
   const razorpayReady = useRazorpayPreload();
+  const { offerUpi, upiFallbackDialog } = useUpiFallback();
   useScrollToDonate("occasion-form");
 
   const [occasion, setOccasion] = useState<string>("Birthday");
@@ -232,7 +234,10 @@ export default function SpecialOccasionClient() {
 
       await razorpayReady();
       const win = window as unknown as { Razorpay?: RazorpayConstructor };
-      if (!win.Razorpay) throw new Error("Razorpay checkout is unavailable.");
+      if (!win.Razorpay) {
+        offerUpi({ donationId: order.donationId, orderId: order.orderId, amount: finalAmount, campaign: `Special Occasion — ${selectedSeva.title}`, donorName: form.name });
+        return;
+      }
 
       new win.Razorpay({
         key: order.key,
@@ -264,7 +269,12 @@ export default function SpecialOccasionClient() {
             setSubmitting(false);
           }
         },
-        modal: { ondismiss: () => setSubmitting(false) },
+        modal: {
+          ondismiss: () => {
+            setSubmitting(false);
+            offerUpi({ donationId: order.donationId, orderId: order.orderId, amount: finalAmount, campaign: `Special Occasion — ${selectedSeva.title}`, donorName: form.name });
+          },
+        },
         theme: { color: "#D69E2E" },
       }).open();
     } catch (err) {
@@ -275,6 +285,7 @@ export default function SpecialOccasionClient() {
 
   return (
     <PageLayout>
+      {upiFallbackDialog}
       <WhatsAppFloatButton />
       <main className="bg-white pt-[var(--header-h)] dark:bg-background">
         {/* ---------- Hero — fully-designed banners in an inset rounded card ---------- */}
