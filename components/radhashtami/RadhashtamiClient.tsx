@@ -387,6 +387,8 @@ export default function RadhashtamiClient() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           sourcePage: "radhashtami",
+          // Page hero banner — used as the header image of the pending-payment WhatsApp reminder.
+          bannerImage: DESKTOP_BANNER,
           utm: attribution.payload().utm,
           festivalSlug: "radhashtami",
           type: "Sri Radhashtami",

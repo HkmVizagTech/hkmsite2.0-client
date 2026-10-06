@@ -318,6 +318,8 @@ export default function DonationsClient() {
         body: JSON.stringify({
           account: "donations",
           sourcePage: "donations",
+          // Page hero banner — used as the header image of the pending-payment WhatsApp reminder.
+          bannerImage: settings.bannerImage,
           type: selected.category,
           sevaName: selected.title,
           name: form.donorName.trim(),

@@ -30,6 +30,9 @@ interface DonationFormProps {
   sourcePage: string;
   /** Optional festival slug (e.g. "chaturmas") appended to payment orders. */
   festivalSlug?: string;
+  /** Desktop hero banner of the page this form sits on. Sent with the order so
+      the pending-payment WhatsApp reminder uses this page's banner as its header. */
+  bannerImage?: string;
   /** Pre-select a tier (or fall back to custom amount) on mount. */
   initialAmount?: number;
   /** Called after a successful one-time/monthly payment is verified. */
@@ -68,6 +71,7 @@ export default function DonationForm({
   seva,
   sourcePage,
   festivalSlug,
+  bannerImage,
   initialAmount,
   onSuccess,
   thankYouType = "donation",
@@ -175,6 +179,7 @@ export default function DonationForm({
         account: seva.account,
         sourcePage,
         ...(festivalSlug ? { festivalSlug } : {}),
+        ...(bannerImage ? { bannerImage } : {}),
         utm: attribution.payload().utm,
         type: seva.category,
         sevaName: seva.title,

@@ -221,6 +221,8 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
       const baseBody = {
         account: config.account,
         sourcePage: config.path,
+        // Page hero banner — used as the header image of the pending-payment WhatsApp reminder.
+        bannerImage: config.bannerImage,
         utm: attribution.payload().utm,
         type: config.type,
         sevaName: config.pageTitle,

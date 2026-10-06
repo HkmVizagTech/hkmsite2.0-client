@@ -422,6 +422,8 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
         body: JSON.stringify({
           account: "donations",
           sourcePage: campaigner ? `/donations/janmashtami2/c/${campaigner.slug}` : "donations/janmashtami2",
+          // Page hero banner — used as the header image of the pending-payment WhatsApp reminder.
+          bannerImage: banners[0]?.desktop,
           campaignerSlug: campaigner?.slug || undefined,
           utm: attribution.payload().utm,
           festivalSlug: "janmashtami",

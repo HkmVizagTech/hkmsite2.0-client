@@ -606,6 +606,7 @@ export default function ChaturmasClient() {
                           seva={selectedSeva}
                           sourcePage="chaturmas"
                           festivalSlug="chaturmas"
+                          bannerImage={banners[0]?.desktop}
                           thankYouType="seva"
                           thankYouSource="the Chaturmas seva programme"
                           trackContentName="Chaturmas"
