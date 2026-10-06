@@ -13,6 +13,7 @@ import type { PrasadamAddress } from "@/components/AddressForm";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
 import { useDonorPrefill } from "@/lib/donorPrefill";
 import { useUpiFallback } from "@/components/UpiFallbackDialog";
+import { prefillEmail } from "@/lib/razorpayPrefill";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 
@@ -236,7 +237,7 @@ export default function DonationForm({
         key: created.key,
         name: "Hare Krishna Movement Vizag",
         description: monthly ? `${seva.title} — Monthly` : seva.title,
-        prefill: { name: form.name, email: form.email, contact: form.mobile },
+        prefill: { name: form.name, email: prefillEmail(form.email), contact: form.mobile },
         notes: { sourcePage, sevaName: seva.title, sevaType: seva.category },
         handler: async (response: Record<string, string>) => {
           stopPolling(); // frontend caught it — poller not needed

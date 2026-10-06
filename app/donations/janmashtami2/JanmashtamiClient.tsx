@@ -14,6 +14,7 @@ import JanmashtamiGallery from "@/components/JanmashtamiGallery";
 import JanmashtamiImportanceSection from "@/components/janmashtami/JanmashtamiImportanceSection";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
 import { useAttribution } from "@/lib/useAttribution";
+import { prefillEmail } from "@/lib/razorpayPrefill";
 
 type SevaOption = {
   legacySevaId: number;
@@ -473,7 +474,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
         order_id: order.orderId,
         prefill: {
           name: form.donorName,
-          email: form.donorEmail,
+          email: prefillEmail(form.donorEmail),
           contact: form.donorMobile,
         },
         notes: {

@@ -24,6 +24,7 @@ import DonorExtrasFields from "@/components/DonorExtrasFields";
 import { getSevaCampaignConfig, GAU_CAMPAIGN, type SevaCampaignConfig } from "@/lib/sevaCampaignConfig";
 import { useDonorPrefill } from "@/lib/donorPrefill";
 import { useUpiFallback } from "@/components/UpiFallbackDialog";
+import { prefillEmail } from "@/lib/razorpayPrefill";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 
@@ -279,7 +280,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
         key: created.key,
         name: "Hare Krishna Movement Vizag",
         description: `${config.pageTitle}${monthly ? " — Monthly" : ""} — Hare Krishna Vaikuntham Temple`,
-        prefill: { name: form.name, email: form.email, contact: form.mobile },
+        prefill: { name: form.name, email: prefillEmail(form.email), contact: form.mobile },
         notes: { sourcePage: config.path, sevaName: config.pageTitle, sevaType: config.type },
         handler: async (response: Record<string, string>) => {
           try {

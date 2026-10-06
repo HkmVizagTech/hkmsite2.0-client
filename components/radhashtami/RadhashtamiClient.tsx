@@ -29,6 +29,7 @@ import {
   trackPurchase,
 } from "@/lib/metaPixel";
 import { useUpiFallback } from "@/components/UpiFallbackDialog";
+import { prefillEmail } from "@/lib/razorpayPrefill";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -439,7 +440,7 @@ export default function RadhashtamiClient() {
         order_id: order.orderId,
         prefill: {
           name: form.donorName,
-          email: form.donorEmail,
+          email: prefillEmail(form.donorEmail),
           contact: form.donorMobile,
         },
         notes: {

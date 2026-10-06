@@ -29,6 +29,7 @@ import StickyMobileBar from "@/components/sqft-campaign/StickyMobileBar";
 import CampaignerCard from "@/components/sqft-campaign/CampaignerCard";
 import { getCampaignConfig, type CampaignConfig, type CampaignerData, type DonorEntry } from "@/lib/campaignConfig";
 import { useUpiFallback } from "@/components/UpiFallbackDialog";
+import { prefillEmail } from "@/lib/razorpayPrefill";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 
@@ -363,7 +364,7 @@ export default function SqftCampaignClient({
         key: created.key,
         name: "Hare Krishna Movement Vizag",
         description: `${sevaName}${monthly ? " — Monthly" : ""} — Hare Krishna Vaikuntham Temple`,
-        prefill: { name: form.name, email: form.email, contact: form.mobile },
+        prefill: { name: form.name, email: prefillEmail(form.email), contact: form.mobile },
         notes: {
           sourcePage,
           sevaName,

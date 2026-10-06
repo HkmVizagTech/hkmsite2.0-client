@@ -33,11 +33,22 @@ const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "h
 
 const COLORS = ["hsl(30,85%,50%)", "hsl(350,45%,35%)", "hsl(42,90%,55%)", "hsl(200,70%,50%)", "hsl(150,60%,40%)", "hsl(280,50%,50%)", "hsl(10,70%,45%)", "hsl(170,55%,40%)"];
 
+// How a hand-entered donation (on this admin, or raised from DRM) was paid.
+// These have no Razorpay payment, so "method" is empty and the table said N/A.
+const MANUAL_MODES: Record<string, string> = { cash: "Cash", cheque: "Cheque", upi: "UPI", bank: "Bank Transfer" };
+const paidBy = (d: any): string =>
+  d.method || (d.manualEntry || d.utrNumber ? MANUAL_MODES[d.manualPaymentMode] || "Offline" : d.razorpayPaymentId ? "Card/UPI" : "N/A");
+// The id that traces the payment: Razorpay's for a website payment, else the
+// UTR / cheque no. typed for a hand-entered one.
+const paymentRef = (d: any): string => d.razorpayPaymentId || d.utrNumber || d.transactionId || "";
+
 const methodIcons: Record<string, typeof CreditCard> = {
   UPI: Smartphone,
   Card: CreditCard,
   "Net Banking": Banknote,
   Cash: IndianRupee,
+  Cheque: Banknote,
+  "Bank Transfer": Banknote,
 };
 
 interface Stats {
@@ -114,7 +125,7 @@ export default function AdminDonations() {
       .then((res) => res.json())
       .then((data) => {
         const rows = (data.donations || []).map((d: any) => [
-          d.razorpayPaymentId || d.razorpayOrderId || d._id,
+          paymentRef(d) || d.razorpayOrderId || d._id,
           d.donorName || "",
           d.donorEmail || "",
           d.donorMobile || "",
@@ -123,8 +134,9 @@ export default function AdminDonations() {
           d.sevaName || d.type || "",
           d.receiptNumber || "",
           d.date ? new Date(d.date).toLocaleDateString("en-IN") : "",
+          paidBy(d),
         ]);
-        const headers = ["TXN ID", "Donor", "Email", "Mobile", "Amount", "Status", "Seva", "Receipt", "Date"];
+        const headers = ["TXN ID", "Donor", "Email", "Mobile", "Amount", "Status", "Seva", "Receipt", "Date", "Paid by"];
         const csv = [headers.join(","), ...rows.map((r: string[]) => r.map((c: string) => `"${String(c).replace(/"/g, '""')}"`).join(","))].join("\n");
         const blob = new Blob([csv], { type: "text/csv" });
         const url = URL.createObjectURL(blob);
@@ -376,12 +388,12 @@ export default function AdminDonations() {
                 ) : donations.length === 0 ? (
                   <tr><td colSpan={10} className="text-center py-6 text-muted-foreground">No donations found.</td></tr>
                 ) : donations.map((d, i) => {
-                  const MethodIcon = methodIcons[d.method] || IndianRupee;
+                  const MethodIcon = methodIcons[paidBy(d)] || IndianRupee;
                   const rowKey = d._id || d.id || d.transactionId || d.razorpayOrderId || `don-${i}`;
                   return (
                     <tr key={rowKey} className="border-b hover:bg-muted/30">
                       <td className="px-4 py-3 text-muted-foreground">{total - ((page - 1) * limit + i)}</td>
-                      <td className="px-4 py-3 font-mono text-xs">{d.razorpayPaymentId || d.razorpayOrderId || d._id}</td>
+                      <td className="px-4 py-3 font-mono text-xs">{paymentRef(d) || d.razorpayOrderId || d._id}</td>
                       <td className="px-4 py-3">
                         <div className="font-medium">{d.donorName || "Anonymous"}</div>
                         <div className="text-xs text-muted-foreground">{d.donorEmail || "-"}</div>
@@ -392,7 +404,7 @@ export default function AdminDonations() {
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-1.5">
                           <MethodIcon className="w-4 h-4 text-muted-foreground" />
-                          <span>{d.method || (d.razorpayPaymentId ? "Card/UPI" : "N/A")}</span>
+                          <span>{paidBy(d)}</span>
                         </div>
                       </td>
                       <td className="px-4 py-3">
@@ -502,16 +514,29 @@ export default function AdminDonations() {
                 <div className="flex justify-between"><span className="text-muted-foreground">UTM Term</span><span>{selectedDonation.utm.term}</span></div>
               )}
               <div className="flex justify-between"><span className="text-muted-foreground">Order ID</span><span className="font-mono text-xs break-all">{selectedDonation.razorpayOrderId || "-"}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Payment ID</span><span className="font-mono text-xs break-all">{selectedDonation.razorpayPaymentId || "-"}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Paid by</span><span>{paidBy(selectedDonation)}</span></div>
+              {selectedDonation.utrNumber && (
+                <div className="flex justify-between"><span className="text-muted-foreground">{selectedDonation.manualPaymentMode === "cheque" ? "Cheque No." : selectedDonation.manualPaymentMode === "cash" ? "Reference" : "Transaction ID (UTR)"}</span><span className="font-mono text-xs break-all">{selectedDonation.utrNumber}</span></div>
+              )}
+              <div className="flex justify-between"><span className="text-muted-foreground">Payment ID</span><span className="font-mono text-xs break-all">{selectedDonation.razorpayPaymentId || selectedDonation.transactionId || "-"}</span></div>
+              {selectedDonation.manualEntryNote && (
+                <div className="flex justify-between gap-4"><span className="text-muted-foreground">Note</span><span className="text-right text-xs">{selectedDonation.manualEntryNote}</span></div>
+              )}
               <div className="flex justify-between"><span className="text-muted-foreground">Receipt</span><span>{selectedDonation.receiptNumber || "-"}</span></div>
               <div className="flex justify-between"><span className="text-muted-foreground">DCC Sync</span><span>{selectedDonation.dccSyncStatus || "-"}</span></div>
               <div className="flex justify-between"><span className="text-muted-foreground">WhatsApp Receipt</span><span>{selectedDonation.whatsappReceiptSentAt ? `Sent ${new Date(selectedDonation.whatsappReceiptSentAt).toLocaleString("en-IN")}` : (selectedDonation.whatsappReceiptError ? "Failed" : "Not sent")}</span></div>
               {selectedDonation.wantPrasadam && selectedDonation.prasadamAddress && (
                 <div className="border-t pt-3">
                   <div className="text-sm text-muted-foreground mb-2">Maha Prasadam Delivery</div>
-                  <div className="text-xs">{selectedDonation.prasadamAddress.doorNo}, {selectedDonation.prasadamAddress.house}</div>
-                  <div className="text-xs">{selectedDonation.prasadamAddress.street}, {selectedDonation.prasadamAddress.area}</div>
-                  <div className="text-xs">{selectedDonation.prasadamAddress.city} - {selectedDonation.prasadamAddress.pincode}, {selectedDonation.prasadamAddress.state}</div>
+                  <div className="text-xs">
+                    {[selectedDonation.prasadamAddress.doorNo, selectedDonation.prasadamAddress.house, selectedDonation.prasadamAddress.street, selectedDonation.prasadamAddress.area]
+                      .filter(Boolean)
+                      .join(", ")}
+                  </div>
+                  <div className="text-xs">
+                    {[selectedDonation.prasadamAddress.city, selectedDonation.prasadamAddress.state].filter(Boolean).join(", ")}
+                    {selectedDonation.prasadamAddress.pincode ? ` - ${selectedDonation.prasadamAddress.pincode}` : ""}
+                  </div>
                 </div>
               )}
               <div className="pt-3 flex flex-wrap gap-2">

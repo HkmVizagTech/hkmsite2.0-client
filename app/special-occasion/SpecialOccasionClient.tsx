@@ -30,6 +30,7 @@ import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
 import { useScrollToDonate } from "@/lib/useScrollToDonate";
 import { newEventId, getMetaBrowserData, trackInitiateCheckout, trackPurchase } from "@/lib/metaPixel";
 import { useUpiFallback } from "@/components/UpiFallbackDialog";
+import { prefillEmail } from "@/lib/razorpayPrefill";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 
@@ -246,7 +247,7 @@ export default function SpecialOccasionClient() {
         name: "Hare Krishna Movement Vizag",
         description: `Special Occasion Seva — ${selectedSeva.title}`,
         order_id: order.orderId,
-        prefill: { name: form.name, email: form.email, contact: form.mobile },
+        prefill: { name: form.name, email: prefillEmail(form.email), contact: form.mobile },
         notes: { sourcePage: "/special-occasion", sevaName: selectedSeva.title, occasion },
         handler: async (response: Record<string, string>) => {
           try {

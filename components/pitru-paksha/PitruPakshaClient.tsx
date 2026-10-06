@@ -35,6 +35,7 @@ import {
 import { useUpiFallback } from "@/components/UpiFallbackDialog";
 import { useT } from "@/components/i18n/LocaleProvider";
 import type { TFunction } from "@/lib/i18n/translate";
+import { prefillEmail } from "@/lib/razorpayPrefill";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -530,7 +531,7 @@ export default function PitruPakshaClient() {
         order_id: order.orderId,
         prefill: {
           name: form.donorName,
-          email: form.donorEmail,
+          email: prefillEmail(form.donorEmail),
           contact: form.donorMobile,
         },
         notes: {

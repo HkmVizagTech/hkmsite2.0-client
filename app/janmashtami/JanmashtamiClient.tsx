@@ -20,6 +20,7 @@ import { usePaymentStatusPoller } from "@/lib/usePaymentStatusPoller";
 import { useScrollToDonate } from "@/lib/useScrollToDonate";
 import PhonePeUpiCard from "@/components/PhonePeUpiCard";
 import { useUpiFallback } from "@/components/UpiFallbackDialog";
+import { prefillEmail } from "@/lib/razorpayPrefill";
 
 type SevaOption = {
   legacySevaId: number;
@@ -506,7 +507,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
         order_id: order.orderId,
         prefill: {
           name: form.donorName,
-          email: form.donorEmail,
+          email: prefillEmail(form.donorEmail),
           contact: form.donorMobile,
         },
         notes: {
