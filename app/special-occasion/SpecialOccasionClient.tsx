@@ -208,6 +208,8 @@ export default function SpecialOccasionClient() {
         body: JSON.stringify({
           account: selectedSeva.account,
           sourcePage: "/special-occasion",
+          // Page hero banner — used as the header image of the pending-payment WhatsApp reminder.
+          bannerImage: HERO_DESKTOP,
           sevaName: selectedSeva.title,
           message: `Special Occasion: ${occasion}${dedication ? ` — ${dedication}` : ""}`,
           name: form.name.trim(),

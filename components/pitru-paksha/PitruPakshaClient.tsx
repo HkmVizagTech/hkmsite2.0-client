@@ -446,6 +446,8 @@ export default function PitruPakshaClient() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           sourcePage: "pitru-paksha",
+          // Page hero banner — used as the header image of the pending-payment WhatsApp reminder.
+          bannerImage: DESKTOP_BANNER,
           utm: attribution.payload().utm,
           festivalSlug: "pitru-paksha",
           type: selected.seva.type,

@@ -201,6 +201,8 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
         body: JSON.stringify({
           account: "default",
           sourcePage: SOURCE_PAGE,
+          // Page hero banner — used as the header image of the pending-payment WhatsApp reminder.
+          bannerImage: campaign.heroImage,
           utm: attribution.payload().utm,
           type: selectedSeva.category,
           sevaName: selectedSeva.sevaName,

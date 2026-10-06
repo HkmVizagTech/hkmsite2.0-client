@@ -267,6 +267,8 @@ export default function AlankaraVastraClient() {
       const baseBody = {
         account: "default",
         sourcePage: "/alankara-vastra-seva",
+        // Page hero banner — used as the header image of the pending-payment WhatsApp reminder.
+        bannerImage: config.bannerImage || config.heroImage,
         utm: attribution.payload().utm,
         type: config.orderType,
         sevaName: config.pageTitle,

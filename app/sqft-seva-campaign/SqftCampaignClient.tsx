@@ -291,6 +291,8 @@ export default function SqftCampaignClient({
       const baseBody = {
         account: "default",
         sourcePage,
+        // Page hero banner — used as the header image of the pending-payment WhatsApp reminder.
+        bannerImage: config.bannerImage || config.heroImage,
         utm: attribution.payload().utm,
         // Tier-aware: a golden offering is recorded as its own seva
         // ("Golden Brick Seva" / GOLDEN_BRICK) so receipts, reports and the

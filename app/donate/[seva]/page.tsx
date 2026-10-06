@@ -312,6 +312,7 @@ function DonateSevaPageInner({ params }: { params: Promise<{ seva: string }> }) 
           <DonationForm
             seva={seva}
             sourcePage={`/donate/${seva.slug}`}
+            bannerImage={seva.heroImageDesktop}
             initialAmount={amountParam ? Number(amountParam) : undefined}
             onSuccess={(donor) => setDonors((d) => [donor, ...d])}
           />
