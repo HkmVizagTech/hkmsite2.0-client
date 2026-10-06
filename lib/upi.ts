@@ -1,27 +1,26 @@
-// Direct UPI payment details used by the "Pay with PhonePe / UPI" cards on the
-// donation pages — the fallback for donors who can't complete Razorpay.
+// Direct UPI payment details used by the "Prefer PhonePe / UPI?" strips and
+// the UPI QR cards on the donation pages — the fallback for donors who can't
+// complete the Razorpay checkout.
 //
-// Change the UPI ID here (or set NEXT_PUBLIC_UPI_VPA on Vercel) and every card
-// and QR on the site follows.
-export const UPI_VPA = process.env.NEXT_PUBLIC_UPI_VPA || "hkmivsp9.08@idfcbank";
-export const UPI_PAYEE_NAME = process.env.NEXT_PUBLIC_UPI_PAYEE_NAME || "HARE KRISHNA MOVEMENT INDIA";
+// This is the temple's Razorpay "Website UPI transactions" QR
+// (Hare Krishna Movement India, IDFC First Bank). The query below is exactly
+// what that QR encodes — keep `tr` (the QR's reference) so every payment made
+// from the buttons is credited to the same QR in the Razorpay dashboard.
+// To change it: decode the new QR, paste its query here and replace
+// public/assets/upi-qr-hkm.png with the new QR image.
+export const UPI_VPA = "harekrishnamove960950.rzp@rxairtel";
+export const UPI_PAYEE_NAME = "Hare Krishna Movement India";
+const UPI_QUERY =
+  "cu=INR&mc=8398&mode=19&pa=harekrishnamove960950.rzp@rxairtel&tn=Payment%20To%20Hare%20Krishna%20Movement%20India&tr=TkXLOSHxVdX10Hqrv2";
+
+/** The official QR image (cropped from the Razorpay poster, logo included). */
+export const UPI_QR_IMAGE = "/assets/upi-qr-hkm.png";
 
 // WhatsApp number donors send their payment screenshot to (for the receipt).
 export const RECEIPT_WHATSAPP = "918977761187";
 
-/** Query string of a standard UPI intent. No `am`, so the donor types the amount. */
-function upiQuery(note?: string) {
-  // `pa` stays raw: several UPI apps reject a VPA with "@" encoded as %40.
-  const params = [`pa=${UPI_VPA}`, `pn=${encodeURIComponent(UPI_PAYEE_NAME)}`, "cu=INR"];
-  if (note) params.push(`tn=${encodeURIComponent(note.slice(0, 50))}`);
-  return params.join("&");
-}
+/** Generic intent: any UPI app (Android shows the app chooser). Same as the QR. */
+export const upiLink = () => `upi://pay?${UPI_QUERY}`;
 
-/** Generic intent: any UPI app (Android shows the app chooser). Also what the QR encodes. */
-export const upiLink = (note?: string) => `upi://pay?${upiQuery(note)}`;
-
-/** Opens PhonePe directly (Android and iOS), with the temple's UPI ID filled in. */
-export const phonePeLink = (note?: string) => `phonepe://pay?${upiQuery(note)}`;
-
-export const upiQrImage = (note?: string, size = 260) =>
-  `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&margin=10&data=${encodeURIComponent(upiLink(note))}`;
+/** Opens PhonePe directly (Android and iOS) with the payee filled in. */
+export const phonePeLink = () => `phonepe://pay?${UPI_QUERY}`;

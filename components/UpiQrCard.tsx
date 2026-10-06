@@ -4,18 +4,18 @@
 // from annadan.harekrishnavizag.org, restyled to this site's saffron/gold
 // theme. Open-amount QR: the donor enters the amount in their own UPI app.
 //
-// Payment details are the temple's live UPI credentials (same as the
-// Annadan site). The QR encodes a standard `upi://pay` string so PhonePe,
-// Google Pay, Paytm, BHIM, and any UPI app can scan it.
+// Payment details (the temple's Razorpay "Website UPI transactions" QR) come
+// from lib/upi.ts, shared with the PhonePe / UPI strip on the seva pages.
+// The QR is a standard `upi://pay` code that any UPI app can scan.
 
 import { useState } from "react";
 import { QrCode, Copy, Check, Smartphone } from "lucide-react";
 
-import { UPI_VPA, upiLink, upiQrImage } from "@/lib/upi";
+import { UPI_VPA, UPI_QR_IMAGE, upiLink } from "@/lib/upi";
 
 // Open-amount UPI intent string (no `am=` so donor sets the amount).
 const UPI_STRING = upiLink();
-const QR_IMG = upiQrImage();
+const QR_IMG = UPI_QR_IMAGE;
 
 export default function UpiQrCard({ note }: { note?: string }) {
   const [copied, setCopied] = useState(false);
