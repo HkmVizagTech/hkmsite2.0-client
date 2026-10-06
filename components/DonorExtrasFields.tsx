@@ -2,6 +2,7 @@
 
 import { useId, useState } from "react";
 import { User, Calendar } from "lucide-react";
+import { useT } from "@/components/i18n/LocaleProvider";
 
 interface Props {
   sevakName: string;
@@ -25,6 +26,7 @@ export default function DonorExtrasFields({
   variant = "default",
   collapsible = false,
 }: Props) {
+  const t = useT();
   const [expanded, setExpanded] = useState(!collapsible || Boolean(sevakName || dob));
   const isAmber = variant === "amber";
   const uid = useId();
@@ -52,14 +54,14 @@ export default function DonorExtrasFields({
     <div className="grid gap-3 sm:grid-cols-2">
       <div>
         <label htmlFor={`${uid}-sevak`} className={labelCls}>
-          Sevak Name <span className="font-normal">(optional)</span>
+          {t("Sevak Name")} <span className="font-normal">{t("(optional)")}</span>
         </label>
         <div className={wrapperCls}>
           <User className={iconCls} />
           <input
             id={`${uid}-sevak`}
             type="text"
-            placeholder="Name for seva dedication"
+            placeholder={t("Name for seva dedication")}
             value={sevakName}
             onChange={(e) => onSevakNameChange(e.target.value)}
             className={inputCls}
@@ -68,7 +70,7 @@ export default function DonorExtrasFields({
       </div>
       <div>
         <label htmlFor={`${uid}-dob`} className={labelCls}>
-          Date of Birth <span className="font-normal">(optional)</span>
+          {t("Date of Birth")} <span className="font-normal">{t("(optional)")}</span>
         </label>
         <div className={wrapperCls}>
           <Calendar className={iconCls} />
@@ -103,7 +105,7 @@ export default function DonorExtrasFields({
           }}
           className={checkboxCls}
         />
-        <span>This Donation is in the memory/honor of someone or performed on a specific occasion</span>
+        <span>{t("This Donation is in the memory/honor of someone or performed on a specific occasion")}</span>
       </label>
       {expanded && fields}
     </div>

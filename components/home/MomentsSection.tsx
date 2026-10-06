@@ -8,6 +8,7 @@ import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { getGalleryImages, TEMPLE_GALLERY_CATEGORIES } from "@/lib/galleryApi";
 import SectionHeading from "@/components/site/SectionHeading";
 import Reveal from "@/components/site/Reveal";
+import { useT } from "@/components/i18n/LocaleProvider";
 
 interface Moment {
   src: string;
@@ -47,6 +48,7 @@ const features = [
 
 /** GVD "Moments at …" — navy band with a swipeable photo strip and three overlapping feature cards. */
 export default function MomentsSection() {
+  const t = useT();
   const [moments, setMoments] = useState<Moment[]>(FALLBACK);
   const [emblaRef, emblaApi] = useEmblaCarousel({ align: "start", dragFree: true, containScroll: "trimSnaps" });
 
@@ -74,10 +76,10 @@ export default function MomentsSection() {
         <div className="vk-container relative">
           <SectionHeading
             light
-            eyebrow="Temple Highlights"
-            title="Moments at Hare Krishna Vaikuntham"
-            subtitle="Festivals, darshan and everyday celebrations of devotion, captured across our temple in Visakhapatnam."
-            action={{ href: "/gallery", label: "View All" }}
+            eyebrow={t("Temple Highlights")}
+            title={t("Moments at Hare Krishna Vaikuntham")}
+            subtitle={t("Festivals, darshan and everyday celebrations of devotion, captured across our temple in Visakhapatnam.")}
+            action={{ href: "/gallery", label: t("View All") }}
           />
           <div className="relative">
             <div className="overflow-hidden" ref={emblaRef}>
@@ -90,7 +92,7 @@ export default function MomentsSection() {
                   >
                     <Image
                       src={m.src}
-                      alt={m.title}
+                      alt={t(m.title)}
                       fill
                       sizes="(min-width: 1024px) 300px, 70vw"
                       className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -99,10 +101,10 @@ export default function MomentsSection() {
                     <div className="absolute inset-x-0 bottom-0 p-4">
                       {m.category && (
                         <span className="mb-1.5 inline-block rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white backdrop-blur">
-                          {m.category}
+                          {t(m.category)}
                         </span>
                       )}
-                      <p className="line-clamp-1 text-sm font-semibold text-white">{m.title}</p>
+                      <p className="line-clamp-1 text-sm font-semibold text-white">{t(m.title)}</p>
                     </div>
                   </Link>
                 ))}
@@ -111,7 +113,7 @@ export default function MomentsSection() {
             <div className="mt-5 hidden justify-end gap-2 md:flex">
               <button
                 type="button"
-                aria-label="Previous photos"
+                aria-label={t("Previous photos")}
                 onClick={() => emblaApi?.scrollPrev()}
                 className="flex h-10 w-10 items-center justify-center rounded-full border border-white/30 text-white hover:bg-white/10"
               >
@@ -119,7 +121,7 @@ export default function MomentsSection() {
               </button>
               <button
                 type="button"
-                aria-label="Next photos"
+                aria-label={t("Next photos")}
                 onClick={() => emblaApi?.scrollNext()}
                 className="flex h-10 w-10 items-center justify-center rounded-full border border-white/30 text-white hover:bg-white/10"
               >
@@ -139,7 +141,7 @@ export default function MomentsSection() {
                 <div className="relative h-44 overflow-hidden">
                   <Image
                     src={f.img}
-                    alt={f.title}
+                    alt={t(f.title)}
                     fill
                     sizes="(min-width: 768px) 33vw, 100vw"
                     className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -147,8 +149,8 @@ export default function MomentsSection() {
                 </div>
                 <div className="flex items-start gap-3 p-5">
                   <div className="min-w-0 flex-1">
-                    <h3 className="text-lg font-bold text-ink">{f.title}</h3>
-                    <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{f.text}</p>
+                    <h3 className="text-lg font-bold text-ink">{t(f.title)}</h3>
+                    <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{t(f.text)}</p>
                   </div>
                   <span className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-vk-100 text-vk-700 transition-colors group-hover:bg-vk-700 group-hover:text-white">
                     <ArrowRight className="h-4 w-4" />

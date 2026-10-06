@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import SectionHeading from "@/components/site/SectionHeading";
+import { useT } from "@/components/i18n/LocaleProvider";
 
 interface DonationCard {
   href: string;
@@ -94,6 +95,7 @@ const OTHER_DONATIONS: DonationCard[] = [
 
 /** "Other Donations" rail — a snap scroller of the temple's other seva pages. */
 export default function OtherDonationsCarousel() {
+  const t = useT();
   const scrollerRef = useRef<HTMLDivElement>(null);
 
   const scrollByCards = (dir: 1 | -1) => {
@@ -107,9 +109,9 @@ export default function OtherDonationsCarousel() {
       <div className="vk-container">
         <SectionHeading
           align="center"
-          eyebrow="Continue your seva"
-          title="Other Donations"
-          subtitle="Beyond Pitru Paksha, your devotion can bless the temple in many ways — from feeding and cow care to the very stones of the Lord's abode."
+          eyebrow={t("Continue your seva")}
+          title={t("Other Donations")}
+          subtitle={t("Beyond Pitru Paksha, your devotion can bless the temple in many ways — from feeding and cow care to the very stones of the Lord's abode.")}
         />
 
         <div
@@ -129,7 +131,7 @@ export default function OtherDonationsCarousel() {
               <div className="relative aspect-[4/3] w-full overflow-hidden bg-vk-900">
                 <Image
                   src={d.image}
-                  alt={d.title}
+                  alt={t(d.title)}
                   fill
                   unoptimized
                   sizes="(max-width: 640px) 78vw, (max-width: 1024px) 46vw, 25vw"
@@ -138,12 +140,12 @@ export default function OtherDonationsCarousel() {
               </div>
               <div className="flex flex-1 flex-col p-5">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-vk-600">
-                  {d.tagline}
+                  {t(d.tagline)}
                 </p>
-                <h3 className="mt-1 text-lg font-bold leading-snug text-ink">{d.title}</h3>
-                <p className="mb-4 mt-2 text-sm leading-6 text-muted-foreground">{d.blurb}</p>
+                <h3 className="mt-1 text-lg font-bold leading-snug text-ink">{t(d.title)}</h3>
+                <p className="mb-4 mt-2 text-sm leading-6 text-muted-foreground">{t(d.blurb)}</p>
                 <span className="vk-btn-gold mt-auto h-10 self-start px-4 text-[13px]">
-                  Donate
+                  {t("Donate")}
                   <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5" />
                 </span>
               </div>
@@ -154,7 +156,7 @@ export default function OtherDonationsCarousel() {
         <div className="mt-4 flex items-center justify-center gap-3">
           <button
             type="button"
-            aria-label="Previous donations"
+            aria-label={t("Previous donations")}
             onClick={() => scrollByCards(-1)}
             className="vk-btn-outline h-11 w-11 !rounded-full !p-0"
           >
@@ -162,7 +164,7 @@ export default function OtherDonationsCarousel() {
           </button>
           <button
             type="button"
-            aria-label="Next donations"
+            aria-label={t("Next donations")}
             onClick={() => scrollByCards(1)}
             className="vk-btn-outline h-11 w-11 !rounded-full !p-0"
           >

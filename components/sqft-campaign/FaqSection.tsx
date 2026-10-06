@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import { useT } from "@/components/i18n/LocaleProvider";
 
 interface FaqItem {
   q: string;
@@ -18,6 +19,7 @@ interface FaqSectionProps {
 }
 
 export default function FaqSection({ faqs, tone = "default" }: FaqSectionProps) {
+  const t = useT();
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const banded = tone !== "default";
 
@@ -43,8 +45,8 @@ export default function FaqSection({ faqs, tone = "default" }: FaqSectionProps) 
       <div className="vk-container">
         <div className="grid gap-8 rounded-3xl bg-gradient-to-br from-vk-100 via-vk-50 to-white p-5 md:p-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-12">
           <div>
-            <span className="vk-pill mb-4">FAQ</span>
-            <h2 className="vk-h2">Frequently Asked Questions</h2>
+            <span className="vk-pill mb-4">{t("FAQ")}</span>
+            <h2 className="vk-h2">{t("Frequently Asked Questions")}</h2>
           </div>
           <div className="space-y-3">
             {faqs.map((f, i) => {

@@ -80,8 +80,8 @@
     --shadow-glow: 0 0 32px rgba(47, 91, 211, 0.28);
     --shadow-card: 0 10px 15px -3px rgba(29, 27, 32, 0.08), 0 4px 6px -4px rgba(29, 27, 32, 0.06);
 
-    --font-body: var(--font-poppins), 'Poppins', system-ui, sans-serif;
-    --font-heading: var(--font-jakarta), 'Plus Jakarta Sans', var(--font-poppins), system-ui, sans-serif;
+    --font-body: var(--font-poppins), 'Poppins', var(--font-telugu), system-ui, sans-serif;
+    --font-heading: var(--font-jakarta), 'Plus Jakarta Sans', var(--font-poppins), var(--font-telugu), system-ui, sans-serif;
 
     /* Gold accent system — reserved for donation CTAs & ornaments */
     --gold: 43 89% 54%;
@@ -264,7 +264,7 @@
 
 /* Donations landing page: matched to iskconcharity.org structure and visual language. */
 .exact-page {
-  --font-sans: "Poppins", "Poppins Fallback", Arial, sans-serif;
+  --font-sans: "Poppins", "Poppins Fallback", var(--font-telugu), Arial, sans-serif;
   --primary: 220 90% 20%;
   --border: 210 20% 88%;
   --gradient-donation: linear-gradient(135deg, hsl(8 78% 39%), hsl(22 88% 50%), hsl(42 100% 58%));
@@ -1283,4 +1283,13 @@
 html[data-bottom-nav="off"] { --bottom-nav-space: 0px; }
 @media (min-width: 1024px) {
   :root { --bottom-nav-space: 0px; }
+}
+
+/* Telugu: the body's Poppins class has no Telugu glyphs, so use the full
+   stack (Poppins → Noto Sans Telugu). Same Latin look in English. */
+html[lang] body {
+  font-family: var(--font-body);
+}
+html[lang="te"] body {
+  line-height: 1.7;
 }

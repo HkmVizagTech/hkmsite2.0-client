@@ -21,6 +21,7 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { CheckCircle2, Loader2, QrCode, Smartphone, X } from "lucide-react";
 import { Dialog, DialogDescription, DialogOverlay, DialogPortal, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { useT } from "@/components/i18n/LocaleProvider";
 import { RECEIPT_WHATSAPP, UPI_API_BASE, UPI_QR_IMAGE, UPI_VPA, phonePeLink, upiLink } from "@/lib/upi";
 
 const PURPLE = "#5f259f";
@@ -58,6 +59,7 @@ function post(path: string, body: Record<string, unknown>) {
 }
 
 function UpiFallbackDialog({ info, onClose }: { info: UpiFallbackInfo | null; onClose: () => void }) {
+  const t = useT();
   const [step, setStep] = useState<Step>("pay");
   const [showQr, setShowQr] = useState(false);
   const [payerName, setPayerName] = useState("");
@@ -82,6 +84,10 @@ function UpiFallbackDialog({ info, onClose }: { info: UpiFallbackInfo | null; on
     };
   }, [info?.orderId, step]);
   const amountLabel = info ? `₹${info.amount.toLocaleString("en-IN")}` : "";
+  // Split around {amount} so the amount stays bold wherever the language puts it.
+  const [payBefore, payAfter = ""] = info
+    ? t("Pay {amount} for {campaign} straight to the temple with PhonePe or any UPI app.", { campaign: info.campaign }).split("{amount}")
+    : [""];
 
   const markOpened = (app: "phonepe" | "other") => {
     if (!canClaim || !info) return;
@@ -92,7 +98,7 @@ function UpiFallbackDialog({ info, onClose }: { info: UpiFallbackInfo | null; on
   const claim = async () => {
     if (!info || !canClaim) return;
     if (payerName.trim().length < 2) {
-      setError("Please enter the name shown in your UPI app.");
+      setError(t("Please enter the name shown in your UPI app."));
       return;
     }
     setSaving(true);
@@ -100,10 +106,10 @@ function UpiFallbackDialog({ info, onClose }: { info: UpiFallbackInfo | null; on
     try {
       const res = await post("claim", { donationId: info.donationId, orderId: info.orderId, payerName: payerName.trim() });
       const json = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(json?.message || "Could not save. Please try again.");
+      if (!res.ok) throw new Error(json?.message || t("Could not save. Please try again."));
       setStep(json?.alreadyPaid ? "paidOnline" : "done");
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Could not save. Please try again.");
+      setError(e instanceof Error ? e.message : t("Could not save. Please try again."));
     } finally {
       setSaving(false);
     }
@@ -129,11 +135,13 @@ function UpiFallbackDialog({ info, onClose }: { info: UpiFallbackInfo | null; on
         {info && step === "pay" && (
           <>
             <DialogTitle className="font-heading text-lg" style={{ color: PURPLE }}>
-              Payment didn&apos;t go through?
+              {t("Payment didn't go through?")}
             </DialogTitle>
             <DialogDescription className="text-sm leading-6">
-              Pay <strong className="text-ink">{amountLabel}</strong> for {info.campaign} straight to the temple with PhonePe or
-              any UPI app.{canClaim ? " Your details are already saved." : ""}
+              {payBefore}
+              <strong className="text-ink">{amountLabel}</strong>
+              {payAfter}
+              {canClaim ? ` ${t("Your details are already saved.")}` : ""}
             </DialogDescription>
 
             <div className="mt-1 grid gap-2.5">
@@ -143,7 +151,7 @@ function UpiFallbackDialog({ info, onClose }: { info: UpiFallbackInfo | null; on
                 className="inline-flex h-12 items-center justify-center gap-2 rounded-xl text-[15px] font-bold text-white hover:opacity-90"
                 style={{ backgroundColor: PURPLE }}
               >
-                <Smartphone className="h-4 w-4" /> Pay {amountLabel} with PhonePe
+                <Smartphone className="h-4 w-4" /> {t("Pay {amount} with PhonePe", { amount: amountLabel })}
               </a>
               <a
                 href={upiLink(info.amount)}
@@ -151,7 +159,7 @@ function UpiFallbackDialog({ info, onClose }: { info: UpiFallbackInfo | null; on
                 className="inline-flex h-11 items-center justify-center rounded-xl border bg-white text-sm font-semibold hover:bg-[#f6f0fd]"
                 style={{ borderColor: PURPLE, color: PURPLE }}
               >
-                GPay / Paytm / other UPI app
+                {t("GPay / Paytm / other UPI app")}
               </a>
             </div>
 
@@ -164,12 +172,12 @@ function UpiFallbackDialog({ info, onClose }: { info: UpiFallbackInfo | null; on
               className="mx-auto mt-1 inline-flex items-center gap-1 text-xs font-semibold hover:underline"
               style={{ color: PURPLE }}
             >
-              <QrCode className="h-3.5 w-3.5" /> {showQr ? "Hide QR" : "On a computer? Scan the QR"}
+              <QrCode className="h-3.5 w-3.5" /> {showQr ? t("Hide QR") : t("On a computer? Scan the QR")}
             </button>
             {showQr && (
               <div className="flex flex-col items-center gap-1">
-                <Image src={UPI_QR_IMAGE} alt={`UPI QR code — pay ${UPI_VPA}`} width={170} height={170} className="rounded-xl border bg-white p-1.5" />
-                <p className="text-[11px] text-muted-foreground">Enter {amountLabel} in your UPI app · {UPI_VPA}</p>
+                <Image src={UPI_QR_IMAGE} alt={t("UPI QR code — pay {vpa}", { vpa: UPI_VPA })} width={170} height={170} className="rounded-xl border bg-white p-1.5" />
+                <p className="text-[11px] text-muted-foreground">{t("Enter {amount} in your UPI app · {vpa}", { amount: amountLabel, vpa: UPI_VPA })}</p>
               </div>
             )}
 
@@ -183,7 +191,7 @@ function UpiFallbackDialog({ info, onClose }: { info: UpiFallbackInfo | null; on
                   }}
                   className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-green-600 text-sm font-bold text-white hover:bg-green-700"
                 >
-                  <CheckCircle2 className="h-4 w-4" /> I&apos;ve paid
+                  <CheckCircle2 className="h-4 w-4" /> {t("I've paid")}
                 </button>
               ) : (
                 <a
@@ -192,11 +200,11 @@ function UpiFallbackDialog({ info, onClose }: { info: UpiFallbackInfo | null; on
                   rel="noopener noreferrer"
                   className="inline-flex h-11 w-full items-center justify-center rounded-xl bg-[#25D366] text-sm font-bold text-white hover:opacity-90"
                 >
-                  Paid? Send the screenshot on WhatsApp
+                  {t("Paid? Send the screenshot on WhatsApp")}
                 </a>
               )}
               <p className="mt-2 text-center text-[11px] leading-5 text-muted-foreground">
-                Already paid in the earlier payment window? Don&apos;t pay again — your receipt will arrive shortly.
+                {t("Already paid in the earlier payment window? Don't pay again — your receipt will arrive shortly.")}
               </p>
             </div>
           </>
@@ -205,26 +213,28 @@ function UpiFallbackDialog({ info, onClose }: { info: UpiFallbackInfo | null; on
         {info && step === "confirm" && (
           <>
             <DialogTitle className="font-heading text-lg" style={{ color: PURPLE }}>
-              Confirm your UPI payment
+              {t("Confirm your UPI payment")}
             </DialogTitle>
             <DialogDescription className="text-sm leading-6">
-              Enter the name shown in your UPI app for this {amountLabel} payment, so we can find it and send your receipt.
+              {t("Enter the name shown in your UPI app for this {amount} payment, so we can find it and send your receipt.", {
+                amount: amountLabel,
+              })}
             </DialogDescription>
             <label className="mt-1 text-xs font-semibold text-ink" htmlFor="upi-payer-name">
-              Name in your UPI app
+              {t("Name in your UPI app")}
             </label>
             <Input
               id="upi-payer-name"
               value={payerName}
               onChange={(e) => setPayerName(e.target.value)}
-              placeholder="e.g. Ramesh Kumar"
+              placeholder={t("e.g. Ramesh Kumar")}
               autoComplete="name"
               maxLength={80}
             />
             {error && <p className="text-xs text-red-600">{error}</p>}
             <div className="mt-1 grid grid-cols-[auto_1fr] gap-2">
               <button type="button" onClick={() => setStep("pay")} className="h-11 rounded-xl border px-4 text-sm font-semibold text-ink/80">
-                Back
+                {t("Back")}
               </button>
               <button
                 type="button"
@@ -232,7 +242,7 @@ function UpiFallbackDialog({ info, onClose }: { info: UpiFallbackInfo | null; on
                 disabled={saving}
                 className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-green-600 text-sm font-bold text-white hover:bg-green-700 disabled:opacity-60"
               >
-                {saving && <Loader2 className="h-4 w-4 animate-spin" />} Submit
+                {saving && <Loader2 className="h-4 w-4 animate-spin" />} {t("Submit")}
               </button>
             </div>
           </>
@@ -241,9 +251,12 @@ function UpiFallbackDialog({ info, onClose }: { info: UpiFallbackInfo | null; on
         {info && step === "paidOnline" && (
           <div className="py-2 text-center">
             <CheckCircle2 className="mx-auto h-12 w-12 text-green-600" />
-            <DialogTitle className="mt-3 font-heading text-lg text-ink">Your payment went through 🙏</DialogTitle>
+            <DialogTitle className="mt-3 font-heading text-lg text-ink">{t("Your payment went through 🙏")}</DialogTitle>
             <DialogDescription className="mt-2 text-sm leading-6">
-              {`We received your ${amountLabel} online payment, so there's no need to pay again. Your receipt is on its way on WhatsApp and email.`}
+              {t(
+                "We received your {amount} online payment, so there's no need to pay again. Your receipt is on its way on WhatsApp and email.",
+                { amount: amountLabel }
+              )}
             </DialogDescription>
             <button
               type="button"
@@ -251,7 +264,7 @@ function UpiFallbackDialog({ info, onClose }: { info: UpiFallbackInfo | null; on
               className="mt-4 h-11 w-full rounded-xl text-sm font-bold text-white"
               style={{ backgroundColor: PURPLE }}
             >
-              Done
+              {t("Done")}
             </button>
           </div>
         )}
@@ -259,9 +272,11 @@ function UpiFallbackDialog({ info, onClose }: { info: UpiFallbackInfo | null; on
         {info && step === "done" && (
           <div className="py-2 text-center">
             <CheckCircle2 className="mx-auto h-12 w-12 text-green-600" />
-            <DialogTitle className="mt-3 font-heading text-lg text-ink">Thank you! Hare Krishna 🙏</DialogTitle>
+            <DialogTitle className="mt-3 font-heading text-lg text-ink">{t("Thank you! Hare Krishna 🙏")}</DialogTitle>
             <DialogDescription className="mt-2 text-sm leading-6">
-              We&apos;ll match your {amountLabel} UPI payment and send your receipt on WhatsApp and email, usually within a day.
+              {t("We'll match your {amount} UPI payment and send your receipt on WhatsApp and email, usually within a day.", {
+                amount: amountLabel,
+              })}
             </DialogDescription>
             <button
               type="button"
@@ -269,13 +284,13 @@ function UpiFallbackDialog({ info, onClose }: { info: UpiFallbackInfo | null; on
               className="mt-4 h-11 w-full rounded-xl text-sm font-bold text-white"
               style={{ backgroundColor: PURPLE }}
             >
-              Done
+              {t("Done")}
             </button>
           </div>
         )}
           <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring">
             <X className="h-4 w-4" />
-            <span className="sr-only">Close</span>
+            <span className="sr-only">{t("Close")}</span>
           </DialogPrimitive.Close>
         </DialogPrimitive.Content>
       </DialogPortal>

@@ -12,6 +12,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import WhatsAppIcon from "@/components/WhatsAppIcon";
+import { useT } from "@/components/i18n/LocaleProvider";
 
 import { navEntries, isGroupActive, shouldHideBottomNav } from "@/lib/navConfig";
 import { NavListItem } from "@/components/NavListItem";
@@ -55,16 +56,15 @@ const getDarshanStatus = () => {
   const activeWindow = DARSHAN_WINDOWS.find(
     (w) => minutesNow >= w.startMin && minutesNow < w.endMin
   );
-  if (activeWindow) return { isOpen: true, label: activeWindow.label };
+  if (activeWindow) return { isOpen: true, label: activeWindow.label, time: activeWindow.label.split("· ")[1] };
 
   const nextWindow = DARSHAN_WINDOWS.find((w) => minutesNow < w.startMin);
-  const reopenLabel = nextWindow
-    ? `Reopens ${nextWindow.label.split("· ")[1].split(" – ")[0]}`
-    : "Reopens 4:30 AM";
-  return { isOpen: false, label: `Darshan Closed · ${reopenLabel}` };
+  const reopenTime = nextWindow ? nextWindow.label.split("· ")[1].split(" – ")[0] : "4:30 AM";
+  return { isOpen: false, label: `Darshan Closed · Reopens ${reopenTime}`, time: reopenTime };
 };
 
 const Navbar = () => {
+  const t = useT();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [darshanStatus, setDarshanStatus] = useState(getDarshanStatus);
@@ -232,7 +232,7 @@ const Navbar = () => {
         >
           <Icon className={`h-[20px] w-[20px] ${active ? "stroke-[2.4px]" : "stroke-[1.9px]"}`} />
         </span>
-        {item.label}
+        {t(item.label)}
       </Link>
     );
   };
@@ -250,7 +250,7 @@ const Navbar = () => {
           <div className="flex min-w-0 items-center gap-2 md:gap-4">
             <a
               href="mailto:social@hkmvizag.org"
-              aria-label="Email social@hkmvizag.org"
+              aria-label={t("Email {email}", { email: "social@hkmvizag.org" })}
               className="hidden items-center gap-2 font-medium transition-colors hover:text-vk-700 sm:inline-flex"
             >
               <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white text-vk-700 shadow-sm md:h-7 md:w-7">
@@ -260,7 +260,7 @@ const Navbar = () => {
             </a>
             <a
               href="tel:+918977761187"
-              aria-label="Call +91 89777 61187"
+              aria-label={t("Call {phone}", { phone: "+91 89777 61187" })}
               className="inline-flex items-center gap-2 whitespace-nowrap font-medium transition-colors hover:text-vk-700"
             >
               <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white text-vk-700 shadow-sm md:h-7 md:w-7">
@@ -283,7 +283,9 @@ const Navbar = () => {
                 />
               </span>
               <span suppressHydrationWarning className="whitespace-nowrap">
-                {darshanStatus.label}
+                {darshanStatus.isOpen
+                  ? `${t("Darshan Open")} · ${darshanStatus.time}`
+                  : `${t("Darshan Closed")} · ${t("Reopens {time}", { time: darshanStatus.time })}`}
               </span>
             </span>
             <div className="hidden items-center gap-1 md:flex">
@@ -303,7 +305,7 @@ const Navbar = () => {
                 href="https://whatsapp.com/channel/0029VaZDEG67T8bWHjibTy2u"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="WhatsApp channel"
+                aria-label={t("WhatsApp channel")}
                 className="inline-flex h-7 w-7 items-center justify-center rounded-full text-ink/70 transition-colors hover:bg-white hover:text-[#25D366]"
               >
                 <WhatsAppIcon className="h-4 w-4 fill-current" />
@@ -330,7 +332,7 @@ const Navbar = () => {
 
       {/* ── Main nav bar ─────────────────────────────────────────── */}
       <nav
-        aria-label="Main"
+        aria-label={t("Main")}
         className={`fixed z-50 transition-all duration-300 ${
           scrolled
             ? "inset-x-2 top-2 rounded-2xl border border-vk-200/70 bg-white/90 shadow-nav backdrop-blur-xl md:inset-x-6"
@@ -343,10 +345,10 @@ const Navbar = () => {
           }`}
         >
           {/* ── Logo ─────────────────────────────────────────────── */}
-          <Link href="/" className="flex shrink-0 items-center gap-3" aria-label="Hare Krishna Movement Vizag — Home">
+          <Link href="/" className="flex shrink-0 items-center gap-3" aria-label={t("Hare Krishna Movement Vizag — Home")}>
             <Image
               src={typeof ISKLogo === "string" ? ISKLogo : ISKLogo.src}
-              alt="ISKCON Gambheeram Visakhapatnam - Hare Krishna Movement Vizag"
+              alt={t("ISKCON Gambheeram Visakhapatnam - Hare Krishna Movement Vizag")}
               width={300}
               height={112}
               priority
@@ -357,7 +359,7 @@ const Navbar = () => {
               <span className="h-6 w-px shrink-0 bg-vk-200 md:h-8" aria-hidden />
               <Image
                 src={typeof HKVTLogo === "string" ? HKVTLogo : HKVTLogo.src}
-                alt="Hare Krishna Movement Vizag"
+                alt={t("Hare Krishna Movement Vizag")}
                 width={795}
                 height={288}
                 className="h-7 w-auto shrink-0 md:h-11 lg:h-9"
@@ -372,7 +374,7 @@ const Navbar = () => {
                 const active = pathname === entry.href;
                 return (
                   <Link key={entry.href} href={entry.href} className={topLinkCls(active)}>
-                    {entry.label}
+                    {t(entry.label)}
                     {active && activeDot}
                   </Link>
                 );
@@ -386,7 +388,7 @@ const Navbar = () => {
                   pathname === festival.href || pathname.startsWith(festival.href);
                 return (
                   <Link key={festival.href} href={festival.href} className={topLinkCls(activeF)}>
-                    {festival.label}
+                    {t(festival.label)}
                     {activeF && activeDot}
                   </Link>
                 );
@@ -400,7 +402,7 @@ const Navbar = () => {
                   pathname === customLink.href || pathname.startsWith(customLink.href);
                 return (
                   <Link key={customLink.href} href={customLink.href} className={topLinkCls(activeC)}>
-                    {customLink.label}
+                    {t(customLink.label)}
                     {activeC && activeDot}
                   </Link>
                 );
@@ -418,7 +420,7 @@ const Navbar = () => {
                     aria-haspopup="true"
                     className={topLinkCls(groupActive)}
                   >
-                    {group.label}
+                    {t(group.label)}
                     <ChevronDown className="h-3.5 w-3.5 transition-transform duration-200 group-hover/dropdown:rotate-180" />
                     {groupActive && activeDot}
                   </button>
@@ -429,8 +431,8 @@ const Navbar = () => {
                         <NavListItem
                           key={item.href}
                           href={item.href}
-                          title={item.label}
-                          description={item.description}
+                          title={t(item.label)}
+                          description={item.description && t(item.description)}
                           icon={item.icon}
                         />
                       ))}
@@ -445,7 +447,7 @@ const Navbar = () => {
           <div className="hidden items-center gap-2 lg:flex">
             <Link href="/donate" className="vk-btn-gold !rounded-xl !px-4">
               <Heart className="h-4 w-4 fill-current" />
-              Donate Now
+              {t("Donate Now")}
             </Link>
             {/* Small laptops (lg–xl): the full menu doesn't fit, so it opens
                 in the same sheet the mobile "More" button uses. */}
@@ -453,7 +455,7 @@ const Navbar = () => {
               type="button"
               onClick={toggleMobile}
               aria-expanded={mobileOpen}
-              aria-label={mobileOpen ? "Close menu" : "Open menu"}
+              aria-label={mobileOpen ? t("Close menu") : t("Open menu")}
               className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-vk-200 text-vk-700 transition-colors hover:bg-vk-50 xl:hidden"
             >
               {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -464,7 +466,7 @@ const Navbar = () => {
           <div className="flex items-center gap-1.5 lg:hidden">
             <Link href="/donate" className="vk-btn-gold !h-9 !rounded-xl !px-3.5 !py-0 !text-[12px]">
               <Heart className="h-3.5 w-3.5 fill-current" />
-              Donate
+              {t("Donate")}
             </Link>
           </div>
         </div>
@@ -493,7 +495,7 @@ const Navbar = () => {
                       className={mobileLinkCls(pathname === festival.href || pathname.startsWith(festival.href))}
                     >
                       <PartyPopper className="h-4 w-4 text-vk-500" />
-                      {festival.label}
+                      {t(festival.label)}
                     </Link>
                   )}
                   {customLink && (
@@ -502,36 +504,36 @@ const Navbar = () => {
                       className={mobileLinkCls(pathname === customLink.href || pathname.startsWith(customLink.href))}
                     >
                       <Megaphone className="h-4 w-4 text-vk-500" />
-                      {customLink.label}
+                      {t(customLink.label)}
                     </Link>
                   )}
                   <Link href="/shop" className={mobileLinkCls(pathname === "/shop")}>
                     <ShoppingBag className="h-4 w-4 text-vk-500" />
-                    Shop
+                    {t("Shop")}
                   </Link>
                   <Link href="/about" className={mobileLinkCls(pathname === "/about")}>
                     <Info className="h-4 w-4 text-vk-500" />
-                    About Us
+                    {t("About Us")}
                   </Link>
                   <Link href="/donor/login" className={mobileLinkCls(pathname === "/donor/login")}>
                     <User className="h-4 w-4 text-vk-500" />
-                    Donor Login
+                    {t("Donor Login")}
                   </Link>
                   <Link href="/ekadashi" className={mobileLinkCls(pathname === "/ekadashi")}>
                     <Calendar className="h-4 w-4 text-vk-500" />
-                    Ekadashi
+                    {t("Ekadashi")}
                   </Link>
                   <Link
                     href="/festival"
                     className={mobileLinkCls(pathname === "/festival" || pathname.startsWith("/festivals"))}
                   >
                     <PartyPopper className="h-4 w-4 text-vk-500" />
-                    Festivals
+                    {t("Festivals")}
                   </Link>
                 </div>
 
                 <p className="px-1 pb-2 pt-3 text-[11px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
-                  Explore by Category
+                  {t("Explore by Category")}
                 </p>
                 {navEntries
                   .filter(
@@ -570,7 +572,7 @@ const Navbar = () => {
                                 <GroupIcon className="h-4 w-4" />
                               </span>
                             )}
-                            <span>{group.label}</span>
+                            <span>{t(group.label)}</span>
                           </span>
                           <span
                             className={`flex h-7 w-7 items-center justify-center rounded-full transition-all duration-300 ${
@@ -601,7 +603,7 @@ const Navbar = () => {
                                     : "text-ink/75 hover:bg-vk-50 hover:text-vk-700"
                                 }`}
                               >
-                                {item.label}
+                                {t(item.label)}
                               </Link>
                             ))}
                           </div>
@@ -637,7 +639,7 @@ const Navbar = () => {
                 <div className="flex items-center gap-2">
                   <Link href="/donate" className="vk-btn-gold h-11 flex-1">
                     <Heart className="h-4 w-4 fill-current" />
-                    Donate Now
+                    {t("Donate Now")}
                   </Link>
                   <button
                     type="button"
@@ -645,7 +647,7 @@ const Navbar = () => {
                     className="vk-btn-outline h-11 flex-1"
                   >
                     <X className="h-4 w-4" />
-                    Close
+                    {t("Close")}
                   </button>
                 </div>
               </div>
@@ -658,7 +660,7 @@ const Navbar = () => {
       <AnimatePresence>
         {!mobileOpen && !shouldHideBottomNav(pathname) && (
           <motion.nav
-            aria-label="Quick links"
+            aria-label={t("Quick links")}
             initial={false}
             animate={{ y: 0 }}
             exit={{ y: 100 }}
@@ -672,7 +674,7 @@ const Navbar = () => {
               <div className="flex flex-1 justify-center">
                 <Link
                   href={DARSHAN_HREF}
-                  aria-label="Today's darshan"
+                  aria-label={t("Today's darshan")}
                   className="group -mt-6 flex flex-col items-center gap-1 pb-1.5"
                 >
                   <span className="relative flex h-[58px] w-[58px] items-center justify-center rounded-full bg-gradient-to-br from-vk-600 to-vk-800 text-white shadow-[0_10px_22px_-8px_rgba(30,58,138,0.75)] ring-4 ring-white transition-transform duration-200 group-active:scale-95">
@@ -688,7 +690,7 @@ const Navbar = () => {
                       />
                     </span>
                   </span>
-                  <span className="text-[10.5px] font-bold text-vk-800">Darshan</span>
+                  <span className="text-[10.5px] font-bold text-vk-800">{t("Darshan")}</span>
                 </Link>
               </div>
 
@@ -710,7 +712,7 @@ const Navbar = () => {
                     <Menu className="h-[20px] w-[20px] stroke-[1.9px]" />
                   )}
                 </span>
-                More
+                {t("More")}
               </button>
             </div>
           </motion.nav>

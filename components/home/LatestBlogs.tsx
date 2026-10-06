@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Clock } from "lucide-react";
 import SectionHeading from "@/components/site/SectionHeading";
 import Reveal from "@/components/site/Reveal";
+import { useT } from "@/components/i18n/LocaleProvider";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 
@@ -29,6 +30,7 @@ const fmtDate = (s?: string) =>
 
 /** GVD "Latest Blogs" — two featured cards plus a compact list. Hidden when there are no posts. */
 export default function LatestBlogs() {
+  const t = useT();
   const [blogs, setBlogs] = useState<Blog[]>([]);
 
   useEffect(() => {
@@ -44,14 +46,14 @@ export default function LatestBlogs() {
 
   const meta = (b: Blog) => (
     <p className="flex flex-wrap items-center gap-x-2 text-xs text-ink/55">
-      <span>{b.author?.name || "Hare Krishna Vaikuntham"}</span>
+      <span>{b.author?.name || t("Hare Krishna Vaikuntham")}</span>
       <span aria-hidden>•</span>
       <span>{fmtDate(b.publishedAt || b.createdAt)}</span>
       {b.readTime ? (
         <>
           <span aria-hidden>•</span>
           <span className="inline-flex items-center gap-1">
-            <Clock className="h-3 w-3" /> {b.readTime} min
+            <Clock className="h-3 w-3" /> {t("{n} min", { n: b.readTime })}
           </span>
         </>
       ) : null}
@@ -62,10 +64,10 @@ export default function LatestBlogs() {
     <section className="vk-section">
       <div className="vk-container">
         <SectionHeading
-          eyebrow="Worth Knowing"
-          title="Latest Blogs"
-          subtitle="Krishna katha, festival insights and the teachings of Srila Prabhupada."
-          action={{ href: "/blogs", label: "View All" }}
+          eyebrow={t("Worth Knowing")}
+          title={t("Latest Blogs")}
+          subtitle={t("Krishna katha, festival insights and the teachings of Srila Prabhupada.")}
+          action={{ href: "/blogs", label: t("View All") }}
         />
         <div className="grid gap-5 lg:grid-cols-[2fr_1fr]">
           <div className="grid gap-5 sm:grid-cols-2">

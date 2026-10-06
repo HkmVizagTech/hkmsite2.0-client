@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Poppins, Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
+import { Poppins, Playfair_Display, Plus_Jakarta_Sans, Noto_Sans_Telugu } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
@@ -9,6 +9,9 @@ import MetaPixel from "@/components/MetaPixel";
 import ThemeProvider from "@/components/ThemeProvider";
 import BottomNavSpace from "@/components/BottomNavSpace";
 import { siteKeywords, ORG_ALT_NAMES, TITLE_TEMPLATE, DEFAULT_OG_IMAGE } from "@/lib/seo";
+import { LocaleProvider } from "@/components/i18n/LocaleProvider";
+import LanguageToggle from "@/components/i18n/LanguageToggle";
+import { getLocale } from "@/lib/i18n/server";
 
 
 const poppins = Poppins({
@@ -23,6 +26,14 @@ const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["500", "600", "700", "800"],
   variable: "--font-jakarta",
+});
+
+// Telugu script (the Latin fonts above have no Telugu glyphs). It sits in
+// every font stack as a fallback, so Telugu text picks it up automatically.
+const telugu = Noto_Sans_Telugu({
+  subsets: ["telugu"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-telugu",
 });
 
 const playfair = Playfair_Display({
@@ -138,13 +149,14 @@ const webSiteJsonLd = {
 };
 
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
   return (
-  <html lang="en" className={`h-full antialiased overflow-x-clip ${playfair.variable} ${poppins.variable} ${jakarta.variable}`} suppressHydrationWarning>
+  <html lang={locale} className={`h-full antialiased overflow-x-clip ${playfair.variable} ${poppins.variable} ${jakarta.variable} ${telugu.variable}`} suppressHydrationWarning>
       <head>
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-XVDQNJK24G"
@@ -173,7 +185,10 @@ export default function RootLayout({
         <ReduxProvider>
           <ThemeProvider>
             <AuthProvider>
-              {children}
+              <LocaleProvider locale={locale}>
+                {children}
+                <LanguageToggle />
+              </LocaleProvider>
               <Toaster />
             </AuthProvider>
           </ThemeProvider>

@@ -5,9 +5,11 @@ import Link from "next/link";
 import { ChevronDown, MessageCircle } from "lucide-react";
 import { homeFaq } from "@/lib/faq";
 import Reveal from "@/components/site/Reveal";
+import { useT } from "@/components/i18n/LocaleProvider";
 
 /** GVD FAQ block — intro card on the left, accordion on the right. */
 export default function HomeFAQ() {
+  const t = useT();
   const [open, setOpen] = useState<number | null>(0);
   const [showAll, setShowAll] = useState(false);
   const items = showAll ? homeFaq : homeFaq.slice(0, 4);
@@ -18,15 +20,14 @@ export default function HomeFAQ() {
         <Reveal>
           <div className="grid gap-8 rounded-3xl bg-gradient-to-br from-vk-100 via-vk-50 to-white p-6 md:p-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-12">
             <div>
-              <span className="vk-pill mb-4">FAQ</span>
-              <h2 className="vk-h2">Frequently Asked Questions</h2>
+              <span className="vk-pill mb-4">{t("FAQ")}</span>
+              <h2 className="vk-h2">{t("Frequently Asked Questions")}</h2>
               <p className="vk-lead mt-3">
-                Quick answers about visiting ISKCON Gambheeram — darshan timings, location, donations and how to
-                get involved.
+                {t("Quick answers about visiting ISKCON Gambheeram — darshan timings, location, donations and how to get involved.")}
               </p>
               <Link href="/contact" className="vk-btn-primary mt-6">
                 <MessageCircle className="h-4 w-4" />
-                Get in Touch
+                {t("Get in Touch")}
               </Link>
             </div>
             <div className="space-y-3">
@@ -48,7 +49,7 @@ export default function HomeFAQ() {
                         className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left text-[15px] font-semibold text-ink"
                       >
                         <span>
-                          {i + 1}. {f.q}
+                          {i + 1}. {t(f.q)}
                         </span>
                         <span
                           className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-all ${
@@ -65,7 +66,7 @@ export default function HomeFAQ() {
                       className={`grid transition-[grid-template-rows] duration-300 ${isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
                     >
                       <div className="overflow-hidden">
-                        <p className="px-5 pb-5 text-sm leading-relaxed text-muted-foreground">{f.a}</p>
+                        <p className="px-5 pb-5 text-sm leading-relaxed text-muted-foreground">{t(f.a)}</p>
                       </div>
                     </div>
                   </div>
@@ -77,7 +78,7 @@ export default function HomeFAQ() {
                   onClick={() => setShowAll((v) => !v)}
                   className="vk-btn-outline"
                 >
-                  {showAll ? "Show less" : "Show more"}
+                  {showAll ? t("Show less") : t("Show more")}
                 </button>
               )}
             </div>

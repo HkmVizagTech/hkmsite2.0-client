@@ -7,6 +7,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import SectionHeading from "@/components/site/SectionHeading";
 import type { CampaignConfig } from "@/lib/campaignConfig";
 import { SQFT_CAMPAIGN } from "@/lib/campaignConfig";
+import { useT } from "@/components/i18n/LocaleProvider";
 
 const CLOUDINARY_BASE = "https://guptvrindavandham.org/media/campaign";
 
@@ -41,6 +42,7 @@ const OTHER_PRIVILEGES = [
 ];
 
 function PrivilegeCarousel({ extraImage }: { extraImage?: { src: string; caption: string } }) {
+  const t = useT();
   const [index, setIndex] = useState(0);
   const touchStartX = useRef(0);
 
@@ -75,7 +77,7 @@ function PrivilegeCarousel({ extraImage }: { extraImage?: { src: string; caption
         >
           <Image
             src={img.src}
-            alt={img.caption}
+            alt={t(img.caption)}
             fill
             sizes="(max-width: 1024px) 100vw, 50vw"
             className="object-cover"
@@ -85,7 +87,7 @@ function PrivilegeCarousel({ extraImage }: { extraImage?: { src: string; caption
       <div className="absolute bottom-3 right-3 flex items-center gap-1.5 rounded-full bg-vk-900/40 px-2 py-1.5 backdrop-blur-sm">
         <button
           type="button"
-          aria-label="Previous image"
+          aria-label={t("Previous image")}
           onClick={prev}
           className="flex h-6 w-6 items-center justify-center rounded-full bg-white/80 text-vk-700 transition hover:bg-white"
         >
@@ -95,7 +97,7 @@ function PrivilegeCarousel({ extraImage }: { extraImage?: { src: string; caption
           <button
             key={img.src}
             type="button"
-            aria-label={`Show ${img.caption}`}
+            aria-label={t("Show {caption}", { caption: t(img.caption) })}
             onClick={() => setIndex(i)}
             className={`h-1.5 rounded-full transition-all ${
               i === index ? "w-5 bg-white" : "w-1.5 bg-white/50 hover:bg-white/80"
@@ -104,7 +106,7 @@ function PrivilegeCarousel({ extraImage }: { extraImage?: { src: string; caption
         ))}
         <button
           type="button"
-          aria-label="Next image"
+          aria-label={t("Next image")}
           onClick={next}
           className="flex h-6 w-6 items-center justify-center rounded-full bg-white/80 text-vk-700 transition hover:bg-white"
         >
@@ -116,6 +118,7 @@ function PrivilegeCarousel({ extraImage }: { extraImage?: { src: string; caption
 }
 
 function OtherPrivilegesGallery({ config = SQFT_CAMPAIGN }: { config?: CampaignConfig }) {
+  const t = useT();
   const scrollerRef = useRef<HTMLDivElement>(null);
 
   const scrollBy = (dir: 1 | -1) => {
@@ -126,12 +129,12 @@ function OtherPrivilegesGallery({ config = SQFT_CAMPAIGN }: { config?: CampaignC
     <div className="relative mt-14 md:mt-16">
       <div className="mb-4 flex items-end justify-between gap-4">
         <h3 className="vk-h3 vk-bar-title">
-          Other Donor Privileges
+          {t("Other Donor Privileges")}
         </h3>
         <div className="hidden gap-2 sm:flex">
           <button
             type="button"
-            aria-label="Scroll left"
+            aria-label={t("Scroll left")}
             onClick={() => scrollBy(-1)}
             className="flex h-10 w-10 items-center justify-center rounded-full border border-vk-200 bg-white text-vk-700 transition hover:border-vk-700 hover:bg-vk-50"
           >
@@ -139,7 +142,7 @@ function OtherPrivilegesGallery({ config = SQFT_CAMPAIGN }: { config?: CampaignC
           </button>
           <button
             type="button"
-            aria-label="Scroll right"
+            aria-label={t("Scroll right")}
             onClick={() => scrollBy(1)}
             className="flex h-10 w-10 items-center justify-center rounded-full border border-vk-200 bg-white text-vk-700 transition hover:border-vk-700 hover:bg-vk-50"
           >
@@ -149,7 +152,7 @@ function OtherPrivilegesGallery({ config = SQFT_CAMPAIGN }: { config?: CampaignC
       </div>
 
       <p className="vk-lead mb-6 max-w-3xl">
-        Each of our respected contributors who donate more than 1 {config.unitName} will receive the following privileges based on Donation Level.
+        {t("Each of our respected contributors who donate more than 1 {unit} will receive the following privileges based on Donation Level.", { unit: t(config.unitName) })}
       </p>
 
       <div
@@ -161,7 +164,7 @@ function OtherPrivilegesGallery({ config = SQFT_CAMPAIGN }: { config?: CampaignC
             key={p.caption}
             className="relative aspect-[4/5] w-64 shrink-0 overflow-hidden rounded-2xl border border-vk-100 bg-vk-50 shadow-card min-[360px]:w-72 sm:w-80 lg:w-96"
           >
-            <Image src={p.src} alt={p.caption} fill sizes="(max-width: 640px) 320px, 384px" className="object-cover" />
+            <Image src={p.src} alt={t(p.caption)} fill sizes="(max-width: 640px) 320px, 384px" className="object-cover" />
           </div>
         ))}
       </div>
@@ -170,6 +173,7 @@ function OtherPrivilegesGallery({ config = SQFT_CAMPAIGN }: { config?: CampaignC
 }
 
 export default function DonorPrivilegesSection({ scrollToDonate, config = SQFT_CAMPAIGN }: { scrollToDonate?: () => void; config?: CampaignConfig }) {
+  const t = useT();
   // Brick Seva alone: a donor's name is engraved on the very brick they
   // sponsor, so lead the privilege list with it and show the machine that
   // does the engraving in the carousel.
@@ -181,7 +185,7 @@ export default function DonorPrivilegesSection({ scrollToDonate, config = SQFT_C
     ? [
         {
           lead: "Your Name on a Brick",
-          rest: ` — the ${config.unitName} you sponsor is laser-engraved with your name before it is laid in the temple.`,
+          rest: t(" — the {unit} you sponsor is laser-engraved with your name before it is laid in the temple.", { unit: t(config.unitName) }),
         },
         ...PRIVILEGES,
       ]
@@ -190,7 +194,7 @@ export default function DonorPrivilegesSection({ scrollToDonate, config = SQFT_C
   return (
     <section className="vk-section bg-white">
       <div className="vk-container">
-        <SectionHeading align="center" eyebrow="Our gratitude to every donor" title="Donor Privileges" />
+        <SectionHeading align="center" eyebrow={t("Our gratitude to every donor")} title={t("Donor Privileges")} />
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -203,7 +207,7 @@ export default function DonorPrivilegesSection({ scrollToDonate, config = SQFT_C
 
           <div>
             <p className="vk-lead mb-5">
-              Each of our respected contributors will receive these privileges as our heartfelt gratitude:
+              {t("Each of our respected contributors will receive these privileges as our heartfelt gratitude:")}
             </p>
             <ol className="space-y-3">
               {privileges.map((p, i) => (
@@ -212,8 +216,8 @@ export default function DonorPrivilegesSection({ scrollToDonate, config = SQFT_C
                     {i + 1}
                   </span>
                   <p className="text-sm leading-relaxed text-ink/80 md:text-[15px]">
-                    <span className="font-bold text-ink">{p.lead}</span>
-                    {p.rest}
+                    <span className="font-bold text-ink">{t(p.lead)}</span>
+                    {t(p.rest)}
                   </p>
                 </li>
               ))}
@@ -224,7 +228,7 @@ export default function DonorPrivilegesSection({ scrollToDonate, config = SQFT_C
                 onClick={scrollToDonate}
                 className="vk-btn-gold mt-8 h-12 px-8 text-base"
               >
-                Donate Now
+                {t("Donate Now")}
               </button>
             )}
           </div>

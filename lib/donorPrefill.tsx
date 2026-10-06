@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { getDonorToken, donorFetch } from "@/lib/donorAuthClient";
 import type { PrasadamAddress } from "@/components/AddressForm";
+import { useT } from "@/components/i18n/LocaleProvider";
 
 const apiBase = () =>
   (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(/\/+$/, "");
@@ -101,6 +102,7 @@ export function useDonorPrefill<TForm extends object>({
   fieldMap,
   onMahaPrasadamSelect,
 }: UseDonorPrefillOptions<TForm>) {
+  const t = useT();
   const [prefill, setPrefill] = useState<DonorPrefillProfile | null>(null);
   const [loggedIn, setLoggedIn] = useState(false);
   // Keep the latest setForm without making it an effect dependency (the
@@ -156,9 +158,11 @@ export function useDonorPrefill<TForm extends object>({
   // Helper strip for a donor who is logged in — their details are pre-filled.
   let hint: ReactNode | null = null;
   if (loggedIn && prefill) {
+    // Split around {name} so the name stays bold wherever the language puts it.
+    const [before, after = ""] = t("Donating as {name} — your details are pre-filled.").split("{name}");
     hint = (
       <p className="rounded-lg bg-emerald-50 px-3 py-2 text-[11px] font-medium text-emerald-700">
-        ✓ Donating as <span className="font-semibold">{prefill.name}</span> — your details are pre-filled.
+        ✓ {before}<span className="font-semibold">{prefill.name}</span>{after}
       </p>
     );
   }

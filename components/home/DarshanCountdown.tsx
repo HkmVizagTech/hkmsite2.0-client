@@ -7,6 +7,7 @@ import { ArrowRight, CalendarDays, ChevronLeft, ChevronRight, Moon, Sparkles, X 
 import { getDarshanPhotos } from "@/lib/darshanApi";
 import { vaishnavaCalendar2026, type VaishnavaDate } from "@/lib/vaishnavaCalendarData";
 import Reveal from "@/components/site/Reveal";
+import { useT } from "@/components/i18n/LocaleProvider";
 
 const FALLBACK_DARSHAN = "/assets/donor-priv-daily-darshan.webp";
 
@@ -45,6 +46,7 @@ function useCountdown(targetIso: string | null) {
  * and the next Ekadashi — the three things a devotee checks most.
  */
 export default function DarshanCountdown() {
+  const t = useT();
   const [photos, setPhotos] = useState<string[]>([]);
   const [syncLabel, setSyncLabel] = useState("");
   const [active, setActive] = useState(0);
@@ -87,11 +89,11 @@ export default function DarshanCountdown() {
                 type="button"
                 onClick={() => photos.length && setLightbox(active)}
                 className="group relative block aspect-[4/3] w-full overflow-hidden rounded-2xl bg-vk-100"
-                aria-label="Open today's darshan photo"
+                aria-label={t("Open today's darshan photo")}
               >
                 <Image
                   src={main}
-                  alt="Today's darshan of Sri Sri Radha Madan Mohan"
+                  alt={t("Today's darshan of Sri Sri Radha Madan Mohan")}
                   fill
                   sizes="(min-width: 1024px) 420px, 100vw"
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -99,7 +101,7 @@ export default function DarshanCountdown() {
                 <div className="absolute inset-0 bg-gradient-to-t from-vk-900/80 via-transparent to-transparent" />
                 <div className="absolute left-3 top-3">
                   <span className="vk-pill !bg-white/95 !text-vk-800 shadow">
-                    <Sparkles className="h-3.5 w-3.5" /> Today&apos;s Darshan
+                    <Sparkles className="h-3.5 w-3.5" /> {t("Today's Darshan")}
                   </span>
                 </div>
                 {syncLabel && (
@@ -113,7 +115,7 @@ export default function DarshanCountdown() {
                       key={src + i}
                       type="button"
                       onClick={() => setActive(i)}
-                      aria-label={`Show darshan photo ${i + 1}`}
+                      aria-label={t("Show darshan photo {n}", { n: i + 1 })}
                       className={`relative h-14 w-14 shrink-0 overflow-hidden rounded-xl ring-2 transition ${
                         i === active ? "ring-vk-500" : "ring-transparent opacity-70 hover:opacity-100"
                       }`}
@@ -127,7 +129,7 @@ export default function DarshanCountdown() {
 
             {/* ── Next festival ──────────────────────────────── */}
             <div className="flex flex-col justify-center gap-4 border-t border-vk-100 p-5 md:p-7 lg:border-l lg:border-t-0">
-              <h2 className="vk-bar-title text-xl text-ink md:text-2xl">Upcoming Festival</h2>
+              <h2 className="vk-bar-title text-xl text-ink md:text-2xl">{t("Upcoming Festival")}</h2>
               {festival ? (
                 <div className="flex items-start gap-4">
                   <div className="w-[76px] shrink-0 overflow-hidden rounded-2xl border border-vk-100 text-center shadow-sm">
@@ -143,15 +145,15 @@ export default function DarshanCountdown() {
                   </div>
                   <div className="min-w-0">
                     <p className="text-lg font-bold leading-snug text-ink" style={{ fontFamily: "var(--font-heading)" }}>
-                      {festival.title}
+                      {t(festival.title)}
                     </p>
                     {festival.description && (
-                      <p className="mt-1 line-clamp-3 text-sm leading-relaxed text-muted-foreground">{festival.description}</p>
+                      <p className="mt-1 line-clamp-3 text-sm leading-relaxed text-muted-foreground">{t(festival.description)}</p>
                     )}
                   </div>
                 </div>
               ) : (
-                <p className="text-sm text-muted-foreground">See the Vaishnava calendar for upcoming celebrations.</p>
+                <p className="text-sm text-muted-foreground">{t("See the Vaishnava calendar for upcoming celebrations.")}</p>
               )}
 
               {ekadashi && (
@@ -160,28 +162,28 @@ export default function DarshanCountdown() {
                     <Moon className="h-4 w-4" />
                   </span>
                   <div className="min-w-0 text-sm">
-                    <p className="font-semibold text-ink">Next Ekadashi · {fmt(ekadashi.date, { day: "numeric", month: "short" })}</p>
-                    <p className="truncate text-muted-foreground">{ekadashi.title}</p>
+                    <p className="font-semibold text-ink">{t("Next Ekadashi · {date}", { date: fmt(ekadashi.date, { day: "numeric", month: "short" }) })}</p>
+                    <p className="truncate text-muted-foreground">{t(ekadashi.title)}</p>
                   </div>
                   <Link href="/ekadashi" className="ml-auto shrink-0 text-sm font-semibold text-vk-600 hover:text-vk-800">
-                    Seva →
+                    {t("Seva →")}
                   </Link>
                 </div>
               )}
 
               <Link href="/vaishnav-calendar" className="vk-btn-outline self-start">
                 <CalendarDays className="h-4 w-4" />
-                Vaishnava Calendar
+                {t("Vaishnava Calendar")}
               </Link>
             </div>
 
             {/* ── Countdown tiles ────────────────────────────── */}
             <div className="grid grid-cols-4 gap-2.5 border-t border-vk-100 bg-gradient-to-br from-vk-50 to-white p-4 md:p-6 lg:grid-cols-2 lg:content-center lg:gap-3 lg:border-l lg:border-t-0">
               {[
-                { v: cd?.days, l: "Days" },
-                { v: cd?.hours, l: "Hours" },
-                { v: cd?.minutes, l: "Minutes" },
-                { v: cd?.seconds, l: "Seconds" },
+                { v: cd?.days, l: t("Days") },
+                { v: cd?.hours, l: t("Hours") },
+                { v: cd?.minutes, l: t("Minutes") },
+                { v: cd?.seconds, l: t("Seconds") },
               ].map((t) => (
                 <div key={t.l} className="rounded-2xl border border-vk-100 bg-white px-2 py-3 text-center shadow-sm md:py-4">
                   <p
@@ -204,17 +206,17 @@ export default function DarshanCountdown() {
         <div
           role="dialog"
           aria-modal="true"
-          aria-label="Darshan photo"
+          aria-label={t("Darshan photo")}
           className="fixed inset-0 z-[100] flex items-center justify-center bg-vk-900/95 p-4"
           onClick={() => setLightbox(null)}
         >
-          <button type="button" aria-label="Close" className="absolute right-5 top-5 text-white/80 hover:text-white" onClick={() => setLightbox(null)}>
+          <button type="button" aria-label={t("Close")} className="absolute right-5 top-5 text-white/80 hover:text-white" onClick={() => setLightbox(null)}>
             <X className="h-8 w-8" />
           </button>
           {lightbox > 0 && (
             <button
               type="button"
-              aria-label="Previous photo"
+              aria-label={t("Previous photo")}
               className="absolute left-3 rounded-full bg-white/10 p-2 text-white hover:bg-white/20 md:left-8"
               onClick={(e) => { e.stopPropagation(); setLightbox(lightbox - 1); }}
             >
@@ -224,7 +226,7 @@ export default function DarshanCountdown() {
           {lightbox < photos.length - 1 && (
             <button
               type="button"
-              aria-label="Next photo"
+              aria-label={t("Next photo")}
               className="absolute right-3 rounded-full bg-white/10 p-2 text-white hover:bg-white/20 md:right-8"
               onClick={(e) => { e.stopPropagation(); setLightbox(lightbox + 1); }}
             >
@@ -232,14 +234,14 @@ export default function DarshanCountdown() {
             </button>
           )}
           <div className="relative h-[82vh] w-[92vw]" onClick={(e) => e.stopPropagation()}>
-            <Image src={photos[lightbox]} alt="Darshan" fill sizes="92vw" className="object-contain" />
+            <Image src={photos[lightbox]} alt={t("Darshan")} fill sizes="92vw" className="object-contain" />
           </div>
           <Link
             href="/gallery"
             className="absolute bottom-6 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-semibold text-vk-800"
             onClick={(e) => e.stopPropagation()}
           >
-            Full gallery <ArrowRight className="h-4 w-4" />
+            {t("Full gallery")} <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       )}

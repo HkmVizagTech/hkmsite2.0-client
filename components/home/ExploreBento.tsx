@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import SectionHeading from "@/components/site/SectionHeading";
 import Reveal from "@/components/site/Reveal";
+import { getT } from "@/lib/i18n/server";
 
 interface Tile {
   title: string;
@@ -74,31 +75,32 @@ const tiles: Tile[] = [
 ];
 
 /** GVD "Explore Temple" bento — image tiles with a navy gradient and caption. */
-export default function ExploreBento() {
+export default async function ExploreBento() {
+  const t = await getT();
   return (
     <section className="vk-section vk-band">
       <div className="vk-container">
         <SectionHeading
-          eyebrow="Discover the Dham"
-          title="Explore Hare Krishna Vaikuntham"
-          subtitle="From daily darshan and aarti to Subhojanam, Gau Seva and grand festivals — explore everything that makes our temple in Gambheeram a home for every seeker."
-          action={{ href: "/about", label: "View All" }}
+          eyebrow={t("Discover the Dham")}
+          title={t("Explore Hare Krishna Vaikuntham")}
+          subtitle={t("From daily darshan and aarti to Subhojanam, Gau Seva and grand festivals — explore everything that makes our temple in Gambheeram a home for every seeker.")}
+          action={{ href: "/about", label: t("View All") }}
         />
         <div className="grid grid-flow-row-dense auto-rows-[150px] grid-cols-2 gap-3 md:auto-rows-[190px] md:gap-4 lg:grid-cols-4">
-          {tiles.map((t, i) => (
-            <Reveal key={t.title} delay={i * 0.04} className={t.cls}>
-              <Link href={t.href} className="vk-tile group block h-full w-full">
+          {tiles.map((tile, i) => (
+            <Reveal key={tile.title} delay={i * 0.04} className={tile.cls}>
+              <Link href={tile.href} className="vk-tile group block h-full w-full">
                 <Image
-                  src={t.img}
-                  alt={t.title}
+                  src={tile.img}
+                  alt={t(tile.title)}
                   fill
                   sizes="(min-width: 1024px) 33vw, 50vw"
                   className="object-cover"
                 />
                 <div className="vk-tile-caption flex items-end justify-between gap-3">
                   <div className="min-w-0">
-                    <h3 className="text-base font-bold leading-tight text-white md:text-xl">{t.title}</h3>
-                    <p className="mt-1 hidden text-[13px] leading-snug text-white/80 sm:block">{t.blurb}</p>
+                    <h3 className="text-base font-bold leading-tight text-white md:text-xl">{t(tile.title)}</h3>
+                    <p className="mt-1 hidden text-[13px] leading-snug text-white/80 sm:block">{t(tile.blurb)}</p>
                   </div>
                   <span className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur transition-colors group-hover:bg-white group-hover:text-vk-800 sm:flex">
                     <ArrowUpRight className="h-4 w-4" />

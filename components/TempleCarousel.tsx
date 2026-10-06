@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useT } from "@/components/i18n/LocaleProvider";
 
 const FALLBACK_IMG = "/assets/home-banner-chaitanya-bhavan.webp";
 const FALLBACK_IMG_MOBILE = "/assets/home-banner-chaitanya-bhavan-mobile.webp";
@@ -64,6 +65,7 @@ const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "
  * admin-managed /hero-banners endpoint, with bundled fallbacks.
  */
 const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true }: TempleCarouselProps = {}) => {
+  const t = useT();
   const [slides, setSlides] = useState<TempleCarouselSlide[]>(propSlides || defaultSlides);
   const [imgErrors, setImgErrors] = useState<Record<string, boolean>>({});
   const [selected, setSelected] = useState(0);
@@ -136,7 +138,7 @@ const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true }: TempleCa
   return (
     <section
       aria-roledescription="carousel"
-      aria-label="Temple highlights"
+      aria-label={t("Temple highlights")}
       className="relative select-none"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
@@ -153,7 +155,7 @@ const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true }: TempleCa
                   key={`${slide.src}-${i}`}
                   className="min-w-0 shrink-0 grow-0 basis-full"
                   aria-roledescription="slide"
-                  aria-label={`${i + 1} of ${slides.length}: ${slide.title}`}
+                  aria-label={t("{n} of {total}: {title}", { n: i + 1, total: slides.length, title: t(slide.title) })}
                 >
                   <div
                     role={slide.linkUrl || !isActive ? "button" : undefined}
@@ -166,7 +168,7 @@ const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true }: TempleCa
                   >
                     <Image
                       src={mobileBroken ? FALLBACK_IMG_MOBILE : slide.mobileSrc}
-                      alt={slide.title}
+                      alt={t(slide.title)}
                       fill
                       sizes="100vw"
                       draggable={false}
@@ -176,7 +178,7 @@ const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true }: TempleCa
                     />
                     <Image
                       src={desktopBroken ? FALLBACK_IMG : slide.src}
-                      alt={slide.title}
+                      alt={t(slide.title)}
                       fill
                       sizes="100vw"
                       draggable={false}
@@ -197,7 +199,7 @@ const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true }: TempleCa
             <button
               type="button"
               onClick={scrollPrev}
-              aria-label="Previous slide"
+              aria-label={t("Previous slide")}
               className="absolute left-3 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-vk-800 shadow-lg backdrop-blur transition hover:bg-white md:flex lg:left-6"
             >
               <ChevronLeft className="h-5 w-5" />
@@ -205,7 +207,7 @@ const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true }: TempleCa
             <button
               type="button"
               onClick={scrollNext}
-              aria-label="Next slide"
+              aria-label={t("Next slide")}
               className="absolute right-3 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-vk-800 shadow-lg backdrop-blur transition hover:bg-white md:flex lg:right-6"
             >
               <ChevronRight className="h-5 w-5" />
@@ -216,14 +218,14 @@ const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true }: TempleCa
 
       {/* Dots */}
       {slides.length > 1 && (
-        <div className="absolute inset-x-0 bottom-3 z-10 flex items-center justify-center gap-1.5 md:bottom-5" role="tablist" aria-label="Choose slide">
+        <div className="absolute inset-x-0 bottom-3 z-10 flex items-center justify-center gap-1.5 md:bottom-5" role="tablist" aria-label={t("Choose slide")}>
           {slides.map((s, i) => (
             <button
               key={`dot-${i}`}
               type="button"
               role="tab"
               aria-selected={i === selected}
-              aria-label={`Go to slide ${i + 1}: ${s.title}`}
+              aria-label={t("Go to slide {n}: {title}", { n: i + 1, title: t(s.title) })}
               onClick={() => emblaApi?.scrollTo(i)}
               className={`h-2 rounded-full transition-all duration-300 ${
                 i === selected ? "w-7 bg-white" : "w-2 bg-white/50 hover:bg-white/80"

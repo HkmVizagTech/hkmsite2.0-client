@@ -19,9 +19,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['var(--font-poppins)', 'Poppins', 'sans-serif'],
-        heading: ['var(--font-jakarta)', 'Plus Jakarta Sans', 'var(--font-poppins)', 'sans-serif'],
-        body: ['var(--font-poppins)', 'Poppins', 'sans-serif'],
+        sans: ['var(--font-poppins)', 'Poppins', 'var(--font-telugu)', 'sans-serif'],
+        heading: ['var(--font-jakarta)', 'Plus Jakarta Sans', 'var(--font-poppins)', 'var(--font-telugu)', 'sans-serif'],
+        body: ['var(--font-poppins)', 'Poppins', 'var(--font-telugu)', 'sans-serif'],
       },
       colors: {
         // Vaikuntham Blue ramp (GVD-standard redesign). Use for brand

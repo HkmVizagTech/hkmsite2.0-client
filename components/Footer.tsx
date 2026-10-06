@@ -6,6 +6,7 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import WhatsAppIcon from "@/components/WhatsAppIcon";
+import { useT } from "@/components/i18n/LocaleProvider";
 import VaikunthamAppPromo from "@/components/VaikunthamAppPromo";
 import HKVTLogo from "@/assets/HKMV_logo.png";
 
@@ -58,6 +59,7 @@ const PRABHUPADA_IMG = "https://res.cloudinary.com/ddmzeqpkc/image/upload/prabhu
 const colTitle = "mb-5 text-xs font-bold uppercase tracking-[0.16em] text-white/90";
 
 const Footer = () => {
+  const t = useT();
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
   return (
@@ -71,10 +73,10 @@ const Footer = () => {
         <div className="vk-container relative">
           {/* ── Brand + Prabhupada quote card (GVD footer header) ── */}
           <div className="flex flex-col gap-6 pt-10 md:pt-14 lg:flex-row lg:items-center lg:gap-10">
-            <Link href="/" className="shrink-0" aria-label="Hare Krishna Movement Vizag — Home">
+            <Link href="/" className="shrink-0" aria-label={t("Hare Krishna Movement Vizag — Home")}>
               <Image
                 src={typeof HKVTLogo === "string" ? HKVTLogo : HKVTLogo.src}
-                alt="Hare Krishna Vaikuntham Cultural Centre"
+                alt={t("Hare Krishna Vaikuntham Cultural Centre")}
                 width={795}
                 height={288}
                 className="h-14 w-auto brightness-0 invert md:h-16"
@@ -85,7 +87,7 @@ const Footer = () => {
               <div className="relative hidden h-full min-h-[150px] w-40 sm:block md:w-48">
                 <Image
                   src={PRABHUPADA_IMG}
-                  alt="His Divine Grace A.C. Bhaktivedanta Swami Srila Prabhupada"
+                  alt={t("His Divine Grace A.C. Bhaktivedanta Swami Srila Prabhupada")}
                   fill
                   sizes="192px"
                   className="object-cover object-top grayscale"
@@ -93,19 +95,18 @@ const Footer = () => {
               </div>
               <div className="p-5 md:p-6">
                 <p className="text-base font-bold leading-snug md:text-lg" style={{ fontFamily: "var(--font-heading)" }}>
-                  A sacred place for seva, soul upliftment &amp;{" "}
-                  <span className="font-serif-display italic text-vk-600">Krishna Consciousness.</span>
+                  {t("A sacred place for seva, soul upliftment &")}{" "}
+                  <span className="font-serif-display italic text-vk-600">{t("Krishna Consciousness.")}</span>
                 </p>
                 <p className="mt-2 text-[13px] leading-relaxed text-ink/60">
-                  Inspired by Srila Prabhupada&apos;s vision, we serve with devotion, compassion and commitment —
-                  since 2008 in Visakhapatnam.
+                  {t("Inspired by Srila Prabhupada's vision, we serve with devotion, compassion and commitment — since 2008 in Visakhapatnam.")}
                 </p>
               </div>
               <div className="hidden border-l border-vk-100 p-5 md:block md:p-6">
                 <p className="font-serif-display text-lg italic leading-snug text-ink">
-                  &ldquo;If you want peace, then you must develop Krishna consciousness.&rdquo;
+                  &ldquo;{t("If you want peace, then you must develop Krishna consciousness.")}&rdquo;
                 </p>
-                <p className="mt-2 text-xs font-semibold uppercase tracking-[0.14em] text-vk-600">— Srila Prabhupada</p>
+                <p className="mt-2 text-xs font-semibold uppercase tracking-[0.14em] text-vk-600">— {t("Srila Prabhupada")}</p>
               </div>
             </div>
           </div>
@@ -114,13 +115,13 @@ const Footer = () => {
           <div className="grid grid-cols-1 gap-10 py-12 sm:grid-cols-2 lg:grid-cols-[1.1fr_1.2fr_0.8fr_1.1fr] lg:gap-12">
             {/* Timings */}
             <div>
-              <h3 className={colTitle}>Temple Timings</h3>
+              <h3 className={colTitle}>{t("Temple Timings")}</h3>
               <ul className="space-y-2.5">
                 {scheduleItems.map((s) => (
                   <li key={s.name} className="flex items-center justify-between gap-4 text-sm">
                     <span className="flex items-center gap-2.5">
                       <span className="h-1.5 w-1.5 rounded-full bg-vk-400 ring-4 ring-vk-400/15" />
-                      {s.name}
+                      {t(s.name)}
                     </span>
                     <span className="font-medium italic text-white/55">{s.time}</span>
                   </li>
@@ -130,13 +131,13 @@ const Footer = () => {
                 href="/daily-schedule"
                 className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-white hover:text-[hsl(var(--gold))]"
               >
-                Full schedule <ChevronRight className="h-4 w-4" />
+                {t("Full schedule")} <ChevronRight className="h-4 w-4" />
               </Link>
             </div>
 
             {/* Sevas as chips */}
             <div>
-              <h3 className={colTitle}>Our Sevas</h3>
+              <h3 className={colTitle}>{t("Our Sevas")}</h3>
               <div className="flex flex-wrap gap-2">
                 {sevaChips.map((c) => (
                   <Link
@@ -144,20 +145,20 @@ const Footer = () => {
                     href={c.href}
                     className="group inline-flex items-center gap-1 rounded-full border border-white/15 bg-white/[0.06] px-3.5 py-1.5 text-[13px] font-medium text-white/85 transition-colors hover:border-white/40 hover:bg-white/15 hover:text-white"
                   >
-                    {c.label}
+                    {t(c.label)}
                     <ArrowUpRight className="h-3.5 w-3.5 opacity-60 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                   </Link>
                 ))}
               </div>
               <Link href="/donate" className="vk-btn-gold mt-6">
                 <Heart className="h-4 w-4 fill-current" />
-                Donate Now
+                {t("Donate Now")}
               </Link>
             </div>
 
             {/* Explore */}
             <div>
-              <h3 className={colTitle}>Explore</h3>
+              <h3 className={colTitle}>{t("Explore")}</h3>
               <ul className="space-y-2.5">
                 {exploreLinks.map((l) => (
                   <li key={l.href}>
@@ -166,7 +167,7 @@ const Footer = () => {
                       className="group inline-flex items-center gap-1.5 text-sm transition-colors hover:text-white"
                     >
                       <ChevronRight className="h-3.5 w-3.5 text-vk-400 transition-transform group-hover:translate-x-0.5" />
-                      {l.label}
+                      {t(l.label)}
                     </Link>
                   </li>
                 ))}
@@ -175,12 +176,11 @@ const Footer = () => {
 
             {/* Visit */}
             <div>
-              <h3 className={colTitle}>Visit Us</h3>
+              <h3 className={colTitle}>{t("Visit Us")}</h3>
               <address className="flex gap-3 text-sm not-italic leading-relaxed">
                 <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-vk-400" />
                 <span>
-                  Chaitanya Bhavan, Hare Krishna Vaikuntham Cultural Centre, IIM Rd, opp. Akshaya Patra
-                  Foundation, Gambhiram, Visakhapatnam, Andhra Pradesh 531163
+                  {t("Chaitanya Bhavan, Hare Krishna Vaikuntham Cultural Centre, IIM Rd, opp. Akshaya Patra Foundation, Gambhiram, Visakhapatnam, Andhra Pradesh 531163")}
                 </span>
               </address>
               <a
@@ -190,7 +190,7 @@ const Footer = () => {
                 className="vk-btn-ghost-light mt-4"
               >
                 <Navigation className="h-4 w-4" />
-                Get Directions
+                {t("Get Directions")}
               </a>
               <div className="mt-6 space-y-2.5 text-sm">
                 <a href="tel:+918977761187" className="flex items-center gap-3 transition-colors hover:text-white">
@@ -216,7 +216,7 @@ const Footer = () => {
 
           {/* ── Follow us ─────────────────────────────────────────── */}
           <div className="flex flex-col items-center gap-3 py-10">
-            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/50">Follow us on</p>
+            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/50">{t("Follow us on")}</p>
             <div className="flex items-center gap-2.5">
               {socials.map((s) => (
                 <a
@@ -234,11 +234,11 @@ const Footer = () => {
                 href="https://whatsapp.com/channel/0029VaZDEG67T8bWHjibTy2u"
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Join our WhatsApp channel"
+                aria-label={t("Join our WhatsApp channel")}
                 className="inline-flex h-10 items-center gap-2 rounded-full bg-[#25D366] px-4 text-sm font-semibold text-white transition-transform hover:-translate-y-0.5"
               >
                 <WhatsAppIcon className="h-4 w-4 fill-current" />
-                Join Channel
+                {t("Join Channel")}
               </a>
             </div>
           </div>
@@ -246,19 +246,19 @@ const Footer = () => {
           {/* ── Bottom bar ────────────────────────────────────────── */}
           <div className="flex flex-col items-center justify-between gap-4 border-t border-white/10 py-6 text-center md:flex-row md:text-left">
             <p className="text-[13px] text-white/50">
-              © {new Date().getFullYear()} Hare Krishna Movement India, Visakhapatnam. All rights reserved.
+              {t("© {year} Hare Krishna Movement India, Visakhapatnam. All rights reserved.", { year: new Date().getFullYear() })}
             </p>
             <div className="flex items-center gap-4 text-[13px] text-white/50">
-              <Link href="/privacy-policy" className="transition-colors hover:text-white">Privacy Policy</Link>
+              <Link href="/privacy-policy" className="transition-colors hover:text-white">{t("Privacy Policy")}</Link>
               <span className="text-white/20">·</span>
-              <Link href="/terms-and-conditions" className="transition-colors hover:text-white">Terms</Link>
+              <Link href="/terms-and-conditions" className="transition-colors hover:text-white">{t("Terms")}</Link>
               <span className="text-white/20">·</span>
-              <Link href="/refund-policy" className="transition-colors hover:text-white">Refunds</Link>
+              <Link href="/refund-policy" className="transition-colors hover:text-white">{t("Refunds")}</Link>
               <button
                 type="button"
                 onClick={scrollToTop}
                 className="ml-2 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white/70 transition-colors hover:bg-white hover:text-vk-800"
-                aria-label="Back to top"
+                aria-label={t("Back to top")}
               >
                 <ArrowUp className="h-4 w-4" />
               </button>

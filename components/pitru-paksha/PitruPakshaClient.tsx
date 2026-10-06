@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, Fragment, useEffect, useState, type ReactNode } from "react";
 import { useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import {
@@ -33,6 +33,8 @@ import {
   trackPurchase,
 } from "@/lib/metaPixel";
 import { useUpiFallback } from "@/components/UpiFallbackDialog";
+import { useT } from "@/components/i18n/LocaleProvider";
+import type { TFunction } from "@/lib/i18n/translate";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -300,6 +302,33 @@ const apiBase = () =>
   );
 const formatAmount = (amount: number) => amount.toLocaleString("en-IN");
 
+// Display-only translation helpers. The seva data stays English (it is sent
+// to the API / Razorpay / analytics); these only change what is rendered.
+
+/** "44 meals" → t("{count} meals", { count: 44 }); non-numeric impacts are
+ *  looked up as-is ("Fodder for a day"). */
+const translateImpact = (t: TFunction, impact: string) => {
+  const m = impact.match(/^(\d+) (.+)$/);
+  return m ? t(`{count} ${m[2]}`, { count: m[1] }) : t(impact);
+};
+
+/** Renders a translated sentence whose {placeholders} are React nodes
+ *  (links), so the language can put them wherever its word order needs. */
+const withNodes = (text: string, nodes: Record<string, ReactNode>) =>
+  text.split(/\{(\w+)\}/g).map((part, i) =>
+    i % 2 === 1 && part in nodes ? <Fragment key={i}>{nodes[part]}</Fragment> : part
+  );
+
+/** First grapheme (Telugu "పి" is one letter made of two code points) — for
+ *  the drop-cap paragraph. */
+const splitFirstGrapheme = (text: string): [string, string] => {
+  const first = text.match(/^.\p{M}*/u)?.[0] ?? "";
+  return [first, text.slice(first.length)];
+};
+
+const PITRU_INTRO =
+  "Pitru Paksha is the fortnight of the Vedic calendar set aside for remembering and honouring our ancestors — the pitrs. Falling each year in the dark fortnight of Ashwin (September–October), it is a season of profound gratitude, when families across India offer shraddha, tarpan and charity on the tithi (date) of their departed elders.";
+
 // Page styling now uses the Vaikuntham Blue vk-* classes. The original banner
 // saffron is kept only for the Razorpay checkout theme so the payment sheet
 // is unchanged.
@@ -310,6 +339,8 @@ const C = {
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export default function PitruPakshaClient() {
+  const t = useT();
+  const [dropCap, introRest] = splitFirstGrapheme(t(PITRU_INTRO));
   const reduce = useReducedMotion();
   const attribution = useAttribution("pitru-paksha");
   const razorpayReady = useRazorpayPreload();
@@ -595,7 +626,7 @@ export default function PitruPakshaClient() {
                 <source media="(max-width: 640px)" srcSet={MOBILE_BANNER} />
                 <img
                   src={DESKTOP_BANNER}
-                  alt="Pitru Paksha seva at Hare Krishna Movement Vizag"
+                  alt={t("Pitru Paksha seva at Hare Krishna Movement Vizag")}
                   className="h-auto w-full"
                 />
               </picture>
@@ -611,9 +642,9 @@ export default function PitruPakshaClient() {
         <div className="vk-container">
           <SectionHeading
             align="center"
-            eyebrow="Choose Your Offering"
-            title="Pitru Paksha Sevas"
-            subtitle="Honour your ancestors with sacred seva and receive their blessings"
+            eyebrow={t("Choose Your Offering")}
+            title={t("Pitru Paksha Sevas")}
+            subtitle={t("Honour your ancestors with sacred seva and receive their blessings")}
           />
 
           {/* Seva cards grid */}
@@ -630,7 +661,7 @@ export default function PitruPakshaClient() {
                 <div className="relative h-44 overflow-hidden bg-vk-900 md:h-48">
                   <Image
                     src={seva.image}
-                    alt={seva.title}
+                    alt={t(seva.title)}
                     fill
                     unoptimized
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -640,7 +671,7 @@ export default function PitruPakshaClient() {
                   <div className="absolute bottom-3 left-4 right-4 flex items-center gap-2">
                     <span className="text-2xl drop-shadow">{seva.icon}</span>
                     <h3 className="text-lg font-bold text-white drop-shadow-md md:text-xl">
-                      {seva.title}
+                      {t(seva.title)}
                     </h3>
                   </div>
                 </div>
@@ -648,7 +679,7 @@ export default function PitruPakshaClient() {
                 {/* Card body */}
                 <div className="flex flex-1 flex-col p-4 sm:p-5">
                   <p className="min-h-[40px] text-[13px] leading-relaxed text-muted-foreground md:text-sm">
-                    {seva.description}
+                    {t(seva.description)}
                   </p>
                   <div className="mt-4 space-y-2.5">
                     {(() => {
@@ -657,11 +688,11 @@ export default function PitruPakshaClient() {
                       return (
                         <>
                           <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
-                            {amountCards.map((t) => (
+                            {amountCards.map((opt) => (
                               <button
-                                key={t.legacySevaId}
+                                key={opt.legacySevaId}
                                 type="button"
-                                onClick={() => openCheckout(seva, t)}
+                                onClick={() => openCheckout(seva, opt)}
                                 className="group/amt flex min-h-[64px] flex-col items-center justify-center rounded-xl border-[1.5px] border-[hsl(var(--gold)/0.6)] bg-[hsl(var(--gold)/0.1)] px-1 py-2 text-center shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-transparent hover:bg-gradient-gold hover:shadow-gold sm:min-h-[68px] sm:px-1.5"
                               >
                                 <span
@@ -669,11 +700,11 @@ export default function PitruPakshaClient() {
                                   style={{ fontFamily: "var(--font-heading)" }}
                                 >
                                   <span className="mr-px text-[0.85em] text-[hsl(var(--gold-deep))] group-hover/amt:text-ink">₹</span>
-                                  {t.amount != null ? formatAmount(t.amount) : "—"}
+                                  {opt.amount != null ? formatAmount(opt.amount) : "—"}
                                 </span>
-                                {t.impact && (
+                                {opt.impact && (
                                   <span className="mt-1.5 block text-[10.5px] font-semibold leading-[1.2] text-ink/60 group-hover/amt:text-ink/80 sm:text-[11px]">
-                                    {t.impact}
+                                    {translateImpact(t, opt.impact)}
                                   </span>
                                 )}
                               </button>
@@ -697,7 +728,7 @@ export default function PitruPakshaClient() {
                                 <line x1="12" y1="5" x2="12" y2="19" />
                                 <line x1="5" y1="12" x2="19" y2="12" />
                               </svg>
-                              <span>Donate Other Amount</span>
+                              <span>{t("Donate Other Amount")}</span>
                             </button>
                           )}
                         </>
@@ -721,19 +752,13 @@ export default function PitruPakshaClient() {
         <div className="vk-container">
           <Reveal className="mx-auto grid max-w-6xl gap-8 md:grid-cols-[1.35fr_0.65fr] md:items-center">
             <div>
-              <span className="vk-pill mb-4">Hare Krishna Movement</span>
-              <h1 className="vk-h1">Pitru Paksha</h1>
+              <span className="vk-pill mb-4">{t("Hare Krishna Movement")}</span>
+              <h1 className="vk-h1">{t("Pitru Paksha")}</h1>
               <p className="vk-lead mt-5 max-w-4xl md:text-lg md:leading-8">
-                The sacred fortnight to honour our ancestors. During Pitru Paksha,
-                we offer shraddha, tarpan and charity — feeding devotees, serving
-                sacred cows and glorifying the Lord — so the departed souls may
-                attain peace and our families may receive their blessings.
+                {t("The sacred fortnight to honour our ancestors. During Pitru Paksha, we offer shraddha, tarpan and charity — feeding devotees, serving sacred cows and glorifying the Lord — so the departed souls may attain peace and our families may receive their blessings.")}
               </p>
               <p className="mt-5 max-w-4xl border-l-4 border-vk-300 pl-4 font-serif-display text-[15px] italic leading-7 text-vk-800 md:text-base">
-                &ldquo;The scriptures declare that whatever is offered with devotion
-                during this fortnight — food, water or charity — reaches the
-                ancestors directly. Gratitude, given in the form of seva, is the
-                greatest homage we can offer.&rdquo;
+                &ldquo;{t("The scriptures declare that whatever is offered with devotion during this fortnight — food, water or charity — reaches the ancestors directly. Gratitude, given in the form of seva, is the greatest homage we can offer.")}&rdquo;
               </p>
             </div>
             <div className="vk-card p-5 md:p-6">
@@ -742,16 +767,14 @@ export default function PitruPakshaClient() {
                   <ShieldCheck className="h-5 w-5" />
                 </span>
                 <div>
-                  <h2 className="vk-h3 !text-lg">Offer Seva This Pitru Paksha</h2>
+                  <h2 className="vk-h3 !text-lg">{t("Offer Seva This Pitru Paksha")}</h2>
                   <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                    Your offering sustains Annadana, Sadhu Bhojan, sacred cow care
-                    and every divine ritual performed at ISKCON Gambheeram Visakhapatnam — carrying your
-                    gratitude to the ancestors you remember.
+                    {t("Your offering sustains Annadana, Sadhu Bhojan, sacred cow care and every divine ritual performed at ISKCON Gambheeram Visakhapatnam — carrying your gratitude to the ancestors you remember.")}
                   </p>
                 </div>
               </div>
               <a href="#offer-seva" className="vk-btn-gold mt-5 h-12 w-full text-[15px] font-bold">
-                Offer Seva
+                {t("Offer Seva")}
               </a>
             </div>
           </Reveal>
@@ -771,7 +794,7 @@ export default function PitruPakshaClient() {
               <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-vk-100 text-vk-700">
                 <b.icon className="h-3.5 w-3.5" />
               </span>
-              {b.label}
+              {t(b.label)}
             </span>
           ))}
         </div>
@@ -783,19 +806,24 @@ export default function PitruPakshaClient() {
       <section className="pt-10 md:pt-16">
         <div className="vk-container">
           <div className="mx-auto max-w-6xl rounded-2xl border border-vk-100 bg-vk-50 px-5 py-4 text-sm leading-7 text-ink/80 md:text-base">
-            While making UPI/Bank payments, please send a screenshot with your
-            name, mobile, address and PAN details to our WhatsApp{" "}
-            <a className="font-bold text-vk-700 hover:text-vk-500" href="tel:+918977761187">
-              +91 89777 61187
-            </a>{" "}
-            or email{" "}
-            <a
-              className="break-all font-bold text-vk-700 hover:text-vk-500"
-              href="mailto:social@hkmvizag.org"
-            >
-              social@hkmvizag.org
-            </a>
-            .
+            {withNodes(
+              t("While making UPI/Bank payments, please send a screenshot with your name, mobile, address and PAN details to our WhatsApp {phone} or email {email}."),
+              {
+                phone: (
+                  <a className="font-bold text-vk-700 hover:text-vk-500" href="tel:+918977761187">
+                    +91 89777 61187
+                  </a>
+                ),
+                email: (
+                  <a
+                    className="break-all font-bold text-vk-700 hover:text-vk-500"
+                    href="mailto:social@hkmvizag.org"
+                  >
+                    social@hkmvizag.org
+                  </a>
+                ),
+              }
+            )}
           </div>
         </div>
       </section>
@@ -804,7 +832,7 @@ export default function PitruPakshaClient() {
         <div className="vk-container">
           <div className="vk-card mx-auto max-w-6xl p-5 md:p-8">
             <h2 className="vk-bar-title text-lg text-ink md:text-xl">
-              Donation Through Bank (NEFT / RTGS)
+              {t("Donation Through Bank (NEFT / RTGS)")}
             </h2>
             <div className="mt-4 grid gap-2.5 sm:grid-cols-2">
               {[
@@ -818,7 +846,7 @@ export default function PitruPakshaClient() {
                   className="flex items-center gap-3 rounded-xl bg-vk-50 p-4 text-sm text-ink"
                 >
                   <div className="min-w-0 flex-1">
-                    <span className="block text-xs font-medium text-muted-foreground">{label}:</span>
+                    <span className="block text-xs font-medium text-muted-foreground">{t(label)}:</span>
                     <span className="mt-0.5 block select-all break-words font-semibold">{value}</span>
                   </div>
                   <button
@@ -829,7 +857,7 @@ export default function PitruPakshaClient() {
                       setTimeout(() => setCopiedField(null), 1500);
                     }}
                     className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-vk-500 transition-colors hover:bg-white hover:text-vk-700"
-                    title={`Copy ${label}`}
+                    title={t("Copy {label}", { label: t(label) })}
                   >
                     {copiedField === label ? (
                       <Check className="h-4 w-4 text-green-600" />
@@ -851,9 +879,9 @@ export default function PitruPakshaClient() {
         <div className="vk-container">
           <SectionHeading
             align="center"
-            eyebrow="Pitru Paksha Daan"
-            title="Honour Your Ancestors Through Pitru Paksha Daan Online"
-            subtitle="The daans that most deeply satisfy the departed souls — offered with devotion at the temple, they carry your gratitude directly to the ancestors you remember."
+            eyebrow={t("Pitru Paksha Daan")}
+            title={t("Honour Your Ancestors Through Pitru Paksha Daan Online")}
+            subtitle={t("The daans that most deeply satisfy the departed souls — offered with devotion at the temple, they carry your gratitude directly to the ancestors you remember.")}
           />
 
           {/* The three supreme daans */}
@@ -895,7 +923,7 @@ export default function PitruPakshaClient() {
                   <div className="relative h-56 overflow-hidden bg-vk-900 md:h-60">
                     <Image
                       src={c.image}
-                      alt={c.title}
+                      alt={t(c.title)}
                       fill
                       unoptimized
                       sizes="(max-width: 768px) 100vw, 33vw"
@@ -904,10 +932,10 @@ export default function PitruPakshaClient() {
                     <div className="absolute inset-0 bg-gradient-to-t from-vk-900/90 via-vk-900/35 to-transparent" />
                     <div className="absolute inset-x-5 bottom-4">
                       <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/75">
-                        {c.kicker}
+                        {t(c.kicker)}
                       </p>
                       <h3 className="mt-1 text-xl font-bold leading-snug text-white md:text-2xl">
-                        {c.title}
+                        {t(c.title)}
                       </h3>
                     </div>
                   </div>
@@ -917,11 +945,11 @@ export default function PitruPakshaClient() {
                       <span className="vk-icon-chip">
                         <c.icon className="h-5 w-5" strokeWidth={2} />
                       </span>
-                      <p className="text-sm leading-7 text-muted-foreground">{c.text}</p>
+                      <p className="text-sm leading-7 text-muted-foreground">{t(c.text)}</p>
                     </div>
 
                     <span className="mt-auto inline-flex w-fit items-center gap-1.5 pt-5 text-sm font-semibold text-vk-700 transition-all duration-300 group-hover:gap-2.5 group-hover:text-vk-500">
-                      Offer this seva
+                      {t("Offer this seva")}
                       <span aria-hidden>→</span>
                     </span>
                   </div>
@@ -934,33 +962,19 @@ export default function PitruPakshaClient() {
           <Reveal className="vk-card mx-auto mt-10 max-w-4xl px-5 py-8 md:mt-14 md:px-10 md:py-10">
             <p className="text-base leading-8 text-ink md:text-lg md:leading-9">
               <span className="float-left mr-3 mt-1 font-serif-display text-5xl font-bold leading-[0.85] text-vk-700 md:text-6xl">
-                P
+                {dropCap}
               </span>
-              itru Paksha is the fortnight of the Vedic calendar set aside for
-              remembering and honouring our ancestors — the pitrs. Falling each
-              year in the dark fortnight of Ashwin (September–October), it is a
-              season of profound gratitude, when families across India offer
-              shraddha, tarpan and charity on the tithi (date) of their departed
-              elders.
+              {introRest}
             </p>
 
             <div className="my-7 h-px w-full bg-vk-100" aria-hidden />
 
             <div className="grid gap-6 md:grid-cols-2 md:gap-8">
               <p className="text-sm leading-7 text-muted-foreground md:text-[15px]">
-                The scriptures tell us that whatever is given with love during
-                this period — food, water, clothing or service — reaches the
-                ancestors directly and brings them peace. Among all offerings,
-                Annadana (feeding the hungry), Sadhu Bhojan (feeding saintly
-                Vaishnavas) and Gau Seva (serving the sacred cows) are glorified
-                as supremely pleasing, for they serve the Lord&apos;s own
-                dependents.
+                {t("The scriptures tell us that whatever is given with love during this period — food, water, clothing or service — reaches the ancestors directly and brings them peace. Among all offerings, Annadana (feeding the hungry), Sadhu Bhojan (feeding saintly Vaishnavas) and Gau Seva (serving the sacred cows) are glorified as supremely pleasing, for they serve the Lord's own dependents.")}
               </p>
               <p className="text-sm leading-7 text-muted-foreground md:text-[15px]">
-                By offering seva this Pitru Paksha, you transform grief into
-                grace. Every offering — no matter the amount — carries your love
-                for those who came before you and returns as blessings upon your
-                family.
+                {t("By offering seva this Pitru Paksha, you transform grief into grace. Every offering — no matter the amount — carries your love for those who came before you and returns as blessings upon your family.")}
               </p>
             </div>
           </Reveal>
@@ -983,7 +997,7 @@ export default function PitruPakshaClient() {
       {/* ═══════════════════════════════════════════════════════════════════
           FAQS
       ═══════════════════════════════════════════════════════════════════ */}
-      <FaqSection faqs={FAQS} tone="blue" />
+      <FaqSection faqs={FAQS.map((f) => ({ q: t(f.q), a: t(f.a) }))} tone="blue" />
 
       {/* ═══════════════════════════════════════════════════════════════════
           OTHER DONATIONS — carousel of the temple's other seva pages
@@ -999,7 +1013,7 @@ export default function PitruPakshaClient() {
             status.type === "success" ? "bg-green-700 text-white" : "bg-red-700 text-white"
           }`}
         >
-          {status.message}
+          {t(status.message)}
         </div>
       )}
 
@@ -1026,16 +1040,16 @@ export default function PitruPakshaClient() {
                   </span>
                   <div className="min-w-0">
                     <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-vk-600">
-                      Pitru Paksha Seva
+                      {t("Pitru Paksha Seva")}
                     </p>
-                    <h2 className="vk-h3 !text-lg">{selected.seva.title}</h2>
+                    <h2 className="vk-h3 !text-lg">{t(selected.seva.title)}</h2>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={closeCheckout}
                   className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-vk-200 bg-white text-vk-800 transition hover:border-vk-500 hover:bg-vk-50"
-                  aria-label="Close checkout"
+                  aria-label={t("Close checkout")}
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -1045,15 +1059,15 @@ export default function PitruPakshaClient() {
                 {/* Summary */}
                 <div className="grid gap-4 rounded-2xl bg-vk-50 p-4 md:grid-cols-2">
                   <div>
-                    <p className="text-xs font-semibold text-muted-foreground">Seva Name</p>
-                    <p className="mt-1 font-bold text-vk-800">{selected.seva.title}</p>
+                    <p className="text-xs font-semibold text-muted-foreground">{t("Seva Name")}</p>
+                    <p className="mt-1 font-bold text-vk-800">{t(selected.seva.title)}</p>
                   </div>
                   <div className="rounded-xl border border-[hsl(var(--gold)/0.6)] bg-[hsl(var(--gold)/0.12)] px-3 py-2">
-                    <p className="text-xs font-semibold text-muted-foreground">Seva Amount</p>
+                    <p className="text-xs font-semibold text-muted-foreground">{t("Seva Amount")}</p>
                     <p className="mt-0.5 font-heading text-2xl font-extrabold tracking-tight text-ink">
                       {selected.option.amount
                         ? `₹${formatAmount(selected.option.amount)}`
-                        : "Enter amount below"}
+                        : t("Enter amount below")}
                     </p>
                   </div>
                 </div>
@@ -1061,7 +1075,7 @@ export default function PitruPakshaClient() {
                 {/* Custom amount */}
                 {!selected.option.amount && (
                   <label className="block max-w-sm">
-                    <span className={labelCls}>Enter Seva Amount *</span>
+                    <span className={labelCls}>{t("Enter Seva Amount *")}</span>
                     <Input
                       type="number"
                       min={100}
@@ -1073,11 +1087,11 @@ export default function PitruPakshaClient() {
                           wantPrasadam: false,
                         })
                       }
-                      placeholder="Enter amount"
+                      placeholder={t("Enter amount")}
                       className={fieldCls}
                     />
                     <span className="mt-1 block text-xs text-muted-foreground">
-                      Amount must be at least Rs.100.
+                      {t("Amount must be at least Rs.100.")}
                     </span>
                   </label>
                 )}
@@ -1085,7 +1099,7 @@ export default function PitruPakshaClient() {
                 {/* Donor fields */}
                 <div className="grid gap-4 md:grid-cols-2">
                   <label className="block">
-                    <span className={labelCls}>Donor Name *</span>
+                    <span className={labelCls}>{t("Donor Name *")}</span>
                     <Input
                       value={form.donorName}
                       maxLength={39}
@@ -1094,12 +1108,12 @@ export default function PitruPakshaClient() {
                           donorName: e.target.value.replace(/[^a-zA-Z ]/g, ""),
                         })
                       }
-                      placeholder="Your Name"
+                      placeholder={t("Your Name")}
                       className={fieldCls}
                     />
                   </label>
                   <label className="block">
-                    <span className={labelCls}>Mobile Number *</span>
+                    <span className={labelCls}>{t("Mobile Number *")}</span>
                     <Input
                       value={form.donorMobile}
                       maxLength={10}
@@ -1108,19 +1122,19 @@ export default function PitruPakshaClient() {
                           donorMobile: e.target.value.replace(/\D/g, ""),
                         })
                       }
-                      placeholder="Your Mobile Number"
+                      placeholder={t("Your Mobile Number")}
                       className={fieldCls}
                     />
                   </label>
                   <label className="block md:col-span-2">
-                    <span className={labelCls}>E-Mail ID (optional)</span>
+                    <span className={labelCls}>{t("E-Mail ID (optional)")}</span>
                     <Input
                       type="email"
                       value={form.donorEmail}
                       onChange={(e) =>
                         updateForm({ donorEmail: e.target.value.toLowerCase() })
                       }
-                      placeholder="Your Email"
+                      placeholder={t("Your Email")}
                       className={fieldCls}
                     />
                   </label>
@@ -1150,8 +1164,7 @@ export default function PitruPakshaClient() {
                         }}
                         className="mt-0.5 h-4 w-4 shrink-0 accent-vk-700"
                       />
-                      I would like to receive Maha Prasadam (Only within
-                      India)
+                      {t("I would like to receive Maha Prasadam (Only within India)")}
                     </label>
                   )}
                   {showTaxField && (
@@ -1167,9 +1180,9 @@ export default function PitruPakshaClient() {
                         className="mt-0.5 h-4 w-4 shrink-0 accent-vk-700"
                       />
                       <span>
-                        I wish to receive 80G Tax Exemption
+                        {t("I wish to receive 80G Tax Exemption")}
                         <span className="mt-1 block text-xs font-normal text-muted-foreground">
-                          PAN and address are mandatory when 80G is selected.
+                          {t("PAN and address are mandatory when 80G is selected.")}
                         </span>
                       </span>
                     </label>
@@ -1178,7 +1191,7 @@ export default function PitruPakshaClient() {
 
                 {form.want80G && (
                   <label className="block max-w-sm">
-                    <span className={labelCls}>PAN Number *</span>
+                    <span className={labelCls}>{t("PAN Number *")}</span>
                     <Input
                       value={form.panNumber}
                       maxLength={10}
@@ -1189,7 +1202,7 @@ export default function PitruPakshaClient() {
                             .replace(/[^A-Z0-9]/g, ""),
                         })
                       }
-                      placeholder="Eg: ABCDE1234F"
+                      placeholder={t("Eg: ABCDE1234F")}
                       className={fieldCls}
                     />
                   </label>
@@ -1198,19 +1211,19 @@ export default function PitruPakshaClient() {
                 {needsAddress && (
                   <div className="grid gap-4 rounded-2xl border border-vk-100 bg-vk-50/60 p-4 md:grid-cols-2">
                     <label className="block md:col-span-2">
-                      <span className={labelCls}>Full Address *</span>
+                      <span className={labelCls}>{t("Full Address *")}</span>
                       <Input
                         value={form.address}
                         maxLength={80}
                         onChange={(e) =>
                           updateForm({ address: e.target.value })
                         }
-                        placeholder="Door No, Street, Area"
+                        placeholder={t("Door No, Street, Area")}
                         className={fieldCls}
                       />
                     </label>
                     <label className="block">
-                      <span className={labelCls}>City *</span>
+                      <span className={labelCls}>{t("City *")}</span>
                       <Input
                         value={form.city}
                         maxLength={30}
@@ -1223,7 +1236,7 @@ export default function PitruPakshaClient() {
                       />
                     </label>
                     <label className="block">
-                      <span className={labelCls}>State *</span>
+                      <span className={labelCls}>{t("State *")}</span>
                       <Input
                         value={form.state}
                         maxLength={30}
@@ -1236,7 +1249,7 @@ export default function PitruPakshaClient() {
                       />
                     </label>
                     <label className="block">
-                      <span className={labelCls}>PIN Code *</span>
+                      <span className={labelCls}>{t("PIN Code *")}</span>
                       <Input
                         value={form.pincode}
                         maxLength={6}
@@ -1253,7 +1266,7 @@ export default function PitruPakshaClient() {
 
                 {status.type === "error" && (
                   <p className="rounded-xl bg-red-50 px-3.5 py-2.5 text-[13px] font-medium text-red-700">
-                    {status.message}
+                    {t(status.message)}
                   </p>
                 )}
 
@@ -1264,18 +1277,18 @@ export default function PitruPakshaClient() {
                 >
                   <Heart className="h-4 w-4 fill-current" />
                   {submitting
-                    ? "Opening Checkout..."
-                    : `Donate Rs. ${formatAmount(finalAmount || 0)}`}
+                    ? t("Opening Checkout...")
+                    : t("Donate Rs. {amount}", { amount: formatAmount(finalAmount || 0) })}
                 </button>
 
                 <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
                   <span className="inline-flex items-center gap-1">
                     <ShieldCheck className="h-3.5 w-3.5 text-vk-500" />
-                    Secure Razorpay Checkout
+                    {t("Secure Razorpay Checkout")}
                   </span>
                   <span className="inline-flex items-center gap-1">
                     <FileCheck2 className="h-3.5 w-3.5 text-vk-500" />
-                    80G Tax Exemption
+                    {t("80G Tax Exemption")}
                   </span>
                 </div>
               </form>
@@ -1291,11 +1304,11 @@ export default function PitruPakshaClient() {
         <div className="fixed bottom-[calc(var(--bottom-nav-space)+4px+env(safe-area-inset-bottom))] left-3 right-[76px] z-40 lg:hidden">
           <div className="flex items-center justify-between gap-3 rounded-2xl border border-vk-100 bg-white/95 p-2 pl-4 shadow-lift backdrop-blur">
             <span className="min-w-0 truncate text-[13px] font-semibold text-vk-800">
-              Pitru Paksha Seva
+              {t("Pitru Paksha Seva")}
             </span>
             <a href="#offer-seva" className="vk-btn-gold h-11 shrink-0 px-5">
               <Heart className="h-4 w-4 fill-current" />
-              Donate Now
+              {t("Donate Now")}
             </a>
           </div>
         </div>

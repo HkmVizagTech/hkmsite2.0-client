@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useT } from "@/components/i18n/LocaleProvider";
 
 // Floating WhatsApp contact button — same number and pattern used on
 // annadan.harekrishnavizag.org (wa.me/918977761187). Rendered globally (via
@@ -19,6 +20,7 @@ export default function WhatsAppFloatButton({
 }: {
   message?: string;
 }) {
+  const t = useT();
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -39,7 +41,7 @@ export default function WhatsAppFloatButton({
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="Chat on WhatsApp"
+      aria-label={t("Chat on WhatsApp")}
       // Sits 20px above the mobile bottom bar (or the screen edge where the bar is hidden)
       // via --bottom-nav-space; md: resets to a small margin from the viewport.
       className="fixed bottom-[calc(var(--bottom-nav-space)+20px)] right-4 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366] shadow-[0_10px_24px_-8px_rgba(10,18,51,0.45)] ring-4 ring-white/90 transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-vk-300 active:scale-95 md:bottom-6 md:right-6"

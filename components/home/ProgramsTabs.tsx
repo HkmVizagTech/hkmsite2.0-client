@@ -6,6 +6,7 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, BookOpen, Building2, HandHeart, PartyPopper, Utensils, Beef, type LucideIcon } from "lucide-react";
 import SectionHeading from "@/components/site/SectionHeading";
+import { useT } from "@/components/i18n/LocaleProvider";
 
 interface Program {
   key: string;
@@ -107,6 +108,7 @@ const programs: Program[] = [
 
 /** GVD "Programs & Activities" — vertical tab list on the left, story + photo strip on the right. */
 export default function ProgramsTabs() {
+  const t = useT();
   const [active, setActive] = useState(programs[0].key);
   const p = programs.find((x) => x.key === active) || programs[0];
 
@@ -115,15 +117,15 @@ export default function ProgramsTabs() {
       <div className="vk-container">
         <SectionHeading
           align="center"
-          eyebrow="Get Involved"
-          title="Programs & Activities"
-          subtitle="Discover the spiritual programmes and seva opportunities that bring Krishna consciousness to Visakhapatnam every day."
+          eyebrow={t("Get Involved")}
+          title={t("Programs & Activities")}
+          subtitle={t("Discover the spiritual programmes and seva opportunities that bring Krishna consciousness to Visakhapatnam every day.")}
         />
         <div className="grid gap-6 lg:grid-cols-[280px_1fr] lg:gap-10">
           {/* Tabs */}
           <div
             role="tablist"
-            aria-label="Programs"
+            aria-label={t("Programs")}
             className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 scrollbar-hide lg:mx-0 lg:flex-col lg:overflow-visible lg:px-0"
           >
             {programs.map((x) => {
@@ -149,7 +151,7 @@ export default function ProgramsTabs() {
                   >
                     <x.icon className="h-4 w-4" />
                   </span>
-                  {x.label}
+                  {t(x.label)}
                 </button>
               );
             })}
@@ -167,21 +169,21 @@ export default function ProgramsTabs() {
               transition={{ duration: 0.3 }}
               className="min-w-0"
             >
-              <h3 className="vk-h3 md:!text-[1.75rem]">{p.title}</h3>
-              <p className="vk-lead mt-3 max-w-3xl">{p.text}</p>
+              <h3 className="vk-h3 md:!text-[1.75rem]">{t(p.title)}</h3>
+              <p className="vk-lead mt-3 max-w-3xl">{t(p.text)}</p>
               <div className="vk-scroller -mx-4 mt-6 px-4 lg:mx-0 lg:px-0">
                 {p.images.map((img) => (
                   <div
                     key={img.src}
                     className="vk-tile relative h-56 w-[70%] shrink-0 sm:w-[46%] md:h-64 md:w-[32%]"
                   >
-                    <Image src={img.src} alt={img.caption} fill sizes="(min-width: 768px) 300px, 70vw" className="object-cover" />
-                    <p className="vk-tile-caption text-base font-bold">{img.caption}</p>
+                    <Image src={img.src} alt={t(img.caption)} fill sizes="(min-width: 768px) 300px, 70vw" className="object-cover" />
+                    <p className="vk-tile-caption text-base font-bold">{t(img.caption)}</p>
                   </div>
                 ))}
               </div>
               <Link href={p.href} className="vk-btn-primary mt-6">
-                {p.cta} <ArrowRight className="h-4 w-4" />
+                {t(p.cta)} <ArrowRight className="h-4 w-4" />
               </Link>
             </motion.div>
           </AnimatePresence>
