@@ -15,7 +15,7 @@
 //   ...Razorpay modal.ondismiss: () => offerUpi({ donationId, orderId, amount, campaign, donorName })
 //   ...render {upiFallbackDialog}
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { CheckCircle2, Loader2, QrCode, Smartphone, X } from "lucide-react";
@@ -33,7 +33,21 @@ export type UpiFallbackInfo = {
   donorName?: string;
 };
 
-type Step = "pay" | "confirm" | "done";
+type Step = "pay" | "confirm" | "done" | "paidOnline";
+
+type OrderStatus = { completed?: boolean; inProgress?: boolean } | null;
+
+/** Donation status for the Razorpay order; live=true also asks Razorpay itself. */
+async function orderStatus(orderId: string, live: boolean): Promise<OrderStatus> {
+  try {
+    const res = await fetch(`${UPI_API_BASE}/payments/status/${encodeURIComponent(orderId)}${live ? "?live=1" : ""}`);
+    return res.ok ? await res.json() : null;
+  } catch {
+    return null;
+  }
+}
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 function post(path: string, body: Record<string, unknown>) {
   return fetch(`${UPI_API_BASE}/payments/upi-fallback/${path}`, {
@@ -51,6 +65,22 @@ function UpiFallbackDialog({ info, onClose }: { info: UpiFallbackInfo | null; on
   const [error, setError] = useState("");
 
   const canClaim = !!(info?.donationId && info?.orderId);
+
+  // The Razorpay payment can still complete after the window closed (UPI
+  // approvals, a late webhook). Keep checking while this is open, and if it
+  // lands, show "payment received" so nobody pays twice.
+  useEffect(() => {
+    if (!info?.orderId || step === "done" || step === "paidOnline") return;
+    let stop = false;
+    const t = setInterval(async () => {
+      const st = await orderStatus(info.orderId!, false);
+      if (!stop && st?.completed) setStep("paidOnline");
+    }, 5000);
+    return () => {
+      stop = true;
+      clearInterval(t);
+    };
+  }, [info?.orderId, step]);
   const amountLabel = info ? `₹${info.amount.toLocaleString("en-IN")}` : "";
 
   const markOpened = (app: "phonepe" | "other") => {
@@ -69,8 +99,9 @@ function UpiFallbackDialog({ info, onClose }: { info: UpiFallbackInfo | null; on
     setError("");
     try {
       const res = await post("claim", { donationId: info.donationId, orderId: info.orderId, payerName: payerName.trim() });
-      if (!res.ok) throw new Error((await res.json().catch(() => ({})))?.message || "Could not save. Please try again.");
-      setStep("done");
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(json?.message || "Could not save. Please try again.");
+      setStep(json?.alreadyPaid ? "paidOnline" : "done");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not save. Please try again.");
     } finally {
@@ -207,6 +238,24 @@ function UpiFallbackDialog({ info, onClose }: { info: UpiFallbackInfo | null; on
           </>
         )}
 
+        {info && step === "paidOnline" && (
+          <div className="py-2 text-center">
+            <CheckCircle2 className="mx-auto h-12 w-12 text-green-600" />
+            <DialogTitle className="mt-3 font-heading text-lg text-ink">Your payment went through 🙏</DialogTitle>
+            <DialogDescription className="mt-2 text-sm leading-6">
+              {`We received your ${amountLabel} online payment, so there's no need to pay again. Your receipt is on its way on WhatsApp and email.`}
+            </DialogDescription>
+            <button
+              type="button"
+              onClick={onClose}
+              className="mt-4 h-11 w-full rounded-xl text-sm font-bold text-white"
+              style={{ backgroundColor: PURPLE }}
+            >
+              Done
+            </button>
+          </div>
+        )}
+
         {info && step === "done" && (
           <div className="py-2 text-center">
             <CheckCircle2 className="mx-auto h-12 w-12 text-green-600" />
@@ -241,8 +290,23 @@ function UpiFallbackDialog({ info, onClose }: { info: UpiFallbackInfo | null; on
 export function useUpiFallback() {
   const [info, setInfo] = useState<UpiFallbackInfo | null>(null);
   const [key, setKey] = useState(0);
-  const offerUpi = useCallback((next: UpiFallbackInfo) => {
+  const pending = useRef(0);
+  const offerUpi = useCallback(async (next: UpiFallbackInfo) => {
     if (!next.amount || next.amount <= 0) return;
+    const ticket = ++pending.current;
+    // Only offer UPI when the Razorpay payment really didn't go through:
+    // ask Razorpay first, and if a payment is still being approved (e.g. in
+    // the donor's UPI app) give it up to ~20 s before deciding.
+    if (next.orderId) {
+      for (let i = 0; i < 5; i++) {
+        const st = await orderStatus(next.orderId, true);
+        if (ticket !== pending.current) return; // superseded by a newer attempt
+        if (st?.completed) return; // paid — the page's own success flow takes over
+        if (!st?.inProgress) break;
+        await sleep(4000);
+      }
+    }
+    if (ticket !== pending.current) return;
     setKey((k) => k + 1); // fresh dialog state for every attempt
     setInfo(next);
   }, []);
