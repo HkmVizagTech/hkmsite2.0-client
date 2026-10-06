@@ -28,6 +28,7 @@ import {
   trackInitiateCheckout,
   trackPurchase,
 } from "@/lib/metaPixel";
+import { prefillEmail } from "@/lib/razorpayPrefill";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -434,7 +435,7 @@ export default function RadhashtamiClient() {
         order_id: order.orderId,
         prefill: {
           name: form.donorName,
-          email: form.donorEmail,
+          email: prefillEmail(form.donorEmail),
           contact: form.donorMobile,
         },
         notes: {

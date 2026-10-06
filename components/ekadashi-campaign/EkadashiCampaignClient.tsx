@@ -26,6 +26,7 @@ import FaqSection from "@/components/sqft-campaign/FaqSection";
 import FounderSection from "@/components/sqft-campaign/FounderSection";
 import { unitImpact } from "@/lib/sevaConfig";
 import type { EkadashiCampaign, EkadashiSeva } from "@/lib/ekadashiCampaign";
+import { prefillEmail } from "@/lib/razorpayPrefill";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 
@@ -238,7 +239,7 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
         name: "Hare Krishna Movement Vizag",
         description: `${selectedSeva.sevaName} — Hare Krishna Vaikuntham Temple`,
         order_id: order.orderId,
-        prefill: { name: form.name, email: form.email, contact: form.mobile },
+        prefill: { name: form.name, email: prefillEmail(form.email), contact: form.mobile },
         notes: { sourcePage: SOURCE_PAGE, sevaName: selectedSeva.sevaName, sevaType: selectedSeva.category },
         handler: async (response: Record<string, string>) => {
           try {

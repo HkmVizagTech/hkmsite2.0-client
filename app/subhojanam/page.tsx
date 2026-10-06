@@ -17,6 +17,7 @@ import {
 import { newEventId, getMetaBrowserData, trackInitiateCheckout, trackPurchase } from "@/lib/metaPixel";
 import { useAttribution } from "@/lib/useAttribution";
 import { useDonorPrefill } from "@/lib/donorPrefill";
+import { prefillEmail } from "@/lib/razorpayPrefill";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 const apiBase = () => (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(/\/+$/, "");
@@ -127,7 +128,7 @@ export default function SubhojanamPage() {
       new win.Razorpay({
         key: order.key, amount: Math.round(checkoutTier.amountValue * 100), currency: "INR",
         name: "Touchstone Charities", description: `Subhojanam — ${checkoutTier.meals}`,
-        order_id: order.orderId, prefill: { name: form.name, email: form.email, contact: form.mobile },
+        order_id: order.orderId, prefill: { name: form.name, email: prefillEmail(form.email), contact: form.mobile },
         notes: { sourcePage: "/subhojanam", sevaName: "Subhojanam" },
         handler: async (response: Record<string, string>) => {
           try {

@@ -6,6 +6,7 @@ import { newEventId, getMetaBrowserData, trackPurchase } from "@/lib/metaPixel";
 import { captureTracking, getStoredTracking } from "@/lib/tracking";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
 import { useDonorPrefill } from "@/lib/donorPrefill";
+import { prefillEmail } from "@/lib/razorpayPrefill";
 
 type DonationOption = {
   id: number;
@@ -366,7 +367,7 @@ export default function DonationsClient() {
         order_id: order.orderId,
         prefill: {
           name: form.donorName,
-          email: form.donorEmail,
+          email: prefillEmail(form.donorEmail),
           contact: form.donorMobile,
         },
         notes: {

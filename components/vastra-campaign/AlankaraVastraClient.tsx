@@ -24,6 +24,7 @@ import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
 import { useScrollToDonate } from "@/lib/useScrollToDonate";
 import { newEventId, getMetaBrowserData, trackPurchase } from "@/lib/metaPixel";
 import { type CampaignConfig } from "@/lib/campaignConfig";
+import { prefillEmail } from "@/lib/razorpayPrefill";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 
@@ -320,7 +321,7 @@ export default function AlankaraVastraClient() {
         key: created.key,
         name: "Hare Krishna Movement Vizag",
         description: `${config.pageTitle}${monthly ? " — Monthly" : ""} — Hare Krishna Vaikuntham Temple`,
-        prefill: { name: form.name, email: form.email, contact: form.mobile },
+        prefill: { name: form.name, email: prefillEmail(form.email), contact: form.mobile },
         notes: { sourcePage: "/alankara-vastra-seva", sevaName: config.pageTitle, sevaType: config.orderType },
         handler: async (response: Record<string, string>) => {
           try {
