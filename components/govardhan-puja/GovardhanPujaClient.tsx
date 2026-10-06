@@ -21,6 +21,7 @@ import { useAttribution } from "@/lib/useAttribution";
 import SearchParamsWatcher from "@/components/SearchParamsWatcher";
 import { usePaymentStatusPoller } from "@/lib/usePaymentStatusPoller";
 import { useScrollToDonate } from "@/lib/useScrollToDonate";
+import PhonePeUpiCard from "@/components/PhonePeUpiCard";
 import {
   newEventId,
   getMetaBrowserData,
@@ -639,6 +640,9 @@ export default function GovardhanPujaClient() {
           </div>
         </div>
       </section>
+
+      {/* Direct PhonePe / UPI payment, for donors who can't use Razorpay */}
+      <PhonePeUpiCard campaign="Govardhan Puja" />
 
       {/* ═══════════════════════════════════════════════════════════════════
           INTRO / ABOUT + TRUST BADGES

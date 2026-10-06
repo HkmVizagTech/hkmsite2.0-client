@@ -3,8 +3,7 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
-import { ArrowLeft, ArrowRight, Check, Clock, Copy, Facebook, FileCheck2, Heart, Instagram, MessageCircle, ShieldCheck, Youtube, UtensilsCrossed, X, QrCode } from "lucide-react";
-import UpiQrCard from "@/components/UpiQrCard";
+import { ArrowLeft, ArrowRight, Check, Clock, Copy, Facebook, FileCheck2, Heart, Instagram, MessageCircle, ShieldCheck, Youtube, UtensilsCrossed, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
 import { useDonorPrefill } from "@/lib/donorPrefill";
@@ -19,6 +18,7 @@ import SearchParamsWatcher from "@/components/SearchParamsWatcher";
 import { newEventId, getMetaBrowserData, trackInitiateCheckout, trackPurchase } from "@/lib/metaPixel";
 import { usePaymentStatusPoller } from "@/lib/usePaymentStatusPoller";
 import { useScrollToDonate } from "@/lib/useScrollToDonate";
+import PhonePeUpiCard from "@/components/PhonePeUpiCard";
 
 type SevaOption = {
   legacySevaId: number;
@@ -789,6 +789,9 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
         </div>
       </section>
 
+      {/* Direct PhonePe / UPI payment, for donors who can't use Razorpay */}
+      <PhonePeUpiCard campaign="Janmashtami" />
+
       <section className="py-10 md:py-14">
         <div className="vk-container">
           <div className="flex items-start gap-3 rounded-2xl border border-vk-100 bg-vk-50 p-4 text-sm leading-7 text-ink/80 md:p-5 md:text-base">
@@ -837,20 +840,6 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
                 </div>
               ))}
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Scan & Pay via UPI — placed right before "Previous Year
-          Celebrations", same QR/VPA pattern as annadan.harekrishnavizag.org. */}
-      <section className="vk-section vk-band">
-        <div className="vk-container">
-          <div className="mx-auto max-w-md">
-            <div className="mb-4 flex items-center justify-center gap-2 text-vk-700">
-              <QrCode className="h-5 w-5" />
-              <h2 className="font-heading text-lg font-bold text-ink">Scan & Pay via UPI</h2>
-            </div>
-            <UpiQrCard note="Please share your name and mobile number to social@hkmvizag.org after paying, so we can send your receipt." />
           </div>
         </div>
       </section>

@@ -11,13 +11,11 @@
 import { useState } from "react";
 import { QrCode, Copy, Check, Smartphone } from "lucide-react";
 
-// Temple UPI credentials (matches annadan.harekrishnavizag.org)
-const UPI_VPA = "hkmivsp9.08@idfcbank";
-const PAYEE_NAME = "HARE KRISHNA MOVEMENT INDIA";
+import { UPI_VPA, upiLink, upiQrImage } from "@/lib/upi";
 
 // Open-amount UPI intent string (no `am=` so donor sets the amount).
-const UPI_STRING = `upi://pay?pa=${UPI_VPA}&pn=${encodeURIComponent(PAYEE_NAME)}&cu=INR`;
-const QR_IMG = `https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=10&data=${encodeURIComponent(UPI_STRING)}`;
+const UPI_STRING = upiLink();
+const QR_IMG = upiQrImage();
 
 export default function UpiQrCard({ note }: { note?: string }) {
   const [copied, setCopied] = useState(false);
