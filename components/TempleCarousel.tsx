@@ -137,7 +137,7 @@ const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true }: TempleCa
     <section
       aria-roledescription="carousel"
       aria-label="Temple highlights"
-      className="relative select-none bg-gradient-to-b from-vk-50 via-white to-white pb-4 pt-4 md:pb-6 md:pt-6"
+      className="relative select-none"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
@@ -151,7 +151,7 @@ const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true }: TempleCa
               return (
                 <div
                   key={`${slide.src}-${i}`}
-                  className="min-w-0 shrink-0 grow-0 basis-[88%] px-1.5 sm:basis-[84%] md:basis-[78%] md:px-2.5 xl:basis-[70%]"
+                  className="min-w-0 shrink-0 grow-0 basis-full"
                   aria-roledescription="slide"
                   aria-label={`${i + 1} of ${slides.length}: ${slide.title}`}
                 >
@@ -162,17 +162,13 @@ const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true }: TempleCa
                     onKeyDown={(e) => {
                       if (e.key === "Enter") openSlide(slide, i);
                     }}
-                    className={`relative aspect-[962/1635] overflow-hidden rounded-[22px] bg-vk-900 transition-all duration-500 md:aspect-[1920/730] md:rounded-[28px] ${
-                      isActive
-                        ? "shadow-[0_30px_60px_-30px_rgba(10,18,51,0.55)]"
-                        : "scale-[0.94] opacity-55"
-                    } ${slide.linkUrl || !isActive ? "cursor-pointer" : ""}`}
+                    className={`relative aspect-[962/1635] overflow-hidden bg-vk-900 md:aspect-[1920/730] ${slide.linkUrl || !isActive ? "cursor-pointer" : ""}`}
                   >
                     <Image
                       src={mobileBroken ? FALLBACK_IMG_MOBILE : slide.mobileSrc}
                       alt={slide.title}
                       fill
-                      sizes="88vw"
+                      sizes="100vw"
                       draggable={false}
                       priority={i === 0}
                       className="object-cover object-center md:hidden"
@@ -182,7 +178,7 @@ const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true }: TempleCa
                       src={desktopBroken ? FALLBACK_IMG : slide.src}
                       alt={slide.title}
                       fill
-                      sizes="(min-width: 1280px) 70vw, 80vw"
+                      sizes="100vw"
                       draggable={false}
                       priority={i === 0}
                       className="hidden object-cover object-center md:block"
@@ -195,14 +191,14 @@ const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true }: TempleCa
           </div>
         </div>
 
-        {/* Arrows — desktop only, sitting over the peeking neighbours */}
+        {/* Arrows — desktop only, over the edges of the full-width banner */}
         {slides.length > 1 && (
           <>
             <button
               type="button"
               onClick={scrollPrev}
               aria-label="Previous slide"
-              className="absolute left-3 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-vk-800 shadow-lg backdrop-blur transition hover:bg-white md:flex lg:left-[8%] xl:left-[13%]"
+              className="absolute left-3 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-vk-800 shadow-lg backdrop-blur transition hover:bg-white md:flex lg:left-6"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
@@ -210,7 +206,7 @@ const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true }: TempleCa
               type="button"
               onClick={scrollNext}
               aria-label="Next slide"
-              className="absolute right-3 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-vk-800 shadow-lg backdrop-blur transition hover:bg-white md:flex lg:right-[8%] xl:right-[13%]"
+              className="absolute right-3 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-vk-800 shadow-lg backdrop-blur transition hover:bg-white md:flex lg:right-6"
             >
               <ChevronRight className="h-5 w-5" />
             </button>
@@ -220,7 +216,7 @@ const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true }: TempleCa
 
       {/* Dots */}
       {slides.length > 1 && (
-        <div className="mt-4 flex items-center justify-center gap-1.5" role="tablist" aria-label="Choose slide">
+        <div className="absolute inset-x-0 bottom-3 z-10 flex items-center justify-center gap-1.5 md:bottom-5" role="tablist" aria-label="Choose slide">
           {slides.map((s, i) => (
             <button
               key={`dot-${i}`}
@@ -230,7 +226,7 @@ const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true }: TempleCa
               aria-label={`Go to slide ${i + 1}: ${s.title}`}
               onClick={() => emblaApi?.scrollTo(i)}
               className={`h-2 rounded-full transition-all duration-300 ${
-                i === selected ? "w-7 bg-vk-700" : "w-2 bg-vk-200 hover:bg-vk-300"
+                i === selected ? "w-7 bg-white" : "w-2 bg-white/50 hover:bg-white/80"
               }`}
             />
           ))}

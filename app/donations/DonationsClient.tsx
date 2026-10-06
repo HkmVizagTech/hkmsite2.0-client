@@ -486,11 +486,11 @@ export default function DonationsClient() {
         </a>
 
         {/* Hero banner — inset rounded card */}
-        <section className="bg-gradient-to-b from-vk-50 to-white pb-2 pt-4 md:pt-6">
-          <div className="vk-container">
+        <section className="bg-gradient-to-b from-vk-50 to-white">
+          <div>
             <a
               href="#annadaan"
-              className="block overflow-hidden rounded-3xl bg-vk-900 shadow-[0_24px_60px_-28px_rgba(10,18,51,0.6)]"
+              className="block overflow-hidden bg-vk-900"
             >
               <picture>
                 <source media="(max-width: 640px)" srcSet={settings.bannerMobileImage || settings.bannerImage} />

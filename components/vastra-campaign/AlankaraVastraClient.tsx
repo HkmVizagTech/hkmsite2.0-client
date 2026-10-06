@@ -385,12 +385,12 @@ export default function AlankaraVastraClient() {
         {/* ── Hero Banner ── */}
         {config.bannerImage ? (
           <section className="bg-gradient-to-b from-vk-50 to-white pt-[var(--header-h)] dark:from-background dark:to-background">
-            <div className="vk-container pt-4 md:pt-6">
+            <div>
             <button
               type="button"
               onClick={scrollToDonate}
               aria-label="Donate — go to the donation form"
-              className="block w-full cursor-pointer overflow-hidden rounded-3xl bg-vk-900 shadow-[0_24px_60px_-28px_rgba(10,18,51,0.6)]"
+              className="block w-full cursor-pointer overflow-hidden bg-vk-900"
             >
               <Image
                 src={config.bannerImageMobile || config.bannerImage}

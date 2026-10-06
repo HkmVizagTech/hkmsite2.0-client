@@ -233,12 +233,12 @@ export default function ShopCatalogPage() {
           </div>
         </section>
       ) : (
-        <section id="shop-hero" className="bg-gradient-to-b from-vk-50 to-white pt-4 md:pt-6">
+        <section id="shop-hero" className="bg-gradient-to-b from-vk-50 to-white">
           {/* The banner itself comes in two crops — a wide desktop frame and a
               taller mobile one that still breathes on a small screen — shown
               as an inset rounded card, GVD-style. */}
-          <div className="vk-container">
-            <div className="overflow-hidden rounded-3xl bg-vk-900 shadow-[0_24px_60px_-28px_rgba(10,18,51,0.6)]">
+          <div>
+            <div className="overflow-hidden bg-vk-900">
               <picture>
                 <source media="(max-width: 640px)" srcSet={SHOP_BANNER_MOBILE} />
                 <img

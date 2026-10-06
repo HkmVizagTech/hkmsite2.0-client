@@ -289,11 +289,11 @@ export default function SpecialOccasionClient() {
       <WhatsAppFloatButton />
       <main className="bg-white pt-[var(--header-h)] dark:bg-background">
         {/* ---------- Hero — fully-designed banners in an inset rounded card ---------- */}
-        <section className="bg-gradient-to-b from-vk-50 to-white pb-2 pt-4 md:pt-6">
-          <div className="vk-container">
+        <section className="bg-gradient-to-b from-vk-50 to-white">
+          <div>
             <button
               onClick={scrollToForm}
-              className="relative block w-full overflow-hidden rounded-3xl bg-vk-900 text-left shadow-[0_24px_60px_-28px_rgba(10,18,51,0.6)]"
+              className="relative block w-full overflow-hidden bg-vk-900 text-left"
               aria-label="Sponsor a seva for your special occasion"
             >
               <div className="relative hidden w-full md:block" style={{ aspectRatio: "2006 / 784" }}>

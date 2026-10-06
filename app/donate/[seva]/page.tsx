@@ -123,13 +123,34 @@ function DonateSevaPageInner({ params }: { params: Promise<{ seva: string }> }) 
     <PageLayout>
       <WhatsAppFloatButton />
     <main className="bg-white pt-[var(--header-h)] dark:bg-background">
-      {/* Hero — inset rounded banner card (GVD style) */}
-      <section className="bg-gradient-to-b from-vk-50 to-white pb-2 pt-4 md:pt-6">
-        <div className="vk-container">
-          <h1 className="sr-only">{seva.title}</h1>
+      {/* Hero — full-width banner (GVD style), breadcrumb below it */}
+      <section>
+        <h1 className="sr-only">{seva.title}</h1>
+        {seva.heroImageDesktop && seva.heroImageMobile ? (
+          // Dedicated, fully-designed banner (title/CTA baked into the image
+          // itself) — shown plain and clear, no dark overlay or duplicate
+          // heading on top, since that would fight the banner's own text.
+          <button
+            onClick={() => document.getElementById("donation-form")?.scrollIntoView({ behavior: "smooth" })}
+            className="block w-full overflow-hidden bg-vk-900 text-left"
+            aria-label={`Donate to ${seva.title}`}
+          >
+            <div className="relative hidden w-full md:block" style={{ aspectRatio: "1925 / 817" }}>
+              <Image src={seva.heroImageDesktop} alt={seva.title} fill priority sizes="100vw" className="object-cover" />
+            </div>
+            <div className="relative w-full md:hidden" style={{ aspectRatio: "941 / 1672" }}>
+              <Image src={seva.heroImageMobile} alt={seva.title} fill priority sizes="100vw" className="object-cover" />
+            </div>
+          </button>
+        ) : (
+          <div className="relative aspect-[16/9] w-full overflow-hidden bg-vk-900 md:aspect-[21/7]">
+            <Image src={seva.image} alt={seva.title} fill priority sizes="100vw" className="object-cover" />
+          </div>
+      )}
+        <div className="vk-container pt-4">
           <nav
             aria-label="Breadcrumb"
-            className="mb-3 inline-flex max-w-full items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-medium text-ink/70 shadow-sm md:text-[13px]"
+            className="inline-flex max-w-full items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-medium text-ink/70 shadow-sm md:text-[13px]"
           >
             <Link href="/" className="inline-flex items-center gap-1 transition-colors hover:text-vk-700">
               <Home className="h-3.5 w-3.5" />
@@ -140,27 +161,6 @@ function DonateSevaPageInner({ params }: { params: Promise<{ seva: string }> }) 
             <ChevronRight className="h-3.5 w-3.5 opacity-60" />
             <span className="truncate font-semibold text-vk-700" aria-current="page">{seva.title}</span>
           </nav>
-          {seva.heroImageDesktop && seva.heroImageMobile ? (
-            // Dedicated, fully-designed banner (title/CTA baked into the image
-            // itself) — shown plain and clear, no dark overlay or duplicate
-            // heading on top, since that would fight the banner's own text.
-            <button
-              onClick={() => document.getElementById("donation-form")?.scrollIntoView({ behavior: "smooth" })}
-              className="block w-full overflow-hidden rounded-3xl bg-vk-900 text-left shadow-[0_24px_60px_-28px_rgba(10,18,51,0.6)]"
-              aria-label={`Donate to ${seva.title}`}
-            >
-              <div className="relative hidden w-full md:block" style={{ aspectRatio: "1925 / 817" }}>
-                <Image src={seva.heroImageDesktop} alt={seva.title} fill priority sizes="(min-width: 1280px) 1248px, 100vw" className="object-cover" />
-              </div>
-              <div className="relative w-full md:hidden" style={{ aspectRatio: "941 / 1672" }}>
-                <Image src={seva.heroImageMobile} alt={seva.title} fill priority sizes="100vw" className="object-cover" />
-              </div>
-            </button>
-          ) : (
-            <div className="relative aspect-[16/9] w-full overflow-hidden rounded-3xl bg-vk-900 shadow-[0_24px_60px_-28px_rgba(10,18,51,0.6)] md:aspect-[21/7]">
-              <Image src={seva.image} alt={seva.title} fill priority sizes="(min-width: 1280px) 1248px, 100vw" className="object-cover" />
-            </div>
-          )}
         </div>
       </section>
 

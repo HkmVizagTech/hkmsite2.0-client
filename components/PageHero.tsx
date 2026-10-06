@@ -42,9 +42,9 @@ const PageHero = ({ title, subtitle, breadcrumb, backgroundImage, eyebrow }: Pag
 
   if (backgroundImage) {
     return (
-      <section className="bg-gradient-to-b from-vk-50 to-white pb-4 pt-4 md:pb-6 md:pt-6">
-        <div className="vk-container">
-          <div className="relative isolate overflow-hidden rounded-3xl bg-vk-900 shadow-[0_24px_60px_-28px_rgba(10,18,51,0.6)]">
+      <section className="bg-gradient-to-b from-vk-50 to-white">
+        <div>
+          <div className="relative isolate overflow-hidden bg-vk-900">
             <Image
               src={backgroundImage}
               alt=""

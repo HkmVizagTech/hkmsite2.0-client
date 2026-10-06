@@ -551,9 +551,9 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
       )}
 
       {/* ---------- Banner carousel (inset rounded card) ---------- */}
-      <section className="bg-gradient-to-b from-vk-50 to-white pt-4 md:pt-6">
-        <div className="vk-container">
-          <div className="relative overflow-hidden rounded-3xl bg-vk-900 shadow-lift">
+      <section className="bg-gradient-to-b from-vk-50 to-white">
+        <div>
+          <div className="relative overflow-hidden bg-vk-900">
             {banners.map((banner, index) => (
               <a
                 key={banner.desktop}

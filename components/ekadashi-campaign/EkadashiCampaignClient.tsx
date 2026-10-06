@@ -296,9 +296,9 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
       <WhatsAppFloatButton />
       <main className="bg-white pt-[var(--header-h)] dark:bg-background">
         {/* ── Hero Banner ── */}
-        <section className="bg-gradient-to-b from-vk-50 to-white pb-4 pt-4 md:pb-6 md:pt-6">
-          <div className="vk-container">
-            <div className="overflow-hidden rounded-3xl bg-vk-900 shadow-[0_24px_60px_-28px_rgba(10,18,51,0.6)]">
+        <section className="bg-gradient-to-b from-vk-50 to-white">
+          <div>
+            <div className="overflow-hidden bg-vk-900">
               <button
                 type="button"
                 onClick={scrollToDonate}

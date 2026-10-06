@@ -318,9 +318,9 @@ export default function ChaturmasClient() {
 
       <div className="bg-white pt-[var(--header-h)] dark:bg-background">
       {/* ── HERO BANNER ─────────────────────────────────────────── */}
-      <section className="bg-gradient-to-b from-vk-50 to-white pb-4 pt-4 md:pb-6 md:pt-6">
-        <div className="vk-container">
-          <div className="relative overflow-hidden rounded-3xl bg-vk-900 shadow-[0_24px_60px_-28px_rgba(10,18,51,0.6)]">
+      <section className="bg-gradient-to-b from-vk-50 to-white">
+        <div>
+          <div className="relative overflow-hidden bg-vk-900">
             {banners.map((banner, index) => (
               <a
                 key={banner.desktop + index}

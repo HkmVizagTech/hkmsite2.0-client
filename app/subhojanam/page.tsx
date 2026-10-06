@@ -152,8 +152,8 @@ export default function SubhojanamPage() {
 
       {/* ── HERO ─────────────────────────────────────────────────── */}
       <section className="bg-gradient-to-b from-vk-50 to-white pt-[var(--header-h)]">
-        <div className="vk-container pb-2 pt-4 md:pt-6">
-          <div className="relative isolate overflow-hidden rounded-3xl bg-vk-900 shadow-[0_24px_60px_-28px_rgba(10,18,51,0.6)]">
+        <div>
+          <div className="relative isolate overflow-hidden bg-vk-900">
             <Image
               src="https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677363792-1783677363601-462395264797134589073566144398536696847591n.jpg"
               alt="Subhojanam meal distribution at hospital"
