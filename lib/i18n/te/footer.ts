@@ -53,4 +53,5 @@ export const footer: Record<string, string> = {
 
   // ── Floating WhatsApp button ──
   "Chat on WhatsApp": "WhatsAppలో చాట్ చేయండి",
+  "Visit the Temple in Vizag": "వైజాగ్‌లో ఆలయ సందర్శన",
 };

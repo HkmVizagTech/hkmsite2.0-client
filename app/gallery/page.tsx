@@ -139,7 +139,7 @@ export default function GalleryPage() {
     <PageLayout>
       <div className="pt-[var(--header-h)]">
         <PageHero
-          title="Gallery"
+          title="Darshan & Temple Gallery"
           subtitle="Divine moments captured — Darshan, Festivals, Seva & Community"
           breadcrumb="Gallery"
           backgroundImage="https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677419371-1783677418690-DietyPhotos.jpeg"

@@ -4,7 +4,7 @@ import { pageSeo, siteKeywords, breadcrumbJsonLd } from "@/lib/seo";
 import JsonLd from "@/components/seo/JsonLd";
 
 export const metadata: Metadata = pageSeo({
-  title: "Darshan Photo Gallery",
+  title: "Today's Darshan & Temple Photos, Vizag",
   description:
     "Daily darshan photos of Sri Sri Radha Madan Mohan and moments from festivals, seva and community life at ISKCON Gambheeram Visakhapatnam.",
   path: "/gallery",

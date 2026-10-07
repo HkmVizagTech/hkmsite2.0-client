@@ -94,4 +94,9 @@ export const nav: Record<string, string> = {
   "Darshan": "దర్శనం",
   "Today's darshan": "నేటి దర్శనం",
   "More": "మరిన్ని",
+  // ── Temple menu: visit guide & Vaikuntham ──
+  "Plan Your Visit": "సందర్శన వివరాలు",
+  "Timings, address & map": "సమయాలు, చిరునామా & మ్యాప్",
+  "Vaikuntham": "వైకుంఠం",
+  "The new temple being built": "నిర్మాణంలో ఉన్న కొత్త ఆలయం",
 };

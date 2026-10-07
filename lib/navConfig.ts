@@ -3,7 +3,7 @@ import {
   Clock, Image, Calendar, Snowflake,
   Heart, Utensils, Beef, BookOpen, Shirt, Gift,
   CalendarDays, PartyPopper, HandHeart, FileText, Flower2, Building2,
-  ShoppingBag, Package, Megaphone,
+  ShoppingBag, Package, Megaphone, MapPin, Landmark,
   type LucideIcon,
 } from "lucide-react";
 
@@ -58,6 +58,8 @@ export const navEntries: NavEntry[] = [
       label: "Temple",
       icon: Clock,
       items: [
+        { label: "Plan Your Visit", href: "/iskcon-vizag-temple", description: "Timings, address & map", icon: MapPin },
+        { label: "Vaikuntham", href: "/vaikuntham", description: "The new temple being built", icon: Landmark },
         { label: "Daily Schedule", href: "/daily-schedule", description: "Aarti timings & daily programs", icon: Clock },
         { label: "Gallery", href: "/gallery", description: "Photos from the temple", icon: Image },
         { label: "Vaishnav Calendar", href: "/vaishnav-calendar", description: "2026 festivals & Ekadashis", icon: Calendar },

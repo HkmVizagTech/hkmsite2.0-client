@@ -12,6 +12,8 @@ import HKVTLogo from "@/assets/HKMV_logo.png";
 
 const exploreLinks = [
   { label: "About Us", href: "/about" },
+  { label: "Visit the Temple in Vizag", href: "/iskcon-vizag-temple" },
+  { label: "Hare Krishna Vaikuntham", href: "/vaikuntham" },
   { label: "Srila Prabhupada", href: "/founder" },
   { label: "Daily Schedule", href: "/daily-schedule" },
   { label: "Gallery", href: "/gallery" },

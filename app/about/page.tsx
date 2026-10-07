@@ -74,7 +74,7 @@ export default function AboutPage() {
     <PageLayout>
       <div className="pt-[var(--header-h)]">
         <PageHero
-          title="About Us"
+          title="About ISKCON Gambheeram, Vizag"
           subtitle="Spreading the timeless message of Lord Krishna through devotion, service, and community"
           breadcrumb="About Us"
           backgroundImage="/assets/about-community.jpg"

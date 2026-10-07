@@ -12,6 +12,7 @@ import { siteKeywords, ORG_ALT_NAMES, TITLE_TEMPLATE, DEFAULT_OG_IMAGE } from "@
 import { LocaleProvider } from "@/components/i18n/LocaleProvider";
 import LanguageToggle from "@/components/i18n/LanguageToggle";
 import { getLocale } from "@/lib/i18n/server";
+import { TEMPLE, DARSHAN_HOURS, MAPS_URL } from "@/lib/templeInfo";
 
 
 const poppins = Poppins({
@@ -50,11 +51,11 @@ export const metadata: Metadata = {
   // Every page title reads "Topic | ISKCON Gambheeram Visakhapatnam";
   // pages pass only their topic (see pageSeo in lib/seo.ts).
   title: {
-    default: "ISKCON Gambheeram Visakhapatnam | Hare Krishna Temple, Vizag",
+    default: "ISKCON Gambheeram Visakhapatnam | Hare Krishna Vaikuntham Temple, Vizag",
     template: TITLE_TEMPLATE,
   },
   description:
-    "ISKCON Gambheeram Visakhapatnam — Hare Krishna temple and Vaikuntham cultural centre in Vizag. Daily darshan, prasadam, festivals and seva since 2008.",
+    "ISKCON Gambheeram Visakhapatnam — the Hare Krishna Vaikuntham temple on IIM Road, Vizag. Darshan & aarti timings, prasadam, festivals and seva since 2008.",
   keywords: siteKeywords,
   // NOTE: no sitewide `alternates.canonical` here on purpose. It was
   // previously set to "/" at this root level, which Next.js's metadata
@@ -65,8 +66,8 @@ export const metadata: Metadata = {
   // multiple pages before this fix. Canonical is now set per-page
   // instead (see app/page.tsx for the homepage's own).
   openGraph: {
-    title: "ISKCON Gambheeram Visakhapatnam | Hare Krishna Temple, Vizag",
-    description: "ISKCON Gambheeram Visakhapatnam — daily darshan, prasadam, festivals, and spiritual programs in Vizag since 2008.",
+    title: "ISKCON Gambheeram Visakhapatnam | Hare Krishna Vaikuntham Temple, Vizag",
+    description: "ISKCON Gambheeram Visakhapatnam — the Hare Krishna Vaikuntham temple in Vizag. Daily darshan, prasadam, festivals and seva since 2008.",
     type: "website",
     locale: "en_IN",
     siteName: "ISKCON Gambheeram Visakhapatnam",
@@ -75,8 +76,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "ISKCON Gambheeram Visakhapatnam | Hare Krishna Temple, Vizag",
-    description: "Spreading the timeless message of Lord Krishna through devotion, service, and community.",
+    title: "ISKCON Gambheeram Visakhapatnam | Hare Krishna Vaikuntham Temple, Vizag",
+    description: "The Hare Krishna Vaikuntham temple in Visakhapatnam — darshan, kirtan, prasadam and festivals for everyone.",
     images: [DEFAULT_OG_IMAGE],
   },
   robots: { index: true, follow: true },
@@ -84,7 +85,9 @@ export const metadata: Metadata = {
 
 const organizationJsonLd = {
   "@context": "https://schema.org",
-  "@type": "HinduTemple",
+  // A temple people visit: HinduTemple (a PlaceOfWorship) + TouristAttraction,
+  // so it can surface for "temples in Visakhapatnam"-style searches too.
+  "@type": ["HinduTemple", "TouristAttraction"],
   "@id": `${SITE_URL}/#organization`,
   name: "ISKCON Gambheeram Visakhapatnam",
   alternateName: ORG_ALT_NAMES,
@@ -110,11 +113,22 @@ const organizationJsonLd = {
   email: "social@hkmvizag.org",
   // Real opening pattern (three blocks — the deities rest midday), not a
   // single continuous window. Matches /daily-schedule exactly.
-  openingHoursSpecification: [
-    { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], opens: "04:30", closes: "05:00" },
-    { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], opens: "07:15", closes: "12:20" },
-    { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"], opens: "16:15", closes: "20:15" },
+  // From lib/templeInfo.ts (same source as the visit guide and schedule).
+  openingHoursSpecification: DARSHAN_HOURS.map((h) => ({
+    "@type": "OpeningHoursSpecification",
+    dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+    opens: h.opens,
+    closes: h.closes,
+  })),
+  hasMap: MAPS_URL,
+  publicAccess: true,
+  containedInPlace: { "@type": "City", name: "Visakhapatnam", alternateName: "Vizag" },
+  areaServed: [
+    { "@type": "City", name: "Visakhapatnam" },
+    { "@type": "State", name: "Andhra Pradesh" },
   ],
+  knowsAbout: ["Krishna consciousness", "Bhagavad Gita", "Srimad Bhagavatam", "Annadanam", "Gau Seva", "Vaishnava festivals"],
+  subjectOf: { "@type": "WebPage", url: `${SITE_URL}/iskcon-vizag-temple`, name: "ISKCON Temple in Vizag: Timings, Address & Darshan" },
   // Links Google's Knowledge Graph entity to our real, active social
   // profiles — a genuine local-SEO signal, distinct from (and in support
   // of) claiming/verifying the actual Google Business Profile listing.

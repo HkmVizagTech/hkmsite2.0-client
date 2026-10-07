@@ -6,6 +6,8 @@ const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [
     { url: `${SITE_URL}/`, changeFrequency: "weekly", priority: 1 },
+    { url: `${SITE_URL}/iskcon-vizag-temple`, changeFrequency: "monthly", priority: 0.95 },
+    { url: `${SITE_URL}/vaikuntham`, changeFrequency: "monthly", priority: 0.9 },
     { url: `${SITE_URL}/about`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE_URL}/founder`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE_URL}/gallery`, changeFrequency: "weekly", priority: 0.6 },

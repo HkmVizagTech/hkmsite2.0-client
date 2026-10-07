@@ -72,7 +72,7 @@ export default function ContactPage() {
     <PageLayout>
       <div className="pt-[var(--header-h)]">
         <PageHero
-          title="Contact Us"
+          title="Visit & Contact ISKCON Gambheeram"
           subtitle="We'd love to hear from you. Reach out to us for any queries or assistance."
           breadcrumb="Contact"
         />

@@ -4,7 +4,7 @@ import { pageSeo, siteKeywords, breadcrumbJsonLd } from "@/lib/seo";
 import JsonLd from "@/components/seo/JsonLd";
 
 export const metadata: Metadata = pageSeo({
-  title: "Contact & Directions",
+  title: "Temple Address & Directions, Vizag",
   description:
     "Visit ISKCON Gambheeram Visakhapatnam at Chaitanya Bhavan, IIM Road, Gambhiram, Vizag 531163. Call +91 89777 61187 · darshan from 4:30 AM.",
   path: "/contact",

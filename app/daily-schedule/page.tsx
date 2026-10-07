@@ -6,20 +6,12 @@ import PageLayout from "@/components/PageLayout";
 import PageHero from "@/components/PageHero";
 import SectionHeading from "@/components/site/SectionHeading";
 import Reveal from "@/components/site/Reveal";
+import { DAILY_SCHEDULE } from "@/lib/templeInfo";
 
-const schedule = [
-  { time: "4:30 AM", event: "Mangala Aarti", icon: Moon, desc: "The first aarti of the day, offered in the pre-dawn hours to awaken the Lord from His divine rest." },
-  { time: "5:00 AM", event: "Tulsi Puja & Japa", icon: Heart, desc: "Devotees circumambulate Tulsi Devi and chant the Hare Krishna Maha-mantra on their beads." },
-  { time: "7:15 AM", event: "Shringar Darshan", icon: Sunrise, desc: "The deities are beautifully dressed and decorated for the morning darshan." },
-  { time: "7:30 AM", event: "Guru Puja", icon: Music, desc: "Worship of the spiritual master with kirtan, flower offerings, and devotional songs." },
-  { time: "8:00 AM", event: "Srimad Bhagavatam Class", icon: BookOpen, desc: "Daily discourse on Srimad Bhagavatam, the ripened fruit of the Vedic literature." },
-  { time: "12:00 PM", event: "Raj Bhog Aarti", icon: Sun, desc: "Grand noon offering with elaborate bhog preparation for the Lord." },
-  { time: "1:00 PM", event: "Prasadam Distribution", icon: Heart, desc: "Sanctified food is distributed to all visitors and devotees present." },
-  { time: "4:15 PM", event: "Temple Reopens", icon: Sunset, desc: "The temple doors reopen after the Lord's afternoon rest period." },
-  { time: "6:30 PM", event: "Sandhya Aarti", icon: Sunset, desc: "Evening aarti with beautiful kirtan as the sun sets — a deeply moving ceremony." },
-  { time: "7:00 PM", event: "Bhagavad Gita Class", icon: BookOpen, desc: "Evening discourse on the Bhagavad Gita — the Song of God spoken by Lord Krishna." },
-  { time: "8:30 PM", event: "Shayan Aarti", icon: Moon, desc: "The final aarti of the day, putting the Lord to rest for the night." },
-];
+// Times and text come from lib/templeInfo.ts (shared with the visit guide
+// and the temple JSON-LD); only the icons live here.
+const SCHEDULE_ICONS = [Moon, Heart, Sunrise, Music, BookOpen, Sun, Heart, Sunset, Sunset, BookOpen, Moon];
+const schedule = DAILY_SCHEDULE.map((s, i) => ({ ...s, icon: SCHEDULE_ICONS[i] ?? Clock }));
 
 const specialPrograms = [
   {
@@ -111,7 +103,7 @@ export default function DailySchedulePage() {
     <PageLayout>
       <div className="pt-[var(--header-h)]">
         <PageHero
-          title="Daily Schedule"
+          title="Daily Darshan & Aarti Schedule"
           subtitle="Temple timings, aarti schedule & spiritual programs"
           breadcrumb="Daily Schedule"
           backgroundImage="/assets/gallery-aarti.jpg"
