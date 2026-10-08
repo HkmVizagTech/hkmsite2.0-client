@@ -16,11 +16,14 @@ import { authFetch } from "@/lib/authClient";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { CheckCircle2, Loader2, RefreshCw, Search, XCircle } from "lucide-react";
+import { CheckCircle2, Loader2, QrCode, RefreshCw, Search, Users, XCircle } from "lucide-react";
+import UpiQrPaymentsPanel from "./UpiQrPaymentsPanel";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 
-type Status = "claimed" | "opened" | "matched" | "dismissed";
+// "open" = everyone who clicked Pay with PhonePe / another UPI app from the
+// fallback (whether or not they then tapped "I've paid").
+type Status = "open" | "matched" | "dismissed";
 
 interface Claim {
   _id: string;
@@ -37,7 +40,7 @@ interface Claim {
   razorpayPaymentId?: string;
   receiptNumber?: string;
   upiFallback: {
-    status: Status;
+    status: "opened" | "claimed" | "matched" | "dismissed";
     app?: string;
     openedAt?: string;
     claimedAt?: string;
@@ -67,14 +70,14 @@ const fmt = (s?: string) =>
 const inr = (n: number) => `₹${n.toLocaleString("en-IN")}`;
 
 const STATUS_LABEL: Record<Status, string> = {
-  claimed: "Said “I've paid”",
-  opened: "Opened UPI app only",
+  open: "To match",
   matched: "Matched",
   dismissed: "Dismissed",
 };
 
 export default function UpiMatchTab() {
-  const [status, setStatus] = useState<Status>("claimed");
+  const [view, setView] = useState<"donors" | "qr">("donors");
+  const [status, setStatus] = useState<Status>("open");
   const [claims, setClaims] = useState<Claim[] | null>(null);
   const [counts, setCounts] = useState<Partial<Record<Status, number>>>({});
   const [loading, setLoading] = useState(true);
@@ -90,7 +93,8 @@ export default function UpiMatchTab() {
       const json = await res.json();
       if (res.ok) {
         setClaims(json.claims || []);
-        setCounts(json.counts || {});
+        const c = json.counts || {};
+        setCounts({ open: (c.claimed || 0) + (c.opened || 0), matched: c.matched || 0, dismissed: c.dismissed || 0 });
       }
     } finally {
       setLoading(false);
@@ -166,10 +170,30 @@ export default function UpiMatchTab() {
       <div>
         <h2 className="text-lg font-semibold">UPI to match</h2>
         <p className="text-sm text-muted-foreground">
-          Donors whose online payment failed and who paid by PhonePe / UPI instead. Match each one to its UPI payment and the
-          receipt is sent automatically.
+          Donors whose online payment failed or was closed and who clicked “Pay with PhonePe / UPI”, and the payments received
+          on the website UPI QR. Match a donor to a payment and the receipt is sent automatically.
         </p>
       </div>
+
+      <div className="inline-flex rounded-lg border p-1">
+        <button
+          onClick={() => setView("donors")}
+          className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium ${view === "donors" ? "bg-primary text-primary-foreground" : "hover:bg-muted"}`}
+        >
+          <Users className="h-4 w-4" /> Donors who clicked PhonePe
+        </button>
+        <button
+          onClick={() => setView("qr")}
+          className={`inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium ${view === "qr" ? "bg-primary text-primary-foreground" : "hover:bg-muted"}`}
+        >
+          <QrCode className="h-4 w-4" /> QR payments
+        </button>
+      </div>
+
+      {view === "qr" ? (
+        <UpiQrPaymentsPanel onMatched={() => load()} />
+      ) : (
+      <>
 
       <div className="flex flex-wrap items-center gap-2">
         {(Object.keys(STATUS_LABEL) as Status[]).map((s) => (
@@ -211,7 +235,17 @@ export default function UpiMatchTab() {
                       {c.donorEmail ? ` · ${c.donorEmail}` : ""}
                     </p>
                   </div>
-                  <span className="rounded-md bg-muted px-2 py-1 text-xs">Razorpay: {c.status}</span>
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    {uf.status === "claimed" && (
+                      <span className="rounded-md bg-green-50 px-2 py-1 text-xs font-semibold text-green-700">Tapped “I've paid”</span>
+                    )}
+                    {uf.status === "opened" && (
+                      <span className="rounded-md bg-amber-50 px-2 py-1 text-xs font-semibold text-amber-700">
+                        Clicked {uf.app === "phonepe" ? "PhonePe" : "UPI"} — not confirmed
+                      </span>
+                    )}
+                    <span className="rounded-md bg-muted px-2 py-1 text-xs">Razorpay: {c.status}</span>
+                  </div>
                 </div>
 
                 <div className="grid gap-x-6 gap-y-1 text-sm sm:grid-cols-2 lg:grid-cols-4">
@@ -326,6 +360,8 @@ export default function UpiMatchTab() {
             </Card>
           );
         })
+      )}
+      </>
       )}
     </div>
   );
