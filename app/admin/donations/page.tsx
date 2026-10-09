@@ -71,6 +71,7 @@ export default function AdminDonations() {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(20);
+  const [exporting, setExporting] = useState(false);
   const [total, setTotal] = useState(0);
   const [stats, setStats] = useState<Stats | null>(null);
   const [statsLoading, setStatsLoading] = useState(true);
@@ -115,38 +116,75 @@ export default function AdminDonations() {
     return () => clearTimeout(t);
   }, [fetchDonations]);
 
-  const exportCsv = () => {
-    const params = new URLSearchParams();
-    if (statusFilter !== "all") params.set("status", statusFilter);
-    if (sevaFilter !== "all") params.set("type", sevaFilter);
-    if (search) params.set("q", search);
-    if (dateFrom) params.set("from", dateFrom);
-    if (dateTo) params.set("to", dateTo);
-    authFetch(`${apiUrl}/donations?${params.toString()}&limit=10000`, { credentials: "include" })
-      .then((res) => res.json())
-      .then((data) => {
-        const rows = (data.donations || []).map((d: any) => [
-          paymentRef(d) || d.razorpayOrderId || d._id,
-          d.donorName || "",
-          d.donorEmail || "",
-          d.donorMobile || "",
-          d.amount,
-          d.status,
-          d.sevaName || d.type || "",
-          d.receiptNumber || "",
-          d.date ? new Date(d.date).toLocaleDateString("en-IN") : "",
-          paidBy(d),
-        ]);
-        const headers = ["TXN ID", "Donor", "Email", "Mobile", "Amount", "Status", "Seva", "Receipt", "Date", "Paid by"];
-        const csv = [headers.join(","), ...rows.map((r: string[]) => r.map((c: string) => `"${String(c).replace(/"/g, '""')}"`).join(","))].join("\n");
-        const blob = new Blob([csv], { type: "text/csv" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `donations-${Date.now()}.csv`;
-        a.click();
-        URL.revokeObjectURL(url);
-      });
+  // Pages through the whole filtered set rather than trusting a single large
+  // request. The API caps a page at 1000 rows even in export mode, so asking
+  // for ?limit=10000 quietly returned the cap and the CSV came out short — 200
+  // rows of a 300-row export, with nothing on screen saying so.
+  //
+  // Looping on `total` means this is correct for any result size, and stays
+  // correct if the server's cap is ever lowered again.
+  const exportCsv = async () => {
+    if (exporting) return;
+    setExporting(true);
+    try {
+      const params = new URLSearchParams();
+      if (statusFilter !== "all") params.set("status", statusFilter);
+      if (sevaFilter !== "all") params.set("type", sevaFilter);
+      if (search) params.set("q", search);
+      if (dateFrom) params.set("from", dateFrom);
+      if (dateTo) params.set("to", dateTo);
+      params.set("export", "1");
+
+      const PAGE_SIZE = 1000;
+      const MAX_PAGES = 100; // 100k rows — a stop so a bad `total` cannot spin forever
+      const all: any[] = [];
+      let total = Infinity;
+
+      for (let pageNo = 1; pageNo <= MAX_PAGES; pageNo++) {
+        params.set("limit", String(PAGE_SIZE));
+        params.set("page", String(pageNo));
+        const res = await authFetch(`${apiUrl}/donations?${params.toString()}`, { credentials: "include" });
+        if (!res.ok) throw new Error(`Export failed (HTTP ${res.status})`);
+        const data = await res.json();
+        const batch: any[] = data.donations || [];
+        if (typeof data.total === "number") total = data.total;
+        all.push(...batch);
+        // An empty page means we have everything, whatever `total` claimed.
+        if (batch.length === 0 || all.length >= total) break;
+      }
+
+      const rows = all.map((d: any) => [
+        paymentRef(d) || d.razorpayOrderId || d._id,
+        d.donorName || "",
+        d.donorEmail || "",
+        d.donorMobile || "",
+        d.amount,
+        d.status,
+        d.sevaName || d.type || "",
+        d.receiptNumber || "",
+        d.date ? new Date(d.date).toLocaleDateString("en-IN") : "",
+        paidBy(d),
+      ]);
+      const headers = ["TXN ID", "Donor", "Email", "Mobile", "Amount", "Status", "Seva", "Receipt", "Date", "Paid by"];
+      const csv = [headers.join(","), ...rows.map((r: string[]) => r.map((c: string) => `"${String(c).replace(/"/g, '""')}"`).join(","))].join("\n");
+      const blob = new Blob([csv], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `donations-${Date.now()}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      // Say plainly how many rows left the building, so a short file is never
+      // mistaken for a complete one again.
+      if (Number.isFinite(total) && all.length < total) {
+        alert(`Exported ${all.length} of ${total} rows. Please report this — the export stopped early.`);
+      }
+    } catch (err: any) {
+      alert(err?.message || "Export failed. Please try again.");
+    } finally {
+      setExporting(false);
+    }
   };
 
   const sevaOptions = stats?.sevaWise?.map((s) => s.name) || [];
@@ -158,8 +196,8 @@ export default function AdminDonations() {
           <h1 className="font-heading text-3xl font-bold">Donations & Payments</h1>
           <p className="text-muted-foreground">Track all seva donations and payment details</p>
         </div>
-        <Button className="gap-2 bg-transparent border border-border text-foreground hover:bg-muted" onClick={exportCsv}>
-          <Download className="w-4 h-4" /> Export CSV
+        <Button className="gap-2 bg-transparent border border-border text-foreground hover:bg-muted" onClick={exportCsv} disabled={exporting}>
+          <Download className="w-4 h-4" /> {exporting ? "Exporting…" : "Export CSV"}
         </Button>
       </div>
 
