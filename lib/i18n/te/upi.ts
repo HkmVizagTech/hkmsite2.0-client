@@ -38,4 +38,8 @@ export const upi: Record<string, string> = {
   "On a computer? Show QR": "కంప్యూటర్‌లో ఉన్నారా? QR చూపించండి",
   "Already paid? {link} for your receipt.": "ఇప్పటికే చెల్లించారా? మీ రసీదు కోసం {link}.",
   "Send the screenshot on WhatsApp": "స్క్రీన్‌షాట్‌ను WhatsApp లో పంపండి",
+  // ── PhonePe strip linked to a recent unpaid attempt ──
+  "For your {amount} donation · {campaign}": "మీ {amount} విరాళం కోసం · {campaign}",
+  "Your details from the form are saved — we'll match this UPI payment to {name} and send the receipt.": "ఫారమ్‌లో మీరు ఇచ్చిన వివరాలు సేవ్ అయ్యాయి — ఈ UPI చెల్లింపును {name} పేరుతో సరిపోల్చి రసీదు పంపుతాము.",
+  "you": "మీ",
 };

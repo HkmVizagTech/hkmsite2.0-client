@@ -7,13 +7,18 @@
 //   - "Other UPI" opens Google Pay / Paytm / BHIM etc. (Android chooser)
 //   - "Show QR" reveals the official QR for donors on a computer
 //   - "Already paid?" opens WhatsApp with a ready message for the receipt
-//     (direct UPI payments don't create a donation record on the website)
+// When this device has a recent unpaid checkout on this page (the Razorpay
+// window failed or was closed — lib/upiAttempt.ts), the strip is tied to it:
+// it shows that amount and seva, opens the UPI app with the amount filled in,
+// and records the click on that donation so it appears in Admin → Donations →
+// UPI to Match with the details from the form.
 // Payment details live in lib/upi.ts.
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Check, Copy, QrCode, Smartphone } from "lucide-react";
-import { RECEIPT_WHATSAPP, UPI_QR_IMAGE, UPI_VPA, phonePeLink, upiLink } from "@/lib/upi";
+import { RECEIPT_WHATSAPP, UPI_API_BASE, UPI_QR_IMAGE, UPI_VPA, phonePeLink, upiLink } from "@/lib/upi";
+import { getUpiAttempt, type UpiAttempt } from "@/lib/upiAttempt";
 import { useT } from "@/components/i18n/LocaleProvider";
 
 const PHONEPE_PURPLE = "#5f259f";
@@ -22,6 +27,24 @@ export default function PhonePeUpiCard({ campaign }: { campaign: string }) {
   const t = useT();
   const [copied, setCopied] = useState(false);
   const [showQr, setShowQr] = useState(false);
+  // Read after mount (storage is browser-only), so the server and first client
+  // render match.
+  const [attempt, setAttempt] = useState<UpiAttempt | null>(null);
+  useEffect(() => {
+    setAttempt(getUpiAttempt());
+  }, []);
+  const amountLabel = attempt ? `₹${attempt.amount.toLocaleString("en-IN")}` : "";
+
+  const markOpened = (app: "phonepe" | "other") => {
+    if (!attempt) return;
+    // fire-and-forget: the app switch must not wait on our API
+    fetch(`${UPI_API_BASE}/payments/upi-fallback/opened`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ donationId: attempt.donationId, orderId: attempt.orderId, app, via: "strip" }),
+      keepalive: true,
+    }).catch(() => {});
+  };
 
   const copyVpa = () => {
     navigator.clipboard
@@ -34,9 +57,9 @@ export default function PhonePeUpiCard({ campaign }: { campaign: string }) {
   };
 
   const whatsappText = [
-    `Hare Krishna! I have paid for ${campaign} seva by UPI.`,
-    "Amount: ₹",
-    "Name: ",
+    `Hare Krishna! I have paid for ${attempt ? attempt.campaign : campaign + " seva"} by UPI.`,
+    `Amount: ${attempt ? amountLabel : "₹"}`,
+    `Name: ${attempt?.donorName || ""}`,
     "Mobile: ",
     "PAN (only if you need an 80G receipt): ",
     "I am attaching the payment screenshot.",
@@ -61,6 +84,11 @@ export default function PhonePeUpiCard({ campaign }: { campaign: string }) {
                 <h2 id="pay-by-upi" className="font-heading text-[15px] font-bold leading-tight" style={{ color: PHONEPE_PURPLE }}>
                   {t("Prefer PhonePe / UPI?")}
                 </h2>
+                {attempt && (
+                  <p className="mt-0.5 text-xs font-semibold text-ink">
+                    {t("For your {amount} donation · {campaign}", { amount: amountLabel, campaign: attempt.campaign })}
+                  </p>
+                )}
                 <button
                   type="button"
                   onClick={copyVpa}
@@ -75,14 +103,16 @@ export default function PhonePeUpiCard({ campaign }: { campaign: string }) {
 
             <div className="grid shrink-0 grid-cols-[1fr_auto] gap-2">
               <a
-                href={phonePeLink()}
+                href={phonePeLink(attempt?.amount)}
+                onClick={() => markOpened("phonepe")}
                 className="inline-flex h-10 items-center justify-center rounded-xl px-4 text-sm font-bold text-white transition-opacity hover:opacity-90"
                 style={{ backgroundColor: PHONEPE_PURPLE }}
               >
                 {t("Pay with PhonePe")}
               </a>
               <a
-                href={upiLink()}
+                href={upiLink(attempt?.amount)}
+                onClick={() => markOpened("other")}
                 className="inline-flex h-10 items-center justify-center rounded-xl border bg-white px-3 text-sm font-semibold transition-colors hover:bg-[#f3ecfc]"
                 style={{ borderColor: PHONEPE_PURPLE, color: PHONEPE_PURPLE }}
               >
@@ -94,7 +124,10 @@ export default function PhonePeUpiCard({ campaign }: { campaign: string }) {
           <div className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-[#ece2f8] pt-2.5 text-xs text-muted-foreground">
             <button
               type="button"
-              onClick={() => setShowQr((v) => !v)}
+              onClick={() => {
+                if (!showQr) markOpened("other");
+                setShowQr((v) => !v);
+              }}
               aria-expanded={showQr}
               className="inline-flex items-center gap-1 font-semibold hover:underline"
               style={{ color: PHONEPE_PURPLE }}
@@ -115,6 +148,12 @@ export default function PhonePeUpiCard({ campaign }: { campaign: string }) {
               {paidAfter}
             </span>
           </div>
+
+          {attempt && (
+            <p className="mt-2 text-xs text-muted-foreground">
+              {t("Your details from the form are saved — we'll match this UPI payment to {name} and send the receipt.", { name: attempt.donorName || t("you") })}
+            </p>
+          )}
 
           {showQr && (
             <div className="mt-3 flex justify-center">

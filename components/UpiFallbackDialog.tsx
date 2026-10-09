@@ -22,6 +22,7 @@ import { CheckCircle2, Loader2, QrCode, Smartphone, X } from "lucide-react";
 import { Dialog, DialogDescription, DialogOverlay, DialogPortal, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useT } from "@/components/i18n/LocaleProvider";
+import { saveUpiAttempt } from "@/lib/upiAttempt";
 import { RECEIPT_WHATSAPP, UPI_API_BASE, UPI_QR_IMAGE, UPI_VPA, phonePeLink, upiLink } from "@/lib/upi";
 
 const PURPLE = "#5f259f";
@@ -92,7 +93,7 @@ function UpiFallbackDialog({ info, onClose }: { info: UpiFallbackInfo | null; on
   const markOpened = (app: "phonepe" | "other") => {
     if (!canClaim || !info) return;
     // fire-and-forget: the app switch must not wait on our API
-    post("opened", { donationId: info.donationId, orderId: info.orderId, app }).catch(() => {});
+    post("opened", { donationId: info.donationId, orderId: info.orderId, app, via: "dialog" }).catch(() => {});
   };
 
   const claim = async () => {
@@ -322,6 +323,11 @@ export function useUpiFallback() {
       }
     }
     if (ticket !== pending.current) return;
+    // Remember this unpaid attempt so the PhonePe strip on the page can link
+    // a later PhonePe click to the same donation (lib/upiAttempt.ts).
+    if (next.donationId && next.orderId) {
+      saveUpiAttempt({ donationId: next.donationId, orderId: next.orderId, amount: next.amount, campaign: next.campaign, donorName: next.donorName });
+    }
     setKey((k) => k + 1); // fresh dialog state for every attempt
     setInfo(next);
   }, []);

@@ -42,6 +42,7 @@ interface Claim {
   upiFallback: {
     status: "opened" | "claimed" | "matched" | "dismissed";
     app?: string;
+    via?: "dialog" | "strip";
     openedAt?: string;
     claimedAt?: string;
     payerName?: string;
@@ -242,6 +243,11 @@ export default function UpiMatchTab() {
                     {uf.status === "opened" && (
                       <span className="rounded-md bg-amber-50 px-2 py-1 text-xs font-semibold text-amber-700">
                         Clicked {uf.app === "phonepe" ? "PhonePe" : "UPI"} — not confirmed
+                      </span>
+                    )}
+                    {(uf.status === "opened" || uf.status === "claimed") && (
+                      <span className="rounded-md bg-muted px-2 py-1 text-xs">
+                        {uf.via === "strip" ? "From the PhonePe box on the page" : "From the payment-failed pop-up"}
                       </span>
                     )}
                     <span className="rounded-md bg-muted px-2 py-1 text-xs">Razorpay: {c.status}</span>
