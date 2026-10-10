@@ -222,7 +222,7 @@ export default function ThankYouPageClient() {
             <p className={`mb-7 text-base md:text-lg ${T ? "" : "text-muted-foreground"}`} style={{ color: T ? T.subtle : undefined }}>
               {recurring
                 ? "Your monthly seva has been set up. May Krishna bless you every month."
-                : "Thank you for your heartfelt offering to Sri Sri Radha Damodar."}
+                : "Thank you for your heartfelt offering to Sri Sri Radha Madan Mohan."}
             </p>
 
             {/* Summary card */}
