@@ -174,12 +174,35 @@ const loadRazorpay = () =>
     document.body.appendChild(script);
   });
 
-export default function DonationsClient() {
+// Folds the admin-edited page record over the built-in defaults. Used in two
+// places — the server-rendered first paint and the client refresh — so both
+// produce an identical object and a hydrated page can never differ from the
+// HTML it replaced.
+function mergeSettings(page: any): DonationPageSettings {
+  return {
+    ...defaultSettings,
+    ...page,
+    bankDetails: { ...defaultSettings.bankDetails, ...(page.bankDetails || {}) },
+    contact: { ...defaultSettings.contact, ...(page.contact || {}) },
+    impactItems: Array.isArray(page.impactItems) && page.impactItems.length ? page.impactItems : defaultSettings.impactItems,
+    donationOptions: Array.isArray(page.donationOptions) && page.donationOptions.length ? page.donationOptions : defaultDonationOptions,
+    galleryImages: Array.isArray(page.galleryImages) && page.galleryImages.length ? page.galleryImages : defaultSettings.galleryImages,
+  };
+}
+
+// `initialPage` is the /donation-page record fetched on the server. Without it
+// the page used to paint the hard-coded default banner first and swap to the
+// real one a second or two later, once the browser fetch returned — visible to
+// every donor as the poster changing under them. Passing it in means the
+// correct banner is in the HTML from the very first frame.
+export default function DonationsClient({ initialPage = null }: { initialPage?: any }) {
   const [selected, setSelected] = useState<DonationOption | null>(null);
   const [form, setForm] = useState<CheckoutForm>(initialForm);
   const [status, setStatus] = useState<{ type: "success" | "error" | "idle"; message: string }>({ type: "idle", message: "" });
   const [submitting, setSubmitting] = useState(false);
-  const [settings, setSettings] = useState<DonationPageSettings>(defaultSettings);
+  const [settings, setSettings] = useState<DonationPageSettings>(() =>
+    initialPage ? mergeSettings(initialPage) : defaultSettings
+  );
   // Donors can adjust a card's suggested amount before donating — keyed by
   // option.id so each card's edit is independent of the others.
   const [cardAmounts, setCardAmounts] = useState<Record<number, string>>({});
@@ -204,23 +227,17 @@ export default function DonationsClient() {
     // Capture UTM/referrer data once on mount so it's ready by the time
     // the donor submits — attached to the order request below.
     captureTracking();
-  }, []);
+  }, [initialPage]);
 
   useEffect(() => {
+    // Already have it from the server — no second request, no re-render.
+    if (initialPage) return;
     let active = true;
     fetch(`${apiBase()}/donation-page`)
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (!active || !data?.page) return;
-        setSettings({
-          ...defaultSettings,
-          ...data.page,
-          bankDetails: { ...defaultSettings.bankDetails, ...(data.page.bankDetails || {}) },
-          contact: { ...defaultSettings.contact, ...(data.page.contact || {}) },
-          impactItems: Array.isArray(data.page.impactItems) && data.page.impactItems.length ? data.page.impactItems : defaultSettings.impactItems,
-          donationOptions: Array.isArray(data.page.donationOptions) && data.page.donationOptions.length ? data.page.donationOptions : defaultDonationOptions,
-          galleryImages: Array.isArray(data.page.galleryImages) && data.page.galleryImages.length ? data.page.galleryImages : defaultSettings.galleryImages,
-        });
+        setSettings(mergeSettings(data.page));
       })
       .catch(() => {});
     return () => {
