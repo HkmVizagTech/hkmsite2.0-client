@@ -266,11 +266,11 @@ export const DONATION_SEO = {
     sevas: [
       { name: "Annadana Seva", amounts: [1100, 2100, 3100, 5555, 9000, 11000], note: "Eligible for 80G" },
       { name: "Gau Seva", amounts: [1500, 2500, 3500, 5500, 9500, 11500], note: "Eligible for 80G" },
-      { name: "Yajamana Seva", amounts: [11000, 25555, 51000, 108000], note: "Principal sponsor of the festival" },
-      { name: "Pushpalankara Seva", amounts: [1100, 2100, 3100, 5100, 11111] },
+      { name: "Yajamana Seva", amounts: [11000, 15000, 25555, 51000, 75000, 108000], note: "Principal sponsor of the festival" },
+      { name: "Pushpalankara Seva", amounts: [1100, 2100, 3100, 5100, 9000, 11111] },
       { name: "Mantapa Seva", amounts: [1100, 3100, 5100, 9000, 15111, 21000] },
       { name: "Vastrabharana Seva", amounts: [1100, 3100, 5100, 9999, 15000, 21000] },
-      { name: "Vijayadashami Homam", amounts: [2500, 7777, 11000, 21000] },
+      { name: "Vijayadashami Homam", amounts: [2500, 5100, 7777, 11000, 15000, 21000] },
     ],
     event: {
       name: "Vijayadashami 2026",

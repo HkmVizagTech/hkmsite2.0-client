@@ -98,8 +98,10 @@ const SEVAS: Seva[] = [
       "The chief sponsor of the festival — sankalpa is taken in your name and gotra, and the day's worship is offered on your behalf.",
     tiers: [
       { label: "Rs. 11,000", amount: 11000 },
+      { label: "Rs. 15,000", amount: 15000 },
       { label: "Rs. 25,555", amount: 25555 },
       { label: "Rs. 51,000", amount: 51000 },
+      { label: "Rs. 75,000", amount: 75000 },
       { label: "Rs. 1,08,000", amount: 108000 },
     ],
     category: "Vijayadashami",
@@ -119,6 +121,7 @@ const SEVAS: Seva[] = [
       { label: "Rs. 2,100", amount: 2100 },
       { label: "Rs. 3,100", amount: 3100 },
       { label: "Rs. 5,100", amount: 5100 },
+      { label: "Rs. 9,000", amount: 9000 },
       { label: "Rs. 11,111", amount: 11111 },
     ],
     category: "Vijayadashami",
@@ -176,8 +179,10 @@ const SEVAS: Seva[] = [
       "Performed for victory over obstacles and the wellbeing of your family — sankalpa and ahuti offered in your name.",
     tiers: [
       { label: "Rs. 2,500", amount: 2500 },
+      { label: "Rs. 5,100", amount: 5100 },
       { label: "Rs. 7,777", amount: 7777 },
       { label: "Rs. 11,000", amount: 11000 },
+      { label: "Rs. 15,000", amount: 15000 },
       { label: "Rs. 21,000", amount: 21000 },
     ],
     category: "Vijayadashami",
@@ -254,9 +259,7 @@ export default function VijayadashamiClient() {
   const formRef = useRef<HTMLDivElement | null>(null);
 
   const introRef = useRef<HTMLDivElement | null>(null);
-  const sevaRef = useRef<HTMLDivElement | null>(null);
   const introInView = useInView(introRef, { once: true, margin: "-80px" });
-  const sevaInView = useInView(sevaRef, { once: true, margin: "-80px" });
 
   // Ad / reminder deep-link: /vijayadashami?seva=annadana-seva scrolls to and
   // highlights that card. Read from window rather than useSearchParams so the
@@ -291,7 +294,6 @@ export default function VijayadashamiClient() {
         <section className="relative">
           <picture>
             <source media="(max-width: 640px)" srcSet={MOBILE_BANNER} />
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={DESKTOP_BANNER}
               alt="Vijayadashami celebrations at ISKCON Gambheeram Visakhapatnam"
@@ -348,7 +350,7 @@ export default function VijayadashamiClient() {
         </section>
 
         {/* ── SEVAS ───────────────────────────────────────────────── */}
-        <section className="vk-section bg-white" id="offer-seva" ref={sevaRef}>
+        <section className="vk-section bg-white" id="offer-seva">
           <div className="vk-container">
             <SectionHeading
               align="center"
