@@ -24,7 +24,7 @@ import UtmBuilderTab from "@/app/donations/admin/UtmBuilderTab";
 import SiteUtmAnalyticsTab from "./SiteUtmAnalyticsTab";
 import ManualEntryTab from "./ManualEntryTab";
 import ReportsTab from "./ReportsTab";
-import NeedsManualReceiptTab from "./NeedsManualReceiptTab";
+import DccReceiptsTab from "./DccReceiptsTab";
 import NeedsWhatsAppTab from "./NeedsWhatsAppTab";
 import PrasadamTab from "./PrasadamTab";
 import UpiMatchTab from "./UpiMatchTab";
@@ -208,7 +208,7 @@ export default function AdminDonations() {
           <TabsTrigger value="manual-entry">Manual Entry</TabsTrigger>
           <TabsTrigger value="upi-match">UPI to Match</TabsTrigger>
           <TabsTrigger value="payment-failures">Payment failures</TabsTrigger>
-          <TabsTrigger value="needs-receipt">Needs Manual Receipt</TabsTrigger>
+          <TabsTrigger value="needs-receipt">DCC receipts</TabsTrigger>
           <TabsTrigger value="needs-whatsapp">Needs WhatsApp</TabsTrigger>
           <TabsTrigger value="prasadam">Prasadam</TabsTrigger>
           <TabsTrigger value="utm-analytics">UTM Analytics</TabsTrigger>
@@ -511,7 +511,7 @@ export default function AdminDonations() {
         </TabsContent>
 
         <TabsContent value="needs-receipt" className="mt-6">
-          <NeedsManualReceiptTab />
+          <DccReceiptsTab />
         </TabsContent>
 
         <TabsContent value="needs-whatsapp" className="mt-6">
