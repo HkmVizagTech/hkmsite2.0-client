@@ -6,6 +6,7 @@ import Reveal from "@/components/site/Reveal";
 import DonationForm from "@/components/DonationForm";
 import PhonePeUpiCard from "@/components/PhonePeUpiCard";
 import FaqSection from "@/components/sqft-campaign/FaqSection";
+import DonorPrivilegesSection from "@/components/sqft-campaign/DonorPrivilegesSection";
 import OtherDonationsCarousel from "@/components/pitru-paksha/OtherDonationsCarousel";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -26,6 +27,7 @@ import {
   X,
 } from "lucide-react";
 import type { Seva } from "@/lib/sevaConfig";
+import type { CampaignConfig } from "@/lib/campaignConfig";
 
 // ── Festival constants ───────────────────────────────────────────────
 // Vijayadashami 2026 falls on Tuesday, 20 October 2026 (tenth day of
@@ -296,6 +298,46 @@ const PRIVILEGES = [
   },
 ];
 
+// Config for the shared <DonorPrivilegesSection>. That component only reads
+// `type`, `unitName` and `engravingImage` — its privilege copy and both
+// carousels (Donor Privileges and Other Privileges) are its own, which is
+// exactly what we want here: the same block the Pitru Paksha and Square Foot
+// pages show. type "SQFT" selects the generic carousel; "BRICK" would switch
+// it to the laser-engraving lede, which is not relevant to a festival seva.
+// The remaining fields exist only to satisfy CampaignConfig, and `privileges`
+// is filled in properly so it stays correct if the component ever reads it.
+const VIJAYADASHAMI_PRIVILEGE_CONFIG: CampaignConfig = {
+  type: "SQFT",
+  pageTitle: "Vijayadashami Seva",
+  metaTitle: "Vijayadashami Seva | Hare Krishna Vaikuntham Temple, Visakhapatnam",
+  metaDesc:
+    "Offer Annadana, Gau Seva, Yajamana, Pushpalankara, Mantapa, Vastrabharana and Homam seva for Vijayadashami.",
+  ogTitle: "Vijayadashami Seva",
+  ogDesc: "Offer your seva on the day of the Lord's victory over adharma.",
+  ogImage: DESKTOP_BANNER,
+  pricePerUnit: 100,
+  unitName: "seva",
+  unitNamePlural: "sevas",
+  unitShort: "seva",
+  minCustomAmount: 100,
+  phone: "+91 89777 61187",
+  phoneHref: "tel:+918977761187",
+  email: "social@hkmvizag.org",
+  heroImage: DESKTOP_BANNER,
+  aboutImage: DESKTOP_BANNER,
+  heroTagline: "A seva initiative of Hare Krishna Movement Visakhapatnam",
+  heroHeading1: "Vijayadashami",
+  heroHeading2: "Seva Online",
+  heroDesc:
+    "Offer Annadana, Gau Seva and the festival sevas on the tenth day of Navaratri.",
+  formHeading: "Offer Your Seva",
+  formSubheading: "Sankalpa is taken in your name on the festival day.",
+  privileges: PRIVILEGES,
+  higherPrivileges: [],
+  statsApiEndpoint: "",
+  orderType: "VIJAYADASHAMI",
+};
+
 const BANK_DETAILS = [
   { label: "Beneficiary Name", value: "HARE KRISHNA MOVEMENT INDIA" },
   { label: "Bank Name", value: "IDFC FIRST BANK LTD" },
@@ -381,6 +423,12 @@ export default function VijayadashamiClient() {
       window.removeEventListener("keydown", onKey);
     };
   }, [selected]);
+
+  // The shared privileges section ends in an "Offer Seva" CTA and expects
+  // the page to supply the scroll.
+  const scrollToDonate = () => {
+    document.getElementById("offer-seva")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   const copyField = (label: string, value: string) => {
     navigator.clipboard?.writeText(value).catch(() => {});
@@ -598,31 +646,6 @@ export default function VijayadashamiClient() {
           </div>
         </section>
 
-        {/* ══ WHAT YOU RECEIVE ═════════════════════════════════ */}
-        <section className="vk-section vk-band">
-          <div className="vk-container">
-            <SectionHeading
-              align="center"
-              eyebrow="For Every Sponsor"
-              title="What You Receive"
-              subtitle="Every seva on this page, at every amount, carries all four."
-            />
-            <div className="mx-auto grid max-w-5xl gap-5 sm:grid-cols-2">
-              {PRIVILEGES.map((item, i) => (
-                <Reveal key={item.title} delay={i * 0.06} className="vk-card flex h-full gap-4 p-5 md:p-6">
-                  <span className="vk-icon-chip shrink-0">
-                    <item.icon className="h-5 w-5" />
-                  </span>
-                  <div className="min-w-0">
-                    <h3 className="text-base font-bold text-ink">{item.title}</h3>
-                    <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{item.text}</p>
-                  </div>
-                </Reveal>
-              ))}
-            </div>
-          </div>
-        </section>
-
         {/* ══ BANK TRANSFER ════════════════════════════════════ */}
         <section className="pt-10 md:pt-16">
           <div className="vk-container">
@@ -682,6 +705,12 @@ export default function VijayadashamiClient() {
             </div>
           </div>
         </section>
+
+        {/* ══ DONOR PRIVILEGES — the shared block, same as /pitru-paksha ═════ */}
+        <DonorPrivilegesSection
+          scrollToDonate={scrollToDonate}
+          config={VIJAYADASHAMI_PRIVILEGE_CONFIG}
+        />
 
         {/* ══ FAQ ═══════════════════════════════════════════ */}
         <FaqSection faqs={FAQS} tone="blue" />
