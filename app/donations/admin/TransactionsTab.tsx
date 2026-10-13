@@ -287,6 +287,9 @@ export default function TransactionsTab() {
                   {selected.utm.term && <Row label="Term" value={selected.utm.term} />}
                 </div>
               )}
+              {selected.status === "completed" && (!selected.receiptNumber || !selected.whatsappReceiptSentAt) && (
+                <DccPushBox txn={selected} onDone={fetchTransactions} />
+              )}
               {selected.status === "pending" && (
                 <ManualCompleteBox donationId={selected._id} onDone={() => { setSelected(null); fetchTransactions(); }} />
               )}
@@ -340,6 +343,56 @@ function ManualCompleteBox({ donationId, onDone }: { donationId: string; onDone:
         </Button>
       </div>
       {msg && <p className="mt-2 text-xs font-medium text-amber-900">{msg}</p>}
+    </div>
+  );
+}
+
+// A successful donation without a DCC receipt number (or whose WhatsApp
+// receipt never went out): push it to DCC now and send the WhatsApp receipt.
+// The server also does this on its own every 10 minutes.
+function DccPushBox({ txn, onDone }: { txn: Transaction; onDone: () => void }) {
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const hasReceipt = !!txn.receiptNumber;
+
+  const push = async () => {
+    // Without a payment ID DCC can't recognise a repeat push, so a second one
+    // could raise a second receipt.
+    if (!hasReceipt && !txn.razorpayPaymentId && txn.dccSyncStatus && txn.dccSyncStatus !== "pending") {
+      const ok = window.confirm(
+        "This donation has no payment ID and was already sent to DCC once, so DCC may already have it. Check DCC first — pushing again could create a second receipt.\n\nPush anyway?"
+      );
+      if (!ok) return;
+    }
+    setBusy(true);
+    setMsg(null);
+    try {
+      const res = await authFetch(`${apiUrl()}/donations-admin/transactions/${txn._id}/dcc-push`, { method: "POST", credentials: "include" });
+      const data = await res.json().catch(() => ({}));
+      setMsg({ ok: res.ok, text: data.message || (res.ok ? "Done" : "Push failed") });
+      if (res.ok) onDone();
+    } catch {
+      setMsg({ ok: false, text: "Network error" });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="rounded-lg border border-blue-300 bg-blue-50 p-3">
+      <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-blue-800">
+        {hasReceipt ? "WhatsApp receipt not sent" : "No DCC receipt yet"}
+      </p>
+      <p className="mb-2 text-xs text-blue-700">
+        {hasReceipt
+          ? "Send the donor their WhatsApp receipt now."
+          : "Push this donation to DCC to get its receipt number (DCC sends back the existing one if it already has it), then the WhatsApp receipt goes to the donor. This also happens automatically every 10 minutes."}
+      </p>
+      <Button size="sm" onClick={push} disabled={busy}>
+        {busy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+        {hasReceipt ? "Send WhatsApp receipt" : "Push to DCC & send receipt"}
+      </Button>
+      {msg && <p className={`mt-2 text-xs font-medium ${msg.ok ? "text-green-700" : "text-red-700"}`}>{msg.text}</p>}
     </div>
   );
 }

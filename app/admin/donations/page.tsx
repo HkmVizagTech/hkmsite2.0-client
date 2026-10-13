@@ -24,7 +24,7 @@ import UtmBuilderTab from "@/app/donations/admin/UtmBuilderTab";
 import SiteUtmAnalyticsTab from "./SiteUtmAnalyticsTab";
 import ManualEntryTab from "./ManualEntryTab";
 import ReportsTab from "./ReportsTab";
-import DccReceiptsTab from "./DccReceiptsTab";
+import DccReceiptsTab from "@/components/admin/DccReceiptsTab";
 import NeedsWhatsAppTab from "./NeedsWhatsAppTab";
 import PrasadamTab from "./PrasadamTab";
 import UpiMatchTab from "./UpiMatchTab";
@@ -202,7 +202,7 @@ export default function AdminDonations() {
       </div>
 
       <Tabs defaultValue="overview">
-        <TabsList>
+        <TabsList className="max-w-full justify-start overflow-x-auto">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="reports">Reports</TabsTrigger>
           <TabsTrigger value="manual-entry">Manual Entry</TabsTrigger>

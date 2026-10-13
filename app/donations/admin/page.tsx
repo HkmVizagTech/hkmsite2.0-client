@@ -14,6 +14,7 @@ import DashboardTab from "./DashboardTab";
 import TransactionsTab from "./TransactionsTab";
 import UtmStatsTab from "./UtmStatsTab";
 import UtmBuilderTab from "./UtmBuilderTab";
+import DccReceiptsTab, { DONATIONS_PAGE_API } from "@/components/admin/DccReceiptsTab";
 
 type DonationOption = {
   id: number;
@@ -286,9 +287,10 @@ export default function DonationsAdminPage() {
         </div>
 
         <Tabs defaultValue="dashboard">
-          <TabsList>
+          <TabsList className="max-w-full justify-start overflow-x-auto">
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
             <TabsTrigger value="transactions">Transactions</TabsTrigger>
+            <TabsTrigger value="dcc">DCC receipts</TabsTrigger>
             <TabsTrigger value="utm">UTM Campaigns</TabsTrigger>
             <TabsTrigger value="utm-builder">UTM Builder</TabsTrigger>
             <TabsTrigger value="content">Page Content</TabsTrigger>
@@ -300,6 +302,10 @@ export default function DonationsAdminPage() {
 
           <TabsContent value="transactions" className="mt-6">
             <TransactionsTab />
+          </TabsContent>
+
+          <TabsContent value="dcc" className="mt-6">
+            <DccReceiptsTab api={DONATIONS_PAGE_API} scopeNote="Donations made on the /donations page only" />
           </TabsContent>
 
           <TabsContent value="utm" className="mt-6">

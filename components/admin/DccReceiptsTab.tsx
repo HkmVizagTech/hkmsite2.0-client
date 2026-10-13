@@ -7,6 +7,10 @@
 // one stands, lets admin push now, and takes a receipt number typed in from
 // DCC for the few the sweep can't safely push (see services/dccSweep.service.js
 // on the server).
+//
+// Used by the main admin (/admin/donations, all donations) and by the
+// /donations page admin (/donations/admin, that page's donations only) —
+// `api` picks the endpoints.
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { authFetch } from "@/lib/authClient";
@@ -71,7 +75,30 @@ const REASON_TEXT: Record<string, string> = {
   just_completed: "Just completed — its own push is running.",
 };
 
-export default function DccReceiptsTab() {
+export interface DccReceiptsApi {
+  status: string;
+  pushAll: string;
+  pushOne: (id: string) => string;
+  receiptNumber: (id: string) => string;
+}
+
+// Main admin: all donations.
+const ALL_DONATIONS_API: DccReceiptsApi = {
+  status: "/donations/dcc-status",
+  pushAll: "/donations/dcc-push-all",
+  pushOne: (id) => `/donations/${id}/resend-receipt`,
+  receiptNumber: (id) => `/donations/${id}/receipt-number`,
+};
+
+// /donations page admin: that page's donations only.
+export const DONATIONS_PAGE_API: DccReceiptsApi = {
+  status: "/donations-admin/dcc-status",
+  pushAll: "/donations-admin/dcc-push-all",
+  pushOne: (id) => `/donations-admin/transactions/${id}/dcc-push`,
+  receiptNumber: (id) => `/donations-admin/transactions/${id}/receipt-number`,
+};
+
+export default function DccReceiptsTab({ api = ALL_DONATIONS_API, scopeNote }: { api?: DccReceiptsApi; scopeNote?: string }) {
   const [status, setStatus] = useState<Status | null>(null);
   const [loading, setLoading] = useState(true);
   const [includeOld, setIncludeOld] = useState(false);
@@ -83,14 +110,14 @@ export default function DccReceiptsTab() {
 
   const load = useCallback(async () => {
     try {
-      const res = await authFetch(`${API_URL}/donations/dcc-status${includeOld ? "?includeOld=true" : ""}`, { credentials: "include" });
+      const res = await authFetch(`${API_URL}${api.status}${includeOld ? "?includeOld=true" : ""}`, { credentials: "include" });
       const json = await res.json();
       if (res.ok) setStatus(json);
       return json as Status;
     } finally {
       setLoading(false);
     }
-  }, [includeOld]);
+  }, [includeOld, api]);
 
   useEffect(() => {
     setLoading(true);
@@ -114,7 +141,7 @@ export default function DccReceiptsTab() {
     setPushAllMsg(null);
     setBusy("__all");
     try {
-      const res = await authFetch(`${API_URL}/donations/dcc-push-all`, { method: "POST", credentials: "include" });
+      const res = await authFetch(`${API_URL}${api.pushAll}`, { method: "POST", credentials: "include" });
       const j = await res.json().catch(() => ({}));
       setPushAllMsg(j.message || (res.ok ? "Pushing to DCC now." : "Could not start the push."));
       if (res.ok) followRun();
@@ -134,7 +161,7 @@ export default function DccReceiptsTab() {
     }
     setBusy(row._id);
     try {
-      const res = await authFetch(`${API_URL}/donations/${row._id}/resend-receipt`, { method: "POST", credentials: "include" });
+      const res = await authFetch(`${API_URL}${api.pushOne(row._id)}`, { method: "POST", credentials: "include" });
       const j = await res.json().catch(() => ({}));
       setNotes((n) => ({ ...n, [row._id]: res.ok ? `✓ ${j.message}` : `✗ ${j.error || j.message || "Failed"}` }));
       if (res.ok) load();
@@ -150,7 +177,7 @@ export default function DccReceiptsTab() {
     if (!val) return;
     setBusy(row._id);
     try {
-      const res = await authFetch(`${API_URL}/donations/${row._id}/receipt-number`, {
+      const res = await authFetch(`${API_URL}${api.receiptNumber(row._id)}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -176,6 +203,7 @@ export default function DccReceiptsTab() {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="max-w-3xl">
           <h2 className="text-xl font-bold">DCC receipts</h2>
+          {scopeNote && <p className="text-xs font-medium text-primary mt-0.5">{scopeNote}</p>}
           <p className="text-sm text-muted-foreground mt-1">
             Every successful donation is pushed to DCC until it has a receipt number, then the donor gets the WhatsApp receipt.
             This runs by itself every 10 minutes; if DCC already has a donation, it sends back the receipt it issued.
