@@ -80,6 +80,7 @@ export const navEntries: NavEntry[] = [
         { label: "Gita Daan", href: "/gita-daan-seva", description: "Distribute Bhagavad Gita", icon: BookOpen },
         { label: "Vastra Seva", href: "/alankara-vastra-seva", description: "Deity garments & ornaments", icon: Shirt },
         { label: "Ekadashi Seva", href: "/ekadashi", description: "Donate on the sacred Ekadashi day", icon: Calendar },
+        { label: "Vijayadashami", href: "/vijayadashami", description: "Dussehra seva — 20 October 2026", icon: PartyPopper },
         { label: "All Sevas", href: "/donate", description: "View every seva opportunity", icon: Gift },
       ],
     },
