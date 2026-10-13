@@ -290,7 +290,7 @@ export default function TransactionsTab() {
               {selected.status === "completed" && (!selected.receiptNumber || !selected.whatsappReceiptSentAt) && (
                 <DccPushBox txn={selected} onDone={fetchTransactions} />
               )}
-              {selected.status === "pending" && (
+              {(selected.status === "pending" || selected.status === "failed") && (
                 <ManualCompleteBox donationId={selected._id} onDone={() => { setSelected(null); fetchTransactions(); }} />
               )}
             </div>

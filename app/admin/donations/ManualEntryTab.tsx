@@ -7,7 +7,7 @@
 //
 // Two modes:
 //   "new"      — record a brand-new completed donation from a UTR entry.
-//   "existing" — search for an existing pending donation and attach a UTR
+//   "existing" — search for an existing unpaid (pending or failed) donation and attach a UTR
 //                to complete it, avoiding a duplicate record.
 
 import { useEffect, useRef, useState } from "react";
@@ -155,12 +155,12 @@ export default function ManualEntryTab() {
     setMatches(null);
     setSelected(null);
     try {
-      const params = new URLSearchParams({ status: "pending", q: search.trim(), limit: "15" });
+      const params = new URLSearchParams({ status: "unpaid", q: search.trim(), limit: "15" }); // pending, or closed as failed after 30 min
       const res = await authFetch(`${API_URL}/donations?${params.toString()}`, { credentials: "include" });
       const data = await res.json();
       setMatches(data.donations || []);
     } catch {
-      setError("Could not search for pending donations.");
+      setError("Could not search for unpaid donations.");
     } finally {
       setSearching(false);
     }
@@ -223,7 +223,7 @@ export default function ManualEntryTab() {
     e.preventDefault();
     setError(null);
     setResult(null);
-    if (!selected) return setError("Please select a pending donation first.");
+    if (!selected) return setError("Please select a donation first.");
     if (!utrNumber.trim()) return setError("Please enter the UTR / reference number.");
 
     setSubmitting(true);
@@ -461,7 +461,7 @@ export default function ManualEntryTab() {
         <div className="space-y-4">
           <Card>
             <CardContent className="p-5 space-y-3">
-              <label className="text-sm font-medium">Search pending donations by name, email, or mobile</label>
+              <label className="text-sm font-medium">Search unpaid (pending or failed) donations by name, email, or mobile</label>
               <div className="flex gap-2">
                 <Input
                   value={search}
@@ -476,7 +476,7 @@ export default function ManualEntryTab() {
               </div>
 
               {matches && matches.length === 0 && (
-                <p className="text-sm text-muted-foreground py-4 text-center">No pending donations match that search.</p>
+                <p className="text-sm text-muted-foreground py-4 text-center">No unpaid donations match that search.</p>
               )}
 
               {matches && matches.length > 0 && (

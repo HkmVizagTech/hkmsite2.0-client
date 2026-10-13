@@ -14,7 +14,7 @@ const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "
 
 type Summary = {
   days: number;
-  checkouts: { started: number; completed: number; failed: number; pending: number };
+  checkouts: { started: number; completed: number; failed: number; notPaid?: number; pending: number };
   reasons: { description?: string; reason?: string; source?: string; donations: number; attempts: number; paidLater: number }[];
   byMethod: { method: string; via: string; donations: number }[];
   recent: {
@@ -111,7 +111,8 @@ export default function PaymentFailuresTab() {
               { label: "Checkouts started", value: c.started, sub: "" },
               { label: "Paid", value: c.completed, sub: pct(c.completed, c.started) },
               { label: "Failed", value: c.failed, sub: pct(c.failed, c.started) },
-              { label: "Left without paying", value: c.pending, sub: pct(c.pending, c.started) },
+              // Closed as failed after 30 minutes with nothing paid, plus any still inside those 30 minutes.
+              { label: "Left without paying", value: (c.notPaid || 0) + c.pending, sub: pct((c.notPaid || 0) + c.pending, c.started) },
             ].map((s) => (
               <Card key={s.label}>
                 <CardContent className="p-4">
