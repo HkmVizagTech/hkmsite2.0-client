@@ -2,21 +2,28 @@
 
 import PageLayout from "@/components/PageLayout";
 import SectionHeading from "@/components/site/SectionHeading";
+import Reveal from "@/components/site/Reveal";
 import DonationForm from "@/components/DonationForm";
 import PhonePeUpiCard from "@/components/PhonePeUpiCard";
-import { motion, useInView, useReducedMotion, AnimatePresence } from "framer-motion";
+import FaqSection from "@/components/sqft-campaign/FaqSection";
+import OtherDonationsCarousel from "@/components/pitru-paksha/OtherDonationsCarousel";
 import { useEffect, useRef, useState } from "react";
 import {
-  ArrowLeft,
   CalendarDays,
+  Check,
   Clock,
+  Copy,
   FileCheck2,
   Flame,
+  Gift,
   Heart,
   MapPin,
+  ScrollText,
   ShieldCheck,
   Sparkles,
+  Sunrise,
   UtensilsCrossed,
+  X,
 } from "lucide-react";
 import type { Seva } from "@/lib/sevaConfig";
 
@@ -230,21 +237,100 @@ const TRUST_BADGES = [
   { icon: ShieldCheck, label: "Secure Razorpay Checkout" },
 ];
 
-const HIGHLIGHTS = [
+// Bhagavad-gita 4.8 — the Lord's own statement of why He appears, which is
+// what Vijayadashami celebrates. The rendering below is a plain paraphrase,
+// not a quotation from any particular published translation.
+const SHLOKA = {
+  sanskrit: [
+    "paritāṇāya sādhūnāṁ vināśāya ca duṣkṛtām",
+    "dharma-saṁsthāpanārthāya sambhavāmi yuge yuge",
+  ],
+  meaning:
+    "To protect the devoted, to put an end to those who do harm, and to re-establish dharma, I appear in every age.",
+  source: "Bhagavad-gita 4.8",
+};
+
+const REASONS = [
   {
     icon: Flame,
-    title: "Vijaya — the day of victory",
-    text: "Vijayadashami marks the Lord's victory over adharma. Any undertaking begun on this day is said to carry that same blessing of success.",
+    title: "The day victory is granted",
+    text: "Vijayadashami is the tenth day, when the Lord's victory over adharma is complete. Seva offered now is traditionally held to clear the obstacles standing in a family's way.",
   },
   {
-    icon: Sparkles,
-    title: "Ayudha Puja & Saraswati Puja",
-    text: "Tools, instruments and books are placed before the Lord and worshipped, acknowledging that every skill we hold is His gift.",
+    icon: Sunrise,
+    title: "An auspicious beginning",
+    text: "Anything begun on Vijayadashami — a study, a business, a vow — is said to carry the day's blessing. Many families start the year's charity here.",
+  },
+  {
+    icon: ScrollText,
+    title: "Ayudha & Saraswati Puja",
+    text: "Tools, instruments and books are placed before the Lord and worshipped, acknowledging that every skill a person holds was given, not earned.",
   },
   {
     icon: Heart,
-    title: "Seva in your family's name",
-    text: "Every seva is offered with sankalpa in your name and gotra, and your receipt reaches you on WhatsApp.",
+    title: "Charity that keeps giving",
+    text: "Your offering feeds visitors, cares for the goshala cows and sustains the worship performed every single day at Hare Krishna Vaikuntham.",
+  },
+];
+
+const PRIVILEGES = [
+  {
+    icon: ScrollText,
+    title: "Sankalpa in your name",
+    text: "The seva is offered with sankalpa in your name and your family's gotra on the festival day itself.",
+  },
+  {
+    icon: FileCheck2,
+    title: "80G tax exemption",
+    text: "Every donation is eligible for 80G. Add your PAN at checkout and the exemption receipt is issued against it.",
+  },
+  {
+    icon: Clock,
+    title: "Receipt on WhatsApp",
+    text: "Your receipt reaches your WhatsApp as soon as the payment is confirmed — no waiting, no follow-up call.",
+  },
+  {
+    icon: Gift,
+    title: "Maha Prasadam at home",
+    text: "Ask for Maha Prasadam at checkout and sanctified prasadam is posted to the address you give us.",
+  },
+];
+
+const BANK_DETAILS = [
+  { label: "Beneficiary Name", value: "HARE KRISHNA MOVEMENT INDIA" },
+  { label: "Bank Name", value: "IDFC FIRST BANK LTD" },
+  { label: "A/c No", value: "10091415313" },
+  { label: "IFSC Code", value: "IDFB0080412" },
+];
+
+const FAQS = [
+  {
+    q: "When is Vijayadashami 2026 and when is my seva performed?",
+    a: "Vijayadashami falls on Tuesday, 20 October 2026. Every seva booked up to that morning is offered on the day itself, during the festival worship at Hare Krishna Vaikuntham, Gambheeram.",
+  },
+  {
+    q: "Will the sankalpa be taken in my name?",
+    a: "Yes. Enter the name the seva should be offered under in the 'Sevak name' field at checkout — you can give your own name, a family member's, or the name of someone you wish to offer it for. The gotra is taken along with it.",
+  },
+  {
+    q: "Do I get an 80G tax exemption receipt?",
+    a: "Yes, all donations to Hare Krishna Movement India are eligible for 80G. Tick the 80G option at checkout and enter your PAN; the exemption receipt is issued against that PAN and sent with your donation receipt.",
+  },
+  {
+    q: "How will I receive my receipt?",
+    a: "Your receipt is sent to your WhatsApp number as soon as the payment is confirmed, usually within a minute. If it has not arrived in ten minutes, call us on the number above and we will resend it.",
+  },
+  {
+    q: "Can I offer more than one seva?",
+    a: "Yes. Complete one seva, then pick the next from the list — each is recorded and receipted separately, so you get a separate 80G receipt for each.",
+  },
+  {
+    q: "Can I pay by UPI or bank transfer instead?",
+    a: "Yes. Use the UPI card on this page, or the NEFT/RTGS details below. For UPI and bank transfers, please WhatsApp us a screenshot with your name, mobile, address and PAN so we can issue your receipt against the right donor.",
+  },
+  {
+    q: "Is there a minimum donation?",
+    a: "Yes, the smallest donation we can accept is Rs. 100. Below that the payment-gateway and receipting costs leave nothing for the seva itself.",
   },
 ];
 
@@ -253,271 +339,424 @@ const formatAmount = (amount: number) => amount.toLocaleString("en-IN");
 type Selection = { seva: Seva; amount: number | null };
 
 export default function VijayadashamiClient() {
-  const reduce = useReducedMotion();
   const [selected, setSelected] = useState<Selection | null>(null);
   const [highlightedSlug, setHighlightedSlug] = useState<string | null>(null);
-  const formRef = useRef<HTMLDivElement | null>(null);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
+  const scrolledRef = useRef(false);
 
-  const introRef = useRef<HTMLDivElement | null>(null);
-  const introInView = useInView(introRef, { once: true, margin: "-80px" });
-
-  // Ad / reminder deep-link: /vijayadashami?seva=annadana-seva scrolls to and
-  // highlights that card. Read from window rather than useSearchParams so the
-  // page needs no Suspense boundary.
+  // Land the donor on the sevas, not the banner. Most arrivals come from an
+  // ad or a WhatsApp broadcast that already showed them the artwork, so the
+  // top of the page is a second look at something they have seen.
+  //
+  // A ?seva= deep link (used by the pending-payment reminder) wins: it goes
+  // to that specific card instead of the top of the grid. Both run through
+  // this one effect so they can never fight each other mid-scroll.
   useEffect(() => {
+    if (scrolledRef.current) return;
+    scrolledRef.current = true;
     const slug = new URLSearchParams(window.location.search).get("seva");
-    if (!slug) return;
-    if (!SEVAS.some((seva) => seva.slug === slug)) return;
-    setHighlightedSlug(slug);
+    const matched = slug && SEVAS.some((seva) => seva.slug === slug) ? slug : null;
+    if (matched) setHighlightedSlug(matched);
+    const targetId = matched ? `seva-card-${matched}` : "offer-seva";
     const timer = window.setTimeout(() => {
-      document
-        .getElementById(`seva-card-${slug}`)
-        ?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
-    }, 400);
+      document.getElementById(targetId)?.scrollIntoView({
+        behavior: "smooth",
+        block: matched ? "center" : "start",
+      });
+    }, 450);
     return () => window.clearTimeout(timer);
-  }, [reduce]);
+  }, []);
 
-  // Picking an amount swaps the grid for the checkout form — bring it into
-  // view so the donor isn't left looking at an apparently unchanged screen.
+  // Modal housekeeping: lock the page behind it and close on Escape.
   useEffect(() => {
     if (!selected) return;
-    const timer = window.setTimeout(() => {
-      formRef.current?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
-    }, 80);
-    return () => window.clearTimeout(timer);
-  }, [selected, reduce]);
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setSelected(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = previous;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [selected]);
+
+  const copyField = (label: string, value: string) => {
+    navigator.clipboard?.writeText(value).catch(() => {});
+    setCopiedField(label);
+    window.setTimeout(() => setCopiedField(null), 1500);
+  };
 
   return (
     <PageLayout>
       <div className="overflow-x-hidden bg-white pt-[var(--header-h)]">
-        {/* ── HERO ────────────────────────────────────────────────── */}
-        <section className="relative">
-          <picture>
-            <source media="(max-width: 640px)" srcSet={MOBILE_BANNER} />
-            <img
-              src={DESKTOP_BANNER}
-              alt="Vijayadashami celebrations at ISKCON Gambheeram Visakhapatnam"
-              className="block h-auto w-full"
-            />
-          </picture>
+        {/* ══ HERO ══════════════════════════════════════════ */}
+        <section className="bg-gradient-to-b from-vk-50 to-white">
+          <a href="#offer-seva" className="block bg-vk-900">
+            <picture>
+              <source media="(max-width: 640px)" srcSet={MOBILE_BANNER} />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={DESKTOP_BANNER}
+                alt="Vijayadashami celebrations at ISKCON Gambheeram Visakhapatnam"
+                className="block h-auto w-full"
+              />
+            </picture>
+          </a>
         </section>
 
-        {/* ── INTRO ───────────────────────────────────────────────── */}
-        <section className="vk-section bg-gradient-to-b from-vk-50 to-white" ref={introRef}>
-          <div className="vk-container">
-            <motion.div
-              initial={reduce ? undefined : { opacity: 0, y: 24 }}
-              animate={introInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6 }}
-              className="mx-auto max-w-3xl text-center"
-            >
-              <span className="inline-flex items-center gap-2 rounded-full border border-vk-200 bg-white px-4 py-1.5 text-[12px] font-bold uppercase tracking-[0.08em] text-vk-700">
-                <CalendarDays className="h-3.5 w-3.5" />
-                <time dateTime={FESTIVAL_DATE_ISO}>{FESTIVAL_DATE_LABEL}</time>
-              </span>
-              <h1 className="mt-5 text-3xl font-black leading-tight text-ink md:text-5xl">
-                Vijayadashami Seva at ISKCON Gambheeram
-              </h1>
-              <p className="mt-5 text-base leading-relaxed text-muted-foreground md:text-lg">
-                On the tenth day of Navaratri the Lord&apos;s victory over adharma is celebrated with
-                abhishekam, homam, grand alankara and Annadana for everyone who comes for darshan.
-                Offer a seva below and your sankalpa will be made in your name on the day.
-              </p>
-              <p className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-vk-700">
-                <MapPin className="h-4 w-4" />
-                Hare Krishna Vaikuntham, Gambheeram, Visakhapatnam
-              </p>
-            </motion.div>
-
-            <div className="mx-auto mt-12 grid max-w-5xl gap-5 md:grid-cols-3">
-              {HIGHLIGHTS.map((item, i) => (
-                <motion.div
-                  key={item.title}
-                  initial={reduce ? undefined : { opacity: 0, y: 20 }}
-                  animate={introInView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.5, delay: 0.1 * i }}
-                  className="vk-card p-6"
-                >
-                  <span className="flex h-11 w-11 items-center justify-center rounded-full bg-vk-100 text-vk-700">
-                    <item.icon className="h-5 w-5" />
-                  </span>
-                  <h3 className="mt-4 text-base font-bold text-ink">{item.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.text}</p>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ── SEVAS ───────────────────────────────────────────────── */}
-        <section className="vk-section bg-white" id="offer-seva">
+        {/* ══ SEVAS ═════════════════════════════════════════ */}
+        <section id="offer-seva" className="vk-section scroll-mt-24">
           <div className="vk-container">
             <SectionHeading
               align="center"
               eyebrow="Choose Your Offering"
               title="Vijayadashami Sevas"
-              subtitle="Tap an amount to offer that seva. Receipts are sent on WhatsApp."
+              subtitle="Tap an amount to offer that seva. Sankalpa is taken in your name and your receipt reaches you on WhatsApp."
             />
 
-            <AnimatePresence mode="wait">
-              {!selected ? (
-                <motion.div
-                  key="grid"
-                  initial={reduce ? undefined : { opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={reduce ? undefined : { opacity: 0 }}
-                  transition={{ duration: 0.25 }}
-                  className="mx-auto flex max-w-6xl flex-wrap justify-center gap-5 md:gap-6"
+            <div className="mx-auto flex max-w-6xl flex-wrap justify-center gap-5 md:gap-6">
+              {SEVAS.map((seva) => (
+                <article
+                  key={seva.slug}
+                  id={`seva-card-${seva.slug}`}
+                  className={`vk-card vk-card-hover group flex w-full scroll-mt-24 flex-col overflow-hidden sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] ${
+                    highlightedSlug === seva.slug ? "ring-2 ring-vk-500 ring-offset-2" : ""
+                  }`}
                 >
-                  {SEVAS.map((seva) => (
-                    <article
-                      key={seva.slug}
-                      id={`seva-card-${seva.slug}`}
-                      className={`vk-card vk-card-hover group flex w-full scroll-mt-24 flex-col overflow-hidden sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] ${
-                        highlightedSlug === seva.slug ? "ring-2 ring-vk-500 ring-offset-2" : ""
-                      }`}
-                    >
-                      {/* Card image with navy scrim + title */}
-                      <div className="relative h-44 overflow-hidden bg-vk-900 md:h-48">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={seva.image}
-                          alt={seva.title}
-                          className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-vk-900/90 via-vk-900/30 to-transparent" />
-                        <div className="absolute bottom-3 left-4 right-4 flex items-center gap-2">
-                          <span className="text-2xl drop-shadow" aria-hidden>
-                            {seva.icon}
-                          </span>
-                          <h3 className="text-lg font-bold text-white drop-shadow-md md:text-xl">
-                            {seva.title}
-                          </h3>
-                        </div>
-                      </div>
-
-                      {/* Card body */}
-                      <div className="flex flex-1 flex-col p-4 sm:p-5">
-                        <p className="min-h-[40px] text-[13px] leading-relaxed text-muted-foreground md:text-sm">
-                          {seva.description}
-                        </p>
-                        <div className="mt-4 space-y-2.5">
-                          <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
-                            {seva.tiers.map((tier) => (
-                              <button
-                                key={tier.amount}
-                                type="button"
-                                onClick={() => setSelected({ seva, amount: tier.amount })}
-                                className="group/amt flex min-h-[64px] flex-col items-center justify-center rounded-xl border-[1.5px] border-[hsl(var(--gold)/0.6)] bg-[hsl(var(--gold)/0.1)] px-1 py-2 text-center shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-transparent hover:bg-gradient-gold hover:shadow-gold sm:min-h-[68px] sm:px-1.5"
-                              >
-                                <span
-                                  className="block whitespace-nowrap text-[17px] font-extrabold leading-none tracking-tight text-ink sm:text-lg"
-                                  style={{ fontFamily: "var(--font-heading)" }}
-                                >
-                                  <span className="mr-px text-[0.85em] text-[hsl(var(--gold-deep))] group-hover/amt:text-ink">
-                                    ₹
-                                  </span>
-                                  {formatAmount(tier.amount)}
-                                </span>
-                                {IMPACTS[seva.slug]?.[tier.amount] && (
-                                  <span className="mt-1.5 block text-[10.5px] font-semibold leading-[1.2] text-ink/60 group-hover/amt:text-ink/80 sm:text-[11px]">
-                                    {IMPACTS[seva.slug][tier.amount]}
-                                  </span>
-                                )}
-                              </button>
-                            ))}
-                          </div>
-
-                          <button
-                            type="button"
-                            onClick={() => setSelected({ seva, amount: null })}
-                            className="flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-vk-300 bg-vk-50 px-3 py-3 text-[13px] font-bold text-vk-800 transition-all duration-200 hover:border-vk-500 hover:bg-vk-100"
-                          >
-                            <svg
-                              className="h-3 w-3 text-vk-600"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2.5"
-                              strokeLinecap="round"
-                              aria-hidden
-                            >
-                              <line x1="12" y1="5" x2="12" y2="19" />
-                              <line x1="5" y1="12" x2="19" y2="12" />
-                            </svg>
-                            <span>Donate Other Amount</span>
-                          </button>
-                        </div>
-                      </div>
-                    </article>
-                  ))}
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="form"
-                  initial={reduce ? undefined : { opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={reduce ? undefined : { opacity: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <div className="mb-5 text-center">
-                    <button
-                      type="button"
-                      onClick={() => setSelected(null)}
-                      className="vk-btn-outline h-10 px-4 text-xs"
-                    >
-                      <ArrowLeft className="h-3.5 w-3.5" /> Change Seva
-                    </button>
-                  </div>
-
-                  <div ref={formRef} className="mx-auto w-full max-w-4xl scroll-mt-28">
-                    <DonationForm
-                      seva={selected.seva}
-                      sourcePage="vijayadashami"
-                      festivalSlug="vijayadashami"
-                      bannerImage={DESKTOP_BANNER}
-                      initialAmount={selected.amount ?? undefined}
-                      startCustom={selected.amount === null}
-                      thankYouType="seva"
-                      thankYouSource="the Vijayadashami seva programme"
-                      trackContentName="Vijayadashami"
-                      variant="grid"
+                  <div className="relative h-44 overflow-hidden bg-vk-900 md:h-48">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={seva.image}
+                      alt={seva.title}
+                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
+                    <div className="absolute inset-0 bg-gradient-to-t from-vk-900/90 via-vk-900/30 to-transparent" />
+                    <div className="absolute bottom-3 left-4 right-4 flex items-center gap-2">
+                      <span className="text-2xl drop-shadow" aria-hidden>
+                        {seva.icon}
+                      </span>
+                      <h3 className="text-lg font-bold text-white drop-shadow-md md:text-xl">
+                        {seva.title}
+                      </h3>
+                    </div>
                   </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
 
-            {/* Trust badges */}
-            <div className="mx-auto mt-10 max-w-3xl">
-              <p className="text-center text-[12px] font-bold uppercase tracking-[0.08em] text-vk-700" aria-hidden>
-                Payment made safe &amp; simple
-              </p>
-              <div className="mt-4 flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
-                {TRUST_BADGES.map((badge) => (
-                  <span
-                    key={badge.label}
-                    className="inline-flex items-center gap-2 rounded-full border border-vk-100 bg-white py-1.5 pl-1.5 pr-4 text-xs font-semibold text-vk-800 shadow-card md:text-sm"
-                  >
-                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-vk-100 text-vk-700">
-                      <badge.icon className="h-3.5 w-3.5" />
-                    </span>
-                    {badge.label}
-                  </span>
-                ))}
-              </div>
+                  <div className="flex flex-1 flex-col p-4 sm:p-5">
+                    <p className="min-h-[40px] text-[13px] leading-relaxed text-muted-foreground md:text-sm">
+                      {seva.description}
+                    </p>
+                    <div className="mt-4 space-y-2.5">
+                      <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
+                        {seva.tiers.map((tier) => (
+                          <button
+                            key={tier.amount}
+                            type="button"
+                            onClick={() => setSelected({ seva, amount: tier.amount })}
+                            className="group/amt flex min-h-[64px] flex-col items-center justify-center rounded-xl border-[1.5px] border-[hsl(var(--gold)/0.6)] bg-[hsl(var(--gold)/0.1)] px-1 py-2 text-center shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-transparent hover:bg-gradient-gold hover:shadow-gold sm:min-h-[68px] sm:px-1.5"
+                          >
+                            <span
+                              className="block whitespace-nowrap text-[17px] font-extrabold leading-none tracking-tight text-ink sm:text-lg"
+                              style={{ fontFamily: "var(--font-heading)" }}
+                            >
+                              <span className="mr-px text-[0.85em] text-[hsl(var(--gold-deep))] group-hover/amt:text-ink">
+                                ₹
+                              </span>
+                              {formatAmount(tier.amount)}
+                            </span>
+                            {IMPACTS[seva.slug]?.[tier.amount] && (
+                              <span className="mt-1.5 block text-[10.5px] font-semibold leading-[1.2] text-ink/60 group-hover/amt:text-ink/80 sm:text-[11px]">
+                                {IMPACTS[seva.slug][tier.amount]}
+                              </span>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => setSelected({ seva, amount: null })}
+                        className="flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-vk-300 bg-vk-50 px-3 py-3 text-[13px] font-bold text-vk-800 transition-all duration-200 hover:border-vk-500 hover:bg-vk-100"
+                      >
+                        <svg
+                          className="h-3 w-3 text-vk-600"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          aria-hidden
+                        >
+                          <line x1="12" y1="5" x2="12" y2="19" />
+                          <line x1="5" y1="12" x2="19" y2="12" />
+                        </svg>
+                        <span>Donate Other Amount</span>
+                      </button>
+                    </div>
+                  </div>
+                </article>
+              ))}
             </div>
 
             <p className="mt-8 text-center text-xs text-muted-foreground">
-              80G Tax Exemption available · Secured by Razorpay · Donations go to Hare Krishna Movement
-              India, Visakhapatnam
+              Minimum donation Rs. 100 · 80G Tax Exemption available · Secured by Razorpay ·
+              Donations go to Hare Krishna Movement India, Visakhapatnam
             </p>
           </div>
         </section>
 
         {/* Direct PhonePe / UPI payment, for donors who can't use Razorpay */}
         <PhonePeUpiCard campaign="Vijayadashami" />
+
+        {/* ══ INTRO + SHLOKA ═══════════════════════════════════ */}
+        <section className="vk-section vk-band">
+          <div className="vk-container">
+            <Reveal className="mx-auto grid max-w-6xl gap-8 md:grid-cols-[1.35fr_0.65fr] md:items-center">
+              <div>
+                <span className="vk-pill mb-4">Hare Krishna Movement</span>
+                <h1 className="vk-h1">Vijayadashami</h1>
+                <p className="mt-4 inline-flex flex-wrap items-center gap-x-4 gap-y-1 text-sm font-semibold text-vk-700">
+                  <span className="inline-flex items-center gap-1.5">
+                    <CalendarDays className="h-4 w-4" />
+                    <time dateTime={FESTIVAL_DATE_ISO}>{FESTIVAL_DATE_LABEL}</time>
+                  </span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <MapPin className="h-4 w-4" />
+                    Hare Krishna Vaikuntham, Gambheeram
+                  </span>
+                </p>
+                <p className="vk-lead mt-5 max-w-4xl md:text-lg md:leading-8">
+                  On the tenth day of Navaratri the Lord&apos;s victory over adharma is complete. At
+                  Hare Krishna Vaikuntham the day is kept with abhishekam, the Vijayadashami homam,
+                  a grand flower alankara for Sri Sri Radha Madan Mohan, and Annadana for every
+                  person who comes for darshan. Offer a seva and your sankalpa is made in your name
+                  on the day.
+                </p>
+                <a href="#offer-seva" className="vk-btn-gold mt-6 inline-flex h-12 px-7 text-[15px] font-bold">
+                  Offer Your Seva
+                </a>
+              </div>
+
+              <div className="vk-card p-6 md:p-7">
+                <span className="vk-icon-chip">
+                  <Sparkles className="h-5 w-5" />
+                </span>
+                <div className="mt-4 space-y-1.5 font-serif-display text-[15px] italic leading-7 text-vk-800 md:text-base">
+                  {SHLOKA.sanskrit.map((line) => (
+                    <p key={line}>{line}</p>
+                  ))}
+                </div>
+                <p className="mt-4 border-l-4 border-vk-300 pl-4 text-sm leading-6 text-muted-foreground">
+                  {SHLOKA.meaning}
+                </p>
+                <p className="mt-3 text-xs font-bold uppercase tracking-[0.08em] text-vk-700">
+                  {SHLOKA.source}
+                </p>
+              </div>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* ══ TRUST BADGES ═════════════════════════════════════ */}
+        <section className="border-y border-vk-100 bg-white py-4">
+          <div className="vk-container flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+            {TRUST_BADGES.map((badge) => (
+              <span
+                key={badge.label}
+                className="inline-flex items-center gap-2 text-xs font-semibold text-vk-800 md:text-sm"
+              >
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-vk-100 text-vk-700">
+                  <badge.icon className="h-3.5 w-3.5" />
+                </span>
+                {badge.label}
+              </span>
+            ))}
+          </div>
+        </section>
+
+        {/* ══ WHY THIS DAY ═════════════════════════════════════ */}
+        <section className="vk-section">
+          <div className="vk-container">
+            <SectionHeading
+              align="center"
+              eyebrow="Why Vijayadashami"
+              title="The Day Victory Is Granted"
+              subtitle="Four reasons families choose this day above any other to offer their seva for the year."
+            />
+            <div className="mx-auto grid max-w-6xl gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {REASONS.map((item, i) => (
+                <Reveal key={item.title} delay={i * 0.06} className="vk-card h-full p-6">
+                  <span className="vk-icon-chip">
+                    <item.icon className="h-5 w-5" />
+                  </span>
+                  <h3 className="mt-4 text-base font-bold text-ink">{item.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.text}</p>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ══ WHAT YOU RECEIVE ═════════════════════════════════ */}
+        <section className="vk-section vk-band">
+          <div className="vk-container">
+            <SectionHeading
+              align="center"
+              eyebrow="For Every Sponsor"
+              title="What You Receive"
+              subtitle="Every seva on this page, at every amount, carries all four."
+            />
+            <div className="mx-auto grid max-w-5xl gap-5 sm:grid-cols-2">
+              {PRIVILEGES.map((item, i) => (
+                <Reveal key={item.title} delay={i * 0.06} className="vk-card flex h-full gap-4 p-5 md:p-6">
+                  <span className="vk-icon-chip shrink-0">
+                    <item.icon className="h-5 w-5" />
+                  </span>
+                  <div className="min-w-0">
+                    <h3 className="text-base font-bold text-ink">{item.title}</h3>
+                    <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{item.text}</p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ══ BANK TRANSFER ════════════════════════════════════ */}
+        <section className="pt-10 md:pt-16">
+          <div className="vk-container">
+            <div className="mx-auto max-w-6xl rounded-2xl border border-vk-100 bg-vk-50 px-5 py-4 text-sm leading-7 text-ink/80 md:text-base">
+              While making UPI or bank payments, please send a screenshot with your name, mobile,
+              address and PAN details to our WhatsApp{" "}
+              <a className="font-bold text-vk-700 hover:text-vk-500" href="tel:+918977761187">
+                +91 89777 61187
+              </a>{" "}
+              or email{" "}
+              <a
+                className="break-all font-bold text-vk-700 hover:text-vk-500"
+                href="mailto:social@hkmvizag.org"
+              >
+                social@hkmvizag.org
+              </a>
+              , so your receipt is issued against the right donor.
+            </div>
+          </div>
+        </section>
+
+        <section className="pb-10 pt-5 md:pb-16 md:pt-6">
+          <div className="vk-container">
+            <div className="vk-card mx-auto max-w-6xl p-5 md:p-8">
+              <h2 className="vk-bar-title text-lg text-ink md:text-xl">
+                Donation Through Bank (NEFT / RTGS)
+              </h2>
+              <div className="mt-4 grid gap-2.5 sm:grid-cols-2">
+                {BANK_DETAILS.map(({ label, value }) => (
+                  <div
+                    key={label}
+                    className="flex items-center gap-3 rounded-xl bg-vk-50 p-4 text-sm text-ink"
+                  >
+                    <div className="min-w-0 flex-1">
+                      <span className="block text-xs font-medium text-muted-foreground">
+                        {label}:
+                      </span>
+                      <span className="mt-0.5 block select-all break-words font-semibold">
+                        {value}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => copyField(label, value)}
+                      className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-vk-500 transition-colors hover:bg-white hover:text-vk-700"
+                      title={`Copy ${label}`}
+                    >
+                      {copiedField === label ? (
+                        <Check className="h-4 w-4 text-green-600" />
+                      ) : (
+                        <Copy className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ══ FAQ ═══════════════════════════════════════════ */}
+        <FaqSection faqs={FAQS} tone="blue" />
+
+        {/* ══ OTHER SEVAS ══════════════════════════════════════ */}
+        <OtherDonationsCarousel />
       </div>
+
+      {/* ══ CHECKOUT MODAL ═══════════════════════════════════ */}
+      {selected && (
+        <div
+          className="fixed inset-0 z-[100] flex items-end justify-center bg-vk-900/70 backdrop-blur-sm sm:items-center sm:p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Offer ${selected.seva.title}`}
+          onMouseDown={(event) => {
+            // Backdrop only — a drag that starts inside the panel must not close it.
+            if (event.target === event.currentTarget) setSelected(null);
+          }}
+        >
+          <div className="vijd-modal relative max-h-[92vh] w-full max-w-2xl overflow-y-auto overflow-x-hidden rounded-t-3xl bg-white shadow-2xl sm:rounded-3xl">
+            <style>{`
+              .vijd-modal::-webkit-scrollbar { width: 6px; }
+              .vijd-modal::-webkit-scrollbar-track { background: transparent; }
+              .vijd-modal::-webkit-scrollbar-thumb { background: #B9C8FB; border-radius: 9999px; }
+            `}</style>
+
+            <div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-vk-100 bg-white/95 px-5 py-3.5 backdrop-blur">
+              <div className="min-w-0">
+                <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-vk-600">
+                  Vijayadashami Seva
+                </p>
+                <p className="truncate text-base font-bold text-ink">{selected.seva.title}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelected(null)}
+                className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-vk-600 transition-colors hover:bg-vk-50 hover:text-vk-800"
+                aria-label="Close"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="p-4 sm:p-5">
+              <DonationForm
+                seva={selected.seva}
+                sourcePage="vijayadashami"
+                festivalSlug="vijayadashami"
+                bannerImage={DESKTOP_BANNER}
+                initialAmount={selected.amount ?? undefined}
+                startCustom={selected.amount === null}
+                thankYouType="seva"
+                thankYouSource="the Vijayadashami seva programme"
+                trackContentName="Vijayadashami"
+                variant="stacked"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ══ STICKY MOBILE DONATE BAR ════════════════════════════ */}
+      {!selected && (
+        <div className="fixed bottom-[calc(var(--bottom-nav-space)+4px+env(safe-area-inset-bottom))] left-3 right-[76px] z-40 lg:hidden">
+          <div className="flex items-center justify-between gap-3 rounded-2xl border border-vk-100 bg-white/95 p-2 pl-4 shadow-lift backdrop-blur">
+            <span className="min-w-0 truncate text-[13px] font-semibold text-vk-800">
+              Vijayadashami Seva
+            </span>
+            <a href="#offer-seva" className="vk-btn-gold h-11 shrink-0 px-5">
+              Offer Seva
+            </a>
+          </div>
+        </div>
+      )}
     </PageLayout>
   );
 }

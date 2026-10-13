@@ -53,6 +53,11 @@ interface DonationFormProps {
   variant?: "stacked" | "grid";
 }
 
+// Smallest donation the server will accept (payment.controller.js applies
+// the same floor). Checked here too so the donor is told before they
+// submit rather than seeing a generic gateway failure.
+const MIN_DONATION_AMOUNT = 100;
+
 // Vaikuntham Blue donation-card styling (shared by both layouts).
 const inputWrapClass = "relative";
 const inputIconClass = "pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-vk-400";
@@ -151,8 +156,11 @@ export default function DonationForm({
     e.preventDefault();
     setStatus(null);
 
-    if (finalAmount < 1) {
-      setStatus({ type: "error", message: "Please enter a valid amount." });
+    if (finalAmount < MIN_DONATION_AMOUNT) {
+      setStatus({
+        type: "error",
+        message: `The minimum donation is Rs. ${MIN_DONATION_AMOUNT}. Please enter a higher amount.`,
+      });
       return;
     }
     if (!form.name.trim()) {
