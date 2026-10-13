@@ -11,7 +11,12 @@
 
 import { vaishnavaCalendar2026 } from "@/lib/vaishnavaCalendarData";
 
-export type MajorFestivalKey = "janmashtami" | "radhashtami" | "govardhan" | "chaturmas";
+export type MajorFestivalKey =
+  | "janmashtami"
+  | "radhashtami"
+  | "govardhan"
+  | "vijayadashami"
+  | "chaturmas";
 
 export interface MajorFestival {
   key: MajorFestivalKey;
@@ -24,6 +29,9 @@ export const MAJOR_FESTIVALS: MajorFestival[] = [
   { key: "janmashtami", label: "Janmashtami", href: "/janmashtami" },
   { key: "radhashtami", label: "Radhashtami", href: "/radhashtami" },
   { key: "govardhan", label: "Govardhan Puja", href: "/govardhan-puja" },
+  // Vijayadashami has no entry in the Vaishnava calendar, so the "auto"
+  // pick can never land on it — an admin pins it explicitly instead.
+  { key: "vijayadashami", label: "Vijayadashami", href: "/vijayadashami" },
   { key: "chaturmas", label: "Chaturmas", href: "/chaturmas" },
 ];
 
@@ -31,6 +39,7 @@ const FESTIVAL_KEYWORDS: Record<MajorFestivalKey, string[]> = {
   janmashtami: ["janmashtami", "nandotsav"],
   radhashtami: ["radhashtami"],
   govardhan: ["govardhan"],
+  vijayadashami: ["vijayadashami", "dussehra", "dasara", "vijaya dashami"],
   chaturmas: ["chaturmas", "chaturmasya"],
 };
 
