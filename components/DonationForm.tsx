@@ -37,6 +37,9 @@ interface DonationFormProps {
   bannerImage?: string;
   /** Pre-select a tier (or fall back to custom amount) on mount. */
   initialAmount?: number;
+  /** Open with the custom-amount field already active, for callers whose
+      "Donate Other Amount" button should land straight on free entry. */
+  startCustom?: boolean;
   /** Called after a successful one-time/monthly payment is verified. */
   onSuccess?: (donor: DonationDonor) => void;
   /** Thank-you URL type ("donation" for seva pages, "seva" for campaign pages). */
@@ -75,6 +78,7 @@ export default function DonationForm({
   festivalSlug,
   bannerImage,
   initialAmount,
+  startCustom = false,
   onSuccess,
   thankYouType = "donation",
   thankYouSource = "our seva programmes",
@@ -93,7 +97,7 @@ export default function DonationForm({
 
   const [tierIndex, setTierIndex] = useState(0);
   const [customAmount, setCustomAmount] = useState("");
-  const [useCustom, setUseCustom] = useState(false);
+  const [useCustom, setUseCustom] = useState(startCustom);
   const [form, setForm] = useState({ name: "", email: "", mobile: "", panNumber: "", sevakName: "", dob: "" });
   const [want80G, setWant80G] = useState(false);
   const [monthly, setMonthly] = useState(false);

@@ -3,7 +3,7 @@ import {
   Clock, Image, Calendar, Snowflake,
   Heart, Utensils, Beef, BookOpen, Shirt, Gift,
   CalendarDays, PartyPopper, HandHeart, FileText, Flower2, Building2,
-  ShoppingBag, Package, Megaphone, MapPin, Landmark,
+  ShoppingBag, Package, Megaphone, MapPin, Landmark, Briefcase,
   type LucideIcon,
 } from "lucide-react";
 
@@ -96,6 +96,8 @@ export const navEntries: NavEntry[] = [
         { label: "Festivals", href: "/festival", description: "Grand celebrations at the temple", icon: PartyPopper },
         { label: "Volunteer", href: "/volunteer", description: "Serve with us", icon: HandHeart },
         { label: "CSR Partnership", href: "/csr", description: "Corporate social responsibility programs", icon: Building2 },
+        // External: the careers site is its own deployment on a subdomain.
+        { label: "Careers", href: "https://careers.harekrishnavizag.org", description: "Work and serve with us", icon: Briefcase },
       ],
     },
   },

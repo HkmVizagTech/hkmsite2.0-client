@@ -3,11 +3,11 @@
 import PageLayout from "@/components/PageLayout";
 import SectionHeading from "@/components/site/SectionHeading";
 import DonationForm from "@/components/DonationForm";
+import PhonePeUpiCard from "@/components/PhonePeUpiCard";
 import { motion, useInView, useReducedMotion, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import {
   ArrowLeft,
-  ArrowRight,
   CalendarDays,
   Clock,
   FileCheck2,
@@ -45,8 +45,8 @@ const MOBILE_BANNER =
 // 15,111 · Vastrabharana 9,999 · Homam 7,777), slotted into the ladder in
 // place of the nearest tier. The surrounding amounts follow the
 // Janmashtami ladders; Gau Seva uses the standard Gau Poshana ladder.
-// Donors can also enter any amount — DonationForm always renders a
-// custom-amount field beneath the tiers.
+// Donors can also enter any amount — the "Donate Other Amount" button
+// opens the same form with the custom-amount field already active.
 const SEVAS: Seva[] = [
   {
     slug: "annadana-seva",
@@ -55,7 +55,7 @@ const SEVAS: Seva[] = [
     image: "/assets/donations-annadana-real.jpg",
     tagline: "Feed every devotee and visitor who comes for darshan",
     description:
-      "Sponsor sanctified prasadam for the devotees, guests and the needy who come to the temple on Vijayadashami. Annadana is the one offering the scriptures call greater than all others, and it is eligible for 80G tax exemption.",
+      "Sponsor sanctified prasadam for the devotees, guests and the needy who come to the temple on Vijayadashami.",
     tiers: [
       { label: "Rs. 1,100", amount: 1100 },
       { label: "Rs. 2,100", amount: 2100 },
@@ -75,7 +75,7 @@ const SEVAS: Seva[] = [
     image: "/assets/donations-gau-seva-real.jpeg",
     tagline: "Protect and nourish the cows at our goshala",
     description:
-      "Offer Gau Poshana Seva on Vijayadashami — fodder, green grass, medicines and daily care for the cows residing at the temple goshala. Serving the cow is held to please the Lord as directly as serving Him. Eligible for 80G tax exemption.",
+      "Offer Gau Poshana Seva — fodder, green grass, medicines and daily care for the cows at the temple goshala.",
     tiers: [
       { label: "Rs. 1,500", amount: 1500 },
       { label: "Rs. 2,500", amount: 2500 },
@@ -95,7 +95,7 @@ const SEVAS: Seva[] = [
     image: "/assets/temple-seva.jpg",
     tagline: "Be the principal sponsor of the Vijayadashami celebrations",
     description:
-      "The Yajamana is the chief sponsor of the festival — the one in whose name the day's worship, homam and offerings are performed. Sankalpa is taken in your name and your family's gotra, and prasadam is sent to your home.",
+      "The chief sponsor of the festival — sankalpa is taken in your name and gotra, and the day's worship is offered on your behalf.",
     tiers: [
       { label: "Rs. 11,000", amount: 11000 },
       { label: "Rs. 25,555", amount: 25555 },
@@ -113,7 +113,7 @@ const SEVAS: Seva[] = [
     image: "/assets/janmashtami-sk2.webp",
     tagline: "Offer the flower decoration for Their Lordships",
     description:
-      "Sponsor the fresh flower alankara for Sri Sri Radha Madan Mohan on Vijayadashami — garlands, floral canopy and the decoration of the altar on the day the Lord's victory is celebrated.",
+      "Sponsor the fresh flower alankara for Sri Sri Radha Madan Mohan — garlands, floral canopy and the altar decoration.",
     tiers: [
       { label: "Rs. 1,100", amount: 1100 },
       { label: "Rs. 2,100", amount: 2100 },
@@ -132,7 +132,7 @@ const SEVAS: Seva[] = [
     image: "/assets/gallery-festival-1.jpg",
     tagline: "Sponsor the festival mantapa and altar decoration",
     description:
-      "The mantapa is the decorated pavilion in which Their Lordships are seated for the festival. Sponsoring it covers the drapery, lighting and ornamental work that frames the darshan every visitor receives that day.",
+      "The decorated pavilion in which Their Lordships are seated for the festival — drapery, lighting and ornamental work.",
     tiers: [
       { label: "Rs. 1,100", amount: 1100 },
       { label: "Rs. 3,100", amount: 3100 },
@@ -149,11 +149,11 @@ const SEVAS: Seva[] = [
     slug: "vastrabharana-seva",
     title: "Vastrabharana Seva",
     shortTitle: "Vastrabharana",
-    image: 
+    image:
       "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677419371-1783677418690-DietyPhotos.jpeg",
     tagline: "Offer new garments and ornaments to the Deities",
     description:
-      "Sponsor the silk vastra and the abharana — the ornaments worn by Sri Sri Radha Madan Mohan on Vijayadashami. The garments offered on this day are worn for the festival darshan and kept in the Deities' wardrobe thereafter.",
+      "Sponsor the silk vastra and abharana worn by Sri Sri Radha Madan Mohan for the Vijayadashami darshan.",
     tiers: [
       { label: "Rs. 1,100", amount: 1100 },
       { label: "Rs. 3,100", amount: 3100 },
@@ -173,7 +173,7 @@ const SEVAS: Seva[] = [
     image: "/assets/gallery-aarti.jpg",
     tagline: "Sponsor the sacred fire sacrifice on Vijayadashami",
     description:
-      "The Vijayadashami homam is performed for victory over obstacles, for protection and for the wellbeing of the sponsor's family. Sankalpa is offered in your name and the ahuti is made on your behalf.",
+      "Performed for victory over obstacles and the wellbeing of your family — sankalpa and ahuti offered in your name.",
     tiers: [
       { label: "Rs. 2,500", amount: 2500 },
       { label: "Rs. 7,777", amount: 7777 },
@@ -185,6 +185,38 @@ const SEVAS: Seva[] = [
     icon: "🔥",
   },
 ];
+
+// What each amount actually funds, shown under the figure on the amount tile
+// (the same treatment /pitru-paksha uses).
+//
+// Annadana is computed from the temple's own Anna Daan rate in sevaConfig.ts
+// (Rs. 250 / 10 plates = Rs. 25 a plate), which is also what /pitru-paksha
+// uses — Rs. 1,100 reads as 44 meals on both pages.
+//
+// The first three Gau Seva lines are the temple's own tier wording from
+// sevaConfig.ts. The last three amounts have no published per-unit rate, so
+// they carry a qualitative line rather than a figure invented from a rate
+// that does not exist — replace them if the goshala gives exact numbers.
+//
+// A seva absent from this map simply shows the amount with no second line.
+const IMPACTS: Record<string, Record<number, string>> = {
+  "annadana-seva": {
+    1100: "44 meals",
+    2100: "84 meals",
+    3100: "124 meals",
+    5555: "222 meals",
+    9000: "360 meals",
+    11000: "440 meals",
+  },
+  "gau-seva": {
+    1500: "10 cows · a day",
+    2500: "Medicines & care",
+    3500: "1 cow · a month",
+    5500: "Fodder & upkeep",
+    9500: "Green grass, all cows",
+    11500: "A month of full care",
+  },
+};
 
 const TRUST_BADGES = [
   { icon: FileCheck2, label: "80G Tax Exemption" },
@@ -207,23 +239,17 @@ const HIGHLIGHTS = [
   {
     icon: Heart,
     title: "Seva in your family's name",
-    text: "Every seva is offered with sankalpa in your name and gotra, and your receipt reaches you on WhatsApp the same day.",
+    text: "Every seva is offered with sankalpa in your name and gotra, and your receipt reaches you on WhatsApp.",
   },
 ];
 
-const lowestTier = (seva: Seva) =>
-  seva.tiers.reduce((min, tier) => (tier.amount < min ? tier.amount : min), seva.tiers[0].amount);
-
-// Most sevas have one fixed price, so "From Rs. X" would be misleading;
-// only the sevas that really do offer a range say "From".
-const priceLabel = (seva: Seva) =>
-  `${seva.tiers.length > 1 ? "From " : ""}Rs. ${formatAmount(lowestTier(seva))}`;
-
 const formatAmount = (amount: number) => amount.toLocaleString("en-IN");
+
+type Selection = { seva: Seva; amount: number | null };
 
 export default function VijayadashamiClient() {
   const reduce = useReducedMotion();
-  const [selectedSeva, setSelectedSeva] = useState<Seva | null>(null);
+  const [selected, setSelected] = useState<Selection | null>(null);
   const [highlightedSlug, setHighlightedSlug] = useState<string | null>(null);
   const formRef = useRef<HTMLDivElement | null>(null);
 
@@ -248,16 +274,15 @@ export default function VijayadashamiClient() {
     return () => window.clearTimeout(timer);
   }, [reduce]);
 
-  // Choosing a seva swaps the grid for the checkout form, which sits much
-  // further down the page — bring it into view so the donor isn't left
-  // looking at an unchanged screen.
+  // Picking an amount swaps the grid for the checkout form — bring it into
+  // view so the donor isn't left looking at an apparently unchanged screen.
   useEffect(() => {
-    if (!selectedSeva) return;
+    if (!selected) return;
     const timer = window.setTimeout(() => {
       formRef.current?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
     }, 80);
     return () => window.clearTimeout(timer);
-  }, [selectedSeva, reduce]);
+  }, [selected, reduce]);
 
   return (
     <PageLayout>
@@ -266,6 +291,7 @@ export default function VijayadashamiClient() {
         <section className="relative">
           <picture>
             <source media="(max-width: 640px)" srcSet={MOBILE_BANNER} />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={DESKTOP_BANNER}
               alt="Vijayadashami celebrations at ISKCON Gambheeram Visakhapatnam"
@@ -308,7 +334,7 @@ export default function VijayadashamiClient() {
                   initial={reduce ? undefined : { opacity: 0, y: 20 }}
                   animate={introInView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.5, delay: 0.1 * i }}
-                  className="rounded-2xl border border-vk-100 bg-white p-6 shadow-card"
+                  className="vk-card p-6"
                 >
                   <span className="flex h-11 w-11 items-center justify-center rounded-full bg-vk-100 text-vk-700">
                     <item.icon className="h-5 w-5" />
@@ -325,67 +351,103 @@ export default function VijayadashamiClient() {
         <section className="vk-section bg-white" id="offer-seva" ref={sevaRef}>
           <div className="vk-container">
             <SectionHeading
-              eyebrow="Vijayadashami Sevas"
-              title="Offer Your Seva"
-              subtitle="Choose a seva below, then pick your offering amount. Receipts are sent on WhatsApp."
               align="center"
+              eyebrow="Choose Your Offering"
+              title="Vijayadashami Sevas"
+              subtitle="Tap an amount to offer that seva. Receipts are sent on WhatsApp."
             />
 
             <AnimatePresence mode="wait">
-              {!selectedSeva ? (
+              {!selected ? (
                 <motion.div
                   key="grid"
                   initial={reduce ? undefined : { opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={reduce ? undefined : { opacity: 0 }}
                   transition={{ duration: 0.25 }}
-                  className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+                  className="mx-auto flex max-w-6xl flex-wrap justify-center gap-5 md:gap-6"
                 >
-                  {SEVAS.map((seva, i) => (
-                    <motion.button
+                  {SEVAS.map((seva) => (
+                    <article
                       key={seva.slug}
                       id={`seva-card-${seva.slug}`}
-                      type="button"
-                      onClick={() => setSelectedSeva(seva)}
-                      initial={reduce ? undefined : { opacity: 0, y: 20 }}
-                      animate={sevaInView ? { opacity: 1, y: 0 } : {}}
-                      transition={{ duration: 0.45, delay: 0.06 * i }}
-                      whileHover={reduce ? undefined : { y: -4 }}
-                      className={`group flex scroll-mt-28 flex-col overflow-hidden rounded-2xl border bg-white text-left shadow-card transition-colors duration-300 ${
-                        highlightedSlug === seva.slug
-                          ? "border-vk-500 ring-2 ring-vk-500/30"
-                          : "border-vk-100 hover:border-vk-400"
+                      className={`vk-card vk-card-hover group flex w-full scroll-mt-24 flex-col overflow-hidden sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] ${
+                        highlightedSlug === seva.slug ? "ring-2 ring-vk-500 ring-offset-2" : ""
                       }`}
                     >
-                      <div className="relative h-44 w-full overflow-hidden bg-vk-50">
+                      {/* Card image with navy scrim + title */}
+                      <div className="relative h-44 overflow-hidden bg-vk-900 md:h-48">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={seva.image}
                           alt={seva.title}
-                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                         />
-                      </div>
-                      <div className="flex flex-1 flex-col p-5">
-                        <h3 className="flex items-center gap-2 text-lg font-bold text-ink">
-                          <span aria-hidden className="text-xl leading-none">
+                        <div className="absolute inset-0 bg-gradient-to-t from-vk-900/90 via-vk-900/30 to-transparent" />
+                        <div className="absolute bottom-3 left-4 right-4 flex items-center gap-2">
+                          <span className="text-2xl drop-shadow" aria-hidden>
                             {seva.icon}
                           </span>
-                          {seva.title}
-                        </h3>
-                        <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">
-                          {seva.tagline}
-                        </p>
-                        <div className="mt-4 flex items-center justify-between">
-                          <span className="text-sm font-semibold text-vk-800">
-                            {priceLabel(seva)}
-                          </span>
-                          <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-vk-700">
-                            Offer Seva
-                            <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5" />
-                          </span>
+                          <h3 className="text-lg font-bold text-white drop-shadow-md md:text-xl">
+                            {seva.title}
+                          </h3>
                         </div>
                       </div>
-                    </motion.button>
+
+                      {/* Card body */}
+                      <div className="flex flex-1 flex-col p-4 sm:p-5">
+                        <p className="min-h-[40px] text-[13px] leading-relaxed text-muted-foreground md:text-sm">
+                          {seva.description}
+                        </p>
+                        <div className="mt-4 space-y-2.5">
+                          <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
+                            {seva.tiers.map((tier) => (
+                              <button
+                                key={tier.amount}
+                                type="button"
+                                onClick={() => setSelected({ seva, amount: tier.amount })}
+                                className="group/amt flex min-h-[64px] flex-col items-center justify-center rounded-xl border-[1.5px] border-[hsl(var(--gold)/0.6)] bg-[hsl(var(--gold)/0.1)] px-1 py-2 text-center shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-transparent hover:bg-gradient-gold hover:shadow-gold sm:min-h-[68px] sm:px-1.5"
+                              >
+                                <span
+                                  className="block whitespace-nowrap text-[17px] font-extrabold leading-none tracking-tight text-ink sm:text-lg"
+                                  style={{ fontFamily: "var(--font-heading)" }}
+                                >
+                                  <span className="mr-px text-[0.85em] text-[hsl(var(--gold-deep))] group-hover/amt:text-ink">
+                                    ₹
+                                  </span>
+                                  {formatAmount(tier.amount)}
+                                </span>
+                                {IMPACTS[seva.slug]?.[tier.amount] && (
+                                  <span className="mt-1.5 block text-[10.5px] font-semibold leading-[1.2] text-ink/60 group-hover/amt:text-ink/80 sm:text-[11px]">
+                                    {IMPACTS[seva.slug][tier.amount]}
+                                  </span>
+                                )}
+                              </button>
+                            ))}
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => setSelected({ seva, amount: null })}
+                            className="flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-xl border border-dashed border-vk-300 bg-vk-50 px-3 py-3 text-[13px] font-bold text-vk-800 transition-all duration-200 hover:border-vk-500 hover:bg-vk-100"
+                          >
+                            <svg
+                              className="h-3 w-3 text-vk-600"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2.5"
+                              strokeLinecap="round"
+                              aria-hidden
+                            >
+                              <line x1="12" y1="5" x2="12" y2="19" />
+                              <line x1="5" y1="12" x2="19" y2="12" />
+                            </svg>
+                            <span>Donate Other Amount</span>
+                          </button>
+                        </div>
+                      </div>
+                    </article>
                   ))}
                 </motion.div>
               ) : (
@@ -399,7 +461,7 @@ export default function VijayadashamiClient() {
                   <div className="mb-5 text-center">
                     <button
                       type="button"
-                      onClick={() => setSelectedSeva(null)}
+                      onClick={() => setSelected(null)}
                       className="vk-btn-outline h-10 px-4 text-xs"
                     >
                       <ArrowLeft className="h-3.5 w-3.5" /> Change Seva
@@ -408,10 +470,12 @@ export default function VijayadashamiClient() {
 
                   <div ref={formRef} className="mx-auto w-full max-w-4xl scroll-mt-28">
                     <DonationForm
-                      seva={selectedSeva}
+                      seva={selected.seva}
                       sourcePage="vijayadashami"
                       festivalSlug="vijayadashami"
                       bannerImage={DESKTOP_BANNER}
+                      initialAmount={selected.amount ?? undefined}
+                      startCustom={selected.amount === null}
                       thankYouType="seva"
                       thankYouSource="the Vijayadashami seva programme"
                       trackContentName="Vijayadashami"
@@ -448,6 +512,9 @@ export default function VijayadashamiClient() {
             </p>
           </div>
         </section>
+
+        {/* Direct PhonePe / UPI payment, for donors who can't use Razorpay */}
+        <PhonePeUpiCard campaign="Vijayadashami" />
       </div>
     </PageLayout>
   );
