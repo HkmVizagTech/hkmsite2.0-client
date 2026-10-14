@@ -101,7 +101,8 @@ const SEVAS: Seva[] = [
     slug: "yajamana-seva",
     title: "Yajamana Seva",
     shortTitle: "Yajamana",
-    image: "/assets/temple-seva.jpg",
+    image:
+      "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1791954983680-1791954983172-DevotionalYajamanaSevaBeforeRadhaKrishna.webp",
     tagline: "Be the principal sponsor of the Vijayadashami celebrations",
     description:
       "The chief sponsor of the festival — sankalpa is taken in your name and gotra, and the day's worship is offered on your behalf.",
@@ -141,7 +142,8 @@ const SEVAS: Seva[] = [
     slug: "mantapa-seva",
     title: "Mantapa Seva",
     shortTitle: "Mantapa",
-    image: "/assets/gallery-festival-1.jpg",
+    image:
+      "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1791955523512-1791955523215-FloralKrishna-RadhaTempleAltar.webp",
     tagline: "Sponsor the festival mantapa and altar decoration",
     description:
       "The decorated pavilion in which Their Lordships are seated for the festival — drapery, lighting and ornamental work.",
@@ -182,7 +184,8 @@ const SEVAS: Seva[] = [
     slug: "vijayadashami-homam",
     title: "Vijayadashami Homam",
     shortTitle: "Homam",
-    image: "/assets/gallery-aarti.jpg",
+    image:
+      "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1791954735604-1791954735378-GoldenTempleFireRitualatSunset.webp",
     tagline: "Sponsor the sacred fire sacrifice on Vijayadashami",
     description:
       "Performed for victory over obstacles and the wellbeing of your family — sankalpa and ahuti offered in your name.",
