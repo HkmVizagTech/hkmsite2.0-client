@@ -40,6 +40,14 @@ interface DonationFormProps {
   /** Open with the custom-amount field already active, for callers whose
       "Donate Other Amount" button should land straight on free entry. */
   startCustom?: boolean;
+  /** Collapse the tier grid to a one-line "Amount ... Change" row (stacked
+      layout only). For callers that already made the donor pick an amount
+      before opening the form, where repeating the whole ladder is both
+      redundant and the main reason the form needs scrolling. */
+  collapseAmount?: boolean;
+  /** Scroll the form into view on mount. Right for a form sitting in a long
+      page, wrong inside a dialog that is already in front of the donor. */
+  autoScrollOnMount?: boolean;
   /** Called after a successful one-time/monthly payment is verified. */
   onSuccess?: (donor: DonationDonor) => void;
   /** Thank-you URL type ("donation" for seva pages, "seva" for campaign pages). */
@@ -84,6 +92,8 @@ export default function DonationForm({
   bannerImage,
   initialAmount,
   startCustom = false,
+  collapseAmount = false,
+  autoScrollOnMount = true,
   onSuccess,
   thankYouType = "donation",
   thankYouSource = "our seva programmes",
@@ -103,6 +113,9 @@ export default function DonationForm({
   const [tierIndex, setTierIndex] = useState(0);
   const [customAmount, setCustomAmount] = useState("");
   const [useCustom, setUseCustom] = useState(startCustom);
+  // Only meaningful when collapseAmount is set: the donor asked to change
+  // the amount they had already chosen, so show the full picker again.
+  const [amountOpen, setAmountOpen] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", mobile: "", panNumber: "", sevakName: "", dob: "" });
   const [want80G, setWant80G] = useState(false);
   const [monthly, setMonthly] = useState(false);
@@ -555,12 +568,15 @@ export default function DonationForm({
   useEffect(() => {
     // Auto-scroll to the form on page load so donors arriving via an ad CTA or
     // WhatsApp broadcast link land directly at the payment form instead of
-    // the top of the page.
+    // the top of the page. Callers that render this inside a dialog pass
+    // autoScrollOnMount={false} — there the form is already in front of the
+    // donor and scrolling only moves the page behind the overlay.
+    if (!autoScrollOnMount) return;
     const timer = setTimeout(() => {
       document.getElementById("donate")?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 400);
     return () => clearTimeout(timer);
-  }, []);
+  }, [autoScrollOnMount]);
 
   return (
     <div id="donate" className="vk-card scroll-mt-28 overflow-hidden !rounded-3xl">
@@ -594,34 +610,61 @@ export default function DonationForm({
           </div>
 
         <form onSubmit={handleSubmit} className="space-y-4 p-4 sm:p-6">
-          <h3 className={stepLabelClass}>
-            Choose an Amount
-          </h3>
-          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-2">
-            {seva.tiers.map((tier, i) => (
+          {collapseAmount && !amountOpen ? (
+            /* The donor already picked an amount before this form opened, so the
+               ladder would just repeat what the strip above already says. One
+               line, with a way back to the full picker. */
+            <div className="flex items-center justify-between gap-3 rounded-xl border border-vk-200 bg-vk-50/60 px-3.5 py-2.5">
+              <span className="text-[13px] font-semibold text-ink/70">
+                {useCustom ? "Enter your amount below" : "Amount"}
+              </span>
+              <span className="flex items-center gap-3">
+                {!useCustom && (
+                  <span className="font-heading text-lg font-extrabold text-vk-800">
+                    ₹{finalAmount.toLocaleString("en-IN")}
+                  </span>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setAmountOpen(true)}
+                  className="text-[13px] font-bold text-vk-700 underline underline-offset-2 transition-colors hover:text-vk-500"
+                >
+                  Change
+                </button>
+              </span>
+            </div>
+          ) : (
+            <>
+              <h3 className={stepLabelClass}>
+                Choose an Amount
+              </h3>
+              <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-2">
+                {seva.tiers.map((tier, i) => (
+                  <button
+                    key={tier.label}
+                    type="button"
+                    aria-pressed={!useCustom && tierIndex === i}
+                    onClick={() => { setTierIndex(i); setUseCustom(false); }}
+                    className={`${chipBase} text-center text-sm font-bold ${
+                      !useCustom && tierIndex === i ? `${chipOn} text-vk-800` : `${chipOff} text-ink`
+                    }`}
+                  >
+                    {tier.label}
+                  </button>
+                ))}
+              </div>
               <button
-                key={tier.label}
                 type="button"
-                aria-pressed={!useCustom && tierIndex === i}
-                onClick={() => { setTierIndex(i); setUseCustom(false); }}
-                className={`${chipBase} text-center text-sm font-bold ${
-                  !useCustom && tierIndex === i ? `${chipOn} text-vk-800` : `${chipOff} text-ink`
+                aria-pressed={useCustom}
+                onClick={() => setUseCustom(true)}
+                className={`${chipBase} w-full text-center text-sm font-semibold ${
+                  useCustom ? `${chipOn} text-vk-800` : "border-dashed border-vk-200 bg-white text-ink/80 hover:border-vk-400"
                 }`}
               >
-                {tier.label}
+                Enter a custom amount
               </button>
-            ))}
-          </div>
-          <button
-            type="button"
-            aria-pressed={useCustom}
-            onClick={() => setUseCustom(true)}
-            className={`${chipBase} w-full text-center text-sm font-semibold ${
-              useCustom ? `${chipOn} text-vk-800` : "border-dashed border-vk-200 bg-white text-ink/80 hover:border-vk-400"
-            }`}
-          >
-            Enter a custom amount
-          </button>
+            </>
+          )}
 
           {useCustom && (
             <div>

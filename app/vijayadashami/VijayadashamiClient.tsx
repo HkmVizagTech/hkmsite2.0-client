@@ -741,24 +741,20 @@ export default function VijayadashamiClient() {
               .vijd-modal::-webkit-scrollbar-thumb { background: #B9C8FB; border-radius: 9999px; }
             `}</style>
 
-            <div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-vk-100 bg-white/95 px-5 py-3.5 backdrop-blur">
-              <div className="min-w-0">
-                <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-vk-600">
-                  Vijayadashami Seva
-                </p>
-                <p className="truncate text-base font-bold text-ink">{selected.seva.title}</p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setSelected(null)}
-                className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-vk-600 transition-colors hover:bg-vk-50 hover:text-vk-800"
-                aria-label="Close"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
+            {/* Floating close. The form's own gradient strip already names the
+                seva and the amount, so a second header here would say the same
+                thing twice and cost ~60px of a dialog we are trying to keep
+                inside one screen. */}
+            <button
+              type="button"
+              onClick={() => setSelected(null)}
+              className="absolute right-3 top-3 z-20 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/15 text-white backdrop-blur transition-colors hover:bg-white/30"
+              aria-label="Close"
+            >
+              <X className="h-5 w-5" />
+            </button>
 
-            <div className="p-4 sm:p-5">
+            <div>
               <DonationForm
                 seva={selected.seva}
                 sourcePage="vijayadashami"
@@ -766,6 +762,8 @@ export default function VijayadashamiClient() {
                 bannerImage={DESKTOP_BANNER}
                 initialAmount={selected.amount ?? undefined}
                 startCustom={selected.amount === null}
+                collapseAmount
+                autoScrollOnMount={false}
                 thankYouType="seva"
                 thankYouSource="the Vijayadashami seva programme"
                 trackContentName="Vijayadashami"
