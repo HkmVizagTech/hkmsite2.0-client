@@ -15,6 +15,7 @@ import TransactionsTab from "./TransactionsTab";
 import UtmStatsTab from "./UtmStatsTab";
 import UtmBuilderTab from "./UtmBuilderTab";
 import DccReceiptsTab, { DONATIONS_PAGE_API } from "@/components/admin/DccReceiptsTab";
+import PrasadamTab, { DONATIONS_PAGE_PRASADAM_API } from "@/components/admin/PrasadamTab";
 
 type DonationOption = {
   id: number;
@@ -291,6 +292,7 @@ export default function DonationsAdminPage() {
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
             <TabsTrigger value="transactions">Transactions</TabsTrigger>
             <TabsTrigger value="dcc">DCC receipts</TabsTrigger>
+            <TabsTrigger value="prasadam">Prasadam</TabsTrigger>
             <TabsTrigger value="utm">UTM Campaigns</TabsTrigger>
             <TabsTrigger value="utm-builder">UTM Builder</TabsTrigger>
             <TabsTrigger value="content">Page Content</TabsTrigger>
@@ -306,6 +308,13 @@ export default function DonationsAdminPage() {
 
           <TabsContent value="dcc" className="mt-6">
             <DccReceiptsTab api={DONATIONS_PAGE_API} scopeNote="Donations made on the /donations page only" />
+          </TabsContent>
+
+          <TabsContent value="prasadam" className="mt-6">
+            <PrasadamTab
+              api={DONATIONS_PAGE_PRASADAM_API}
+              scopeNote="Donors on the /donations pages who opted for Maha Prasadam — each donation is tracked and marked on its own."
+            />
           </TabsContent>
 
           <TabsContent value="utm" className="mt-6">

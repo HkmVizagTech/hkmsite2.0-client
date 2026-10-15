@@ -26,7 +26,7 @@ import ManualEntryTab from "./ManualEntryTab";
 import ReportsTab from "./ReportsTab";
 import DccReceiptsTab from "@/components/admin/DccReceiptsTab";
 import NeedsWhatsAppTab from "./NeedsWhatsAppTab";
-import PrasadamTab from "./PrasadamTab";
+import PrasadamTab from "@/components/admin/PrasadamTab";
 import UpiMatchTab from "./UpiMatchTab";
 import PaymentFailuresTab from "./PaymentFailuresTab";
 

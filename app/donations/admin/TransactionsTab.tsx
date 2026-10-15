@@ -30,6 +30,9 @@ interface Transaction {
   panNumber?: string;
   certificate?: boolean;
   wantPrasadam?: boolean;
+  prasadamStatus?: "pending" | "dispatched" | "delivered" | "cancelled";
+  prasadamCourier?: string;
+  prasadamTrackingNumber?: string;
   prasadamAddress?: {
     doorNo?: string; house?: string; street?: string; area?: string;
     city?: string; state?: string; pincode?: string; country?: string;
@@ -263,6 +266,16 @@ export default function TransactionsTab() {
               <Row label="80G Requested" value={selected.certificate ? "Yes" : "No"} />
               <Row label="PAN" value={selected.panNumber} />
               <Row label="Mahaprasadam Requested" value={selected.wantPrasadam ? "Yes" : "No"} />
+              {selected.wantPrasadam && (
+                <Row
+                  label="Prasadam Dispatch"
+                  value={[
+                    selected.prasadamStatus || "pending",
+                    selected.prasadamCourier,
+                    selected.prasadamTrackingNumber,
+                  ].filter(Boolean).join(" · ")}
+                />
+              )}
               {selected.wantPrasadam && selected.prasadamAddress && (
                 <Row
                   label="Prasadam Address"

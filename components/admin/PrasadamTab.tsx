@@ -3,13 +3,16 @@
 // Prasadam tab — every donation where the donor opted for Maha Prasadam
 // delivery, with an admin-managed dispatch lifecycle (pending → dispatched
 // → delivered, or cancelled), courier/tracking details, and a CSV download
-// for the courier run. Backed by /donations/prasadam-requests,
-// /donations/:id/prasadam-status and /donations/prasadam-export.
+// for the courier run.
 //
-// Scope: main-site seva/campaign donations only. The standalone /donations
-// page family is excluded server-side (it has its own dedicated admin), so
-// its donors never appear here. All counts are prasadam opt-ins only —
-// donors who never ticked the prasadam box are never counted.
+// Shared by two admins — `api` picks the endpoints (and so the scope):
+//   - main admin (/admin/donations): main-site seva/campaign donations; the
+//     standalone /donations page family is excluded server-side.
+//   - /donations admin (/donations/admin): that page family's donations only.
+//
+// Every row is one DONATION, never one donor: a donor who gave three times and
+// ticked Prasadam each time has three rows, each marked on its own. All counts
+// are prasadam opt-ins only — donors who never ticked the box are not counted.
 
 import { useCallback, useEffect, useState } from "react";
 import type { ChangeEvent } from "react";
@@ -23,6 +26,26 @@ import {
 } from "lucide-react";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
+
+export interface PrasadamApi {
+  list: string;
+  export: string;
+  update: (id: string) => string;
+}
+
+// Main admin: main-site donations (the /donations family is excluded there).
+const ALL_DONATIONS_API: PrasadamApi = {
+  list: "/donations/prasadam-requests",
+  export: "/donations/prasadam-export",
+  update: (id) => `/donations/${id}/prasadam-status`,
+};
+
+// /donations page admin: that page family's donations only.
+export const DONATIONS_PAGE_PRASADAM_API: PrasadamApi = {
+  list: "/donations-admin/prasadam-requests",
+  export: "/donations-admin/prasadam-export",
+  update: (id) => `/donations-admin/transactions/${id}/prasadam-status`,
+};
 
 interface PrasadamAddress {
   doorNo?: string;
@@ -97,7 +120,7 @@ const prettyPage = (p: string) =>
     ? p.replace(/^\//, "").replace(/[-_/]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
     : p;
 
-export default function PrasadamTab() {
+export default function PrasadamTab({ api = ALL_DONATIONS_API, scopeNote }: { api?: PrasadamApi; scopeNote?: string }) {
   const [list, setList] = useState<PrasadamRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -114,6 +137,7 @@ export default function PrasadamTab() {
   const [sevaOptions, setSevaOptions] = useState<string[]>([]);
   const [pageOptions, setPageOptions] = useState<string[]>([]);
   const [downloading, setDownloading] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
 
   // Update modal state
   const [editing, setEditing] = useState<PrasadamRequest | null>(null);
@@ -131,7 +155,7 @@ export default function PrasadamTab() {
       if (pageFilter !== "all") params.set("sourcePage", pageFilter);
       if (dateFrom) params.set("from", dateFrom);
       if (dateTo) params.set("to", dateTo);
-      const res = await authFetch(`${API_URL}/donations/prasadam-requests?${params.toString()}`, { credentials: "include" });
+      const res = await authFetch(`${API_URL}${api.list}?${params.toString()}`, { credentials: "include" });
       const json = await res.json().catch(() => ({}));
       if (res.ok) {
         setList(json.requests || []);
@@ -152,7 +176,7 @@ export default function PrasadamTab() {
     } finally {
       setLoading(false);
     }
-  }, [page, limit, statusFilter, search, sevaFilter, pageFilter, dateFrom, dateTo]);
+  }, [api, page, limit, statusFilter, search, sevaFilter, pageFilter, dateFrom, dateTo]);
 
   useEffect(() => {
     const t = setTimeout(fetchList, 250);
@@ -161,8 +185,9 @@ export default function PrasadamTab() {
 
   const resetPage = () => setPage(1);
 
-  const downloadCsv = () => {
+  const downloadCsv = async () => {
     setDownloading(true);
+    setExportError(null);
     try {
       const params = new URLSearchParams({ status: statusFilter });
       if (search) params.set("q", search);
@@ -170,7 +195,20 @@ export default function PrasadamTab() {
       if (pageFilter !== "all") params.set("sourcePage", pageFilter);
       if (dateFrom) params.set("from", dateFrom);
       if (dateTo) params.set("to", dateTo);
-      window.open(`${API_URL}/donations/prasadam-export?${params.toString()}`, "_blank");
+      // authFetch attaches the Bearer token; window.open wouldn't include it
+      // (and the cross-site cookie is blocked in some browsers), so fetch the
+      // CSV as a blob and trigger the download manually.
+      const res = await authFetch(`${API_URL}${api.export}?${params.toString()}`, { credentials: "include" });
+      if (!res.ok) throw new Error(`Export failed (${res.status})`);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `prasadam-dispatch-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      setExportError(e instanceof Error ? e.message : "Could not download the CSV.");
     } finally {
       setDownloading(false);
     }
@@ -192,7 +230,7 @@ export default function PrasadamTab() {
     setSaving(true);
     setSaveMsg(null);
     try {
-      const res = await authFetch(`${API_URL}/donations/${editing._id}/prasadam-status`, {
+      const res = await authFetch(`${API_URL}${api.update(editing._id)}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -227,12 +265,14 @@ export default function PrasadamTab() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Package className="w-4 h-4" />
-          Main-site donors who opted for Maha Prasadam — track dispatch &amp; delivery.
+          {scopeNote ?? "Main-site donors who opted for Maha Prasadam — track dispatch & delivery."}
         </div>
         <Button className="gap-2 bg-transparent border border-border text-foreground hover:bg-muted" onClick={downloadCsv} disabled={downloading}>
           <Download className="w-4 h-4" /> Download CSV
         </Button>
       </div>
+
+      {exportError && <p className="text-xs text-red-600">{exportError}</p>}
 
       {/* Error banner — API failed is NOT the same as "no data" */}
       {error && !loading && (
