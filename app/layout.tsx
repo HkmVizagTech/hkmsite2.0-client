@@ -9,9 +9,6 @@ import MetaPixel from "@/components/MetaPixel";
 import ThemeProvider from "@/components/ThemeProvider";
 import BottomNavSpace from "@/components/BottomNavSpace";
 import { siteKeywords, ORG_ALT_NAMES, TITLE_TEMPLATE, DEFAULT_OG_IMAGE } from "@/lib/seo";
-import { LocaleProvider } from "@/components/i18n/LocaleProvider";
-import LanguageToggle from "@/components/i18n/LanguageToggle";
-import { getLocale } from "@/lib/i18n/server";
 import { TEMPLE, DARSHAN_HOURS, MAPS_URL } from "@/lib/templeInfo";
 
 
@@ -98,7 +95,7 @@ const organizationJsonLd = {
   foundingDate: "2008",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Chaitanya Bhavan, Hare Krishna Vaikuntam Cultural Centre, IIM Rd, opp. Akshaya Patra Foundation, Gambhiram",
+    streetAddress: "Door No: 8-22, IIM Rd, near Akshaya Patra Foundation Kitchen, Gambhiram",
     addressLocality: "Visakhapatnam",
     addressRegion: "Andhra Pradesh",
     postalCode: "531163",
@@ -163,14 +160,16 @@ const webSiteJsonLd = {
 };
 
 
-export default async function RootLayout({
+// Static on purpose: nothing here reads cookies or headers, so every public
+// page can be prerendered and served from the CDN. The page's language comes
+// from app/[lang]/layout.tsx (which also corrects <html lang> for Telugu).
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const locale = await getLocale();
   return (
-  <html lang={locale} className={`h-full antialiased overflow-x-clip ${playfair.variable} ${poppins.variable} ${jakarta.variable} ${telugu.variable}`} suppressHydrationWarning>
+  <html lang="en" className={`h-full antialiased overflow-x-clip ${playfair.variable} ${poppins.variable} ${jakarta.variable} ${telugu.variable}`} suppressHydrationWarning>
       <head>
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-XVDQNJK24G"
@@ -199,10 +198,7 @@ export default async function RootLayout({
         <ReduxProvider>
           <ThemeProvider>
             <AuthProvider>
-              <LocaleProvider locale={locale}>
-                {children}
-                <LanguageToggle />
-              </LocaleProvider>
+              {children}
               <Toaster />
             </AuthProvider>
           </ThemeProvider>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import Image from "next/image";
+import { getImageProps } from "next/image";
 import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useT } from "@/components/i18n/LocaleProvider";
@@ -55,6 +55,39 @@ const defaultSlides: TempleCarouselSlide[] = [
     linkUrl: "",
   },
 ];
+
+/**
+ * One <picture> per slide: the browser picks the phone or desktop banner
+ * itself, so only one is downloaded and the first slide can load eagerly at
+ * high priority (the hero is the page's largest paint). Two separate <Image>s
+ * would have to stay lazy, or a phone would download the desktop banner too.
+ */
+function SlidePicture({ mobileSrc, desktopSrc, alt, first, onError }: {
+  mobileSrc: string;
+  desktopSrc: string;
+  alt: string;
+  first: boolean;
+  onError: () => void;
+}) {
+  const common = { alt, fill: true, sizes: "100vw" } as const;
+  const { props: { srcSet: desktop } } = getImageProps({ ...common, src: desktopSrc });
+  const { props: { srcSet: mobile, ...rest } } = getImageProps({ ...common, src: mobileSrc });
+  return (
+    <picture>
+      <source media="(min-width: 768px)" srcSet={desktop} sizes="100vw" />
+      <img
+        {...rest}
+        srcSet={mobile}
+        alt={alt}
+        loading={first ? "eager" : "lazy"}
+        fetchPriority={first ? "high" : "auto"}
+        draggable={false}
+        className="object-cover object-center"
+        onError={onError}
+      />
+    </picture>
+  );
+}
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 
@@ -166,25 +199,12 @@ const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true }: TempleCa
                     }}
                     className={`relative aspect-[962/1635] overflow-hidden bg-vk-900 md:aspect-[1920/730] ${slide.linkUrl || !isActive ? "cursor-pointer" : ""}`}
                   >
-                    <Image
-                      src={mobileBroken ? FALLBACK_IMG_MOBILE : slide.mobileSrc}
+                    <SlidePicture
+                      mobileSrc={mobileBroken ? FALLBACK_IMG_MOBILE : slide.mobileSrc}
+                      desktopSrc={desktopBroken ? FALLBACK_IMG : slide.src}
                       alt={t(slide.title)}
-                      fill
-                      sizes="100vw"
-                      draggable={false}
-                      priority={i === 0}
-                      className="object-cover object-center md:hidden"
-                      onError={() => setImgErrors((prev) => ({ ...prev, [slide.mobileSrc]: true }))}
-                    />
-                    <Image
-                      src={desktopBroken ? FALLBACK_IMG : slide.src}
-                      alt={t(slide.title)}
-                      fill
-                      sizes="100vw"
-                      draggable={false}
-                      priority={i === 0}
-                      className="hidden object-cover object-center md:block"
-                      onError={() => setImgErrors((prev) => ({ ...prev, [slide.src]: true }))}
+                      first={i === 0}
+                      onError={() => setImgErrors((prev) => ({ ...prev, [slide.mobileSrc]: true, [slide.src]: true }))}
                     />
                   </div>
                 </div>

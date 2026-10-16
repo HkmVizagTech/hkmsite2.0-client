@@ -75,8 +75,8 @@ const tiles: Tile[] = [
 ];
 
 /** GVD "Explore Temple" bento — image tiles with a navy gradient and caption. */
-export default async function ExploreBento() {
-  const t = await getT();
+export default function ExploreBento({ lang }: { lang: string }) {
+  const t = getT(lang);
   return (
     <section className="vk-section vk-band">
       <div className="vk-container">

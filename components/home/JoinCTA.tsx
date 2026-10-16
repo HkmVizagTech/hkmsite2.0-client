@@ -6,8 +6,8 @@ import Reveal from "@/components/site/Reveal";
 import { getT } from "@/lib/i18n/server";
 
 /** GVD closing pair: "Volunteer to Serve" + "Join Our Divine Journey" banner. */
-export default async function JoinCTA() {
-  const t = await getT();
+export default function JoinCTA({ lang }: { lang: string }) {
+  const t = getT(lang);
   return (
     <section className="pb-4 pt-6 md:pt-10">
       <div className="vk-container grid gap-5 lg:grid-cols-[1fr_1.35fr]">

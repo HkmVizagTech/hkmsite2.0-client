@@ -37,7 +37,7 @@ interface SiteContent {
 const defaultContent: SiteContent = {
   hero: { title: "Hare Krishna Movement", subtitle: "Visakhapatnam", tagline: "Spreading the timeless message of Lord Krishna through devotion, service, and community" },
   about: { heading: "A Legacy of Devotion & Service", body: "" },
-  contact: { phone: "+91 89777 61187", email: "social@hkmvizag.org", address: "Chaitanya Bhavan, Hare Krishna Vaikuntam Cultural Centre, IIM Rd, opp. Akshaya Patra Foundation, Gambhiram, Visakhapatnam, Andhra Pradesh 531163", morningHours: "4:30 AM - 1:00 PM", eveningHours: "4:00 PM - 8:30 PM" },
+  contact: { phone: "+91 89777 61187", email: "social@hkmvizag.org", address: "Hare Krishna Vaikuntham Cultural Centre, Door No: 8-22, IIM Rd, near Akshaya Patra Foundation Kitchen, Gambhiram, Visakhapatnam, Andhra Pradesh 531163", morningHours: "4:30 AM - 1:00 PM", eveningHours: "4:00 PM - 8:30 PM" },
   navbar: { majorFestival: "auto", customLink: { enabled: false, label: "", href: "" } },
   festival: { bannerDesktop: FESTIVAL_PAGE_BANNER.desktop, bannerMobile: FESTIVAL_PAGE_BANNER.mobile },
   construction: { videoUrl: "", videoId: "", photos: [] },

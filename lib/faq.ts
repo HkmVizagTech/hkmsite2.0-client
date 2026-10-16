@@ -13,7 +13,7 @@ export const homeFaq: FaqItem[] = [
   },
   {
     q: "Where is the temple located?",
-    a: "Chaitanya Bhavan, Hare Krishna Vaikuntham Cultural Centre, IIM Road, opposite Akshaya Patra Foundation, Gambhiram, Visakhapatnam, Andhra Pradesh 531163. Use the “Get Directions” button in the footer to navigate there with Google Maps.",
+    a: "Hare Krishna Vaikuntham Cultural Centre, Door No: 8-22, IIM Road, near Akshaya Patra Foundation Kitchen, Gambhiram, Visakhapatnam, Andhra Pradesh 531163. Use the “Get Directions” button in the footer to navigate there with Google Maps.",
   },
   {
     q: "What are the darshan timings?",

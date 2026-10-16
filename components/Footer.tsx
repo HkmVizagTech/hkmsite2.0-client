@@ -182,7 +182,7 @@ const Footer = () => {
               <address className="flex gap-3 text-sm not-italic leading-relaxed">
                 <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-vk-400" />
                 <span>
-                  {t("Chaitanya Bhavan, Hare Krishna Vaikuntham Cultural Centre, IIM Rd, opp. Akshaya Patra Foundation, Gambhiram, Visakhapatnam, Andhra Pradesh 531163")}
+                  {t("Hare Krishna Vaikuntham Cultural Centre, Door No: 8-22, IIM Rd, near Akshaya Patra Foundation Kitchen, Gambhiram, Visakhapatnam, Andhra Pradesh 531163")}
                 </span>
               </address>
               <a

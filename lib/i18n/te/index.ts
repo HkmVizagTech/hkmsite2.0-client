@@ -8,5 +8,6 @@ import { pitruPaksha } from "./pitruPaksha";
 import { upi } from "./upi";
 import { shared } from "./shared";
 import { visit } from "./visit";
+import { seo } from "./seo";
 
-export const te: Record<string, string> = { ...common, ...nav, ...footer, ...home, ...pitruPaksha, ...upi, ...shared, ...visit };
+export const te: Record<string, string> = { ...common, ...nav, ...footer, ...home, ...pitruPaksha, ...upi, ...shared, ...visit, ...seo };

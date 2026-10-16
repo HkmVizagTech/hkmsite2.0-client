@@ -382,7 +382,7 @@ export function donationJsonLd(key: DonationSeoKey) {
         name: "Hare Krishna Vaikuntham Temple, Gambheeram",
         address: {
           "@type": "PostalAddress",
-          streetAddress: "Chaitanya Bhavan, IIM Road, opp. Akshaya Patra Foundation, Gambhiram",
+          streetAddress: "Door No: 8-22, IIM Rd, near Akshaya Patra Foundation Kitchen, Gambhiram",
           addressLocality: "Visakhapatnam",
           addressRegion: "Andhra Pradesh",
           postalCode: "531163",

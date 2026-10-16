@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/seo";
+import { isTeIndexable, localizedPath } from "@/lib/i18n/routing";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 
@@ -129,5 +130,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   } catch {}
 
-  return [...staticPages, ...blogPages, ...blogCategoryPages, ...eventPages, ...productPages, ...festivalPages];
+  // Telugu: pages that are actually translated get their /te/ URL, and both
+  // versions point at each other (hreflang), so Telugu searches can find them.
+  const withLanguages: MetadataRoute.Sitemap = staticPages.flatMap((p) => {
+    const path = p.url.slice(SITE_URL.length) || "/";
+    if (!isTeIndexable(path)) return [p];
+    const languages = {
+      "en-IN": `${SITE_URL}${localizedPath(path, "en")}`,
+      "te-IN": `${SITE_URL}${localizedPath(path, "te")}`,
+    };
+    return [
+      { ...p, alternates: { languages } },
+      { ...p, url: languages["te-IN"], priority: Math.max(0.5, (p.priority ?? 0.5) - 0.1), alternates: { languages } },
+    ];
+  });
+
+  return [...withLanguages, ...blogPages, ...blogCategoryPages, ...eventPages, ...productPages, ...festivalPages];
 }

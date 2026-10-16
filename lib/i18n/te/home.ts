@@ -264,8 +264,8 @@ export const home: Record<string, string> = {
   "Yes. This is ISKCON Gambheeram Visakhapatnam, also known as Hare Krishna Movement Vizag, located in Gambheeram, Visakhapatnam. We are a centre of the International Society for Krishna Consciousness (ISKCON), serving the community since 2008.":
     "అవును. ఇది ఇస్కాన్ గంభీరం విశాఖపట్నం — హరే కృష్ణ మూవ్‌మెంట్ వైజాగ్ అని కూడా పిలుస్తారు — విశాఖపట్నంలోని గంభీరంలో ఉంది. మేము అంతర్జాతీయ కృష్ణ చైతన్య సంఘం (ISKCON) కేంద్రం, 2008 నుండి సమాజానికి సేవ చేస్తున్నాము.",
   "Where is the temple located?": "ఆలయం ఎక్కడ ఉంది?",
-  "Chaitanya Bhavan, Hare Krishna Vaikuntham Cultural Centre, IIM Road, opposite Akshaya Patra Foundation, Gambhiram, Visakhapatnam, Andhra Pradesh 531163. Use the “Get Directions” button in the footer to navigate there with Google Maps.":
-    "చైతన్య భవన్, హరే కృష్ణ వైకుంఠం సాంస్కృతిక కేంద్రం, IIM రోడ్, అక్షయ పాత్ర ఫౌండేషన్ ఎదురుగా, గంభీరం, విశాఖపట్నం, ఆంధ్రప్రదేశ్ 531163. Google Mapsలో దారి కోసం పేజీ కింద ఉన్న “దారి తెలుసుకోండి” బటన్‌ను నొక్కండి.",
+  "Hare Krishna Vaikuntham Cultural Centre, Door No: 8-22, IIM Road, near Akshaya Patra Foundation Kitchen, Gambhiram, Visakhapatnam, Andhra Pradesh 531163. Use the “Get Directions” button in the footer to navigate there with Google Maps.":
+    "హరే కృష్ణ వైకుంఠం సాంస్కృతిక కేంద్రం, డోర్ నం: 8-22, IIM రోడ్, అక్షయ పాత్ర ఫౌండేషన్ కిచెన్ దగ్గర, గంభీరం, విశాఖపట్నం, ఆంధ్రప్రదేశ్ 531163. Google Mapsలో దారి కోసం పేజీ కింద ఉన్న “దారి తెలుసుకోండి” బటన్‌ను నొక్కండి.",
   "What are the darshan timings?": "దర్శన వేళలు ఏమిటి?",
   "Darshan is open from 4:30 AM to 5:00 AM (Mangala Aarti), 7:15 AM to 12:20 PM, and 4:15 PM to 8:15 PM. The live darshan status is shown at the top of every page, and the full aarti schedule is on the Daily Schedule page.":
     "దర్శనం ఉదయం 4:30 నుండి 5:00 వరకు (మంగళ హారతి), ఉదయం 7:15 నుండి మధ్యాహ్నం 12:20 వరకు, సాయంత్రం 4:15 నుండి రాత్రి 8:15 వరకు ఉంటుంది. దర్శనం ప్రస్తుతం తెరిచి ఉందో లేదో ప్రతి పేజీ పైభాగంలో కనిపిస్తుంది; పూర్తి హారతి వేళలు నిత్య కార్యక్రమాలు పేజీలో ఉన్నాయి.",

@@ -1,15 +1,16 @@
-// Server components only (uses next/headers).
-import { cookies } from "next/headers";
-import { DEFAULT_LOCALE, LOCALE_COOKIE, isLocale, type Locale } from "./config";
+// Server components only. The language comes from the URL segment
+// (app/[lang]/…), not a cookie, so every page can be prerendered once per
+// language and served from the CDN cache. proxy.ts maps /x to /en/x (or to
+// /te/x for a visitor who chose Telugu) and serves /te/x as-is.
+import { DEFAULT_LOCALE, isLocale, type Locale } from "./config";
 import { makeT, type TFunction } from "./translate";
 
-/** The visitor's chosen language (server components / layouts). */
-export async function getLocale(): Promise<Locale> {
-  const v = (await cookies()).get(LOCALE_COOKIE)?.value;
-  return isLocale(v) ? v : DEFAULT_LOCALE;
+/** The page's language from its `[lang]` route param. */
+export function localeOf(lang: unknown): Locale {
+  return isLocale(lang) ? lang : DEFAULT_LOCALE;
 }
 
-/** Translator for server components: `const t = await getT();` */
-export async function getT(): Promise<TFunction> {
-  return makeT(await getLocale());
+/** Translator for server components: `const t = getT(lang);` */
+export function getT(lang: unknown): TFunction {
+  return makeT(localeOf(lang));
 }

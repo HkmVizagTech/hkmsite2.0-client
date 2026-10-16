@@ -34,8 +34,8 @@ export const footer: Record<string, string> = {
   // ── Explore / Visit ──
   "Explore": "అన్వేషించండి",
   "Visit Us": "మమ్మల్ని సందర్శించండి",
-  "Chaitanya Bhavan, Hare Krishna Vaikuntham Cultural Centre, IIM Rd, opp. Akshaya Patra Foundation, Gambhiram, Visakhapatnam, Andhra Pradesh 531163":
-    "చైతన్య భవన్, హరే కృష్ణ వైకుంఠం సాంస్కృతిక కేంద్రం, IIM రోడ్, అక్షయ పాత్ర ఫౌండేషన్ ఎదురుగా, గంభీరం, విశాఖపట్నం, ఆంధ్రప్రదేశ్ 531163",
+  "Hare Krishna Vaikuntham Cultural Centre, Door No: 8-22, IIM Rd, near Akshaya Patra Foundation Kitchen, Gambhiram, Visakhapatnam, Andhra Pradesh 531163":
+    "హరే కృష్ణ వైకుంఠం సాంస్కృతిక కేంద్రం, డోర్ నం: 8-22, IIM రోడ్, అక్షయ పాత్ర ఫౌండేషన్ కిచెన్ దగ్గర, గంభీరం, విశాఖపట్నం, ఆంధ్రప్రదేశ్ 531163",
   "Get Directions": "దారి తెలుసుకోండి",
 
   // ── Follow us ──

@@ -6,7 +6,9 @@
 export const TEMPLE = {
   name: "ISKCON Gambheeram Visakhapatnam",
   alsoKnownAs: ["Hare Krishna Vaikuntham Temple", "Hare Krishna Movement Vizag", "ISKCON Vizag (Gambheeram)"],
-  streetAddress: "Chaitanya Bhavan, Hare Krishna Vaikuntam Cultural Centre, IIM Rd, opp. Akshaya Patra Foundation, Gambhiram",
+  // Written exactly as on the Google Business Profile — Google trusts a
+  // listing more when the website and profile addresses match.
+  streetAddress: "Door No: 8-22, IIM Rd, near Akshaya Patra Foundation Kitchen, Gambhiram",
   locality: "Visakhapatnam",
   region: "Andhra Pradesh",
   postalCode: "531163",

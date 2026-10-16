@@ -13,8 +13,8 @@ const facts = [
 ];
 
 /** GVD "Fulfilling Srila Prabhupada's Dream" — full-width photo card with copy over a navy wash. */
-export default async function DivineVision() {
-  const t = await getT();
+export default function DivineVision({ lang }: { lang: string }) {
+  const t = getT(lang);
   return (
     <section className="vk-section">
       <div className="vk-container">
