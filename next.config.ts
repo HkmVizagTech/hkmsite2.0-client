@@ -81,13 +81,9 @@ const nextConfig: NextConfig = {
     const TE = [{ type: "cookie" as const, key: "hk_lang", value: "te" }];
     const PUBLIC = "/:path((?!(?:te|en|admin|api|_next|_vercel)(?:/|$)|donations/admin(?:/|$)).+)";
     return {
-      // "/" has no file of its own, so it can be rewritten before the
-      // filesystem check — as an afterFiles rule Vercel still routed the bare
-      // homepage through a function in iad1 (seen live on x-vercel-id).
-      beforeFiles: [
-        { source: "/", has: TE, destination: "/te" },
-        { source: "/", destination: "/en" },
-      ],
+      // "/" is its own route (app/page.tsx, the English home); Telugu
+      // visitors are sent to /te before that route is matched.
+      beforeFiles: [{ source: "/", has: TE, destination: "/te" }],
       afterFiles: [
         { source: PUBLIC, has: TE, destination: "/te/:path" },
         { source: PUBLIC, destination: "/en/:path" },
