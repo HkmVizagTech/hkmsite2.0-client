@@ -81,10 +81,14 @@ const nextConfig: NextConfig = {
     const TE = [{ type: "cookie" as const, key: "hk_lang", value: "te" }];
     const PUBLIC = "/:path((?!(?:te|en|admin|api|_next|_vercel)(?:/|$)|donations/admin(?:/|$)).+)";
     return {
-      beforeFiles: [],
-      afterFiles: [
+      // "/" has no file of its own, so it can be rewritten before the
+      // filesystem check — as an afterFiles rule Vercel still routed the bare
+      // homepage through a function in iad1 (seen live on x-vercel-id).
+      beforeFiles: [
         { source: "/", has: TE, destination: "/te" },
         { source: "/", destination: "/en" },
+      ],
+      afterFiles: [
         { source: PUBLIC, has: TE, destination: "/te/:path" },
         { source: PUBLIC, destination: "/en/:path" },
       ],
