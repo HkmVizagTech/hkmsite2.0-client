@@ -67,8 +67,35 @@ const nextConfig: NextConfig = {
   // ranking penalty for exactly the queries we want these pages to win.
   // 301s here merge any existing backlinks/index signal from the old URL
   // into the new page and stop Google indexing both.
+  // Language routing (public pages live under app/[lang]/, prerendered for
+  // en and te). Done here rather than in a proxy.ts on purpose: on Vercel,
+  // config rewrites run at the edge next to the visitor, while a Next 16
+  // proxy always runs as a server function in one region (iad1, USA) — an
+  // extra trans-Pacific hop on every page view from India.
+  //   /x     -> /en/x, or /te/x when the visitor chose Telugu (hk_lang=te)
+  //   /te/x  -> served as-is (Telugu URL Google indexes)
+  //   /en/x  -> 308 to /x (below, in redirects)
+  // afterFiles: static files and staff pages (/admin, /donations/admin, /api)
+  // match first; these apply before the [lang] dynamic route would catch /x.
+  async rewrites() {
+    const TE = [{ type: "cookie" as const, key: "hk_lang", value: "te" }];
+    const PUBLIC = "/:path((?!(?:te|en|admin|api|_next|_vercel)(?:/|$)|donations/admin(?:/|$)).+)";
+    return {
+      beforeFiles: [],
+      afterFiles: [
+        { source: "/", has: TE, destination: "/te" },
+        { source: "/", destination: "/en" },
+        { source: PUBLIC, has: TE, destination: "/te/:path" },
+        { source: PUBLIC, destination: "/en/:path" },
+      ],
+      fallback: [],
+    };
+  },
   async redirects() {
     return [
+      // One English URL per page: /en/x is the internal route only.
+      { source: "/en", destination: "/", permanent: true },
+      { source: "/en/:path*", destination: "/:path*", permanent: true },
       { source: "/donate/gau-seva", destination: "/gau-seva", permanent: true },
       { source: "/donate/anna-daan-seva", destination: "/anna-daan-seva", permanent: true },
       { source: "/donate/square-foot-seva", destination: "/sqft-seva-campaign", permanent: true },

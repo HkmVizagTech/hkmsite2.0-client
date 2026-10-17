@@ -1,12 +1,10 @@
 // URL shape of the two languages:
-//   English  /x        (the internal route is /en/x — proxy.ts rewrites to it)
+//   English  /x        (the internal route is /en/x — next.config.ts rewrites to it)
 //   Telugu   /te/x
-// Shared by proxy.ts, the language switch, metadata (canonical + hreflang)
-// and the sitemap so they can never disagree.
+// Shared by the language switch, metadata (canonical + hreflang) and the
+// sitemap so they can never disagree. Staff tools (/admin, /donations/admin)
+// and /api are never localised; the rewrites in next.config.ts skip them.
 import { DEFAULT_LOCALE, type Locale } from "./config";
-
-/** Paths that are never localised (staff tools, API proxies, files). */
-export const UNLOCALIZED_PREFIXES = ["/admin", "/api", "/donations/admin", "/_next", "/_vercel"];
 
 /**
  * Pages whose content is actually translated into Telugu. Only these get a

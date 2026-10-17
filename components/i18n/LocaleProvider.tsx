@@ -19,11 +19,16 @@ export function LocaleProvider({ locale, children }: { locale: Locale; children:
   // Telugu pages once hydrated (screen readers, browser translate prompts).
   useEffect(() => {
     document.documentElement.lang = locale;
+    // Arriving on a /te/ page (e.g. from Google) means Telugu: remember it so
+    // links to plain URLs stay in Telugu (the rewrites in next.config.ts read it).
+    if (locale === "te" && !document.cookie.split("; ").includes(`${LOCALE_COOKIE}=te`)) {
+      document.cookie = `${LOCALE_COOKIE}=te; path=/; max-age=${60 * 60 * 24 * 365}; samesite=lax`;
+    }
   }, [locale]);
   const setLocale = useCallback((next: Locale) => {
     document.cookie = `${LOCALE_COOKIE}=${next}; path=/; max-age=${60 * 60 * 24 * 365}; samesite=lax`;
-    // Telugu has its own URLs (/te/…), English the plain ones; proxy.ts uses
-    // the cookie so links to plain URLs stay in the chosen language.
+    // Telugu has its own URLs (/te/…), English the plain ones; the rewrites in
+    // next.config.ts use the cookie so links to plain URLs stay in the chosen language.
     const { pathname, search, hash } = window.location;
     window.location.assign(localizedPath(pathname, next) + search + hash);
   }, []);

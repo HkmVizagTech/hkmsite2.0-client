@@ -1,7 +1,7 @@
 // Server components only. The language comes from the URL segment
 // (app/[lang]/…), not a cookie, so every page can be prerendered once per
-// language and served from the CDN cache. proxy.ts maps /x to /en/x (or to
-// /te/x for a visitor who chose Telugu) and serves /te/x as-is.
+// language and served from the CDN cache. The rewrites in next.config.ts map
+// /x to /en/x (or to /te/x for a visitor who chose Telugu).
 import { DEFAULT_LOCALE, isLocale, type Locale } from "./config";
 import { makeT, type TFunction } from "./translate";
 
