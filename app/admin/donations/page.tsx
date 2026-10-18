@@ -29,6 +29,7 @@ import NeedsWhatsAppTab from "./NeedsWhatsAppTab";
 import PrasadamTab from "@/components/admin/PrasadamTab";
 import UpiMatchTab from "./UpiMatchTab";
 import PaymentFailuresTab from "./PaymentFailuresTab";
+import MonthlySevaTab from "./MonthlySevaTab";
 
 const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:3003";
 
@@ -208,6 +209,7 @@ export default function AdminDonations() {
           <TabsTrigger value="manual-entry">Manual Entry</TabsTrigger>
           <TabsTrigger value="upi-match">UPI to Match</TabsTrigger>
           <TabsTrigger value="payment-failures">Payment failures</TabsTrigger>
+          <TabsTrigger value="monthly-seva">Monthly Seva</TabsTrigger>
           <TabsTrigger value="needs-receipt">DCC receipts</TabsTrigger>
           <TabsTrigger value="needs-whatsapp">Needs WhatsApp</TabsTrigger>
           <TabsTrigger value="prasadam">Prasadam</TabsTrigger>
@@ -508,6 +510,10 @@ export default function AdminDonations() {
 
         <TabsContent value="payment-failures" className="mt-6">
           <PaymentFailuresTab />
+        </TabsContent>
+
+        <TabsContent value="monthly-seva" className="mt-6">
+          <MonthlySevaTab />
         </TabsContent>
 
         <TabsContent value="needs-receipt" className="mt-6">
