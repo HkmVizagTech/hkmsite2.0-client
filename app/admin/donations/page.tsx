@@ -64,6 +64,30 @@ interface Stats {
   sevaWise: { name: string; value: number; count: number }[];
 }
 
+/** Pill switcher for the screens grouped under one top-level tab. */
+function SubTabs({ items }: { items: { value: string; label: string; content: React.ReactNode }[] }) {
+  return (
+    <Tabs defaultValue={items[0].value}>
+      <TabsList className="h-auto max-w-full flex-wrap justify-start gap-2 bg-transparent p-0">
+        {items.map((i) => (
+          <TabsTrigger
+            key={i.value}
+            value={i.value}
+            className="rounded-full border border-border px-3 py-1.5 text-sm data-[state=active]:border-primary data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-none"
+          >
+            {i.label}
+          </TabsTrigger>
+        ))}
+      </TabsList>
+      {items.map((i) => (
+        <TabsContent key={i.value} value={i.value} className="mt-5">
+          {i.content}
+        </TabsContent>
+      ))}
+    </Tabs>
+  );
+}
+
 export default function AdminDonations() {
   const [search, setSearch] = useState("");
   const [sevaFilter, setSevaFilter] = useState("all");
@@ -203,18 +227,15 @@ export default function AdminDonations() {
       </div>
 
       <Tabs defaultValue="overview">
+        {/* Six groups instead of eleven tabs; related screens sit together as
+            sub-tabs (SubTabs below), so nothing is more than one extra click. */}
         <TabsList className="max-w-full justify-start overflow-x-auto">
           <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="reports">Reports</TabsTrigger>
-          <TabsTrigger value="manual-entry">Manual Entry</TabsTrigger>
-          <TabsTrigger value="upi-match">UPI to Match</TabsTrigger>
-          <TabsTrigger value="payment-failures">Payment failures</TabsTrigger>
           <TabsTrigger value="monthly-seva">Monthly Seva</TabsTrigger>
-          <TabsTrigger value="needs-receipt">DCC receipts</TabsTrigger>
-          <TabsTrigger value="needs-whatsapp">Needs WhatsApp</TabsTrigger>
-          <TabsTrigger value="prasadam">Prasadam</TabsTrigger>
-          <TabsTrigger value="utm-analytics">UTM Analytics</TabsTrigger>
-          <TabsTrigger value="utm-builder">UTM Builder</TabsTrigger>
+          <TabsTrigger value="receipts">Receipts</TabsTrigger>
+          <TabsTrigger value="payment-issues">Payment issues</TabsTrigger>
+          <TabsTrigger value="entry-prasadam">Manual Entry &amp; Prasadam</TabsTrigger>
+          <TabsTrigger value="reports">Reports</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="mt-6 space-y-6">
@@ -496,44 +517,45 @@ export default function AdminDonations() {
 
         </TabsContent>
 
-        <TabsContent value="reports" className="mt-6">
-          <ReportsTab />
-        </TabsContent>
-
-        <TabsContent value="manual-entry" className="mt-6">
-          <ManualEntryTab />
-        </TabsContent>
-
-        <TabsContent value="upi-match" className="mt-6">
-          <UpiMatchTab />
-        </TabsContent>
-
-        <TabsContent value="payment-failures" className="mt-6">
-          <PaymentFailuresTab />
-        </TabsContent>
-
         <TabsContent value="monthly-seva" className="mt-6">
           <MonthlySevaTab />
         </TabsContent>
 
-        <TabsContent value="needs-receipt" className="mt-6">
-          <DccReceiptsTab />
+        <TabsContent value="receipts" className="mt-6">
+          <SubTabs
+            items={[
+              { value: "dcc", label: "DCC receipts", content: <DccReceiptsTab /> },
+              { value: "whatsapp", label: "Needs WhatsApp", content: <NeedsWhatsAppTab /> },
+            ]}
+          />
         </TabsContent>
 
-        <TabsContent value="needs-whatsapp" className="mt-6">
-          <NeedsWhatsAppTab />
+        <TabsContent value="payment-issues" className="mt-6">
+          <SubTabs
+            items={[
+              { value: "failures", label: "Payment failures", content: <PaymentFailuresTab /> },
+              { value: "upi", label: "UPI to Match", content: <UpiMatchTab /> },
+            ]}
+          />
         </TabsContent>
 
-        <TabsContent value="prasadam" className="mt-6">
-          <PrasadamTab />
+        <TabsContent value="entry-prasadam" className="mt-6">
+          <SubTabs
+            items={[
+              { value: "manual", label: "Manual Entry", content: <ManualEntryTab /> },
+              { value: "prasadam", label: "Prasadam", content: <PrasadamTab /> },
+            ]}
+          />
         </TabsContent>
 
-        <TabsContent value="utm-analytics" className="mt-6">
-          <SiteUtmAnalyticsTab />
-        </TabsContent>
-
-        <TabsContent value="utm-builder" className="mt-6">
-          <UtmBuilderTab />
+        <TabsContent value="reports" className="mt-6">
+          <SubTabs
+            items={[
+              { value: "reports", label: "Reports", content: <ReportsTab /> },
+              { value: "utm-analytics", label: "UTM Analytics", content: <SiteUtmAnalyticsTab /> },
+              { value: "utm-builder", label: "UTM Builder", content: <UtmBuilderTab /> },
+            ]}
+          />
         </TabsContent>
       </Tabs>
 
