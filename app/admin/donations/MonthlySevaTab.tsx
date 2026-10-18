@@ -44,13 +44,40 @@ interface Row {
   live?: Live;
 }
 
+type Bucket = "active" | "authorised" | "failing" | "notStarted" | "ended" | "unknown";
+
 interface Data {
   total: number;
   page: number;
   totalPages: number;
-  summary: { subscriptions: number; chargesRecorded: number; collected: number; thisMonthCharges: number; thisMonthAmount: number };
+  liveCheckedAt?: string;
+  liveErrors?: Record<string, string>;
+  summary: {
+    subscriptions: number;
+    activeCount: number;
+    activeMonthly: number;
+    authorisedCount: number;
+    authorisedMonthly: number;
+    needsAttention: number;
+    chargesRecorded: number;
+    collected: number;
+    thisMonthCharges: number;
+    thisMonthAmount: number;
+  };
+  statusCounts: Record<Bucket, number>;
+  sevaOptions: string[];
   subscriptions: Row[];
 }
+
+const FILTERS: { key: "all" | Bucket; label: string }[] = [
+  { key: "all", label: "All" },
+  { key: "active", label: "Active" },
+  { key: "authorised", label: "Authorised (first charge due)" },
+  { key: "failing", label: "Charge failing / halted" },
+  { key: "notStarted", label: "Not authorised" },
+  { key: "ended", label: "Cancelled / ended" },
+  { key: "unknown", label: "Status unknown" },
+];
 
 const inr = (n: number) => `₹${Math.round(n || 0).toLocaleString("en-IN")}`;
 const day = (s?: string | null) =>
@@ -75,13 +102,20 @@ export default function MonthlySevaTab() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [query, setQuery] = useState("");
+  const [status, setStatus] = useState<"all" | Bucket>("all");
+  const [seva, setSeva] = useState("");
+  const [attention, setAttention] = useState(false);
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (fresh = false) => {
     setLoading(true);
     setError("");
     try {
       const params = new URLSearchParams({ page: String(page), limit: "25" });
       if (query) params.set("search", query);
+      if (status !== "all") params.set("status", status);
+      if (seva) params.set("seva", seva);
+      if (attention) params.set("attention", "1");
+      if (fresh) params.set("fresh", "1");
       const res = await authFetch(`${API_URL}/donations/subscriptions?${params}`, { credentials: "include" });
       const json = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(json.message || "Could not load monthly seva.");
@@ -91,7 +125,7 @@ export default function MonthlySevaTab() {
     } finally {
       setLoading(false);
     }
-  }, [page, query]);
+  }, [page, query, status, seva, attention]);
 
   useEffect(() => {
     load();
@@ -113,7 +147,7 @@ export default function MonthlySevaTab() {
             Razorpay&apos;s live figures.
           </p>
         </div>
-        <Button variant="outline" size="sm" onClick={load} disabled={loading} className="gap-1.5">
+        <Button variant="outline" size="sm" onClick={() => load(true)} disabled={loading} className="gap-1.5">
           <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} /> Refresh
         </Button>
       </div>
@@ -121,19 +155,78 @@ export default function MonthlySevaTab() {
       {s && (
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           {[
-            { label: "Monthly sevas", value: String(s.subscriptions), sub: "signed up (all time)" },
-            { label: "Charges received", value: String(s.chargesRecorded), sub: "months paid, all donors" },
-            { label: "Collected", value: inr(s.collected), sub: "from monthly seva" },
-            { label: "This month", value: inr(s.thisMonthAmount), sub: `${s.thisMonthCharges} charge${s.thisMonthCharges === 1 ? "" : "s"}` },
+            {
+              label: "Active monthly worth",
+              value: `${inr(s.activeMonthly)}/month`,
+              sub: `${s.activeCount} active · about ${inr(s.activeMonthly * 12)} a year`,
+              strong: true,
+            },
+            {
+              label: "Starting soon",
+              value: `${inr(s.authorisedMonthly)}/month`,
+              sub: `${s.authorisedCount} authorised, first charge due`,
+            },
+            { label: "Collected", value: inr(s.collected), sub: `${s.chargesRecorded} monthly charges, all time` },
+            { label: "This month", value: inr(s.thisMonthAmount), sub: `${s.thisMonthCharges} charge${s.thisMonthCharges === 1 ? "" : "s"} received` },
           ].map((k) => (
-            <Card key={k.label}>
+            <Card key={k.label} className={k.strong ? "border-green-300 bg-green-50/60" : undefined}>
               <CardContent className="p-4">
                 <p className="text-xs text-muted-foreground">{k.label}</p>
-                <p className="text-2xl font-bold">{k.value}</p>
+                <p className={`text-2xl font-bold ${k.strong ? "text-green-700" : ""}`}>{k.value}</p>
                 <p className="text-xs text-muted-foreground">{k.sub}</p>
               </CardContent>
             </Card>
           ))}
+        </div>
+      )}
+
+      {data && (
+        <div className="space-y-3">
+          <div className="flex flex-wrap gap-2">
+            {FILTERS.filter((f) => f.key === "all" || f.key === status || (data.statusCounts?.[f.key as Bucket] ?? 0) > 0).map((f) => {
+              const n = f.key === "all" ? s?.subscriptions ?? 0 : data.statusCounts?.[f.key as Bucket] ?? 0;
+              const on = status === f.key;
+              return (
+                <button
+                  key={f.key}
+                  type="button"
+                  onClick={() => { setStatus(f.key); setPage(1); }}
+                  className={`rounded-full border px-3 py-1.5 text-sm ${on ? "border-primary bg-primary text-primary-foreground" : "bg-background hover:bg-muted"}`}
+                >
+                  {f.label} <span className={on ? "opacity-80" : "text-muted-foreground"}>{n}</span>
+                </button>
+              );
+            })}
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <select
+              value={seva}
+              onChange={(e) => { setSeva(e.target.value); setPage(1); }}
+              className="h-9 rounded-md border border-input bg-background px-2 text-sm"
+              aria-label="Filter by seva"
+            >
+              <option value="">All sevas</option>
+              {(data.sevaOptions || []).map((o) => (
+                <option key={o} value={o}>{o}</option>
+              ))}
+            </select>
+            <label className="inline-flex items-center gap-2 text-sm">
+              <input type="checkbox" checked={attention} onChange={(e) => { setAttention(e.target.checked); setPage(1); }} />
+              Needs attention only{s && s.needsAttention > 0 ? ` (${s.needsAttention})` : ""}
+            </label>
+            {data.liveCheckedAt && (
+              <span className="text-xs text-muted-foreground">
+                Razorpay status as of{" "}
+                {new Date(data.liveCheckedAt).toLocaleTimeString("en-IN", { timeZone: "Asia/Kolkata", hour: "numeric", minute: "2-digit" })}{" "}
+                (Refresh to re-check)
+              </span>
+            )}
+          </div>
+          {data.liveErrors && Object.keys(data.liveErrors).length > 0 && (
+            <p className="text-xs text-red-700">
+              Couldn&apos;t read Razorpay for {Object.keys(data.liveErrors).join(", ")}; those rows show no live status.
+            </p>
+          )}
         </div>
       )}
 
@@ -160,7 +253,7 @@ export default function MonthlySevaTab() {
       ) : rows.length === 0 ? (
         <Card>
           <CardContent className="py-10 text-center text-sm text-muted-foreground">
-            {query ? "No monthly seva matches that search." : "No monthly seva sign-ups yet."}
+            {query || status !== "all" || seva || attention ? "No monthly seva matches these filters." : "No monthly seva sign-ups yet."}
           </CardContent>
         </Card>
       ) : (
