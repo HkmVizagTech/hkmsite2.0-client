@@ -3,7 +3,8 @@ import { NextResponse } from 'next/server';
 const API = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || 'http://localhost:3003';
 
 export async function GET(req: Request, context: any) {
-  const params = context?.params || {};
+  // Next 16: route params are a Promise; reading them directly gave "undefined".
+  const params = (await context?.params) || {};
   const { id } = params as { id?: string };
   try {
     const url = new URL(req.url);
@@ -23,7 +24,8 @@ export async function GET(req: Request, context: any) {
 }
 
 export async function POST(req: Request, context: any) {
-  const params = context?.params || {};
+  // Next 16: route params are a Promise; reading them directly gave "undefined".
+  const params = (await context?.params) || {};
   const { id } = params as { id?: string };
   try {
     const body = await req.text();

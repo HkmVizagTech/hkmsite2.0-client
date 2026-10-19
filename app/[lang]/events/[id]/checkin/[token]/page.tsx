@@ -3,8 +3,10 @@
 import React, { useEffect, useState } from "react";
 import PageLayout from "@/components/PageLayout";
 
-export default function CheckinPage({ params }: any) {
-  const { id, token } = params;
+export default function CheckinPage({ params }: { params: Promise<{ id: string; token: string }> }) {
+  // Next 16: params is a Promise; reading it directly gave "undefined" and
+  // every QR check-in failed.
+  const { id, token } = React.use(params);
   const [status, setStatus] = useState<string | null>(null);
   const [registration, setRegistration] = useState<any>(null);
   const [loading, setLoading] = useState(true);

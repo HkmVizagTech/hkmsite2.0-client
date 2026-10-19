@@ -11,7 +11,27 @@ type Registration = {
   files?: { url: string; fieldname?: string }[];
   present?: boolean;
   createdAt?: string;
+  paymentStatus?: "not_required" | "pending" | "paid";
+  amount?: number;
 };
+
+// The server stores attendance as attendance.present and attachments as plain
+// URLs; the views below read r.present and f.url. (Without this, Present was
+// always "No" and attachment links were dead.)
+function normalize(r: any): Registration {
+  return {
+    ...r,
+    present: !!(r.present ?? r.attendance?.present),
+    files: (r.files || []).map((f: any) => (typeof f === "string" ? { url: f } : f)),
+  };
+}
+
+// "Paid ₹300" / "Fee pending" for events with a registration fee.
+function paymentNote(r: Registration) {
+  if (r.paymentStatus === "paid") return ` · Paid${r.amount ? ` ₹${r.amount}` : ""}`;
+  if (r.paymentStatus === "pending") return " · Fee pending";
+  return "";
+}
 
 export default function RegistrationsList({ eventId, tableOnly }: { eventId: string; tableOnly?: boolean }) {
   const [registrations, setRegistrations] = useState<Registration[]>([]);
@@ -90,7 +110,7 @@ export default function RegistrationsList({ eventId, tableOnly }: { eventId: str
   return;
       }
       const json = await res.json();
-      setRegistrations(json.items || []);
+      setRegistrations((json.items || []).map(normalize));
       setTotal(json.total || 0);
       setPage(p);
     } catch (e) {
@@ -216,7 +236,7 @@ export default function RegistrationsList({ eventId, tableOnly }: { eventId: str
                       <button className="px-2 py-1 border rounded text-xs" onClick={() => navigator.clipboard?.writeText(`${typeof window !== 'undefined' ? window.location.origin : (process.env.NEXT_PUBLIC_SITE_URL || '')}/events/${eventId}/checkin/${encodeURIComponent(r.token)}`)}>Copy</button>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-sm whitespace-nowrap">{r.present ? 'Yes' : 'No'}</td>
+                  <td className="px-4 py-3 text-sm whitespace-nowrap">{r.present ? 'Yes' : 'No'}{paymentNote(r)}</td>
                   <td className="px-4 py-3 text-sm whitespace-nowrap">{r.createdAt ? new Date(r.createdAt).toLocaleString() : '-'}</td>
                 </tr>
               ))}
@@ -300,7 +320,7 @@ export default function RegistrationsList({ eventId, tableOnly }: { eventId: str
                         <button className="px-2 py-1 border rounded text-xs" onClick={() => navigator.clipboard?.writeText(`${typeof window !== 'undefined' ? window.location.origin : (process.env.NEXT_PUBLIC_SITE_URL || '')}/events/${eventId}/checkin/${encodeURIComponent(r.token)}`)}>Copy</button>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-sm whitespace-nowrap">{r.present ? 'Yes' : 'No'}</td>
+                    <td className="px-4 py-3 text-sm whitespace-nowrap">{r.present ? 'Yes' : 'No'}{paymentNote(r)}</td>
                     <td className="px-4 py-3 text-sm whitespace-nowrap">{r.createdAt ? new Date(r.createdAt).toLocaleString() : '-'}</td>
                   </tr>
                 );
@@ -327,7 +347,7 @@ export default function RegistrationsList({ eventId, tableOnly }: { eventId: str
                         <div className="text-sm text-muted-foreground">{r.data?.email || '-'}</div>
                       </div>
                       <div className="text-sm">
-                        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${r.present ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-700'}`}>{r.present ? 'Present' : 'Absent'}</span>
+                        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${r.present ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-700'}`}>{r.present ? 'Present' : 'Absent'}{paymentNote(r)}</span>
                       </div>
                     </div>
                     <div className="mt-3 text-sm">
