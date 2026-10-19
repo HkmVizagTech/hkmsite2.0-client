@@ -2,6 +2,20 @@
 
 import React, { useState } from "react";
 import { CheckCircle2, Upload, ChevronDown, Sparkles } from "lucide-react";
+import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
+
+const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
+
+// What the server returns for an event with a registration fee.
+type PaymentOrder = { orderId: string; amount: number; currency: string; key: string; eventTitle?: string };
+type Pending = { regId: string; token: string; payment: PaymentOrder };
+
+// Fee options as the admin form builder stores them (key sent as paymentChoice).
+const FEE_OPTIONS = [
+  { choice: "student", field: "studentPrice", label: "Student" },
+  { choice: "job", field: "jobPrice", label: "Professional" },
+  { choice: "general", field: "price", label: "General" },
+] as const;
 
 type FieldDef = {
   id: string;
@@ -50,8 +64,81 @@ export default function EventRegistrationForm({ eventId, formSchema, event }: Pr
   const [submitting, setSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [paymentChoice, setPaymentChoice] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [pending, setPending] = useState<Pending | null>(null);
+  const razorpayReady = useRazorpayPreload();
+
+  // Fee options with a real price (the server ignores options left at 0).
+  const pay = formSchema?.payment;
+  const feeOptions = pay?.enabled
+    ? FEE_OPTIONS.map((o) => ({ ...o, amount: Number(pay[o.field]) })).filter((o) => o.amount > 0)
+    : [];
+  const paidEvent = feeOptions.length > 0;
+  const chosenFee = paymentChoice || (feeOptions.length === 1 ? feeOptions[0].choice : null);
 
   if (!formSchema?.enabled) return null;
+
+  // Prefill Razorpay with what the visitor typed in email / phone fields.
+  const prefill = () => {
+    const byType = (t: string) => formSchema.fields.find((f) => f.type === t && state[f.id])?.id;
+    const nameField = formSchema.fields.find((f) => f.type === "text" && /name/i.test(f.label) && state[f.id])?.id;
+    const emailId = byType("email");
+    const telId = byType("tel");
+    return {
+      ...(nameField ? { name: String(state[nameField]) } : {}),
+      ...(emailId ? { email: String(state[emailId]) } : {}),
+      ...(telId ? { contact: String(state[telId]) } : {}),
+    };
+  };
+
+  // Opens Razorpay for a registration that needs its fee paid. Can be called
+  // again (same order) if the visitor closed the window.
+  async function openCheckout(p: Pending) {
+    setSubmitError(null);
+    setSubmitting(true);
+    try {
+      await razorpayReady();
+      const Razorpay = (window as unknown as { Razorpay?: new (o: object) => { open: () => void } }).Razorpay;
+      if (!Razorpay) throw new Error("no checkout");
+      new Razorpay({
+        key: p.payment.key,
+        order_id: p.payment.orderId,
+        amount: p.payment.amount,
+        currency: p.payment.currency,
+        name: "ISKCON Gambheeram Visakhapatnam",
+        description: `${p.payment.eventTitle || event?.title || "Event"} — registration`,
+        prefill: prefill(),
+        theme: { color: "#1e3a8a" },
+        handler: async (resp: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) => {
+          try {
+            const vr = await fetch(`${API_URL}/events/${eventId}/registrations/${p.regId}/verify-payment`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(resp),
+            });
+            if (vr.ok) setSuccessMessage("Registered and paid! 🎉");
+            else setSuccessMessage("Payment received — confirming your registration. 🙏");
+          } catch {
+            // Razorpay also tells our server directly, so the registration
+            // is still marked paid.
+            setSuccessMessage("Payment received — confirming your registration. 🙏");
+          } finally {
+            setPending(null);
+            setSubmitting(false);
+          }
+        },
+        modal: {
+          ondismiss: () => {
+            setSubmitting(false);
+            setSubmitError("Payment not completed. Your details are saved — tap Pay to finish registering.");
+          },
+        },
+      }).open();
+    } catch {
+      setSubmitting(false);
+      setSubmitError("Couldn't open the payment window. Please check your connection and tap Pay again.");
+    }
+  }
 
   const onChange = (id: string, val: any) => {
     setState((prev) => ({ ...prev, [id]: val }));
@@ -74,8 +161,13 @@ export default function EventRegistrationForm({ eventId, formSchema, event }: Pr
         else if (f.type !== "file" && !val) newErrors[f.id] = "This field is required";
       }
     });
+    if (paidEvent && !chosenFee) newErrors.__fee = "Please choose a registration fee option";
     if (Object.keys(newErrors).length) { setErrors(newErrors); return; }
 
+    // Already registered, only the payment is left: reopen checkout.
+    if (pending) { openCheckout(pending); return; }
+
+    setSubmitError(null);
     setSubmitting(true);
     try {
       const fd = new FormData();
@@ -86,14 +178,27 @@ export default function EventRegistrationForm({ eventId, formSchema, event }: Pr
         else fd.append(key, String(val));
       }
       Object.keys(files).forEach((k) => files[k] && fd.append(k, files[k]!));
-      if (paymentChoice) fd.append("paymentChoice", paymentChoice);
+      if (chosenFee) fd.append("paymentChoice", chosenFee);
 
-      const res = await fetch(`/events/${eventId}/register`, { method: "POST", body: fd, credentials: 'include' });
-      if (res.ok) setSuccessMessage("Registered Successfully! 🎉");
-      else setSuccessMessage("Registered Successfully! 🎉");
-    } catch {
+      // The API server, not this website (it used to post to a page that
+      // doesn't exist and show "Registered" whatever happened).
+      const res = await fetch(`${API_URL}/events/${eventId}/register`, { method: "POST", body: fd });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setSubmitError(json.message || "Registration failed. Please try again.");
+        setSubmitting(false);
+        return;
+      }
+      if (json.payment) {
+        const p: Pending = { regId: String(json.id), token: String(json.token), payment: json.payment };
+        setPending(p);
+        await openCheckout(p);
+        return;
+      }
       setSuccessMessage("Registered Successfully! 🎉");
-    } finally {
+      setSubmitting(false);
+    } catch {
+      setSubmitError("Couldn't reach the server. Please check your connection and try again.");
       setSubmitting(false);
     }
   }
@@ -205,7 +310,8 @@ export default function EventRegistrationForm({ eventId, formSchema, event }: Pr
           <label className="flex min-h-[56px] cursor-pointer items-center gap-3 rounded-xl border-2 border-dashed border-vk-200 bg-vk-50 px-4 py-3 text-sm text-muted-foreground transition-all hover:border-vk-500 hover:bg-vk-100/60">
             <Upload className="h-5 w-5 shrink-0 text-vk-600" />
             <span>{files[f.id]?.name || `Choose ${f.label.toLowerCase()}`}</span>
-            <input type="file" className="sr-only" onChange={(e) => onFile(f.id, e.target.files?.[0])} />
+            {/* The server accepts images only. */}
+            <input type="file" accept="image/*" className="sr-only" onChange={(e) => onFile(f.id, e.target.files?.[0])} />
           </label>
         );
 
@@ -266,48 +372,41 @@ export default function EventRegistrationForm({ eventId, formSchema, event }: Pr
           ))}
         </div>
 
-        {formSchema.payment?.enabled && (
+        {paidEvent && (
           <div className="space-y-3 rounded-2xl border border-vk-200 bg-vk-50 p-5">
-            <h3 className="font-semibold text-ink">Select Payment Option</h3>
+            <h3 className="font-semibold text-ink">Registration fee</h3>
             <div className="flex flex-wrap gap-3">
-              {formSchema.payment.studentPrice != null && (
+              {feeOptions.map((o) => (
                 <label
+                  key={o.choice}
                   className={`inline-flex min-h-[44px] cursor-pointer items-center rounded-xl border-2 px-5 text-sm font-medium transition-all ${
-                    paymentChoice === "student"
+                    chosenFee === o.choice
                       ? "border-vk-700 bg-vk-700 text-white shadow-md"
                       : "border-vk-200 bg-white text-ink/80 hover:border-vk-700"
-                  }`}
+                  } ${pending ? "pointer-events-none opacity-70" : ""}`}
                 >
-                  <input type="radio" name="payment" className="sr-only" onChange={() => setPaymentChoice("student")} />
-                  Student — ₹{formSchema.payment.studentPrice}
+                  <input
+                    type="radio"
+                    name="payment"
+                    className="sr-only"
+                    checked={chosenFee === o.choice}
+                    disabled={!!pending}
+                    onChange={() => {
+                      setPaymentChoice(o.choice);
+                      setErrors((prev) => { const n = { ...prev }; delete n.__fee; return n; });
+                    }}
+                  />
+                  {feeOptions.length > 1 ? `${o.label} — ` : ""}₹{o.amount.toLocaleString("en-IN")}
                 </label>
-              )}
-              {formSchema.payment.jobPrice != null && (
-                <label
-                  className={`inline-flex min-h-[44px] cursor-pointer items-center rounded-xl border-2 px-5 text-sm font-medium transition-all ${
-                    paymentChoice === "job"
-                      ? "border-vk-700 bg-vk-700 text-white shadow-md"
-                      : "border-vk-200 bg-white text-ink/80 hover:border-vk-700"
-                  }`}
-                >
-                  <input type="radio" name="payment" className="sr-only" onChange={() => setPaymentChoice("job")} />
-                  Professional — ₹{formSchema.payment.jobPrice}
-                </label>
-              )}
-              {formSchema.payment.price != null && (
-                <label
-                  className={`inline-flex min-h-[44px] cursor-pointer items-center rounded-xl border-2 px-5 text-sm font-medium transition-all ${
-                    paymentChoice === "general"
-                      ? "border-vk-700 bg-vk-700 text-white shadow-md"
-                      : "border-vk-200 bg-white text-ink/80 hover:border-vk-700"
-                  }`}
-                >
-                  <input type="radio" name="payment" className="sr-only" onChange={() => setPaymentChoice("general")} />
-                  General — ₹{formSchema.payment.price}
-                </label>
-              )}
+              ))}
             </div>
+            {errors.__fee && <p className="text-xs font-medium text-destructive">{errors.__fee}</p>}
+            <p className="text-xs text-muted-foreground">You&apos;ll pay securely through Razorpay (UPI, card or net banking) to complete your registration.</p>
           </div>
+        )}
+
+        {submitError && (
+          <p className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{submitError}</p>
         )}
 
         <button
@@ -315,7 +414,13 @@ export default function EventRegistrationForm({ eventId, formSchema, event }: Pr
           disabled={submitting}
           className="vk-btn-primary min-h-[52px] w-full text-base active:scale-[0.98]"
         >
-          {submitting ? "Submitting…" : "Register Now 🙏"}
+          {(() => {
+            const fee = feeOptions.find((o) => o.choice === chosenFee);
+            if (submitting) return pending ? "Opening payment…" : "Submitting…";
+            if (pending && fee) return `Pay ₹${fee.amount.toLocaleString("en-IN")} to complete registration`;
+            if (paidEvent) return fee ? `Register & Pay ₹${fee.amount.toLocaleString("en-IN")} 🙏` : "Register & Pay 🙏";
+            return "Register Now 🙏";
+          })()}
         </button>
       </form>
     </div>
