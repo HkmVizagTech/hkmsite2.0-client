@@ -26,6 +26,7 @@ type ImportantDate = {
 };
 
 type DisplayEvent = {
+  slug?: string;
   _id?: string;
   title: string;
   date: string;
@@ -200,7 +201,7 @@ export default function EventsPage() {
 
   const featured = events[0];
   const rest = events.slice(1);
-  const hrefFor = (e: DisplayEvent) => e.href || `/events/${e._id || e.title}`;
+  const hrefFor = (e: DisplayEvent) => e.href || `/events/${e.slug || e._id || e.title}`;
   // When the admin linked a separate landing page, clicking the event opens
   // that page (in a new tab) instead of the on-site event detail.
   const externalOf = (e: DisplayEvent) => e.registrationLink?.trim() || "";

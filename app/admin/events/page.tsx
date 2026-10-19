@@ -35,7 +35,7 @@ export default function AdminEvents() {
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<number | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [form, setForm] = useState<{ title: string; date: string; time: string; location: string; status: string; image: string; images?: string[]; bannerImage?: string; registrationLink?: string; file?: File }>({ title: "", date: "", time: "", location: "", status: "upcoming", image: "", bannerImage: "", registrationLink: "" });
+  const [form, setForm] = useState<{ title: string; date: string; time: string; location: string; status: string; image: string; images?: string[]; bannerImage?: string; registrationLink?: string; slug?: string; file?: File }>({ title: "", date: "", time: "", location: "", status: "upcoming", image: "", bannerImage: "", registrationLink: "", slug: "" });
     const [registrationForm, setRegistrationForm] = useState<any>(null);
     const [showFormBuilder, setShowFormBuilder] = useState(false);
   const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm({
@@ -53,7 +53,7 @@ export default function AdminEvents() {
   };
 
   const openCreate = () => {
-    setForm({ title: "", date: "", time: "", location: "", status: "upcoming", image: "", bannerImage: "", registrationLink: "" });
+    setForm({ title: "", date: "", time: "", location: "", status: "upcoming", image: "", bannerImage: "", registrationLink: "", slug: "" });
   setRegistrationForm(null);
   reset({ title: "", date: "", time: "", location: "", status: "upcoming", category: "", description: "" });
     fileRef.current = null;
@@ -63,7 +63,7 @@ export default function AdminEvents() {
   };
 
   const openEdit = (event: EventType) => {
-  setForm({ title: event.title, date: event.date, time: event.time, location: event.location, status: event.status, image: event.image || (event.images && event.images[0]) || "", images: event.images, bannerImage: (event as any).bannerImage || "", registrationLink: (event as any).registrationLink || "" });
+  setForm({ title: event.title, date: event.date, time: event.time, location: event.location, status: event.status, image: event.image || (event.images && event.images[0]) || "", images: event.images, bannerImage: (event as any).bannerImage || "", registrationLink: (event as any).registrationLink || "", slug: (event as any).slug || "" });
   setRegistrationForm((event as any).registrationForm || null);
   reset({
     title: event.title || "",
@@ -216,6 +216,8 @@ export default function AdminEvents() {
   if (fileRef.current) fd.append("images", fileRef.current);
   if (form.bannerImage) fd.append("bannerImage", form.bannerImage);
   if (form.registrationLink) fd.append("registrationLink", form.registrationLink);
+  // Web address: left empty on a new event, the server makes it from the title.
+  if (form.slug && form.slug.trim()) fd.append("slug", form.slug.trim());
   if (editing) {
         // If admin has a registration form open/set, include it in the update payload
         if (registrationForm) {
@@ -231,7 +233,7 @@ export default function AdminEvents() {
             const normalized = { ...ev, id: ev._id || ev.id || `temp-${Date.now()}` } as any;
             dispatch(updateEvent(normalized));
             // revalidate updated event page
-            try { authFetch(`/api/revalidate`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ path: `/events/${normalized._id || normalized.id}` }) }).catch(()=>null); } catch (_) {}
+            try { authFetch(`/api/revalidate`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ path: `/en/events/${normalized.slug || normalized._id || normalized.id}` }) }).catch(()=>null); authFetch(`/api/revalidate`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ path: `/te/events/${normalized.slug || normalized._id || normalized.id}` }) }).catch(()=>null); } catch (_) {}
           }
           success = true;
         } else {
@@ -253,7 +255,7 @@ export default function AdminEvents() {
             const normalized = { ...ev, id: ev._id || ev.id || `temp-${Date.now()}` } as any;
             dispatch(addEvent(normalized));
             // revalidate created event page
-            try { authFetch(`/api/revalidate`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ path: `/events/${normalized._id || normalized.id}` }) }).catch(()=>null); } catch (_) {}
+            try { authFetch(`/api/revalidate`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ path: `/en/events/${normalized.slug || normalized._id || normalized.id}` }) }).catch(()=>null); authFetch(`/api/revalidate`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ path: `/te/events/${normalized.slug || normalized._id || normalized.id}` }) }).catch(()=>null); } catch (_) {}
           }
           success = true;
         } else {
@@ -389,6 +391,21 @@ export default function AdminEvents() {
                     </a>
                   )}
                 </div>
+                <div className="rounded-xl border border-border p-3">
+                  <p className="mb-1 text-xs font-bold uppercase tracking-wide text-primary">Web address</p>
+                  <p className="mb-2.5 text-[11.5px] leading-relaxed text-muted-foreground">
+                    Made from the title automatically when the event is created. Change it only if needed — links shared
+                    earlier keep working and open the new address.
+                  </p>
+                  <div className="flex items-center gap-1 text-sm">
+                    <span className="shrink-0 text-muted-foreground">harekrishnavizag.org/events/</span>
+                    <Input
+                      placeholder={editing ? "" : "made from the title"}
+                      value={form.slug || ""}
+                      onChange={(e) => setForm({ ...form, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]+/g, "-") })}
+                    />
+                  </div>
+                </div>
                   <div className="flex items-center justify-between">
                     <div />
                     <div>
@@ -484,7 +501,7 @@ export default function AdminEvents() {
                   <div className="p-4">
                     <EventCard
                       event={display}
-                      href={(display as any).registrationLink?.trim() || `/events/${id}`}
+                      href={(display as any).registrationLink?.trim() || `/events/${(display as any).slug || id}`}
                       external={!!(display as any).registrationLink?.trim()}
                       smallCard
                     />

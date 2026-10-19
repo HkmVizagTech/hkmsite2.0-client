@@ -93,7 +93,7 @@ const EventsPreview = () => {
             <Reveal key={(event._id || event.title) + index} delay={Math.min(index, 4) * 0.06}>
               <EventCard
                 event={event as any}
-                href={event.href || `/events/${event._id || event.title}`}
+                href={event.href || `/events/${(event as { slug?: string }).slug || event._id || event.title}`}
               />
             </Reveal>
           ))}
