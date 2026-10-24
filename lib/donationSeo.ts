@@ -279,6 +279,32 @@ export const DONATION_SEO = {
         "Vijayadashami celebrations at ISKCON Gambheeram, Visakhapatnam — abhishekam, homam, alankara and Annadana.",
     },
   },
+  "kartik-deepotsav": {
+    path: "/kartik-deepotsav",
+    title: "Kartik Deepotsav Seva Donation",
+    description:
+      "Offer Annadana, Gau Seva, Pushpalankara and Vastrabharana seva for Kartik Deepotsav (Damodar month) 2026 at ISKCON Gambheeram Visakhapatnam. 80G tax benefit.",
+    keywords: ["damodar month seva Visakhapatnam", "kartika masam seva ISKCON Vizag", "damodar masa 2026", "damodarashtakam Visakhapatnam", ...LOCAL],
+    ogImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1792847552701-1792847546420-DamodaraMonthDesktop1920x730.png",
+    breadcrumb: "Kartik Deepotsav",
+    h1: "Kartik Deepotsav Seva — Damodar Month 2026 in Visakhapatnam",
+    intro: [
+      "Kartik Deepotsav 2026 runs from 26 October to 24 November — a month of daily lamp offerings, the Damodarashtakam and Annadana at Hare Krishna Vaikuntham, Gambheeram.",
+      BENEFIT,
+    ],
+    sevas: [
+      { name: "Annadana Seva", amounts: [1100, 2100, 3100, 5555, 9000, 11000], note: "Eligible for 80G" },
+      { name: "Gau Seva", amounts: [1500, 2500, 3500, 5500, 9500, 11500], note: "Eligible for 80G" },
+      { name: "Pushpalankara Seva", amounts: [1100, 2100, 3100, 5100, 9000, 11111] },
+      { name: "Vastrabharana Seva", amounts: [1100, 3100, 5100, 9999, 15000, 21000] },
+    ],
+    event: {
+      name: "Kartik Deepotsav 2026",
+      startDate: "2026-10-26",
+      description:
+        "Damodar (Kartik) month at ISKCON Gambheeram, Visakhapatnam — daily lamp offering, Damodarashtakam and Annadana.",
+    },
+  },
   "special-occasion": {
     path: "/special-occasion",
     title: "Special Occasion Seva",
