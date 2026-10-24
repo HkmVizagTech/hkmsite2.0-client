@@ -279,6 +279,34 @@ export const DONATION_SEO = {
         "Vijayadashami celebrations at ISKCON Gambheeram, Visakhapatnam — abhishekam, homam, alankara and Annadana.",
     },
   },
+  damodar: {
+    path: "/damodar",
+    title: "Damodar Month Seva Donation",
+    description:
+      "Offer Deepa Daan, Annadana, Gau Seva, Pushpalankara, Vastrabharana and Yajamana seva in Damodar (Kartik) month 2026 at ISKCON Gambheeram Visakhapatnam. 80G tax benefit.",
+    keywords: ["damodar month seva Visakhapatnam", "kartik deepa daan Vizag", "kartika masam seva ISKCON Vizag", "damodar masa 2026", "damodarashtakam Visakhapatnam", ...LOCAL],
+    ogImage: "https://www.harekrishnavizag.org/assets/home-banner-radha-madan-mohan.webp",
+    breadcrumb: "Damodar",
+    h1: "Damodar Month Seva — Kartik 2026 in Visakhapatnam",
+    intro: [
+      "Damodar (Kartik) month 2026 runs from 26 October to 24 November — a month of daily lamp offerings, the Damodarashtakam and Annadana at Hare Krishna Vaikuntham, Gambheeram.",
+      BENEFIT,
+    ],
+    sevas: [
+      { name: "Deepa Daan Seva", amounts: [501, 1100, 2100, 5100, 10800, 21000], note: "Eligible for 80G" },
+      { name: "Annadana Seva", amounts: [1100, 2100, 3100, 5555, 9000, 11000], note: "Eligible for 80G" },
+      { name: "Gau Seva", amounts: [1500, 2500, 3500, 5500, 9500, 11500], note: "Eligible for 80G" },
+      { name: "Pushpalankara Seva", amounts: [1100, 2100, 3100, 5100, 9000, 11111] },
+      { name: "Vastrabharana Seva", amounts: [1100, 3100, 5100, 9999, 15000, 21000] },
+      { name: "Kartik Yajamana Seva", amounts: [11000, 15000, 25555, 51000, 75000, 108000], note: "Principal sponsor of the month" },
+    ],
+    event: {
+      name: "Damodar Month 2026",
+      startDate: "2026-10-26",
+      description:
+        "Damodar (Kartik) month at ISKCON Gambheeram, Visakhapatnam — daily lamp offering, Damodarashtakam and Annadana.",
+    },
+  },
   "special-occasion": {
     path: "/special-occasion",
     title: "Special Occasion Seva",
