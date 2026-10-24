@@ -42,26 +42,6 @@ const MOBILE_BANNER = "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media
 // `sevaName`, together with festivalSlug "kartik-deepotsav".
 const SEVAS: Seva[] = [
   {
-    slug: "deepa-daan-seva",
-    title: "Deepa Daan Seva",
-    shortTitle: "Deepa Daan",
-    image: "/assets/gallery-aarti.jpg",
-    tagline: "Offer ghee lamps to Sri Damodar every evening of Kartik",
-    description:
-      "Lamps are offered to Lord Damodar through the whole month. Your lamps are lit in your name and your family's name at the evening arati.",
-    tiers: [
-      { label: "Rs. 501", amount: 501 },
-      { label: "Rs. 1,100", amount: 1100 },
-      { label: "Rs. 2,100", amount: 2100 },
-      { label: "Rs. 5,100", amount: 5100 },
-      { label: "Rs. 10,800", amount: 10800 },
-      { label: "Rs. 21,000", amount: 21000 },
-    ],
-    category: "Kartik Deepotsav",
-    account: "default",
-    icon: "🪔",
-  },
-  {
     slug: "annadana-seva",
     title: "Annadana Seva",
     shortTitle: "Annadana",
@@ -141,27 +121,6 @@ const SEVAS: Seva[] = [
     category: "Kartik Deepotsav",
     account: "default",
     icon: "👗",
-  },
-  {
-    slug: "kartik-yajamana-seva",
-    title: "Kartik Yajamana Seva",
-    shortTitle: "Yajamana",
-    image:
-      "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1791954983680-1791954983172-DevotionalYajamanaSevaBeforeRadhaKrishna.webp",
-    tagline: "Be the principal sponsor of the month's worship",
-    description:
-      "The chief sponsor of Damodar month — sankalpa is taken in your name and gotra, and the month's worship is offered on your behalf.",
-    tiers: [
-      { label: "Rs. 11,000", amount: 11000 },
-      { label: "Rs. 15,000", amount: 15000 },
-      { label: "Rs. 25,555", amount: 25555 },
-      { label: "Rs. 51,000", amount: 51000 },
-      { label: "Rs. 75,000", amount: 75000 },
-      { label: "Rs. 1,08,000", amount: 108000 },
-    ],
-    category: "Kartik Deepotsav",
-    account: "default",
-    icon: "🙏",
   },
 ];
 
@@ -261,7 +220,7 @@ const KARTIK_DEEPOTSAV_PRIVILEGE_CONFIG: CampaignConfig = {
   pageTitle: "Kartik Deepotsav Seva",
   metaTitle: "Kartik Deepotsav Seva | Hare Krishna Vaikuntham Temple, Visakhapatnam",
   metaDesc:
-    "Offer Deepa Daan, Annadana, Gau Seva, Pushpalankara, Vastrabharana and Yajamana seva in Damodar (Kartik) month.",
+    "Offer Annadana, Gau Seva, Pushpalankara and Vastrabharana seva in Damodar (Kartik) month.",
   ogTitle: "Kartik Deepotsav Seva",
   ogDesc: "Offer your seva to Lord Damodar in the dearest month of the year.",
   ogImage: DESKTOP_BANNER,
@@ -279,7 +238,7 @@ const KARTIK_DEEPOTSAV_PRIVILEGE_CONFIG: CampaignConfig = {
   heroHeading1: "Kartik Deepotsav",
   heroHeading2: "Seva Online",
   heroDesc:
-    "Offer lamps, Annadana, Gau Seva and the month's sevas to Lord Damodar.",
+    "Offer Annadana, Gau Seva and the month's sevas to Lord Damodar.",
   formHeading: "Offer Your Seva",
   formSubheading: "Sankalpa is taken in your name for Damodar month.",
   privileges: PRIVILEGES,
