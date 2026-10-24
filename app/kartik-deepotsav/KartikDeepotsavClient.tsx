@@ -30,7 +30,7 @@ import type { Seva } from "@/lib/sevaConfig";
 import type { CampaignConfig } from "@/lib/campaignConfig";
 
 // ── Festival constants ───────────────────────────────────────────────
-// Damodar (Kartik) month 2026 runs from Sharad Purnima, 26 October, to
+// Kartik Deepotsav 2026 runs from Sharad Purnima, 26 October, to
 // Kartik Purnima, 24 November 2026. Update these next year.
 const FESTIVAL_DATE_LABEL = "26 October – 24 November 2026";
 const FESTIVAL_DATE_ISO = "2026-10-26";
@@ -39,7 +39,7 @@ const DESKTOP_BANNER = "/assets/home-banner-radha-madan-mohan.webp";
 const MOBILE_BANNER = "/assets/home-banner-radha-madan-mohan-mobile.webp";
 
 // `category` is sent to the API as the donation `type`, and `title` as
-// `sevaName`, together with festivalSlug "damodar".
+// `sevaName`, together with festivalSlug "kartik-deepotsav".
 const SEVAS: Seva[] = [
   {
     slug: "deepa-daan-seva",
@@ -57,7 +57,7 @@ const SEVAS: Seva[] = [
       { label: "Rs. 10,800", amount: 10800 },
       { label: "Rs. 21,000", amount: 21000 },
     ],
-    category: "Damodar",
+    category: "Kartik Deepotsav",
     account: "default",
     icon: "🪔",
   },
@@ -77,7 +77,7 @@ const SEVAS: Seva[] = [
       { label: "Rs. 9,000", amount: 9000 },
       { label: "Rs. 11,000", amount: 11000 },
     ],
-    category: "Damodar",
+    category: "Kartik Deepotsav",
     account: "default",
     icon: "🍚",
   },
@@ -97,7 +97,7 @@ const SEVAS: Seva[] = [
       { label: "Rs. 9,500", amount: 9500 },
       { label: "Rs. 11,500", amount: 11500 },
     ],
-    category: "Damodar",
+    category: "Kartik Deepotsav",
     account: "default",
     icon: "🐄",
   },
@@ -117,7 +117,7 @@ const SEVAS: Seva[] = [
       { label: "Rs. 9,000", amount: 9000 },
       { label: "Rs. 11,111", amount: 11111 },
     ],
-    category: "Damodar",
+    category: "Kartik Deepotsav",
     account: "default",
     icon: "🌺",
   },
@@ -138,7 +138,7 @@ const SEVAS: Seva[] = [
       { label: "Rs. 15,000", amount: 15000 },
       { label: "Rs. 21,000", amount: 21000 },
     ],
-    category: "Damodar",
+    category: "Kartik Deepotsav",
     account: "default",
     icon: "👗",
   },
@@ -159,7 +159,7 @@ const SEVAS: Seva[] = [
       { label: "Rs. 75,000", amount: 75000 },
       { label: "Rs. 1,08,000", amount: 108000 },
     ],
-    category: "Damodar",
+    category: "Kartik Deepotsav",
     account: "default",
     icon: "🙏",
   },
@@ -210,13 +210,13 @@ const REASONS = [
   },
   {
     icon: Sunrise,
-    title: "Small seva, great result",
-    text: "Scriptures say that even a single lamp offered in Kartik gives a result far beyond what the same offering gives in other months.",
+    title: "A daily lamp to the Lord",
+    text: "The heart of the month is the daily offering of a ghee lamp to Sri Yashoda Damodara, at home or at the temple, with steady remembrance of Krishna.",
   },
   {
     icon: ScrollText,
-    title: "Damodarashtakam daily",
-    text: "Devotees sing the Damodarashtakam every evening before the lamp offering, remembering the Lord's childhood pastime.",
+    title: "Damodarashtakam and chanting",
+    text: "The eight-verse Damodarashtakam is sung during the lamp offering, with attentive chanting of the Hare Krishna maha-mantra and daily hearing of Krishna katha.",
   },
   {
     icon: Heart,
@@ -256,13 +256,13 @@ const PRIVILEGES = [
 // it to the laser-engraving lede, which is not relevant to a festival seva.
 // The remaining fields exist only to satisfy CampaignConfig, and `privileges`
 // is filled in properly so it stays correct if the component ever reads it.
-const DAMODAR_PRIVILEGE_CONFIG: CampaignConfig = {
+const KARTIK_DEEPOTSAV_PRIVILEGE_CONFIG: CampaignConfig = {
   type: "SQFT",
-  pageTitle: "Damodar Seva",
-  metaTitle: "Damodar Seva | Hare Krishna Vaikuntham Temple, Visakhapatnam",
+  pageTitle: "Kartik Deepotsav Seva",
+  metaTitle: "Kartik Deepotsav Seva | Hare Krishna Vaikuntham Temple, Visakhapatnam",
   metaDesc:
     "Offer Deepa Daan, Annadana, Gau Seva, Pushpalankara, Vastrabharana and Yajamana seva in Damodar (Kartik) month.",
-  ogTitle: "Damodar Seva",
+  ogTitle: "Kartik Deepotsav Seva",
   ogDesc: "Offer your seva to Lord Damodar in the dearest month of the year.",
   ogImage: DESKTOP_BANNER,
   pricePerUnit: 100,
@@ -276,7 +276,7 @@ const DAMODAR_PRIVILEGE_CONFIG: CampaignConfig = {
   heroImage: DESKTOP_BANNER,
   aboutImage: DESKTOP_BANNER,
   heroTagline: "A seva initiative of Hare Krishna Movement Visakhapatnam",
-  heroHeading1: "Damodar",
+  heroHeading1: "Kartik Deepotsav",
   heroHeading2: "Seva Online",
   heroDesc:
     "Offer lamps, Annadana, Gau Seva and the month's sevas to Lord Damodar.",
@@ -285,7 +285,7 @@ const DAMODAR_PRIVILEGE_CONFIG: CampaignConfig = {
   privileges: PRIVILEGES,
   higherPrivileges: [],
   statsApiEndpoint: "",
-  orderType: "DAMODAR",
+  orderType: "KARTIK_DEEPOTSAV",
 };
 
 const BANK_DETAILS = [
@@ -297,8 +297,8 @@ const BANK_DETAILS = [
 
 const FAQS = [
   {
-    q: "When is Damodar month 2026 and when is my seva performed?",
-    a: "Damodar (Kartik) month runs from 26 October to 24 November 2026. Your seva is offered during the month's daily worship at Hare Krishna Vaikuntham, Gambheeram, with sankalpa in your name.",
+    q: "When is Kartik Deepotsav 2026 and when is my seva performed?",
+    a: "Kartik month (Damodar masa) runs from 26 October to 24 November 2026. Your seva is offered during the month's daily worship at Hare Krishna Vaikuntham, Gambheeram, with sankalpa in your name.",
   },
   {
     q: "Will the sankalpa be taken in my name?",
@@ -330,7 +330,7 @@ const formatAmount = (amount: number) => amount.toLocaleString("en-IN");
 
 type Selection = { seva: Seva; amount: number | null };
 
-export default function DamodarClient() {
+export default function KartikDeepotsavClient() {
   const [selected, setSelected] = useState<Selection | null>(null);
   const [highlightedSlug, setHighlightedSlug] = useState<string | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
@@ -397,7 +397,7 @@ export default function DamodarClient() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={DESKTOP_BANNER}
-                alt="Damodar celebrations at ISKCON Gambheeram Visakhapatnam"
+                alt="Kartik Deepotsav celebrations at ISKCON Gambheeram Visakhapatnam"
                 className="block h-auto w-full"
               />
             </picture>
@@ -410,7 +410,7 @@ export default function DamodarClient() {
             <SectionHeading
               align="center"
               eyebrow="Choose Your Offering"
-              title="Damodar Sevas"
+              title="Kartik Deepotsav Sevas"
               subtitle="Tap an amount to offer that seva. Sankalpa is taken in your name and your receipt reaches you on WhatsApp."
             />
 
@@ -505,7 +505,7 @@ export default function DamodarClient() {
         </section>
 
         {/* Direct PhonePe / UPI payment, for donors who can't use Razorpay */}
-        <PhonePeUpiCard campaign="Damodar" />
+        <PhonePeUpiCard campaign="Kartik Deepotsav" />
 
         {/* ══ INTRO + SHLOKA ═══════════════════════════════════ */}
         <section className="vk-section vk-band">
@@ -513,7 +513,7 @@ export default function DamodarClient() {
             <Reveal className="mx-auto grid max-w-6xl gap-8 md:grid-cols-[1.35fr_0.65fr] md:items-center">
               <div>
                 <span className="vk-pill mb-4">Hare Krishna Movement</span>
-                <h1 className="vk-h1">Damodar</h1>
+                <h1 className="vk-h1">Kartik Deepotsav</h1>
                 <p className="mt-4 inline-flex flex-wrap items-center gap-x-4 gap-y-1 text-sm font-semibold text-vk-700">
                   <span className="inline-flex items-center gap-1.5">
                     <CalendarDays className="h-4 w-4" />
@@ -578,7 +578,7 @@ export default function DamodarClient() {
           <div className="vk-container">
             <SectionHeading
               align="center"
-              eyebrow="Why Damodar"
+              eyebrow="Why Kartik Deepotsav"
               title="The Month Lord Damodar Loves Most"
               subtitle="Four reasons families make Kartik the month of their seva for the year."
             />
@@ -659,7 +659,7 @@ export default function DamodarClient() {
         {/* ══ DONOR PRIVILEGES — the shared block, same as /pitru-paksha ═════ */}
         <DonorPrivilegesSection
           scrollToDonate={scrollToDonate}
-          config={DAMODAR_PRIVILEGE_CONFIG}
+          config={KARTIK_DEEPOTSAV_PRIVILEGE_CONFIG}
         />
 
         {/* ══ FAQ ═══════════════════════════════════════════ */}
@@ -681,11 +681,11 @@ export default function DamodarClient() {
             if (event.target === event.currentTarget) setSelected(null);
           }}
         >
-          <div className="damd-modal relative max-h-[92vh] w-full max-w-2xl overflow-y-auto overflow-x-hidden rounded-t-3xl bg-white shadow-2xl sm:rounded-3xl">
+          <div className="kd-modal relative max-h-[92vh] w-full max-w-2xl overflow-y-auto overflow-x-hidden rounded-t-3xl bg-white shadow-2xl sm:rounded-3xl">
             <style>{`
-              .damd-modal::-webkit-scrollbar { width: 6px; }
-              .damd-modal::-webkit-scrollbar-track { background: transparent; }
-              .damd-modal::-webkit-scrollbar-thumb { background: #B9C8FB; border-radius: 9999px; }
+              .kd-modal::-webkit-scrollbar { width: 6px; }
+              .kd-modal::-webkit-scrollbar-track { background: transparent; }
+              .kd-modal::-webkit-scrollbar-thumb { background: #B9C8FB; border-radius: 9999px; }
             `}</style>
 
             {/* Floating close. The form's own gradient strip already names the
@@ -704,16 +704,16 @@ export default function DamodarClient() {
             <div>
               <DonationForm
                 seva={selected.seva}
-                sourcePage="damodar"
-                festivalSlug="damodar"
+                sourcePage="kartik-deepotsav"
+                festivalSlug="kartik-deepotsav"
                 bannerImage={DESKTOP_BANNER}
                 initialAmount={selected.amount ?? undefined}
                 startCustom={selected.amount === null}
                 collapseAmount
                 autoScrollOnMount={false}
                 thankYouType="seva"
-                thankYouSource="the Damodar seva programme"
-                trackContentName="Damodar"
+                thankYouSource="the Kartik Deepotsav seva programme"
+                trackContentName="Kartik Deepotsav"
                 variant="stacked"
               />
             </div>
@@ -726,7 +726,7 @@ export default function DamodarClient() {
         <div className="fixed bottom-[calc(var(--bottom-nav-space)+4px+env(safe-area-inset-bottom))] left-3 right-[76px] z-40 lg:hidden">
           <div className="flex items-center justify-between gap-3 rounded-2xl border border-vk-100 bg-white/95 p-2 pl-4 shadow-lift backdrop-blur">
             <span className="min-w-0 truncate text-[13px] font-semibold text-vk-800">
-              Damodar Seva
+              Kartik Deepotsav Seva
             </span>
             <a href="#offer-seva" className="vk-btn-gold h-11 shrink-0 px-5">
               Offer Seva

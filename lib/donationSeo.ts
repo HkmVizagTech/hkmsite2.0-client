@@ -279,17 +279,17 @@ export const DONATION_SEO = {
         "Vijayadashami celebrations at ISKCON Gambheeram, Visakhapatnam — abhishekam, homam, alankara and Annadana.",
     },
   },
-  damodar: {
-    path: "/damodar",
-    title: "Damodar Month Seva Donation",
+  "kartik-deepotsav": {
+    path: "/kartik-deepotsav",
+    title: "Kartik Deepotsav Seva Donation",
     description:
-      "Offer Deepa Daan, Annadana, Gau Seva, Pushpalankara, Vastrabharana and Yajamana seva in Damodar (Kartik) month 2026 at ISKCON Gambheeram Visakhapatnam. 80G tax benefit.",
+      "Offer Deepa Daan, Annadana, Gau Seva, Pushpalankara, Vastrabharana and Yajamana seva for Kartik Deepotsav (Damodar month) 2026 at ISKCON Gambheeram Visakhapatnam. 80G tax benefit.",
     keywords: ["damodar month seva Visakhapatnam", "kartik deepa daan Vizag", "kartika masam seva ISKCON Vizag", "damodar masa 2026", "damodarashtakam Visakhapatnam", ...LOCAL],
     ogImage: "https://www.harekrishnavizag.org/assets/home-banner-radha-madan-mohan.webp",
-    breadcrumb: "Damodar",
-    h1: "Damodar Month Seva — Kartik 2026 in Visakhapatnam",
+    breadcrumb: "Kartik Deepotsav",
+    h1: "Kartik Deepotsav Seva — Damodar Month 2026 in Visakhapatnam",
     intro: [
-      "Damodar (Kartik) month 2026 runs from 26 October to 24 November — a month of daily lamp offerings, the Damodarashtakam and Annadana at Hare Krishna Vaikuntham, Gambheeram.",
+      "Kartik Deepotsav 2026 runs from 26 October to 24 November — a month of daily lamp offerings, the Damodarashtakam and Annadana at Hare Krishna Vaikuntham, Gambheeram.",
       BENEFIT,
     ],
     sevas: [
@@ -301,7 +301,7 @@ export const DONATION_SEO = {
       { name: "Kartik Yajamana Seva", amounts: [11000, 15000, 25555, 51000, 75000, 108000], note: "Principal sponsor of the month" },
     ],
     event: {
-      name: "Damodar Month 2026",
+      name: "Kartik Deepotsav 2026",
       startDate: "2026-10-26",
       description:
         "Damodar (Kartik) month at ISKCON Gambheeram, Visakhapatnam — daily lamp offering, Damodarashtakam and Annadana.",
