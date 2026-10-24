@@ -96,6 +96,7 @@ const nextConfig: NextConfig = {
       // One English URL per page: /en/x is the internal route only.
       { source: "/en", destination: "/", permanent: true },
       { source: "/en/:path*", destination: "/:path*", permanent: true },
+      { source: "/kartik-deepotsav", destination: "/kartik-maas", permanent: true },
       { source: "/donate/gau-seva", destination: "/gau-seva", permanent: true },
       { source: "/donate/anna-daan-seva", destination: "/anna-daan-seva", permanent: true },
       { source: "/donate/square-foot-seva", destination: "/sqft-seva-campaign", permanent: true },

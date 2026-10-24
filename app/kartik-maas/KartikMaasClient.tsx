@@ -30,7 +30,7 @@ import type { Seva } from "@/lib/sevaConfig";
 import type { CampaignConfig } from "@/lib/campaignConfig";
 
 // ── Festival constants ───────────────────────────────────────────────
-// Kartik Deepotsav 2026 runs from Sharad Purnima, 26 October, to
+// Kartik Maas 2026 runs from Sharad Purnima, 26 October, to
 // Kartik Purnima, 24 November 2026. Update these next year.
 const FESTIVAL_DATE_LABEL = "26 October – 24 November 2026";
 const FESTIVAL_DATE_ISO = "2026-10-26";
@@ -39,7 +39,7 @@ const DESKTOP_BANNER = "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/medi
 const MOBILE_BANNER = "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1792847553526-1792847550588-DamodaraMonthMobile962x1635.png";
 
 // `category` is sent to the API as the donation `type`, and `title` as
-// `sevaName`, together with festivalSlug "kartik-deepotsav".
+// `sevaName`, together with festivalSlug "kartik-maas".
 const SEVAS: Seva[] = [
   {
     slug: "annadana-seva",
@@ -57,7 +57,7 @@ const SEVAS: Seva[] = [
       { label: "Rs. 9,000", amount: 9000 },
       { label: "Rs. 11,000", amount: 11000 },
     ],
-    category: "Kartik Deepotsav",
+    category: "Kartik Maas",
     account: "default",
     icon: "🍚",
   },
@@ -77,7 +77,7 @@ const SEVAS: Seva[] = [
       { label: "Rs. 9,500", amount: 9500 },
       { label: "Rs. 11,500", amount: 11500 },
     ],
-    category: "Kartik Deepotsav",
+    category: "Kartik Maas",
     account: "default",
     icon: "🐄",
   },
@@ -97,7 +97,7 @@ const SEVAS: Seva[] = [
       { label: "Rs. 9,000", amount: 9000 },
       { label: "Rs. 11,111", amount: 11111 },
     ],
-    category: "Kartik Deepotsav",
+    category: "Kartik Maas",
     account: "default",
     icon: "🌺",
   },
@@ -118,7 +118,7 @@ const SEVAS: Seva[] = [
       { label: "Rs. 15,000", amount: 15000 },
       { label: "Rs. 21,000", amount: 21000 },
     ],
-    category: "Kartik Deepotsav",
+    category: "Kartik Maas",
     account: "default",
     icon: "👗",
   },
@@ -215,13 +215,13 @@ const PRIVILEGES = [
 // it to the laser-engraving lede, which is not relevant to a festival seva.
 // The remaining fields exist only to satisfy CampaignConfig, and `privileges`
 // is filled in properly so it stays correct if the component ever reads it.
-const KARTIK_DEEPOTSAV_PRIVILEGE_CONFIG: CampaignConfig = {
+const KARTIK_MAAS_PRIVILEGE_CONFIG: CampaignConfig = {
   type: "SQFT",
-  pageTitle: "Kartik Deepotsav Seva",
-  metaTitle: "Kartik Deepotsav Seva | Hare Krishna Vaikuntham Temple, Visakhapatnam",
+  pageTitle: "Kartik Maas Seva",
+  metaTitle: "Kartik Maas Seva | Hare Krishna Vaikuntham Temple, Visakhapatnam",
   metaDesc:
     "Offer Annadana, Gau Seva, Pushpalankara and Vastrabharana seva in Damodar (Kartik) month.",
-  ogTitle: "Kartik Deepotsav Seva",
+  ogTitle: "Kartik Maas Seva",
   ogDesc: "Offer your seva to Lord Damodar in the dearest month of the year.",
   ogImage: DESKTOP_BANNER,
   pricePerUnit: 100,
@@ -235,7 +235,7 @@ const KARTIK_DEEPOTSAV_PRIVILEGE_CONFIG: CampaignConfig = {
   heroImage: DESKTOP_BANNER,
   aboutImage: DESKTOP_BANNER,
   heroTagline: "A seva initiative of Hare Krishna Movement Visakhapatnam",
-  heroHeading1: "Kartik Deepotsav",
+  heroHeading1: "Kartik Maas",
   heroHeading2: "Seva Online",
   heroDesc:
     "Offer Annadana, Gau Seva and the month's sevas to Lord Damodar.",
@@ -244,7 +244,7 @@ const KARTIK_DEEPOTSAV_PRIVILEGE_CONFIG: CampaignConfig = {
   privileges: PRIVILEGES,
   higherPrivileges: [],
   statsApiEndpoint: "",
-  orderType: "KARTIK_DEEPOTSAV",
+  orderType: "KARTIK_MAAS",
 };
 
 const BANK_DETAILS = [
@@ -256,7 +256,7 @@ const BANK_DETAILS = [
 
 const FAQS = [
   {
-    q: "When is Kartik Deepotsav 2026 and when is my seva performed?",
+    q: "When is Kartik Maas 2026 and when is my seva performed?",
     a: "Kartik month (Damodar masa) runs from 26 October to 24 November 2026. Your seva is offered during the month's daily worship at Hare Krishna Vaikuntham, Gambheeram, with sankalpa in your name.",
   },
   {
@@ -289,7 +289,7 @@ const formatAmount = (amount: number) => amount.toLocaleString("en-IN");
 
 type Selection = { seva: Seva; amount: number | null };
 
-export default function KartikDeepotsavClient() {
+export default function KartikMaasClient() {
   const [selected, setSelected] = useState<Selection | null>(null);
   const [highlightedSlug, setHighlightedSlug] = useState<string | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
@@ -356,7 +356,7 @@ export default function KartikDeepotsavClient() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={DESKTOP_BANNER}
-                alt="Kartik Deepotsav celebrations at ISKCON Gambheeram Visakhapatnam"
+                alt="Kartik Maas celebrations at ISKCON Gambheeram Visakhapatnam"
                 className="block h-auto w-full"
               />
             </picture>
@@ -369,7 +369,7 @@ export default function KartikDeepotsavClient() {
             <SectionHeading
               align="center"
               eyebrow="Choose Your Offering"
-              title="Kartik Deepotsav Sevas"
+              title="Kartik Maas Sevas"
               subtitle="Tap an amount to offer that seva. Sankalpa is taken in your name and your receipt reaches you on WhatsApp."
             />
 
@@ -464,7 +464,7 @@ export default function KartikDeepotsavClient() {
         </section>
 
         {/* Direct PhonePe / UPI payment, for donors who can't use Razorpay */}
-        <PhonePeUpiCard campaign="Kartik Deepotsav" />
+        <PhonePeUpiCard campaign="Kartik Maas" />
 
         {/* ══ INTRO + SHLOKA ═══════════════════════════════════ */}
         <section className="vk-section vk-band">
@@ -472,7 +472,7 @@ export default function KartikDeepotsavClient() {
             <Reveal className="mx-auto grid max-w-6xl gap-8 md:grid-cols-[1.35fr_0.65fr] md:items-center">
               <div>
                 <span className="vk-pill mb-4">Hare Krishna Movement</span>
-                <h1 className="vk-h1">Kartik Deepotsav</h1>
+                <h1 className="vk-h1">Kartik Maas</h1>
                 <p className="mt-4 inline-flex flex-wrap items-center gap-x-4 gap-y-1 text-sm font-semibold text-vk-700">
                   <span className="inline-flex items-center gap-1.5">
                     <CalendarDays className="h-4 w-4" />
@@ -537,7 +537,7 @@ export default function KartikDeepotsavClient() {
           <div className="vk-container">
             <SectionHeading
               align="center"
-              eyebrow="Why Kartik Deepotsav"
+              eyebrow="Why Kartik Maas"
               title="The Month Lord Damodar Loves Most"
               subtitle="Four reasons families make Kartik the month of their seva for the year."
             />
@@ -618,7 +618,7 @@ export default function KartikDeepotsavClient() {
         {/* ══ DONOR PRIVILEGES — the shared block, same as /pitru-paksha ═════ */}
         <DonorPrivilegesSection
           scrollToDonate={scrollToDonate}
-          config={KARTIK_DEEPOTSAV_PRIVILEGE_CONFIG}
+          config={KARTIK_MAAS_PRIVILEGE_CONFIG}
         />
 
         {/* ══ FAQ ═══════════════════════════════════════════ */}
@@ -663,16 +663,16 @@ export default function KartikDeepotsavClient() {
             <div>
               <DonationForm
                 seva={selected.seva}
-                sourcePage="kartik-deepotsav"
-                festivalSlug="kartik-deepotsav"
+                sourcePage="kartik-maas"
+                festivalSlug="kartik-maas"
                 bannerImage={DESKTOP_BANNER}
                 initialAmount={selected.amount ?? undefined}
                 startCustom={selected.amount === null}
                 collapseAmount
                 autoScrollOnMount={false}
                 thankYouType="seva"
-                thankYouSource="the Kartik Deepotsav seva programme"
-                trackContentName="Kartik Deepotsav"
+                thankYouSource="the Kartik Maas seva programme"
+                trackContentName="Kartik Maas"
                 variant="stacked"
               />
             </div>
@@ -685,7 +685,7 @@ export default function KartikDeepotsavClient() {
         <div className="fixed bottom-[calc(var(--bottom-nav-space)+4px+env(safe-area-inset-bottom))] left-3 right-[76px] z-40 lg:hidden">
           <div className="flex items-center justify-between gap-3 rounded-2xl border border-vk-100 bg-white/95 p-2 pl-4 shadow-lift backdrop-blur">
             <span className="min-w-0 truncate text-[13px] font-semibold text-vk-800">
-              Kartik Deepotsav Seva
+              Kartik Maas Seva
             </span>
             <a href="#offer-seva" className="vk-btn-gold h-11 shrink-0 px-5">
               Offer Seva

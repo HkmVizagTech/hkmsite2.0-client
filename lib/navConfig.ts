@@ -147,7 +147,7 @@ export const HIDE_BOTTOM_NAV_PREFIXES = [
   "/shayani-ekadashi",
   "/pitru-paksha",
   "/vijayadashami",
-  "/kartik-deepotsav",
+  "/kartik-maas",
   "/govardhan-puja",
   "/radhashtami",
   "/chaturmas",
