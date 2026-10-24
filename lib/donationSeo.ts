@@ -285,7 +285,7 @@ export const DONATION_SEO = {
     description:
       "Offer Deepa Daan, Annadana, Gau Seva, Pushpalankara, Vastrabharana and Yajamana seva for Kartik Deepotsav (Damodar month) 2026 at ISKCON Gambheeram Visakhapatnam. 80G tax benefit.",
     keywords: ["damodar month seva Visakhapatnam", "kartik deepa daan Vizag", "kartika masam seva ISKCON Vizag", "damodar masa 2026", "damodarashtakam Visakhapatnam", ...LOCAL],
-    ogImage: "https://www.harekrishnavizag.org/assets/home-banner-radha-madan-mohan.webp",
+    ogImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1792847552701-1792847546420-DamodaraMonthDesktop1920x730.png",
     breadcrumb: "Kartik Deepotsav",
     h1: "Kartik Deepotsav Seva — Damodar Month 2026 in Visakhapatnam",
     intro: [

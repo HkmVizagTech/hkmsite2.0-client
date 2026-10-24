@@ -35,8 +35,8 @@ import type { CampaignConfig } from "@/lib/campaignConfig";
 const FESTIVAL_DATE_LABEL = "26 October – 24 November 2026";
 const FESTIVAL_DATE_ISO = "2026-10-26";
 
-const DESKTOP_BANNER = "/assets/home-banner-radha-madan-mohan.webp";
-const MOBILE_BANNER = "/assets/home-banner-radha-madan-mohan-mobile.webp";
+const DESKTOP_BANNER = "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1792847552701-1792847546420-DamodaraMonthDesktop1920x730.png";
+const MOBILE_BANNER = "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1792847553526-1792847550588-DamodaraMonthMobile962x1635.png";
 
 // `category` is sent to the API as the donation `type`, and `title` as
 // `sevaName`, together with festivalSlug "kartik-deepotsav".
