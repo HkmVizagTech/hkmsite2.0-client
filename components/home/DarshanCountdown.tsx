@@ -16,8 +16,14 @@ function istToday(): string {
   return new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
 }
 
+// The first entry of these types strictly AFTER today (today's own entries are shown separately, see todayOf).
 function nextOf(types: VaishnavaDate["type"][], today: string): VaishnavaDate | null {
-  return vaishnavaCalendar2026.find((d) => d.date >= today && types.includes(d.type)) ?? null;
+  return vaishnavaCalendar2026.find((d) => d.date > today && types.includes(d.type)) ?? null;
+}
+
+// Everything of these types that falls on today's date.
+function todayOf(types: VaishnavaDate["type"][], today: string): VaishnavaDate[] {
+  return vaishnavaCalendar2026.filter((d) => d.date === today && types.includes(d.type));
 }
 
 function useCountdown(targetIso: string | null) {
@@ -38,6 +44,39 @@ function useCountdown(targetIso: string | null) {
     seconds: Math.floor((diff / 1000) % 60),
     isToday: diff === 0,
   };
+}
+
+function FestivalRow({
+  f,
+  fmt,
+  t,
+  badge,
+}: {
+  f: VaishnavaDate;
+  fmt: (iso: string, opts: Intl.DateTimeFormatOptions) => string;
+  t: (key: string, vars?: Record<string, string | number>) => string;
+  badge?: string;
+}) {
+  return (
+    <div className="flex items-start gap-4">
+      <div className="w-[76px] shrink-0 overflow-hidden rounded-2xl border border-vk-100 text-center shadow-sm">
+        <div className="bg-vk-700 py-1 text-[11px] font-bold uppercase tracking-wider text-white">{fmt(f.date, { month: "short" })}</div>
+        <div className="py-1.5 text-3xl font-extrabold leading-none text-ink" style={{ fontFamily: "var(--font-heading)" }}>
+          {fmt(f.date, { day: "numeric" })}
+        </div>
+        <div className="pb-1.5 text-[10px] font-semibold uppercase text-ink/50">{fmt(f.date, { weekday: "short" })}</div>
+      </div>
+      <div className="min-w-0">
+        {badge && (
+          <span className="mb-1 inline-block rounded-full bg-vk-700 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-white">{badge}</span>
+        )}
+        <p className="text-lg font-bold leading-snug text-ink" style={{ fontFamily: "var(--font-heading)" }}>
+          {t(f.title)}
+        </p>
+        {f.description && <p className="mt-1 line-clamp-3 text-sm leading-relaxed text-muted-foreground">{t(f.description)}</p>}
+      </div>
+    </div>
+  );
 }
 
 /**
@@ -68,7 +107,9 @@ export default function DarshanCountdown() {
     });
   }, []);
 
+  const festivalToday = useMemo(() => (today ? todayOf(["Festival", "Appearance"], today) : []), [today]);
   const festival = useMemo(() => (today ? nextOf(["Festival", "Appearance"], today) : null), [today]);
+  const ekadashiToday = useMemo(() => (today ? todayOf(["Ekadashi"], today)[0] ?? null : null), [today]);
   const ekadashi = useMemo(() => (today ? nextOf(["Ekadashi"], today) : null), [today]);
   const cd = useCountdown(festival?.date ?? null);
 
@@ -79,7 +120,7 @@ export default function DarshanCountdown() {
     new Date(`${iso}T12:00:00+05:30`).toLocaleDateString("en-IN", { ...opts, timeZone: "Asia/Kolkata" });
 
   return (
-    <section className="relative z-10 pb-6 md:pb-10">
+    <section className="relative z-10 pb-6 pt-6 md:pb-10 md:pt-10">
       <div className="vk-container">
         <Reveal>
           <div className="grid overflow-hidden rounded-3xl border border-vk-100 bg-white shadow-[0_30px_60px_-36px_rgba(10,18,51,0.45)] lg:grid-cols-[1.05fr_1.25fr_0.9fr]">
@@ -129,33 +170,35 @@ export default function DarshanCountdown() {
 
             {/* ── Next festival ──────────────────────────────── */}
             <div className="flex flex-col justify-center gap-4 border-t border-vk-100 p-5 md:p-7 lg:border-l lg:border-t-0">
+              {festivalToday.length > 0 && (
+                <>
+                  <h2 className="vk-bar-title text-xl text-ink md:text-2xl">{t("Today's Festival")}</h2>
+                  {festivalToday.map((f) => (
+                    <FestivalRow key={f.title} f={f} fmt={fmt} t={t} badge={t("Today")} />
+                  ))}
+                </>
+              )}
               <h2 className="vk-bar-title text-xl text-ink md:text-2xl">{t("Upcoming Festival")}</h2>
               {festival ? (
-                <div className="flex items-start gap-4">
-                  <div className="w-[76px] shrink-0 overflow-hidden rounded-2xl border border-vk-100 text-center shadow-sm">
-                    <div className="bg-vk-700 py-1 text-[11px] font-bold uppercase tracking-wider text-white">
-                      {fmt(festival.date, { month: "short" })}
-                    </div>
-                    <div className="py-1.5 text-3xl font-extrabold leading-none text-ink" style={{ fontFamily: "var(--font-heading)" }}>
-                      {fmt(festival.date, { day: "numeric" })}
-                    </div>
-                    <div className="pb-1.5 text-[10px] font-semibold uppercase text-ink/50">
-                      {fmt(festival.date, { weekday: "short" })}
-                    </div>
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-lg font-bold leading-snug text-ink" style={{ fontFamily: "var(--font-heading)" }}>
-                      {t(festival.title)}
-                    </p>
-                    {festival.description && (
-                      <p className="mt-1 line-clamp-3 text-sm leading-relaxed text-muted-foreground">{t(festival.description)}</p>
-                    )}
-                  </div>
-                </div>
+                <FestivalRow f={festival} fmt={fmt} t={t} />
               ) : (
                 <p className="text-sm text-muted-foreground">{t("See the Vaishnava calendar for upcoming celebrations.")}</p>
               )}
 
+              {ekadashiToday && (
+                <div className="flex items-center gap-3 rounded-2xl bg-vk-50 px-4 py-3">
+                  <span className="vk-icon-chip !h-9 !w-9 !bg-white">
+                    <Moon className="h-4 w-4" />
+                  </span>
+                  <div className="min-w-0 text-sm">
+                    <p className="font-semibold text-ink">{t("Ekadashi today")}</p>
+                    <p className="truncate text-muted-foreground">{t(ekadashiToday.title)}</p>
+                  </div>
+                  <Link href="/ekadashi" className="ml-auto shrink-0 text-sm font-semibold text-vk-600 hover:text-vk-800">
+                    {t("Seva →")}
+                  </Link>
+                </div>
+              )}
               {ekadashi && (
                 <div className="flex items-center gap-3 rounded-2xl bg-vk-50 px-4 py-3">
                   <span className="vk-icon-chip !h-9 !w-9 !bg-white">
