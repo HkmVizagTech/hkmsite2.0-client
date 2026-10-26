@@ -34,6 +34,7 @@ export const home: Record<string, string> = {
   "Upcoming Festival": "రాబోయే పండుగ",
   "Today's Festival": "నేటి పండుగ",
   "Today": "నేడు",
+  "Starts in": "ప్రారంభానికి",
   "Ekadashi today": "ఈ రోజు ఏకాదశి",
   "See the Vaishnava calendar for upcoming celebrations.": "రాబోయే ఉత్సవాల కోసం వైష్ణవ క్యాలెండర్ చూడండి.",
   "Next Ekadashi · {date}": "తదుపరి ఏకాదశి · {date}",
