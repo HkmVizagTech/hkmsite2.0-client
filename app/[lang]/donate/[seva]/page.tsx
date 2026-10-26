@@ -13,7 +13,7 @@ import {
 import { getSevaBySlug, sevas, getSevaHref } from "@/lib/sevaConfig";
 import PageLayout from "@/components/PageLayout";
 import UpiQrCard from "@/components/UpiQrCard";
-import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
+import { SEVA_WHATSAPP_NUMBER } from "@/components/WhatsAppFloatButton";
 import DonationForm from "@/components/DonationForm";
 
 import { Suspense } from "react";
@@ -120,8 +120,7 @@ function DonateSevaPageInner({ params }: { params: Promise<{ seva: string }> }) 
   const otherSevas = sevas.filter((s) => s.slug !== seva.slug);
 
   return (
-    <PageLayout>
-      <WhatsAppFloatButton />
+    <PageLayout whatsappNumber={SEVA_WHATSAPP_NUMBER}>
     <main className="bg-white pt-[var(--header-h)] dark:bg-background">
       {/* Hero — full-width banner (GVD style), breadcrumb below it */}
       <section>

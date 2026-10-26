@@ -19,7 +19,7 @@ import AddressForm from "@/components/AddressForm";
 import type { PrasadamAddress } from "@/components/AddressForm";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
 import { useDonorPrefill } from "@/lib/donorPrefill";
-import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
+import { SEVA_WHATSAPP_NUMBER } from "@/components/WhatsAppFloatButton";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
 import { useScrollToDonate } from "@/lib/useScrollToDonate";
 import { newEventId, getMetaBrowserData, trackPurchase } from "@/lib/metaPixel";
@@ -379,9 +379,8 @@ export default function AlankaraVastraClient() {
   };
 
   return (
-    <PageLayout>
+    <PageLayout whatsappNumber={SEVA_WHATSAPP_NUMBER}>
       {upiFallbackDialog}
-      <WhatsAppFloatButton />
       <main className="bg-white dark:bg-background">
         {/* ── Hero Banner ── */}
         {config.bannerImage ? (
