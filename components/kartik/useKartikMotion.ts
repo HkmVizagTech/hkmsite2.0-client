@@ -1,0 +1,145 @@
+"use client";
+
+import { useLayoutEffect, useRef, type RefObject } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import type { SceneState } from "./KartikScene";
+
+/**
+ * All GSAP on the Kartik Maas page lives here, scoped to `root` and cleaned up on unmount.
+ *
+ * Markers used in the markup:
+ *   data-hero-word   headline words (rise in)        data-hero-fade   hero copy/buttons (fade up in order)
+ *   data-reveal      fade-up when scrolled into view data-group > [data-item]  staggered children
+ *   data-lamps       the 30-lamp grid (flames ignite) data-tilt  card that leans toward the pointer
+ *   data-count       number that counts up (data-count="30")
+ *
+ * With prefers-reduced-motion nothing moves: everything is simply shown, and the 3D scene is told to start lit.
+ */
+export function useKartikMotion(root: RefObject<HTMLElement | null>, scene: SceneState, story: SceneState) {
+  const sceneRef = useRef(scene);
+  sceneRef.current = scene;
+
+  useLayoutEffect(() => {
+    const el = root.current;
+    if (!el) return;
+    gsap.registerPlugin(ScrollTrigger);
+    const mm = gsap.matchMedia();
+
+    // The Damodar lila: scroll progress through the story section drives the 3D scene (the pose of Krishna, the rope)
+    // and lights the matching step. This is user-driven, so it also runs with reduced motion.
+    const storyEl = el.querySelector<HTMLElement>("[data-story]");
+    let storyTrigger: ScrollTrigger | null = null;
+    if (storyEl) {
+      const cards = Array.from(storyEl.querySelectorAll<HTMLElement>("[data-step-card]"));
+      const dots = Array.from(storyEl.querySelectorAll<HTMLElement>("[data-dot]"));
+      const mark = (idx: number) => {
+        cards.forEach((c, i) => c.classList.toggle("km-on", i === idx));
+        dots.forEach((d, i) => d.classList.toggle("km-on", i === idx));
+      };
+      mark(0);
+      // Progress runs over the column of steps: 0 when the first card reaches the reading line, 1 when the last card has
+      // been read and the stage is about to be released (so the final scene always plays with the stage fully pinned).
+      const stage = storyEl.querySelector<HTMLElement>("[data-stage]");
+      const px = (css: string) => {
+        const probe = document.createElement("div");
+        probe.style.cssText = `position:absolute;visibility:hidden;height:${css}`;
+        document.body.appendChild(probe);
+        const h = probe.offsetHeight;
+        probe.remove();
+        return h;
+      };
+      const stageBottom = () => {
+        const wide = window.innerWidth >= 1024;
+        return px("var(--header-h)") + (wide ? 28 : 8) + (stage?.offsetHeight ?? 400);
+      };
+      storyTrigger = ScrollTrigger.create({
+        trigger: storyEl.querySelector("[data-steps]") ?? storyEl,
+        start: () => (window.innerWidth < 1024 ? `top ${Math.round(stageBottom() + 90)}px` : "top 50%"),
+        end: () => `bottom ${Math.round(stageBottom())}px`,
+        invalidateOnRefresh: true,
+        onUpdate: (self) => {
+          story.progress = self.progress;
+          mark(Math.min(cards.length - 1, Math.floor(self.progress * cards.length + 0.0001)));
+        },
+      });
+    }
+
+    mm.add("(prefers-reduced-motion: reduce)", () => {
+      sceneRef.current.intro = 1;
+    });
+
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      const ctx = gsap.context(() => {
+        // Hero: the flame ignites and the lotus opens (the scene reads `intro`), while the copy rises in.
+        sceneRef.current.intro = 0;
+        gsap.to(sceneRef.current, { intro: 1, duration: 2.6, ease: "power2.inOut", delay: 0.25 });
+        const tl = gsap.timeline({ defaults: { ease: "power3.out" }, delay: 0.2 });
+        tl.from("[data-hero-word]", { yPercent: 115, rotate: 3, opacity: 0, duration: 0.9, stagger: 0.07 })
+          .from("[data-hero-fade]", { y: 26, opacity: 0, duration: 0.8, stagger: 0.1 }, "-=0.5");
+
+        // Fade-up on scroll
+        gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach((n) => {
+          gsap.from(n, { y: 38, opacity: 0, duration: 0.9, ease: "power3.out", scrollTrigger: { trigger: n, start: "top 88%", once: true } });
+        });
+        // Staggered groups (seva cards, reason cards...)
+        gsap.utils.toArray<HTMLElement>("[data-group]").forEach((g) => {
+          const items = g.querySelectorAll("[data-item]");
+          if (!items.length) return;
+          gsap.from(items, { y: 46, opacity: 0, scale: 0.97, duration: 0.85, ease: "power3.out", stagger: 0.12, scrollTrigger: { trigger: g, start: "top 85%", once: true } });
+        });
+        // Lamps ignite one after another
+        const lamps = el.querySelector("[data-lamps]");
+        if (lamps) {
+          gsap.from(lamps.querySelectorAll("[data-lamp]"), { y: 14, opacity: 0, duration: 0.5, stagger: 0.03, ease: "back.out(2)", scrollTrigger: { trigger: lamps, start: "top 85%", once: true } });
+          // The flames only exist once the page has worked out today's date (after mount), so look them up on entry.
+          ScrollTrigger.create({
+            trigger: lamps,
+            start: "top 85%",
+            once: true,
+            onEnter: () => {
+              const flames = lamps.querySelectorAll("[data-flame]");
+              if (flames.length) gsap.from(flames, { scale: 0, transformOrigin: "50% 100%", duration: 0.7, stagger: 0.05, delay: 0.4, ease: "elastic.out(1,0.6)" });
+            },
+          });
+        }
+        // Count-up numbers
+        gsap.utils.toArray<HTMLElement>("[data-count]").forEach((n) => {
+          const to = Number(n.dataset.count || 0);
+          const o = { v: 0 };
+          gsap.to(o, { v: to, duration: 1.6, ease: "power2.out", onUpdate: () => (n.textContent = String(Math.round(o.v))), scrollTrigger: { trigger: n, start: "top 90%", once: true } });
+        });
+
+        // Cards lean toward the pointer (mouse only; touch screens skip this)
+        if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+          gsap.utils.toArray<HTMLElement>("[data-tilt]").forEach((card) => {
+            const rx = gsap.quickTo(card, "rotationX", { duration: 0.5, ease: "power3.out" });
+            const ry = gsap.quickTo(card, "rotationY", { duration: 0.5, ease: "power3.out" });
+            gsap.set(card, { transformPerspective: 900, transformOrigin: "center" });
+            card.addEventListener("pointermove", (e) => {
+              const r = card.getBoundingClientRect();
+              ry(((e.clientX - r.left) / r.width - 0.5) * 7);
+              rx(-((e.clientY - r.top) / r.height - 0.5) * 7);
+            });
+            card.addEventListener("pointerleave", () => {
+              rx(0);
+              ry(0);
+            });
+          });
+        }
+      }, el);
+      return () => ctx.revert();
+    });
+
+    // Images and fonts settle after first paint; recalculate trigger positions once they have.
+    const refresh = () => ScrollTrigger.refresh();
+    window.addEventListener("load", refresh);
+    const t = window.setTimeout(refresh, 900);
+    return () => {
+      window.removeEventListener("load", refresh);
+      window.clearTimeout(t);
+      storyTrigger?.kill();
+      mm.revert();
+    };
+  }, [root]);
+}

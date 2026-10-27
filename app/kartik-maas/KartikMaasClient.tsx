@@ -8,9 +8,15 @@ import PhonePeUpiCard from "@/components/PhonePeUpiCard";
 import FaqSection from "@/components/sqft-campaign/FaqSection";
 import DonorPrivilegesSection from "@/components/sqft-campaign/DonorPrivilegesSection";
 import OtherDonationsCarousel from "@/components/pitru-paksha/OtherDonationsCarousel";
+import dynamic from "next/dynamic";
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import LampTracker, { useKartikDay } from "@/components/kartik/LampTracker";
+import { useKartikMotion } from "@/components/kartik/useKartikMotion";
 import {
+  ArrowRight,
   CalendarDays,
+  ChevronDown,
   Check,
   Clock,
   Copy,
@@ -28,6 +34,39 @@ import {
 } from "lucide-react";
 import type { Seva } from "@/lib/sevaConfig";
 import type { CampaignConfig } from "@/lib/campaignConfig";
+
+// The 3D scene (three.js) is loaded in the browser only, after the page has painted.
+const KartikScene = dynamic(() => import("@/components/kartik/KartikScene"), { ssr: false });
+
+/** Mounts a 3D scene only when its section is about to scroll into view (saves a WebGL context on phones). */
+function LazyScene({ variant, state }: { variant: "hero" | "story" | "finale"; state?: { intro: number; progress?: number } }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          setShow(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "300px" }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return (
+    <div ref={ref} className="absolute inset-0">
+      {show && <KartikScene variant={variant} state={state} />}
+    </div>
+  );
+}
+
+const MANTRA = "Hare Krishna Hare Krishna Krishna Krishna Hare Hare ✦ Hare Rama Hare Rama Rama Rama Hare Hare ✦";
+
+const HERO_WORDS = ["Light", "a", "Lamp", "for", "Lord", "Damodar"];
 
 // ── Festival constants ───────────────────────────────────────────────
 // Kartik Maas 2026 runs from Sharad Purnima, 26 October, to
@@ -160,6 +199,35 @@ const SHLOKA = {
     "I offer my obeisances to Lord Damodar, whose form is eternal, full of knowledge and bliss, whose earrings swing as He shines in Gokula.",
   source: "Damodarashtakam",
 };
+
+// The Damodar lila (Srimad Bhagavatam 10.9), told in three beats.
+const LILA = [
+  {
+    n: "1",
+    title: "The butter pot",
+    text: "Little Krishna broke the pot of curd and butter and ran. Mother Yashoda, stick in hand, chased the Lord whom yogis cannot catch.",
+  },
+  {
+    n: "2",
+    title: "A rope two fingers short",
+    text: "She caught Him and tried to bind Him to the wooden mortar. Whatever length she added, the rope fell two fingers short.",
+  },
+  {
+    n: "3",
+    title: "Bound by love",
+    text: "When Krishna saw His mother tired and sweating, He allowed Himself to be bound. That is why He is called Damodara, the one bound at the belly by a rope.",
+  },
+  {
+    n: "4",
+    title: "Dragging the mortar",
+    text: "Still bound, the little Lord crawled off, dragging the heavy mortar behind Him, toward the two tall arjuna trees in the courtyard.",
+  },
+  {
+    n: "5",
+    title: "The trees fall",
+    text: "The mortar stuck crosswise between the trees. He pulled, and they crashed down, freeing two radiant souls, the cursed sons of Kuvera, who bowed and offered their prayers.",
+  },
+];
 
 const REASONS = [
   {
@@ -294,28 +362,44 @@ export default function KartikMaasClient() {
   const [highlightedSlug, setHighlightedSlug] = useState<string | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const scrolledRef = useRef(false);
+  const [pastHero, setPastHero] = useState(false);
+  const [inDonation, setInDonation] = useState(false);
+  const day = useKartikDay();
+  const rootRef = useRef<HTMLDivElement>(null);
+  const sceneState = useRef({ intro: 0 }).current;
+  const storyState = useRef({ intro: 1, progress: 0 }).current;
+  useKartikMotion(rootRef, sceneState, storyState);
 
-  // Land the donor on the sevas, not the banner. Most arrivals come from an
-  // ad or a WhatsApp broadcast that already showed them the artwork, so the
-  // top of the page is a second look at something they have seen.
-  //
-  // A ?seva= deep link (used by the pending-payment reminder) wins: it goes
-  // to that specific card instead of the top of the grid. Both run through
-  // this one effect so they can never fight each other mid-scroll.
+  // A ?seva= deep link (used by the pending-payment reminder) goes straight to that seva's card. Everyone else
+  // lands on the hero: it has its own Offer buttons, and the page must not move on its own.
   useEffect(() => {
     if (scrolledRef.current) return;
     scrolledRef.current = true;
     const slug = new URLSearchParams(window.location.search).get("seva");
     const matched = slug && SEVAS.some((seva) => seva.slug === slug) ? slug : null;
-    if (matched) setHighlightedSlug(matched);
-    const targetId = matched ? `seva-card-${matched}` : "offer-seva";
+    if (!matched) return;
+    setHighlightedSlug(matched);
     const timer = window.setTimeout(() => {
-      document.getElementById(targetId)?.scrollIntoView({
-        behavior: "smooth",
-        block: matched ? "center" : "start",
-      });
+      document.getElementById(`seva-card-${matched}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 450);
     return () => window.clearTimeout(timer);
+  }, []);
+
+  // The sticky "Offer Seva" bar waits until the hero (which has its own button) has scrolled away.
+  useEffect(() => {
+    const onScroll = () => setPastHero(window.scrollY > window.innerHeight * 0.75);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Hide the floating "Offer Seva" buttons while the donation section itself is on screen.
+  useEffect(() => {
+    const el = document.getElementById("offer-seva");
+    if (!el) return;
+    const io = new IntersectionObserver((e) => setInDonation(e[0]?.isIntersecting ?? false), { threshold: 0.12 });
+    io.observe(el);
+    return () => io.disconnect();
   }, []);
 
   // Modal housekeeping: lock the page behind it and close on Escape.
@@ -347,47 +431,283 @@ export default function KartikMaasClient() {
 
   return (
     <PageLayout>
-      <div className="overflow-x-hidden bg-white pt-[var(--header-h)]">
-        {/* ══ HERO ══════════════════════════════════════════ */}
-        <section className="bg-gradient-to-b from-vk-50 to-white">
-          <a href="#offer-seva" className="block bg-vk-900">
-            <picture>
-              <source media="(max-width: 640px)" srcSet={MOBILE_BANNER} />
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={DESKTOP_BANNER}
-                alt="Kartik Maas celebrations at ISKCON Gambheeram Visakhapatnam"
-                className="block h-auto w-full"
-              />
-            </picture>
-          </a>
+      <div ref={rootRef} className="overflow-x-clip bg-white pt-[var(--header-h)]">
+        {/* ══ HERO ═════════════════════════════════════════════════════════ */}
+        <section className="relative isolate overflow-hidden bg-[radial-gradient(120%_90%_at_72%_18%,#1d3290_0%,#0e1a52_42%,#070d27_100%)] text-white">
+          <KartikScene variant="hero" state={sceneState} className="z-0" />
+          <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[58%] bg-gradient-to-t from-[#070d27] via-[#070d27]/80 to-transparent md:h-40 md:via-[#070d27]/50" />
+          <div className="vk-container relative z-10 flex min-h-[calc(100svh-var(--header-h))] flex-col justify-end pb-8 pt-[46svh] md:justify-between md:pb-10 md:pt-16">
+            <div className="max-w-xl md:my-auto lg:max-w-[38rem]">
+              <p data-hero-fade className="flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-amber-200 md:text-xs">
+                <span aria-hidden className="h-px w-8 bg-amber-300/70" /> Damodar Māsa 2026
+              </p>
+              <h1 className="mt-4 font-heading text-[2.5rem] font-extrabold leading-[1.04] tracking-[-0.03em] sm:text-[3.4rem] lg:text-[4rem]">
+                {HERO_WORDS.map((w) => (
+                  <span key={w} className="mr-[0.22em] inline-block overflow-hidden pb-[0.08em] align-bottom">
+                    <span
+                      data-hero-word
+                      className="inline-block will-change-transform"
+                      {...(w === "Lamp" ? { style: { backgroundImage: "var(--gradient-gold)", WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" } } : {})}
+                    >
+                      {w}
+                    </span>
+                  </span>
+                ))}
+              </h1>
+              <p data-hero-fade className="mt-5 max-w-lg text-[15px] leading-relaxed text-white/75 md:text-[17px] md:leading-8">
+                Offer a seva this Kartik with sankalpa in your name. At Hare Krishna Vaikuntham a lamp is offered to Sri Damodar every
+                evening and Annadana is served to all who come.
+              </p>
+              <div data-hero-fade className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3">
+                <a href="#offer-seva" className="vk-btn-gold h-[3.25rem] px-8 text-base font-bold">
+                  Offer Your Seva <ArrowRight className="h-4 w-4" />
+                </a>
+                <a href="#damodar-lila" className="group inline-flex items-center gap-2 text-sm font-semibold text-white/80 transition-colors hover:text-white">
+                  The Damodar lila
+                  <ChevronDown className="h-4 w-4 transition-transform group-hover:translate-y-0.5" />
+                </a>
+              </div>
+            </div>
+
+            <dl data-hero-fade className="mt-8 grid grid-cols-2 gap-x-6 gap-y-5 border-t border-white/15 pt-5 md:mt-0 md:grid-cols-4">
+              {[
+                { icon: CalendarDays, k: "26 Oct – 24 Nov", v: "Thirty days of Damodar Māsa" },
+                { icon: Flame, k: day !== null && day >= 1 && day <= 30 ? `Day ${day} of 30` : "A lamp every evening", v: "Kartik Purnima on 24 November" },
+                { icon: FileCheck2, k: "80G tax exemption", v: "Receipt against your PAN" },
+                { icon: ShieldCheck, k: "Secure checkout", v: "Razorpay · receipt on WhatsApp" },
+              ].map((f) => (
+                <div key={f.k} className="flex items-start gap-3">
+                  <f.icon className="mt-0.5 h-5 w-5 shrink-0 text-amber-300" />
+                  <div className="min-w-0">
+                    <dt className="text-[13px] font-semibold text-white md:text-sm">{f.k}</dt>
+                    <dd className="mt-0.5 text-[11px] leading-snug text-white/60 md:text-xs">{f.v}</dd>
+                  </div>
+                </div>
+              ))}
+            </dl>
+          </div>
         </section>
 
-        {/* ══ SEVAS ═════════════════════════════════════════ */}
-        <section id="offer-seva" className="vk-section scroll-mt-24">
+        {/* ══ MANTRA STRIP ═════════════════════════════════════════════════ */}
+        <div aria-hidden className="relative overflow-hidden border-y border-[hsl(var(--gold)/0.3)] bg-[#070d27] py-3">
+          <div className="km-marquee flex w-max whitespace-nowrap">
+            {[0, 1].map((k) => (
+              <div key={k} className="flex shrink-0 items-center gap-6 pr-6 text-sm font-semibold tracking-wide text-[hsl(var(--gold))] md:text-base">
+                {[0, 1, 2].map((j) => (
+                  <span key={j}>{MANTRA}</span>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ══ THE DAMODAR LILA — a sticky 3D stage that plays the pastime as the visitor scrolls ══ */}
+        <section id="damodar-lila" data-story className="relative scroll-mt-20 bg-[#070d27] pt-14 text-white md:pt-20">
+          <div className="vk-container">
+            <div data-reveal>
+              <SectionHeading
+                light
+                align="center"
+                eyebrow="The Damodar Lila"
+                title="Why He is Called Damodara"
+                subtitle="Scroll, and watch the pastime that gives this month its name, from the butter pot to the falling trees."
+              />
+            </div>
+            <div className="grid gap-x-12 lg:grid-cols-[1fr_1.05fr]">
+              {/* Phones: this wrapper is the sticky element (it sits above the steps in the same grid).
+                  Desktop: it is the right-hand column and the inner box sticks inside it. */}
+              <div className="sticky top-[calc(var(--header-h)+8px)] z-10 order-1 lg:static lg:order-2 lg:z-auto">
+                <div className="lg:sticky lg:top-[calc(var(--header-h)+28px)]">
+                  <div data-stage className="relative h-[38svh] min-h-[240px] w-full overflow-hidden rounded-3xl bg-[radial-gradient(110%_100%_at_60%_20%,#1d3290_0%,#0e1a52_50%,#070d27_100%)] shadow-[0_30px_80px_-30px_rgba(0,0,0,0.8)] ring-1 ring-white/10 lg:h-[min(66svh,600px)]">
+                    <LazyScene variant="story" state={storyState} />
+                  </div>
+                </div>
+              </div>
+              <div data-steps className="order-2 lg:order-1">
+                {LILA.map((step) => (
+                  <div key={step.n} data-step-card className="km-step flex min-h-[46svh] items-center py-3 lg:min-h-[62svh] lg:py-4">
+                    <div className="relative w-full rounded-2xl border border-white/10 bg-white/[0.06] p-6 pt-8 md:p-8 md:pt-10">
+                      <span className="absolute -top-5 left-6 flex h-11 w-11 items-center justify-center rounded-full bg-gradient-gold font-heading text-lg font-extrabold text-ink shadow-gold">
+                        {step.n}
+                      </span>
+                      <h3 className="font-heading text-xl font-bold text-white md:text-2xl">{step.title}</h3>
+                      <p className="mt-3 text-[15px] leading-relaxed text-white/75 md:text-base md:leading-7">{step.text}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="mx-auto max-w-3xl pb-16 pt-6 text-center md:pb-24">
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-amber-200">Bound by love</p>
+              <h3 className="mt-3 font-heading text-2xl font-extrabold leading-tight text-white md:text-[1.9rem]">
+                The Lord no one can catch let Himself be bound by a mother&apos;s love. This month, let Him be bound by yours.
+              </h3>
+              <a href="#offer-seva" className="vk-btn-gold mt-6 h-[3.25rem] px-8 text-base font-bold">
+                Offer Your Seva <ArrowRight className="h-4 w-4" />
+              </a>
+            </div>
+          </div>
+        </section>
+
+        {/* ══ INTRO + SHLOKA ═══════════════════════════════════ */}
+        <section className="vk-section vk-band">
+          <div className="vk-container">
+            <Reveal className="mx-auto grid max-w-6xl gap-8 md:grid-cols-[1.35fr_0.65fr] md:items-center">
+              <div>
+                <span className="vk-pill mb-4">Hare Krishna Movement</span>
+                <h2 className="vk-h1">Kartik Maas</h2>
+                <p className="mt-4 inline-flex flex-wrap items-center gap-x-4 gap-y-1 text-sm font-semibold text-vk-700">
+                  <span className="inline-flex items-center gap-1.5">
+                    <CalendarDays className="h-4 w-4" />
+                    <time dateTime={FESTIVAL_DATE_ISO}>{FESTIVAL_DATE_LABEL}</time>
+                  </span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <MapPin className="h-4 w-4" />
+                    Hare Krishna Vaikuntham, Gambheeram
+                  </span>
+                </p>
+                <p className="vk-lead mt-5 max-w-4xl md:text-lg md:leading-8">
+                  Kartik is Damodar month, when Lord Krishna is worshipped as the child bound by
+                  Mother Yashoda&apos;s love. At Hare Krishna Vaikuntham a lamp is offered to Sri
+                  Damodar every evening, the Damodarashtakam is sung, and Annadana is served to
+                  everyone who comes for darshan. Offer a seva and your sankalpa is made in your
+                  name.
+                </p>
+                <a href="#offer-seva" className="vk-btn-gold mt-6 inline-flex h-12 px-7 text-[15px] font-bold">
+                  Offer Your Seva
+                </a>
+              </div>
+
+              <div className="vk-card p-6 md:p-7">
+                <span className="vk-icon-chip">
+                  <Sparkles className="h-5 w-5" />
+                </span>
+                <div className="mt-4 space-y-1.5 font-serif-display text-[15px] italic leading-7 text-vk-800 md:text-base">
+                  {SHLOKA.sanskrit.map((line) => (
+                    <p key={line}>{line}</p>
+                  ))}
+                </div>
+                <p className="mt-4 border-l-4 border-vk-300 pl-4 text-sm leading-6 text-muted-foreground">
+                  {SHLOKA.meaning}
+                </p>
+                <p className="mt-3 text-xs font-bold uppercase tracking-[0.08em] text-vk-700">
+                  {SHLOKA.source}
+                </p>
+              </div>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* ══ WHY THIS DAY ═════════════════════════════════════ */}
+        <section id="why-kartik" className="vk-section scroll-mt-24">
           <div className="vk-container">
             <SectionHeading
               align="center"
-              eyebrow="Choose Your Offering"
-              title="Kartik Maas Sevas"
-              subtitle="Tap an amount to offer that seva. Sankalpa is taken in your name and your receipt reaches you on WhatsApp."
+              eyebrow="Why Kartik Maas"
+              title="The Month Lord Damodar Loves Most"
+              subtitle="Four reasons families make Kartik the month of their seva for the year."
             />
+            <div data-group className="mx-auto grid max-w-6xl gap-5 [perspective:1200px] sm:grid-cols-2 lg:grid-cols-4">
+              {REASONS.map((item, i) => (
+                <div key={item.title} data-item data-tilt className="vk-card relative h-full overflow-hidden p-6">
+                  <span aria-hidden className="absolute right-4 top-2 font-heading text-6xl font-extrabold leading-none text-vk-100">
+                    {i + 1}
+                  </span>
+                  <span className="vk-icon-chip relative">
+                    <item.icon className="h-5 w-5" />
+                  </span>
+                  <h3 className="relative mt-4 text-base font-bold text-ink">{item.title}</h3>
+                  <p className="relative mt-2 text-sm leading-relaxed text-muted-foreground">{item.text}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
 
-            <div className="mx-auto flex max-w-6xl flex-wrap justify-center gap-5 md:gap-6">
+        {/* ══ THE CELEBRATION — the festival artwork, with a gentle parallax ═══ */}
+        <section className="pb-6 md:pb-10">
+          <div className="vk-container">
+            <a
+              href="#offer-seva"
+              data-reveal
+              className="relative mx-auto block max-w-6xl overflow-hidden rounded-3xl bg-vk-900 shadow-lift"
+              aria-label="Offer your seva this Kartik"
+            >
+              <div className="relative aspect-[962/1635] overflow-hidden sm:aspect-[1920/730]">
+                <Image
+                  src={MOBILE_BANNER}
+                  alt="Kartik Maas celebrations at ISKCON Gambheeram Visakhapatnam"
+                  fill
+                  sizes="100vw"
+                  quality={72}
+                  className="object-contain sm:hidden"
+                />
+                <Image
+                  src={DESKTOP_BANNER}
+                  alt=""
+                  fill
+                  sizes="(min-width: 1152px) 1152px, 100vw"
+                  quality={78}
+                  className="hidden object-contain sm:block"
+                />
+              </div>
+            </a>
+          </div>
+        </section>
+
+        {/* ══ THIRTY LAMPS ═════════════════════════════════════════════════ */}
+        <LampTracker onOffer={() => document.getElementById("offer-seva")?.scrollIntoView({ behavior: "smooth", block: "start" })} />
+
+        {/* ══ DONATION FINALE — the end of the journey: bind Him with your seva ══════════ */}
+        <section id="offer-seva" className="relative isolate scroll-mt-16 overflow-hidden bg-[radial-gradient(120%_70%_at_50%_0%,#1d3290_0%,#0e1a52_45%,#070d27_100%)] text-white">
+          <div aria-hidden className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-300/70 to-transparent" />
+          <div className="vk-container relative z-10 pt-14 md:pt-20">
+            <div className="grid items-center gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+              <div data-reveal>
+                <p className="flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-amber-200 md:text-xs">
+                  <span aria-hidden className="h-px w-8 bg-amber-300/70" /> Offer your seva
+                  {day !== null && day >= 1 && day <= 30 ? <span className="rounded-full bg-amber-300 px-2.5 py-0.5 text-[10px] tracking-wider text-vk-900">Day {day} of 30</span> : null}
+                </p>
+                <h2 className="mt-4 font-heading text-[2rem] font-extrabold leading-[1.06] tracking-[-0.03em] sm:text-5xl">
+                  He allowed Himself to be bound by love.{" "}
+                  <span style={{ backgroundImage: "var(--gradient-gold)", WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>Bind Him with your seva.</span>
+                </h2>
+                <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-white/75 md:text-lg md:leading-8">
+                  Offer a seva this Damodar month. Sankalpa is taken in your name, your receipt reaches your WhatsApp the moment the payment is
+                  confirmed, and every donation is eligible for 80G.
+                </p>
+                <ul className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-[13px] font-semibold text-white/85">
+                  {TRUST_BADGES.map((b) => (
+                    <li key={b.label} className="inline-flex items-center gap-2">
+                      <b.icon className="h-4 w-4 text-amber-300" /> {b.label}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="relative h-[250px] md:h-[330px]">
+                <LazyScene variant="finale" />
+              </div>
+            </div>
+
+            <p className="mb-6 mt-4 text-center text-xs font-semibold uppercase tracking-[0.2em] text-white/60 md:mt-8">Choose your offering · tap an amount</p>
+            <div data-group className="mx-auto flex max-w-6xl flex-wrap justify-center gap-5 [perspective:1200px] md:gap-6">
               {SEVAS.map((seva) => (
                 <article
                   key={seva.slug}
                   id={`seva-card-${seva.slug}`}
-                  className={`vk-card vk-card-hover group flex w-full scroll-mt-24 flex-col overflow-hidden sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] ${
+                  data-item
+                  data-tilt
+                  className={`vk-card group flex w-full scroll-mt-24 flex-col overflow-hidden border-t-[3px] border-t-[hsl(var(--gold))] transition-shadow duration-300 hover:shadow-lift sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] ${
                     highlightedSlug === seva.slug ? "ring-2 ring-vk-500 ring-offset-2" : ""
                   }`}
                 >
                   <div className="relative h-44 overflow-hidden bg-vk-900 md:h-48">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    <Image
                       src={seva.image}
                       alt={seva.title}
-                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      fill
+                      sizes="(min-width: 1024px) 380px, (min-width: 640px) 50vw, 100vw"
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-vk-900/90 via-vk-900/30 to-transparent" />
                     <div className="absolute bottom-3 left-4 right-4 flex items-center gap-2">
@@ -456,129 +776,32 @@ export default function KartikMaasClient() {
               ))}
             </div>
 
-            <p className="mt-8 text-center text-xs text-muted-foreground">
+
+            <p className="mt-8 text-center text-xs text-white/55">
               Minimum donation Rs. 100 · 80G Tax Exemption available · Secured by Razorpay ·
               Donations go to Hare Krishna Movement India, Visakhapatnam
             </p>
-          </div>
-        </section>
 
-        {/* Direct PhonePe / UPI payment, for donors who can't use Razorpay */}
-        <PhonePeUpiCard campaign="Kartik Maas" />
-
-        {/* ══ INTRO + SHLOKA ═══════════════════════════════════ */}
-        <section className="vk-section vk-band">
-          <div className="vk-container">
-            <Reveal className="mx-auto grid max-w-6xl gap-8 md:grid-cols-[1.35fr_0.65fr] md:items-center">
-              <div>
-                <span className="vk-pill mb-4">Hare Krishna Movement</span>
-                <h1 className="vk-h1">Kartik Maas</h1>
-                <p className="mt-4 inline-flex flex-wrap items-center gap-x-4 gap-y-1 text-sm font-semibold text-vk-700">
-                  <span className="inline-flex items-center gap-1.5">
-                    <CalendarDays className="h-4 w-4" />
-                    <time dateTime={FESTIVAL_DATE_ISO}>{FESTIVAL_DATE_LABEL}</time>
-                  </span>
-                  <span className="inline-flex items-center gap-1.5">
-                    <MapPin className="h-4 w-4" />
-                    Hare Krishna Vaikuntham, Gambheeram
-                  </span>
-                </p>
-                <p className="vk-lead mt-5 max-w-4xl md:text-lg md:leading-8">
-                  Kartik is Damodar month, when Lord Krishna is worshipped as the child bound by
-                  Mother Yashoda&apos;s love. At Hare Krishna Vaikuntham a lamp is offered to Sri
-                  Damodar every evening, the Damodarashtakam is sung, and Annadana is served to
-                  everyone who comes for darshan. Offer a seva and your sankalpa is made in your
-                  name.
-                </p>
-                <a href="#offer-seva" className="vk-btn-gold mt-6 inline-flex h-12 px-7 text-[15px] font-bold">
-                  Offer Your Seva
-                </a>
-              </div>
-
-              <div className="vk-card p-6 md:p-7">
-                <span className="vk-icon-chip">
-                  <Sparkles className="h-5 w-5" />
-                </span>
-                <div className="mt-4 space-y-1.5 font-serif-display text-[15px] italic leading-7 text-vk-800 md:text-base">
-                  {SHLOKA.sanskrit.map((line) => (
-                    <p key={line}>{line}</p>
-                  ))}
-                </div>
-                <p className="mt-4 border-l-4 border-vk-300 pl-4 text-sm leading-6 text-muted-foreground">
-                  {SHLOKA.meaning}
-                </p>
-                <p className="mt-3 text-xs font-bold uppercase tracking-[0.08em] text-vk-700">
-                  {SHLOKA.source}
-                </p>
-              </div>
-            </Reveal>
-          </div>
-        </section>
-
-        {/* ══ TRUST BADGES ═════════════════════════════════════ */}
-        <section className="border-y border-vk-100 bg-white py-4">
-          <div className="vk-container flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
-            {TRUST_BADGES.map((badge) => (
-              <span
-                key={badge.label}
-                className="inline-flex items-center gap-2 text-xs font-semibold text-vk-800 md:text-sm"
-              >
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-vk-100 text-vk-700">
-                  <badge.icon className="h-3.5 w-3.5" />
-                </span>
-                {badge.label}
-              </span>
-            ))}
-          </div>
-        </section>
-
-        {/* ══ WHY THIS DAY ═════════════════════════════════════ */}
-        <section className="vk-section">
-          <div className="vk-container">
-            <SectionHeading
-              align="center"
-              eyebrow="Why Kartik Maas"
-              title="The Month Lord Damodar Loves Most"
-              subtitle="Four reasons families make Kartik the month of their seva for the year."
-            />
-            <div className="mx-auto grid max-w-6xl gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {REASONS.map((item, i) => (
-                <Reveal key={item.title} delay={i * 0.06} className="vk-card h-full p-6">
-                  <span className="vk-icon-chip">
-                    <item.icon className="h-5 w-5" />
-                  </span>
-                  <h3 className="mt-4 text-base font-bold text-ink">{item.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.text}</p>
-                </Reveal>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ══ BANK TRANSFER ════════════════════════════════════ */}
-        <section className="pt-10 md:pt-16">
-          <div className="vk-container">
-            <div className="mx-auto max-w-6xl rounded-2xl border border-vk-100 bg-vk-50 px-5 py-4 text-sm leading-7 text-ink/80 md:text-base">
+            <div className="mx-auto mt-10 grid max-w-6xl gap-5 lg:grid-cols-2 lg:items-start">
+              <div className="space-y-4">
+            <div className="rounded-2xl border border-white/10 bg-white/[0.07] px-5 py-4 text-sm leading-7 text-white/80 md:text-base">
               While making UPI or bank payments, please send a screenshot with your name, mobile,
               address and PAN details to our WhatsApp{" "}
-              <a className="font-bold text-vk-700 hover:text-vk-500" href="tel:+918977761187">
-                +91 89777 61187
+              <a className="font-bold text-amber-200 hover:text-amber-100" href="https://wa.me/917995097108" target="_blank" rel="noreferrer">
+                +91 79950 97108
               </a>{" "}
               or email{" "}
               <a
-                className="break-all font-bold text-vk-700 hover:text-vk-500"
+                className="break-all font-bold text-amber-200 hover:text-amber-100"
                 href="mailto:social@hkmvizag.org"
               >
                 social@hkmvizag.org
               </a>
               , so your receipt is issued against the right donor.
             </div>
-          </div>
-        </section>
 
-        <section className="pb-10 pt-5 md:pb-16 md:pt-6">
-          <div className="vk-container">
-            <div className="vk-card mx-auto max-w-6xl p-5 md:p-8">
+              </div>
+            <div className="vk-card p-5 md:p-7">
               <h2 className="vk-bar-title text-lg text-ink md:text-xl">
                 Donation Through Bank (NEFT / RTGS)
               </h2>
@@ -612,6 +835,11 @@ export default function KartikMaasClient() {
                 ))}
               </div>
             </div>
+
+            </div>
+          </div>
+          <div className="mt-10 [&_section]:pb-14 md:[&_section]:pb-20">
+        <PhonePeUpiCard campaign="Kartik Maas" />
           </div>
         </section>
 
@@ -681,7 +909,7 @@ export default function KartikMaasClient() {
       )}
 
       {/* ══ STICKY MOBILE DONATE BAR ════════════════════════════ */}
-      {!selected && (
+      {!selected && pastHero && !inDonation && (
         <div className="fixed bottom-[calc(var(--bottom-nav-space)+4px+env(safe-area-inset-bottom))] left-3 right-[76px] z-40 lg:hidden">
           <div className="flex items-center justify-between gap-3 rounded-2xl border border-vk-100 bg-white/95 p-2 pl-4 shadow-lift backdrop-blur">
             <span className="min-w-0 truncate text-[13px] font-semibold text-vk-800">
@@ -692,6 +920,15 @@ export default function KartikMaasClient() {
             </a>
           </div>
         </div>
+      )}
+      {/* ══ DESKTOP FLOATING DONATE PILL ═══════════════════════ */}
+      {!selected && pastHero && !inDonation && (
+        <a
+          href="#offer-seva"
+          className="vk-btn-gold fixed bottom-6 right-24 z-40 hidden h-12 items-center gap-2 px-6 text-sm font-bold shadow-gold lg:inline-flex"
+        >
+          <Heart className="h-4 w-4" /> Offer Seva
+        </a>
       )}
     </PageLayout>
   );
