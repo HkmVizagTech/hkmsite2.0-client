@@ -9,12 +9,21 @@ const DAYS = 30;
 const istToday = () => new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
 const dayDiff = (a: string, b: string) => Math.round((Date.parse(`${b}T00:00:00Z`) - Date.parse(`${a}T00:00:00Z`)) / 86_400_000);
 
+/** Day of Damodar month (IST) once mounted: <1 before it starts, >30 after. null on the server / first render. */
+export function useKartikDay() {
+  const [day, setDay] = useState<number | null>(null);
+  useEffect(() => {
+    setDay(dayDiff(START, istToday()) + 1);
+  }, []);
+  return day;
+}
+
 /** One diya: brass bowl and (when lit) a flickering flame. */
 function Diya({ lit, current }: { lit: boolean; current: boolean }) {
   return (
     <svg viewBox="0 0 48 56" className="h-full w-full overflow-visible" aria-hidden>
       {lit && (
-        <g data-flame className={`km-flame ${current ? "km-flame-strong" : ""}`}>
+        <g data-flame className={current ? "km-flame" : undefined}>
           <ellipse cx="24" cy="20" rx="14" ry="16" fill="url(#km-glow)" opacity={current ? 0.9 : 0.55} />
           <path d="M24 4c5 6 8 11 8 16a8 8 0 0 1-16 0c0-4 3-8 8-16Z" fill="url(#km-flame)" />
           <path d="M24 13c2.4 3 3.6 5.3 3.6 7.6a3.6 3.6 0 0 1-7.2 0c0-2.3 1.2-4.6 3.6-7.6Z" fill="#FFF7D6" />
@@ -29,11 +38,7 @@ function Diya({ lit, current }: { lit: boolean; current: boolean }) {
 
 export default function LampTracker({ onOffer }: { onOffer: () => void }) {
   // Computed after mount so the server HTML and the first client render agree.
-  const [day, setDay] = useState<number | null>(null);
-
-  useEffect(() => {
-    setDay(dayDiff(START, istToday()) + 1);
-  }, []);
+  const day = useKartikDay();
 
   const lit = day === null ? 0 : Math.max(0, Math.min(DAYS, day));
   const started = day !== null && day >= 1;

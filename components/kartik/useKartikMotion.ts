@@ -11,8 +11,7 @@ import type { SceneState } from "./KartikScene";
  * Markers used in the markup:
  *   data-hero-word   headline words (rise in)        data-hero-fade   hero copy/buttons (fade up in order)
  *   data-reveal      fade-up when scrolled into view data-group > [data-item]  staggered children
- *   data-lamps       the 30-lamp grid (flames ignite) data-parallax  image that drifts while scrolling
- *   data-marquee     endless mantra strip            data-tilt  card that leans toward the pointer
+ *   data-lamps       the 30-lamp grid (flames ignite) data-tilt  card that leans toward the pointer
  *   data-count       number that counts up (data-count="30")
  *
  * With prefers-reduced-motion nothing moves: everything is simply shown, and the 3D scene is told to start lit.
@@ -65,14 +64,6 @@ export function useKartikMotion(root: RefObject<HTMLElement | null>, scene: Scen
             },
           });
         }
-        // Parallax image
-        gsap.utils.toArray<HTMLElement>("[data-parallax]").forEach((img) => {
-          gsap.fromTo(img, { yPercent: -8 }, { yPercent: 8, ease: "none", scrollTrigger: { trigger: img.parentElement, start: "top bottom", end: "bottom top", scrub: 0.6 } });
-        });
-        // Mantra marquee
-        gsap.utils.toArray<HTMLElement>("[data-marquee]").forEach((m) => {
-          gsap.to(m, { xPercent: -50, duration: 46, ease: "none", repeat: -1 });
-        });
         // Count-up numbers
         gsap.utils.toArray<HTMLElement>("[data-count]").forEach((n) => {
           const to = Number(n.dataset.count || 0);

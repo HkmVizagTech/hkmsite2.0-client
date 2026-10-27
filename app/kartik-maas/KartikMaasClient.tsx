@@ -9,8 +9,9 @@ import FaqSection from "@/components/sqft-campaign/FaqSection";
 import DonorPrivilegesSection from "@/components/sqft-campaign/DonorPrivilegesSection";
 import OtherDonationsCarousel from "@/components/pitru-paksha/OtherDonationsCarousel";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import LampTracker from "@/components/kartik/LampTracker";
+import LampTracker, { useKartikDay } from "@/components/kartik/LampTracker";
 import { useKartikMotion } from "@/components/kartik/useKartikMotion";
 import {
   CalendarDays,
@@ -331,29 +332,22 @@ export default function KartikMaasClient() {
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const scrolledRef = useRef(false);
   const [pastHero, setPastHero] = useState(false);
+  const day = useKartikDay();
   const rootRef = useRef<HTMLDivElement>(null);
   const sceneState = useRef({ intro: 0 }).current;
   useKartikMotion(rootRef, sceneState);
 
-  // Land the donor on the sevas, not the banner. Most arrivals come from an
-  // ad or a WhatsApp broadcast that already showed them the artwork, so the
-  // top of the page is a second look at something they have seen.
-  //
-  // A ?seva= deep link (used by the pending-payment reminder) wins: it goes
-  // to that specific card instead of the top of the grid. Both run through
-  // this one effect so they can never fight each other mid-scroll.
+  // A ?seva= deep link (used by the pending-payment reminder) goes straight to that seva's card. Everyone else
+  // lands on the hero: it has its own Offer buttons, and the page must not move on its own.
   useEffect(() => {
     if (scrolledRef.current) return;
     scrolledRef.current = true;
     const slug = new URLSearchParams(window.location.search).get("seva");
     const matched = slug && SEVAS.some((seva) => seva.slug === slug) ? slug : null;
-    if (matched) setHighlightedSlug(matched);
-    const targetId = matched ? `seva-card-${matched}` : "offer-seva";
+    if (!matched) return;
+    setHighlightedSlug(matched);
     const timer = window.setTimeout(() => {
-      document.getElementById(targetId)?.scrollIntoView({
-        behavior: "smooth",
-        block: matched ? "center" : "start",
-      });
+      document.getElementById(`seva-card-${matched}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 450);
     return () => window.clearTimeout(timer);
   }, []);
@@ -402,8 +396,8 @@ export default function KartikMaasClient() {
           <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[62%] bg-gradient-to-t from-[#070d27] via-[#070d27]/80 to-transparent md:h-48 md:via-[#070d27]/70" />
           <div className="vk-container relative z-10 flex min-h-[calc(100svh-var(--header-h))] flex-col justify-end pb-12 pt-[46svh] md:justify-center md:pb-20 md:pt-16">
             <div className="max-w-xl lg:max-w-[40rem]">
-              <p data-hero-fade className="vk-pill-light">
-                <Flame className="h-3.5 w-3.5 text-amber-300" /> Damodar Māsa · 26 Oct – 24 Nov 2026
+              <p data-hero-fade className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-white ring-1 ring-white/15 md:text-xs">
+                <Flame className="h-3.5 w-3.5 text-amber-300" /> Damodar Māsa · 26 Oct – 24 Nov{day !== null && day >= 1 && day <= 30 ? ` · Day ${day} of 30` : " 2026"}
               </p>
               <h1 className="mt-4 font-heading text-[2.6rem] font-extrabold leading-[1.02] tracking-[-0.035em] sm:text-6xl lg:text-[4.4rem]">
                 {HERO_WORDS.map((w) => (
@@ -419,8 +413,11 @@ export default function KartikMaasClient() {
                 ))}
               </h1>
               <p data-hero-fade className="mt-5 max-w-xl text-[15px] leading-relaxed text-white/80 md:text-lg md:leading-8">
-                Offer a seva this Kartik and your sankalpa is made in your name at Hare Krishna Vaikuntham — every evening a lamp is
-                offered to Sri Damodar, the Damodarashtakam is sung, and Annadana is served.
+                <span className="sm:hidden">Your seva is offered with sankalpa in your name, as a lamp to Sri Damodar every evening.</span>
+                <span className="hidden sm:inline">
+                  Offer a seva this Kartik and your sankalpa is made in your name at Hare Krishna Vaikuntham — every evening a lamp is
+                  offered to Sri Damodar, the Damodarashtakam is sung, and Annadana is served.
+                </span>
               </p>
               <div data-hero-fade className="mt-7 flex flex-wrap items-center gap-3">
                 <a href="#offer-seva" className="vk-btn-gold h-[3.25rem] px-8 text-base font-bold md:h-14">
@@ -428,16 +425,32 @@ export default function KartikMaasClient() {
                 </a>
                 <a
                   href="#why-kartik"
-                  className="inline-flex h-12 items-center justify-center rounded-xl border border-white/25 bg-white/10 px-6 text-sm font-semibold text-white backdrop-blur transition-colors hover:bg-white/20 md:h-14"
+                  className="inline-flex h-12 items-center justify-center rounded-xl bg-white/10 px-6 text-sm font-semibold text-white ring-1 ring-white/25 transition-colors hover:bg-white/20 md:h-14"
                 >
                   Why Kartik?
                 </a>
               </div>
-              <ul data-hero-fade className="mt-7 flex flex-wrap gap-2">
+              <div data-hero-fade className="mt-6">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/60">Annadana Seva · tap to offer</p>
+                <div className="mt-2 grid max-w-md grid-cols-3 gap-2">
+                  {[1100, 2100, 5555].map((amount) => (
+                    <button
+                      key={amount}
+                      type="button"
+                      onClick={() => setSelected({ seva: SEVAS[0], amount })}
+                      className="rounded-xl border border-amber-300/40 bg-amber-300/10 px-3 py-2 text-left transition-colors hover:bg-amber-300/20 active:bg-amber-300/25"
+                    >
+                      <span className="block font-heading text-lg font-extrabold leading-tight text-amber-200">₹{formatAmount(amount)}</span>
+                      <span className="block text-[11px] text-white/70">{IMPACTS["annadana-seva"][amount]}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <ul data-hero-fade className="mt-6 hidden flex-wrap gap-2 sm:flex">
                 {TRUST_BADGES.map((badge) => (
                   <li
                     key={badge.label}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[11px] font-semibold text-white/90 backdrop-blur md:text-xs"
+                    className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[11px] font-semibold text-white/90 ring-1 ring-white/15 md:text-xs"
                   >
                     <badge.icon className="h-3.5 w-3.5 text-amber-300" />
                     {badge.label}
@@ -455,7 +468,7 @@ export default function KartikMaasClient() {
 
         {/* ══ MANTRA STRIP ═════════════════════════════════════════════════ */}
         <div aria-hidden className="relative overflow-hidden border-y border-[hsl(var(--gold)/0.3)] bg-[#070d27] py-3">
-          <div data-marquee className="flex w-max whitespace-nowrap">
+          <div className="km-marquee flex w-max whitespace-nowrap">
             {[0, 1].map((k) => (
               <div key={k} className="flex shrink-0 items-center gap-6 pr-6 text-sm font-semibold tracking-wide text-[hsl(var(--gold))] md:text-base">
                 {[0, 1, 2].map((j) => (
@@ -493,11 +506,12 @@ export default function KartikMaasClient() {
                   }`}
                 >
                   <div className="relative h-44 overflow-hidden bg-vk-900 md:h-48">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    <Image
                       src={seva.image}
                       alt={seva.title}
-                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      fill
+                      sizes="(min-width: 1024px) 380px, (min-width: 640px) 50vw, 100vw"
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-vk-900/90 via-vk-900/30 to-transparent" />
                     <div className="absolute bottom-3 left-4 right-4 flex items-center gap-2">
@@ -661,17 +675,22 @@ export default function KartikMaasClient() {
               aria-label="Offer your seva this Kartik"
             >
               <div className="relative aspect-[4/5] overflow-hidden sm:aspect-[1920/730]">
-                <picture>
-                  <source media="(max-width: 640px)" srcSet={MOBILE_BANNER} />
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    data-parallax
-                    src={DESKTOP_BANNER}
-                    alt="Kartik Maas celebrations at ISKCON Gambheeram Visakhapatnam"
-                    className="absolute -top-[8%] left-0 h-[116%] w-full object-cover object-top"
-                    loading="lazy"
-                  />
-                </picture>
+                <Image
+                  src={MOBILE_BANNER}
+                  alt="Kartik Maas celebrations at ISKCON Gambheeram Visakhapatnam"
+                  fill
+                  sizes="100vw"
+                  quality={72}
+                  className="object-cover object-top sm:hidden"
+                />
+                <Image
+                  src={DESKTOP_BANNER}
+                  alt=""
+                  fill
+                  sizes="(min-width: 1152px) 1152px, 100vw"
+                  quality={78}
+                  className="hidden object-cover object-top sm:block"
+                />
               </div>
             </a>
           </div>
@@ -749,7 +768,7 @@ export default function KartikMaasClient() {
           <div aria-hidden className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-r from-[#070d27]/80 via-[#070d27]/30 to-transparent md:from-[#070d27]/70" />
           <div className="vk-container relative z-10">
             <div data-reveal className="max-w-xl">
-              <span className="vk-pill-light">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-white ring-1 ring-white/15 md:text-xs">
                 <Sparkles className="h-3.5 w-3.5 text-amber-300" /> Damodar Māsa
               </span>
               <h2 className="mt-4 font-heading text-[2rem] font-extrabold leading-[1.08] tracking-[-0.03em] sm:text-5xl">

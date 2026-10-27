@@ -33,21 +33,26 @@ export default function KartikScene({ variant = "hero", state, className = "" }:
     const host = hostRef.current;
     if (!host) return;
     let disposed = false;
-    let cleanup: (() => void) | undefined;
-    (async () => {
-      try {
-        const THREE = await import("three");
-        const { RoomEnvironment } = await import("three/examples/jsm/environments/RoomEnvironment.js");
-        if (disposed) return;
-        cleanup = build(THREE, RoomEnvironment, host, variant, state ?? { intro: 1 });
-      } catch (err) {
+    let detach: (() => void) | undefined;
+    acquireController()
+      .then((ctl) => {
+        if (disposed) {
+          ctl.release();
+          return;
+        }
+        ctl.attach(variant, host, state ?? { intro: 1 });
+        detach = () => {
+          ctl.detach(variant);
+          ctl.release();
+        };
+      })
+      .catch((err) => {
         console.warn("[kartik-scene] 3D unavailable, using the CSS glow instead:", err);
         if (!disposed) setFailed(true);
-      }
-    })();
+      });
     return () => {
       disposed = true;
-      cleanup?.();
+      detach?.();
     };
   }, [variant, state]);
 
@@ -60,6 +65,52 @@ export default function KartikScene({ variant = "hero", state, className = "" }:
       )}
     </div>
   );
+}
+
+/**
+ * ONE WebGL context serves both the hero and the finale: the canvas is moved into whichever section is on screen. The
+ * finale therefore costs nothing extra (no second context, shader compile or texture upload while the visitor scrolls).
+ */
+type Controller = {
+  attach: (variant: Variant, host: HTMLElement, state: SceneState) => void;
+  detach: (variant: Variant) => void;
+  release: () => void;
+};
+type Variant = "hero" | "finale";
+
+let controllerPromise: Promise<Controller> | null = null;
+let controllerRefs = 0;
+let controllerDispose: (() => void) | null = null;
+
+function acquireController(): Promise<Controller> {
+  controllerRefs++;
+  if (!controllerPromise) {
+    controllerPromise = (async () => {
+      const THREE = await import("three");
+      const { RoomEnvironment } = await import("three/examples/jsm/environments/RoomEnvironment.js");
+      const built = build(THREE, RoomEnvironment);
+      await built.ready;
+      controllerDispose = built.dispose;
+      return {
+        attach: built.attach,
+        detach: built.detach,
+        release: () => {
+          controllerRefs--;
+          if (controllerRefs <= 0) {
+            controllerDispose?.();
+            controllerPromise = null;
+            controllerDispose = null;
+            controllerRefs = 0;
+          }
+        },
+      };
+    })().catch((err) => {
+      controllerPromise = null;
+      controllerRefs = 0;
+      throw err;
+    });
+  }
+  return controllerPromise;
 }
 
 // ───────────────────────────────────────────────────────────────────────────────────────────
@@ -83,22 +134,21 @@ function canvasTexture(THREE: THREE_, size: number, height: number, draw: (ctx: 
 
 function build(
   THREE: THREE_,
-  RoomEnvironment: new () => import("three").Scene,
-  host: HTMLElement,
-  variant: "hero" | "finale",
-  state: SceneState
-): () => void {
+  RoomEnvironment: new () => import("three").Scene
+): { ready: Promise<void>; attach: Controller["attach"]; detach: Controller["detach"]; dispose: () => void } {
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const coarse = window.matchMedia("(pointer: coarse)").matches;
-  const isHero = variant === "hero";
+  // The section the canvas currently lives in. Everything below that used to be fixed per instance follows it.
+  let isHero = true;
+  let host: HTMLElement | null = null;
+  let state: SceneState = { intro: 1 };
 
-  const renderer = new THREE.WebGLRenderer({ antialias: !coarse, alpha: true, powerPreference: "high-performance" });
+  const renderer = new THREE.WebGLRenderer({ antialias: !coarse && (window.devicePixelRatio || 1) < 1.5, alpha: true, powerPreference: "default" });
   renderer.setClearColor(0x000000, 0);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.12;
   const canvas = renderer.domElement;
   canvas.style.cssText = "position:absolute;inset:0;width:100%;height:100%;display:block;";
-  host.appendChild(canvas);
 
   const scene = new THREE.Scene();
   const pmrem = new THREE.PMREMGenerator(renderer);
@@ -267,19 +317,30 @@ function build(
     { n: 8, elev: 0.9, scale: 0.74, off: 0 },
     { n: 6, elev: 1.2, scale: 0.52, off: 0.5 },
   ];
-  const pivots: { mesh: InstanceType<typeof THREE.Mesh>; elev: number }[] = [];
-  for (const ring of rings) {
-    for (let i = 0; i < ring.n; i++) {
-      const pivot = new THREE.Group();
-      pivot.rotation.y = ((i + ring.off) / ring.n) * Math.PI * 2;
-      const mesh = new THREE.Mesh(petalGeo, petalMat);
-      mesh.scale.setScalar(ring.scale);
-      mesh.position.z = 0.12;
-      pivot.add(mesh);
-      lotus.add(pivot);
-      pivots.push({ mesh, elev: ring.elev });
-    }
-  }
+  const slots: { angle: number; elev: number; scale: number }[] = [];
+  for (const ring of rings) for (let i = 0; i < ring.n; i++) slots.push({ angle: ((i + ring.off) / ring.n) * Math.PI * 2, elev: ring.elev, scale: ring.scale });
+  // One draw call for the whole lotus. Petal matrices are rewritten only while the flower is opening.
+  const lotusMesh = new THREE.InstancedMesh(petalGeo, petalMat, slots.length);
+  lotusMesh.frustumCulled = false;
+  const pivotD = new THREE.Object3D();
+  const petalD = new THREE.Object3D();
+  const lotusM = new THREE.Matrix4();
+  let lastBloom = -1;
+  const writeLotus = (bloom: number) => {
+    slots.forEach((slot, i) => {
+      pivotD.rotation.set(0, slot.angle, 0);
+      pivotD.updateMatrix();
+      petalD.rotation.set(Math.PI / 2 - lerp(1.5, slot.elev, bloom), 0, 0);
+      petalD.position.set(0, 0, 0.12);
+      petalD.scale.setScalar(slot.scale);
+      petalD.updateMatrix();
+      lotusM.multiplyMatrices(pivotD.matrix, petalD.matrix);
+      lotusMesh.setMatrixAt(i, lotusM);
+    });
+    lotusMesh.instanceMatrix.needsUpdate = true;
+  };
+  writeLotus(0);
+  lotus.add(lotusMesh);
   lotus.position.y = -0.18;
   rig.add(lotus);
 
@@ -302,8 +363,8 @@ function build(
   rig.add(halo);
 
   // ── Embers, petals, stars ─────────────────────────────────────────
-  const small = () => host.clientWidth < 640;
-  const EMBERS = isHero ? (small() ? 70 : 150) : small() ? 40 : 90;
+  const small = () => window.innerWidth < 640;
+  const EMBERS = small() ? 70 : 150;
   const emberPos = new Float32Array(EMBERS * 3);
   const emberCol = new Float32Array(EMBERS * 3);
   const emberSpeed = new Float32Array(EMBERS);
@@ -332,7 +393,7 @@ function build(
   const embers = new THREE.Points(emberGeo, emberMat);
   rig.add(embers);
 
-  const PETALS = isHero ? (small() ? 8 : 16) : small() ? 5 : 10;
+  const PETALS = small() ? 8 : 16;
   const drift = new THREE.InstancedMesh(petalGeo, petalMat, PETALS);
   const dd = Array.from({ length: PETALS }, () => ({ x: 0, y: 0, z: 0, s: 0, vy: 0, sx: 0, rx: 0, ry: 0, rz: 0, vr: 0 }));
   const resetPetal = (p: (typeof dd)[number], spawn: boolean) => {
@@ -373,7 +434,7 @@ function build(
   starGeo.setAttribute("position", new THREE.BufferAttribute(starPos, 3));
   const starMat = track(new THREE.PointsMaterial({ size: 0.09, map: dotTex, color: 0xdfe7ff, transparent: true, opacity: 0.7, depthWrite: false, toneMapped: false }));
   const stars = new THREE.Points(starGeo, starMat);
-  stars.visible = isHero;
+  stars.visible = true;
   scene.add(stars);
 
   // ── Layout ────────────────────────────────────────────────────────
@@ -385,10 +446,11 @@ function build(
   let baseScale = 1;
 
   const layout = () => {
+    if (!host) return;
     const w = Math.max(1, host.clientWidth);
     const h = Math.max(1, host.clientHeight);
     aspect = w / h;
-    maxDpr = Math.min(window.devicePixelRatio || 1, coarse ? 1.5 : 2);
+    maxDpr = Math.min(window.devicePixelRatio || 1, 1.5);
     renderer.setPixelRatio(quality === "low" ? 1 : maxDpr);
     renderer.setSize(w, h, false);
     camera.aspect = aspect;
@@ -418,10 +480,11 @@ function build(
     if (quality === "low") return;
     quality = "low";
     renderer.setPixelRatio(1);
-    renderer.setSize(host.clientWidth, host.clientHeight, false);
+    if (host) renderer.setSize(host.clientWidth, host.clientHeight, false);
     emberGeo.setDrawRange(0, Math.floor(EMBERS / 2));
     drift.count = Math.floor(PETALS / 2);
     stars.visible = false;
+    mandalaB.visible = false;
   };
   let sampleFrames = 0;
   let sampleSum = 0;
@@ -452,9 +515,11 @@ function build(
     flameLight.intensity = (isHero ? 30 : 24) * ignite * (0.92 + (f1 - 1) * 1.6);
     oilMat.emissiveIntensity = 0.7 * ignite;
 
-    // lotus bloom
-    const breathe = 0.03 * Math.sin(t * 0.9);
-    for (const p of pivots) p.mesh.parent!.children[0].rotation.x = Math.PI / 2 - lerp(1.5, p.elev + breathe, bloom);
+    // lotus bloom (matrices are only rewritten while it is still opening)
+    if (Math.abs(bloom - lastBloom) > 0.003) {
+      writeLotus(bloom);
+      lastBloom = bloom;
+    }
 
     // slow spins
     mandalaA.rotation.z += dt * 0.05;
@@ -501,16 +566,29 @@ function build(
   let last = performance.now();
   let running = false;
   const clock0 = performance.now();
+  // While the visitor is scrolling the browser has page work to do (the blurred header, compositing), so the
+  // scene drops to 30fps then and stops entirely once the hero has mostly scrolled away.
+  let lastScroll = 0;
+  const onScroll = () => {
+    lastScroll = performance.now();
+  };
+  window.addEventListener("scroll", onScroll, { passive: true });
   const frame = (now: number) => {
     raf = requestAnimationFrame(frame);
+    if (isHero && (window.scrollY - hostTop) / hostH > 1.05) {
+      last = now;
+      return;
+    }
+    const scrolling = now - lastScroll < 160;
+    if ((scrolling || quality === "low") && now - last < 30) return; // 30fps while scrolling, and always on weak devices
     const dt = Math.min(0.05, (now - last) / 1000);
     last = now;
     update((now - clock0) / 1000, dt);
     renderer.render(scene, camera);
-    if (quality === "high" && now - clock0 > 1500 && sampleFrames < 90) {
+    if (quality === "high" && !scrolling && now - clock0 > 1200 && sampleFrames < 60) {
       sampleSum += dt;
       sampleFrames++;
-      if (sampleFrames === 90 && sampleSum / 90 > 0.027) lowerQuality();
+      if (sampleFrames === 60 && sampleSum / 60 > 0.022) lowerQuality();
     }
   };
   const start = () => {
@@ -524,48 +602,115 @@ function build(
     cancelAnimationFrame(raf);
   };
 
-  layout();
-  if (reduceMotion) {
-    state.intro = 1;
-    update(2, 0);
-    renderer.render(scene, camera);
-  }
+  // Weak or data-saving devices start on the light settings instead of waiting for the frame-time governor.
+  const nav = navigator as Navigator & { deviceMemory?: number; connection?: { saveData?: boolean } };
+  if ((nav.hardwareConcurrency ?? 8) <= 4 || (nav.deviceMemory ?? 8) <= 4 || nav.connection?.saveData) lowerQuality();
 
-  let onScreen = true;
-  const sync = () => (onScreen && !document.hidden ? start() : stop());
-  const io = new IntersectionObserver(
-    (entries) => {
-      onScreen = entries[0]?.isIntersecting ?? true;
-      sync();
-    },
-    { rootMargin: "120px" }
-  );
-  io.observe(host);
+  // ── Hosts: the hero and the finale each register; the canvas lives in the one that is on screen ──
+  type Entry = { host: HTMLElement; state: SceneState; onScreen: boolean; io: IntersectionObserver; ro: ResizeObserver };
+  const entries = new Map<Variant, Entry>();
+  let active: Variant | null = null;
+
+  const activate = (variant: Variant | null) => {
+    if (variant === active) return;
+    active = variant;
+    if (!variant) {
+      stop();
+      return;
+    }
+    const e = entries.get(variant)!;
+    isHero = variant === "hero";
+    host = e.host;
+    state = e.state;
+    if (canvas.parentElement !== host) host.appendChild(canvas);
+    stars.visible = isHero && quality === "high";
+    flameLight.intensity = 0;
+    layout();
+    if (reduceMotion) {
+      state.intro = 1;
+      update(2, 0);
+      renderer.render(scene, camera);
+    }
+    sync();
+  };
+  const pick = () => {
+    const hero = entries.get("hero");
+    const finale = entries.get("finale");
+    activate(hero?.onScreen ? "hero" : finale?.onScreen ? "finale" : null);
+  };
+  const sync = () => (active && !document.hidden ? start() : stop());
+
   const onVis = () => sync();
   document.addEventListener("visibilitychange", onVis);
-  const ro = new ResizeObserver(() => {
-    layout();
-    if (reduceMotion) renderer.render(scene, camera);
-  });
-  ro.observe(host);
-  const onScrollResize = () => {
-    const r = host.getBoundingClientRect();
-    hostTop = r.top + window.scrollY;
-  };
-  window.addEventListener("load", onScrollResize);
-  sync();
+  const onLoad = () => layout();
+  window.addEventListener("load", onLoad);
 
-  return () => {
+  const attach: Controller["attach"] = (variant, h, st) => {
+    entries.get(variant)?.io.disconnect();
+    entries.get(variant)?.ro.disconnect();
+    const entry: Entry = {
+      host: h,
+      state: st,
+      onScreen: false,
+      io: new IntersectionObserver(
+        (list) => {
+          entry.onScreen = list[list.length - 1]?.isIntersecting ?? false;
+          pick();
+        },
+        { rootMargin: "120px" }
+      ),
+      ro: new ResizeObserver(() => {
+        if (host === h) {
+          layout();
+          if (reduceMotion) renderer.render(scene, camera);
+        }
+      }),
+    };
+    entries.set(variant, entry);
+    entry.io.observe(h);
+    entry.ro.observe(h);
+  };
+  const detach: Controller["detach"] = (variant) => {
+    const e = entries.get(variant);
+    if (!e) return;
+    e.io.disconnect();
+    e.ro.disconnect();
+    entries.delete(variant);
+    if (active === variant) {
+      active = null;
+      host = null;
+      canvas.remove();
+    }
+    pick();
+  };
+
+  const dispose = () => {
     stop();
-    io.disconnect();
-    ro.disconnect();
+    entries.forEach((e) => {
+      e.io.disconnect();
+      e.ro.disconnect();
+    });
+    entries.clear();
     document.removeEventListener("visibilitychange", onVis);
     window.removeEventListener("pointermove", onPointer);
-    window.removeEventListener("load", onScrollResize);
+    window.removeEventListener("load", onLoad);
+    window.removeEventListener("scroll", onScroll);
     drift.dispose();
+    lotusMesh.dispose();
     disposables.forEach((d) => d.dispose());
     renderer.dispose();
     renderer.forceContextLoss();
     canvas.remove();
   };
+
+  // Compile every shader off the main thread (where supported) before the first frame, so nothing hitches later.
+  const ready = (async () => {
+    try {
+      await renderer.compileAsync(scene, camera);
+    } catch {
+      /* compiled lazily on the first frame instead */
+    }
+  })();
+
+  return { ready, attach, detach, dispose };
 }
