@@ -15,7 +15,9 @@ import LampTracker, { useKartikDay } from "@/components/kartik/LampTracker";
 import RopeRail from "@/components/kartik/RopeRail";
 import { useKartikMotion } from "@/components/kartik/useKartikMotion";
 import {
+  ArrowRight,
   CalendarDays,
+  ChevronDown,
   Check,
   Clock,
   Copy,
@@ -38,7 +40,7 @@ import type { CampaignConfig } from "@/lib/campaignConfig";
 const KartikScene = dynamic(() => import("@/components/kartik/KartikScene"), { ssr: false });
 
 /** Mounts a 3D scene only when its section is about to scroll into view (saves a WebGL context on phones). */
-function LazyScene({ variant }: { variant: "hero" | "finale" }) {
+function LazyScene({ variant, state }: { variant: "hero" | "story" | "finale"; state?: { intro: number; progress?: number } }) {
   const ref = useRef<HTMLDivElement>(null);
   const [show, setShow] = useState(false);
   useEffect(() => {
@@ -58,7 +60,7 @@ function LazyScene({ variant }: { variant: "hero" | "finale" }) {
   }, []);
   return (
     <div ref={ref} className="absolute inset-0">
-      {show && <KartikScene variant={variant} />}
+      {show && <KartikScene variant={variant} state={state} />}
     </div>
   );
 }
@@ -355,7 +357,8 @@ export default function KartikMaasClient() {
   const day = useKartikDay();
   const rootRef = useRef<HTMLDivElement>(null);
   const sceneState = useRef({ intro: 0 }).current;
-  useKartikMotion(rootRef, sceneState);
+  const storyState = useRef({ intro: 1, progress: 0 }).current;
+  useKartikMotion(rootRef, sceneState, storyState);
 
   // A ?seva= deep link (used by the pending-payment reminder) goes straight to that seva's card. Everyone else
   // lands on the hero: it has its own Offer buttons, and the page must not move on its own.
@@ -410,17 +413,17 @@ export default function KartikMaasClient() {
   return (
     <PageLayout>
       <RopeRail />
-      <div ref={rootRef} className="overflow-x-hidden bg-white pt-[var(--header-h)]">
-        {/* ══ HERO — three.js diya + lotus, GSAP intro ═════════════════════ */}
+      <div ref={rootRef} className="overflow-x-clip bg-white pt-[var(--header-h)]">
+        {/* ══ HERO ═════════════════════════════════════════════════════════ */}
         <section className="relative isolate overflow-hidden bg-[radial-gradient(120%_90%_at_72%_18%,#1d3290_0%,#0e1a52_42%,#070d27_100%)] text-white">
           <KartikScene variant="hero" state={sceneState} className="z-0" />
-          <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[62%] bg-gradient-to-t from-[#070d27] via-[#070d27]/80 to-transparent md:h-24 md:via-[#070d27]/60" />
-          <div className="vk-container relative z-10 flex min-h-[calc(100svh-var(--header-h))] flex-col justify-end pb-12 pt-[46svh] md:justify-center md:pb-20 md:pt-16">
-            <div className="max-w-xl lg:max-w-[40rem]">
-              <p data-hero-fade className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-white ring-1 ring-white/15 md:text-xs">
-                <Flame className="h-3.5 w-3.5 text-amber-300" /> Damodar Māsa · 26 Oct – 24 Nov{day !== null && day >= 1 && day <= 30 ? ` · Day ${day} of 30` : " 2026"}
+          <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[58%] bg-gradient-to-t from-[#070d27] via-[#070d27]/80 to-transparent md:h-40 md:via-[#070d27]/50" />
+          <div className="vk-container relative z-10 flex min-h-[calc(100svh-var(--header-h))] flex-col justify-end pb-8 pt-[46svh] md:justify-between md:pb-10 md:pt-16">
+            <div className="max-w-xl md:my-auto lg:max-w-[38rem]">
+              <p data-hero-fade className="flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-amber-200 md:text-xs">
+                <span aria-hidden className="h-px w-8 bg-amber-300/70" /> Damodar Māsa 2026
               </p>
-              <h1 className="mt-4 font-heading text-[2.6rem] font-extrabold leading-[1.02] tracking-[-0.035em] sm:text-6xl lg:text-[4.4rem]">
+              <h1 className="mt-4 font-heading text-[2.5rem] font-extrabold leading-[1.04] tracking-[-0.03em] sm:text-[3.4rem] lg:text-[4rem]">
                 {HERO_WORDS.map((w) => (
                   <span key={w} className="mr-[0.22em] inline-block overflow-hidden pb-[0.08em] align-bottom">
                     <span
@@ -433,57 +436,37 @@ export default function KartikMaasClient() {
                   </span>
                 ))}
               </h1>
-              <p data-hero-fade className="mt-5 max-w-xl text-[15px] leading-relaxed text-white/80 md:text-lg md:leading-8">
-                <span className="sm:hidden">Your seva is offered with sankalpa in your name, as a lamp to Sri Damodar every evening.</span>
-                <span className="hidden sm:inline">
-                  Offer a seva this Kartik and your sankalpa is made in your name at Hare Krishna Vaikuntham — every evening a lamp is
-                  offered to Sri Damodar, the Damodarashtakam is sung, and Annadana is served.
-                </span>
+              <p data-hero-fade className="mt-5 max-w-lg text-[15px] leading-relaxed text-white/75 md:text-[17px] md:leading-8">
+                Offer a seva this Kartik with sankalpa in your name. At Hare Krishna Vaikuntham a lamp is offered to Sri Damodar every
+                evening and Annadana is served to all who come.
               </p>
-              <div data-hero-fade className="mt-7 flex flex-wrap items-center gap-3">
-                <a href="#offer-seva" className="vk-btn-gold h-[3.25rem] px-8 text-base font-bold md:h-14">
-                  <Heart className="h-4 w-4" /> Offer Your Seva
+              <div data-hero-fade className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3">
+                <a href="#offer-seva" className="vk-btn-gold h-[3.25rem] px-8 text-base font-bold">
+                  Offer Your Seva <ArrowRight className="h-4 w-4" />
                 </a>
-                <a
-                  href="#why-kartik"
-                  className="inline-flex h-12 items-center justify-center rounded-xl bg-white/10 px-6 text-sm font-semibold text-white ring-1 ring-white/25 transition-colors hover:bg-white/20 md:h-14"
-                >
-                  Why Kartik?
+                <a href="#damodar-lila" className="group inline-flex items-center gap-2 text-sm font-semibold text-white/80 transition-colors hover:text-white">
+                  The Damodar lila
+                  <ChevronDown className="h-4 w-4 transition-transform group-hover:translate-y-0.5" />
                 </a>
               </div>
-              <div data-hero-fade className="mt-6">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/60">Annadana Seva · tap to offer</p>
-                <div className="mt-2 grid max-w-md grid-cols-3 gap-2">
-                  {[1100, 2100, 5555].map((amount) => (
-                    <button
-                      key={amount}
-                      type="button"
-                      onClick={() => setSelected({ seva: SEVAS[0], amount })}
-                      className="rounded-xl border border-amber-300/40 bg-amber-300/10 px-3 py-2 text-left transition-colors hover:bg-amber-300/20 active:bg-amber-300/25"
-                    >
-                      <span className="block font-heading text-lg font-extrabold leading-tight text-amber-200">₹{formatAmount(amount)}</span>
-                      <span className="block text-[11px] text-white/70">{IMPACTS["annadana-seva"][amount]}</span>
-                    </button>
-                  ))}
+            </div>
+
+            <dl data-hero-fade className="mt-8 grid grid-cols-2 gap-x-6 gap-y-5 border-t border-white/15 pt-5 md:mt-0 md:grid-cols-4">
+              {[
+                { icon: CalendarDays, k: "26 Oct – 24 Nov", v: "Thirty days of Damodar Māsa" },
+                { icon: Flame, k: day !== null && day >= 1 && day <= 30 ? `Day ${day} of 30` : "A lamp every evening", v: "Kartik Purnima on 24 November" },
+                { icon: FileCheck2, k: "80G tax exemption", v: "Receipt against your PAN" },
+                { icon: ShieldCheck, k: "Secure checkout", v: "Razorpay · receipt on WhatsApp" },
+              ].map((f) => (
+                <div key={f.k} className="flex items-start gap-3">
+                  <f.icon className="mt-0.5 h-5 w-5 shrink-0 text-amber-300" />
+                  <div className="min-w-0">
+                    <dt className="text-[13px] font-semibold text-white md:text-sm">{f.k}</dt>
+                    <dd className="mt-0.5 text-[11px] leading-snug text-white/60 md:text-xs">{f.v}</dd>
+                  </div>
                 </div>
-              </div>
-              <ul data-hero-fade className="mt-6 hidden flex-wrap gap-2 sm:flex">
-                {TRUST_BADGES.map((badge) => (
-                  <li
-                    key={badge.label}
-                    className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[11px] font-semibold text-white/90 ring-1 ring-white/15 md:text-xs"
-                  >
-                    <badge.icon className="h-3.5 w-3.5 text-amber-300" />
-                    {badge.label}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-          <div aria-hidden className="absolute bottom-5 left-1/2 z-10 hidden -translate-x-1/2 md:block">
-            <div className="flex h-9 w-5 justify-center rounded-full border border-white/40 pt-1.5">
-              <span className="km-cue-dot block h-1.5 w-1 rounded-full bg-white" />
-            </div>
+              ))}
+            </dl>
           </div>
         </section>
 
@@ -660,28 +643,48 @@ export default function KartikMaasClient() {
           </div>
         </section>
 
-        {/* ══ THE DAMODAR LILA ═════════════════════════════════════════════ */}
-        <section className="vk-section bg-gradient-to-b from-white to-vk-50/60">
+        {/* ══ THE DAMODAR LILA — a sticky 3D stage that plays the pastime as the visitor scrolls ══ */}
+        <section id="damodar-lila" data-story className="relative scroll-mt-20 bg-gradient-to-b from-white to-vk-50/60 pt-14 md:pt-20">
           <div className="vk-container">
             <div data-reveal>
               <SectionHeading
                 align="center"
                 eyebrow="The Damodar Lila"
                 title="Why He is Called Damodara"
-                subtitle="The pastime that gives this month its name, in three moments."
+                subtitle="Scroll, and watch the pastime that gives this month its name."
               />
             </div>
-            <div data-group className="relative mx-auto grid max-w-6xl gap-5 md:grid-cols-3">
-              <div aria-hidden className="absolute left-[16%] right-[16%] top-[46px] hidden border-t-2 border-dashed border-[hsl(var(--gold)/0.7)] md:block" />
-              {LILA.map((step) => (
-                <div key={step.n} data-item className="vk-card relative p-6 pt-8 text-center">
-                  <span className="absolute -top-5 left-1/2 flex h-11 w-11 -translate-x-1/2 items-center justify-center rounded-full bg-gradient-gold font-heading text-lg font-extrabold text-ink shadow-gold">
-                    {step.n}
-                  </span>
-                  <h3 className="mt-2 text-lg font-bold text-ink">{step.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{step.text}</p>
+            <div className="grid gap-x-12 lg:grid-cols-[1fr_1.05fr]">
+              {/* Phones: this wrapper is the sticky element (it sits above the steps in the same grid).
+                  Desktop: it is the right-hand column and the inner box sticks inside it. */}
+              <div className="sticky top-[calc(var(--header-h)+8px)] z-10 order-1 lg:static lg:order-2 lg:z-auto">
+                <div className="lg:sticky lg:top-[calc(var(--header-h)+28px)]">
+                  <div className="relative h-[38svh] min-h-[240px] w-full overflow-hidden rounded-3xl bg-[radial-gradient(110%_100%_at_60%_20%,#1d3290_0%,#0e1a52_50%,#070d27_100%)] shadow-lift lg:h-[min(66svh,600px)]">
+                    <LazyScene variant="story" state={storyState} />
+                    <div aria-hidden className="absolute inset-x-0 bottom-3 flex items-center justify-center gap-2">
+                      {LILA.map((step, i) => (
+                        <span key={step.n} data-dot className="km-dot flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-[11px] font-semibold text-white/70 ring-1 ring-white/10">
+                          <span className="font-heading">{i + 1}</span>
+                          <span className="hidden sm:inline">{step.title}</span>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-              ))}
+              </div>
+              <div data-steps className="order-2 lg:order-1">
+                {LILA.map((step) => (
+                  <div key={step.n} data-step-card className="km-step flex min-h-[55svh] items-center py-4 lg:min-h-[82svh] lg:py-6">
+                    <div className="vk-card relative w-full p-6 pt-8 md:p-8 md:pt-10">
+                      <span className="absolute -top-5 left-6 flex h-11 w-11 items-center justify-center rounded-full bg-gradient-gold font-heading text-lg font-extrabold text-ink shadow-gold">
+                        {step.n}
+                      </span>
+                      <h3 className="font-heading text-xl font-bold text-ink md:text-2xl">{step.title}</h3>
+                      <p className="mt-3 text-[15px] leading-relaxed text-muted-foreground md:text-base md:leading-7">{step.text}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </section>

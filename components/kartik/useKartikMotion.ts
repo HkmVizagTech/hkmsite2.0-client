@@ -16,7 +16,7 @@ import type { SceneState } from "./KartikScene";
  *
  * With prefers-reduced-motion nothing moves: everything is simply shown, and the 3D scene is told to start lit.
  */
-export function useKartikMotion(root: RefObject<HTMLElement | null>, scene: SceneState) {
+export function useKartikMotion(root: RefObject<HTMLElement | null>, scene: SceneState, story: SceneState) {
   const sceneRef = useRef(scene);
   sceneRef.current = scene;
 
@@ -25,6 +25,32 @@ export function useKartikMotion(root: RefObject<HTMLElement | null>, scene: Scen
     if (!el) return;
     gsap.registerPlugin(ScrollTrigger);
     const mm = gsap.matchMedia();
+
+    // The Damodar lila: scroll progress through the story section drives the 3D scene (the pose of Krishna, the rope)
+    // and lights the matching step. This is user-driven, so it also runs with reduced motion.
+    const storyEl = el.querySelector<HTMLElement>("[data-story]");
+    let storyTrigger: ScrollTrigger | null = null;
+    if (storyEl) {
+      const cards = Array.from(storyEl.querySelectorAll<HTMLElement>("[data-step-card]"));
+      const dots = Array.from(storyEl.querySelectorAll<HTMLElement>("[data-dot]"));
+      const mark = (idx: number) => {
+        cards.forEach((c, i) => c.classList.toggle("km-on", i === idx));
+        dots.forEach((d, i) => d.classList.toggle("km-on", i === idx));
+      };
+      mark(0);
+      // Progress runs over the column of steps: 0 when the first card reaches mid-screen, 1 when the last one leaves it.
+      storyTrigger = ScrollTrigger.create({
+        trigger: storyEl.querySelector("[data-steps]") ?? storyEl,
+        // Phones: the sticky stage covers the top of the screen, so the "reading line" sits lower.
+        start: () => (window.innerWidth < 1024 ? "top 73%" : "top 50%"),
+        end: () => (window.innerWidth < 1024 ? "bottom 73%" : "bottom 50%"),
+        invalidateOnRefresh: true,
+        onUpdate: (self) => {
+          story.progress = self.progress;
+          mark(Math.min(2, Math.floor(self.progress * 3 + 0.0001)));
+        },
+      });
+    }
 
     mm.add("(prefers-reduced-motion: reduce)", () => {
       sceneRef.current.intro = 1;
@@ -99,6 +125,7 @@ export function useKartikMotion(root: RefObject<HTMLElement | null>, scene: Scen
     return () => {
       window.removeEventListener("load", refresh);
       window.clearTimeout(t);
+      storyTrigger?.kill();
       mm.revert();
     };
   }, [root]);

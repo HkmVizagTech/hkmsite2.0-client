@@ -1307,6 +1307,11 @@ html[lang="te"] body {
 .km-cue-dot { animation: km-cue 1.8s ease-in-out infinite; }
 @keyframes km-marquee { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
 .km-marquee { animation: km-marquee 60s linear infinite; will-change: transform; }
+.km-step { opacity: 0.42; transition: opacity 0.45s ease; }
+.km-step.km-on { opacity: 1; }
+.km-dot { transition: background-color 0.3s, color 0.3s; }
+.km-dot.km-on { background: hsl(43 89% 54%); color: #1d1b20; }
 @media (prefers-reduced-motion: reduce) {
   .km-flame, .km-cue-dot, .km-marquee { animation: none; }
+  .km-step { opacity: 1; }
 }

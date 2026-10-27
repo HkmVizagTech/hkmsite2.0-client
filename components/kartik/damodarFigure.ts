@@ -10,8 +10,12 @@ type T = typeof THREE_NS;
  */
 export type FigureControls = {
   group: THREE_NS.Group;
-  /** t seconds, tug 0..1 (how hard He pulls), look -1..1 (head turn). */
-  update: (t: number, tug: number, look: number) => void;
+  /**
+   * t seconds, tug 0..1 (how hard He pulls), look -1..1 (head turn).
+   * `story` (0..3) plays the pastime while the visitor scrolls: 0-1 the butter pot, 1-2 the rope that is two fingers
+   * short, 2-3 bound by love. Omit it for the idle loop.
+   */
+  update: (t: number, tug: number, look: number, story?: number | null) => void;
   dispose: () => void;
 };
 
@@ -207,6 +211,7 @@ export function createDamodar(THREE: T): FigureControls {
     brow.rotation.z = s * -0.15 + 0.5 * (s === 1 ? 1 : -1) * 0.0;
   }
   mesh(new THREE.SphereGeometry(0.04, 12, 10), skinLight, head, 0, -0.05, 0.45);
+  for (const [x, y, z, r] of [[0.2, -0.17, 0.4, 0.028], [0.25, -0.12, 0.39, 0.02]] as const) mesh(new THREE.SphereGeometry(r, 10, 8), std(0xfff4c2, { roughness: 0.4 }), head, x, y, z); // butter on the cheek
   const smile = mesh(new THREE.TorusGeometry(0.085, 0.014, 8, 20, Math.PI * 0.85), black, head, 0, -0.18, 0.41);
   smile.rotation.set(0, 0, Math.PI + Math.PI * 0.075);
   const tilak = mesh(new THREE.CapsuleGeometry(0.012, 0.07, 4, 8), std(0xfff2b0, { emissive: 0xaa8800, emissiveIntensity: 0.4 }), head, 0, 0.2, 0.455);
@@ -271,35 +276,52 @@ export function createDamodar(THREE: T): FigureControls {
   const butter = mesh(new THREE.SphereGeometry(0.17, 20, 14), std(0xfff0b8, { roughness: 0.4 }), pot, 0, 0.55, 0);
   butter.scale.set(1, 0.6, 1);
 
-  // ── Rope: hip -> mortar ───────────────────────────────────────────
+  // ── Rope: mortar -> hip. `reach` (0..1) is how much of the way to His belly it gets: in the pastime it stays two
+  //    fingers short (the gold ring marks the gap) until He lets Himself be bound. ──
   const ropeHolder = new THREE.Group();
   root.add(ropeHolder);
   let ropeMesh: THREE_NS.Mesh | null = null;
+  const gap = mesh(new THREE.TorusGeometry(0.1, 0.014, 8, 28), std(0xffd45e, { emissive: 0xffb300, emissiveIntensity: 1.2, toneMapped: false } as never), ropeHolder);
+  gap.visible = false;
   const a = new THREE.Vector3();
   const b = new THREE.Vector3();
+  const e = new THREE.Vector3();
   const mid1 = new THREE.Vector3();
   const mid2 = new THREE.Vector3();
   let lastTension = -1;
-  const buildRope = (tension: number) => {
+  let lastReach = -1;
+  const buildRope = (tension: number, reach: number) => {
+    if (reach < 0.03) {
+      if (ropeMesh) ropeMesh.visible = false;
+      gap.visible = false;
+      return;
+    }
     kr.updateWorldMatrix(true, false);
     mortar.updateWorldMatrix(true, false);
     ropeKnot.getWorldPosition(a);
     mortarKnot.getWorldPosition(b);
     root.worldToLocal(a);
     root.worldToLocal(b);
+    e.lerpVectors(b, a, reach); // the free end
     const sag = (1 - tension) * 0.38;
-    mid1.lerpVectors(a, b, 0.33);
-    mid2.lerpVectors(a, b, 0.66);
+    mid1.lerpVectors(b, e, 0.33);
+    mid2.lerpVectors(b, e, 0.66);
     mid1.y -= sag + 0.05;
     mid2.y -= sag;
-    const curve = new THREE.CatmullRomCurve3([a.clone(), mid1.clone(), mid2.clone(), b.clone()]);
+    const curve = new THREE.CatmullRomCurve3([b.clone(), mid1.clone(), mid2.clone(), e.clone()]);
     const geo = new THREE.TubeGeometry(curve, 28, 0.034, 7);
     if (ropeMesh) {
       ropeMesh.geometry.dispose();
       ropeMesh.geometry = geo;
+      ropeMesh.visible = true;
     } else {
       ropeMesh = new THREE.Mesh(geo, ropeMat);
       ropeHolder.add(ropeMesh);
+    }
+    gap.visible = reach < 0.985;
+    if (gap.visible) {
+      gap.position.lerpVectors(e, a, 0.5);
+      gap.lookAt(a);
     }
   };
 
@@ -308,41 +330,72 @@ export function createDamodar(THREE: T): FigureControls {
   armR.fore.rotation.set(-2.05, 0, 0);
   const base = { kx: 0, mz: 0 };
 
-  const update = (t: number, tug: number, look: number) => {
+  const smooth = (x: number, lo: number, hi: number) => {
+    const u = clamp01((x - lo) / (hi - lo));
+    return u * u * (3 - 2 * u);
+  };
+  const lerp = (x: number, y: number, k: number) => x + (y - x) * k;
+
+  const update = (t: number, tug0: number, look0: number, story?: number | null) => {
+    const sp = story ?? null;
+    // ── what the pastime asks of the pose ──
+    let tug = tug0;
+    let look = look0;
+    let reach = 1;
+    let reachOut = 0; // right hand reaching for the butter
+    let grin = 1;
+    if (sp !== null) {
+      const toPot = 1 - smooth(sp, 0.7, 1.1);
+      const bound = smooth(sp, 2.0, 2.5);
+      reach = sp < 1.0 ? 0 : sp < 2.0 ? lerp(0.02, 0.86, smooth(sp, 1.0, 1.9)) : lerp(0.86, 1, bound);
+      tug = lerp(lerp(0.2, 1, smooth(sp, 1.0, 1.4)), 0.25, bound);
+      look = lerp(lerp(0.9 * toPot, -0.7, 1 - toPot), 0, bound);
+      reachOut = toPot;
+      grin = 1 + 0.55 * bound;
+    }
+
     // breathing
     const br = 1 + Math.sin(t * 1.7) * 0.012;
     torso.scale.set(br, 1.02 * br, 0.9);
     belly.scale.set(1.04 * br, 0.9 * br, 0.92 * br);
     // He leans away from the mortar when pulling, in little bursts
     const burst = Math.max(0, Math.sin(t * 1.35)) ** 2;
-    const pull = clamp01(tug) * (0.35 + 0.65 * burst);
+    const pull = clamp01(tug) * (sp === null ? 0.35 + 0.65 * burst : 0.55 + 0.45 * burst);
     kr.position.x = base.kx + pull * 0.18;
     kr.rotation.z = -pull * 0.1;
     kr.rotation.y = 0.35 + look * 0.5;
     mortar.rotation.z = Math.sin(t * 22) * 0.012 * pull;
     mortar.position.x = -1.55 + pull * 0.1;
+    pot.rotation.z = sp !== null ? Math.sin(t * 7) * 0.06 * reachOut : 0;
     // head
     head.rotation.z = Math.sin(t * 0.9) * 0.06 - pull * 0.08;
-    head.rotation.y = Math.sin(t * 0.6) * 0.12 - 0.25 + look * 0.3;
+    head.rotation.y = Math.sin(t * 0.6) * 0.12 - 0.25 + look * 0.45;
     head.rotation.x = 0.1 + Math.sin(t * 0.8) * 0.03;
     feather.rotation.z = -0.28 + Math.sin(t * 1.3) * 0.05;
+    smile.scale.set(grin, grin, 1);
     // blink every ~4s
     const phase = (t % 4.2) / 4.2;
     const blink = phase > 0.96 ? 1 - Math.abs((phase - 0.98) / 0.02) : 0;
     eyeGroups.forEach((g) => g.scale.set(1, 1 - 0.9 * clamp01(blink), 1));
-    pupils.forEach((p) => p.position.set(-0.012, -0.03, 0.03));
-    // arms
+    pupils.forEach((p) => p.position.set(-0.012 + look * 0.02, -0.03, 0.03));
+    // arms: left pulls the rope; right wipes an eye, or reaches for the butter
     armL.upper.rotation.set(0.1 + pull * 0.2, 0, -0.85 - pull * 0.2);
     armL.fore.rotation.set(-0.5 - pull * 0.4, -0.5, 0);
-    armR.upper.rotation.z = 0.75 + Math.sin(t * 2.1) * 0.04;
+    armR.upper.rotation.set(lerp(0.25, 1.0, reachOut), lerp(0, -0.35, reachOut), lerp(0.75 + Math.sin(t * 2.1) * 0.04, 0.55, reachOut));
+    armR.fore.rotation.set(lerp(-2.05, -0.35, reachOut), 0, 0);
     // rope follows
     const tension = 0.35 + pull * 0.65;
-    if (Math.abs(tension - lastTension) > 0.01) {
+    if (Math.abs(tension - lastTension) > 0.01 || Math.abs(reach - lastReach) > 0.004) {
       lastTension = tension;
-      buildRope(tension);
+      lastReach = reach;
+      buildRope(tension, reach);
+    }
+    if (gap.visible) {
+      const k = 1 + Math.sin(t * 6) * 0.18;
+      gap.scale.set(k, k, k);
     }
   };
-  buildRope(0.4);
+  buildRope(0.4, 1);
   update(0, 0, 0);
 
   const dispose = () => {

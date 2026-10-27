@@ -16,10 +16,10 @@ import { createDamodar } from "./damodarFigure";
  *
  * `state.intro` (0 -> 1) is driven by GSAP on the page: it ignites the flame and opens the lotus.
  */
-export type SceneState = { intro: number };
+export type SceneState = { intro: number; /** 0..1 through the scroll story (story variant only) */ progress?: number };
 
 type Props = {
-  variant?: "hero" | "finale";
+  variant?: "hero" | "story" | "finale";
   state?: SceneState;
   className?: string;
 };
@@ -77,7 +77,7 @@ type Controller = {
   detach: (variant: Variant) => void;
   release: () => void;
 };
-type Variant = "hero" | "finale";
+type Variant = "hero" | "story" | "finale";
 
 let controllerPromise: Promise<Controller> | null = null;
 let controllerRefs = 0;
@@ -141,6 +141,7 @@ function build(
   const coarse = window.matchMedia("(pointer: coarse)").matches;
   // The section the canvas currently lives in. Everything below that used to be fixed per instance follows it.
   let isHero = true;
+  let isStory = false;
   let host: HTMLElement | null = null;
   let state: SceneState = { intro: 1 };
 
@@ -465,23 +466,17 @@ function build(
 
   // Which centrepiece is shown follows the section the canvas is in.
   const applyVariant = () => {
-    key.visible = isHero;
-    figure.group.visible = isHero;
-    shadow.visible = isHero;
-    lotus.visible = !isHero;
-    if (isHero) {
-      diya.position.set(-0.55, 0.08, 1.95);
-      diya.scale.setScalar(0.3);
-      mandalaA.position.set(0.3, 1.6, -1.9);
-      mandalaB.position.set(0.3, 1.6, -1.7);
-      halo.position.set(0.3, 1.6, -1.2);
-    } else {
-      diya.position.set(0, 0.55, 0);
-      diya.scale.setScalar(1);
-      mandalaA.position.set(0, 1.3, -1.6);
-      mandalaB.position.set(0, 1.3, -1.4);
-      halo.position.set(0, 1.3, -0.9);
-    }
+    key.visible = isStory;
+    figure.group.visible = isStory;
+    shadow.visible = isStory;
+    lotus.visible = !isStory;
+    diya.visible = !isStory;
+    diya.position.set(0, 0.55, 0);
+    diya.scale.setScalar(1);
+    const my = isStory ? 1.55 : 1.3;
+    mandalaA.position.set(0, my, -1.9);
+    mandalaB.position.set(0, my, -1.7);
+    halo.position.set(0, my, -1.1);
   };
   applyVariant();
 
@@ -506,14 +501,18 @@ function build(
     hostTop = r.top + window.scrollY;
     hostH = r.height || 1;
     const visW = 2 * camera.position.z * Math.tan((camera.fov * Math.PI) / 360) * aspect;
-    if (isHero) {
+    if (isStory) {
+      // The sticky story stage: Krishna, the mortar and the butter pot centred, as large as the stage allows.
+      baseScale = clamp((visW * 0.86) / 4.6, 0.5, 1.3);
+      baseRig.set(0, -1.5 * baseScale, 0);
+    } else if (isHero) {
       if (aspect > 1.15) {
-        baseScale = 1.22;
-        baseRig.set(visW * 0.215, -1.55, 0);
+        baseScale = 1;
+        baseRig.set(visW * 0.22, -1.15, 0);
       } else {
-        // Portrait phone: the figure sits in the upper part, the copy is below it.
-        baseScale = clamp(visW * 0.19, 0.42, 0.66);
-        baseRig.set(0.2 * baseScale, 3.05 - 1.6 * baseScale - 0.95, 0);
+        // Portrait phone: the diya sits in the upper part, the copy is below it.
+        baseScale = clamp(visW * 0.215, 0.5, 0.78);
+        baseRig.set(0, 3.0 - 1.45 * baseScale - 0.95, 0);
       }
     } else {
       baseScale = aspect > 1.15 ? 0.9 : clamp(visW * 0.3, 0.55, 0.85);
@@ -562,7 +561,7 @@ function build(
     (flameGlow.material as import("three").SpriteMaterial).opacity = 0.55 * ignite;
     flameCore.getWorldPosition(flameWorld);
     flameLight.position.set(flameWorld.x, flameWorld.y, flameWorld.z + 1.2);
-    flameLight.intensity = (isHero ? 6 : 24) * ignite * (0.92 + (f1 - 1) * 1.6);
+    flameLight.intensity = (isHero ? 30 : isStory ? 0 : 24) * ignite * (0.92 + (f1 - 1) * 1.6);
     oilMat.emissiveIntensity = 0.7 * ignite;
 
     // lotus bloom (matrices are only rewritten while it is still opening)
@@ -599,13 +598,10 @@ function build(
     writePetals(t);
 
     // Krishna: pulls harder at the rope the further the visitor scrolls, and turns toward the pointer
-    if (isHero) {
-      const ps = clamp((window.scrollY - hostTop) / hostH, 0, 1);
-      figure.update(t, clamp(0.5 + ps * 0.9, 0, 1), coarse ? Math.sin(t * 0.4) * 0.5 : pointer.x);
-    }
+    if (isStory) figure.update(t, 0.5, coarse ? Math.sin(t * 0.4) * 0.3 : pointer.x * 0.5, clamp(state.progress ?? 0, 0, 1) * 3);
 
     // rig: scroll lift + pointer parallax (touch screens get a slow sway instead)
-    const p = clamp((window.scrollY - hostTop) / hostH, 0, 1);
+    const p = isStory ? 0 : clamp((window.scrollY - hostTop) / hostH, 0, 1);
     pointer.x = lerp(pointer.x, pointer.tx, 0.05);
     pointer.y = lerp(pointer.y, pointer.ty, 0.05);
     const sway2 = coarse ? Math.sin(t * 0.35) * 0.18 : pointer.x * 0.4;
@@ -676,10 +672,11 @@ function build(
     }
     const e = entries.get(variant)!;
     isHero = variant === "hero";
+    isStory = variant === "story";
     host = e.host;
     state = e.state;
     if (canvas.parentElement !== host) host.appendChild(canvas);
-    stars.visible = isHero && quality === "high";
+    stars.visible = variant !== "finale" && quality === "high";
     flameLight.intensity = 0;
     applyVariant();
     layout();
@@ -691,9 +688,8 @@ function build(
     sync();
   };
   const pick = () => {
-    const hero = entries.get("hero");
-    const finale = entries.get("finale");
-    activate(hero?.onScreen ? "hero" : finale?.onScreen ? "finale" : null);
+    const order: Variant[] = ["story", "hero", "finale"];
+    activate(order.find((v) => entries.get(v)?.onScreen) ?? null);
   };
   const sync = () => (active && !document.hidden ? start() : stop());
 
