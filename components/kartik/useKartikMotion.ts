@@ -38,16 +38,29 @@ export function useKartikMotion(root: RefObject<HTMLElement | null>, scene: Scen
         dots.forEach((d, i) => d.classList.toggle("km-on", i === idx));
       };
       mark(0);
-      // Progress runs over the column of steps: 0 when the first card reaches mid-screen, 1 when the last one leaves it.
+      // Progress runs over the column of steps: 0 when the first card reaches the reading line, 1 when the last card has
+      // been read and the stage is about to be released (so the final scene always plays with the stage fully pinned).
+      const stage = storyEl.querySelector<HTMLElement>("[data-stage]");
+      const px = (css: string) => {
+        const probe = document.createElement("div");
+        probe.style.cssText = `position:absolute;visibility:hidden;height:${css}`;
+        document.body.appendChild(probe);
+        const h = probe.offsetHeight;
+        probe.remove();
+        return h;
+      };
+      const stageBottom = () => {
+        const wide = window.innerWidth >= 1024;
+        return px("var(--header-h)") + (wide ? 28 : 8) + (stage?.offsetHeight ?? 400);
+      };
       storyTrigger = ScrollTrigger.create({
         trigger: storyEl.querySelector("[data-steps]") ?? storyEl,
-        // Phones: the sticky stage covers the top of the screen, so the "reading line" sits lower.
-        start: () => (window.innerWidth < 1024 ? "top 73%" : "top 50%"),
-        end: () => (window.innerWidth < 1024 ? "bottom 73%" : "bottom 50%"),
+        start: () => (window.innerWidth < 1024 ? `top ${Math.round(stageBottom() + 90)}px` : "top 50%"),
+        end: () => `bottom ${Math.round(stageBottom())}px`,
         invalidateOnRefresh: true,
         onUpdate: (self) => {
           story.progress = self.progress;
-          mark(Math.min(2, Math.floor(self.progress * 3 + 0.0001)));
+          mark(Math.min(cards.length - 1, Math.floor(self.progress * cards.length + 0.0001)));
         },
       });
     }

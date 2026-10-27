@@ -17,7 +17,7 @@ const UPI_QUERY =
 export const UPI_QR_IMAGE = "/assets/upi-qr-hkm.png";
 
 // WhatsApp number donors send their payment screenshot to (for the receipt).
-export const RECEIPT_WHATSAPP = "918977761187";
+export const RECEIPT_WHATSAPP = "917995097108"; // +91 79950 97108
 
 // Optional fixed amount (₹) — used by the checkout fallback so the UPI app
 // opens with the exact seva amount instead of asking the donor to type it.

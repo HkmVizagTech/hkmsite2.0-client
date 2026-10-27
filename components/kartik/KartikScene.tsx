@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { createDamodar } from "./damodarFigure";
+import { createBalKrishna } from "./balKrishna";
+import { createEnvironment } from "./damodarEnvironment";
 
 /**
  * Three.js scene for the Kartik Maas page: a brass diya with a flickering flame resting on a blooming lotus,
@@ -10,7 +11,7 @@ import { createDamodar } from "./damodarFigure";
  * Built with plain three (loaded on demand, so it never touches the first paint), tuned for phones:
  *   - pixel ratio is capped, antialiasing is off on touch screens, particle counts are lower on small screens
  *   - the render loop only runs while the canvas is on screen and the tab is visible
- *   - a frame-time governor drops quality if the device can't keep up
+ *   - the scene is identical on every device; only the render resolution adapts to keep the frame rate smooth
  *   - prefers-reduced-motion renders one still frame
  *   - if WebGL is unavailable a CSS glow is shown instead
  *
@@ -145,12 +146,12 @@ function build(
   let host: HTMLElement | null = null;
   let state: SceneState = { intro: 1 };
 
-  const renderer = new THREE.WebGLRenderer({ antialias: !coarse && (window.devicePixelRatio || 1) < 1.5, alpha: true, powerPreference: "default" });
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "default" });
   renderer.setClearColor(0x000000, 0);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.12;
   const canvas = renderer.domElement;
-  canvas.style.cssText = "position:absolute;inset:0;width:100%;height:100%;display:block;";
+  canvas.style.cssText = "position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity .7s ease;";
 
   const scene = new THREE.Scene();
   const pmrem = new THREE.PMREMGenerator(renderer);
@@ -172,14 +173,30 @@ function build(
   const rim = new THREE.DirectionalLight(0x7f9bef, 1.1);
   rim.position.set(-4, 3, 2);
   scene.add(rim);
-  const key = new THREE.DirectionalLight(0xfff0d8, 1.5);
-  key.position.set(-2.5, 4, 6);
-  scene.add(key);
+  const key = new THREE.DirectionalLight(0xfff0d8, 1.6);
+  key.position.set(-2.5, 6, 5);
+  key.shadow.mapSize.set(1024, 1024);
+  key.shadow.camera.left = -9;
+  key.shadow.camera.right = 9;
+  key.shadow.camera.top = 9;
+  key.shadow.camera.bottom = -4;
+  key.shadow.camera.near = 0.5;
+  key.shadow.camera.far = 24;
+  key.shadow.bias = -0.0006;
+  key.shadow.normalBias = 0.03;
+  const fog = new THREE.Fog(0x0a1442, 1000, 2000); // pushed far away except on the story stage
+  scene.fog = fog;
+  const hemi = new THREE.HemisphereLight(0x9db4ff, 0x4a2f1c, 0.55);
+  scene.add(hemi);
+  const rimBlue = new THREE.DirectionalLight(0x6f95ff, 1.1);
+  rimBlue.position.set(5, 3, -4);
+  scene.add(rimBlue);
   const flameLight = new THREE.PointLight(0xffa447, 0, 16, 1.6);
   scene.add(flameLight);
 
   const rig = new THREE.Group();
   scene.add(rig);
+  rig.add(key, key.target);
 
   // ── Textures ──────────────────────────────────────────────────────
   const dotTex = track(
@@ -350,26 +367,35 @@ function build(
   rig.add(lotus);
 
   // ── Bala Krishna tied to the mortar (hero). The diya + lotus above are the finale's centrepiece. ──
-  const figure = createDamodar(THREE);
-  figure.group.position.set(0.55, 0, 0);
+  const figure = createBalKrishna(THREE);
   rig.add(figure.group);
+  const env = createEnvironment(THREE, dotTex);
+  rig.add(env.group);
+  disposables.push({ dispose: figure.dispose }, { dispose: env.dispose });
   const shadowTex = track(
     canvasTexture(THREE, 128, 128, (ctx, w, h) => {
       const g = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2);
-      g.addColorStop(0, "rgba(0,0,0,0.55)");
+      g.addColorStop(0, "rgba(0,0,0,0.6)");
       g.addColorStop(1, "rgba(0,0,0,0)");
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, w, h);
     })
   );
-  const shadow = new THREE.Mesh(
-    track(new THREE.PlaneGeometry(5.2, 3.2)),
-    track(new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false, toneMapped: false }))
-  );
-  shadow.rotation.x = -Math.PI / 2;
-  shadow.position.set(-0.3, 0.01, 0.1);
-  rig.add(shadow);
-  disposables.push({ dispose: figure.dispose });
+  const blobGeo = track(new THREE.PlaneGeometry(1, 1));
+  const blobMat = track(new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false, toneMapped: false, opacity: 0.8 }));
+  const blobs = [
+    { w: 2.8, d: 1.9 }, // Krishna
+    { w: 1.9, d: 1.5 }, // mortar
+    { w: 1.0, d: 0.9 }, // butter pot
+  ].map(({ w, d }) => {
+    const m = new THREE.Mesh(blobGeo, blobMat);
+    m.rotation.x = -Math.PI / 2;
+    m.scale.set(w, d, 1);
+    m.position.y = 0.012;
+    rig.add(m);
+    return m;
+  });
+  const shadow = blobs[0];
 
   // ── Mandala + halo ────────────────────────────────────────────────
   const mandalaMat = (opacity: number) =>
@@ -391,7 +417,7 @@ function build(
 
   // ── Embers, petals, stars ─────────────────────────────────────────
   const small = () => window.innerWidth < 640;
-  const EMBERS = small() ? 70 : 150;
+  const EMBERS = 90;
   const emberPos = new Float32Array(EMBERS * 3);
   const emberCol = new Float32Array(EMBERS * 3);
   const emberSpeed = new Float32Array(EMBERS);
@@ -420,7 +446,7 @@ function build(
   const embers = new THREE.Points(emberGeo, emberMat);
   rig.add(embers);
 
-  const PETALS = small() ? 8 : 16;
+  const PETALS = 10;
   const drift = new THREE.InstancedMesh(petalGeo, petalMat, PETALS);
   const dd = Array.from({ length: PETALS }, () => ({ x: 0, y: 0, z: 0, s: 0, vy: 0, sx: 0, rx: 0, ry: 0, rz: 0, vr: 0 }));
   const resetPetal = (p: (typeof dd)[number], spawn: boolean) => {
@@ -450,7 +476,7 @@ function build(
   drift.frustumCulled = false;
   rig.add(drift);
 
-  const STARS = small() ? 120 : 240;
+  const STARS = 180;
   const starPos = new Float32Array(STARS * 3);
   for (let i = 0; i < STARS; i++) {
     starPos[i * 3] = (Math.random() - 0.5) * 34;
@@ -467,13 +493,18 @@ function build(
   // Which centrepiece is shown follows the section the canvas is in.
   const applyVariant = () => {
     key.visible = isStory;
+    hemi.visible = isStory;
+    rimBlue.visible = isStory;
     figure.group.visible = isStory;
-    shadow.visible = isStory;
+    env.group.visible = isStory;
+    blobs.forEach((b) => (b.visible = isStory));
+    fog.near = isStory ? 14 : 1000;
+    fog.far = isStory ? 46 : 2000;
     lotus.visible = !isStory;
     diya.visible = !isStory;
     diya.position.set(0, 0.55, 0);
     diya.scale.setScalar(1);
-    const my = isStory ? 1.55 : 1.3;
+    const my = isStory ? 2.2 : 1.3;
     mandalaA.position.set(0, my, -1.9);
     mandalaB.position.set(0, my, -1.7);
     halo.position.set(0, my, -1.1);
@@ -494,7 +525,7 @@ function build(
     const h = Math.max(1, host.clientHeight);
     aspect = w / h;
     maxDpr = Math.min(window.devicePixelRatio || 1, 1.5);
-    renderer.setPixelRatio(quality === "low" ? 1 : maxDpr);
+    renderer.setPixelRatio(maxDpr * resScale);
     renderer.setSize(w, h, false);
     camera.aspect = aspect;
     const r = host.getBoundingClientRect();
@@ -503,8 +534,8 @@ function build(
     const visW = 2 * camera.position.z * Math.tan((camera.fov * Math.PI) / 360) * aspect;
     if (isStory) {
       // The sticky story stage: Krishna, the mortar and the butter pot centred, as large as the stage allows.
-      baseScale = clamp((visW * 0.86) / 4.6, 0.5, 1.3);
-      baseRig.set(0, -1.5 * baseScale, 0);
+      baseScale = clamp((visW * 0.9) / 5.4, 0.45, 1.25);
+      baseRig.set(0, -1.35 * baseScale, 0);
     } else if (isHero) {
       if (aspect > 1.15) {
         baseScale = 1;
@@ -515,26 +546,24 @@ function build(
         baseRig.set(0, 3.0 - 1.45 * baseScale - 0.95, 0);
       }
     } else {
-      baseScale = aspect > 1.15 ? 0.9 : clamp(visW * 0.3, 0.55, 0.85);
-      baseRig.set(aspect > 1.15 ? visW * 0.2 : 0, aspect > 1.15 ? -1.2 : -0.4, 0);
+      baseScale = aspect > 1.15 ? 1.25 : clamp(visW * 0.34, 0.6, 0.95);
+      baseRig.set(0, aspect > 1.15 ? -1.55 : -1.1, 0);
     }
     camera.updateProjectionMatrix();
   };
 
-  // ── Quality governor ──────────────────────────────────────────────
-  let quality: "high" | "low" = "high";
-  const lowerQuality = () => {
-    if (quality === "low") return;
-    quality = "low";
-    renderer.setPixelRatio(1);
+  // ── Resolution governor ──────────────────────────────────────────
+  // Every device gets the same scene, lighting and effects. Only the render resolution adapts: it steps down when frames
+  // take too long and creeps back up when there is headroom, so a low-end phone stays smooth at a slightly softer image.
+  let resScale = 1;
+  const setRes = (k: number) => {
+    resScale = clamp(k, 0.55, 1);
+    renderer.setPixelRatio(maxDpr * resScale);
     if (host) renderer.setSize(host.clientWidth, host.clientHeight, false);
-    emberGeo.setDrawRange(0, Math.floor(EMBERS / 2));
-    drift.count = Math.floor(PETALS / 2);
-    stars.visible = false;
-    mandalaB.visible = false;
   };
   let sampleFrames = 0;
   let sampleSum = 0;
+  let goodWindows = 0;
 
   // ── Input ─────────────────────────────────────────────────────────
   const pointer = { x: 0, y: 0, tx: 0, ty: 0 };
@@ -575,12 +604,12 @@ function build(
     mandalaB.rotation.z -= dt * 0.08;
     halo.rotation.z += dt * 0.1;
     halo.scale.setScalar(0.9 + 0.1 * bloom);
-    (mandalaA.material as import("three").MeshBasicMaterial).opacity = 0.34 * bloom;
-    (mandalaB.material as import("three").MeshBasicMaterial).opacity = 0.16 * bloom;
-    haloMat.opacity = 0.55 * bloom;
+    (mandalaA.material as import("three").MeshBasicMaterial).opacity = (isStory ? 0.14 : 0.34) * bloom;
+    (mandalaB.material as import("three").MeshBasicMaterial).opacity = (isStory ? 0.06 : 0.16) * bloom;
+    haloMat.opacity = (isStory ? 0.22 : 0.55) * bloom;
 
     // embers
-    const n = quality === "low" ? Math.floor(EMBERS / 2) : EMBERS;
+    const n = EMBERS;
     for (let i = 0; i < n; i++) {
       emberPos[i * 3 + 1] += emberSpeed[i] * dt;
       emberPos[i * 3] += Math.sin(t * 0.7 + emberPhase[i]) * 0.003;
@@ -590,7 +619,7 @@ function build(
     emberMat.opacity = 0.95 * ignite;
 
     // drifting petals
-    const pn = quality === "low" ? Math.floor(PETALS / 2) : PETALS;
+    const pn = PETALS;
     for (let i = 0; i < pn; i++) {
       dd[i].y -= dd[i].vy * dt;
       if (dd[i].y < -3.5) resetPetal(dd[i], false);
@@ -598,19 +627,43 @@ function build(
     writePetals(t);
 
     // Krishna: pulls harder at the rope the further the visitor scrolls, and turns toward the pointer
-    if (isStory) figure.update(t, 0.5, coarse ? Math.sin(t * 0.4) * 0.3 : pointer.x * 0.5, clamp(state.progress ?? 0, 0, 1) * 3);
+    let focusX = 0;
+    let zoom = 1;
+    let tilt = 0;
+    if (isStory) {
+      const chapter = clamp(state.progress ?? 0, 0, 1) * 4.999;
+      const dv = figure.update(t, { chapter, look: coarse ? Math.sin(t * 0.4) * 0.3 : pointer.x * 0.5, tug: 0.5 });
+      env.update(t, dv);
+      focusX = dv.focusX;
+      const ss = (x: number, a: number, b: number) => {
+        const u = clamp((x - a) / (b - a), 0, 1);
+        return u * u * (3 - 2 * u);
+      };
+      // follow Him while He crawls, then pull back to take in the whole of the two trees
+      zoom = 1 - 0.08 * ss(chapter, 3.0, 3.5) - 0.3 * ss(chapter, 3.9, 4.4);
+      tilt = ss(chapter, 3.9, 4.4);
+      key.position.set(focusX - 3, 6, 5);
+      key.target.position.set(focusX, 0, 0);
+      blobs[0].position.x = dv.kx - 0.2;
+      blobs[1].position.x = dv.mortarX;
+      blobs[1].position.z = -0.5;
+      blobs[2].position.set(1.0, 0.012, 0.8);
+      blobMat.opacity = 0.8;
+    }
 
     // rig: scroll lift + pointer parallax (touch screens get a slow sway instead)
     const p = isStory ? 0 : clamp((window.scrollY - hostTop) / hostH, 0, 1);
     pointer.x = lerp(pointer.x, pointer.tx, 0.05);
     pointer.y = lerp(pointer.y, pointer.ty, 0.05);
     const sway2 = coarse ? Math.sin(t * 0.35) * 0.18 : pointer.x * 0.4;
-    rig.rotation.y = sway2;
-    rig.rotation.x = coarse ? 0 : pointer.y * 0.1;
+    rig.rotation.y = isStory ? sway2 * 0.2 : sway2;
+    rig.rotation.x = coarse || isStory ? 0 : pointer.y * 0.1;
     tmpV.copy(baseRig);
-    tmpV.y += p * 1.1 + Math.sin(t * 0.6) * 0.05;
+    tmpV.y += p * 1.1 + (isStory ? 0 : Math.sin(t * 0.6) * 0.05);
+    tmpV.x -= focusX * baseScale * zoom;
+    tmpV.y = lerp(tmpV.y, -1.55, tilt);
     rig.position.copy(tmpV);
-    rig.scale.setScalar(baseScale * (1 - p * 0.18));
+    rig.scale.setScalar(baseScale * zoom * (1 - p * 0.18));
     stars.rotation.z = t * 0.004;
   };
 
@@ -632,15 +685,29 @@ function build(
       return;
     }
     const scrolling = now - lastScroll < 160;
-    if ((scrolling || quality === "low") && now - last < 30) return; // 30fps while scrolling, and always on weak devices
+    if (scrolling && now - last < 30) return; // 30fps while the page is scrolling (same on every device)
     const dt = Math.min(0.05, (now - last) / 1000);
     last = now;
     update((now - clock0) / 1000, dt);
     renderer.render(scene, camera);
-    if (quality === "high" && !scrolling && now - clock0 > 1200 && sampleFrames < 60) {
+    if (canvas.style.opacity !== "1") canvas.style.opacity = "1"; // fade in once the first frame is really on the canvas
+    if (!scrolling && now - clock0 > 1200) {
       sampleSum += dt;
       sampleFrames++;
-      if (sampleFrames === 60 && sampleSum / 60 > 0.022) lowerQuality();
+      if (sampleFrames === 40) {
+        const avg = sampleSum / 40;
+        if (avg > 0.024 && resScale > 0.56) {
+          setRes(resScale * 0.82);
+          goodWindows = 0;
+        } else if (avg < 0.0185 && resScale < 1) {
+          if (++goodWindows >= 3) {
+            setRes(resScale * 1.12);
+            goodWindows = 0;
+          }
+        } else goodWindows = 0;
+        sampleFrames = 0;
+        sampleSum = 0;
+      }
     }
   };
   const start = () => {
@@ -653,10 +720,6 @@ function build(
     running = false;
     cancelAnimationFrame(raf);
   };
-
-  // Weak or data-saving devices start on the light settings instead of waiting for the frame-time governor.
-  const nav = navigator as Navigator & { deviceMemory?: number; connection?: { saveData?: boolean } };
-  if ((nav.hardwareConcurrency ?? 8) <= 4 || (nav.deviceMemory ?? 8) <= 4 || nav.connection?.saveData) lowerQuality();
 
   // ── Hosts: the hero and the finale each register; the canvas lives in the one that is on screen ──
   type Entry = { host: HTMLElement; state: SceneState; onScreen: boolean; io: IntersectionObserver; ro: ResizeObserver };
@@ -676,14 +739,19 @@ function build(
     host = e.host;
     state = e.state;
     if (canvas.parentElement !== host) host.appendChild(canvas);
-    stars.visible = variant !== "finale" && quality === "high";
+    stars.visible = variant !== "finale";
     flameLight.intensity = 0;
     applyVariant();
     layout();
+    canvas.style.transition = "none";
+    canvas.style.opacity = "0";
+    void canvas.offsetWidth;
+    canvas.style.transition = "opacity .7s ease";
     if (reduceMotion) {
       state.intro = 1;
       update(2, 0);
       renderer.render(scene, camera);
+      canvas.style.opacity = "1";
     }
     sync();
   };
@@ -757,11 +825,15 @@ function build(
   };
 
   // Compile every shader off the main thread (where supported) before the first frame, so nothing hitches later.
+  // Everything is made visible for the compile so the story stage's materials (and the shadow pass) are ready too.
   const ready = (async () => {
     try {
+      key.visible = hemi.visible = rimBlue.visible = figure.group.visible = env.group.visible = lotus.visible = diya.visible = true;
       await renderer.compileAsync(scene, camera);
     } catch {
       /* compiled lazily on the first frame instead */
+    } finally {
+      applyVariant();
     }
   })();
 
