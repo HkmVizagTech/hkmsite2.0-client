@@ -27,6 +27,9 @@ export const nav: Record<string, string> = {
   "Radhashtami": "రాధాష్టమి",
   "Govardhan Puja": "గోవర్ధన పూజ",
   "Chaturmas": "చాతుర్మాస్యం",
+  "Kartik Maas": "కార్తీక మాసం",
+  "Diwali": "దీపావళి",
+  "Vaikuntha Ekadashi": "వైకుంఠ ఏకాదశి",
 
   // ── About ──
   "About": "మా గురించి",

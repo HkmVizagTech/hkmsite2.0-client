@@ -16,7 +16,10 @@ export type MajorFestivalKey =
   | "radhashtami"
   | "govardhan"
   | "vijayadashami"
-  | "chaturmas";
+  | "chaturmas"
+  | "kartik"
+  | "diwali"
+  | "vaikuntha";
 
 export interface MajorFestival {
   key: MajorFestivalKey;
@@ -33,6 +36,10 @@ export const MAJOR_FESTIVALS: MajorFestival[] = [
   // pick can never land on it — an admin pins it explicitly instead.
   { key: "vijayadashami", label: "Vijayadashami", href: "/vijayadashami" },
   { key: "chaturmas", label: "Chaturmas", href: "/chaturmas" },
+  // Kartik Maas runs 26 Oct - 24 Nov 2026 and has no single calendar entry that names it, so it is pinned by an admin.
+  { key: "kartik", label: "Kartik Maas", href: "/kartik-maas" },
+  { key: "diwali", label: "Diwali", href: "/diwali" },
+  { key: "vaikuntha", label: "Vaikuntha Ekadashi", href: "/vaikuntha-ekadashi" },
 ];
 
 const FESTIVAL_KEYWORDS: Record<MajorFestivalKey, string[]> = {
@@ -41,6 +48,9 @@ const FESTIVAL_KEYWORDS: Record<MajorFestivalKey, string[]> = {
   govardhan: ["govardhan"],
   vijayadashami: ["vijayadashami", "dussehra", "dasara", "vijaya dashami"],
   chaturmas: ["chaturmas", "chaturmasya"],
+  kartik: [],
+  diwali: ["diwali", "dipavali", "dhanteras"],
+  vaikuntha: ["moksada", "vaikuntha"],
 };
 
 // A festival counts as "current" from two weeks before to ten days after its
