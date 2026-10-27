@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, CalendarDays, Check, Copy, FileCheck2, Heart, MapPin, ShieldCheck, Sparkles } from "lucide-react";
 import { useT } from "@/components/i18n/LocaleProvider";
@@ -81,15 +82,20 @@ export default function VaikunthaEkadashiClient() {
       <div className="overflow-x-clip bg-white pt-[var(--header-h)]">
         {/* ══ HERO ═══════════════════════════════════════════════════════ */}
         {hasBanner ? (
-          <section>
-            <h1 className="sr-only">{t("Vaikuntha Ekadashi")}, {t(EVENT_DATE_LABEL)}</h1>
-            <a href="#offer-seva" className="block bg-vk-900">
-              <picture>
-                {BANNER_MOBILE && <source media="(max-width: 640px)" srcSet={BANNER_MOBILE} />}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={BANNER_DESKTOP as string} alt={t("Vaikuntha Ekadashi")} className="block h-auto w-full" />
-              </picture>
-            </a>
+          <section className="bg-[#0a0d2e]">
+            <h1 className="sr-only">
+              {t("Vaikuntha Ekadashi")}, {t(EVENT_DATE_LABEL)}
+            </h1>
+            <button type="button" onClick={scrollToDonate} className="relative mx-auto block w-full max-w-[1920px] text-left" aria-label={t("Offer Your Seva")}>
+              {BANNER_MOBILE && (
+                <span className="relative block aspect-[1080/1350] w-full sm:hidden">
+                  <Image src={BANNER_MOBILE} alt={t("Vaikuntha Ekadashi")} fill priority sizes="100vw" quality={78} className="object-cover" />
+                </span>
+              )}
+              <span className={`relative ${BANNER_MOBILE ? "hidden sm:block" : "block"} aspect-[1920/700] w-full`}>
+                <Image src={BANNER_DESKTOP as string} alt={t("Vaikuntha Ekadashi")} fill priority sizes="(min-width: 1920px) 1920px, 100vw" quality={80} className="object-cover" />
+              </span>
+            </button>
           </section>
         ) : (
           <section className="relative isolate overflow-hidden bg-[radial-gradient(120%_100%_at_75%_10%,#1c2f86_0%,#0d1a52_48%,#070d27_100%)] text-white">
@@ -123,18 +129,18 @@ export default function VaikunthaEkadashiClient() {
         )}
 
         {/* ══ FACTS ══════════════════════════════════════════════════════ */}
-        <section className="border-b border-vk-100 bg-white">
+        <section className="border-y border-amber-300/30 bg-gradient-to-r from-[#0a0d2e] via-[#14186a] to-[#0a0d2e]">
           <dl className="vk-container grid grid-cols-2 gap-x-6 gap-y-5 py-5 md:grid-cols-4 md:py-6">
             {FACTS.map((f, i) => {
               const Icon = FACT_ICONS[i];
               return (
                 <div key={f.k} className="flex items-start gap-3">
-                  <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-vk-50 text-vk-700">
+                  <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-300/15 text-amber-300 ring-1 ring-amber-300/40">
                     <Icon className="h-[18px] w-[18px]" />
                   </span>
                   <div className="min-w-0">
-                    <dt className="text-[13px] font-bold text-ink md:text-sm">{t(f.k)}</dt>
-                    <dd className="mt-0.5 text-[11.5px] leading-snug text-muted-foreground md:text-xs">{t(f.v)}</dd>
+                    <dt className="text-[13px] font-bold text-white md:text-sm">{t(f.k)}</dt>
+                    <dd className="mt-0.5 text-[11.5px] leading-snug text-white/65 md:text-xs">{t(f.v)}</dd>
                   </div>
                 </div>
               );
@@ -143,24 +149,27 @@ export default function VaikunthaEkadashiClient() {
         </section>
 
         {/* ══ SEVAS ══════════════════════════════════════════════════════ */}
-        <section id="offer-seva" className="vk-section scroll-mt-20 bg-gradient-to-b from-white via-vk-50/70 to-white">
+        <section id="offer-seva" className="vk-section scroll-mt-20 bg-[radial-gradient(100%_60%_at_50%_0%,#1b1a5c_0%,#0c1342_50%,#070d27_100%)] text-white">
           <div className="vk-container">
             <Reveal>
               <SectionHeading
+                light
                 align="center"
                 eyebrow={t("Choose Your Offering")}
                 title={t("Vaikuntha Ekadashi Sevas")}
                 subtitle={t("Tap an amount to offer that seva. Sankalpa is taken in your name and your receipt reaches you on WhatsApp.")}
               />
             </Reveal>
-            <FestivalSevaGrid sevas={SEVAS} impacts={IMPACTS} highlightedSlug={highlightedSlug} onSelect={setSelected} />
-            <p className="mt-8 text-center text-xs text-muted-foreground">
+            <FestivalSevaGrid sevas={SEVAS} impacts={IMPACTS} highlightedSlug={highlightedSlug} onSelect={setSelected} variant="dark" />
+            <p className="mt-8 text-center text-xs text-white/55">
               {t("Minimum donation Rs. 100 · 80G Tax Exemption available · Secured by Razorpay · Donations go to Hare Krishna Movement India, Visakhapatnam")}
             </p>
           </div>
         </section>
 
-        <PhonePeUpiCard campaign="Vaikuntha Ekadashi" />
+        <div className="bg-[#070d27] pt-2 [&_section]:pb-12 md:[&_section]:pb-16">
+          <PhonePeUpiCard campaign="Vaikuntha Ekadashi" />
+        </div>
 
         {/* ══ ABOUT ══════════════════════════════════════════════════════ */}
         <section id="about" className="vk-section scroll-mt-20">

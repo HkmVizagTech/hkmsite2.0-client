@@ -12,9 +12,11 @@ export const EVENT_DATE_LABEL = "20 December 2026";
  * The festival banner. Paste the banner URLs here when the artwork is ready (same sizes as the Kartik Maas banners:
  * about 1920x730 for desktop and 962x1635 for phones). While these are null the page shows a designed typographic hero.
  */
-export const BANNER_DESKTOP: string | null = null;
-export const BANNER_MOBILE: string | null = null;
-export const OG_IMAGE = "/assets/gallery-aarti.jpg";
+export const BANNER_DESKTOP: string | null =
+  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793102162450-1793102161730-vaikunthaekadashilandscape1920x700.png";
+export const BANNER_MOBILE: string | null =
+  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793102163210-1793102162127-vaikunthaekadashimobile1080x1350.png";
+export const OG_IMAGE = BANNER_DESKTOP ?? "/assets/gallery-aarti.jpg";
 
 const RADHA_MADAN_MOHAN =
   "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677419371-1783677418690-DietyPhotos.jpeg";

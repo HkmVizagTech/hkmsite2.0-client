@@ -311,7 +311,7 @@ export const DONATION_SEO = {
     description:
       "Offer Annadana, Gau, Pushpalankara and Vastrabharana seva on Vaikuntha (Moksada) Ekadashi, 20 December 2026, at ISKCON Gambheeram Visakhapatnam. 80G tax benefit.",
     keywords: ["vaikuntha ekadashi 2026 Visakhapatnam", "moksada ekadashi seva", "vaikuntha ekadashi donation", "ekadashi seva ISKCON Vizag", ...LOCAL],
-    ogImage: "/assets/gallery-aarti.jpg",
+    ogImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793102162450-1793102161730-vaikunthaekadashilandscape1920x700.png",
     breadcrumb: "Vaikuntha Ekadashi",
     h1: "Vaikuntha Ekadashi Seva — Moksada Ekadashi 2026 in Visakhapatnam",
     intro: [
