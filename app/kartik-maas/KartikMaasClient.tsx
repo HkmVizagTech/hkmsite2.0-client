@@ -5,6 +5,7 @@ import SectionHeading from "@/components/site/SectionHeading";
 import Reveal from "@/components/site/Reveal";
 import DonationForm from "@/components/DonationForm";
 import PhonePeUpiCard from "@/components/PhonePeUpiCard";
+import ScenePoster from "@/components/festival/ScenePoster";
 import FaqSection from "@/components/sqft-campaign/FaqSection";
 import DonorPrivilegesSection from "@/components/sqft-campaign/DonorPrivilegesSection";
 import OtherDonationsCarousel from "@/components/pitru-paksha/OtherDonationsCarousel";
@@ -434,6 +435,7 @@ export default function KartikMaasClient() {
       <div ref={rootRef} className="overflow-x-clip bg-white pt-[var(--header-h)]">
         {/* ══ HERO ═════════════════════════════════════════════════════════ */}
         <section className="relative isolate overflow-hidden bg-[radial-gradient(120%_90%_at_72%_18%,#1d3290_0%,#0e1a52_42%,#070d27_100%)] text-white">
+          <ScenePoster className="left-1/2 top-[18svh] w-[62vw] max-w-[260px] -translate-x-1/2 lg:left-auto lg:right-[15%] lg:top-[22%] lg:w-[340px] lg:max-w-none lg:translate-x-0" />
           <KartikScene variant="hero" state={sceneState} className="z-0" />
           <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[58%] bg-gradient-to-t from-[#070d27] via-[#070d27]/80 to-transparent md:h-40 md:via-[#070d27]/50" />
           <div className="vk-container relative z-10 flex min-h-[calc(100svh-var(--header-h))] flex-col justify-end pb-8 pt-[46svh] md:justify-between md:pb-10 md:pt-16">
@@ -518,7 +520,7 @@ export default function KartikMaasClient() {
                   Desktop: it is the right-hand column and the inner box sticks inside it. */}
               <div className="sticky top-[calc(var(--header-h)+8px)] z-10 order-1 lg:static lg:order-2 lg:z-auto">
                 <div className="lg:sticky lg:top-[calc(var(--header-h)+28px)]">
-                  <div data-stage className="relative h-[38svh] min-h-[240px] w-full overflow-hidden rounded-3xl bg-[radial-gradient(110%_100%_at_60%_20%,#1d3290_0%,#0e1a52_50%,#070d27_100%)] shadow-[0_30px_80px_-30px_rgba(0,0,0,0.8)] ring-1 ring-white/10 lg:h-[min(66svh,600px)]">
+                  <div data-stage className="relative h-[48svh] min-h-[300px] max-h-[560px] w-full overflow-hidden rounded-3xl bg-[radial-gradient(110%_100%_at_60%_20%,#1d3290_0%,#0e1a52_50%,#070d27_100%)] shadow-[0_30px_80px_-30px_rgba(0,0,0,0.8)] ring-1 ring-white/10 lg:h-[min(66svh,600px)]">
                     <LazyScene variant="story" state={storyState} />
                   </div>
                 </div>

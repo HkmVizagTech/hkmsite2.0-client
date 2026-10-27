@@ -53,7 +53,7 @@ export function useDiwaliMotion(root: RefObject<HTMLElement | null>, hero: Diwal
     mm.add("(prefers-reduced-motion: no-preference)", () => {
       const ctx = gsap.context(() => {
         hero.intro = 0;
-        gsap.to(hero, { intro: 1, duration: 3.2, ease: "power2.inOut", delay: 0.3 });
+        gsap.to(hero, { intro: 1, duration: 2.0, ease: "power2.inOut", delay: 0.1 });
         gsap.from("[data-hero-fade]", { y: 28, opacity: 0, duration: 0.9, ease: "power3.out", stagger: 0.12, delay: 0.25 });
         gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach((n) => {
           gsap.from(n, { y: 34, opacity: 0, duration: 0.9, ease: "power3.out", scrollTrigger: { trigger: n, start: "top 88%", once: true } });
