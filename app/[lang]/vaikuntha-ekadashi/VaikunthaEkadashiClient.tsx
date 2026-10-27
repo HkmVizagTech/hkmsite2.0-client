@@ -287,7 +287,7 @@ export default function VaikunthaEkadashiClient() {
         </section>
 
         <DonorPrivilegesSection scrollToDonate={scrollToDonate} config={PRIVILEGE_CONFIG} />
-        <FaqSection faqs={FAQS} tone="blue" />
+        <FaqSection faqs={FAQS.map((f) => ({ q: t(f.q), a: t(f.a) }))} tone="blue" />
         <OtherDonationsCarousel />
       </div>
 
