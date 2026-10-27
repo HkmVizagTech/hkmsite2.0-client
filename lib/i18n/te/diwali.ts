@@ -3,8 +3,16 @@
 export const diwali: Record<string, string> = {
   "Diwali Seva Donation": "దీపావళి సేవ విరాళం",
   "Diwali Seva Donation | ISKCON Gambheeram Visakhapatnam": "దీపావళి సేవ విరాళం | ఇస్కాన్ గంభీరం విశాఖపట్నం",
-  "Light a lamp this Diwali with Annadana, Gau, Pushpalankara and Vastrabharana seva at ISKCON Gambheeram Visakhapatnam. Diwali is on 9 November 2026. 80G tax benefit.":
-    "ఇస్కాన్ గంభీరం విశాఖపట్నంలో అన్నదాన, గో, పుష్పాలంకార, వస్త్రాభరణ సేవలతో ఈ దీపావళికి దీపం వెలిగించండి. దీపావళి 2026 నవంబర్ 9న. 80G పన్ను ప్రయోజనం.",
+  "Light a lamp this Diwali with Annadana, Gau, Pushpalankara, Vastrabharana, Brick and Square Foot seva at ISKCON Gambheeram Visakhapatnam. Diwali is on 9 November 2026. 80G tax benefit.":
+    "ఇస్కాన్ గంభీరం విశాఖపట్నంలో అన్నదాన, గో, పుష్పాలంకార, వస్త్రాభరణ, ఇటుక, చదరపు అడుగు సేవలతో ఈ దీపావళికి దీపం వెలిగించండి. దీపావళి 2026 నవంబర్ 9న. 80G పన్ను ప్రయోజనం.",
+  "Brick Seva": "ఇటుక సేవ",
+  "Square Foot Seva": "చదరపు అడుగు సేవ",
+  "Sponsor a sacred brick of the Hare Krishna Vaikuntham Temple under construction — each brick laid in devotion becomes an eternal part of the Lord's abode.":
+    "నిర్మాణంలో ఉన్న హరే కృష్ణ వైకుంఠం ఆలయానికి ఒక పవిత్ర ఇటుకను సమర్పించండి — భక్తితో వేసే ప్రతి ఇటుక భగవంతుని నివాసంలో శాశ్వత భాగమవుతుంది.",
+  "Be a part of the temple in the making — sponsor square feet of its sacred construction and leave an eternal footprint in the Lord's divine abode.":
+    "నిర్మాణంలో ఉన్న ఆలయంలో మీరూ భాగస్వాములు కండి — దాని పవిత్ర నిర్మాణంలో చదరపు అడుగులను సమర్పించి, భగవంతుని దివ్య నివాసంలో మీ శాశ్వత ముద్ర వేయండి.",
+  "1 brick": "1 ఇటుక", "2 bricks": "2 ఇటుకలు", "3 bricks": "3 ఇటుకలు", "4 bricks": "4 ఇటుకలు", "5 bricks": "5 ఇటుకలు", "10 bricks": "10 ఇటుకలు",
+  "1 sq ft": "1 చ. అడుగు", "2 sq ft": "2 చ. అడుగులు", "3 sq ft": "3 చ. అడుగులు", "5 sq ft": "5 చ. అడుగులు", "7 sq ft": "7 చ. అడుగులు", "10 sq ft": "10 చ. అడుగులు",
   "Dipavali": "దీపావళి",
   "9 November 2026": "2026 నవంబర్ 9",
   "{n} days to Diwali": "దీపావళికి {n} రోజులు",

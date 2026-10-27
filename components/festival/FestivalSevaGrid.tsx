@@ -34,7 +34,7 @@ export default function FestivalSevaGrid({
         <article
           key={seva.slug}
           id={`seva-card-${seva.slug}`}
-          className={`group flex w-full scroll-mt-24 flex-col overflow-hidden transition-all duration-300 sm:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.2rem)] ${
+          className={`group flex w-full scroll-mt-24 flex-col overflow-hidden transition-all duration-300 sm:w-[calc(50%-0.75rem)] ${sevas.length > 4 ? "lg:w-[calc(33.333%-1rem)]" : "lg:w-[calc(25%-1.2rem)]"} ${
             dark
               ? "relative rounded-3xl border border-amber-300/40 bg-[linear-gradient(180deg,rgba(40,30,110,0.85),rgba(12,16,66,0.95))] shadow-[0_0_0_1px_rgba(255,200,90,0.08),0_24px_60px_-24px_rgba(0,0,0,0.9),0_0_40px_-18px_rgba(255,170,40,0.55)] hover:-translate-y-1.5 hover:border-amber-300/80 hover:shadow-[0_0_0_1px_rgba(255,200,90,0.3),0_30px_70px_-20px_rgba(0,0,0,0.9),0_0_60px_-10px_rgba(255,170,40,0.6)]"
               : "vk-card border-t-[3px] border-t-[hsl(var(--gold))] hover:shadow-lift lg:w-[calc(33.333%-1rem)]"

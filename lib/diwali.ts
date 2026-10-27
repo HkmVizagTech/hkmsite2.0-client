@@ -15,7 +15,8 @@ const RADHA_MADAN_MOHAN =
 const tiers = (amounts: number[]) => amounts.map((amount) => ({ label: `Rs. ${amount.toLocaleString("en-IN")}`, amount }));
 const base = { category: "Diwali", account: "default" as const };
 
-// The same four seva cards as the Kartik Maas and Vaikuntha Ekadashi pages: same sevas, photos and amounts.
+// The same four seva cards as the Kartik Maas and Vaikuntha Ekadashi pages (same sevas, photos and amounts), plus Brick Seva and
+// Square Foot Seva with the photos and amounts of the Pitru Paksha page.
 export const SEVAS: Seva[] = [
   {
     slug: "annadana-seva",
@@ -61,10 +62,38 @@ export const SEVAS: Seva[] = [
     icon: "👗",
     ...base,
   },
+  {
+    slug: "brick-seva",
+    title: "Brick Seva",
+    shortTitle: "Brick",
+    image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1790226869681-1790226868033-cardbrick.webp",
+    tagline: "A sacred brick of the Lord's abode",
+    description:
+      "Sponsor a sacred brick of the Hare Krishna Vaikuntham Temple under construction — each brick laid in devotion becomes an eternal part of the Lord's abode.",
+    tiers: tiers([1500, 3000, 4500, 6000, 7500, 15000]),
+    category: "BRICK",
+    account: "default",
+    icon: "🧱",
+  },
+  {
+    slug: "square-foot-seva",
+    title: "Square Foot Seva",
+    shortTitle: "Square Foot",
+    image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1790226868531-1790226867774-cardsft.webp",
+    tagline: "Leave an eternal footprint in the temple",
+    description:
+      "Be a part of the temple in the making — sponsor square feet of its sacred construction and leave an eternal footprint in the Lord's divine abode.",
+    tiers: tiers([2100, 4200, 6300, 10500, 14700, 21000]),
+    category: "SQFT",
+    account: "default",
+    icon: "🛕",
+  },
 ];
 
 export const IMPACTS: Record<string, Record<number, string>> = {
   "annadana-seva": { 1100: "44 meals", 2100: "84 meals", 3100: "124 meals", 5555: "222 meals", 9000: "360 meals", 11000: "440 meals" },
+  "brick-seva": { 1500: "1 brick", 3000: "2 bricks", 4500: "3 bricks", 6000: "4 bricks", 7500: "5 bricks", 15000: "10 bricks" },
+  "square-foot-seva": { 2100: "1 sq ft", 4200: "2 sq ft", 6300: "3 sq ft", 10500: "5 sq ft", 14700: "7 sq ft", 21000: "10 sq ft" },
   "gau-seva": { 1500: "10 cows · a day", 2500: "Medicines & care", 3500: "1 cow · a month", 5500: "Fodder & upkeep", 9500: "Green grass, all cows", 11500: "A month of full care" },
 };
 

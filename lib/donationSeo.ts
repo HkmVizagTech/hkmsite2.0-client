@@ -334,7 +334,7 @@ export const DONATION_SEO = {
     path: "/diwali",
     title: "Diwali Seva Donation",
     description:
-      "Light a lamp this Diwali with Annadana, Gau, Pushpalankara and Vastrabharana seva at ISKCON Gambheeram Visakhapatnam. Diwali is on 9 November 2026. 80G tax benefit.",
+      "Light a lamp this Diwali with Annadana, Gau, Pushpalankara, Vastrabharana, Brick and Square Foot seva at ISKCON Gambheeram Visakhapatnam. Diwali is on 9 November 2026. 80G tax benefit.",
     keywords: ["diwali seva Visakhapatnam", "deepavali donation ISKCON Vizag", "diwali 2026 temple seva", "dipavali seva", ...LOCAL],
     ogImage: "/assets/gallery-aarti.jpg",
     breadcrumb: "Diwali",
@@ -348,6 +348,8 @@ export const DONATION_SEO = {
       { name: "Gau Seva", amounts: [1500, 2500, 3500, 5500, 9500, 11500], note: "Eligible for 80G" },
       { name: "Pushpalankara Seva", amounts: [1100, 2100, 3100, 5100, 9000, 11111] },
       { name: "Vastrabharana Seva", amounts: [1100, 3100, 5100, 9999, 15000, 21000] },
+      { name: "Brick Seva", amounts: [1500, 3000, 4500, 6000, 7500, 15000] },
+      { name: "Square Foot Seva", amounts: [2100, 4200, 6300, 10500, 14700, 21000] },
     ],
     event: {
       name: "Diwali 2026",
