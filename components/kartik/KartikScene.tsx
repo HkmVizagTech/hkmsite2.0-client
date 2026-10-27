@@ -1,0 +1,571 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+
+/**
+ * Three.js scene for the Kartik Maas page: a brass diya with a flickering flame resting on a blooming lotus,
+ * a slowly turning mandala and halo behind it, rising embers, drifting lotus petals and a field of stars.
+ *
+ * Built with plain three (loaded on demand, so it never touches the first paint), tuned for phones:
+ *   - pixel ratio is capped, antialiasing is off on touch screens, particle counts are lower on small screens
+ *   - the render loop only runs while the canvas is on screen and the tab is visible
+ *   - a frame-time governor drops quality if the device can't keep up
+ *   - prefers-reduced-motion renders one still frame
+ *   - if WebGL is unavailable a CSS glow is shown instead
+ *
+ * `state.intro` (0 -> 1) is driven by GSAP on the page: it ignites the flame and opens the lotus.
+ */
+export type SceneState = { intro: number };
+
+type Props = {
+  variant?: "hero" | "finale";
+  state?: SceneState;
+  className?: string;
+};
+
+type THREE_ = typeof import("three");
+
+export default function KartikScene({ variant = "hero", state, className = "" }: Props) {
+  const hostRef = useRef<HTMLDivElement>(null);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    const host = hostRef.current;
+    if (!host) return;
+    let disposed = false;
+    let cleanup: (() => void) | undefined;
+    (async () => {
+      try {
+        const THREE = await import("three");
+        const { RoomEnvironment } = await import("three/examples/jsm/environments/RoomEnvironment.js");
+        if (disposed) return;
+        cleanup = build(THREE, RoomEnvironment, host, variant, state ?? { intro: 1 });
+      } catch (err) {
+        console.warn("[kartik-scene] 3D unavailable, using the CSS glow instead:", err);
+        if (!disposed) setFailed(true);
+      }
+    })();
+    return () => {
+      disposed = true;
+      cleanup?.();
+    };
+  }, [variant, state]);
+
+  return (
+    <div ref={hostRef} aria-hidden className={`pointer-events-none absolute inset-0 ${className}`}>
+      {failed && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(255,196,80,0.55),rgba(255,140,40,0.18)_45%,transparent_70%)] blur-2xl md:h-80 md:w-80" />
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ───────────────────────────────────────────────────────────────────────────────────────────
+// Scene
+// ───────────────────────────────────────────────────────────────────────────────────────────
+
+const clamp = (v: number, a: number, b: number) => Math.min(b, Math.max(a, v));
+const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+
+function canvasTexture(THREE: THREE_, size: number, height: number, draw: (ctx: CanvasRenderingContext2D, w: number, h: number) => void) {
+  const c = document.createElement("canvas");
+  c.width = size;
+  c.height = height;
+  const ctx = c.getContext("2d")!;
+  draw(ctx, size, height);
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+
+function build(
+  THREE: THREE_,
+  RoomEnvironment: new () => import("three").Scene,
+  host: HTMLElement,
+  variant: "hero" | "finale",
+  state: SceneState
+): () => void {
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const coarse = window.matchMedia("(pointer: coarse)").matches;
+  const isHero = variant === "hero";
+
+  const renderer = new THREE.WebGLRenderer({ antialias: !coarse, alpha: true, powerPreference: "high-performance" });
+  renderer.setClearColor(0x000000, 0);
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.12;
+  const canvas = renderer.domElement;
+  canvas.style.cssText = "position:absolute;inset:0;width:100%;height:100%;display:block;";
+  host.appendChild(canvas);
+
+  const scene = new THREE.Scene();
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  const envTex = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+  scene.environment = envTex;
+  scene.environmentIntensity = 0.5;
+
+  const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 80);
+  camera.position.set(0, 0.5, 9);
+
+  const disposables: { dispose: () => void }[] = [pmrem, envTex];
+  const track = <T extends { dispose: () => void }>(o: T): T => {
+    disposables.push(o);
+    return o;
+  };
+
+  // ── Lights ────────────────────────────────────────────────────────
+  scene.add(new THREE.AmbientLight(0x6f86ff, 0.35));
+  const rim = new THREE.DirectionalLight(0x7f9bef, 1.1);
+  rim.position.set(-4, 3, 2);
+  scene.add(rim);
+  const flameLight = new THREE.PointLight(0xffa447, 0, 16, 1.6);
+  scene.add(flameLight);
+
+  const rig = new THREE.Group();
+  scene.add(rig);
+
+  // ── Textures ──────────────────────────────────────────────────────
+  const dotTex = track(
+    canvasTexture(THREE, 64, 64, (ctx, w, h) => {
+      const g = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2);
+      g.addColorStop(0, "rgba(255,255,255,1)");
+      g.addColorStop(0.35, "rgba(255,255,255,0.55)");
+      g.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, w, h);
+    })
+  );
+  const flameTex = track(
+    canvasTexture(THREE, 128, 256, (ctx, w, h) => {
+      ctx.save();
+      ctx.translate(w / 2, h * 0.68);
+      ctx.scale(0.62, 1.55);
+      const g = ctx.createRadialGradient(0, 0, 2, 0, 0, w * 0.5);
+      g.addColorStop(0, "rgba(255,255,238,1)");
+      g.addColorStop(0.22, "rgba(255,224,130,0.98)");
+      g.addColorStop(0.55, "rgba(255,150,45,0.6)");
+      g.addColorStop(1, "rgba(255,90,10,0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(-w, -h, w * 2, h * 2);
+      ctx.restore();
+    })
+  );
+  const mandalaTex = track(
+    canvasTexture(THREE, 1024, 1024, (ctx, w, h) => {
+      ctx.translate(w / 2, h / 2);
+      ctx.strokeStyle = "rgba(255,206,110,0.9)";
+      ctx.fillStyle = "rgba(255,206,110,0.9)";
+      ctx.lineCap = "round";
+      const ring = (r: number, lw: number) => {
+        ctx.lineWidth = lw;
+        ctx.beginPath();
+        ctx.arc(0, 0, r, 0, Math.PI * 2);
+        ctx.stroke();
+      };
+      ring(500, 3);
+      ring(486, 1.5);
+      ring(330, 2);
+      ring(180, 2);
+      const petals = (n: number, r0: number, r1: number, width: number, lw: number) => {
+        ctx.lineWidth = lw;
+        for (let i = 0; i < n; i++) {
+          ctx.save();
+          ctx.rotate((i / n) * Math.PI * 2);
+          ctx.beginPath();
+          ctx.moveTo(0, -r0);
+          ctx.quadraticCurveTo(width, -(r0 + r1) / 2, 0, -r1);
+          ctx.quadraticCurveTo(-width, -(r0 + r1) / 2, 0, -r0);
+          ctx.stroke();
+          ctx.restore();
+        }
+      };
+      petals(24, 335, 482, 46, 2);
+      petals(16, 185, 326, 54, 2);
+      petals(12, 40, 176, 44, 2);
+      for (let i = 0; i < 48; i++) {
+        const a = (i / 48) * Math.PI * 2;
+        ctx.beginPath();
+        ctx.arc(Math.cos(a) * 458, Math.sin(a) * 458, 3.4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    })
+  );
+
+  // ── Diya ──────────────────────────────────────────────────────────
+  const goldMat = track(new THREE.MeshStandardMaterial({ color: 0xdca21e, metalness: 1, roughness: 0.28, side: THREE.DoubleSide }));
+  const profile = [
+    [0, -0.02], [0.3, 0], [0.6, 0.07], [0.86, 0.22], [1.0, 0.45], [1.05, 0.6], [0.99, 0.63],
+    [0.9, 0.54], [0.72, 0.36], [0.42, 0.26], [0, 0.24],
+  ].map(([x, y]) => new THREE.Vector2(x, y));
+  const bowlGeo = track(new THREE.LatheGeometry(profile, 72));
+  const bowl = new THREE.Mesh(bowlGeo, goldMat);
+  const diya = new THREE.Group();
+  diya.add(bowl);
+
+  const rimGeo = track(new THREE.TorusGeometry(1.02, 0.035, 12, 96));
+  const rimMesh = new THREE.Mesh(rimGeo, goldMat);
+  rimMesh.rotation.x = Math.PI / 2;
+  rimMesh.position.y = 0.6;
+  diya.add(rimMesh);
+
+  const oilMat = track(new THREE.MeshStandardMaterial({ color: 0x2c1404, emissive: 0xff7a18, emissiveIntensity: 0, roughness: 0.12, metalness: 0 }));
+  const oilGeo = track(new THREE.CircleGeometry(0.7, 48));
+  const oil = new THREE.Mesh(oilGeo, oilMat);
+  oil.rotation.x = -Math.PI / 2;
+  oil.position.y = 0.3;
+  diya.add(oil);
+
+  const wickMat = track(new THREE.MeshStandardMaterial({ color: 0x3a2412, roughness: 0.8 }));
+  const wickGeo = track(new THREE.CylinderGeometry(0.03, 0.045, 0.3, 10));
+  const wick = new THREE.Mesh(wickGeo, wickMat);
+  wick.position.y = 0.42;
+  diya.add(wick);
+
+  const flameCore = new THREE.Sprite(
+    track(new THREE.SpriteMaterial({ map: flameTex, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, toneMapped: false }))
+  );
+  const flameGlow = new THREE.Sprite(
+    track(new THREE.SpriteMaterial({ map: dotTex, color: 0xff9a2e, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: 0.0, toneMapped: false }))
+  );
+  const flameBase = new THREE.Vector3(0, 0.98, 0.05);
+  flameCore.position.copy(flameBase);
+  flameGlow.position.set(0, 0.92, -0.05);
+  diya.add(flameGlow, flameCore);
+  diya.position.y = 0.55;
+  rig.add(diya);
+
+  // ── Lotus ─────────────────────────────────────────────────────────
+  const petalShape = new THREE.Shape();
+  petalShape.moveTo(0, 0);
+  petalShape.bezierCurveTo(0.58, 0.25, 0.5, 1.0, 0, 1.55);
+  petalShape.bezierCurveTo(-0.5, 1.0, -0.58, 0.25, 0, 0);
+  const petalGeo = track(new THREE.ShapeGeometry(petalShape, 14));
+  {
+    const pos = petalGeo.attributes.position;
+    const colors = new Float32Array(pos.count * 3);
+    const base = new THREE.Color(0xfff4ee);
+    const tip = new THREE.Color(0xf38db3);
+    const c = new THREE.Color();
+    for (let i = 0; i < pos.count; i++) {
+      const y = pos.getY(i);
+      pos.setZ(i, -0.3 * y * y);
+      c.copy(base).lerp(tip, clamp(y / 1.55, 0, 1) ** 1.4);
+      colors.set([c.r, c.g, c.b], i * 3);
+    }
+    petalGeo.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+    petalGeo.computeVertexNormals();
+  }
+  const petalMat = track(
+    new THREE.MeshStandardMaterial({ vertexColors: true, side: THREE.DoubleSide, roughness: 0.55, metalness: 0, emissive: 0x7a2a4a, emissiveIntensity: 0.18 })
+  );
+  const lotus = new THREE.Group();
+  const rings = [
+    { n: 10, elev: 0.14, scale: 1.05, off: 0 },
+    { n: 10, elev: 0.5, scale: 0.92, off: 0.5 },
+    { n: 8, elev: 0.9, scale: 0.74, off: 0 },
+    { n: 6, elev: 1.2, scale: 0.52, off: 0.5 },
+  ];
+  const pivots: { mesh: InstanceType<typeof THREE.Mesh>; elev: number }[] = [];
+  for (const ring of rings) {
+    for (let i = 0; i < ring.n; i++) {
+      const pivot = new THREE.Group();
+      pivot.rotation.y = ((i + ring.off) / ring.n) * Math.PI * 2;
+      const mesh = new THREE.Mesh(petalGeo, petalMat);
+      mesh.scale.setScalar(ring.scale);
+      mesh.position.z = 0.12;
+      pivot.add(mesh);
+      lotus.add(pivot);
+      pivots.push({ mesh, elev: ring.elev });
+    }
+  }
+  lotus.position.y = -0.18;
+  rig.add(lotus);
+
+  // ── Mandala + halo ────────────────────────────────────────────────
+  const mandalaMat = (opacity: number) =>
+    track(new THREE.MeshBasicMaterial({ map: mandalaTex, transparent: true, opacity, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }));
+  const planeGeo = track(new THREE.PlaneGeometry(1, 1));
+  const mandalaA = new THREE.Mesh(planeGeo, mandalaMat(0.34));
+  mandalaA.scale.setScalar(7.4);
+  mandalaA.position.set(0, 1.3, -1.6);
+  const mandalaB = new THREE.Mesh(planeGeo, mandalaMat(0.16));
+  mandalaB.scale.setScalar(5.1);
+  mandalaB.position.set(0, 1.3, -1.4);
+  rig.add(mandalaA, mandalaB);
+
+  const haloGeo = track(new THREE.TorusGeometry(2.45, 0.014, 8, 160));
+  const haloMat = track(new THREE.MeshBasicMaterial({ color: 0xffc95e, transparent: true, opacity: 0.55, toneMapped: false }));
+  const halo = new THREE.Mesh(haloGeo, haloMat);
+  halo.position.set(0, 1.3, -0.9);
+  rig.add(halo);
+
+  // ── Embers, petals, stars ─────────────────────────────────────────
+  const small = () => host.clientWidth < 640;
+  const EMBERS = isHero ? (small() ? 70 : 150) : small() ? 40 : 90;
+  const emberPos = new Float32Array(EMBERS * 3);
+  const emberCol = new Float32Array(EMBERS * 3);
+  const emberSpeed = new Float32Array(EMBERS);
+  const emberPhase = new Float32Array(EMBERS);
+  const cA = new THREE.Color(0xffd36b);
+  const cB = new THREE.Color(0xff8a2a);
+  const tmpC = new THREE.Color();
+  const resetEmber = (i: number, spawn = false) => {
+    const a = Math.random() * Math.PI * 2;
+    const r = Math.sqrt(Math.random()) * 3.6;
+    emberPos[i * 3] = Math.cos(a) * r;
+    emberPos[i * 3 + 1] = spawn ? -1 + Math.random() * 7 : -1.2 + Math.random() * 0.8;
+    emberPos[i * 3 + 2] = -1.2 + Math.random() * 3;
+    emberSpeed[i] = 0.18 + Math.random() * 0.45;
+    emberPhase[i] = Math.random() * Math.PI * 2;
+    tmpC.copy(cA).lerp(cB, Math.random());
+    emberCol.set([tmpC.r, tmpC.g, tmpC.b], i * 3);
+  };
+  for (let i = 0; i < EMBERS; i++) resetEmber(i, true);
+  const emberGeo = track(new THREE.BufferGeometry());
+  emberGeo.setAttribute("position", new THREE.BufferAttribute(emberPos, 3));
+  emberGeo.setAttribute("color", new THREE.BufferAttribute(emberCol, 3));
+  const emberMat = track(
+    new THREE.PointsMaterial({ size: 0.085, map: dotTex, vertexColors: true, transparent: true, opacity: 0.95, blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true, toneMapped: false })
+  );
+  const embers = new THREE.Points(emberGeo, emberMat);
+  rig.add(embers);
+
+  const PETALS = isHero ? (small() ? 8 : 16) : small() ? 5 : 10;
+  const drift = new THREE.InstancedMesh(petalGeo, petalMat, PETALS);
+  const dd = Array.from({ length: PETALS }, () => ({ x: 0, y: 0, z: 0, s: 0, vy: 0, sx: 0, rx: 0, ry: 0, rz: 0, vr: 0 }));
+  const resetPetal = (p: (typeof dd)[number], spawn: boolean) => {
+    p.x = (Math.random() - 0.5) * 9;
+    p.y = spawn ? -2 + Math.random() * 8 : 5.5 + Math.random() * 1.5;
+    p.z = -1.5 + Math.random() * 3.5;
+    p.s = 0.09 + Math.random() * 0.1;
+    p.vy = 0.22 + Math.random() * 0.3;
+    p.sx = 0.3 + Math.random() * 0.5;
+    p.rx = Math.random() * 6;
+    p.ry = Math.random() * 6;
+    p.rz = Math.random() * 6;
+    p.vr = 0.4 + Math.random() * 0.9;
+  };
+  dd.forEach((p) => resetPetal(p, true));
+  const dummy = new THREE.Object3D();
+  const writePetals = (t: number) => {
+    dd.forEach((p, i) => {
+      dummy.position.set(p.x + Math.sin(t * p.sx + i) * 0.5, p.y, p.z);
+      dummy.rotation.set(p.rx + t * p.vr * 0.5, p.ry + t * p.vr, p.rz);
+      dummy.scale.setScalar(p.s);
+      dummy.updateMatrix();
+      drift.setMatrixAt(i, dummy.matrix);
+    });
+    drift.instanceMatrix.needsUpdate = true;
+  };
+  drift.frustumCulled = false;
+  rig.add(drift);
+
+  const STARS = small() ? 120 : 240;
+  const starPos = new Float32Array(STARS * 3);
+  for (let i = 0; i < STARS; i++) {
+    starPos[i * 3] = (Math.random() - 0.5) * 34;
+    starPos[i * 3 + 1] = (Math.random() - 0.3) * 20;
+    starPos[i * 3 + 2] = -14 - Math.random() * 6;
+  }
+  const starGeo = track(new THREE.BufferGeometry());
+  starGeo.setAttribute("position", new THREE.BufferAttribute(starPos, 3));
+  const starMat = track(new THREE.PointsMaterial({ size: 0.09, map: dotTex, color: 0xdfe7ff, transparent: true, opacity: 0.7, depthWrite: false, toneMapped: false }));
+  const stars = new THREE.Points(starGeo, starMat);
+  stars.visible = isHero;
+  scene.add(stars);
+
+  // ── Layout ────────────────────────────────────────────────────────
+  let hostTop = 0;
+  let hostH = 1;
+  let aspect = 1;
+  let maxDpr = 1;
+  const baseRig = new THREE.Vector3();
+  let baseScale = 1;
+
+  const layout = () => {
+    const w = Math.max(1, host.clientWidth);
+    const h = Math.max(1, host.clientHeight);
+    aspect = w / h;
+    maxDpr = Math.min(window.devicePixelRatio || 1, coarse ? 1.5 : 2);
+    renderer.setPixelRatio(quality === "low" ? 1 : maxDpr);
+    renderer.setSize(w, h, false);
+    camera.aspect = aspect;
+    const r = host.getBoundingClientRect();
+    hostTop = r.top + window.scrollY;
+    hostH = r.height || 1;
+    const visW = 2 * camera.position.z * Math.tan((camera.fov * Math.PI) / 360) * aspect;
+    if (isHero) {
+      if (aspect > 1.15) {
+        baseScale = 1;
+        baseRig.set(visW * 0.22, -1.15, 0);
+      } else {
+        // Portrait phone: the diya sits in the upper part, the copy is below it.
+        baseScale = clamp(visW * 0.215, 0.5, 0.78);
+        baseRig.set(0, 3.0 - 1.45 * baseScale - 0.95, 0);
+      }
+    } else {
+      baseScale = aspect > 1.15 ? 0.9 : clamp(visW * 0.3, 0.55, 0.85);
+      baseRig.set(aspect > 1.15 ? visW * 0.2 : 0, aspect > 1.15 ? -1.2 : -0.4, 0);
+    }
+    camera.updateProjectionMatrix();
+  };
+
+  // ── Quality governor ──────────────────────────────────────────────
+  let quality: "high" | "low" = "high";
+  const lowerQuality = () => {
+    if (quality === "low") return;
+    quality = "low";
+    renderer.setPixelRatio(1);
+    renderer.setSize(host.clientWidth, host.clientHeight, false);
+    emberGeo.setDrawRange(0, Math.floor(EMBERS / 2));
+    drift.count = Math.floor(PETALS / 2);
+    stars.visible = false;
+  };
+  let sampleFrames = 0;
+  let sampleSum = 0;
+
+  // ── Input ─────────────────────────────────────────────────────────
+  const pointer = { x: 0, y: 0, tx: 0, ty: 0 };
+  const onPointer = (e: PointerEvent) => {
+    pointer.tx = (e.clientX / window.innerWidth) * 2 - 1;
+    pointer.ty = (e.clientY / window.innerHeight) * 2 - 1;
+  };
+  if (!coarse && !reduceMotion) window.addEventListener("pointermove", onPointer, { passive: true });
+
+  // ── Frame ─────────────────────────────────────────────────────────
+  const tmpV = new THREE.Vector3();
+  const update = (t: number, dt: number) => {
+    const intro = clamp(state.intro, 0, 1);
+    const ignite = easeOutCubic(clamp((intro - 0.35) / 0.65, 0, 1));
+    const bloom = easeOutCubic(clamp(intro / 0.85, 0, 1));
+
+    // flame
+    const f1 = 1 + 0.07 * Math.sin(t * 9.1) + 0.045 * Math.sin(t * 17.3 + 1.1) + 0.03 * Math.sin(t * 31 + 2);
+    const sway = 0.025 * Math.sin(t * 5.2) + 0.012 * Math.sin(t * 11.7);
+    flameCore.scale.set(0.78 * f1 * ignite, 1.55 * (1 + (f1 - 1) * 1.4) * ignite, 1);
+    flameCore.position.set(flameBase.x + sway, flameBase.y + 0.1 * ignite, flameBase.z);
+    flameGlow.scale.setScalar(3.1 * (0.96 + (f1 - 1) * 0.8) * ignite);
+    (flameGlow.material as import("three").SpriteMaterial).opacity = 0.55 * ignite;
+    flameLight.position.set(rig.position.x + sway, rig.position.y + 1.6 * rig.scale.y, 1.2);
+    flameLight.intensity = (isHero ? 30 : 24) * ignite * (0.92 + (f1 - 1) * 1.6);
+    oilMat.emissiveIntensity = 0.7 * ignite;
+
+    // lotus bloom
+    const breathe = 0.03 * Math.sin(t * 0.9);
+    for (const p of pivots) p.mesh.parent!.children[0].rotation.x = Math.PI / 2 - lerp(1.5, p.elev + breathe, bloom);
+
+    // slow spins
+    mandalaA.rotation.z += dt * 0.05;
+    mandalaB.rotation.z -= dt * 0.08;
+    halo.rotation.z += dt * 0.1;
+    halo.scale.setScalar(0.9 + 0.1 * bloom);
+    (mandalaA.material as import("three").MeshBasicMaterial).opacity = 0.34 * bloom;
+    (mandalaB.material as import("three").MeshBasicMaterial).opacity = 0.16 * bloom;
+    haloMat.opacity = 0.55 * bloom;
+
+    // embers
+    const n = quality === "low" ? Math.floor(EMBERS / 2) : EMBERS;
+    for (let i = 0; i < n; i++) {
+      emberPos[i * 3 + 1] += emberSpeed[i] * dt;
+      emberPos[i * 3] += Math.sin(t * 0.7 + emberPhase[i]) * 0.003;
+      if (emberPos[i * 3 + 1] > 6) resetEmber(i);
+    }
+    emberGeo.attributes.position.needsUpdate = true;
+    emberMat.opacity = 0.95 * ignite;
+
+    // drifting petals
+    const pn = quality === "low" ? Math.floor(PETALS / 2) : PETALS;
+    for (let i = 0; i < pn; i++) {
+      dd[i].y -= dd[i].vy * dt;
+      if (dd[i].y < -3.5) resetPetal(dd[i], false);
+    }
+    writePetals(t);
+
+    // rig: scroll lift + pointer parallax (touch screens get a slow sway instead)
+    const p = clamp((window.scrollY - hostTop) / hostH, 0, 1);
+    pointer.x = lerp(pointer.x, pointer.tx, 0.05);
+    pointer.y = lerp(pointer.y, pointer.ty, 0.05);
+    const sway2 = coarse ? Math.sin(t * 0.35) * 0.18 : pointer.x * 0.4;
+    rig.rotation.y = sway2;
+    rig.rotation.x = coarse ? 0 : pointer.y * 0.1;
+    tmpV.copy(baseRig);
+    tmpV.y += p * 1.1 + Math.sin(t * 0.6) * 0.05;
+    rig.position.copy(tmpV);
+    rig.scale.setScalar(baseScale * (1 - p * 0.18));
+    stars.rotation.z = t * 0.004;
+  };
+
+  let raf = 0;
+  let last = performance.now();
+  let running = false;
+  const clock0 = performance.now();
+  const frame = (now: number) => {
+    raf = requestAnimationFrame(frame);
+    const dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+    update((now - clock0) / 1000, dt);
+    renderer.render(scene, camera);
+    if (quality === "high" && now - clock0 > 1500 && sampleFrames < 90) {
+      sampleSum += dt;
+      sampleFrames++;
+      if (sampleFrames === 90 && sampleSum / 90 > 0.027) lowerQuality();
+    }
+  };
+  const start = () => {
+    if (running || reduceMotion) return;
+    running = true;
+    last = performance.now();
+    raf = requestAnimationFrame(frame);
+  };
+  const stop = () => {
+    running = false;
+    cancelAnimationFrame(raf);
+  };
+
+  layout();
+  if (reduceMotion) {
+    state.intro = 1;
+    update(2, 0);
+    renderer.render(scene, camera);
+  }
+
+  let onScreen = true;
+  const sync = () => (onScreen && !document.hidden ? start() : stop());
+  const io = new IntersectionObserver(
+    (entries) => {
+      onScreen = entries[0]?.isIntersecting ?? true;
+      sync();
+    },
+    { rootMargin: "120px" }
+  );
+  io.observe(host);
+  const onVis = () => sync();
+  document.addEventListener("visibilitychange", onVis);
+  const ro = new ResizeObserver(() => {
+    layout();
+    if (reduceMotion) renderer.render(scene, camera);
+  });
+  ro.observe(host);
+  const onScrollResize = () => {
+    const r = host.getBoundingClientRect();
+    hostTop = r.top + window.scrollY;
+  };
+  window.addEventListener("load", onScrollResize);
+  sync();
+
+  return () => {
+    stop();
+    io.disconnect();
+    ro.disconnect();
+    document.removeEventListener("visibilitychange", onVis);
+    window.removeEventListener("pointermove", onPointer);
+    window.removeEventListener("load", onScrollResize);
+    drift.dispose();
+    disposables.forEach((d) => d.dispose());
+    renderer.dispose();
+    renderer.forceContextLoss();
+    canvas.remove();
+  };
+}
