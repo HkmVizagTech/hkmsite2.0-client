@@ -1,5 +1,6 @@
 import type { Seva } from "@/lib/sevaConfig";
 import type { CampaignConfig } from "@/lib/campaignConfig";
+import { SEVAS as DIWALI_SEVAS, IMPACTS as DIWALI_IMPACTS } from "@/lib/diwali";
 
 /**
  * Vaikuntha (Moksada) Ekadashi 2026 page content. Update the date and the amounts here each year.
@@ -73,8 +74,13 @@ export const SEVAS: Seva[] = [
   },
 ];
 
+// Brick Seva and Square Foot Seva: the same cards (photos, amounts, DCC category) as on the Diwali page.
+SEVAS.push(...DIWALI_SEVAS.filter((x) => x.slug === "brick-seva" || x.slug === "square-foot-seva"));
+
 /** What a gift buys, shown under the amount (only where it can be stated plainly). */
 export const IMPACTS: Record<string, Record<number, string>> = {
+  "brick-seva": DIWALI_IMPACTS["brick-seva"],
+  "square-foot-seva": DIWALI_IMPACTS["square-foot-seva"],
   "annadana-seva": { 1100: "44 meals", 2100: "84 meals", 3100: "124 meals", 5555: "222 meals", 9000: "360 meals", 11000: "440 meals" },
   "gau-seva": { 1500: "10 cows · a day", 2500: "Medicines & care", 3500: "1 cow · a month", 5500: "Fodder & upkeep", 9500: "Green grass, all cows", 11500: "A month of full care" },
 };
@@ -143,7 +149,7 @@ export const PRIVILEGE_CONFIG: CampaignConfig = {
   type: "SQFT",
   pageTitle: "Vaikuntha Ekadashi Seva",
   metaTitle: "Vaikuntha Ekadashi Seva | Hare Krishna Vaikuntham Temple, Visakhapatnam",
-  metaDesc: "Offer Annadana, Gau, Pushpalankara and Vastrabharana seva on Vaikuntha Ekadashi at ISKCON Gambheeram.",
+  metaDesc: "Offer Annadana, Gau, Pushpalankara, Vastrabharana, Brick and Square Foot seva on Vaikuntha Ekadashi at ISKCON Gambheeram.",
   ogTitle: "Vaikuntha Ekadashi Seva",
   ogDesc: "Offer your seva on the sacred day of Vaikuntha Ekadashi.",
   ogImage: OG_IMAGE,
