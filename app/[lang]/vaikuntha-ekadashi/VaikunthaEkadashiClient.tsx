@@ -12,7 +12,7 @@ import DonorPrivilegesSection from "@/components/sqft-campaign/DonorPrivilegesSe
 import OtherDonationsCarousel from "@/components/pitru-paksha/OtherDonationsCarousel";
 import FestivalSevaGrid, { type SevaSelection } from "@/components/festival/FestivalSevaGrid";
 import FestivalCheckoutModal from "@/components/festival/FestivalCheckoutModal";
-import VaikunthaGate from "@/components/festival/VaikunthaGate";
+import { OrnamentDivider, PetalFall } from "@/components/festival/FestivalDecor";
 import {
   ABOUT,
   BANK_DETAILS,
@@ -94,49 +94,24 @@ export default function VaikunthaEkadashiClient() {
             </a>
           </section>
         ) : (
-          <section className="relative isolate overflow-hidden bg-[radial-gradient(120%_100%_at_75%_10%,#1c2f86_0%,#0d1a52_48%,#070d27_100%)] text-white">
-            <div aria-hidden className="absolute inset-0 opacity-[0.07] [background-image:radial-gradient(#fff_1px,transparent_1px)] [background-size:26px_26px]" />
-            <div className="vk-container relative grid items-center gap-6 py-12 md:py-20 lg:grid-cols-[1.1fr_0.9fr] lg:py-24">
-              <div className="max-w-xl">
-                <p className="flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-amber-200 md:text-xs">
-                  <span aria-hidden className="h-px w-8 bg-amber-300/70" /> {t("Moksada Ekadashi")} · {t(EVENT_DATE_LABEL)}
-                </p>
-                <h1 className="mt-4 font-heading text-[2.6rem] font-extrabold leading-[1.04] tracking-[-0.03em] sm:text-6xl">
-                  {t("Vaikuntha")}{" "}
-                  <span style={{ backgroundImage: "var(--gradient-gold)", WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>{t("Ekadashi")}</span>
-                </h1>
-                <p className="mt-5 max-w-lg text-[15px] leading-relaxed text-white/75 md:text-lg md:leading-8">
-                  {t("A sacred day to worship Lord Vishnu and to give in His service. Offer a seva at Hare Krishna Vaikuntham, Gambheeram, with sankalpa taken in your name.")}
-                </p>
-                <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3">
-                  <button type="button" onClick={scrollToDonate} className="vk-btn-gold h-[3.25rem] px-8 text-base font-bold">
-                    {t("Offer Your Seva")} <ArrowRight className="h-4 w-4" />
-                  </button>
-                  <a href="#about" className="text-sm font-semibold text-white/80 transition-colors hover:text-white">
-                    {t("About the day →")}
-                  </a>
-                </div>
-              </div>
-              <div className="mx-auto hidden w-full max-w-[340px] md:block lg:max-w-[420px]">
-                <VaikunthaGate className="h-auto w-full" />
-              </div>
-            </div>
+          <section className="bg-gradient-to-b from-amber-50 to-white py-14 text-center">
+            <h1 className="vk-h1">{t("Vaikuntha Ekadashi")}</h1>
           </section>
         )}
 
         {/* ══ FACTS ══════════════════════════════════════════════════════ */}
-        <section className="border-y border-amber-300/30 bg-gradient-to-r from-[#0a0d2e] via-[#14186a] to-[#0a0d2e]">
+        <section className="border-b border-[hsl(var(--gold)/0.35)] bg-gradient-to-r from-amber-50 via-white to-amber-50">
           <dl className="vk-container grid grid-cols-2 gap-x-6 gap-y-5 py-5 md:grid-cols-4 md:py-6">
             {FACTS.map((f, i) => {
               const Icon = FACT_ICONS[i];
               return (
                 <div key={f.k} className="flex items-start gap-3">
-                  <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-300/15 text-amber-300 ring-1 ring-amber-300/40">
+                  <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[hsl(var(--gold)/0.18)] text-[hsl(var(--gold-deep))]">
                     <Icon className="h-[18px] w-[18px]" />
                   </span>
                   <div className="min-w-0">
-                    <dt className="text-[13px] font-bold text-white md:text-sm">{t(f.k)}</dt>
-                    <dd className="mt-0.5 text-[11.5px] leading-snug text-white/65 md:text-xs">{t(f.v)}</dd>
+                    <dt className="text-[13px] font-bold text-ink md:text-sm">{t(f.k)}</dt>
+                    <dd className="mt-0.5 text-[11.5px] leading-snug text-muted-foreground md:text-xs">{t(f.v)}</dd>
                   </div>
                 </div>
               );
@@ -145,27 +120,26 @@ export default function VaikunthaEkadashiClient() {
         </section>
 
         {/* ══ SEVAS ══════════════════════════════════════════════════════ */}
-        <section id="offer-seva" className="vk-section scroll-mt-20 bg-[radial-gradient(100%_60%_at_50%_0%,#1b1a5c_0%,#0c1342_50%,#070d27_100%)] text-white">
-          <div className="vk-container">
+        <section id="offer-seva" className="vk-section relative scroll-mt-20 overflow-hidden bg-gradient-to-b from-white via-amber-50/50 to-white">
+          <PetalFall count={7} />
+          <div className="vk-container relative">
             <Reveal>
               <SectionHeading
-                light
                 align="center"
                 eyebrow={t("Choose Your Offering")}
                 title={t("Vaikuntha Ekadashi Sevas")}
                 subtitle={t("Tap an amount to offer that seva. Sankalpa is taken in your name and your receipt reaches you on WhatsApp.")}
               />
             </Reveal>
-            <FestivalSevaGrid sevas={SEVAS} impacts={IMPACTS} highlightedSlug={highlightedSlug} onSelect={setSelected} variant="dark" />
-            <p className="mt-8 text-center text-xs text-white/55">
+            <FestivalSevaGrid sevas={SEVAS} impacts={IMPACTS} highlightedSlug={highlightedSlug} onSelect={setSelected} />
+            <p className="mt-8 text-center text-xs text-muted-foreground">
               {t("Minimum donation Rs. 100 · 80G Tax Exemption available · Secured by Razorpay · Donations go to Hare Krishna Movement India, Visakhapatnam")}
             </p>
           </div>
         </section>
 
-        <div className="bg-[#070d27] pt-2 [&_section]:pb-12 md:[&_section]:pb-16">
-          <PhonePeUpiCard campaign="Vaikuntha Ekadashi" />
-        </div>
+        <PhonePeUpiCard campaign="Vaikuntha Ekadashi" />
+        <OrnamentDivider className="my-2" />
 
         {/* ══ ABOUT ══════════════════════════════════════════════════════ */}
         <section id="about" className="vk-section scroll-mt-20">
@@ -184,15 +158,15 @@ export default function VaikunthaEkadashiClient() {
                 </button>
               </Reveal>
               <Reveal delay={0.08}>
-                <figure className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-vk-800 via-vk-900 to-[#070d27] p-7 text-white shadow-lift md:p-9">
-                  <Sparkles className="h-6 w-6 text-amber-300" />
-                  <blockquote className="mt-5 space-y-1 font-serif-display text-lg italic leading-8 text-amber-100 md:text-xl">
+                <figure className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-50 to-white p-7 shadow-lift ring-1 ring-[hsl(var(--gold)/0.4)] md:p-9">
+                  <Sparkles className="h-6 w-6 text-[hsl(var(--gold-deep))]" />
+                  <blockquote className="mt-5 space-y-1 font-serif-display text-lg italic leading-8 text-vk-800 md:text-xl">
                     {SHLOKA.sanskrit.map((line) => (
                       <p key={line}>{t(line)}</p>
                     ))}
                   </blockquote>
-                  <p className="mt-5 border-l-2 border-amber-300/60 pl-4 text-sm leading-6 text-white/75">{t(SHLOKA.meaning)}</p>
-                  <figcaption className="mt-4 text-xs font-bold uppercase tracking-[0.12em] text-amber-200">{t(SHLOKA.source)}</figcaption>
+                  <p className="mt-5 border-l-2 border-[hsl(var(--gold)/0.7)] pl-4 text-sm leading-6 text-muted-foreground">{t(SHLOKA.meaning)}</p>
+                  <figcaption className="mt-4 text-xs font-bold uppercase tracking-[0.12em] text-[hsl(var(--gold-deep))]">{t(SHLOKA.source)}</figcaption>
                 </figure>
               </Reveal>
             </div>
@@ -220,17 +194,17 @@ export default function VaikunthaEkadashiClient() {
         </section>
 
         {/* ══ WHY GIVE ═══════════════════════════════════════════════════ */}
-        <section className="relative overflow-hidden bg-gradient-to-b from-vk-900 to-[#070d27] py-14 text-white md:py-20">
+        <section className="relative overflow-hidden bg-gradient-to-b from-amber-50 to-white py-14 md:py-20">
           <div className="vk-container">
             <Reveal className="mx-auto max-w-2xl text-center">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-amber-200 md:text-xs">{t("Why offer a seva today")}</p>
-              <h2 className="mt-3 font-heading text-[1.9rem] font-extrabold leading-tight tracking-[-0.025em] md:text-[2.5rem]">{t("Merit, devotion and liberation")}</h2>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[hsl(var(--gold-deep))] md:text-xs">{t("Why offer a seva today")}</p>
+              <h2 className="mt-3 font-heading text-[1.9rem] font-extrabold leading-tight tracking-[-0.025em] text-ink md:text-[2.5rem]">{t("Merit, devotion and liberation")}</h2>
             </Reveal>
             <div className="mx-auto mt-10 grid max-w-6xl gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
               {WHY_GIVE.map((w, i) => (
-                <Reveal key={w.title} delay={i * 0.05} className="border-t border-amber-300/40 pt-5">
-                  <h3 className="font-heading text-lg font-bold text-white">{t(w.title)}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-white/70">{t(w.text)}</p>
+                <Reveal key={w.title} delay={i * 0.05} className="border-t-2 border-[hsl(var(--gold)/0.6)] pt-5">
+                  <h3 className="font-heading text-lg font-bold text-ink">{t(w.title)}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{t(w.text)}</p>
                 </Reveal>
               ))}
             </div>
