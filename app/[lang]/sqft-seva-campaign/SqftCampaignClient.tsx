@@ -5,7 +5,7 @@ import { useAttribution } from "@/lib/useAttribution";
 import { useRouter } from "next/navigation";
 import SearchParamsWatcher from "@/components/SearchParamsWatcher";
 import PageLayout from "@/components/PageLayout";
-import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
+import { SEVA_WHATSAPP_NUMBER } from "@/components/WhatsAppFloatButton";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
 import { useScrollToDonate } from "@/lib/useScrollToDonate";
 import { newEventId, getMetaBrowserData, trackPurchase } from "@/lib/metaPixel";
@@ -447,10 +447,9 @@ export default function SqftCampaignClient({
   };
 
   return (
-    <PageLayout>
+    <PageLayout whatsappNumber={SEVA_WHATSAPP_NUMBER}>
       {upiFallbackDialog}
       <SearchParamsWatcher onChange={setSearchParams} />
-      <WhatsAppFloatButton />
       <main className="bg-white pt-[var(--header-h)]">
         {/* Hero section — full‑width banner */}
         <HeroSection

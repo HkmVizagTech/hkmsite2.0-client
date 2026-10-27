@@ -16,8 +16,14 @@ function istToday(): string {
   return new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
 }
 
+// The first entry of these types strictly AFTER today (today's own entries are shown separately, see todayOf).
 function nextOf(types: VaishnavaDate["type"][], today: string): VaishnavaDate | null {
-  return vaishnavaCalendar2026.find((d) => d.date >= today && types.includes(d.type)) ?? null;
+  return vaishnavaCalendar2026.find((d) => d.date > today && types.includes(d.type)) ?? null;
+}
+
+// Everything of these types that falls on today's date.
+function todayOf(types: VaishnavaDate["type"][], today: string): VaishnavaDate[] {
+  return vaishnavaCalendar2026.filter((d) => d.date === today && types.includes(d.type));
 }
 
 function useCountdown(targetIso: string | null) {
@@ -38,6 +44,30 @@ function useCountdown(targetIso: string | null) {
     seconds: Math.floor((diff / 1000) % 60),
     isToday: diff === 0,
   };
+}
+
+type Fmt = (iso: string, opts: Intl.DateTimeFormatOptions) => string;
+
+/** Calendar-page style date: month on top, big day, weekday below. `tone` flips it for the dark "today" panel. */
+function DateChip({ iso, fmt, tone = "light" }: { iso: string; fmt: Fmt; tone?: "light" | "dark" }) {
+  const dark = tone === "dark";
+  return (
+    <div
+      className={`w-[68px] shrink-0 overflow-hidden rounded-2xl text-center shadow-sm ${
+        dark ? "bg-white/10 ring-1 ring-white/25" : "border border-vk-100 bg-white"
+      }`}
+    >
+      <div className={`py-1 text-[10px] font-bold uppercase tracking-[0.14em] ${dark ? "bg-white/20 text-white" : "bg-vk-700 text-white"}`}>
+        {fmt(iso, { month: "short" })}
+      </div>
+      <div className={`pt-1.5 text-[1.75rem] font-extrabold leading-none ${dark ? "text-white" : "text-ink"}`} style={{ fontFamily: "var(--font-heading)" }}>
+        {fmt(iso, { day: "numeric" })}
+      </div>
+      <div className={`pb-1.5 pt-1 text-[10px] font-semibold uppercase tracking-wide ${dark ? "text-white/70" : "text-ink/50"}`}>
+        {fmt(iso, { weekday: "short" })}
+      </div>
+    </div>
+  );
 }
 
 /**
@@ -68,7 +98,9 @@ export default function DarshanCountdown() {
     });
   }, []);
 
+  const festivalToday = useMemo(() => (today ? todayOf(["Festival", "Appearance"], today) : []), [today]);
   const festival = useMemo(() => (today ? nextOf(["Festival", "Appearance"], today) : null), [today]);
+  const ekadashiToday = useMemo(() => (today ? todayOf(["Ekadashi"], today)[0] ?? null : null), [today]);
   const ekadashi = useMemo(() => (today ? nextOf(["Ekadashi"], today) : null), [today]);
   const cd = useCountdown(festival?.date ?? null);
 
@@ -79,16 +111,16 @@ export default function DarshanCountdown() {
     new Date(`${iso}T12:00:00+05:30`).toLocaleDateString("en-IN", { ...opts, timeZone: "Asia/Kolkata" });
 
   return (
-    <section className="relative z-10 pb-6 md:pb-10">
+    <section className="relative z-10 pb-6 pt-6 md:pb-10 md:pt-10">
       <div className="vk-container">
         <Reveal>
-          <div className="grid overflow-hidden rounded-3xl border border-vk-100 bg-white shadow-[0_30px_60px_-36px_rgba(10,18,51,0.45)] lg:grid-cols-[1.05fr_1.25fr_0.9fr]">
+          <div className="grid overflow-hidden rounded-3xl border border-vk-100 bg-white shadow-[0_30px_60px_-36px_rgba(10,18,51,0.45)] lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.5fr)]">
             {/* ── Today's darshan ─────────────────────────────── */}
-            <div className="relative p-3 md:p-4">
+            <div className="relative flex flex-col p-3 md:p-4">
               <button
                 type="button"
                 onClick={() => photos.length && setLightbox(active)}
-                className="group relative block aspect-[4/3] w-full overflow-hidden rounded-2xl bg-vk-100"
+                className="group relative block aspect-[4/3] w-full overflow-hidden rounded-2xl bg-vk-100 max-h-[380px] md:max-h-[460px] lg:aspect-auto lg:max-h-none lg:min-h-[300px] lg:flex-1"
                 aria-label={t("Open today's darshan photo")}
               >
                 <Image
@@ -127,75 +159,102 @@ export default function DarshanCountdown() {
               )}
             </div>
 
-            {/* ── Next festival ──────────────────────────────── */}
-            <div className="flex flex-col justify-center gap-4 border-t border-vk-100 p-5 md:p-7 lg:border-l lg:border-t-0">
-              <h2 className="vk-bar-title text-xl text-ink md:text-2xl">{t("Upcoming Festival")}</h2>
-              {festival ? (
-                <div className="flex items-start gap-4">
-                  <div className="w-[76px] shrink-0 overflow-hidden rounded-2xl border border-vk-100 text-center shadow-sm">
-                    <div className="bg-vk-700 py-1 text-[11px] font-bold uppercase tracking-wider text-white">
-                      {fmt(festival.date, { month: "short" })}
-                    </div>
-                    <div className="py-1.5 text-3xl font-extrabold leading-none text-ink" style={{ fontFamily: "var(--font-heading)" }}>
-                      {fmt(festival.date, { day: "numeric" })}
-                    </div>
-                    <div className="pb-1.5 text-[10px] font-semibold uppercase text-ink/50">
-                      {fmt(festival.date, { weekday: "short" })}
+            {/* ── Festivals + countdown ─────────────────────── */}
+            <div className="flex flex-col gap-4 border-t border-vk-100 p-5 md:p-7 lg:border-l lg:border-t-0">
+              {/* Today's festival — the highlighted panel */}
+              {festivalToday.map((f) => (
+                <div
+                  key={f.title}
+                  className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-vk-700 via-vk-800 to-vk-900 p-5 text-white shadow-[0_18px_40px_-22px_rgba(10,18,51,0.7)] md:p-6"
+                >
+                  <div aria-hidden className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
+                  <div className="relative flex items-start gap-4">
+                    <DateChip iso={f.date} fmt={fmt} tone="dark" />
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h2 className="text-[11px] font-bold uppercase tracking-[0.16em] text-amber-200">{t("Today's Festival")}</h2>
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-300 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-vk-900">
+                          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-vk-900" /> {t("Today")}
+                        </span>
+                      </div>
+                      <p className="mt-1.5 text-xl font-bold leading-snug md:text-2xl" style={{ fontFamily: "var(--font-heading)" }}>
+                        {t(f.title)}
+                      </p>
+                      {f.description && <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-white/80">{t(f.description)}</p>}
                     </div>
                   </div>
-                  <div className="min-w-0">
-                    <p className="text-lg font-bold leading-snug text-ink" style={{ fontFamily: "var(--font-heading)" }}>
-                      {t(festival.title)}
-                    </p>
-                    {festival.description && (
-                      <p className="mt-1 line-clamp-3 text-sm leading-relaxed text-muted-foreground">{t(festival.description)}</p>
-                    )}
-                  </div>
-                </div>
-              ) : (
-                <p className="text-sm text-muted-foreground">{t("See the Vaishnava calendar for upcoming celebrations.")}</p>
-              )}
-
-              {ekadashi && (
-                <div className="flex items-center gap-3 rounded-2xl bg-vk-50 px-4 py-3">
-                  <span className="vk-icon-chip !h-9 !w-9 !bg-white">
-                    <Moon className="h-4 w-4" />
-                  </span>
-                  <div className="min-w-0 text-sm">
-                    <p className="font-semibold text-ink">{t("Next Ekadashi · {date}", { date: fmt(ekadashi.date, { day: "numeric", month: "short" }) })}</p>
-                    <p className="truncate text-muted-foreground">{t(ekadashi.title)}</p>
-                  </div>
-                  <Link href="/ekadashi" className="ml-auto shrink-0 text-sm font-semibold text-vk-600 hover:text-vk-800">
-                    {t("Seva →")}
-                  </Link>
-                </div>
-              )}
-
-              <Link href="/vaishnav-calendar" className="vk-btn-outline self-start">
-                <CalendarDays className="h-4 w-4" />
-                {t("Vaishnava Calendar")}
-              </Link>
-            </div>
-
-            {/* ── Countdown tiles ────────────────────────────── */}
-            <div className="grid grid-cols-4 gap-2.5 border-t border-vk-100 bg-gradient-to-br from-vk-50 to-white p-4 md:p-6 lg:grid-cols-2 lg:content-center lg:gap-3 lg:border-l lg:border-t-0">
-              {[
-                { v: cd?.days, l: t("Days") },
-                { v: cd?.hours, l: t("Hours") },
-                { v: cd?.minutes, l: t("Minutes") },
-                { v: cd?.seconds, l: t("Seconds") },
-              ].map((t) => (
-                <div key={t.l} className="rounded-2xl border border-vk-100 bg-white px-2 py-3 text-center shadow-sm md:py-4">
-                  <p
-                    className="text-2xl font-extrabold tabular-nums text-vk-700 md:text-[2rem]"
-                    style={{ fontFamily: "var(--font-heading)" }}
-                    suppressHydrationWarning
-                  >
-                    {t.v === undefined ? "–" : String(t.v).padStart(2, "0")}
-                  </p>
-                  <p className="mt-1 border-t border-vk-100 pt-1 text-[11px] font-medium text-ink/60 md:text-xs">{t.l}</p>
                 </div>
               ))}
+
+              {/* Upcoming festival with its countdown attached */}
+              <div className="rounded-2xl border border-vk-100 bg-gradient-to-br from-vk-50/70 to-white p-4 md:p-5">
+                <div className="flex items-center justify-between gap-3">
+                  <h2 className="text-[11px] font-bold uppercase tracking-[0.16em] text-vk-600">{t("Upcoming Festival")}</h2>
+                  <Link href="/vaishnav-calendar" className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap text-[13px] font-semibold text-vk-600 hover:text-vk-800 md:text-sm">
+                    <CalendarDays className="h-4 w-4" /> {t("Vaishnava Calendar")}
+                  </Link>
+                </div>
+                {festival ? (
+                  <div className="mt-3 flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+                    <div className="flex min-w-0 items-start gap-4">
+                      <DateChip iso={festival.date} fmt={fmt} />
+                      <div className="min-w-0">
+                        <p className="text-lg font-bold leading-snug text-ink" style={{ fontFamily: "var(--font-heading)" }}>
+                          {t(festival.title)}
+                        </p>
+                        {festival.description && (
+                          <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-muted-foreground">{t(festival.description)}</p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="shrink-0">
+                      <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-ink/50">{t("Starts in")}</p>
+                      <div className="grid grid-cols-4 gap-2">
+                        {[
+                          { v: cd?.days, l: t("Days") },
+                          { v: cd?.hours, l: t("Hours") },
+                          { v: cd?.minutes, l: t("Minutes") },
+                          { v: cd?.seconds, l: t("Seconds") },
+                        ].map((u) => (
+                          <div key={u.l} className="min-w-[58px] rounded-xl border border-vk-100 bg-white px-2 py-2 text-center shadow-sm">
+                            <p
+                              className="text-xl font-extrabold tabular-nums leading-none text-vk-700 md:text-2xl"
+                              style={{ fontFamily: "var(--font-heading)" }}
+                              suppressHydrationWarning
+                            >
+                              {u.v === undefined ? "–" : String(u.v).padStart(2, "0")}
+                            </p>
+                            <p className="mt-1 text-[10px] font-medium uppercase tracking-wide text-ink/55">{u.l}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="mt-2 text-sm text-muted-foreground">{t("See the Vaishnava calendar for upcoming celebrations.")}</p>
+                )}
+              </div>
+
+              {/* Ekadashi */}
+              {[
+                ekadashiToday && { label: t("Ekadashi today"), title: ekadashiToday.title },
+                ekadashi && { label: t("Next Ekadashi · {date}", { date: fmt(ekadashi.date, { day: "numeric", month: "short" }) }), title: ekadashi.title },
+              ]
+                .filter((x): x is { label: string; title: string } => Boolean(x))
+                .map((x) => (
+                  <div key={x.label} className="flex items-center gap-3 rounded-2xl border border-vk-100 bg-white px-4 py-3">
+                    <span className="vk-icon-chip !h-9 !w-9 !bg-vk-50">
+                      <Moon className="h-4 w-4" />
+                    </span>
+                    <div className="min-w-0 text-sm">
+                      <p className="font-semibold text-ink">{x.label}</p>
+                      <p className="truncate text-muted-foreground">{t(x.title)}</p>
+                    </div>
+                    <Link href="/ekadashi" className="ml-auto shrink-0 rounded-full bg-vk-50 px-3 py-1.5 text-sm font-semibold text-vk-700 hover:bg-vk-100">
+                      {t("Seva →")}
+                    </Link>
+                  </div>
+                ))}
             </div>
           </div>
         </Reveal>

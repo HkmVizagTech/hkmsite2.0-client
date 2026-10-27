@@ -15,10 +15,16 @@ let mounted = false;
 
 const WHATSAPP_NUMBER = "918977761187"; // 91 + 8977761187
 
+// The seva donation pages (/donate/<seva>, Anna Daan, Gau, Gita Daan, Alankara Vastra, Brick, Sqft) use this
+// number instead: +91 79950 97108.
+export const SEVA_WHATSAPP_NUMBER = "917995097108";
+
 export default function WhatsAppFloatButton({
   message = "Hare Krishna! I have a question about making a donation.",
+  number = WHATSAPP_NUMBER,
 }: {
   message?: string;
+  number?: string;
 }) {
   const t = useT();
   const [visible, setVisible] = useState(false);
@@ -34,7 +40,7 @@ export default function WhatsAppFloatButton({
 
   if (!visible) return null;
 
-  const href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  const href = `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
 
   return (
     <a
