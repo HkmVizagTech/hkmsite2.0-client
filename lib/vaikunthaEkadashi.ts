@@ -84,24 +84,31 @@ export const FACTS = [
   { k: "Secure checkout", v: "Razorpay · receipt on WhatsApp" },
 ];
 
+/** Bhagavad-gita 18.66, with Srila Prabhupada's translation (Bhagavad-gita As It Is). */
 export const SHLOKA = {
   sanskrit: ["sarva-dharmān parityajya", "mām ekaṁ śaraṇaṁ vraja", "ahaṁ tvāṁ sarva-pāpebhyo", "mokṣayiṣyāmi mā śucaḥ"],
-  meaning: "Abandon all varieties of dharma and simply surrender unto Me. I shall deliver you from all sinful reactions. Do not fear.",
+  meaning: "Abandon all varieties of religion and just surrender unto Me. I shall deliver you from all sinful reactions. Do not fear.",
   source: "Bhagavad-gita 18.66",
 };
 
+export const ABOUT = [
+  "Vaikuntha Ekadashi, also known as Moksada Ekadashi, is regarded as one of the most spiritually rewarding days to worship Lord Vishnu and to engage in sacred acts of giving. It falls on the Ekadashi of the bright fortnight of Margashirsha.",
+  "Moksada means the bestower of liberation. The day reminds us that the aim of life is to return to the Lord's abode, and it is observed together with Gita Jayanti, the anniversary of the day Sri Krishna spoke the Bhagavad-gita.",
+  "Donations offered on this day are traditionally associated with spiritual merit, inner purification and progress on the path of devotion. Your seva supports the ongoing worship and devotional services at Hare Krishna Vaikuntham, offered with faith and remembrance of the Lord rather than for material return.",
+];
+
 export const OBSERVANCE = [
-  { n: "01", title: "Fast and remember the Lord", text: "Devotees observe Ekadashi by abstaining from grains and beans, and fill the day with chanting the Hare Krishna maha-mantra." },
-  { n: "02", title: "Take darshan and worship", text: "The day is spent in the Lord's presence: darshan, aarti and kirtan, and the hearing of Hari-katha." },
-  { n: "03", title: "Hear the Gita", text: "Moksada Ekadashi is observed with Gita Jayanti, the day the Bhagavad-gita was spoken, so devotees read and hear its message." },
-  { n: "04", title: "Give in the Lord's service", text: "Annadana, Gau Seva, flower alankara and vastra offerings let every devotee take part, whether or not they can be at the temple." },
+  { n: "01", title: "Observe Ekadashi", text: "Devotees fast from grains and beans and spend the day remembering the Lord and chanting the Hare Krishna maha-mantra." },
+  { n: "02", title: "Worship and hear", text: "The day is for darshan, prayers, kirtan and hearing about the Lord." },
+  { n: "03", title: "Remember the Gita", text: "Moksada Ekadashi is observed together with Gita Jayanti, so devotees read and hear the Bhagavad-gita." },
+  { n: "04", title: "Give in His service", text: "Annadana, Gau Seva, flower alankara and vastra offerings let every devotee take part, whether or not they can be at the temple." },
 ];
 
 export const WHY_GIVE = [
-  { title: "Charity on Ekadashi", text: "The scriptures speak of giving on Ekadashi as especially meritorious, because the day is already set aside for the Lord." },
-  { title: "Liberation is the aim", text: "Moksada means the giver of liberation. The day reminds us that the goal of life is to return to the Lord's abode." },
-  { title: "For your family too", text: "Your sankalpa can be offered in your own name or on behalf of parents, children or ancestors." },
-  { title: "Worship that continues", text: "Every offering sustains the daily worship, prasadam distribution and goshala care at Hare Krishna Vaikuntham." },
+  { title: "Merit and purification", text: "Giving on Vaikuntha Ekadashi is traditionally associated with spiritual merit, inner purification and progress on the path of devotion." },
+  { title: "The Lord's worship continues", text: "Your offering sustains the daily worship, prasadam distribution and goshala care at Hare Krishna Vaikuntham." },
+  { title: "Faith, not return", text: "The offering is made with faith, remembrance and a desire for divine connection, not for material return." },
+  { title: "For your family", text: "Sankalpa can be taken in your own name, or for a family member or someone you wish to offer it for." },
 ];
 
 export const PRIVILEGES = [
@@ -119,11 +126,11 @@ export const BANK_DETAILS = [
 ];
 
 export const FAQS = [
-  { q: "When is Vaikuntha Ekadashi in 2026?", a: `Vaikuntha Ekadashi, also called Moksada Ekadashi, falls on ${EVENT_DATE_LABEL}. Your seva is offered on the day at Hare Krishna Vaikuntham, Gambheeram, with sankalpa in your name.` },
-  { q: "What is Vaikuntha (Moksada) Ekadashi?", a: "It is the Ekadashi of the bright fortnight of Margashirsha. In Vaishnava tradition it is regarded as one of the most auspicious days to worship Lord Vishnu and remember the goal of liberation, and it is observed together with Gita Jayanti." },
-  { q: "Do I have to fast to donate?", a: "No. Anyone can offer a seva. Devotees who fast keep to grains and beans on Ekadashi, but giving is open to everyone." },
-  { q: "Will the sankalpa be taken in my name?", a: "Yes. Enter the name the seva should be offered under in the 'Sevak name' field at checkout. It can be your own, a family member's, or someone you wish to offer it for." },
-  { q: "Do I get an 80G tax exemption receipt?", a: "Yes, all donations to Hare Krishna Movement India are eligible for 80G. Tick the 80G option at checkout and enter your PAN; the exemption receipt is issued against that PAN." },
+  { q: "When is Vaikuntha Ekadashi in 2026?", a: `Vaikuntha Ekadashi, also called Moksada Ekadashi, falls on ${EVENT_DATE_LABEL} as per the temple's Vaishnava calendar. Your seva is offered at Hare Krishna Vaikuntham, Gambheeram, with sankalpa in your name.` },
+  { q: "What is Vaikuntha (Moksada) Ekadashi?", a: "It is the Ekadashi of the bright fortnight of Margashirsha. It is regarded as one of the most spiritually rewarding days to worship Lord Vishnu and give in His service, and it is observed together with Gita Jayanti." },
+  { q: "Do I have to fast to donate?", a: "No. Anyone can offer a seva. Devotees who observe Ekadashi fast from grains and beans, but giving is open to everyone." },
+  { q: "Will the sankalpa be taken in my name?", a: "Yes. Enter the name the seva should be offered under in the 'Sevak name' field at checkout. It can be your own, a family member's, or someone you wish to offer it for. The gotra is taken along with it." },
+  { q: "Do I get an 80G tax exemption receipt?", a: "Yes, all donations to Hare Krishna Movement India are eligible for 80G. Tick the 80G option at checkout and enter your PAN; the exemption receipt is issued against that PAN and sent with your donation receipt." },
   { q: "How will I receive my receipt?", a: "Your receipt is sent to your WhatsApp number as soon as the payment is confirmed, usually within a minute. If it has not arrived in ten minutes, message us on WhatsApp and we will resend it." },
   { q: "Can I offer more than one seva?", a: "Yes. Complete one seva, then pick the next from the list. Each is recorded and receipted separately." },
   { q: "Is there a minimum donation?", a: "The smallest donation we can accept is Rs. 100." },

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useT } from "@/components/i18n/LocaleProvider";
 import type { Seva } from "@/lib/sevaConfig";
 
 export type SevaSelection = { seva: Seva; amount: number | null };
@@ -22,6 +23,7 @@ export default function FestivalSevaGrid({
   highlightedSlug?: string | null;
   onSelect: (selection: SevaSelection) => void;
 }) {
+  const t = useT();
   return (
     <div className="mx-auto flex max-w-6xl flex-wrap justify-center gap-5 md:gap-6">
       {sevas.map((seva) => (
@@ -35,7 +37,7 @@ export default function FestivalSevaGrid({
           <div className="relative h-44 overflow-hidden bg-vk-900 md:h-48">
             <Image
               src={seva.image}
-              alt={seva.title}
+              alt={t(seva.title)}
               fill
               sizes="(min-width: 1024px) 380px, (min-width: 640px) 50vw, 100vw"
               className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -45,12 +47,12 @@ export default function FestivalSevaGrid({
               <span className="text-2xl drop-shadow" aria-hidden>
                 {seva.icon}
               </span>
-              <h3 className="text-lg font-bold text-white drop-shadow-md md:text-xl">{seva.title}</h3>
+              <h3 className="text-lg font-bold text-white drop-shadow-md md:text-xl">{t(seva.title)}</h3>
             </div>
           </div>
 
           <div className="flex flex-1 flex-col p-4 sm:p-5">
-            <p className="min-h-[40px] text-[13px] leading-relaxed text-muted-foreground md:text-sm">{seva.description}</p>
+            <p className="min-h-[40px] text-[13px] leading-relaxed text-muted-foreground md:text-sm">{t(seva.description)}</p>
             <div className="mt-4 space-y-2.5">
               <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
                 {seva.tiers.map((tier) => (
@@ -69,7 +71,7 @@ export default function FestivalSevaGrid({
                     </span>
                     {impacts[seva.slug]?.[tier.amount] && (
                       <span className="mt-1.5 block text-[10.5px] font-semibold leading-[1.2] text-ink/60 group-hover/amt:text-ink/80 sm:text-[11px]">
-                        {impacts[seva.slug][tier.amount]}
+                        {t(impacts[seva.slug][tier.amount])}
                       </span>
                     )}
                   </button>
@@ -85,7 +87,7 @@ export default function FestivalSevaGrid({
                   <line x1="12" y1="5" x2="12" y2="19" />
                   <line x1="5" y1="12" x2="19" y2="12" />
                 </svg>
-                <span>Donate Other Amount</span>
+                <span>{t("Donate Other Amount")}</span>
               </button>
             </div>
           </div>

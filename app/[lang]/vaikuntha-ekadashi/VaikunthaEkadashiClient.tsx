@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, CalendarDays, Check, Copy, FileCheck2, Heart, MapPin, ShieldCheck, Sparkles } from "lucide-react";
+import { useT } from "@/components/i18n/LocaleProvider";
 import PageLayout from "@/components/PageLayout";
 import SectionHeading from "@/components/site/SectionHeading";
 import Reveal from "@/components/site/Reveal";
@@ -13,6 +14,7 @@ import FestivalSevaGrid, { type SevaSelection } from "@/components/festival/Fest
 import FestivalCheckoutModal from "@/components/festival/FestivalCheckoutModal";
 import VaikunthaGate from "@/components/festival/VaikunthaGate";
 import {
+  ABOUT,
   BANK_DETAILS,
   BANNER_DESKTOP,
   BANNER_MOBILE,
@@ -32,6 +34,7 @@ const SLUG = "vaikuntha-ekadashi";
 const FACT_ICONS = [CalendarDays, MapPin, FileCheck2, ShieldCheck];
 
 export default function VaikunthaEkadashiClient() {
+  const t = useT();
   const [selected, setSelected] = useState<SevaSelection | null>(null);
   const [highlightedSlug, setHighlightedSlug] = useState<string | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
@@ -79,12 +82,12 @@ export default function VaikunthaEkadashiClient() {
         {/* ══ HERO ═══════════════════════════════════════════════════════ */}
         {hasBanner ? (
           <section>
-            <h1 className="sr-only">Vaikuntha Ekadashi Seva, {EVENT_DATE_LABEL}</h1>
+            <h1 className="sr-only">{t("Vaikuntha Ekadashi")}, {t(EVENT_DATE_LABEL)}</h1>
             <a href="#offer-seva" className="block bg-vk-900">
               <picture>
                 {BANNER_MOBILE && <source media="(max-width: 640px)" srcSet={BANNER_MOBILE} />}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={BANNER_DESKTOP as string} alt="Vaikuntha Ekadashi at ISKCON Gambheeram Visakhapatnam" className="block h-auto w-full" />
+                <img src={BANNER_DESKTOP as string} alt={t("Vaikuntha Ekadashi")} className="block h-auto w-full" />
               </picture>
             </a>
           </section>
@@ -94,21 +97,21 @@ export default function VaikunthaEkadashiClient() {
             <div className="vk-container relative grid items-center gap-6 py-12 md:py-20 lg:grid-cols-[1.1fr_0.9fr] lg:py-24">
               <div className="max-w-xl">
                 <p className="flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-amber-200 md:text-xs">
-                  <span aria-hidden className="h-px w-8 bg-amber-300/70" /> Moksada Ekadashi · {EVENT_DATE_LABEL}
+                  <span aria-hidden className="h-px w-8 bg-amber-300/70" /> {t("Moksada Ekadashi")} · {t(EVENT_DATE_LABEL)}
                 </p>
                 <h1 className="mt-4 font-heading text-[2.6rem] font-extrabold leading-[1.04] tracking-[-0.03em] sm:text-6xl">
-                  Vaikuntha{" "}
-                  <span style={{ backgroundImage: "var(--gradient-gold)", WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>Ekadashi</span>
+                  {t("Vaikuntha")}{" "}
+                  <span style={{ backgroundImage: "var(--gradient-gold)", WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>{t("Ekadashi")}</span>
                 </h1>
                 <p className="mt-5 max-w-lg text-[15px] leading-relaxed text-white/75 md:text-lg md:leading-8">
-                  The day the gates of Vaikuntha are said to stand open. Offer a seva at Hare Krishna Vaikuntham, Gambheeram, with sankalpa taken in your name.
+                  {t("A sacred day to worship Lord Vishnu and to give in His service. Offer a seva at Hare Krishna Vaikuntham, Gambheeram, with sankalpa taken in your name.")}
                 </p>
                 <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3">
                   <button type="button" onClick={scrollToDonate} className="vk-btn-gold h-[3.25rem] px-8 text-base font-bold">
-                    Offer Your Seva <ArrowRight className="h-4 w-4" />
+                    {t("Offer Your Seva")} <ArrowRight className="h-4 w-4" />
                   </button>
                   <a href="#about" className="text-sm font-semibold text-white/80 transition-colors hover:text-white">
-                    About the day →
+                    {t("About the day →")}
                   </a>
                 </div>
               </div>
@@ -130,8 +133,8 @@ export default function VaikunthaEkadashiClient() {
                     <Icon className="h-[18px] w-[18px]" />
                   </span>
                   <div className="min-w-0">
-                    <dt className="text-[13px] font-bold text-ink md:text-sm">{f.k}</dt>
-                    <dd className="mt-0.5 text-[11.5px] leading-snug text-muted-foreground md:text-xs">{f.v}</dd>
+                    <dt className="text-[13px] font-bold text-ink md:text-sm">{t(f.k)}</dt>
+                    <dd className="mt-0.5 text-[11.5px] leading-snug text-muted-foreground md:text-xs">{t(f.v)}</dd>
                   </div>
                 </div>
               );
@@ -145,14 +148,14 @@ export default function VaikunthaEkadashiClient() {
             <Reveal>
               <SectionHeading
                 align="center"
-                eyebrow="Choose Your Offering"
-                title="Vaikuntha Ekadashi Sevas"
-                subtitle="Tap an amount to offer that seva. Sankalpa is taken in your name and your receipt reaches you on WhatsApp."
+                eyebrow={t("Choose Your Offering")}
+                title={t("Vaikuntha Ekadashi Sevas")}
+                subtitle={t("Tap an amount to offer that seva. Sankalpa is taken in your name and your receipt reaches you on WhatsApp.")}
               />
             </Reveal>
             <FestivalSevaGrid sevas={SEVAS} impacts={IMPACTS} highlightedSlug={highlightedSlug} onSelect={setSelected} />
             <p className="mt-8 text-center text-xs text-muted-foreground">
-              Minimum donation Rs. 100 · 80G Tax Exemption available · Secured by Razorpay · Donations go to Hare Krishna Movement India, Visakhapatnam
+              {t("Minimum donation Rs. 100 · 80G Tax Exemption available · Secured by Razorpay · Donations go to Hare Krishna Movement India, Visakhapatnam")}
             </p>
           </div>
         </section>
@@ -164,26 +167,15 @@ export default function VaikunthaEkadashiClient() {
           <div className="vk-container">
             <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
               <Reveal>
-                <span className="vk-pill-soft">About the day</span>
-                <h2 className="vk-h2 mt-4">The day of liberation</h2>
+                <span className="vk-pill-soft">{t("About the day")}</span>
+                <h2 className="vk-h2 mt-4">{t("The day of liberation")}</h2>
                 <div className="mt-5 space-y-4 text-[15px] leading-relaxed text-muted-foreground md:text-base md:leading-8">
-                  <p>
-                    Vaikuntha Ekadashi, also called Moksada Ekadashi, is the Ekadashi of the bright fortnight of Margashirsha. In Vaishnava tradition it is
-                    one of the most auspicious days to worship Lord Vishnu, and in many temples the gate to the sanctum, the Vaikuntha Dwara, is opened so
-                    that devotees may pass through it with prayer.
-                  </p>
-                  <p>
-                    <em>Moksada</em>{" "}
-                    means the giver of liberation. The day is a reminder that the goal of life is to return to the Lord&apos;s abode, and
-                    it is observed together with Gita Jayanti, the anniversary of the day Sri Krishna spoke the Bhagavad-gita.
-                  </p>
-                  <p>
-                    Devotees fast from grains and beans, chant, hear the Gita and give in the Lord&apos;s service. A seva offered today supports the worship,
-                    prasadam distribution and goshala care at Hare Krishna Vaikuntham all year round.
-                  </p>
+                  {ABOUT.map((para) => (
+                    <p key={para}>{t(para)}</p>
+                  ))}
                 </div>
                 <button type="button" onClick={scrollToDonate} className="vk-btn-gold mt-7 h-12 px-7 text-[15px] font-bold">
-                  Offer Your Seva
+                  {t("Offer Your Seva")}
                 </button>
               </Reveal>
               <Reveal delay={0.08}>
@@ -191,11 +183,11 @@ export default function VaikunthaEkadashiClient() {
                   <Sparkles className="h-6 w-6 text-amber-300" />
                   <blockquote className="mt-5 space-y-1 font-serif-display text-lg italic leading-8 text-amber-100 md:text-xl">
                     {SHLOKA.sanskrit.map((line) => (
-                      <p key={line}>{line}</p>
+                      <p key={line}>{t(line)}</p>
                     ))}
                   </blockquote>
-                  <p className="mt-5 border-l-2 border-amber-300/60 pl-4 text-sm leading-6 text-white/75">{SHLOKA.meaning}</p>
-                  <figcaption className="mt-4 text-xs font-bold uppercase tracking-[0.12em] text-amber-200">{SHLOKA.source}</figcaption>
+                  <p className="mt-5 border-l-2 border-amber-300/60 pl-4 text-sm leading-6 text-white/75">{t(SHLOKA.meaning)}</p>
+                  <figcaption className="mt-4 text-xs font-bold uppercase tracking-[0.12em] text-amber-200">{t(SHLOKA.source)}</figcaption>
                 </figure>
               </Reveal>
             </div>
@@ -206,7 +198,7 @@ export default function VaikunthaEkadashiClient() {
         <section className="vk-section vk-band">
           <div className="vk-container">
             <Reveal>
-              <SectionHeading align="center" eyebrow="How the day is observed" title="Four ways to keep Vaikuntha Ekadashi" />
+              <SectionHeading align="center" eyebrow={t("How the day is observed")} title={t("Four ways to keep Vaikuntha Ekadashi")} />
             </Reveal>
             <div className="mx-auto grid max-w-6xl gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {OBSERVANCE.map((o, i) => (
@@ -214,8 +206,8 @@ export default function VaikunthaEkadashiClient() {
                   <span aria-hidden className="font-heading text-5xl font-extrabold leading-none text-vk-100">
                     {o.n}
                   </span>
-                  <h3 className="mt-3 text-base font-bold text-ink">{o.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{o.text}</p>
+                  <h3 className="mt-3 text-base font-bold text-ink">{t(o.title)}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{t(o.text)}</p>
                 </Reveal>
               ))}
             </div>
@@ -226,20 +218,20 @@ export default function VaikunthaEkadashiClient() {
         <section className="relative overflow-hidden bg-gradient-to-b from-vk-900 to-[#070d27] py-14 text-white md:py-20">
           <div className="vk-container">
             <Reveal className="mx-auto max-w-2xl text-center">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-amber-200 md:text-xs">Why offer a seva today</p>
-              <h2 className="mt-3 font-heading text-[1.9rem] font-extrabold leading-tight tracking-[-0.025em] md:text-[2.5rem]">Merit, devotion and liberation</h2>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-amber-200 md:text-xs">{t("Why offer a seva today")}</p>
+              <h2 className="mt-3 font-heading text-[1.9rem] font-extrabold leading-tight tracking-[-0.025em] md:text-[2.5rem]">{t("Merit, devotion and liberation")}</h2>
             </Reveal>
             <div className="mx-auto mt-10 grid max-w-6xl gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
               {WHY_GIVE.map((w, i) => (
                 <Reveal key={w.title} delay={i * 0.05} className="border-t border-amber-300/40 pt-5">
-                  <h3 className="font-heading text-lg font-bold text-white">{w.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-white/70">{w.text}</p>
+                  <h3 className="font-heading text-lg font-bold text-white">{t(w.title)}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-white/70">{t(w.text)}</p>
                 </Reveal>
               ))}
             </div>
             <div className="mt-10 text-center">
               <button type="button" onClick={scrollToDonate} className="vk-btn-gold h-[3.25rem] px-8 text-base font-bold">
-                <Heart className="h-4 w-4" /> Offer Your Seva
+                <Heart className="h-4 w-4" /> {t("Offer Your Seva")}
               </button>
             </div>
           </div>
@@ -250,30 +242,39 @@ export default function VaikunthaEkadashiClient() {
           <div className="vk-container">
             <div className="mx-auto grid max-w-6xl gap-5 lg:grid-cols-2 lg:items-start">
               <div className="rounded-2xl border border-vk-100 bg-vk-50 px-5 py-4 text-sm leading-7 text-ink/80 md:text-base">
-                While making UPI or bank payments, please send a screenshot with your name, mobile, address and PAN details to our WhatsApp{" "}
-                <a className="font-bold text-vk-700 hover:text-vk-500" href="https://wa.me/917995097108" target="_blank" rel="noreferrer">
-                  +91 79950 97108
-                </a>{" "}
-                or email{" "}
-                <a className="break-all font-bold text-vk-700 hover:text-vk-500" href="mailto:social@hkmvizag.org">
-                  social@hkmvizag.org
-                </a>
-                , so your receipt is issued against the right donor.
+                {t(
+                  "While making UPI or bank payments, please send a screenshot with your name, mobile, address and PAN details to our WhatsApp {phone} or email {email}, so your receipt is issued against the right donor.",
+                  { phone: "\u0001", email: "\u0002" }
+                )
+                  .split(/(\u0001|\u0002)/)
+                  .map((part, i) =>
+                    part === "\u0001" ? (
+                      <a key={i} className="font-bold text-vk-700 hover:text-vk-500" href="https://wa.me/917995097108" target="_blank" rel="noreferrer">
+                        +91 79950 97108
+                      </a>
+                    ) : part === "\u0002" ? (
+                      <a key={i} className="break-all font-bold text-vk-700 hover:text-vk-500" href="mailto:social@hkmvizag.org">
+                        social@hkmvizag.org
+                      </a>
+                    ) : (
+                      <span key={i}>{part}</span>
+                    )
+                  )}
               </div>
               <div className="vk-card p-5 md:p-7">
-                <h2 className="vk-bar-title text-lg text-ink md:text-xl">Donation Through Bank (NEFT / RTGS)</h2>
+                <h2 className="vk-bar-title text-lg text-ink md:text-xl">{t("Donation Through Bank (NEFT / RTGS)")}</h2>
                 <div className="mt-4 grid gap-2.5 sm:grid-cols-2">
                   {BANK_DETAILS.map(({ label, value }) => (
                     <div key={label} className="flex items-center gap-3 rounded-xl bg-vk-50 p-4 text-sm text-ink">
                       <div className="min-w-0 flex-1">
-                        <span className="block text-xs font-medium text-muted-foreground">{label}:</span>
+                        <span className="block text-xs font-medium text-muted-foreground">{t(label)}:</span>
                         <span className="mt-0.5 block select-all break-words font-semibold">{value}</span>
                       </div>
                       <button
                         type="button"
                         onClick={() => copyField(label, value)}
                         className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-vk-500 transition-colors hover:bg-white hover:text-vk-700"
-                        title={`Copy ${label}`}
+                        title={`${t("Copy")} ${t(label)}`}
                       >
                         {copiedField === label ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
                       </button>
@@ -305,9 +306,9 @@ export default function VaikunthaEkadashiClient() {
       {!selected && pastHero && !inSevas && (
         <div className="fixed bottom-[calc(var(--bottom-nav-space)+4px+env(safe-area-inset-bottom))] left-3 right-[76px] z-40 lg:hidden">
           <div className="flex items-center justify-between gap-3 rounded-2xl border border-vk-100 bg-white/95 p-2 pl-4 shadow-lift">
-            <span className="min-w-0 truncate text-[13px] font-semibold text-vk-800">Vaikuntha Ekadashi</span>
+            <span className="min-w-0 truncate text-[13px] font-semibold text-vk-800">{t("Vaikuntha Ekadashi")}</span>
             <button type="button" onClick={scrollToDonate} className="vk-btn-gold h-11 shrink-0 px-5">
-              Offer Seva
+              {t("Offer Seva")}
             </button>
           </div>
         </div>
