@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, CalendarDays, Check, Copy, FileCheck2, Heart, MapPin, ShieldCheck, Sparkles } from "lucide-react";
 import { useT } from "@/components/i18n/LocaleProvider";
@@ -86,16 +85,13 @@ export default function VaikunthaEkadashiClient() {
             <h1 className="sr-only">
               {t("Vaikuntha Ekadashi")}, {t(EVENT_DATE_LABEL)}
             </h1>
-            <button type="button" onClick={scrollToDonate} className="relative mx-auto block w-full max-w-[1920px] text-left" aria-label={t("Offer Your Seva")}>
-              {BANNER_MOBILE && (
-                <span className="relative block aspect-[1080/1350] w-full sm:hidden">
-                  <Image src={BANNER_MOBILE} alt={t("Vaikuntha Ekadashi")} fill priority sizes="100vw" quality={78} className="object-cover" />
-                </span>
-              )}
-              <span className={`relative ${BANNER_MOBILE ? "hidden sm:block" : "block"} aspect-[1920/700] w-full`}>
-                <Image src={BANNER_DESKTOP as string} alt={t("Vaikuntha Ekadashi")} fill priority sizes="(min-width: 1920px) 1920px, 100vw" quality={80} className="object-cover" />
-              </span>
-            </button>
+            <a href="#offer-seva" className="block" aria-label={t("Offer Your Seva")}>
+              <picture>
+                {BANNER_MOBILE && <source media="(max-width: 640px)" srcSet={BANNER_MOBILE} />}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={BANNER_DESKTOP as string} alt={t("Vaikuntha Ekadashi")} fetchPriority="high" className="block h-auto w-full" />
+              </picture>
+            </a>
           </section>
         ) : (
           <section className="relative isolate overflow-hidden bg-[radial-gradient(120%_100%_at_75%_10%,#1c2f86_0%,#0d1a52_48%,#070d27_100%)] text-white">
