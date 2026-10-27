@@ -16,9 +16,32 @@ type T = typeof THREE_NS;
  */
 export type Direction = { chapter: number | null; look: number; tug: number };
 export type Director = { focusX: number; fall: number; burst: number; orbs: number; kx: number; stuck: number; mortarX: number; crawlW: number };
+/** Free-standing pose (used by the Diwali page): Krishna on His own, with no mortar, rope or butter pot. */
+export type FreePose = {
+  x: number;
+  z: number;
+  /** Heading about the vertical axis (0 = facing the camera, 1.3 = facing +x / right). */
+  rotY: number;
+  /** 0 sitting .. 1 on hands and knees. */
+  crawl: number;
+  /** 0 still .. 1 crawling (limbs move). */
+  moving: number;
+  /** 0..1 raises the right hand and waves. */
+  wave: number;
+  /** 0..1 raises the left arm overhead (holding something up with a finger). */
+  lift: number;
+  /** -1..1 gaze. */
+  look: number;
+  /** Uniform scale. */
+  scale: number;
+};
+
 export type FigureControls = {
   group: THREE_NS.Group;
   update: (t: number, dir: Direction) => Director;
+  updateFree: (t: number, f: FreePose) => void;
+  /** Shows or hides the mortar, the butter pot and the rope. */
+  setProps: (visible: boolean) => void;
   dispose: () => void;
 };
 
@@ -711,6 +734,51 @@ export function createBalKrishna(THREE: T): FigureControls {
     return dirOut;
   };
 
+  const updateFree = (t: number, f: FreePose) => {
+    const crawlW = f.crawl;
+    const moving = f.moving;
+    const cph = t * 5.2;
+    const swing = Math.sin(cph) * moving;
+    const swing2 = Math.sin(cph + Math.PI) * moving;
+    root.scale.setScalar(f.scale);
+    kr.position.set(f.x, 0, f.z);
+    kr.rotation.set(0, lerp(0.25, f.rotY, 1), 0);
+    const breathe = 1 + Math.sin(t * 1.7) * 0.012;
+    pelvis.position.y = lerp(0.42, 0.62, crawlW) + Math.abs(swing) * 0.03 * crawlW;
+    torso.scale.set(breathe, breathe, breathe);
+    torso.rotation.set(lerp(0, 1.32, crawlW) + Math.sin(cph) * 0.04 * moving, 0, swing * 0.05);
+    const wave = f.wave;
+    head.rotation.set(lerp(0.08, -0.55, crawlW), Math.sin(t * 0.6) * 0.1 - 0.1 + f.look * 0.4 + Math.sin(t * 4) * 0.06 * wave, Math.sin(t * 0.9) * 0.05 + wave * 0.08);
+    feather.rotation.z = -0.26 + Math.sin(t * 1.3) * 0.05;
+    const phase = (t % 4.2) / 4.2;
+    const blink = phase > 0.955 ? 1 - Math.abs((phase - 0.9775) / 0.0225) : 0;
+    lids.forEach((l) => (l.rotation.x = lerp(-1.2, 0.15, clamp01(blink))));
+    irises.forEach((i) => i.position.set(-0.012 + f.look * 0.03, -0.012, 0.045));
+    const crawlArmX = -torso.rotation.x;
+    // left arm: resting / crawling, or raised overhead to hold something up on a finger
+    armL.shoulder.rotation.set(lerp(lerp(0.1, crawlArmX + swing * 0.55, crawlW), 0.2, f.lift), 0, lerp(lerp(-0.6, -0.12, crawlW), -2.75, f.lift));
+    armL.elbow.rotation.set(lerp(-0.4, -0.15 + Math.max(0, -swing) * 0.4, crawlW) * (1 - f.lift), 0, 0);
+    // right arm: resting, crawling, or waving
+    armR.shoulder.rotation.set(lerp(lerp(0.2, crawlArmX + swing2 * 0.55, crawlW), 0.1, wave), 0, lerp(lerp(0.6, 0.12, crawlW), 2.45 + Math.sin(t * 7) * 0.12, wave));
+    armR.elbow.rotation.set(lerp(lerp(-0.4, -0.15 + Math.max(0, -swing2) * 0.4, crawlW), -0.35 + Math.sin(t * 7) * 0.5, wave), 0, 0);
+    armR.wrist.rotation.x = lerp(0, 0.3, crawlW);
+    armL.wrist.rotation.x = lerp(0, 0.3, crawlW);
+    legR.hip.rotation.set(lerp(-1.4, -0.1 - swing2 * 0.25, crawlW), 0, lerp(0.38, 0.05, crawlW));
+    legL.hip.rotation.set(lerp(-1.4, -0.1 - swing * 0.25, crawlW), 0, lerp(-0.38, -0.05, crawlW));
+    legR.knee.rotation.set(lerp(0.45, 1.5 + Math.max(0, swing2) * 0.25, crawlW), 0, 0);
+    legL.knee.rotation.set(lerp(0.45, 1.5 + Math.max(0, swing) * 0.25, crawlW), 0, 0);
+    legR.ankle.rotation.x = lerp(-0.3, 0.7, crawlW);
+    legL.ankle.rotation.x = lerp(-0.3, 0.7, crawlW);
+  };
+
+  const setProps = (visible: boolean) => {
+    mortar.visible = visible;
+    pot.visible = visible;
+    ropeInst.visible = visible && ropeInst.visible;
+    if (!visible) gap.visible = false;
+    ropeKnotNode.visible = visible;
+  };
+
   update(0, { chapter: null, look: 0, tug: 0.4 });
 
   const dispose = () => {
@@ -718,5 +786,5 @@ export function createBalKrishna(THREE: T): FigureControls {
     disposables.forEach((x) => x.dispose());
   };
 
-  return { group: root, update, dispose };
+  return { group: root, update, updateFree, setProps, dispose };
 }

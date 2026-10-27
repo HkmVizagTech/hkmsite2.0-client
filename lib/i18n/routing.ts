@@ -13,7 +13,7 @@ import { DEFAULT_LOCALE, type Locale } from "./config";
  * so a mostly-English "Telugu" copy is never indexed as a duplicate. Add a
  * path here once its page text goes through t().
  */
-export const TE_INDEXABLE = ["/", "/iskcon-vizag-temple", "/vaikuntham", "/pitru-paksha", "/vaikuntha-ekadashi"];
+export const TE_INDEXABLE = ["/", "/iskcon-vizag-temple", "/vaikuntham", "/pitru-paksha", "/vaikuntha-ekadashi", "/diwali"];
 export const isTeIndexable = (path: string) => TE_INDEXABLE.includes(stripLocale(path));
 
 /** "/te/gau-seva" -> "/gau-seva", "/te" -> "/", "/gau-seva" -> "/gau-seva". */

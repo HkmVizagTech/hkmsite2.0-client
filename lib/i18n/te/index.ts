@@ -10,5 +10,6 @@ import { shared } from "./shared";
 import { visit } from "./visit";
 import { seo } from "./seo";
 import { vaikunthaEkadashi } from "./vaikunthaEkadashi";
+import { diwali } from "./diwali";
 
-export const te: Record<string, string> = { ...common, ...nav, ...footer, ...home, ...pitruPaksha, ...upi, ...shared, ...visit, ...seo, ...vaikunthaEkadashi };
+export const te: Record<string, string> = { ...common, ...nav, ...footer, ...home, ...pitruPaksha, ...upi, ...shared, ...visit, ...seo, ...vaikunthaEkadashi, ...diwali };

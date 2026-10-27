@@ -330,6 +330,31 @@ export const DONATION_SEO = {
       description: "Vaikuntha (Moksada) Ekadashi at ISKCON Gambheeram, Visakhapatnam, observed with Gita Jayanti.",
     },
   },
+  diwali: {
+    path: "/diwali",
+    title: "Diwali Seva Donation",
+    description:
+      "Light a lamp this Diwali with Annadana, Gau, Pushpalankara and Vastrabharana seva at ISKCON Gambheeram Visakhapatnam. Diwali is on 9 November 2026. 80G tax benefit.",
+    keywords: ["diwali seva Visakhapatnam", "deepavali donation ISKCON Vizag", "diwali 2026 temple seva", "dipavali seva", ...LOCAL],
+    ogImage: "/assets/gallery-aarti.jpg",
+    breadcrumb: "Diwali",
+    h1: "Diwali Seva — Dipavali 2026 in Visakhapatnam",
+    intro: [
+      "Diwali (Dipavali) falls on 9 November 2026, with the five days of the festival running from Dhanteras on 8 November to Bhratri Dvitiya on 11 November. Offer a seva at Hare Krishna Vaikuntham, Gambheeram.",
+      BENEFIT,
+    ],
+    sevas: [
+      { name: "Annadana Seva", amounts: [1100, 2100, 3100, 5555, 9000, 11000], note: "Eligible for 80G" },
+      { name: "Gau Seva", amounts: [1500, 2500, 3500, 5500, 9500, 11500], note: "Eligible for 80G" },
+      { name: "Pushpalankara Seva", amounts: [1100, 2100, 3100, 5100, 9000, 11111] },
+      { name: "Vastrabharana Seva", amounts: [1100, 3100, 5100, 9999, 15000, 21000] },
+    ],
+    event: {
+      name: "Diwali 2026",
+      startDate: "2026-11-09",
+      description: "Diwali (Dipavali) at ISKCON Gambheeram, Visakhapatnam, with the lighting of lamps and festival sevas.",
+    },
+  },
   "special-occasion": {
     path: "/special-occasion",
     title: "Special Occasion Seva",
