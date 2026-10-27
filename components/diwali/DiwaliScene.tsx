@@ -111,7 +111,7 @@ function build(THREE: THREE_, RoomEnvironment: new () => import("three").Scene) 
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "default" });
   renderer.setClearColor(0x000000, 0);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.12;
+  renderer.toneMappingExposure = 1.0;
   const canvas = renderer.domElement;
   canvas.style.cssText = "position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity .7s ease;";
 
@@ -120,7 +120,7 @@ function build(THREE: THREE_, RoomEnvironment: new () => import("three").Scene) 
   const pmrem = new THREE.PMREMGenerator(renderer);
   const envTex = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
   scene.environment = envTex;
-  scene.environmentIntensity = 0.55;
+  scene.environmentIntensity = 0.28;
   const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 80);
   const CAM_TARGET = new THREE.Vector3(0, 0.9, 0);
   camera.position.set(0, 2.5, 9.2);
@@ -134,8 +134,8 @@ function build(THREE: THREE_, RoomEnvironment: new () => import("three").Scene) 
 
   // lights
   scene.add(new THREE.AmbientLight(0x7a6bff, 0.35));
-  scene.add(new THREE.HemisphereLight(0xaab6ff, 0x5a2d18, 0.55));
-  const key = new THREE.DirectionalLight(0xfff0d8, 1.4);
+  scene.add(new THREE.HemisphereLight(0x8fa2ff, 0x3a1f12, 0.3));
+  const key = new THREE.DirectionalLight(0xfff0d8, 1.0);
   key.position.set(-3, 6, 6);
   scene.add(key);
   const rim = new THREE.DirectionalLight(0xff9a5a, 0.9);
@@ -330,7 +330,7 @@ function build(THREE: THREE_, RoomEnvironment: new () => import("three").Scene) 
       moving = 1;
       rotY = -1.3;
     }
-    return { x, z: 2.3, rotY, crawl, moving, wave, lift: 0, look: 0, scale: 0.62 };
+    return { x, z: 2.3, rotY, crawl, moving, wave, lift: 0, look: 0, scale: 0.72 };
   };
 
   const stageKrishna = (c: number) => {
@@ -352,7 +352,7 @@ function build(THREE: THREE_, RoomEnvironment: new () => import("three").Scene) 
       wave: lerp(a.wave, n.wave, b) * (1 - dash),
       lift: lerp(a.lift, n.lift, b),
       look: 0,
-      scale: 0.78,
+      scale: 0.95,
       sitX,
     };
   };

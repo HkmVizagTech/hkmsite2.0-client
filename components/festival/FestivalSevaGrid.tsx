@@ -34,15 +34,15 @@ export default function FestivalSevaGrid({
         <article
           key={seva.slug}
           id={`seva-card-${seva.slug}`}
-          className={`group flex w-full scroll-mt-24 flex-col overflow-hidden transition-all duration-300 sm:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.1rem)] ${
+          className={`group flex w-full scroll-mt-24 flex-col overflow-hidden transition-all duration-300 sm:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.2rem)] ${
             dark
-              ? "rounded-2xl border border-amber-300/30 bg-gradient-to-b from-[#16226b] to-[#0a1240] shadow-[0_20px_50px_-24px_rgba(0,0,0,0.9)] hover:-translate-y-1 hover:border-amber-300/70 hover:shadow-[0_24px_60px_-20px_rgba(255,170,40,0.45)]"
+              ? "relative rounded-3xl border border-amber-300/40 bg-[linear-gradient(180deg,rgba(40,30,110,0.85),rgba(12,16,66,0.95))] shadow-[0_0_0_1px_rgba(255,200,90,0.08),0_24px_60px_-24px_rgba(0,0,0,0.9),0_0_40px_-18px_rgba(255,170,40,0.55)] hover:-translate-y-1.5 hover:border-amber-300/80 hover:shadow-[0_0_0_1px_rgba(255,200,90,0.3),0_30px_70px_-20px_rgba(0,0,0,0.9),0_0_60px_-10px_rgba(255,170,40,0.6)]"
               : "vk-card border-t-[3px] border-t-[hsl(var(--gold))] hover:shadow-lift lg:w-[calc(33.333%-1rem)]"
           } ${
             highlightedSlug === seva.slug ? "ring-2 ring-vk-500 ring-offset-2" : ""
           }`}
         >
-          <div className="relative h-44 overflow-hidden bg-vk-900 md:h-48">
+          <div className={`relative h-44 overflow-hidden bg-vk-900 md:h-48 ${dark ? "m-2 rounded-2xl ring-1 ring-amber-300/40" : ""}`}>
             <Image
               src={seva.image}
               alt={t(seva.title)}
@@ -50,7 +50,7 @@ export default function FestivalSevaGrid({
               sizes="(min-width: 1024px) 380px, (min-width: 640px) 50vw, 100vw"
               className="object-cover transition-transform duration-700 group-hover:scale-105"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-vk-900/90 via-vk-900/30 to-transparent" />
+            <div className={`absolute inset-0 bg-gradient-to-t ${dark ? "from-[#0a1042] via-[#0a1042]/25" : "from-vk-900/90 via-vk-900/30"} to-transparent`} />
             <div className="absolute bottom-3 left-4 right-4 flex items-center gap-2">
               <span className="text-2xl drop-shadow" aria-hidden>
                 {seva.icon}
@@ -68,7 +68,7 @@ export default function FestivalSevaGrid({
                     key={tier.amount}
                     type="button"
                     onClick={() => onSelect({ seva, amount: tier.amount })}
-                    className={`group/amt flex min-h-[64px] flex-col items-center justify-center rounded-xl border-[1.5px] px-1 py-2 text-center shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-transparent hover:bg-gradient-gold hover:shadow-gold sm:min-h-[68px] sm:px-1.5 ${dark ? "border-amber-300/50 bg-white/[0.06]" : "border-[hsl(var(--gold)/0.6)] bg-[hsl(var(--gold)/0.1)]"}`}
+                    className={`group/amt flex min-h-[64px] flex-col items-center justify-center rounded-xl border-[1.5px] px-1 py-2 text-center shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-transparent hover:bg-gradient-gold hover:shadow-gold sm:min-h-[68px] sm:px-1.5 ${dark ? "border-amber-300/45 bg-gradient-to-b from-amber-300/15 to-amber-300/[0.03] shadow-[inset_0_1px_0_rgba(255,236,170,0.25)]" : "border-[hsl(var(--gold)/0.6)] bg-[hsl(var(--gold)/0.1)]"}`}
                   >
                     <span
                       className={`block whitespace-nowrap text-[17px] font-extrabold leading-none tracking-tight group-hover/amt:text-ink sm:text-lg ${dark ? "text-white" : "text-ink"}`}
@@ -89,7 +89,7 @@ export default function FestivalSevaGrid({
               <button
                 type="button"
                 onClick={() => onSelect({ seva, amount: null })}
-                className={`flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-xl border border-dashed px-3 py-3 text-[13px] font-bold transition-all duration-200 ${dark ? "border-amber-300/50 bg-white/[0.04] text-amber-100 hover:border-amber-300 hover:bg-white/10" : "border-vk-300 bg-vk-50 text-vk-800 hover:border-vk-500 hover:bg-vk-100"}`}
+                className={`flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-xl border border-dashed px-3 py-3 text-[13px] font-bold transition-all duration-200 ${dark ? "border-amber-300/60 bg-amber-300/10 text-amber-100 hover:border-amber-300 hover:bg-amber-300/20" : "border-vk-300 bg-vk-50 text-vk-800 hover:border-vk-500 hover:bg-vk-100"}`}
               >
                 <svg className={`h-3 w-3 ${dark ? "text-amber-300" : "text-vk-600"}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden>
                   <line x1="12" y1="5" x2="12" y2="19" />

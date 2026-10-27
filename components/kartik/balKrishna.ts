@@ -118,8 +118,8 @@ export function createBalKrishna(THREE: T): FigureControls {
   });
   const skinN = normalMapOf(poreH, 1.4);
   skinN.repeat.set(5, 5);
-  const skin = phys(0x2449b9, { normalMap: skinN, normalScale: new THREE.Vector2(0.35, 0.35), roughness: 0.42, sheen: 1, sheenColor: new THREE.Color(0x86a8ff), sheenRoughness: 0.45, clearcoat: 0.18, clearcoatRoughness: 0.5, emissive: 0x081a5c, emissiveIntensity: 0.14 });
-  const skinSoft = phys(0x4a73e2, { normalMap: skinN, normalScale: new THREE.Vector2(0.3, 0.3), roughness: 0.4, sheen: 1, sheenColor: new THREE.Color(0x9bb8ff), sheenRoughness: 0.5, emissive: 0x081a5c, emissiveIntensity: 0.1 });
+  const skin = phys(0x3a69dc, { normalMap: skinN, normalScale: new THREE.Vector2(0.35, 0.35), roughness: 0.42, sheen: 0.35, sheenColor: new THREE.Color(0x86a8ff), sheenRoughness: 0.45, clearcoat: 0.18, clearcoatRoughness: 0.5, emissive: 0x10277a, emissiveIntensity: 0.16 });
+  const skinSoft = phys(0x5b88ec, { normalMap: skinN, normalScale: new THREE.Vector2(0.3, 0.3), roughness: 0.4, sheen: 0.3, sheenColor: new THREE.Color(0x9bb8ff), sheenRoughness: 0.5, emissive: 0x10277a, emissiveIntensity: 0.14 });
   const lipMat = phys(0xd4577a, { roughness: 0.32, clearcoat: 0.5 });
   const hairMat = phys(0x0b0d26, { roughness: 0.32, clearcoat: 0.6, clearcoatRoughness: 0.3, sheen: 0.6, sheenColor: new THREE.Color(0x3b4a9c) });
   const gold = phys(0xe8b02a, { metalness: 1, roughness: 0.22 });
@@ -146,8 +146,8 @@ export function createBalKrishna(THREE: T): FigureControls {
   const silkMap = texOf(
     canvasOf(256, 128, (c, w, h) => {
       const g = c.createLinearGradient(0, 0, 0, h);
-      g.addColorStop(0, "#ffc20a");
-      g.addColorStop(0.78, "#f5b200");
+      g.addColorStop(0, "#f7b32b");
+      g.addColorStop(0.78, "#eea01a");
       g.addColorStop(0.8, "#b4421a");
       g.addColorStop(0.86, "#b4421a");
       g.addColorStop(0.88, "#e8a317");
@@ -169,8 +169,8 @@ export function createBalKrishna(THREE: T): FigureControls {
     canvasOf(128, 128, (c, w, h) => {
       const g = c.createRadialGradient(w / 2, h / 2, 4, w / 2, h / 2, w / 2);
       g.addColorStop(0, "#060508");
-      g.addColorStop(0.3, "#150b07");
-      g.addColorStop(0.75, "#4a2410");
+      g.addColorStop(0.3, "#2a140a");
+      g.addColorStop(0.75, "#7a4320");
       g.addColorStop(1, "#1a0c06");
       c.fillStyle = g;
       c.beginPath();
@@ -366,7 +366,8 @@ export function createBalKrishna(THREE: T): FigureControls {
 
   // ── Head ──
   const neck = group(torso, 0, 1.12, 0);
-  const head = group(neck, 0, 0.44, 0.04);
+  const head = group(neck, 0, 0.5, 0.04);
+  head.scale.setScalar(1.3);
   {
     // skull: an egg that narrows toward a small round chin
     const sk = new THREE.SphereGeometry(0.47, 56, 40);
