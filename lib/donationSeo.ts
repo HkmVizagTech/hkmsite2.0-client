@@ -338,7 +338,7 @@ export const DONATION_SEO = {
     description:
       "Light a lamp this Diwali with Annadana, Gau, Pushpalankara, Vastrabharana, Brick and Square Foot seva at ISKCON Gambheeram Visakhapatnam. Diwali is on 9 November 2026. 80G tax benefit.",
     keywords: ["diwali seva Visakhapatnam", "deepavali donation ISKCON Vizag", "diwali 2026 temple seva", "dipavali seva", ...LOCAL],
-    ogImage: "/assets/gallery-aarti.jpg",
+    ogImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793107747613-1793107746912-diwalidonatedesktop1920x700.png",
     breadcrumb: "Diwali",
     h1: "Diwali Seva — Dipavali 2026 in Visakhapatnam",
     intro: [

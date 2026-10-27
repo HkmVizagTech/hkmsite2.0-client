@@ -1294,8 +1294,7 @@ html[lang="te"] body {
   line-height: 1.7;
 }
 
-/* ── Kartik Maas page ───────────────────────────────────────────── */
-/* Only transform/opacity are animated, so these run on the compositor and never repaint. */
+/* ── Kartik Maas page (lamp tracker) ───────────────────────────── */
 @keyframes km-flicker {
   0%, 100% { transform: scale(1, 1) rotate(0deg); }
   25% { transform: scale(0.96, 1.07) rotate(-1.5deg); }
@@ -1303,15 +1302,18 @@ html[lang="te"] body {
   75% { transform: scale(0.98, 1.05) rotate(-0.5deg); }
 }
 .km-flame { transform-origin: 50% 90%; transform-box: fill-box; animation: km-flicker 1.6s ease-in-out infinite; }
-@keyframes km-cue { 0% { transform: translateY(0); opacity: 0; } 30% { opacity: 1; } 100% { transform: translateY(12px); opacity: 0; } }
-.km-cue-dot { animation: km-cue 1.8s ease-in-out infinite; }
-@keyframes km-marquee { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
-.km-marquee { animation: km-marquee 60s linear infinite; will-change: transform; }
-.km-step { opacity: 0.42; transition: opacity 0.45s ease; }
-.km-step.km-on { opacity: 1; }
-.km-dot { transition: background-color 0.3s, color 0.3s; }
-.km-dot.km-on { background: hsl(43 89% 54%); color: #1d1b20; }
-@media (prefers-reduced-motion: reduce) {
-  .km-flame, .km-cue-dot, .km-marquee { animation: none; }
-  .km-step { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .km-flame { animation: none; } }
+
+/* Festival pages: the soft lamp flicker (transform only; off with reduced motion). */
+@keyframes fs-flicker {
+  0%, 100% { transform: scale(1, 1) rotate(0deg); }
+  30% { transform: scale(0.97, 1.06) rotate(-1.2deg); }
+  60% { transform: scale(1.02, 0.96) rotate(0.8deg); }
 }
+.fs-flame { transform-origin: 50% 90%; transform-box: fill-box; animation: fs-flicker 2s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .fs-flame { animation: none; } }
+@keyframes fs-fall { 0% { transform: translate3d(0, -10px, 0) rotate(0deg); opacity: 0; } 10% { opacity: 0.75; } 100% { transform: translate3d(40px, 105vh, 0) rotate(260deg); opacity: 0; } }
+.fs-petal { animation: fs-fall linear infinite; will-change: transform; }
+@keyframes fs-turn { to { transform: rotate(360deg); } }
+.fs-turn { animation: fs-turn 120s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .fs-petal, .fs-turn { animation: none; } .fs-petal { display: none; } }

@@ -5,6 +5,7 @@ export const diwali: Record<string, string> = {
   "Diwali Seva Donation | ISKCON Gambheeram Visakhapatnam": "దీపావళి సేవ విరాళం | ఇస్కాన్ గంభీరం విశాఖపట్నం",
   "Light a lamp this Diwali with Annadana, Gau, Pushpalankara, Vastrabharana, Brick and Square Foot seva at ISKCON Gambheeram Visakhapatnam. Diwali is on 9 November 2026. 80G tax benefit.":
     "ఇస్కాన్ గంభీరం విశాఖపట్నంలో అన్నదాన, గో, పుష్పాలంకార, వస్త్రాభరణ, ఇటుక, చదరపు అడుగు సేవలతో ఈ దీపావళికి దీపం వెలిగించండి. దీపావళి 2026 నవంబర్ 9న. 80G పన్ను ప్రయోజనం.",
+  "Sri Sri Radha Madan Mohan": "శ్రీ శ్రీ రాధా మదన మోహన",
   "Brick Seva": "ఇటుక సేవ",
   "Square Foot Seva": "చదరపు అడుగు సేవ",
   "Sponsor a sacred brick of the Hare Krishna Vaikuntham Temple under construction — each brick laid in devotion becomes an eternal part of the Lord's abode.":
