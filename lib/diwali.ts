@@ -8,7 +8,11 @@ import type { CampaignConfig } from "@/lib/campaignConfig";
  */
 export const DIWALI_DATE_ISO = "2026-11-09";
 export const DIWALI_DATE_LABEL = "9 November 2026";
-export const OG_IMAGE = "/assets/gallery-aarti.jpg";
+export const BANNER_DESKTOP =
+  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793107747613-1793107746912-diwalidonatedesktop1920x700.png";
+export const BANNER_MOBILE =
+  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793107748978-1793107747307-diwalidonatemobile1080x1350.png";
+export const OG_IMAGE = BANNER_DESKTOP;
 
 const RADHA_MADAN_MOHAN =
   "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677419371-1783677418690-DietyPhotos.jpeg";

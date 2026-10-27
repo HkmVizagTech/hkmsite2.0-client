@@ -1,49 +1,21 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, Check, Copy, Heart, ShieldCheck } from "lucide-react";
 import { useT } from "@/components/i18n/LocaleProvider";
 import PageLayout from "@/components/PageLayout";
 import SectionHeading from "@/components/site/SectionHeading";
+import Reveal from "@/components/site/Reveal";
 import PhonePeUpiCard from "@/components/PhonePeUpiCard";
-import ScenePoster from "@/components/festival/ScenePoster";
 import FaqSection from "@/components/sqft-campaign/FaqSection";
 import DonorPrivilegesSection from "@/components/sqft-campaign/DonorPrivilegesSection";
 import OtherDonationsCarousel from "@/components/pitru-paksha/OtherDonationsCarousel";
 import FestivalSevaGrid, { type SevaSelection } from "@/components/festival/FestivalSevaGrid";
 import FestivalCheckoutModal from "@/components/festival/FestivalCheckoutModal";
-import { useDiwaliMotion } from "@/components/diwali/useDiwaliMotion";
-import { BANK_DETAILS, DAYS, DIWALI_DATE_ISO, DIWALI_DATE_LABEL, FAQS, IMPACTS, OG_IMAGE, PRIVILEGE_CONFIG, SEVAS, STRIP } from "@/lib/diwali";
-
-// The 3D scene (three.js) is loaded in the browser only, after the page has painted.
-const DiwaliScene = dynamic(() => import("@/components/diwali/DiwaliScene"), { ssr: false });
-
-/** Mounts a 3D scene only when its section is about to scroll into view (saves a WebGL context on phones). */
-function LazyScene({ variant, state, className = "" }: { variant: "hero" | "stage" | "finale"; state?: { intro: number; progress?: number }; className?: string }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [show, setShow] = useState(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const io = new IntersectionObserver(
-      (e) => {
-        if (e[0]?.isIntersecting) {
-          setShow(true);
-          io.disconnect();
-        }
-      },
-      { rootMargin: "300px" }
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-  return (
-    <div ref={ref} className={`absolute inset-0 ${className}`}>
-      {show && <DiwaliScene variant={variant} state={state} />}
-    </div>
-  );
-}
+import StoryTimeline from "@/components/festival/StoryTimeline";
+import DiyaRow from "@/components/festival/DiyaRow";
+import { Mandala, OrnamentDivider, PetalFall } from "@/components/festival/FestivalDecor";
+import { BANK_DETAILS, BANNER_DESKTOP, BANNER_MOBILE, DAYS, DIWALI_DATE_ISO, DIWALI_DATE_LABEL, FAQS, IMPACTS, OG_IMAGE, PRIVILEGE_CONFIG, SEVAS, STRIP } from "@/lib/diwali";
 
 const SLUG = "diwali";
 const istDate = (d: Date) => d.toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
@@ -57,11 +29,7 @@ export default function DiwaliClient() {
   const [pastHero, setPastHero] = useState(false);
   const [hideBar, setHideBar] = useState(false);
   const [daysLeft, setDaysLeft] = useState<number | null>(null);
-  const rootRef = useRef<HTMLDivElement>(null);
   const scrolledRef = useRef(false);
-  const heroState = useRef({ intro: 0 }).current;
-  const stageState = useRef({ intro: 1, progress: 0 }).current;
-  useDiwaliMotion(rootRef, heroState, stageState);
 
   // Days to Diwali, worked out after mount so the server and the first client render agree.
   useEffect(() => {
@@ -123,133 +91,102 @@ export default function DiwaliClient() {
 
   return (
     <PageLayout>
-      <div ref={rootRef} className="overflow-x-clip bg-[#070d27] pt-[var(--header-h)]">
-        {/* ══ HERO — a lotus diya, a rangoli that blooms, fireworks, lanterns and little Krishna ═══════════ */}
-        <section className="relative isolate overflow-hidden bg-[radial-gradient(120%_90%_at_72%_22%,#3b1b73_0%,#16143f_46%,#070d27_100%)] text-white">
-          <ScenePoster className="left-1/2 top-[19svh] w-[62vw] max-w-[260px] -translate-x-1/2 lg:left-auto lg:right-[15%] lg:top-[24%] lg:w-[340px] lg:max-w-none lg:translate-x-0" />
-          <DiwaliScene variant="hero" state={heroState} className="z-0" />
-          <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[40%] bg-gradient-to-t from-[#070d27] via-[#070d27]/70 to-transparent" />
-          <div className="vk-container relative z-10 flex min-h-[calc(100svh-var(--header-h))] flex-col justify-end pb-10 pt-[50svh] md:justify-start md:pb-24 md:pt-24">
-            <div className="max-w-xl lg:max-w-[38rem]">
-              <p data-hero-fade className="flex flex-wrap items-center gap-x-3 gap-y-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-amber-200 md:text-xs">
-                <span aria-hidden className="h-px w-8 bg-amber-300/70" /> {t("Dipavali")} · {t(DIWALI_DATE_LABEL)}
-                {countdown && <span className="rounded-full bg-amber-300 px-2.5 py-0.5 text-[10px] tracking-wider text-[#1d1b20]">{countdown}</span>}
-              </p>
-              <h1 className="mt-4 font-heading text-[2.6rem] font-extrabold leading-[1.03] tracking-[-0.03em] sm:text-6xl lg:text-[4.4rem]">
-                <span data-hero-fade className="block">{t("Light a Lamp")}</span>
-                <span data-hero-fade className="block" style={GOLD}>{t("this Diwali")}</span>
-              </h1>
-              <p data-hero-fade className="mt-5 max-w-lg text-[15px] leading-relaxed text-white/80 md:text-lg md:leading-8">
-                {t("The festival of lights is the lighting of lamps for the Lord. Offer a seva at Hare Krishna Vaikuntham, Gambheeram, with sankalpa taken in your name.")}
-              </p>
-              <div data-hero-fade className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3">
-                <button type="button" onClick={scrollToDonate} className="vk-btn-gold h-[3.25rem] px-8 text-base font-bold">
-                  {t("Offer Your Seva")} <ArrowRight className="h-4 w-4" />
-                </button>
-                <a href="#days" className="text-sm font-semibold text-white/80 transition-colors hover:text-white">
-                  {t("The five days →")}
-                </a>
-              </div>
-            </div>
+      <div className="overflow-x-clip bg-white pt-[var(--header-h)]">
+        {/* ══ BANNER ═════════════════════════════════════════════════════ */}
+        <section className="bg-[#fff6e0]">
+          <h1 className="sr-only">
+            {t("Light a Lamp")} {t("this Diwali")}, {t(DIWALI_DATE_LABEL)}
+          </h1>
+          <a href="#offer-seva" className="block" aria-label={t("Offer Your Seva")}>
+            <picture>
+              <source media="(max-width: 640px)" srcSet={BANNER_MOBILE} />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={BANNER_DESKTOP} alt={t("Diwali")} fetchPriority="high" className="block h-auto w-full" />
+            </picture>
+          </a>
+        </section>
+
+        {/* ══ INTRO — the date, a line of welcome, lit lamps ═══════════════ */}
+        <section className="relative isolate overflow-hidden bg-[radial-gradient(120%_100%_at_50%_0%,#fff3d6_0%,#fffaf0_55%,#ffffff_100%)]">
+          <Mandala className="absolute -right-24 -top-10 -z-10 h-[360px] w-[360px] md:right-10 md:h-[440px] md:w-[440px]" />
+          <PetalFall count={7} className="-z-[5]" />
+          <div className="vk-container flex flex-col items-center py-10 text-center md:py-14">
+            <p className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[hsl(var(--gold-deep))] md:text-xs">
+              {t("Dipavali")} · {t(DIWALI_DATE_LABEL)}
+              {countdown && <span className="rounded-full bg-gradient-gold px-2.5 py-0.5 text-[10px] tracking-wider text-ink">{countdown}</span>}
+            </p>
+            <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-muted-foreground md:text-lg md:leading-8">
+              {t("The festival of lights is the lighting of lamps for the Lord. Offer a seva at Hare Krishna Vaikuntham, Gambheeram, with sankalpa taken in your name.")}
+            </p>
+            <DiyaRow count={7} className="mt-7" />
           </div>
         </section>
 
-        {/* ══ THE FIVE DAYS — ticker ═══════════════════════════════════════ */}
-        <div className="border-y border-amber-300/25 bg-[#070d27]">
-          <ul className="vk-container flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 py-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-200/90 md:gap-x-9 md:text-xs">
+        {/* ══ THE FIVE DAYS — ticker ═════════════════════════════════════ */}
+        <div className="border-y border-[hsl(var(--gold)/0.35)] bg-gradient-to-r from-amber-50 via-white to-amber-50">
+          <ul className="vk-container flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 py-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-[hsl(var(--gold-deep))] md:gap-x-9 md:text-xs">
             {STRIP.map((d, i) => (
               <li key={d} className="flex items-center gap-2">
-                {i > 0 && <span aria-hidden className="hidden h-1 w-1 rounded-full bg-amber-300/60 sm:block" />}
+                {i > 0 && <span aria-hidden className="hidden h-1 w-1 rounded-full bg-[hsl(var(--gold))] sm:block" />}
                 {t(d)}
               </li>
             ))}
           </ul>
         </div>
 
-        {/* ══ SEVAS — the donation, straight after the hero ═══════════════ */}
-        <section id="offer-seva" className="relative scroll-mt-16 overflow-hidden bg-[radial-gradient(100%_60%_at_50%_0%,#1b1a5c_0%,#0c1342_50%,#070d27_100%)] py-14 text-white md:py-20">
+        {/* ══ SEVAS — the donation, straight after the hero ═════════════ */}
+        <section id="offer-seva" className="vk-section scroll-mt-16 bg-gradient-to-b from-white via-amber-50/50 to-white">
           <div className="vk-container">
-            <div data-reveal>
+            <Reveal>
               <SectionHeading
-                light
                 align="center"
                 eyebrow={t("Choose Your Offering")}
                 title={t("Diwali Sevas")}
                 subtitle={t("Tap an amount to offer that seva. Sankalpa is taken in your name and your receipt reaches you on WhatsApp.")}
               />
-            </div>
-            <div data-group>
-              <FestivalSevaGrid sevas={SEVAS} impacts={IMPACTS} highlightedSlug={highlightedSlug} onSelect={setSelected} variant="dark" />
-            </div>
-            <p className="mt-8 text-center text-xs text-white/55">
+            </Reveal>
+            <FestivalSevaGrid sevas={SEVAS} impacts={IMPACTS} highlightedSlug={highlightedSlug} onSelect={setSelected} />
+            <p className="mt-8 text-center text-xs text-muted-foreground">
               {t("Minimum donation Rs. 100 · 80G Tax Exemption available · Secured by Razorpay · Donations go to Hare Krishna Movement India, Visakhapatnam")}
             </p>
           </div>
-          <div className="mt-8 [&_section]:pb-2">
-            <PhonePeUpiCard campaign="Diwali" />
-          </div>
         </section>
 
-        {/* ══ THE FIVE DAYS — a sticky 3D stage that plays each day as you scroll ═══════ */}
-        <section id="days" data-days className="relative scroll-mt-20 bg-[#070d27] pt-14 text-white md:pt-20">
+        <PhonePeUpiCard campaign="Diwali" />
+        <OrnamentDivider className="my-2" />
+
+        {/* ══ THE FIVE DAYS ══════════════════════════════════════════════ */}
+        <section id="days" className="vk-section vk-band scroll-mt-20">
           <div className="vk-container">
-            <div data-reveal>
-              <SectionHeading light align="center" eyebrow={t("Five days of light")} title={t("The Days of Diwali")} subtitle={t("Scroll to walk through the festival, day by day.")} />
-            </div>
-            <div className="grid gap-x-12 lg:grid-cols-[1fr_1.05fr]">
-              <div className="sticky top-[calc(var(--header-h)+8px)] z-10 order-1 lg:static lg:order-2 lg:z-auto">
-                <div className="lg:sticky lg:top-[calc(var(--header-h)+28px)]">
-                  <div data-stage className="relative h-[48svh] min-h-[300px] max-h-[560px] w-full overflow-hidden rounded-3xl bg-[radial-gradient(110%_100%_at_60%_20%,#3b1b73_0%,#14123f_52%,#070d27_100%)] shadow-[0_30px_80px_-30px_rgba(0,0,0,0.8)] ring-1 ring-white/10 lg:h-[min(66svh,600px)]">
-                    <LazyScene variant="stage" state={stageState} />
-                  </div>
-                </div>
-              </div>
-              <div data-steps className="order-2 lg:order-1">
-                {DAYS.map((d) => (
-                  <div key={d.n} data-step-card className="km-step flex min-h-[46svh] items-center py-3 lg:min-h-[54svh] lg:py-4">
-                    <div className="relative w-full rounded-2xl border border-amber-300/20 bg-white/[0.05] p-6 pt-8 md:p-8 md:pt-10">
-                      <span className="absolute -top-5 left-6 flex h-11 w-11 items-center justify-center rounded-full bg-gradient-gold font-heading text-lg font-extrabold text-ink shadow-gold">{d.n}</span>
-                      <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-amber-200">{t(d.date)}</p>
-                      <h3 className="mt-1 font-heading text-xl font-bold text-white md:text-2xl">{t(d.title)}</h3>
-                      <p className="mt-3 text-[15px] leading-relaxed text-white/75 md:text-base md:leading-7">{t(d.text)}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <Reveal>
+              <SectionHeading align="center" eyebrow={t("Five days of light")} title={t("The Days of Diwali")} />
+            </Reveal>
+            <StoryTimeline steps={DAYS.map((d) => ({ n: d.n, title: d.title, text: d.text, date: d.date }))} />
           </div>
         </section>
 
-        {/* ══ FINALE — the last call to donate ═══════════════════════════ */}
-        <section id="finale" className="relative isolate scroll-mt-16 overflow-hidden bg-[radial-gradient(110%_100%_at_75%_30%,#3b1b73_0%,#14123f_48%,#070d27_100%)] py-16 text-white md:py-24">
-          <div className="vk-container relative z-10">
-            <div className="grid items-center gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-              <div data-reveal>
-                <p className="flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.22em] text-amber-200 md:text-xs">
-                  <span aria-hidden className="h-px w-8 bg-amber-300/70" /> {t("Offer your seva")}
-                </p>
-                <h2 className="mt-4 font-heading text-[2rem] font-extrabold leading-[1.06] tracking-[-0.03em] sm:text-5xl">
-                  {t("Let your seva be a lamp")} <span style={GOLD}>{t("that keeps burning")}</span>
-                </h2>
-                <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-white/75 md:text-lg md:leading-8">
-                  {t("Sankalpa is taken in your name, your receipt reaches your WhatsApp the moment the payment is confirmed, and every donation is eligible for 80G.")}
-                </p>
-                <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3">
-                  <button type="button" onClick={scrollToDonate} className="vk-btn-gold h-[3.25rem] px-8 text-base font-bold">
-                    <Heart className="h-4 w-4" /> {t("Offer Your Seva")}
-                  </button>
-                  <span className="inline-flex items-center gap-2 text-xs font-semibold text-white/70">
-                    <ShieldCheck className="h-4 w-4 text-amber-300" /> {t("80G · Secure Razorpay checkout")}
-                  </span>
-                </div>
+        {/* ══ FINAL CALL + BANK ══════════════════════════════════════════ */}
+        <section id="finale" className="vk-section scroll-mt-16">
+          <div className="vk-container">
+            <Reveal className="mx-auto max-w-3xl text-center">
+              <h2 className="vk-h2">
+                {t("Let your seva be a lamp")} <span style={GOLD}>{t("that keeps burning")}</span>
+              </h2>
+              <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground md:text-lg md:leading-8">
+                {t("Sankalpa is taken in your name, your receipt reaches your WhatsApp the moment the payment is confirmed, and every donation is eligible for 80G.")}
+              </p>
+              <div className="mt-7 flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
+                <button type="button" onClick={scrollToDonate} className="vk-btn-gold h-[3.25rem] px-8 text-base font-bold">
+                  <Heart className="h-4 w-4" /> {t("Offer Your Seva")}
+                </button>
+                <span className="inline-flex items-center gap-2 text-xs font-semibold text-muted-foreground">
+                  <ShieldCheck className="h-4 w-4 text-[hsl(var(--gold-deep))]" /> {t("80G · Secure Razorpay checkout")}
+                </span>
               </div>
-              <div className="relative h-[260px] md:h-[360px]">
-                <LazyScene variant="finale" />
-              </div>
-            </div>
+            </Reveal>
 
             <div className="mx-auto mt-12 grid max-w-6xl gap-5 lg:grid-cols-2 lg:items-start">
-              <div className="rounded-2xl border border-white/10 bg-white/[0.07] px-5 py-4 text-sm leading-7 text-white/80 md:text-base">
+              <div className="rounded-2xl border border-vk-100 bg-vk-50 px-5 py-4 text-sm leading-7 text-ink/80 md:text-base">
                 {t(
                   "While making UPI or bank payments, please send a screenshot with your name, mobile, address and PAN details to our WhatsApp {phone} or email {email}, so your receipt is issued against the right donor.",
                   { phone: "\u0001", email: "\u0002" }
@@ -257,11 +194,11 @@ export default function DiwaliClient() {
                   .split(/(\u0001|\u0002)/)
                   .map((part, i) =>
                     part === "\u0001" ? (
-                      <a key={i} className="font-bold text-amber-200 hover:text-amber-100" href="https://wa.me/917995097108" target="_blank" rel="noreferrer">
+                      <a key={i} className="font-bold text-vk-700 hover:text-vk-500" href="https://wa.me/917995097108" target="_blank" rel="noreferrer">
                         +91 79950 97108
                       </a>
                     ) : part === "\u0002" ? (
-                      <a key={i} className="break-all font-bold text-amber-200 hover:text-amber-100" href="mailto:social@hkmvizag.org">
+                      <a key={i} className="break-all font-bold text-vk-700 hover:text-vk-500" href="mailto:social@hkmvizag.org">
                         social@hkmvizag.org
                       </a>
                     ) : (
