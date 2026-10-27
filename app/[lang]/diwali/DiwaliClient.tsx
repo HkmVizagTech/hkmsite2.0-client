@@ -7,6 +7,7 @@ import { useT } from "@/components/i18n/LocaleProvider";
 import PageLayout from "@/components/PageLayout";
 import SectionHeading from "@/components/site/SectionHeading";
 import PhonePeUpiCard from "@/components/PhonePeUpiCard";
+import ScenePoster from "@/components/festival/ScenePoster";
 import FaqSection from "@/components/sqft-campaign/FaqSection";
 import DonorPrivilegesSection from "@/components/sqft-campaign/DonorPrivilegesSection";
 import OtherDonationsCarousel from "@/components/pitru-paksha/OtherDonationsCarousel";
@@ -125,6 +126,7 @@ export default function DiwaliClient() {
       <div ref={rootRef} className="overflow-x-clip bg-[#070d27] pt-[var(--header-h)]">
         {/* ══ HERO — a lotus diya, a rangoli that blooms, fireworks, lanterns and little Krishna ═══════════ */}
         <section className="relative isolate overflow-hidden bg-[radial-gradient(120%_90%_at_72%_22%,#3b1b73_0%,#16143f_46%,#070d27_100%)] text-white">
+          <ScenePoster className="left-1/2 top-[19svh] w-[62vw] max-w-[260px] -translate-x-1/2 lg:left-auto lg:right-[15%] lg:top-[24%] lg:w-[340px] lg:max-w-none lg:translate-x-0" />
           <DiwaliScene variant="hero" state={heroState} className="z-0" />
           <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[40%] bg-gradient-to-t from-[#070d27] via-[#070d27]/70 to-transparent" />
           <div className="vk-container relative z-10 flex min-h-[calc(100svh-var(--header-h))] flex-col justify-end pb-10 pt-[50svh] md:justify-start md:pb-24 md:pt-24">
@@ -197,7 +199,7 @@ export default function DiwaliClient() {
             <div className="grid gap-x-12 lg:grid-cols-[1fr_1.05fr]">
               <div className="sticky top-[calc(var(--header-h)+8px)] z-10 order-1 lg:static lg:order-2 lg:z-auto">
                 <div className="lg:sticky lg:top-[calc(var(--header-h)+28px)]">
-                  <div data-stage className="relative h-[40svh] min-h-[250px] w-full overflow-hidden rounded-3xl bg-[radial-gradient(110%_100%_at_60%_20%,#3b1b73_0%,#14123f_52%,#070d27_100%)] shadow-[0_30px_80px_-30px_rgba(0,0,0,0.8)] ring-1 ring-white/10 lg:h-[min(66svh,600px)]">
+                  <div data-stage className="relative h-[48svh] min-h-[300px] max-h-[560px] w-full overflow-hidden rounded-3xl bg-[radial-gradient(110%_100%_at_60%_20%,#3b1b73_0%,#14123f_52%,#070d27_100%)] shadow-[0_30px_80px_-30px_rgba(0,0,0,0.8)] ring-1 ring-white/10 lg:h-[min(66svh,600px)]">
                     <LazyScene variant="stage" state={stageState} />
                   </div>
                 </div>

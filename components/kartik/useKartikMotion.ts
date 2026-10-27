@@ -73,7 +73,7 @@ export function useKartikMotion(root: RefObject<HTMLElement | null>, scene: Scen
       const ctx = gsap.context(() => {
         // Hero: the flame ignites and the lotus opens (the scene reads `intro`), while the copy rises in.
         sceneRef.current.intro = 0;
-        gsap.to(sceneRef.current, { intro: 1, duration: 2.6, ease: "power2.inOut", delay: 0.25 });
+        gsap.to(sceneRef.current, { intro: 1, duration: 1.8, ease: "power2.inOut", delay: 0.1 });
         const tl = gsap.timeline({ defaults: { ease: "power3.out" }, delay: 0.2 });
         tl.from("[data-hero-word]", { yPercent: 115, rotate: 3, opacity: 0, duration: 0.9, stagger: 0.07 })
           .from("[data-hero-fade]", { y: 26, opacity: 0, duration: 0.8, stagger: 0.1 }, "-=0.5");

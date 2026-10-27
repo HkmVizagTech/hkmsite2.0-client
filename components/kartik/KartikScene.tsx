@@ -518,6 +518,7 @@ function build(
   let maxDpr = 1;
   const baseRig = new THREE.Vector3();
   let baseScale = 1;
+  let storyFinalZoom = 0.62;
 
   const layout = () => {
     if (!host) return;
@@ -535,6 +536,9 @@ function build(
     if (isStory) {
       // The sticky story stage: Krishna, the mortar and the butter pot centred, as large as the stage allows.
       baseScale = clamp((visW * 0.9) / 5.4, 0.45, 1.25);
+      // at the end the whole of the two tall trees (about 9.6 units) must fit the stage height
+      const visH = 2 * camera.position.z * Math.tan((camera.fov * Math.PI) / 360);
+      storyFinalZoom = clamp((visH * 0.8) / (9.6 * baseScale), 0.22, 0.62);
       baseRig.set(0, -1.35 * baseScale, 0);
     } else if (isHero) {
       if (aspect > 1.15) {
@@ -640,7 +644,7 @@ function build(
         return u * u * (3 - 2 * u);
       };
       // follow Him while He crawls, then pull back to take in the whole of the two trees
-      zoom = 1 - 0.08 * ss(chapter, 3.0, 3.5) - 0.3 * ss(chapter, 3.9, 4.4);
+      zoom = lerp(1 - 0.08 * ss(chapter, 3.0, 3.5), storyFinalZoom, ss(chapter, 3.9, 4.4));
       tilt = ss(chapter, 3.9, 4.4);
       key.position.set(focusX - 3, 6, 5);
       key.target.position.set(focusX, 0, 0);
@@ -690,7 +694,10 @@ function build(
     last = now;
     update((now - clock0) / 1000, dt);
     renderer.render(scene, camera);
-    if (canvas.style.opacity !== "1") canvas.style.opacity = "1"; // fade in once the first frame is really on the canvas
+    if (canvas.style.opacity !== "1") {
+      canvas.style.opacity = "1"; // fade in once the first frame is really on the canvas
+      host?.dispatchEvent(new CustomEvent("scene-ready", { bubbles: true }));
+    }
     if (!scrolling && now - clock0 > 1200) {
       sampleSum += dt;
       sampleFrames++;
@@ -752,6 +759,7 @@ function build(
       update(2, 0);
       renderer.render(scene, camera);
       canvas.style.opacity = "1";
+      host?.dispatchEvent(new CustomEvent("scene-ready", { bubbles: true }));
     }
     sync();
   };

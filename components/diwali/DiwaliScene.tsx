@@ -258,8 +258,11 @@ function build(THREE: THREE_, RoomEnvironment: new () => import("three").Scene) 
       baseScale = wide ? 1.0 : clamp((visW * 0.17) / 1.0, 0.45, 0.68);
       baseRig.set(wide ? visW * 0.2 : 0, wide ? -0.35 : 1.5, 0);
     } else if (variant === "stage") {
-      baseScale = clamp((visW * 1.2) / 8.2, 0.5, 1.25);
-      baseRig.set(0, -0.8 * baseScale, 0);
+      // Fit BOTH the width (rangoli, Krishna, the food heap) and the height (the lifted hill, the rising coins), so every
+      // scene is whole in a tall phone, a short phone or a wide laptop box. The content spans y -0.5 .. 5.4.
+      const visH = 2 * camera.position.z * Math.tan((camera.fov * Math.PI) / 360);
+      baseScale = clamp(Math.min((visW * 1.08) / 7.6, (visH * 0.92) / 5.9), 0.4, 1.25);
+      baseRig.set(0, 0.95 - 2.45 * baseScale, 0);
     } else {
       baseScale = wide ? 1.0 : clamp(visW * 0.2, 0.5, 0.8);
       baseRig.set(wide ? visW * 0.18 : 0, wide ? -1.5 : -0.2, 0);
@@ -352,7 +355,7 @@ function build(THREE: THREE_, RoomEnvironment: new () => import("three").Scene) 
       wave: lerp(a.wave, n.wave, b) * (1 - dash),
       lift: lerp(a.lift, n.lift, b),
       look: 0,
-      scale: 0.95,
+      scale: 0.88,
       sitX,
     };
   };
@@ -427,8 +430,8 @@ function build(THREE: THREE_, RoomEnvironment: new () => import("three").Scene) 
       // hold the Govardhan hill above His raised left hand; the Annakut heap sits on the ground beside Him
       const up = smooth(w3, 0.1, 0.9);
       govardhan.group.position.set(0, 0, 0);
-      govardhan.hillGroup.position.set(k.x + 0.15, lerp(5.2, 3.45, up), 0.2);
-      govardhan.hillGroup.scale.setScalar(0.72);
+      govardhan.hillGroup.position.set(k.x + 0.1, lerp(5.6, 3.55, up), 0.2);
+      govardhan.hillGroup.scale.setScalar(0.95);
       govardhan.foodGroup.position.set(k.x + 3.1, 0, 0.9);
       govardhan.foodGroup.scale.setScalar(1.25);
     } else {
@@ -471,7 +474,10 @@ function build(THREE: THREE_, RoomEnvironment: new () => import("three").Scene) 
     last = now;
     update((now - clock0) / 1000, dt);
     renderer.render(scene, camera);
-    if (canvas.style.opacity !== "1") canvas.style.opacity = "1";
+    if (canvas.style.opacity !== "1") {
+      canvas.style.opacity = "1";
+      host?.dispatchEvent(new CustomEvent("scene-ready", { bubbles: true }));
+    }
     if (!scrolling && now - clock0 > 1200) {
       sampleSum += dt;
       sampleFrames++;
@@ -529,6 +535,7 @@ function build(THREE: THREE_, RoomEnvironment: new () => import("three").Scene) 
       update(3, 0.016);
       renderer.render(scene, camera);
       canvas.style.opacity = "1";
+      host?.dispatchEvent(new CustomEvent("scene-ready", { bubbles: true }));
     }
     sync();
   };
