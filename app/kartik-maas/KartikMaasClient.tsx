@@ -633,14 +633,14 @@ export default function KartikMaasClient() {
               className="relative mx-auto block max-w-6xl overflow-hidden rounded-3xl bg-vk-900 shadow-lift"
               aria-label="Offer your seva this Kartik"
             >
-              <div className="relative aspect-[4/5] overflow-hidden sm:aspect-[1920/730]">
+              <div className="relative aspect-[962/1635] overflow-hidden sm:aspect-[1920/730]">
                 <Image
                   src={MOBILE_BANNER}
                   alt="Kartik Maas celebrations at ISKCON Gambheeram Visakhapatnam"
                   fill
                   sizes="100vw"
                   quality={72}
-                  className="object-cover object-top sm:hidden"
+                  className="object-contain sm:hidden"
                 />
                 <Image
                   src={DESKTOP_BANNER}
@@ -648,7 +648,7 @@ export default function KartikMaasClient() {
                   fill
                   sizes="(min-width: 1152px) 1152px, 100vw"
                   quality={78}
-                  className="hidden object-cover object-top sm:block"
+                  className="hidden object-contain sm:block"
                 />
               </div>
             </a>
