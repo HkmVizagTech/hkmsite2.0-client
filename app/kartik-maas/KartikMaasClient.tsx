@@ -12,6 +12,7 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import LampTracker, { useKartikDay } from "@/components/kartik/LampTracker";
+import RopeRail from "@/components/kartik/RopeRail";
 import { useKartikMotion } from "@/components/kartik/useKartikMotion";
 import {
   CalendarDays,
@@ -197,6 +198,25 @@ const SHLOKA = {
     "I offer my obeisances to Lord Damodar, whose form is eternal, full of knowledge and bliss, whose earrings swing as He shines in Gokula.",
   source: "Damodarashtakam",
 };
+
+// The Damodar lila (Srimad Bhagavatam 10.9), told in three beats.
+const LILA = [
+  {
+    n: "1",
+    title: "The butter pot",
+    text: "Little Krishna broke the pot of curd and butter and ran. Mother Yashoda, stick in hand, chased the Lord whom yogis cannot catch.",
+  },
+  {
+    n: "2",
+    title: "A rope two fingers short",
+    text: "She caught Him and tried to bind Him to the wooden mortar. Whatever length she added, the rope fell two fingers short.",
+  },
+  {
+    n: "3",
+    title: "Bound by love",
+    text: "When Krishna saw His mother tired and sweating, He allowed Himself to be bound. That is why He is called Damodara, the one bound at the belly by a rope.",
+  },
+];
 
 const REASONS = [
   {
@@ -389,11 +409,12 @@ export default function KartikMaasClient() {
 
   return (
     <PageLayout>
+      <RopeRail />
       <div ref={rootRef} className="overflow-x-hidden bg-white pt-[var(--header-h)]">
         {/* ══ HERO — three.js diya + lotus, GSAP intro ═════════════════════ */}
         <section className="relative isolate overflow-hidden bg-[radial-gradient(120%_90%_at_72%_18%,#1d3290_0%,#0e1a52_42%,#070d27_100%)] text-white">
           <KartikScene variant="hero" state={sceneState} className="z-0" />
-          <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[62%] bg-gradient-to-t from-[#070d27] via-[#070d27]/80 to-transparent md:h-48 md:via-[#070d27]/70" />
+          <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[62%] bg-gradient-to-t from-[#070d27] via-[#070d27]/80 to-transparent md:h-24 md:via-[#070d27]/60" />
           <div className="vk-container relative z-10 flex min-h-[calc(100svh-var(--header-h))] flex-col justify-end pb-12 pt-[46svh] md:justify-center md:pb-20 md:pt-16">
             <div className="max-w-xl lg:max-w-[40rem]">
               <p data-hero-fade className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-white ring-1 ring-white/15 md:text-xs">
@@ -636,6 +657,32 @@ export default function KartikMaasClient() {
                 </p>
               </div>
             </Reveal>
+          </div>
+        </section>
+
+        {/* ══ THE DAMODAR LILA ═════════════════════════════════════════════ */}
+        <section className="vk-section bg-gradient-to-b from-white to-vk-50/60">
+          <div className="vk-container">
+            <div data-reveal>
+              <SectionHeading
+                align="center"
+                eyebrow="The Damodar Lila"
+                title="Why He is Called Damodara"
+                subtitle="The pastime that gives this month its name, in three moments."
+              />
+            </div>
+            <div data-group className="relative mx-auto grid max-w-6xl gap-5 md:grid-cols-3">
+              <div aria-hidden className="absolute left-[16%] right-[16%] top-[46px] hidden border-t-2 border-dashed border-[hsl(var(--gold)/0.7)] md:block" />
+              {LILA.map((step) => (
+                <div key={step.n} data-item className="vk-card relative p-6 pt-8 text-center">
+                  <span className="absolute -top-5 left-1/2 flex h-11 w-11 -translate-x-1/2 items-center justify-center rounded-full bg-gradient-gold font-heading text-lg font-extrabold text-ink shadow-gold">
+                    {step.n}
+                  </span>
+                  <h3 className="mt-2 text-lg font-bold text-ink">{step.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{step.text}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 

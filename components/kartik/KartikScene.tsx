@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createDamodar } from "./damodarFigure";
 
 /**
  * Three.js scene for the Kartik Maas page: a brass diya with a flickering flame resting on a blooming lotus,
@@ -170,6 +171,9 @@ function build(
   const rim = new THREE.DirectionalLight(0x7f9bef, 1.1);
   rim.position.set(-4, 3, 2);
   scene.add(rim);
+  const key = new THREE.DirectionalLight(0xfff0d8, 1.5);
+  key.position.set(-2.5, 4, 6);
+  scene.add(key);
   const flameLight = new THREE.PointLight(0xffa447, 0, 16, 1.6);
   scene.add(flameLight);
 
@@ -344,6 +348,28 @@ function build(
   lotus.position.y = -0.18;
   rig.add(lotus);
 
+  // ── Bala Krishna tied to the mortar (hero). The diya + lotus above are the finale's centrepiece. ──
+  const figure = createDamodar(THREE);
+  figure.group.position.set(0.55, 0, 0);
+  rig.add(figure.group);
+  const shadowTex = track(
+    canvasTexture(THREE, 128, 128, (ctx, w, h) => {
+      const g = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2);
+      g.addColorStop(0, "rgba(0,0,0,0.55)");
+      g.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, w, h);
+    })
+  );
+  const shadow = new THREE.Mesh(
+    track(new THREE.PlaneGeometry(5.2, 3.2)),
+    track(new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false, toneMapped: false }))
+  );
+  shadow.rotation.x = -Math.PI / 2;
+  shadow.position.set(-0.3, 0.01, 0.1);
+  rig.add(shadow);
+  disposables.push({ dispose: figure.dispose });
+
   // ── Mandala + halo ────────────────────────────────────────────────
   const mandalaMat = (opacity: number) =>
     track(new THREE.MeshBasicMaterial({ map: mandalaTex, transparent: true, opacity, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }));
@@ -437,6 +463,28 @@ function build(
   stars.visible = true;
   scene.add(stars);
 
+  // Which centrepiece is shown follows the section the canvas is in.
+  const applyVariant = () => {
+    key.visible = isHero;
+    figure.group.visible = isHero;
+    shadow.visible = isHero;
+    lotus.visible = !isHero;
+    if (isHero) {
+      diya.position.set(-0.55, 0.08, 1.95);
+      diya.scale.setScalar(0.3);
+      mandalaA.position.set(0.3, 1.6, -1.9);
+      mandalaB.position.set(0.3, 1.6, -1.7);
+      halo.position.set(0.3, 1.6, -1.2);
+    } else {
+      diya.position.set(0, 0.55, 0);
+      diya.scale.setScalar(1);
+      mandalaA.position.set(0, 1.3, -1.6);
+      mandalaB.position.set(0, 1.3, -1.4);
+      halo.position.set(0, 1.3, -0.9);
+    }
+  };
+  applyVariant();
+
   // ── Layout ────────────────────────────────────────────────────────
   let hostTop = 0;
   let hostH = 1;
@@ -460,12 +508,12 @@ function build(
     const visW = 2 * camera.position.z * Math.tan((camera.fov * Math.PI) / 360) * aspect;
     if (isHero) {
       if (aspect > 1.15) {
-        baseScale = 1;
-        baseRig.set(visW * 0.22, -1.15, 0);
+        baseScale = 1.22;
+        baseRig.set(visW * 0.215, -1.55, 0);
       } else {
-        // Portrait phone: the diya sits in the upper part, the copy is below it.
-        baseScale = clamp(visW * 0.215, 0.5, 0.78);
-        baseRig.set(0, 3.0 - 1.45 * baseScale - 0.95, 0);
+        // Portrait phone: the figure sits in the upper part, the copy is below it.
+        baseScale = clamp(visW * 0.19, 0.42, 0.66);
+        baseRig.set(0.2 * baseScale, 3.05 - 1.6 * baseScale - 0.95, 0);
       }
     } else {
       baseScale = aspect > 1.15 ? 0.9 : clamp(visW * 0.3, 0.55, 0.85);
@@ -499,6 +547,7 @@ function build(
 
   // ── Frame ─────────────────────────────────────────────────────────
   const tmpV = new THREE.Vector3();
+  const flameWorld = new THREE.Vector3();
   const update = (t: number, dt: number) => {
     const intro = clamp(state.intro, 0, 1);
     const ignite = easeOutCubic(clamp((intro - 0.35) / 0.65, 0, 1));
@@ -511,8 +560,9 @@ function build(
     flameCore.position.set(flameBase.x + sway, flameBase.y + 0.1 * ignite, flameBase.z);
     flameGlow.scale.setScalar(3.1 * (0.96 + (f1 - 1) * 0.8) * ignite);
     (flameGlow.material as import("three").SpriteMaterial).opacity = 0.55 * ignite;
-    flameLight.position.set(rig.position.x + sway, rig.position.y + 1.6 * rig.scale.y, 1.2);
-    flameLight.intensity = (isHero ? 30 : 24) * ignite * (0.92 + (f1 - 1) * 1.6);
+    flameCore.getWorldPosition(flameWorld);
+    flameLight.position.set(flameWorld.x, flameWorld.y, flameWorld.z + 1.2);
+    flameLight.intensity = (isHero ? 6 : 24) * ignite * (0.92 + (f1 - 1) * 1.6);
     oilMat.emissiveIntensity = 0.7 * ignite;
 
     // lotus bloom (matrices are only rewritten while it is still opening)
@@ -547,6 +597,12 @@ function build(
       if (dd[i].y < -3.5) resetPetal(dd[i], false);
     }
     writePetals(t);
+
+    // Krishna: pulls harder at the rope the further the visitor scrolls, and turns toward the pointer
+    if (isHero) {
+      const ps = clamp((window.scrollY - hostTop) / hostH, 0, 1);
+      figure.update(t, clamp(0.5 + ps * 0.9, 0, 1), coarse ? Math.sin(t * 0.4) * 0.5 : pointer.x);
+    }
 
     // rig: scroll lift + pointer parallax (touch screens get a slow sway instead)
     const p = clamp((window.scrollY - hostTop) / hostH, 0, 1);
@@ -625,6 +681,7 @@ function build(
     if (canvas.parentElement !== host) host.appendChild(canvas);
     stars.visible = isHero && quality === "high";
     flameLight.intensity = 0;
+    applyVariant();
     layout();
     if (reduceMotion) {
       state.intro = 1;
