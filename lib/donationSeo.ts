@@ -305,6 +305,60 @@ export const DONATION_SEO = {
         "Damodar (Kartik) month at ISKCON Gambheeram, Visakhapatnam — daily lamp offering, Damodarashtakam and Annadana.",
     },
   },
+  "vaikuntha-ekadashi": {
+    path: "/vaikuntha-ekadashi",
+    title: "Vaikuntha Ekadashi Seva Donation",
+    description:
+      "Offer Annadana, Gau, Pushpalankara and Vastrabharana seva on Vaikuntha (Moksada) Ekadashi, 20 December 2026, at ISKCON Gambheeram Visakhapatnam. 80G tax benefit.",
+    keywords: ["vaikuntha ekadashi 2026 Visakhapatnam", "moksada ekadashi seva", "vaikuntha ekadashi donation", "ekadashi seva ISKCON Vizag", ...LOCAL],
+    ogImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793102162450-1793102161730-vaikunthaekadashilandscape1920x700.png",
+    breadcrumb: "Vaikuntha Ekadashi",
+    h1: "Vaikuntha Ekadashi Seva — Moksada Ekadashi 2026 in Visakhapatnam",
+    intro: [
+      "Vaikuntha (Moksada) Ekadashi falls on 20 December 2026. Offer a seva at Hare Krishna Vaikuntham, Gambheeram, with sankalpa taken in your name.",
+      BENEFIT,
+    ],
+    sevas: [
+      { name: "Annadana Seva", amounts: [1100, 2100, 3100, 5555, 9000, 11000], note: "Eligible for 80G" },
+      { name: "Gau Seva", amounts: [1500, 2500, 3500, 5500, 9500, 11500], note: "Eligible for 80G" },
+      { name: "Pushpalankara Seva", amounts: [1100, 2100, 3100, 5100, 9000, 11111] },
+      { name: "Vastrabharana Seva", amounts: [1100, 3100, 5100, 9999, 15000, 21000] },
+      { name: "Brick Seva", amounts: [1500, 3000, 4500, 6000, 7500, 15000] },
+      { name: "Square Foot Seva", amounts: [2100, 4200, 6300, 10500, 14700, 21000] },
+    ],
+    event: {
+      name: "Vaikuntha Ekadashi 2026",
+      startDate: "2026-12-20",
+      description: "Vaikuntha (Moksada) Ekadashi at ISKCON Gambheeram, Visakhapatnam, observed with Gita Jayanti.",
+    },
+  },
+  diwali: {
+    path: "/diwali",
+    title: "Diwali Seva Donation",
+    description:
+      "Light a lamp this Diwali with Annadana, Gau, Pushpalankara, Vastrabharana, Brick and Square Foot seva at ISKCON Gambheeram Visakhapatnam. Diwali is on 9 November 2026. 80G tax benefit.",
+    keywords: ["diwali seva Visakhapatnam", "deepavali donation ISKCON Vizag", "diwali 2026 temple seva", "dipavali seva", ...LOCAL],
+    ogImage: "/assets/gallery-aarti.jpg",
+    breadcrumb: "Diwali",
+    h1: "Diwali Seva — Dipavali 2026 in Visakhapatnam",
+    intro: [
+      "Diwali (Dipavali) falls on 9 November 2026, with the five days of the festival running from Dhanteras on 8 November to Bhratri Dvitiya on 11 November. Offer a seva at Hare Krishna Vaikuntham, Gambheeram.",
+      BENEFIT,
+    ],
+    sevas: [
+      { name: "Annadana Seva", amounts: [1100, 2100, 3100, 5555, 9000, 11000], note: "Eligible for 80G" },
+      { name: "Gau Seva", amounts: [1500, 2500, 3500, 5500, 9500, 11500], note: "Eligible for 80G" },
+      { name: "Pushpalankara Seva", amounts: [1100, 2100, 3100, 5100, 9000, 11111] },
+      { name: "Vastrabharana Seva", amounts: [1100, 3100, 5100, 9999, 15000, 21000] },
+      { name: "Brick Seva", amounts: [1500, 3000, 4500, 6000, 7500, 15000] },
+      { name: "Square Foot Seva", amounts: [2100, 4200, 6300, 10500, 14700, 21000] },
+    ],
+    event: {
+      name: "Diwali 2026",
+      startDate: "2026-11-09",
+      description: "Diwali (Dipavali) at ISKCON Gambheeram, Visakhapatnam, with the lighting of lamps and festival sevas.",
+    },
+  },
   "special-occasion": {
     path: "/special-occasion",
     title: "Special Occasion Seva",
