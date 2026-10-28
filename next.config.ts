@@ -103,6 +103,10 @@ const nextConfig: NextConfig = {
       { source: "/donate/brick-seva", destination: "/brick-seva-campaign", permanent: true },
       { source: "/donate/gita-daan-seva", destination: "/gita-daan-seva", permanent: true },
       { source: "/donate/vastra-seva", destination: "/alankara-vastra-seva", permanent: true },
+      // Old addresses that Google still crawls (they were 404 in Search Console).
+      { source: "/terms", destination: "/terms-and-conditions", permanent: true },
+      { source: "/privacy", destination: "/privacy-policy", permanent: true },
+      { source: "/festivals", destination: "/festival", permanent: true },
     ];
   },
 };
