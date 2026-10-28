@@ -283,8 +283,8 @@ export const DONATION_SEO = {
     path: "/kartik-maas",
     title: "Kartik Maas Seva Donation",
     description:
-      "Offer Annadana, Gau Seva, Pushpalankara and Vastrabharana seva for Kartik Maas (Damodar month) 2026 at ISKCON Gambheeram Visakhapatnam. 80G tax benefit.",
-    keywords: ["damodar month seva Visakhapatnam", "kartika masam seva ISKCON Vizag", "damodar masa 2026", "damodarashtakam Visakhapatnam", ...LOCAL],
+      "Offer Deep Daan, Annadana, Gau Seva, Pushpalankara, Vaishnav Bhojan, Brick and Square Foot seva for Kartik Maas (Damodar month) 2026 at ISKCON Gambheeram Visakhapatnam. 80G tax benefit.",
+    keywords: ["damodar month seva Visakhapatnam", "deep daan Visakhapatnam", "deepa daan Kartik Maas Vizag", "108 deep daan", "vaishnav bhojan seva", "kartika masam seva ISKCON Vizag", "damodar masa 2026", "damodarashtakam Visakhapatnam", ...LOCAL],
     ogImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1792847552701-1792847546420-DamodaraMonthDesktop1920x730.png",
     breadcrumb: "Kartik Maas",
     h1: "Kartik Maas Seva — Damodar Month 2026 in Visakhapatnam",
@@ -296,13 +296,18 @@ export const DONATION_SEO = {
       { name: "Annadana Seva", amounts: [1100, 2100, 3100, 5555, 9000, 11000], note: "Eligible for 80G" },
       { name: "Gau Seva", amounts: [1500, 2500, 3500, 5500, 9500, 11500], note: "Eligible for 80G" },
       { name: "Pushpalankara Seva", amounts: [1100, 2100, 3100, 5100, 9000, 11111] },
-      { name: "Vastrabharana Seva", amounts: [1100, 3100, 5100, 9999, 15000, 21000] },
+      { name: "Deep Daan for 1 Month", amounts: [1100, 2100, 3100, 5555, 9000, 11000], note: "A lamp offered daily through Damodar month" },
+      { name: "108 Deep Daan", amounts: [1100, 2100, 3100, 5555, 9000, 11000] },
+      { name: "Vaishnav Bhojan Seva", amounts: [1100, 2100, 3100, 5555, 9000, 11000] },
+      { name: "Brick Seva", amounts: [1500, 3000, 4500, 6000, 7500, 15000], note: "A brick of the Vaikuntham temple under construction" },
+      { name: "Square Foot Seva", amounts: [2100, 4200, 6300, 10500, 14700, 21000], note: "A square foot of the Vaikuntham temple under construction" },
     ],
     event: {
       name: "Kartik Maas 2026",
       startDate: "2026-10-26",
+      endDate: "2026-11-24",
       description:
-        "Damodar (Kartik) month at ISKCON Gambheeram, Visakhapatnam — daily lamp offering, Damodarashtakam and Annadana.",
+        "Damodar (Kartik) month at ISKCON Gambheeram, Visakhapatnam — daily lamp offering (Deep Daan), Damodarashtakam, Annadana and Vaishnav Bhojan.",
     },
   },
   "vaikuntha-ekadashi": {
