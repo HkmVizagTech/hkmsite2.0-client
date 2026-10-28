@@ -1312,8 +1312,23 @@ html[lang="te"] body {
 }
 .fs-flame { transform-origin: 50% 90%; transform-box: fill-box; animation: fs-flicker 2s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .fs-flame { animation: none; } }
-@keyframes fs-fall { 0% { transform: translate3d(0, -10px, 0) rotate(0deg); opacity: 0; } 10% { opacity: 0.75; } 100% { transform: translate3d(40px, 105vh, 0) rotate(260deg); opacity: 0; } }
+@keyframes fs-fall { 0% { transform: translate3d(0, -10px, 0) rotate(0deg); opacity: 0; } 10% { opacity: 0.85; } 35% { transform: translate3d(28px, 35vh, 0) rotate(110deg); } 65% { transform: translate3d(-18px, 70vh, 0) rotate(210deg); } 100% { transform: translate3d(30px, 105vh, 0) rotate(330deg); opacity: 0; } }
 .fs-petal { animation: fs-fall linear infinite; will-change: transform; }
 @keyframes fs-turn { to { transform: rotate(360deg); } }
 .fs-turn { animation: fs-turn 120s linear infinite; }
 @media (prefers-reduced-motion: reduce) { .fs-petal, .fs-turn { animation: none; } .fs-petal { display: none; } }
+
+/* Premium festival cards: slow gold border sweep + light shimmer */
+.fs-premium-border {
+  background: linear-gradient(120deg, #f6d77f, #b8801f 30%, #fff1b8 50%, #b8801f 70%, #f6d77f);
+  background-size: 250% 250%;
+  animation: fs-border-sweep 6s linear infinite;
+}
+.fs-shimmer {
+  background: linear-gradient(110deg, transparent 35%, rgba(255, 236, 170, 0.14) 50%, transparent 65%);
+  background-size: 250% 100%;
+  animation: fs-shimmer-move 5s ease-in-out infinite;
+}
+@keyframes fs-border-sweep { 0% { background-position: 0% 50%; } 100% { background-position: 250% 50%; } }
+@keyframes fs-shimmer-move { 0% { background-position: 150% 0; } 100% { background-position: -100% 0; } }
+@media (prefers-reduced-motion: reduce) { .fs-premium-border, .fs-shimmer { animation: none; } }

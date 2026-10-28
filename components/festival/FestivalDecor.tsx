@@ -58,15 +58,29 @@ export function OrnamentDivider({ className = "" }: { className?: string }) {
   );
 }
 
-/** A few soft petals drifting down (CSS only). */
-export function PetalFall({ count = 9, className = "" }: { count?: number; className?: string }) {
+const PETAL_COLORS = [
+  "from-amber-200 to-yellow-500",
+  "from-yellow-200 to-amber-400",
+  "from-pink-300 to-orange-200",
+  "from-amber-300 to-orange-400",
+  "from-yellow-100 to-amber-300",
+];
+const PETAL_SIZES = ["h-3 w-2", "h-4 w-2.5", "h-2.5 w-1.5", "h-5 w-3"];
+
+/** Soft petals drifting down, mostly gold with a few marigold and rose ones (CSS only). `gold` = gold petals only. */
+export function PetalFall({ count = 9, className = "", gold = false }: { count?: number; className?: string; gold?: boolean }) {
   return (
     <div aria-hidden className={`pointer-events-none absolute inset-0 overflow-hidden ${className}`}>
       {Array.from({ length: count }, (_, i) => (
         <span
           key={i}
-          className="fs-petal absolute -top-6 block h-3 w-2 rounded-[60%_40%_60%_40%] bg-gradient-to-br from-pink-300 to-orange-200 opacity-70"
-          style={{ left: `${(i * 11 + 6) % 96}%`, animationDelay: `${(i * 1.7) % 9}s`, animationDuration: `${11 + (i % 4) * 2}s` }}
+          className={`fs-petal absolute -top-6 block rounded-[60%_40%_60%_40%] bg-gradient-to-br shadow-[0_0_6px_rgba(255,200,80,0.55)] ${PETAL_SIZES[i % PETAL_SIZES.length]} ${PETAL_COLORS[gold ? i % 2 : i % PETAL_COLORS.length]}`}
+          style={{
+            left: `${(i * 37 + 5) % 97}%`,
+            opacity: 0.55 + (i % 4) * 0.1,
+            animationDelay: `${-((i * 1.9) % 14)}s`,
+            animationDuration: `${9 + (i % 5) * 2.5}s`,
+          }}
         />
       ))}
     </div>
