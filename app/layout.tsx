@@ -48,11 +48,11 @@ export const metadata: Metadata = {
   // Every page title reads "Topic | ISKCON Gambheeram Visakhapatnam";
   // pages pass only their topic (see pageSeo in lib/seo.ts).
   title: {
-    default: "ISKCON Gambheeram Visakhapatnam | Hare Krishna Vaikuntham Temple, Vizag",
+    default: "ISKCON Vizag | ISKCON Gambheeram Visakhapatnam, Hare Krishna Vaikuntham Temple",
     template: TITLE_TEMPLATE,
   },
   description:
-    "ISKCON Gambheeram Visakhapatnam — the Hare Krishna Vaikuntham temple on IIM Road, Vizag. Darshan & aarti timings, prasadam, festivals and seva since 2008.",
+    "ISKCON Vizag at Gambheeram, Visakhapatnam — the Hare Krishna Vaikuntham temple on IIM Road. Darshan & aarti timings, prasadam, festivals and seva since 2008.",
   keywords: siteKeywords,
   // NOTE: no sitewide `alternates.canonical` here on purpose. It was
   // previously set to "/" at this root level, which Next.js's metadata
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
   // multiple pages before this fix. Canonical is now set per-page
   // instead (see app/page.tsx for the homepage's own).
   openGraph: {
-    title: "ISKCON Gambheeram Visakhapatnam | Hare Krishna Vaikuntham Temple, Vizag",
+    title: "ISKCON Vizag | ISKCON Gambheeram Visakhapatnam, Hare Krishna Vaikuntham Temple",
     description: "ISKCON Gambheeram Visakhapatnam — the Hare Krishna Vaikuntham temple in Vizag. Daily darshan, prasadam, festivals and seva since 2008.",
     type: "website",
     locale: "en_IN",
@@ -73,7 +73,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "ISKCON Gambheeram Visakhapatnam | Hare Krishna Vaikuntham Temple, Vizag",
+    title: "ISKCON Vizag | ISKCON Gambheeram Visakhapatnam, Hare Krishna Vaikuntham Temple",
     description: "The Hare Krishna Vaikuntham temple in Visakhapatnam — darshan, kirtan, prasadam and festivals for everyone.",
     images: [DEFAULT_OG_IMAGE],
   },
