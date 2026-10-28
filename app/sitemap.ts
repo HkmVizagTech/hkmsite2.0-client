@@ -26,6 +26,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Festival & occasion seva pages
     { url: `${SITE_URL}/pitru-paksha`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${SITE_URL}/govardhan-puja`, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${SITE_URL}/kartik-maas`, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${SITE_URL}/diwali`, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${SITE_URL}/vaikuntha-ekadashi`, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${SITE_URL}/vijayadashami`, changeFrequency: "weekly", priority: 0.7 },
     { url: `${SITE_URL}/ekadashi`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${SITE_URL}/radhashtami`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE_URL}/chaturmas`, changeFrequency: "monthly", priority: 0.7 },
