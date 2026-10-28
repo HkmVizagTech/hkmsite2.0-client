@@ -15,6 +15,7 @@ import StoryTimeline from "@/components/festival/StoryTimeline";
 import { OrnamentDivider, PetalFall } from "@/components/festival/FestivalDecor";
 import LampTracker, { useKartikDay } from "@/components/kartik/LampTracker";
 import type { Seva } from "@/lib/sevaConfig";
+import { SEVAS as DIWALI_SEVAS, IMPACTS as DIWALI_IMPACTS } from "@/lib/diwali";
 import type { CampaignConfig } from "@/lib/campaignConfig";
 
 // ── Festival constants ───────────────────────────────────────────────
@@ -29,6 +30,45 @@ const MOBILE_BANNER = "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media
 // `category` is sent to the API as the donation `type`, and `title` as
 // `sevaName`, together with festivalSlug "kartik-maas".
 const SEVAS: Seva[] = [
+  {
+    slug: "deep-daan-1-month",
+    title: "Deep Daan for 1 Month",
+    shortTitle: "Deep Daan · 1 Month",
+    image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793155363450-1793155362796-templeshrine1500x1000.png",
+    tagline: "A lamp offered daily through Damodar month",
+    description:
+      "Sponsor a ghee lamp offered to Sri Yashoda Damodara every day of the month, with your sankalpa in your name.",
+    tiers: [
+      { label: "Rs. 1,100", amount: 1100 },
+      { label: "Rs. 2,100", amount: 2100 },
+      { label: "Rs. 3,100", amount: 3100 },
+      { label: "Rs. 5,555", amount: 5555 },
+      { label: "Rs. 9,000", amount: 9000 },
+      { label: "Rs. 11,000", amount: 11000 },
+    ],
+    category: "Kartik Maas",
+    account: "default",
+    icon: "🪔",
+  },
+  {
+    slug: "108-deep-daan",
+    title: "108 Deep Daan",
+    shortTitle: "108 Deep Daan",
+    image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793155977517-1793155976914-108deepskrishnayashodha1500x1000.webp",
+    tagline: "108 lamps offered to the Lord",
+    description: "Sponsor 108 ghee lamps offered to Sri Yashoda Damodara during Damodar month.",
+    tiers: [
+      { label: "Rs. 1,100", amount: 1100 },
+      { label: "Rs. 2,100", amount: 2100 },
+      { label: "Rs. 3,100", amount: 3100 },
+      { label: "Rs. 5,555", amount: 5555 },
+      { label: "Rs. 9,000", amount: 9000 },
+      { label: "Rs. 11,000", amount: 11000 },
+    ],
+    category: "Kartik Maas",
+    account: "default",
+    icon: "🪔",
+  },
   {
     slug: "annadana-seva",
     title: "Annadana Seva",
@@ -90,29 +130,32 @@ const SEVAS: Seva[] = [
     icon: "🌺",
   },
   {
-    slug: "vastrabharana-seva",
-    title: "Vastrabharana Seva",
-    shortTitle: "Vastrabharana",
-    image:
-      "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677419371-1783677418690-DietyPhotos.jpeg",
-    tagline: "Offer new garments and ornaments to the Deities",
-    description:
-      "Sponsor the silk vastra and abharana worn by Sri Sri Radha Madan Mohan during Damodar month.",
+    slug: "vaishnav-bhojan-seva",
+    title: "Vaishnav Bhojan Seva",
+    shortTitle: "Vaishnav Bhojan",
+    image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1790144104776-1790144104666-sadhuBhojan.webp",
+    tagline: "Serve a sanctified meal to Vaishnavas",
+    description: "Serve a sanctified meal to Vaishnavas and saintly persons during Damodar month.",
     tiers: [
       { label: "Rs. 1,100", amount: 1100 },
+      { label: "Rs. 2,100", amount: 2100 },
       { label: "Rs. 3,100", amount: 3100 },
-      { label: "Rs. 5,100", amount: 5100 },
-      { label: "Rs. 9,999", amount: 9999 },
-      { label: "Rs. 15,000", amount: 15000 },
-      { label: "Rs. 21,000", amount: 21000 },
+      { label: "Rs. 5,555", amount: 5555 },
+      { label: "Rs. 9,000", amount: 9000 },
+      { label: "Rs. 11,000", amount: 11000 },
     ],
     category: "Kartik Maas",
     account: "default",
-    icon: "👗",
+    icon: "🍽️",
   },
+  // Brick Seva and Square Foot Seva: same cards, photos and amounts as the Diwali and Vaikuntha Ekadashi pages
+  // (they are the Vaikuntham temple-construction sevas, so they carry the "BRICK" / "SQFT" donation type).
+  ...DIWALI_SEVAS.filter((s) => s.slug === "brick-seva" || s.slug === "square-foot-seva"),
 ];
 
 const IMPACTS: Record<string, Record<number, string>> = {
+  "brick-seva": DIWALI_IMPACTS["brick-seva"],
+  "square-foot-seva": DIWALI_IMPACTS["square-foot-seva"],
   "annadana-seva": {
     1100: "44 meals",
     2100: "84 meals",
@@ -237,7 +280,7 @@ const KARTIK_MAAS_PRIVILEGE_CONFIG: CampaignConfig = {
   pageTitle: "Kartik Maas Seva",
   metaTitle: "Kartik Maas Seva | Hare Krishna Vaikuntham Temple, Visakhapatnam",
   metaDesc:
-    "Offer Annadana, Gau Seva, Pushpalankara and Vastrabharana seva in Damodar (Kartik) month.",
+    "Offer Deep Daan, Annadana, Gau Seva, Pushpalankara and Vaishnav Bhojan seva in Damodar (Kartik) month.",
   ogTitle: "Kartik Maas Seva",
   ogDesc: "Offer your seva to Lord Damodar in the dearest month of the year.",
   ogImage: DESKTOP_BANNER,
@@ -386,7 +429,7 @@ export default function KartikMaasClient() {
 
         {/* ══ SEVAS ══════════════════════════════════════════════════════ */}
         <section id="offer-seva" className="vk-section relative scroll-mt-20 overflow-hidden bg-gradient-to-b from-white via-amber-50/50 to-white">
-          <PetalFall count={7} />
+          <PetalFall count={20} />
           <div className="vk-container relative">
             <Reveal>
               <SectionHeading
@@ -396,7 +439,7 @@ export default function KartikMaasClient() {
                 subtitle="Tap an amount to offer that seva. Sankalpa is taken in your name and your receipt reaches you on WhatsApp."
               />
             </Reveal>
-            <FestivalSevaGrid sevas={SEVAS} impacts={IMPACTS} highlightedSlug={highlightedSlug} onSelect={setSelected} />
+            <FestivalSevaGrid featuredStyle="ivory" featuredSlugs={["deep-daan-1-month", "108-deep-daan"]} sevas={SEVAS} impacts={IMPACTS} highlightedSlug={highlightedSlug} onSelect={setSelected} />
             <p className="mt-8 text-center text-xs text-muted-foreground">
               Minimum donation Rs. 100 · 80G Tax Exemption available · Secured by Razorpay · Donations go to Hare Krishna Movement India, Visakhapatnam
             </p>
