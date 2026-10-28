@@ -7,9 +7,9 @@
 // readers search with the English word.
 export const seo: Record<string, string> = {
   // ── Home ──
-  "ISKCON Gambheeram Visakhapatnam | Hare Krishna Vaikuntham Temple, Vizag":
+  "ISKCON Vizag | ISKCON Gambheeram Visakhapatnam, Hare Krishna Vaikuntham Temple":
     "ఇస్కాన్ గంభీరం విశాఖపట్నం (ISKCON Vizag) | హరే కృష్ణ వైకుంఠం ఆలయం, వైజాగ్",
-  "ISKCON Gambheeram Visakhapatnam — the Hare Krishna Vaikuntham temple on IIM Road, Vizag. Darshan & aarti timings, prasadam, festivals and seva since 2008.":
+  "ISKCON Vizag at Gambheeram, Visakhapatnam — the Hare Krishna Vaikuntham temple on IIM Road. Darshan & aarti timings, prasadam, festivals and seva since 2008.":
     "ఇస్కాన్ గంభీరం విశాఖపట్నం — వైజాగ్ ఐఐఎం రోడ్‌లోని హరే కృష్ణ వైకుంఠం ఆలయం. దర్శనం, హారతి వేళలు, ప్రసాదం, ఉత్సవాలు, సేవ — 2008 నుండి.",
 
   // ── Visit guide (/iskcon-vizag-temple) ──

@@ -26,9 +26,9 @@ import { localized } from "@/lib/i18n/seo";
 const baseMetadata: Metadata = {
   // Same as the root layout's default; set here so the Telugu home page gets
   // its translated title and description (lib/i18n/seo.ts).
-  title: { absolute: "ISKCON Gambheeram Visakhapatnam | Hare Krishna Vaikuntham Temple, Vizag" },
+  title: { absolute: "ISKCON Vizag | ISKCON Gambheeram Visakhapatnam, Hare Krishna Vaikuntham Temple" },
   description:
-    "ISKCON Gambheeram Visakhapatnam — the Hare Krishna Vaikuntham temple on IIM Road, Vizag. Darshan & aarti timings, prasadam, festivals and seva since 2008.",
+    "ISKCON Vizag at Gambheeram, Visakhapatnam — the Hare Krishna Vaikuntham temple on IIM Road. Darshan & aarti timings, prasadam, festivals and seva since 2008.",
   alternates: { canonical: "/" },
 };
 
