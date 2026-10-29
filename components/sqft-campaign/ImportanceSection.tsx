@@ -5,7 +5,9 @@ import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import useInViewVideo from "@/hooks/useInViewVideo";
 
-const CLOUDINARY_BASE = "https://res.cloudinary.com/ddmzeqpkc/video/upload";
+// The "%2520" is deliberate: the files sit in a folder whose name literally contains "%20", so the folder
+// has to be double-encoded to be found.
+const VIDEO_BASE = "https://pub-f62a54aab54448388c9e16334109aea9.r2.dev/Temple%2520Images";
 
 // Short scriptural glorifications (no Sanskrit) shown as text over the video,
 // mirroring the "Power of Giving" section on the campaigns site.
@@ -13,17 +15,17 @@ const SCRIPTURES = [
   {
     citation: "Garuda Purana",
     text: "One who contributes to building a temple attains heaven and is honored by all.",
-    video: `${CLOUDINARY_BASE}/garuda_purana.mp4`,
+    video: `${VIDEO_BASE}/garuda_purana.mp4`,
   },
   {
     citation: "Vishnu Purana (3.8.27)",
     text: "One who donates towards the construction of a temple is liberated from all sins and attains the heavenly realms.",
-    video: `${CLOUDINARY_BASE}/vishnu_purana.mp4`,
+    video: `${VIDEO_BASE}/vishnu_purana.mp4`,
   },
   {
     citation: "Vamana Purana",
     text: "One can attain the spiritual world (Vaikuntha) by helping construct or renovate a temple.",
-    video: `${CLOUDINARY_BASE}/vamana_purana.mp4`,
+    video: `${VIDEO_BASE}/vamana_purana.mp4`,
   },
 ];
 

@@ -75,7 +75,7 @@ export default function TempleConstructionFeature() {
               </div>
               <div className="relative min-h-[260px] md:min-h-full">
                 <Image
-                  src="https://res.cloudinary.com/ddmzeqpkc/image/upload/f_auto,q_auto/phase_1"
+                  src="https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793266487328-1793266486628-MajesticWhiteandGoldHinduTemple.png"
                   alt={t("Hare Krishna Vaikuntham Temple, Visakhapatnam")}
                   fill
                   sizes="(min-width: 1024px) 460px, 100vw"
