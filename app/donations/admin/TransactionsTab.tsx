@@ -19,6 +19,7 @@ const apiUrl = () => (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "")
 interface Transaction {
   _id: string;
   id: string;
+  serialNo?: number;
   donorName?: string;
   donorEmail?: string;
   donorMobile?: string;
@@ -210,8 +211,8 @@ export default function TransactionsTab() {
             <Card key={txn._id} className="cursor-pointer transition-shadow hover:shadow-md" onClick={() => setSelected(txn)}>
               <CardContent className="flex flex-wrap items-center justify-between gap-3 p-4">
                 <div className="flex min-w-0 items-start gap-3">
-                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-muted-foreground">
-                    {totalCount - (page - 1) * 20 - i}
+                  <span className="mt-0.5 flex h-6 min-w-[2.25rem] shrink-0 items-center justify-center rounded-full bg-muted px-2 text-xs font-semibold text-muted-foreground" title="Permanent donation number">
+                    {txn.serialNo ?? "—"}
                   </span>
                   <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
@@ -254,6 +255,7 @@ export default function TransactionsTab() {
           <DialogHeader><DialogTitle>Transaction Details</DialogTitle></DialogHeader>
           {selected && (
             <div className="space-y-3 text-sm">
+              <Row label="S.No" value={selected.serialNo != null ? String(selected.serialNo) : undefined} />
               <Row label="Donor" value={selected.donorName || "Anonymous"} />
               <Row label="Email" value={selected.donorEmail} />
               <Row label="Mobile" value={selected.donorMobile} />
