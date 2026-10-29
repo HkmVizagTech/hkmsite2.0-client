@@ -88,7 +88,7 @@ export default function ImportanceSection() {
                 loop
                 muted
                 playsInline
-                className="absolute inset-0 h-full w-full scale-150 object-cover transition-transform duration-700 group-hover:scale-[1.6]"
+                className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
               {/* Navy gradient so the overlaid text stays readable */}
               <div className="absolute inset-0 bg-gradient-to-t from-vk-900/90 via-vk-900/45 to-vk-900/5" />

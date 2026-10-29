@@ -79,7 +79,7 @@ export default function TempleConstructionFeature() {
                   alt={t("Hare Krishna Vaikuntham Temple, Visakhapatnam")}
                   fill
                   sizes="(min-width: 1024px) 460px, 100vw"
-                  className="object-cover"
+                  className="object-cover object-[73%_50%]"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-vk-900/40 to-transparent md:bg-gradient-to-r md:from-white/0" />
               </div>
