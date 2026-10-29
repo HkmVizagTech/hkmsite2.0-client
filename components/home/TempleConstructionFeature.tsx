@@ -74,12 +74,14 @@ export default function TempleConstructionFeature() {
                 </div>
               </div>
               <div className="relative min-h-[260px] md:min-h-full">
+                {/* The photo is much wider than this panel, so only a slice shows. The slice is placed to take in the
+                    golden flagpole on the left and the temple's main tower and doorway. */}
                 <Image
                   src="https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793266487328-1793266486628-MajesticWhiteandGoldHinduTemple.png"
                   alt={t("Hare Krishna Vaikuntham Temple, Visakhapatnam")}
                   fill
                   sizes="(min-width: 1024px) 460px, 100vw"
-                  className="object-cover object-[73%_50%]"
+                  className="object-cover object-[42%_50%]"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-vk-900/40 to-transparent md:bg-gradient-to-r md:from-white/0" />
               </div>
