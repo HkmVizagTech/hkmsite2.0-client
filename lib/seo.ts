@@ -18,6 +18,10 @@ export const ORG_ALT_NAMES = [
   "ISKCON Vizag",
   "ISKCON Visakhapatnam",
   "Hare Krishna Temple Visakhapatnam",
+  "Hare Krishna Vaikuntham Visakhapatnam",
+  "Hare Krishna Vaikuntham Vizag",
+  "Hare Krishna Vaikuntham",
+  "HareKrishnaVaikuntham",
 ];
 
 // Broad, location-agnostic + Vizag variants. The <meta keywords> tag is
@@ -34,6 +38,12 @@ export const siteKeywords = [
   "Hare Krishna temple Vizag",
   "Hare Krishna Vaikuntham Cultural Centre",
   "Hare Krishna Vaikuntham Temple",
+  "Hare Krishna Vaikuntham",
+  "Hare Krishna Vaikuntham Vizag",
+  "Hare Krishna Vaikuntham Visakhapatnam",
+  "Hare Krishna Vaikuntham temple Gambheeram",
+  "Hare Krishna Vaikuntham donation",
+  "harekrishnavaikuntham",
   "Krishna temple Visakhapatnam",
   "Hare Krishna",
   "Krishna",
