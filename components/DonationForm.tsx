@@ -1,5 +1,6 @@
 "use client";
 
+import { cleanMobile } from "@/lib/phone";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Check, CheckCircle2, Heart, Loader2, ShieldCheck, User, Phone, Mail } from "lucide-react";
@@ -426,7 +427,7 @@ export default function DonationForm({
                     inputMode="numeric"
                     placeholder="10-digit mobile"
                     value={form.mobile}
-                    onChange={(e) => setForm({ ...form, mobile: e.target.value.replace(/[^\d]/g, "").slice(0, 10) })}
+                    onChange={(e) => setForm({ ...form, mobile: cleanMobile(e.target.value) })}
                     className={inputClass}
                   />
                 </div>
@@ -749,7 +750,7 @@ export default function DonationForm({
               maxLength={10}
               inputMode="numeric"
               value={form.mobile}
-              onChange={(e) => setForm({ ...form, mobile: e.target.value.replace(/[^\d]/g, "").slice(0, 10) })}
+              onChange={(e) => setForm({ ...form, mobile: cleanMobile(e.target.value) })}
               className="vk-input"
               placeholder="10-digit mobile number"
             />

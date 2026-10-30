@@ -1,5 +1,6 @@
 "use client";
 
+import { cleanMobile } from "@/lib/phone";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
@@ -1012,7 +1013,7 @@ export default function JanmashtamiClient({ campaigner }: { campaigner?: Janmash
                 </label>
                 <label className="block">
                   <span className={labelCls}>Mobile Number *</span>
-                  <Input value={form.donorMobile} maxLength={10} onChange={(event) => updateForm({ donorMobile: event.target.value.replace(/\D/g, "") })} placeholder="Your Mobile Number" className={fieldCls} />
+                  <Input value={form.donorMobile} onChange={(event) => updateForm({ donorMobile: cleanMobile(event.target.value) })} placeholder="Your Mobile Number" className={fieldCls} />
                 </label>
                 <label className="block md:col-span-2">
                   <span className={labelCls}>E-Mail ID (optional)</span>

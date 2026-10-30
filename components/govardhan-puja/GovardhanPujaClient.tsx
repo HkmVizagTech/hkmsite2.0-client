@@ -1,5 +1,6 @@
 "use client";
 
+import { cleanMobile } from "@/lib/phone";
 import { FormEvent, useEffect, useState } from "react";
 import { useReducedMotion } from "framer-motion";
 import Image from "next/image";
@@ -1004,7 +1005,7 @@ export default function GovardhanPujaClient() {
                       maxLength={10}
                       onChange={(e) =>
                         updateForm({
-                          donorMobile: e.target.value.replace(/\D/g, ""),
+                          donorMobile: cleanMobile(e.target.value),
                         })
                       }
                       placeholder="Your Mobile Number"

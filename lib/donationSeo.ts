@@ -203,7 +203,7 @@ export const DONATION_SEO = {
     description:
       "Sponsor square feet of the Hare Krishna Vaikuntham Temple of ISKCON Gambheeram Visakhapatnam — ₹2,100 per sq ft. 80G tax benefit.",
     keywords: ["square foot seva", "temple construction donation Visakhapatnam", "Hare Krishna Vaikuntham temple", "donate to build temple Vizag", "mandir nirman seva", ...LOCAL],
-    ogImage: "https://res.cloudinary.com/ddmzeqpkc/image/upload/f_auto,q_auto/phase_1",
+    ogImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793266487328-1793266486628-MajesticWhiteandGoldHinduTemple.png",
     breadcrumb: "Square Foot Seva",
     h1: "Square Foot Seva — Build the Hare Krishna Vaikuntham Temple",
     intro: [SQFT_CAMPAIGN.metaDesc, BENEFIT],

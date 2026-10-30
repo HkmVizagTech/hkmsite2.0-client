@@ -133,7 +133,7 @@ export const SQFT_CAMPAIGN: CampaignConfig = {
   bannerHeight: 773,
   bannerMobileWidth: 964,
   bannerMobileHeight: 1632,
-  aboutImage: "https://res.cloudinary.com/ddmzeqpkc/image/upload/f_auto,q_auto/phase_1",
+  aboutImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793266487328-1793266486628-MajesticWhiteandGoldHinduTemple.png",
   heroTagline: "A fundraising initiative of Hare Krishna Movement Visakhapatnam",
   heroHeading1: "Hare Krishna",
   heroHeading2: "Vaikuntham Temple",

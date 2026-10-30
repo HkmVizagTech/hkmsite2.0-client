@@ -1,5 +1,6 @@
 "use client";
 
+import { cleanMobile } from "@/lib/phone";
 import { FormEvent, Fragment, useEffect, useState, type ReactNode } from "react";
 import { useReducedMotion } from "framer-motion";
 import Image from "next/image";
@@ -1120,7 +1121,7 @@ export default function PitruPakshaClient() {
                       maxLength={10}
                       onChange={(e) =>
                         updateForm({
-                          donorMobile: e.target.value.replace(/\D/g, ""),
+                          donorMobile: cleanMobile(e.target.value),
                         })
                       }
                       placeholder={t("Your Mobile Number")}

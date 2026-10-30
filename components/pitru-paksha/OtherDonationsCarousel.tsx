@@ -33,7 +33,7 @@ const OTHER_DONATIONS: DonationCard[] = [
     tagline: "Be a part of the temple",
     blurb: "Sponsor a square foot of the Vaikuntham temple and leave a permanent offering.",
     image:
-      "https://res.cloudinary.com/ddmzeqpkc/image/upload/f_auto,q_auto/phase_1",
+      "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793266487328-1793266486628-MajesticWhiteandGoldHinduTemple.png",
   },
   {
     href: "/brick-seva-campaign",

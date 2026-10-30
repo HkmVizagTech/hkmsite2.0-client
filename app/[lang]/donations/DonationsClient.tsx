@@ -1,5 +1,6 @@
 "use client";
 
+import { cleanMobile } from "@/lib/phone";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { Building2, Heart, Milk, ShieldCheck, Utensils, X } from "lucide-react";
 import { newEventId, getMetaBrowserData, trackPurchase } from "@/lib/metaPixel";
@@ -704,7 +705,7 @@ export default function DonationsClient({ initialPage = null }: { initialPage?: 
                 </label>
                 <label className="block">
                   <span className={labelCls}>Mobile Number *</span>
-                  <input value={form.donorMobile} maxLength={10} onChange={(event) => updateForm({ donorMobile: event.target.value.replace(/\D/g, "") })} placeholder="Your Mobile Number" className="vk-input" />
+                  <input value={form.donorMobile} onChange={(event) => updateForm({ donorMobile: cleanMobile(event.target.value) })} placeholder="Your Mobile Number" className="vk-input" />
                 </label>
                 <label className="block md:col-span-2">
                   <span className={labelCls}>
