@@ -18,13 +18,14 @@ export const EMERGENCY = {
   heroImage: "/assets/donations-annadana-real.jpg",
 };
 
+// Each tile reads "<meals> / <amount>" (the form prints the label above the rupee amount). Rs. 25 feeds one person.
 const RELIEF_TIERS_FOOD = [
-  { label: "Rs. 500", amount: 500 },
-  { label: "Rs. 1,000", amount: 1000 },
-  { label: "Rs. 2,500", amount: 2500 },
-  { label: "Rs. 5,000", amount: 5000 },
-  { label: "Rs. 10,000", amount: 10000 },
-  { label: "Rs. 25,000", amount: 25000 },
+  { label: "20 meals", amount: 500 },
+  { label: "40 meals", amount: 1000 },
+  { label: "100 meals", amount: 2500 },
+  { label: "200 meals", amount: 5000 },
+  { label: "400 meals", amount: 10000 },
+  { label: "1,000 meals", amount: 25000 },
 ];
 
 // Food only. The title keeps the word "Annadana" on purpose: the server maps a seva name containing it to the
@@ -38,19 +39,9 @@ export const EMERGENCY_SEVAS: Seva[] = [
     tagline: "Hot prasadam, cooked fresh and delivered",
     description: "Sponsor freshly cooked meals packed and carried to families in the affected areas. Rs. 25 feeds one person.",
     tiers: RELIEF_TIERS_FOOD,
+    unit: { price: 25, singular: "meal", plural: "meals" },
     category: "Emergency Relief",
     account: "default",
     icon: "🍛",
   },
 ];
-
-export const EMERGENCY_IMPACTS: Record<string, Record<number, string>> = {
-  "relief-food-packets": {
-    500: "20 meals",
-    1000: "40 meals",
-    2500: "100 meals",
-    5000: "200 meals",
-    10000: "400 meals",
-    25000: "1,000 meals",
-  },
-};
