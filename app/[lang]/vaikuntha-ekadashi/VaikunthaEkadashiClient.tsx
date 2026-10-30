@@ -13,6 +13,7 @@ import OtherDonationsCarousel from "@/components/pitru-paksha/OtherDonationsCaro
 import FestivalSevaGrid, { type SevaSelection } from "@/components/festival/FestivalSevaGrid";
 import FestivalCheckoutModal from "@/components/festival/FestivalCheckoutModal";
 import { OrnamentDivider, PetalFall } from "@/components/festival/FestivalDecor";
+import { Chakra, Clouds, GoldGate } from "@/components/festival/VaikunthaDecor";
 import {
   ABOUT,
   BANK_DETAILS,
@@ -78,7 +79,7 @@ export default function VaikunthaEkadashiClient() {
 
   return (
     <PageLayout>
-      <div className="overflow-x-clip bg-white pt-[var(--header-h)]">
+      <div className="overflow-x-clip bg-[linear-gradient(180deg,#cfe5f6_0%,#e8f3fb_16%,#fff5dc_40%,#e6f1fa_64%,#d3e7f6_100%)] pt-[var(--header-h)]">
         {/* ══ HERO ═══════════════════════════════════════════════════════ */}
         {hasBanner ? (
           <section className="bg-[#0a0d2e]">
@@ -100,7 +101,7 @@ export default function VaikunthaEkadashiClient() {
         )}
 
         {/* ══ FACTS ══════════════════════════════════════════════════════ */}
-        <section className="border-b border-[hsl(var(--gold)/0.35)] bg-gradient-to-r from-amber-50 via-white to-amber-50">
+        <section className="border-b border-[hsl(var(--gold)/0.35)] bg-white/70 backdrop-blur-sm">
           <dl className="vk-container grid grid-cols-2 gap-x-6 gap-y-5 py-5 md:grid-cols-4 md:py-6">
             {FACTS.map((f, i) => {
               const Icon = FACT_ICONS[i];
@@ -120,10 +121,13 @@ export default function VaikunthaEkadashiClient() {
         </section>
 
         {/* ══ SEVAS ══════════════════════════════════════════════════════ */}
-        <section id="offer-seva" className="vk-section relative scroll-mt-20 overflow-hidden bg-gradient-to-b from-white via-amber-50/50 to-white">
-          <PetalFall count={7} />
+        <section id="offer-seva" className="vk-section relative scroll-mt-20 overflow-hidden">
+          <Clouds />
+          <div aria-hidden className="vkd-rays pointer-events-none absolute inset-x-0 top-0 h-[28rem]" />
+          <PetalFall count={9} gold />
           <div className="vk-container relative">
             <Reveal>
+              <GoldGate className="mb-3" />
               <SectionHeading
                 align="center"
                 eyebrow={t("Choose Your Offering")}
@@ -131,7 +135,7 @@ export default function VaikunthaEkadashiClient() {
                 subtitle={t("Tap an amount to offer that seva. Sankalpa is taken in your name and your receipt reaches you on WhatsApp.")}
               />
             </Reveal>
-            <FestivalSevaGrid sevas={SEVAS} impacts={IMPACTS} highlightedSlug={highlightedSlug} onSelect={setSelected} />
+            <FestivalSevaGrid featuredStyle="heaven" featuredBadge={false} featuredSlugs={SEVAS.map((x) => x.slug)} sevas={SEVAS} impacts={IMPACTS} highlightedSlug={highlightedSlug} onSelect={setSelected} />
             <p className="mt-8 text-center text-xs text-muted-foreground">
               {t("Minimum donation Rs. 100 · 80G Tax Exemption available · Secured by Razorpay · Donations go to Hare Krishna Movement India, Visakhapatnam")}
             </p>
@@ -142,8 +146,9 @@ export default function VaikunthaEkadashiClient() {
         <OrnamentDivider className="my-2" />
 
         {/* ══ ABOUT ══════════════════════════════════════════════════════ */}
-        <section id="about" className="vk-section scroll-mt-20">
-          <div className="vk-container">
+        <section id="about" className="vk-section relative scroll-mt-20 overflow-hidden">
+          <Chakra className="absolute -right-36 -top-10 h-72 w-72 opacity-70 md:-right-24 md:h-[28rem] md:w-[28rem]" />
+          <div className="vk-container relative">
             <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
               <Reveal>
                 <span className="vk-pill-soft">{t("About the day")}</span>
@@ -158,7 +163,7 @@ export default function VaikunthaEkadashiClient() {
                 </button>
               </Reveal>
               <Reveal delay={0.08}>
-                <figure className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-50 to-white p-7 shadow-lift ring-1 ring-[hsl(var(--gold)/0.4)] md:p-9">
+                <figure className="relative overflow-hidden rounded-3xl bg-white/90 p-7 shadow-lift ring-1 ring-[hsl(var(--gold)/0.5)] md:p-9">
                   <Sparkles className="h-6 w-6 text-[hsl(var(--gold-deep))]" />
                   <blockquote className="mt-5 space-y-1 font-serif-display text-lg italic leading-8 text-vk-800 md:text-xl">
                     {SHLOKA.sanskrit.map((line) => (
@@ -174,14 +179,14 @@ export default function VaikunthaEkadashiClient() {
         </section>
 
         {/* ══ HOW THE DAY IS OBSERVED ════════════════════════════════════ */}
-        <section className="vk-section vk-band">
+        <section className="vk-section bg-white/45">
           <div className="vk-container">
             <Reveal>
               <SectionHeading align="center" eyebrow={t("How the day is observed")} title={t("Four ways to keep Vaikuntha Ekadashi")} />
             </Reveal>
             <div className="mx-auto grid max-w-6xl gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {OBSERVANCE.map((o, i) => (
-                <Reveal key={o.n} delay={i * 0.05} className="vk-card relative h-full overflow-hidden p-6">
+                <Reveal key={o.n} delay={i * 0.05} className="vk-card relative h-full overflow-hidden border-t-4 border-t-[hsl(var(--gold)/0.75)] p-6">
                   <span aria-hidden className="font-heading text-5xl font-extrabold leading-none text-vk-100">
                     {o.n}
                   </span>
@@ -194,7 +199,7 @@ export default function VaikunthaEkadashiClient() {
         </section>
 
         {/* ══ WHY GIVE ═══════════════════════════════════════════════════ */}
-        <section className="relative overflow-hidden bg-gradient-to-b from-amber-50 to-white py-14 md:py-20">
+        <section className="relative overflow-hidden py-14 md:py-20">
           <div className="vk-container">
             <Reveal className="mx-auto max-w-2xl text-center">
               <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[hsl(var(--gold-deep))] md:text-xs">{t("Why offer a seva today")}</p>

@@ -1332,3 +1332,11 @@ html[lang="te"] body {
 @keyframes fs-border-sweep { 0% { background-position: 0% 50%; } 100% { background-position: 250% 50%; } }
 @keyframes fs-shimmer-move { 0% { background-position: 150% 0; } 100% { background-position: -100% 0; } }
 @media (prefers-reduced-motion: reduce) { .fs-premium-border, .fs-shimmer { animation: none; } }
+
+/* Vaikuntha Ekadashi: heavenly sky */
+.vkd-cloud { animation-name: vkd-drift; animation-timing-function: ease-in-out; animation-iteration-count: infinite; animation-direction: alternate; will-change: transform; }
+@keyframes vkd-drift { from { transform: translate3d(-50px, 0, 0); } to { transform: translate3d(70px, 0, 0); } }
+.vkd-rays { background: radial-gradient(ellipse 60% 70% at 50% 0%, rgba(255, 222, 140, 0.6), rgba(255, 236, 190, 0.25) 45%, transparent 72%); }
+.vkd-card-3d { transform-style: preserve-3d; transition: transform 0.4s ease, box-shadow 0.4s ease; }
+@media (hover: hover) { .vkd-card-3d:hover { transform: perspective(1000px) rotateX(2.5deg) translateY(-8px); } }
+@media (prefers-reduced-motion: reduce) { .vkd-cloud { animation: none; } .vkd-card-3d:hover { transform: none; } }
