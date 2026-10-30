@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Heart, Sparkles } from "lucide-react";
+import { ArrowUpRight, Sparkles } from "lucide-react";
 import { sevas, getSevaHref } from "@/lib/sevaConfig";
 import { FESTIVAL_PAGE } from "@/components/FestivalDonationsSection";
 import SectionHeading from "@/components/site/SectionHeading";
@@ -91,14 +91,14 @@ export default function SevaTiles() {
                 )}
                 <div className="vk-tile-caption">
                   <h3 className="text-[15px] font-bold leading-tight text-white md:text-lg">{t(tile.title)}</h3>
-                  <div className="mt-1.5 flex items-center justify-between gap-2">
+                  <div className="mt-1.5 flex items-end justify-between gap-2">
                     {tile.from ? (
                       <p className="text-xs text-white/80 md:text-[13px]">{t("From ₹{amount}", { amount: inr(tile.from) })}</p>
                     ) : (
                       <span />
                     )}
-                    <span className="inline-flex translate-y-1 items-center gap-1 rounded-full bg-[hsl(var(--gold))] px-2.5 py-1 text-[11px] font-bold text-ink opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                      <Heart className="h-3 w-3 fill-current" /> {t("Donate")}
+                    <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur transition-colors group-hover:bg-white group-hover:text-vk-800 md:h-9 md:w-9">
+                      <ArrowUpRight className="h-4 w-4" />
                     </span>
                   </div>
                 </div>

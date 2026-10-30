@@ -1340,3 +1340,11 @@ html[lang="te"] body {
 .vkd-card-3d { transform-style: preserve-3d; transition: transform 0.4s ease, box-shadow 0.4s ease; }
 @media (hover: hover) { .vkd-card-3d:hover { transform: perspective(1000px) rotateX(2.5deg) translateY(-8px); } }
 @media (prefers-reduced-motion: reduce) { .vkd-cloud { animation: none; } .vkd-card-3d:hover { transform: none; } }
+
+/* Home page: one soft sky-to-ivory wash behind all sections, so it feels like one page (blue and gold, light) */
+.home-theme { background-image: linear-gradient(180deg, #ffffff 0%, #F3F7FF 18%, #FFFBEF 42%, #F3F7FF 66%, #FFFBEF 88%, #ffffff 100%); }
+.home-theme .vk-band { background-image: linear-gradient(180deg, rgba(255,255,255,.55), rgba(238,242,255,.5)); }
+
+/* Home: a short gold rule under each section title, for a finished look */
+.home-theme .vk-h2::after { content: ""; display: block; width: 3.25rem; height: 3px; margin-top: .7rem; border-radius: 9999px; background: linear-gradient(90deg, hsl(var(--gold)), hsl(var(--gold) / .15)); }
+.home-theme .text-center .vk-h2::after { margin-inline: auto; background: linear-gradient(90deg, hsl(var(--gold) / .15), hsl(var(--gold)), hsl(var(--gold) / .15)); }
