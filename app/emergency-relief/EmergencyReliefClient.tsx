@@ -110,7 +110,7 @@ export default function EmergencyReliefClient() {
                 align="center"
                 eyebrow="Give Relief"
                 title={EMERGENCY.name}
-                subtitle="Tap an amount to give. Your receipt reaches you on WhatsApp."
+                subtitle="Rs. 25 feeds one person. Tap an amount to give; your receipt reaches you on WhatsApp."
               />
             </Reveal>
             <div className="mx-auto max-w-5xl overflow-hidden rounded-3xl border border-vk-100 bg-white shadow-lift">
