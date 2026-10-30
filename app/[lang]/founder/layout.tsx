@@ -10,7 +10,7 @@ const baseMetadata: Metadata = pageSeo({
     "The life and teachings of His Divine Grace A.C. Bhaktivedanta Swami Srila Prabhupada, founder-acharya of ISKCON, who inspires ISKCON Gambheeram Visakhapatnam.",
   path: "/founder",
   keywords: ["Srila Prabhupada", "founder acharya ISKCON", "A.C. Bhaktivedanta Swami Prabhupada biography", ...siteKeywords],
-  image: "https://res.cloudinary.com/ddmzeqpkc/image/upload/prabhupada_home",
+  image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793324889281-1793324889228-prabhupada-home.avif",
 });
 
 export default function FounderLayout({ children }: { children: ReactNode }) {

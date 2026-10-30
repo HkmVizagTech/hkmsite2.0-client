@@ -85,7 +85,7 @@ export default function FounderPage() {
                 <div aria-hidden className="absolute -inset-3 -z-10 -rotate-3 rounded-[2rem] bg-gradient-to-br from-vk-200/80 via-vk-100/70 to-transparent" />
                 <div className="overflow-hidden rounded-3xl shadow-[0_30px_60px_-28px_rgba(30,58,138,0.55)]">
                   <Image
-                    src="https://res.cloudinary.com/ddmzeqpkc/image/upload/prabhupada_home"
+                    src="https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793324889281-1793324889228-prabhupada-home.avif"
                     alt="Srila Prabhupada"
                     width={400}
                     height={500}
