@@ -10,6 +10,7 @@
  * WhatsApp receipt pipeline as the rest of the site.
  */
 
+import { cleanMobile } from "@/lib/phone";
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -549,7 +550,7 @@ export default function SpecialOccasionClient() {
                         <label htmlFor="so-mobile" className="mb-1.5 block text-[13px] font-semibold text-ink/80">Mobile number <span className="text-red-600">*</span></label>
                         <div className="relative">
                           <Phone className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-vk-400" />
-                          <input id="so-mobile" type="tel" required maxLength={10} inputMode="numeric" placeholder="Mobile number *" value={form.mobile} onChange={(e) => setForm({ ...form, mobile: e.target.value.replace(/[^\d]/g, "").slice(0, 10) })} className="vk-input pl-10" />
+                          <input id="so-mobile" type="tel" required inputMode="numeric" placeholder="Mobile number *" value={form.mobile} onChange={(e) => setForm({ ...form, mobile: cleanMobile(e.target.value) })} className="vk-input pl-10" />
                         </div>
                       </div>
                       <div className="sm:col-span-2">

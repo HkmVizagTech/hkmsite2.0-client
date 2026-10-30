@@ -1,5 +1,6 @@
 "use client";
 
+import { cleanMobile } from "@/lib/phone";
 import type { Dispatch, SetStateAction } from "react";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
@@ -468,7 +469,7 @@ export default function DonationFormSection({
                       inputMode="numeric"
                       placeholder="10-digit mobile"
                       value={form.mobile}
-                      onChange={(e) => setForm({ ...form, mobile: e.target.value.replace(/[^\d]/g, "").slice(0, 10) })}
+                      onChange={(e) => setForm({ ...form, mobile: cleanMobile(e.target.value) })}
                       className={inputClass}
                     />
                   </div>

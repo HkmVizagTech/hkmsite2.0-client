@@ -1,5 +1,6 @@
 "use client";
 
+import { cleanMobile } from "@/lib/phone";
 import PageLayout from "@/components/PageLayout";
 import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
@@ -513,7 +514,7 @@ export default function SubhojanamPage() {
                     <label htmlFor="sj-mobile" className="mb-1.5 block text-[13px] font-semibold text-ink/80">Mobile Number <span className="text-red-600">*</span></label>
                     <div className="relative">
                       <Phone className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-vk-400" />
-                      <input id="sj-mobile" type="tel" required maxLength={10} inputMode="numeric" value={form.mobile} onChange={(e) => setForm((f) => ({ ...f, mobile: e.target.value.replace(/[^\d]/g, "").slice(0, 10) }))} className="vk-input pl-10" placeholder="10-digit Mobile Number" />
+                      <input id="sj-mobile" type="tel" required inputMode="numeric" value={form.mobile} onChange={(e) => setForm((f) => ({ ...f, mobile: cleanMobile(e.target.value) }))} className="vk-input pl-10" placeholder="10-digit Mobile Number" />
                     </div>
                   </div>
                 </div>
