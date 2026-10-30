@@ -1,10 +1,9 @@
 "use client";
 
-import { useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
-import SectionHeading from "@/components/site/SectionHeading";
+import { ArrowUpRight } from "lucide-react";
+import Reveal from "@/components/site/Reveal";
 import { useT } from "@/components/i18n/LocaleProvider";
 
 interface DonationCard {
@@ -18,7 +17,7 @@ interface DonationCard {
 // Curated rail of the temple's other online donation pages. Art is chosen so
 // it crops gracefully in the rounded card frame (banners with baked-in text
 // are avoided here for the same reason as on the seva grid).
-const OTHER_DONATIONS: DonationCard[] = [
+export const OTHER_DONATIONS: DonationCard[] = [
   {
     href: "/alankara-vastra-seva",
     title: "Vastra & Alankara Seva",
@@ -93,83 +92,44 @@ const OTHER_DONATIONS: DonationCard[] = [
   },
 ];
 
-/** "Other Donations" rail — a snap scroller of the temple's other seva pages. */
+/** "Other Donations": a clean grid of the temple's other seva pages (photo on top, name below). Used on every festival and seva page. */
 export default function OtherDonationsCarousel() {
   const t = useT();
-  const scrollerRef = useRef<HTMLDivElement>(null);
-
-  const scrollByCards = (dir: 1 | -1) => {
-    const el = scrollerRef.current;
-    if (!el) return;
-    el.scrollBy({ left: dir * el.clientWidth * 0.85, behavior: "smooth" });
-  };
-
   return (
-    <section className="vk-section bg-white">
+    <section className="vk-section !pb-0">
       <div className="vk-container">
-        <SectionHeading
-          align="center"
-          eyebrow={t("Continue your seva")}
-          title={t("Other Donations")}
-          subtitle={t("Beyond Pitru Paksha, your devotion can bless the temple in many ways — from feeding and cow care to the very stones of the Lord's abode.")}
-        />
-
-        <div
-          ref={scrollerRef}
-          className="vk-scroller -mx-4 px-4 pb-4 md:-mx-6 md:px-6"
-          onKeyDown={(e) => {
-            if (e.key === "ArrowLeft") scrollByCards(-1);
-            if (e.key === "ArrowRight") scrollByCards(1);
-          }}
-        >
+        <Reveal className="mx-auto mb-8 max-w-2xl text-center md:mb-10">
+          <span className="vk-pill mb-3">{t("Continue your seva")}</span>
+          <h2 className="vk-h2">{t("Other Donations")}</h2>
+        </Reveal>
+        <div className="mx-auto grid max-w-5xl grid-cols-2 gap-3 md:gap-5 lg:grid-cols-3">
           {OTHER_DONATIONS.map((d) => (
             <Link
               key={d.href}
               href={d.href}
-              className="vk-card vk-card-hover group flex w-[78%] shrink-0 flex-col overflow-hidden sm:w-[46%] lg:w-[calc(25%-12px)]"
+              className="group flex flex-col overflow-hidden rounded-2xl border border-vk-100 bg-white shadow-[0_18px_40px_-30px_rgba(30,58,138,0.5)] transition-all duration-300 hover:-translate-y-1 hover:border-[hsl(var(--gold)/0.6)]"
             >
-              <div className="relative aspect-[4/3] w-full overflow-hidden bg-vk-900">
+              <div className="relative aspect-[4/3] w-full overflow-hidden bg-vk-50">
                 <Image
                   src={d.image}
                   alt={t(d.title)}
                   fill
                   unoptimized
-                  sizes="(max-width: 640px) 78vw, (max-width: 1024px) 46vw, 25vw"
+                  sizes="(max-width: 1024px) 50vw, 33vw"
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
                 />
               </div>
-              <div className="flex flex-1 flex-col p-5">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-vk-600">
-                  {t(d.tagline)}
-                </p>
-                <h3 className="mt-1 text-lg font-bold leading-snug text-ink">{t(d.title)}</h3>
-                <p className="mb-4 mt-2 text-sm leading-6 text-muted-foreground">{t(d.blurb)}</p>
-                <span className="vk-btn-gold mt-auto h-10 self-start px-4 text-[13px]">
-                  {t("Donate")}
-                  <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5" />
+              <div className="flex flex-1 items-end justify-between gap-2 p-3.5 md:p-4">
+                <div className="min-w-0">
+                  <p className="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-[hsl(var(--gold-deep))]">{t(d.tagline)}</p>
+                  <h3 className="mt-0.5 text-[15px] font-bold leading-snug text-vk-800 md:text-lg">{t(d.title)}</h3>
+                </div>
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-vk-50 text-vk-700 transition-colors group-hover:bg-vk-700 group-hover:text-white">
+                  <ArrowUpRight className="h-4 w-4" />
                 </span>
               </div>
             </Link>
           ))}
-        </div>
-
-        <div className="mt-4 flex items-center justify-center gap-3">
-          <button
-            type="button"
-            aria-label={t("Previous donations")}
-            onClick={() => scrollByCards(-1)}
-            className="vk-btn-outline h-11 w-11 !rounded-full !p-0"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </button>
-          <button
-            type="button"
-            aria-label={t("Next donations")}
-            onClick={() => scrollByCards(1)}
-            className="vk-btn-outline h-11 w-11 !rounded-full !p-0"
-          >
-            <ChevronRight className="h-5 w-5" />
-          </button>
         </div>
       </div>
     </section>

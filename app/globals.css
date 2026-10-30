@@ -1348,3 +1348,7 @@ html[lang="te"] body {
 /* Home: a short gold rule under each section title, for a finished look */
 .home-theme .vk-h2::after { content: ""; display: block; width: 3.25rem; height: 3px; margin-top: .7rem; border-radius: 9999px; background: linear-gradient(90deg, hsl(var(--gold)), hsl(var(--gold) / .15)); }
 .home-theme .text-center .vk-h2::after { margin-inline: auto; background: linear-gradient(90deg, hsl(var(--gold) / .15), hsl(var(--gold)), hsl(var(--gold) / .15)); }
+
+/* Diwali: calm and minimal. White surfaces, blue text, gold only as a thin accent line */
+.diwali-theme .vk-card { border-color: hsl(var(--gold) / 0.35); box-shadow: 0 18px 40px -30px rgba(30, 58, 138, 0.45); }
+.diwali-theme .vk-band { background-image: none; background-color: rgba(238, 242, 255, 0.45); }
