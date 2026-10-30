@@ -144,7 +144,7 @@ const webSiteJsonLd = {
   url: SITE_URL,
   // Google shows this as the site name in search results.
   name: "ISKCON Gambheeram Visakhapatnam",
-  alternateName: ["Hare Krishna Movement Vizag", "ISKCON Visakhapatnam"],
+  alternateName: ["ISKCON Vizag", "Hare Krishna Movement Vizag", "ISKCON Visakhapatnam"],
   description:
     "Hare Krishna temple, Vaikuntham cultural centre and online devotional store of ISKCON Gambheeram Visakhapatnam.",
   publisher: { "@id": `${SITE_URL}/#organization` },
@@ -159,6 +159,30 @@ const webSiteJsonLd = {
   },
 };
 
+// A hint to Google about which pages matter most. Google decides on its own whether to show "sitelinks" under the
+// result, so this raises the odds but guarantees nothing.
+const KEY_PAGES: [string, string][] = [
+  ["Donate Online", "/donate"],
+  ["Square Foot Seva", "/sqft-seva-campaign"],
+  ["Brick Seva", "/brick-seva-campaign"],
+  ["Anna Daan Seva", "/anna-daan-seva"],
+  ["Gau Seva", "/gau-seva"],
+  ["Kartik Maas Seva", "/kartik-maas"],
+  ["Emergency Food Relief", "/emergency-relief"],
+  ["Daily Temple Schedule", "/daily-schedule"],
+  ["Contact & Visit", "/contact"],
+];
+const siteNavJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "@id": `${SITE_URL}/#key-pages`,
+  itemListElement: KEY_PAGES.map(([name, path], i) => ({
+    "@type": "SiteNavigationElement",
+    position: i + 1,
+    name,
+    url: `${SITE_URL}${path}`,
+  })),
+};
 
 // Static on purpose: nothing here reads cookies or headers, so every public
 // page can be prerendered and served from the CDN. The page's language comes
@@ -194,6 +218,10 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(siteNavJsonLd) }}
         />
         <ReduxProvider>
           <ThemeProvider>

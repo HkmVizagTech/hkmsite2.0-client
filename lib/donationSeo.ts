@@ -279,6 +279,23 @@ export const DONATION_SEO = {
         "Vijayadashami celebrations at ISKCON Gambheeram, Visakhapatnam — abhishekam, homam, alankara and Annadana.",
     },
   },
+  "emergency-relief": {
+    path: "/emergency-relief",
+    title: "Emergency Food Relief Donation",
+    description:
+      "Donate food for cyclone and flood relief in Visakhapatnam and coastal Andhra. Hot prasadam from ISKCON Gambheeram's kitchen to affected families. 80G tax benefit.",
+    keywords: ["cyclone relief donation Visakhapatnam", "flood relief food donation Vizag", "emergency food donation Andhra Pradesh", "disaster relief ISKCON Vizag", "food packets donation Visakhapatnam", ...LOCAL],
+    ogImage: "/assets/donations-annadana-real.jpg",
+    breadcrumb: "Emergency Relief",
+    h1: "Emergency Relief: Food for Cyclone and Flood Affected Families",
+    intro: [
+      "Hare Krishna Movement Visakhapatnam cooks fresh prasadam and delivers it to families hit by cyclones, floods and other emergencies.",
+      BENEFIT,
+    ],
+    sevas: [
+      { name: "Annadana Seva: Emergency Food Relief", amounts: [500, 1000, 2500, 5000, 10000, 25000], note: "Rs. 25 feeds one person" },
+    ],
+  },
   "kartik-maas": {
     path: "/kartik-maas",
     title: "Kartik Maas Seva Donation",

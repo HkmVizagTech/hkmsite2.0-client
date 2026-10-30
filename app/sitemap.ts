@@ -27,6 +27,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/pitru-paksha`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${SITE_URL}/govardhan-puja`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${SITE_URL}/kartik-maas`, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${SITE_URL}/emergency-relief`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${SITE_URL}/diwali`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${SITE_URL}/vaikuntha-ekadashi`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${SITE_URL}/vijayadashami`, changeFrequency: "weekly", priority: 0.7 },

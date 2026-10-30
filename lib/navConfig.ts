@@ -148,6 +148,7 @@ export const HIDE_BOTTOM_NAV_PREFIXES = [
   "/pitru-paksha",
   "/vijayadashami",
   "/kartik-maas",
+  "/emergency-relief",
   "/vaikuntha-ekadashi",
   "/diwali",
   "/govardhan-puja",
