@@ -132,7 +132,7 @@ export default function FestivalSevaGrid({
   return (
     <>
     {featured.length > 0 && (
-      <div className={`mx-auto grid gap-5 md:grid-cols-2 md:gap-6 ${featured.length > 4 ? "max-w-6xl lg:grid-cols-3" : "max-w-4xl"} ${sevas.length ? "mb-6 md:mb-8" : ""}`}>
+      <div className={`mx-auto grid gap-5 md:gap-6 ${featured.length === 1 ? "max-w-2xl" : featured.length > 4 ? "max-w-6xl md:grid-cols-2 lg:grid-cols-3" : "max-w-4xl md:grid-cols-2"} ${sevas.length ? "mb-6 md:mb-8" : ""}`}>
         {featured.map((seva) => (
           <div
             key={seva.slug}
