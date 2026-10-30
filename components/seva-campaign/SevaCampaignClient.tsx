@@ -60,7 +60,7 @@ const stepLabelClass = "text-[13px] font-bold uppercase tracking-[0.08em] text-v
 const addonBoxClass = "rounded-xl border border-vk-100 bg-vk-50/60 px-3.5 py-3";
 const checkLabelClass = "flex cursor-pointer items-start gap-2.5 text-[13px] font-medium text-ink";
 const checkboxClass = "mt-0.5 h-4 w-4 shrink-0 accent-vk-700";
-const chipBase = "min-h-[52px] rounded-xl border px-3 py-2.5 transition-all";
+const chipBase = "min-h-[64px] rounded-xl border px-3 py-3 transition-all active:scale-[0.99]";
 const chipOn = "border-vk-500 bg-vk-50 ring-2 ring-vk-500/20";
 const chipOff = "border-vk-200 bg-white hover:border-vk-400";
 
@@ -431,12 +431,12 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                           onClick={() => { setUseCustom(false); setTierIndex(i); }}
                           className={`${chipBase} text-left ${!useCustom && tierIndex === i ? chipOn : chipOff}`}
                         >
-                          <span className="mb-0.5 block text-[13px] font-semibold leading-snug text-ink">{tier.label}</span>
-                          <span className="mb-1 block text-[11px] leading-snug text-muted-foreground">
-                            {tier.description}
-                          </span>
-                          <span className="block text-base font-extrabold text-vk-700">
+                          <span className="block text-lg font-extrabold leading-none text-vk-700">
                             ₹{tier.amount.toLocaleString("en-IN")}
+                          </span>
+                          <span className="mt-1.5 block text-[13px] font-semibold leading-snug text-ink">{tier.label}</span>
+                          <span className="mt-0.5 line-clamp-2 block text-[11px] leading-snug text-muted-foreground">
+                            {tier.description}
                           </span>
                         </button>
                       ))}
@@ -754,13 +754,15 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: i * 0.08 }}
-                  className="vk-card vk-card-hover p-5 md:p-6"
+                  className="vk-card vk-card-hover flex gap-4 p-4 sm:block sm:p-5 md:p-6"
                 >
-                  <span className="vk-icon-chip mb-4">
+                  <span className="vk-icon-chip sm:mb-4">
                     <item.icon className="h-5 w-5" />
                   </span>
-                  <h3 className="mb-1.5 text-base font-bold text-ink">{item.title}</h3>
-                  <p className="text-sm leading-relaxed text-muted-foreground">{item.text}</p>
+                  <div className="min-w-0">
+                    <h3 className="mb-1 text-base font-bold text-ink">{item.title}</h3>
+                    <p className="text-sm leading-relaxed text-muted-foreground">{item.text}</p>
+                  </div>
                 </motion.div>
               ))}
             </div>
@@ -873,12 +875,12 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="vk-scroller pb-4"
+              className="vk-scroller -mx-4 px-4 pb-8 sm:mx-0 sm:px-0"
             >
               {config.testimonials.map((t) => (
                 <div
                   key={t.name}
-                  className="vk-card flex w-[85%] max-w-[380px] shrink-0 flex-col p-5 sm:w-96 md:p-6"
+                  className="vk-card flex w-[84%] max-w-[380px] shrink-0 flex-col p-5 sm:w-96 md:p-6"
                 >
                   <Quote className="mb-3 h-7 w-7 text-vk-300" />
                   <p className="mb-5 flex-1 text-sm leading-relaxed text-ink/85 md:text-[15px]">
@@ -907,8 +909,8 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
         {stats && stats.donors.length > 0 && (
           <section className="vk-section vk-band">
             <div className="vk-container">
-              <div className="mx-auto max-w-5xl">
-                <div className="mb-6 flex flex-col items-center justify-center gap-2 text-center">
+              <div className="mx-auto max-w-2xl">
+                <div className="mb-5 text-center">
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-green-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-green-700">
                     <span className="relative flex h-2 w-2">
                       <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-75" />
@@ -916,28 +918,35 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                     </span>
                     Live
                   </span>
-                  <h2 className="vk-h3">
-                    Recent Devotees Supporting This Seva
-                  </h2>
+                  <h2 className="vk-h3 mt-3">Recent Devotees Supporting This Seva</h2>
+                  <p className="mt-1.5 text-sm text-muted-foreground">Thank you to everyone who has offered this seva recently.</p>
                 </div>
-                <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+
+                <motion.ul
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4 }}
+                  className="vk-card divide-y divide-vk-100 overflow-hidden !rounded-3xl"
+                >
                   {stats.donors.slice(0, 5).map((d, i) => (
-                    <motion.div
-                      key={`${d.name}-${i}`}
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.05 }}
-                      className="vk-card flex items-center gap-3 px-3.5 py-2.5"
-                    >
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-vk-700 text-xs font-bold text-white">
-                        {d.name.charAt(0)}
-                      </div>
+                    <li key={`${d.name}-${i}`} className="flex items-center gap-3.5 px-4 py-3.5 sm:px-5">
+                      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-vk-700 to-vk-500 text-sm font-bold text-white">
+                        {d.name.charAt(0).toUpperCase()}
+                      </span>
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-semibold text-ink">{d.name}</p>
-                        <p className="text-[11px] text-muted-foreground">Donated ₹{d.amount.toLocaleString("en-IN")} · {d.time}</p>
+                        <p className="truncate text-[15px] font-semibold text-ink">{d.name}</p>
+                        <p className="text-xs text-muted-foreground">{d.time}</p>
                       </div>
-                    </motion.div>
+                      <p className="shrink-0 rounded-full bg-vk-50 px-3 py-1 text-sm font-bold text-vk-700">₹{d.amount.toLocaleString("en-IN")}</p>
+                    </li>
                   ))}
+                </motion.ul>
+
+                <div className="mt-5 text-center">
+                  <button type="button" onClick={scrollToDonate} className="vk-btn-gold h-12 px-8 text-[15px] font-bold">
+                    <Heart className="h-4 w-4 fill-current" /> Join them
+                  </button>
                 </div>
               </div>
             </div>
