@@ -78,7 +78,7 @@ export default function VaikunthaEkadashiClient() {
   const hasBanner = Boolean(BANNER_DESKTOP);
 
   return (
-    <PageLayout>
+    <PageLayout background="#d3e7f6">
       <div className="overflow-x-clip bg-[linear-gradient(180deg,#cfe5f6_0%,#e8f3fb_16%,#fff5dc_40%,#e6f1fa_64%,#d3e7f6_100%)] pt-[var(--header-h)]">
         {/* ══ HERO ═══════════════════════════════════════════════════════ */}
         {hasBanner ? (

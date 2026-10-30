@@ -64,6 +64,20 @@ const FEATURED_THEMES = {
     rupee: "text-[hsl(var(--gold-deep))]",
     cta: "bg-gradient-to-r from-vk-700 via-vk-600 to-vk-700 text-white",
   },
+  diya: {
+    glow: "shadow-[0_24px_52px_-28px_rgba(217,150,20,0.6)]",
+    bg: "bg-[linear-gradient(180deg,#ffffff_0%,#fffaec_100%)]",
+    fade: "from-white",
+    badge: "border-amber-300 bg-vk-800 text-amber-200",
+    icon: "border-[hsl(var(--gold)/0.7)] bg-white shadow-[0_0_14px_rgba(255,190,70,0.5)]",
+    title: "text-vk-800",
+    tagline: "text-[hsl(var(--gold-deep))]",
+    body: "text-ink/70",
+    tile: "border-[hsl(var(--gold)/0.6)] bg-gradient-to-b from-white to-[#fff3d2] shadow-sm",
+    amount: "text-vk-800",
+    rupee: "text-[hsl(var(--gold-deep))]",
+    cta: "bg-vk-700 text-white",
+  },
   midnight: {
     glow: "shadow-[0_0_50px_-12px_rgba(255,170,40,0.55),0_24px_60px_-22px_rgba(10,12,60,0.9)]",
     bg: "bg-[radial-gradient(120%_80%_at_50%_0%,#2a2a7a_0%,#14163f_55%,#0a0b2a_100%)]",
@@ -107,7 +121,7 @@ export default function FestivalSevaGrid({
   /** "royal" = deep maroon and gold; "ivory" = cream with maroon accents; "midnight" = night-sky indigo with a glowing lamp-gold finish. */
   /** Show the "Special Seva" ribbon on featured cards (off when every card on the page is featured). */
   featuredBadge?: boolean;
-  featuredStyle?: "royal" | "ivory" | "midnight" | "festive" | "heaven";
+  featuredStyle?: "royal" | "ivory" | "midnight" | "festive" | "heaven" | "diya";
 }) {
   const theme = FEATURED_THEMES[featuredStyle];
   const dark = variant === "dark";
@@ -123,7 +137,7 @@ export default function FestivalSevaGrid({
           <div
             key={seva.slug}
             id={`seva-card-${seva.slug}`}
-            className={`fs-premium-border vkd-card-3d scroll-mt-24 rounded-[28px] p-[2px] ${theme.glow} ${highlightedSlug === seva.slug ? "ring-2 ring-vk-500 ring-offset-2" : ""}`}
+            className={`fs-premium-border vkd-card-3d rounded-[28px] p-[2px] scroll-mt-24 ${theme.glow} ${highlightedSlug === seva.slug ? "ring-2 ring-vk-500 ring-offset-2" : ""}`}
           >
             <article className={`relative flex h-full flex-col overflow-hidden rounded-[26px] ${theme.bg}`}>
               {featuredStyle === "midnight" && <div aria-hidden className="pointer-events-none absolute -top-24 left-1/2 h-64 w-96 -translate-x-1/2 rounded-full bg-amber-400/20 blur-3xl" />}
@@ -131,9 +145,9 @@ export default function FestivalSevaGrid({
               <PetalFall count={12} gold className="z-10" />
               <span aria-hidden className="pointer-events-none absolute left-2.5 top-2.5 z-20 h-6 w-6 rounded-tl-2xl border-l-2 border-t-2 border-amber-300" />
               <span aria-hidden className="pointer-events-none absolute right-2.5 top-2.5 z-20 h-6 w-6 rounded-tr-2xl border-r-2 border-t-2 border-amber-300" />
-              <div className={`relative overflow-hidden ${featuredStyle === "heaven" ? "aspect-[1.92/1]" : "aspect-[3/2]"}`}>
+              <div className={`relative overflow-hidden ${featuredStyle === "heaven" || featuredStyle === "diya" ? "aspect-[1.92/1]" : "aspect-[3/2]"}`}>
                 <Image src={seva.image} alt={t(seva.title)} fill sizes="(min-width: 768px) 440px, 100vw" className="object-cover" />
-                {featuredStyle !== "heaven" && <div className={`absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t ${theme.fade} to-transparent`} />}
+                {featuredStyle !== "heaven" && featuredStyle !== "diya" && <div className={`absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t ${theme.fade} to-transparent`} />}
                 {featuredBadge && <span className={`absolute left-4 top-4 rounded-full border px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.14em] shadow-lg ${theme.badge}`}>
                   ✦ {t("Special Seva")}
                 </span>}

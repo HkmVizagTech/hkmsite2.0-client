@@ -7,14 +7,14 @@ import PageLayout from "@/components/PageLayout";
 import SectionHeading from "@/components/site/SectionHeading";
 import Reveal from "@/components/site/Reveal";
 import PhonePeUpiCard from "@/components/PhonePeUpiCard";
-import FaqSection from "@/components/sqft-campaign/FaqSection";
-import DonorPrivilegesSection from "@/components/sqft-campaign/DonorPrivilegesSection";
+import { DiwaliFaq } from "@/components/festival/DiwaliSections";
 import OtherDonationsCarousel from "@/components/pitru-paksha/OtherDonationsCarousel";
+import DonorPrivilegesSection from "@/components/sqft-campaign/DonorPrivilegesSection";
 import FestivalSevaGrid, { type SevaSelection } from "@/components/festival/FestivalSevaGrid";
 import FestivalCheckoutModal from "@/components/festival/FestivalCheckoutModal";
 import StoryTimeline from "@/components/festival/StoryTimeline";
 import DiyaRow from "@/components/festival/DiyaRow";
-import { Mandala, OrnamentDivider, PetalFall } from "@/components/festival/FestivalDecor";
+import { Mandala, OrnamentDivider } from "@/components/festival/FestivalDecor";
 import { BANK_DETAILS, BANNER_DESKTOP, BANNER_MOBILE, DAYS, DIWALI_DATE_ISO, DIWALI_DATE_LABEL, FAQS, IMPACTS, OG_IMAGE, PRIVILEGE_CONFIG, SEVAS, STRIP } from "@/lib/diwali";
 
 const SLUG = "diwali";
@@ -90,8 +90,8 @@ export default function DiwaliClient() {
   const GOLD = { backgroundImage: "var(--gradient-gold)", WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" } as const;
 
   return (
-    <PageLayout>
-      <div className="overflow-x-clip bg-white pt-[var(--header-h)]">
+    <PageLayout background="#FFFBEF">
+      <div className="diwali-theme overflow-x-clip bg-[linear-gradient(180deg,#FFFBEF_0%,#FFFFFF_22%,#FFFFFF_80%,#FFFBEF_100%)] pt-[var(--header-h)]">
         {/* ══ BANNER ═════════════════════════════════════════════════════ */}
         <section className="bg-[#fff6e0]">
           <h1 className="sr-only">
@@ -109,7 +109,6 @@ export default function DiwaliClient() {
         {/* ══ INTRO — the date, a line of welcome, lit lamps ═══════════════ */}
         <section className="relative isolate overflow-hidden bg-[radial-gradient(120%_100%_at_50%_0%,#fff3d6_0%,#fffaf0_55%,#ffffff_100%)]">
           <Mandala className="absolute -right-24 -top-10 -z-10 h-[360px] w-[360px] md:right-10 md:h-[440px] md:w-[440px]" />
-          <PetalFall count={7} className="-z-[5]" />
           <div className="vk-container flex flex-col items-center py-10 text-center md:py-14">
             <p className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[hsl(var(--gold-deep))] md:text-xs">
               {t("Dipavali")} · {t(DIWALI_DATE_LABEL)}
@@ -135,7 +134,7 @@ export default function DiwaliClient() {
         </div>
 
         {/* ══ SEVAS — the donation, straight after the hero ═════════════ */}
-        <section id="offer-seva" className="vk-section scroll-mt-16 bg-gradient-to-b from-white via-amber-50/50 to-white">
+        <section id="offer-seva" className="vk-section scroll-mt-16">
           <div className="vk-container">
             <Reveal>
               <SectionHeading
@@ -145,7 +144,7 @@ export default function DiwaliClient() {
                 subtitle={t("Tap an amount to offer that seva. Sankalpa is taken in your name and your receipt reaches you on WhatsApp.")}
               />
             </Reveal>
-            <FestivalSevaGrid sevas={SEVAS} impacts={IMPACTS} highlightedSlug={highlightedSlug} onSelect={setSelected} />
+            <FestivalSevaGrid featuredStyle="diya" featuredBadge={false} featuredSlugs={SEVAS.map((x) => x.slug)} sevas={SEVAS} impacts={IMPACTS} highlightedSlug={highlightedSlug} onSelect={setSelected} />
             <p className="mt-8 text-center text-xs text-muted-foreground">
               {t("Minimum donation Rs. 100 · 80G Tax Exemption available · Secured by Razorpay · Donations go to Hare Krishna Movement India, Visakhapatnam")}
             </p>
@@ -232,7 +231,7 @@ export default function DiwaliClient() {
         </section>
 
         <DonorPrivilegesSection scrollToDonate={scrollToDonate} config={PRIVILEGE_CONFIG} />
-        <FaqSection faqs={FAQS.map((f) => ({ q: t(f.q), a: t(f.a) }))} tone="blue" />
+        <DiwaliFaq faqs={FAQS.map((f) => ({ q: t(f.q), a: t(f.a) }))} />
         <OtherDonationsCarousel />
       </div>
 
