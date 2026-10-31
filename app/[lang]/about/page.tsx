@@ -5,7 +5,8 @@ import WhatsAppCommunityCTA from "@/components/WhatsAppCommunityCTA";
 import PageHero from "@/components/PageHero";
 import SectionHeading from "@/components/site/SectionHeading";
 import Reveal from "@/components/site/Reveal";
-import { Heart, BookOpen, Users, Flower2, Globe, Calendar, Music, GraduationCap, ExternalLink, Info } from "lucide-react";
+import Link from "next/link";
+import { Heart, BookOpen, Users, Flower2, GraduationCap, ExternalLink, Info, Flame, Utensils, Check, Landmark, Milk, PartyPopper } from "lucide-react";
 import Image from "next/image";
 import AssociatedTrustsImg from "@/assets/AssociatedTrusts.png";
 
@@ -16,12 +17,35 @@ const values = [
   { icon: Flower2, title: "Value Education", desc: "Inculcating timeless values in children through interactive programs, summer camps, and cultural activities." },
 ];
 
-const activities = [
-  { icon: Calendar, title: "Daily Programs", desc: "Morning and evening aartis, kirtan sessions, and Bhagavad Gita classes open to all." },
-  { icon: Music, title: "Kirtan & Bhajans", desc: "Soul-stirring musical sessions that connect hearts to the divine through devotional singing." },
-  { icon: GraduationCap, title: "Youth Programs", desc: "Engaging sessions for college students covering personality development, stress management, and spiritual growth." },
-  { icon: Globe, title: "Cultural Festivals", desc: "Grand celebrations of Janmashtami, Gaura Purnima, Ratha Yatra, and other Vaishnava festivals." },
+const activities: { icon: typeof BookOpen; image?: string; title: string; desc: string; href?: string }[] = [
+  { icon: BookOpen, title: "Gita Classes", desc: "Regular sessions on Bhagavad-gita and spiritual living", href: "/gita-daan-seva" },
+  { icon: Utensils, title: "Annadaan Seva", desc: "Distributing prasadam and helping those in need", href: "/anna-daan-seva" },
+  { icon: Milk, image: "/assets/about-cow.png", title: "Cow Care", desc: "Dedicated Gau Seva and compassionate care", href: "/gau-seva" },
+  { icon: PartyPopper, title: "Festivals", desc: "Celebrating devotion through festivals and kirtan", href: "/festivals" },
+  { icon: GraduationCap, title: "Youth Programs", desc: "Guiding youth through values and spiritual growth" },
 ];
+
+function ActivityCard({ item }: { item: (typeof activities)[number] }) {
+  const body = (
+    <>
+      {item.image ? (
+        <Image src={item.image} alt="" width={40} height={40} className="h-10 w-10 object-contain" />
+      ) : (
+        <item.icon className="h-10 w-10 stroke-[1.4] text-vk-800" />
+      )}
+      <h3 className="mt-4 text-base font-bold text-foreground">{item.title}</h3>
+      <p className="mt-1.5 text-[13.5px] leading-relaxed text-muted-foreground">{item.desc}</p>
+    </>
+  );
+  const cls = "vk-card flex h-full flex-col items-center p-5 text-center";
+  return item.href ? (
+    <Link href={item.href} className={`${cls} vk-card-hover`}>
+      {body}
+    </Link>
+  ) : (
+    <div className={cls}>{body}</div>
+  );
+}
 
 const milestones = [
   { year: "2008", event: "Began humble seva activities in Visakhapatnam" },
@@ -31,6 +55,31 @@ const milestones = [
   { year: "2019", event: "Expanded to serve 500+ meals daily at KGH Hospital" },
   { year: "2021", event: "Extended food service to GGH Hospital, Kakinada" },
   { year: "2023", event: "Announced Hare Krishna Vaikuntham Temple project" },
+];
+
+
+const ROOTS_IMAGE = "/assets/about-roots.jpg";
+const TEMPLE_AERIAL = "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793428381313-1793428379864-GoldenTempleinaLushForest.png";
+const GOVINDA_SIDE = "https://pub-f62a54aab54448388c9e16334109aea9.r2.dev/Temple%2520Images/govindaSideView.jpg";
+
+const TEMPLE_IMAGE =
+  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793266487328-1793266486628-MajesticWhiteandGoldHinduTemple.png";
+
+const practices = ["Chanting the Hare Krishna Maha-Mantra", "Studying the Vedic Scriptures", "Honoring sanctified prasadam"];
+
+const highlights = [
+  "Sri Sri Radha Madan Mohan and Sri Srinivasa Govinda, worshipped with daily aarti and darshan",
+  "A Divine Altar at the heart of the temple, where Lord Srinivasa Govinda will eternally reside",
+  "A Vedic Planetarium that presents timeless wisdom through modern technology",
+  "A Prasadam Hall to serve Krishna-prasadam to all who come",
+  "A Festival Hall and Harinam Mandap for kirtan, celebrations and quiet chanting",
+  "Bala Samskriti and Gita Life programmes for children, youth and families",
+];
+
+const principles = [
+  { title: "Devotion", desc: "Everything we do begins with the worship of Sri Sri Radha Madan Mohan." },
+  { title: "Service", desc: "No one who comes to the temple, or to the hospital gate, should go hungry." },
+  { title: "Community", desc: "A home for every seeker, whatever their age, background or belief." },
 ];
 
 const trusts = [
@@ -77,7 +126,7 @@ export default function AboutPage() {
           title="About ISKCON Gambheeram, Vizag"
           subtitle="Spreading the timeless message of Lord Krishna through devotion, service, and community"
           breadcrumb="About Us"
-          backgroundImage="/assets/about-community.jpg"
+          backgroundImage={GOVINDA_SIDE}
         />
 
         {/* ── OUR STORY — feature split ─────────────────────────── */}
@@ -117,8 +166,8 @@ export default function AboutPage() {
               <div aria-hidden className="absolute -inset-3 -z-10 rounded-[2rem] bg-gradient-to-br from-vk-200/70 via-vk-100/60 to-transparent" />
               <div className="relative aspect-[4/3] overflow-hidden rounded-3xl shadow-[0_30px_60px_-28px_rgba(30,58,138,0.55)]">
                 <Image
-                  src="/assets/about-community.jpg"
-                  alt="Community gathering"
+                  src={TEMPLE_AERIAL}
+                  alt="Aerial view of the Hare Krishna Vaikuntham Temple, Visakhapatnam"
                   fill
                   sizes="(min-width: 1024px) 560px, 100vw"
                   className="object-cover"
@@ -128,8 +177,38 @@ export default function AboutPage() {
           </div>
         </section>
 
+        {/* ── OUR SPIRITUAL ROOTS ───────────────────────────────── */}
+        <section className="vk-section">
+          <div className="vk-container">
+            <Reveal className="vk-card mx-auto grid max-w-6xl items-center gap-8 !rounded-3xl p-5 md:p-8 lg:grid-cols-[0.9fr_1.1fr] lg:gap-12 lg:p-10">
+              <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-lift lg:aspect-[7/6]">
+                <Image src={ROOTS_IMAGE} alt="Sri Chaitanya Mahaprabhu and His associates in sankirtana" fill sizes="(min-width: 1024px) 520px, 100vw" className="object-cover object-[42%_50%]" />
+              </div>
+              <div>
+                <h2 className="vk-h2">Our Spiritual Roots</h2>
+                <p className="mt-4 text-[15px] leading-7 text-muted-foreground md:text-base">
+                  The Hare Krishna Movement is an initiative led by His Divine Grace A.C. Bhaktivedanta Swami Srila Prabhupada, with deep reference to
+                  the Vedic scriptures like the Bhagavad-gita and Srimad Bhagavatam.
+                </p>
+                <p className="mt-3 text-[15px] leading-7 text-muted-foreground md:text-base">
+                  These sacred texts have been preserved through the Gaudiya Vaishnava disciplic lineage. Our guiding practice offers devotees a
+                  practical path to spiritual growth and devotion in today&apos;s modern lifestyle.
+                </p>
+                <h3 className="mt-6 font-heading text-xl font-bold text-foreground md:text-2xl">Daily Spiritual Practices We Follow:</h3>
+                <ul className="mt-4 space-y-2.5">
+                  {practices.map((item) => (
+                    <li key={item} className="rounded-2xl bg-vk-50 px-4 py-3 text-sm font-medium text-ink md:text-[15px]">
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </Reveal>
+          </div>
+        </section>
+
         {/* ── CORE VALUES ───────────────────────────────────────── */}
-        <section className="vk-section vk-band">
+        <section className="vk-section">
           <div className="vk-container">
             <SectionHeading align="center" eyebrow="What We Stand For" title="Our Core Values" />
             <div className="mx-auto grid max-w-5xl gap-4 sm:grid-cols-2 md:gap-6">
@@ -150,22 +229,94 @@ export default function AboutPage() {
           </div>
         </section>
 
+        {/* ── THE GRAND VISION ──────────────────────────────────── */}
+        <section className="vk-section vk-band overflow-hidden">
+          <div className="vk-container">
+            <SectionHeading
+              align="center"
+              eyebrow="The Vision"
+              title="The Grand Vision Behind Hare Krishna Vaikuntham"
+              subtitle="A temple and cultural centre at Gambheeram, Visakhapatnam, built so that devotion, learning and service have a permanent home."
+            />
+            <div className="mx-auto grid max-w-6xl items-start gap-8 lg:grid-cols-[1.05fr_1fr] lg:gap-12">
+              <Reveal className="relative">
+                <div className="relative aspect-[4/3] overflow-hidden rounded-3xl shadow-[0_30px_60px_-28px_rgba(30,58,138,0.55)]">
+                  <Image
+                    src={TEMPLE_IMAGE}
+                    alt="Artist's impression of the Hare Krishna Vaikuntham Temple"
+                    fill
+                    sizes="(min-width: 1024px) 600px, 100vw"
+                    className="object-cover object-[65%_50%]"
+                  />
+                </div>
+                <div className="mt-4 flex items-start gap-3 rounded-2xl border border-vk-100 bg-vk-50 p-4 text-sm leading-relaxed text-muted-foreground">
+                  <Landmark className="mt-0.5 h-5 w-5 shrink-0 text-vk-500" />
+                  <p>
+                    The Vaikuntham project was announced in 2023. Every <Link href="/sqft-seva-campaign" className="font-semibold text-vk-700 hover:underline">square foot</Link> and{" "}
+                    <Link href="/brick-seva-campaign" className="font-semibold text-vk-700 hover:underline">brick</Link> offered by devotees brings it closer to completion.
+                  </p>
+                </div>
+              </Reveal>
+
+              <Reveal delay={0.1}>
+                <p className="vk-lead">
+                  Hare Krishna Vaikuntham is being built in the white and gold style of the great temples of India, as the
+                  permanent home of Sri Sri Radha Madan Mohan and Sri Srinivasa Govinda. It is more than a place of
+                  worship. It is planned as a cultural centre where families come to learn, celebrate and be served.
+                </p>
+
+                <h3 className="mt-7 flex items-center gap-2 text-lg font-bold text-foreground">
+                  <Flame className="h-5 w-5 text-[hsl(var(--gold-deep))]" /> Mission of Devotion and Service
+                </h3>
+                <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">
+                  To share the teachings of Bhagavad Gita and Srimad Bhagavatam, to feed the hungry with sanctified prasadam,
+                  and to nurture children and youth with timeless values.
+                </p>
+
+                <h3 className="mt-7 text-lg font-bold text-foreground">Key Highlights</h3>
+                <ul className="mt-3 space-y-2.5">
+                  {highlights.map((h) => (
+                    <li key={h} className="flex items-start gap-2.5 text-[15px] leading-relaxed text-muted-foreground">
+                      <Check className="mt-1 h-4 w-4 shrink-0 text-vk-600" />
+                      {h}
+                    </li>
+                  ))}
+                </ul>
+              </Reveal>
+            </div>
+
+            <div className="mx-auto mt-10 max-w-6xl">
+              <h3 className="mb-4 text-center text-lg font-bold text-foreground">Guiding Principles</h3>
+              <div className="grid gap-4 md:grid-cols-3 md:gap-6">
+                {principles.map((p, i) => (
+                  <Reveal key={p.title} delay={i * 0.06}>
+                    <div className="vk-card h-full border-t-2 border-t-[hsl(var(--gold))] p-5 text-center">
+                      <h4 className="text-base font-bold text-vk-800">{p.title}</h4>
+                      <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{p.desc}</p>
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* ── ACTIVITIES ────────────────────────────────────────── */}
         <section className="vk-section">
           <div className="vk-container">
-            <SectionHeading align="center" eyebrow="What We Do" title="Our Activities" />
-            <div className="grid gap-4 sm:grid-cols-2 md:gap-5 lg:grid-cols-4">
-              {activities.map((item, i) => (
-                <Reveal key={item.title} delay={i * 0.06}>
-                  <div className="vk-card vk-card-hover h-full p-6">
-                    <span className="vk-icon-chip mb-4">
-                      <item.icon className="h-5 w-5" />
-                    </span>
-                    <h3 className="text-lg font-bold text-foreground">{item.title}</h3>
-                    <p className="mt-1.5 text-[15px] leading-relaxed text-muted-foreground">{item.desc}</p>
-                  </div>
-                </Reveal>
-              ))}
+            <div className="mx-auto max-w-7xl rounded-3xl bg-vk-50 px-4 py-10 md:px-8 md:py-14">
+              <SectionHeading
+                align="center"
+                title={<>Our <span className="text-vk-600">Activities</span> and <span className="text-vk-600">Initiatives</span></>}
+                subtitle="Creating an impact through devotion and service at the Hare Krishna temple."
+              />
+              <div className="grid grid-cols-2 gap-3 md:gap-5 lg:grid-cols-5">
+                {activities.map((item, i) => (
+                  <Reveal key={item.title} delay={i * 0.05} className={i === activities.length - 1 ? "col-span-2 lg:col-span-1" : ""}>
+                    <ActivityCard item={item} />
+                  </Reveal>
+                ))}
+              </div>
             </div>
           </div>
         </section>
@@ -186,7 +337,7 @@ export default function AboutPage() {
                           <p className="text-[15px] font-medium text-foreground">{m.event}</p>
                         </div>
                       </div>
-                      <div className="relative z-[1] flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-vk-700 text-xs font-bold text-white ring-4 ring-vk-100 md:absolute md:left-1/2 md:-translate-x-1/2">
+                      <div className="relative z-[1] flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[hsl(var(--gold))] to-[hsl(var(--gold-deep))] text-xs font-extrabold text-vk-900 ring-4 ring-[hsl(var(--gold)/0.25)] md:absolute md:left-1/2 md:-translate-x-1/2">
                         {m.year}
                       </div>
                       <div className="vk-card flex-1 p-4 md:hidden">
@@ -265,6 +416,28 @@ export default function AboutPage() {
                   are the same organisation — ISKCON is the global name, while HKM India is the registered legal entity
                   in India through which all activities are conducted.
                 </p>
+              </div>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* ── INVITATION ────────────────────────────────────────── */}
+        <section className="vk-section vk-band">
+          <div className="vk-container">
+            <Reveal className="mx-auto max-w-3xl text-center">
+              <span className="vk-pill mb-4">Join Us</span>
+              <h2 className="vk-h2">An Invitation to Begin Your Journey</h2>
+              <p className="vk-lead mt-5">
+                Come for darshan, sit for a Gita class, take prasadam, or offer a seva. However you begin, you are welcome
+                at Hare Krishna Vaikuntham.
+              </p>
+              <div className="mt-7 space-y-1.5 font-serif-display text-lg italic leading-8 text-vk-800 md:text-xl">
+                <p>Hare Krishna Hare Krishna Krishna Krishna Hare Hare</p>
+                <p>Hare Rama Hare Rama Rama Rama Hare Hare</p>
+              </div>
+              <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+                <Link href="/donate" className="vk-btn-gold h-12 px-7 text-[15px] font-bold">Offer a Seva</Link>
+                <Link href="/daily-schedule" className="inline-flex h-12 items-center rounded-xl border border-vk-100 bg-white px-6 text-[15px] font-bold text-vk-800 hover:bg-vk-50">Temple Timings</Link>
               </div>
             </Reveal>
           </div>
