@@ -14,7 +14,7 @@ const PATH = "/centers";
 
 // Header artwork. It carries its own title, so no overlay or text sits on it.
 const HEADER_IMAGE =
-  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793693661448-1793693661152-harekrishnabanner1920x730.png";
+  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793696368658-1793696367924-harekrishnatemplesworldwide1920x730.png";
 const HEADER_RATIO = 1920 / 730;
 
 const baseMetadata: Metadata = pageSeo({
