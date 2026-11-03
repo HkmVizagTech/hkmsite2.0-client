@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/seo";
+import { CENTERS } from "@/lib/centers";
 import { isTeIndexable, localizedPath } from "@/lib/i18n/routing";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
@@ -10,6 +11,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/iskcon-vizag-temple`, changeFrequency: "monthly", priority: 0.95 },
     { url: `${SITE_URL}/vaikuntham`, changeFrequency: "monthly", priority: 0.9 },
     { url: `${SITE_URL}/about`, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${SITE_URL}/centers`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${SITE_URL}/founder`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE_URL}/gallery`, changeFrequency: "weekly", priority: 0.6 },
     { url: `${SITE_URL}/events`, changeFrequency: "daily", priority: 0.9 },
@@ -23,6 +25,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/gita-daan-seva`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE_URL}/alankara-vastra-seva`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE_URL}/brick-seva-campaign`, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${SITE_URL}/patron`, changeFrequency: "monthly", priority: 0.8 },
     // Festival & occasion seva pages
     { url: `${SITE_URL}/pitru-paksha`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${SITE_URL}/govardhan-puja`, changeFrequency: "weekly", priority: 0.9 },
@@ -150,5 +153,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ];
   });
 
-  return [...withLanguages, ...blogPages, ...blogCategoryPages, ...eventPages, ...productPages, ...festivalPages];
+  const centerPages: MetadataRoute.Sitemap = CENTERS.map((c) => ({
+    url: `${SITE_URL}/centers/${c.slug}`,
+    changeFrequency: "monthly" as const,
+    priority: 0.4,
+  }));
+
+  return [...withLanguages, ...centerPages, ...blogPages, ...blogCategoryPages, ...eventPages, ...productPages, ...festivalPages];
 }

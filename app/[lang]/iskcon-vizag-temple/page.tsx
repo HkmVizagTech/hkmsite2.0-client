@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { Clock, MapPin, Phone, Mail, Navigation, Utensils, Music, BookOpen, PartyPopper, HeartHandshake, Shirt, Camera, Store, ArrowRight } from "lucide-react";
+import { Clock, MapPin, Phone, Mail, Navigation, ChevronRight, Home, Utensils, Music, BookOpen, PartyPopper, HeartHandshake, Shirt, Camera, Store, ArrowRight } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
-import PageHero from "@/components/PageHero";
 import JsonLd from "@/components/seo/JsonLd";
 import { pageSeo, siteKeywords, breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import { getT } from "@/lib/i18n/server";
@@ -16,6 +15,11 @@ import { localized } from "@/lib/i18n/seo";
 // site-wide temple JSON-LD).
 
 const PATH = "/iskcon-vizag-temple";
+
+const OVERVIEW_IMAGE =
+  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793691134023-1793691133192-WhiteStoneHinduTempleinForestClearing.png";
+const HEADER_IMAGE =
+  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793690805550-1793690804029-HareKrishnaVaikunthamTemple.png";
 
 const baseMetadata: Metadata = pageSeo({
   title: "ISKCON Temple in Vizag: Timings, Address & Darshan",
@@ -108,13 +112,33 @@ export default async function IskconVizagTemplePage({ params }: { params: Promis
       <JsonLd data={pageJsonLd} />
       <JsonLd data={faqJsonLd} />
       <main className="bg-white pt-[var(--header-h)]">
-        <PageHero
-          title={t("ISKCON Temple in Vizag — Hare Krishna Vaikuntham, Gambheeram")}
-          subtitle={t("Darshan timings, address, how to reach and what to expect at ISKCON Gambheeram Visakhapatnam.")}
-          breadcrumb={t("Visit the Temple")}
-          backgroundImage="/assets/vizag-temple-1.jpeg"
-          eyebrow={t("Plan your visit")}
-        />
+        {/* Illustrated banner: the artwork carries the temple's name, so no overlay or text sits on it. */}
+        <section className="bg-gradient-to-b from-vk-50 to-white pb-6 pt-6">
+          <div className="vk-container">
+            <nav aria-label="Breadcrumb" className="mb-4 flex items-center gap-1.5 text-xs font-medium text-ink/55">
+              <Link href="/" className="inline-flex items-center gap-1 hover:text-vk-700">
+                <Home className="h-3.5 w-3.5" /> {t("Home")}
+              </Link>
+              <ChevronRight className="h-3.5 w-3.5 opacity-60" />
+              <span className="text-ink" aria-current="page">{t("Visit the Temple")}</span>
+            </nav>
+            <div style={{ aspectRatio: 1672 / 941 }} className="relative w-full overflow-hidden rounded-2xl shadow-[0_24px_60px_-28px_rgba(10,18,51,0.5)] md:rounded-3xl">
+              <Image
+                src={HEADER_IMAGE}
+                alt={t("Hare Krishna Vaikuntham, Gambheeram")}
+                fill
+                priority
+                sizes="(min-width: 1280px) 1200px, 100vw"
+                className="object-cover"
+              />
+            </div>
+            <div className="mt-6 max-w-3xl">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gold-deep">{t("Plan your visit")}</p>
+              <h1 className="mt-2 text-2xl font-bold tracking-tight text-ink md:text-3xl">{t("ISKCON Temple in Vizag — Hare Krishna Vaikuntham, Gambheeram")}</h1>
+              <p className="mt-2 text-ink/65">{t("Darshan timings, address, how to reach and what to expect at ISKCON Gambheeram Visakhapatnam.")}</p>
+            </div>
+          </div>
+        </section>
 
         {/* Quick facts */}
         <section className="vk-section !pt-10">
@@ -167,8 +191,8 @@ export default async function IskconVizagTemplePage({ params }: { params: Promis
                 <Link href="/vaikuntham" className="font-semibold text-vk-700 hover:underline">{t("Read about Vaikuntham")}</Link>
               </p>
             </div>
-            <div className="relative aspect-[4/3] overflow-hidden rounded-3xl bg-vk-900">
-              <Image src="/assets/vizag-temple-4.jpeg" alt={t("ISKCON Gambheeram — Hare Krishna temple in Visakhapatnam")} fill sizes="(min-width: 1024px) 45vw, 100vw" className="object-cover" />
+            <div className="relative aspect-[16/9] overflow-hidden rounded-3xl bg-vk-900">
+              <Image src={OVERVIEW_IMAGE} alt={t("ISKCON Gambheeram — Hare Krishna temple in Visakhapatnam")} fill sizes="(min-width: 1024px) 45vw, 100vw" className="object-cover" />
             </div>
           </div>
         </section>
