@@ -3,12 +3,17 @@
 // Floating "తెలుగు / English" switch (like GVD's हिंदी pill), stacked just
 // above the WhatsApp button on every page.
 
+import { usePathname } from "next/navigation";
 import { Languages } from "lucide-react";
+import { stripLocale } from "@/lib/i18n/routing";
 import { SWITCH_LABEL } from "@/lib/i18n/config";
 import { useLocale } from "./LocaleProvider";
 
 export default function LanguageToggle() {
   const { locale, setLocale } = useLocale();
+  const pathname = usePathname();
+  // The /donations checkout is a single-language, distraction-free page: no switch there.
+  if (stripLocale(pathname || "/") === "/donations") return null;
   const next = locale === "te" ? "en" : "te";
   return (
     <button

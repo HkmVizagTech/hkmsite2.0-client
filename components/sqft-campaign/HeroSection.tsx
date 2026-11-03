@@ -6,17 +6,21 @@ import type { CampaignConfig } from "@/lib/campaignConfig";
 interface HeroSectionProps {
   scrollToDonate: () => void;
   config: CampaignConfig;
+  /** Brick Seva sets its own heading in the intro right under the banner. */
+  hideTitle?: boolean;
+  /** Brick Seva: the banner sits inset in the page container with medium rounded corners. */
+  rounded?: boolean;
 }
 
-export default function HeroSection({ scrollToDonate, config }: HeroSectionProps) {
+export default function HeroSection({ scrollToDonate, config, hideTitle = false, rounded = false }: HeroSectionProps) {
   const altText = `${config.pageTitle} — ${config.heroHeading1} ${config.heroHeading2}`;
   const desktopSrc = config.bannerImage || config.heroImage;
   const mobileSrc = config.bannerImageMobile || config.bannerImage || config.heroImage;
 
   return (
     <section className="bg-gradient-to-b from-vk-50 to-white">
-      <div>
-        <div className="overflow-hidden bg-vk-900">
+      <div className={rounded ? "vk-container pt-4 md:pt-6" : undefined}>
+        <div className={`overflow-hidden bg-vk-900 ${rounded ? "rounded-2xl shadow-card" : ""}`}>
           {/* Whole banner is clickable — glides to the donation form */}
           <button
             type="button"
@@ -56,9 +60,11 @@ export default function HeroSection({ scrollToDonate, config }: HeroSectionProps
             Uses pageTitle (e.g. "Square Foot Seva") rather than the generic
             heroHeading1/2 branding text, since that's the actual keyword
             this page needs to rank for. */}
-        <div className="px-4 pb-2 pt-6 text-center md:pt-8">
-          <h1 className="vk-h2">{config.pageTitle}</h1>
-        </div>
+        {!hideTitle && (
+          <div className="px-4 pb-2 pt-6 text-center md:pt-8">
+            <h1 className="vk-h2">{config.pageTitle}</h1>
+          </div>
+        )}
       </div>
     </section>
   );

@@ -26,6 +26,8 @@ import DonorWallSection from "@/components/sqft-campaign/DonorWallSection";
 import FundraisingCtaSection from "@/components/sqft-campaign/FundraisingCtaSection";
 import FinalCtaSection from "@/components/sqft-campaign/FinalCtaSection";
 import StickyMobileBar from "@/components/sqft-campaign/StickyMobileBar";
+import { BrickWallBuilder, BrickJourney } from "@/components/sqft-campaign/BrickSpecial";
+import { BrickIntro, BrickBenefits, BrickWallOfNames, BrickFinalCta } from "@/components/sqft-campaign/BrickPage";
 import CampaignerCard from "@/components/sqft-campaign/CampaignerCard";
 import { getCampaignConfig, type CampaignConfig, type CampaignerData, type DonorEntry } from "@/lib/campaignConfig";
 import { useUpiFallback } from "@/components/UpiFallbackDialog";
@@ -134,6 +136,11 @@ export default function SqftCampaignClient({
     pincode: "",
     sevakName: "",
     dob: "",
+    // Why the seva is being offered (birthday, wedding anniversary, death
+    // anniversary, other) and, for "other", what the donor typed. `dob` holds the
+    // date for whichever occasion is picked.
+    dedicationOccasion: "",
+    dedicationNote: "",
   });
   const [want80G, setWant80G] = useState(false);
   const [monthly, setMonthly] = useState(false);
@@ -215,6 +222,16 @@ export default function SqftCampaignClient({
 
   const scrollToDonate = () => {
     document.getElementById("donate")?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  // "Build your wall" (Brick Seva): hand the chosen quantity to the form.
+  const sponsorBricks = (n: number, engraveName: string) => {
+    if (engraveName) setForm((f) => ({ ...f, sevakName: engraveName }));
+    setTier("standard");
+    setUseCustom(false);
+    setCustomAmount("");
+    setSqftCount(n);
+    scrollToDonate();
   };
 
   const scrollToDonateWith5Lakh = () => {
@@ -308,7 +325,12 @@ export default function SqftCampaignClient({
         mobile: form.mobile.trim(),
         amount: finalAmount,
         sevakName: form.sevakName.trim() || undefined,
-        dob: form.dob || undefined,
+        // `dob` stays a real date of birth only (DRM reads it as the donor's birthday);
+        // the date for any other occasion travels as dedicationDate.
+        dob: form.dedicationOccasion === "birthday" ? form.dob || undefined : undefined,
+        dedicationOccasion: form.dedicationOccasion || undefined,
+        dedicationNote: form.dedicationOccasion === "other" ? form.dedicationNote.trim() || undefined : undefined,
+        dedicationDate: form.dedicationOccasion ? form.dob || undefined : undefined,
         certificate: want80G,
         panNumber: want80G ? form.panNumber.trim() : undefined,
         campaignerSlug: campaigner?.slug || undefined,
@@ -455,7 +477,14 @@ export default function SqftCampaignClient({
         <HeroSection
           scrollToDonate={scrollToDonate}
           config={config}
+          hideTitle={campaignType === "BRICK"}
+          rounded={campaignType === "BRICK"}
         />
+        {campaignType === "BRICK" && <BrickIntro config={config} stats={stats} />}
+
+        {/* Brick Seva only: "Every brick, laid with your name" - first thing after the banner.
+            It picks a quantity and a name and hands them to the donation form just below. */}
+        {campaignType === "BRICK" && <BrickWallBuilder price={config.pricePerUnit} stats={stats} onSponsor={sponsorBricks} />}
 
         {/* Campaigner card (P2P pages only) */}
         {campaigner && (
@@ -509,6 +538,10 @@ export default function SqftCampaignClient({
         />
         </div>
 
+        {/* Brick Seva only: the construction video and site photos come first, right under the
+            form, so a donor sees the temple actually rising before the Golden Brick offer. */}
+        {campaignType === "BRICK" && <ConstructionStatusSection scrollToDonate={scrollToDonate} />}
+
         {/* Golden Brick Seva — the limited golden-brick tier, directly under the
             form so it is seen without a long scroll, while still leaving the
             standard offering as the first call to action. */}
@@ -518,11 +551,18 @@ export default function SqftCampaignClient({
         <TempleFeaturesSection />
 
         {/* Donor privileges */}
-        <DonorPrivilegesSection scrollToDonate={scrollToDonate} config={config} />
+        {/* Brick Seva only: what happens to the brick, straight into what the donor receives. */}
+        {campaignType === "BRICK" && <BrickJourney />}
+
+        {campaignType === "BRICK" ? (
+          <BrickBenefits config={config} />
+        ) : (
+          <DonorPrivilegesSection scrollToDonate={scrollToDonate} config={config} />
+        )}
 
         {/* Temple construction status — right below the donor privileges so
             contributors see the live building progress early */}
-        <ConstructionStatusSection scrollToDonate={scrollToDonate} />
+        {campaignType !== "BRICK" && <ConstructionStatusSection scrollToDonate={scrollToDonate} />}
 
         {/* ₹5 Lakh Seva — Square Foot campaign only (beneath the donor privileges) */}
         {campaignType === "SQFT" && (
@@ -533,13 +573,17 @@ export default function SqftCampaignClient({
         <TestimonialsSection config={config} />
 
         {/* Donor wall */}
-        <DonorWallSection
+        {campaignType === "BRICK" ? (
+          <BrickWallOfNames stats={stats} price={price} onDonate={scrollToDonate} />
+        ) : (
+          <DonorWallSection
           stats={stats}
           wallTab={wallTab}
           setWallTab={setWallTab}
           price={price}
           config={config}
         />
+        )}
 
         {/* About / inspiration */}
         <AboutSection
@@ -555,7 +599,11 @@ export default function SqftCampaignClient({
         <GallerySection />
 
         {/* Final CTA — below Temple & Seva Glimpses */}
-        <FinalCtaSection scrollToDonate={scrollToDonate} config={config} />
+        {campaignType === "BRICK" ? (
+          <BrickFinalCta config={config} />
+        ) : (
+          <FinalCtaSection scrollToDonate={scrollToDonate} config={config} />
+        )}
 
         {/* Founder's words */}
         <FounderSection />
