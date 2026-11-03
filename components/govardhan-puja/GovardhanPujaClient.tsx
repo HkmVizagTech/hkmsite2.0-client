@@ -88,7 +88,7 @@ const sevas: Seva[] = [
     description:
       "Sponsor the sacred worship of Govardhan Hill — the divine mountain lifted by Lord Krishna to protect the residents of Vrindavan.",
     icon: "⛰️",
-    image: "/assets/janmashtami-sk3.webp",
+    image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793711352183-govardhan-seva.webp",
     options: [
       { legacySevaId: 3400, label: "Donate Rs. 21,111", amount: 21111 },
       { legacySevaId: 3401, label: "Donate Rs. 11,111", amount: 11111 },
