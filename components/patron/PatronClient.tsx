@@ -106,17 +106,10 @@ export default function PatronClient() {
     setSending(true);
     try {
       const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
-      const res = await fetch(`${apiUrl}/contact-messages`, {
+      const res = await fetch(`${apiUrl}/patron-requests`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: `${form.firstName} ${form.lastName}`.trim(),
-          phone: form.phone,
-          email: form.email,
-          subject: "Become a Patron",
-          message: `City/District: ${form.city}\nState: ${form.state}\n\n${form.message}`.trim(),
-          authorization,
-        }),
+        body: JSON.stringify({ ...form, authorization }),
       });
       if (!res.ok) throw new Error("Failed");
       setSent(true);
