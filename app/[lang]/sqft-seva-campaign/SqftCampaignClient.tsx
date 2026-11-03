@@ -24,10 +24,10 @@ import FounderSection from "@/components/sqft-campaign/FounderSection";
 import FaqSection from "@/components/sqft-campaign/FaqSection";
 import DonorWallSection from "@/components/sqft-campaign/DonorWallSection";
 import FundraisingCtaSection from "@/components/sqft-campaign/FundraisingCtaSection";
-import FinalCtaSection from "@/components/sqft-campaign/FinalCtaSection";
 import StickyMobileBar from "@/components/sqft-campaign/StickyMobileBar";
 import { BrickWallBuilder, BrickJourney } from "@/components/sqft-campaign/BrickSpecial";
 import { BrickIntro, BrickBenefits, BrickWallOfNames, BrickFinalCta } from "@/components/sqft-campaign/BrickPage";
+import { SqftIntro, SqftFloorBuilder, SqftJourney, SqftFinalCta } from "@/components/sqft-campaign/SqftSpecial";
 import CampaignerCard from "@/components/sqft-campaign/CampaignerCard";
 import { getCampaignConfig, type CampaignConfig, type CampaignerData, type DonorEntry } from "@/lib/campaignConfig";
 import { useUpiFallback } from "@/components/UpiFallbackDialog";
@@ -480,14 +480,18 @@ export default function SqftCampaignClient({
         <HeroSection
           scrollToDonate={scrollToDonate}
           config={config}
-          hideTitle={campaignType === "BRICK"}
-          rounded={campaignType === "BRICK"}
+          hideTitle
+          rounded
         />
-        {campaignType === "BRICK" && <BrickIntro config={config} stats={stats} />}
+        {campaignType === "BRICK" ? <BrickIntro config={config} stats={stats} /> : <SqftIntro config={config} stats={stats} />}
 
         {/* Brick Seva only: "Every brick, laid with your name" - first thing after the banner.
             It picks a quantity and a name and hands them to the donation form just below. */}
-        {campaignType === "BRICK" && <BrickWallBuilder price={config.pricePerUnit} stats={stats} onSponsor={sponsorBricks} />}
+        {campaignType === "BRICK" ? (
+          <BrickWallBuilder price={config.pricePerUnit} stats={stats} onSponsor={sponsorBricks} />
+        ) : (
+          <SqftFloorBuilder price={config.pricePerUnit} stats={stats} onSponsor={sponsorBricks} />
+        )}
 
         {/* Campaigner card (P2P pages only) */}
         {campaigner && (
@@ -541,9 +545,9 @@ export default function SqftCampaignClient({
         />
         </div>
 
-        {/* Brick Seva only: the construction video and site photos come first, right under the
-            form, so a donor sees the temple actually rising before the Golden Brick offer. */}
-        {campaignType === "BRICK" && <ConstructionStatusSection scrollToDonate={scrollToDonate} />}
+        {/* The construction video and site photos come first, right under the form, so a donor
+            sees the temple actually rising (on Brick Seva, before the Golden Brick offer). */}
+        <ConstructionStatusSection scrollToDonate={scrollToDonate} />
 
         {/* Golden Brick Seva — the limited golden-brick tier, directly under the
             form so it is seen without a long scroll, while still leaving the
@@ -555,17 +559,17 @@ export default function SqftCampaignClient({
 
         {/* Donor privileges */}
         {/* Brick Seva only: what happens to the brick, straight into what the donor receives. */}
-        {campaignType === "BRICK" && <BrickJourney />}
+        {campaignType === "BRICK" ? <BrickJourney /> : <SqftJourney />}
 
         {campaignType === "BRICK" ? (
           <BrickBenefits config={config} />
         ) : (
-          <DonorPrivilegesSection scrollToDonate={scrollToDonate} config={config} />
+          // Square Foot Seva keeps its richer privileges list and photo carousel (sankalp and
+          // aarti, books, Narasimha Kavach Sutra...); the id lets the intro's button scroll here.
+          <div id="brick-benefits" className="scroll-mt-20">
+            <DonorPrivilegesSection scrollToDonate={scrollToDonate} config={config} />
+          </div>
         )}
-
-        {/* Temple construction status — right below the donor privileges so
-            contributors see the live building progress early */}
-        {campaignType !== "BRICK" && <ConstructionStatusSection scrollToDonate={scrollToDonate} />}
 
         {/* ₹5 Lakh Seva — Square Foot campaign only (beneath the donor privileges) */}
         {campaignType === "SQFT" && (
@@ -602,11 +606,7 @@ export default function SqftCampaignClient({
         <GallerySection />
 
         {/* Final CTA — below Temple & Seva Glimpses */}
-        {campaignType === "BRICK" ? (
-          <BrickFinalCta config={config} />
-        ) : (
-          <FinalCtaSection scrollToDonate={scrollToDonate} config={config} />
-        )}
+        {campaignType === "BRICK" ? <BrickFinalCta config={config} /> : <SqftFinalCta config={config} />}
 
         {/* Founder's words */}
         <FounderSection />
