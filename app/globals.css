@@ -1184,6 +1184,10 @@
     background-image: var(--gradient-blue-overlay);
     pointer-events: none;
   }
+  /* A photo with no caption has nothing for the gradient to sit behind. */
+  .vk-tile-plain::after {
+    display: none;
+  }
   .vk-tile > img,
   .vk-tile > span > img {
     transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
