@@ -24,7 +24,12 @@ export interface DonorForm {
   dob: string;
   dedicationOccasion: string;
   dedicationNote: string;
+  /** Family gotra, asked (optionally) on offerings above ₹1,000. */
+  gotram: string;
 }
+
+/** Gotram is asked on offerings above this amount (₹). */
+const GOTRAM_MIN_AMOUNT = 1000;
 
 interface DonationFormSectionProps {
   price: number;
@@ -496,6 +501,27 @@ export default function DonationFormSection({
                   />
                 </div>
               </div>
+
+              {/* Gotram: optional, and only asked on offerings above ₹1,000 - the sankalpa is
+                  taken in the family's gotra. */}
+              {finalAmount > GOTRAM_MIN_AMOUNT && (
+                <div>
+                  <label htmlFor="donor-gotram" className="mb-1.5 block text-[13px] font-semibold text-ink/80">
+                    Gotram <span className="font-normal">(optional)</span>
+                  </label>
+                  <input
+                    id="donor-gotram"
+                    type="text"
+                    maxLength={60}
+                    placeholder="e.g. Bharadwaja, Kashyapa"
+                    value={form.gotram}
+                    onChange={(e) => setForm((f) => ({ ...f, gotram: e.target.value }))}
+                    className={`${inputClass} !pl-3.5`}
+                    autoComplete="off"
+                  />
+                  <p className="mt-1 text-xs text-muted-foreground">Used when the sankalpa is taken in your family&apos;s name.</p>
+                </div>
+              )}
 
               <DonorExtrasFields
                 sevakName={form.sevakName}
