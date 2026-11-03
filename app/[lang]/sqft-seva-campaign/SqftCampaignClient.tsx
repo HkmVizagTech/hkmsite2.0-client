@@ -141,6 +141,7 @@ export default function SqftCampaignClient({
     // date for whichever occasion is picked.
     dedicationOccasion: "",
     dedicationNote: "",
+    gotram: "",
   });
   const [want80G, setWant80G] = useState(false);
   const [monthly, setMonthly] = useState(false);
@@ -331,6 +332,8 @@ export default function SqftCampaignClient({
         dedicationOccasion: form.dedicationOccasion || undefined,
         dedicationNote: form.dedicationOccasion === "other" ? form.dedicationNote.trim() || undefined : undefined,
         dedicationDate: form.dedicationOccasion ? form.dob || undefined : undefined,
+        // Optional, and only collected above ₹1,000 (the field is hidden below that).
+        gotram: finalAmount > 1000 ? form.gotram.trim() || undefined : undefined,
         certificate: want80G,
         panNumber: want80G ? form.panNumber.trim() : undefined,
         campaignerSlug: campaigner?.slug || undefined,
