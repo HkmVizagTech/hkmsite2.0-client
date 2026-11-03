@@ -156,7 +156,7 @@ export default function ConstructionStatusSection({ scrollToDonate }: { scrollTo
           {photos.map((p) => (
             <div
               key={p.url}
-              className="vk-tile group aspect-[4/3] w-[85%] max-w-[24rem] shrink-0 sm:w-96"
+              className={`vk-tile group aspect-[4/3] w-[85%] max-w-[24rem] shrink-0 sm:w-96 ${p.caption ? "" : "vk-tile-plain"}`}
             >
               <Image
                 src={p.url}
