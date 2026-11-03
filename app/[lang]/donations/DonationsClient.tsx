@@ -493,7 +493,7 @@ export default function DonationsClient({ initialPage = null }: { initialPage?: 
             distraction-free checkout flow without the full site nav, so a
             quick way to ask a question stays available. */}
         <a
-          href="https://wa.me/917995097108"
+          href="https://wa.me/919063020108"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Chat with us on WhatsApp"
@@ -632,7 +632,6 @@ export default function DonationsClient({ initialPage = null }: { initialPage?: 
               <ul className="space-y-2 text-sm text-white/75">
                 <li><a href={`tel:${phoneHref}`} className="hover:text-white">{settings.contact.phone}</a></li>
                 <li><a href={`mailto:${settings.contact.email}`} className="break-all hover:text-white">{settings.contact.email}</a></li>
-                <li><a href="https://wa.me/917995097108" target="_blank" rel="noreferrer" className="hover:text-white">WhatsApp +91 79950 97108</a></li>
               </ul>
             </div>
           </div>

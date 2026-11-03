@@ -22,6 +22,8 @@ export interface DonorForm {
   pincode: string;
   sevakName: string;
   dob: string;
+  dedicationOccasion: string;
+  dedicationNote: string;
 }
 
 interface DonationFormSectionProps {
@@ -213,7 +215,7 @@ export default function DonationFormSection({
 
         {/* Two-column on desktop (form + engraving panel); stacked on mobile
             with the panel below the form. */}
-        <div className={`mx-auto grid gap-6 ${showEngravingPanel ? "max-w-6xl xl:grid-cols-[minmax(0,1fr)_300px]" : "max-w-4xl"} xl:items-stretch`}>
+        <div className={`mx-auto grid gap-6 ${showEngravingPanel ? "max-w-6xl xl:grid-cols-[minmax(0,1fr)_340px]" : "max-w-4xl"} xl:items-stretch`}>
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -498,8 +500,12 @@ export default function DonationFormSection({
               <DonorExtrasFields
                 sevakName={form.sevakName}
                 dob={form.dob}
-                onSevakNameChange={(v) => setForm({ ...form, sevakName: v })}
-                onDobChange={(v) => setForm({ ...form, dob: v })}
+                onSevakNameChange={(v) => setForm((f) => ({ ...f, sevakName: v }))}
+                onDobChange={(v) => setForm((f) => ({ ...f, dob: v }))}
+                occasion={form.dedicationOccasion}
+                occasionNote={form.dedicationNote}
+                onOccasionChange={(v) => setForm((f) => ({ ...f, dedicationOccasion: v }))}
+                onOccasionNoteChange={(v) => setForm((f) => ({ ...f, dedicationNote: v }))}
                 collapsible
               />
 
@@ -705,32 +711,34 @@ function EngravingPanel({
   isGolden: boolean;
 }) {
   return (
-    <aside className="vk-card mx-auto flex w-full max-w-md flex-col overflow-hidden !rounded-3xl xl:mx-0 xl:h-full">
-      <div className="relative min-h-[200px] flex-1">
+    <aside className="mx-auto flex w-full max-w-sm flex-col overflow-hidden rounded-3xl border border-[#EADFC8] bg-[#FBF5E8] shadow-card xl:sticky xl:top-28 xl:mx-0 xl:max-w-none xl:self-start">
+      {/* The photo is 3:4 and cream, so the box is exactly 3:4 and it runs edge to
+          edge: nothing is cropped, there is no frame around it, and it melts into
+          the cream card below. */}
+      <div className="relative w-full" style={{ aspectRatio: "1086 / 1448" }}>
         <Image
           src={image}
           alt="The laser engraving machine at the temple that inscribes donor names onto the bricks"
           fill
-          sizes="(min-width: 1280px) 300px, (min-width: 640px) 448px, 100vw"
+          sizes="(min-width: 1280px) 340px, (min-width: 640px) 384px, 100vw"
           className="object-cover"
         />
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-vk-900/60 via-transparent to-transparent" />
       </div>
-      <div className="p-5">
-        <p className="vk-pill-soft">
+      <div className="border-t border-[#EADFC8] p-5">
+        <p className="inline-flex items-center gap-1.5 rounded-full bg-vk-700 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-white">
+          <PenLine className="h-3 w-3" />
           {isGolden ? "Golden tier · engraving first" : "Included with every brick"}
         </p>
         <h3 className="mt-3 font-heading text-lg font-bold leading-snug text-ink">
           Your name, engraved on your {unitName}
         </h3>
-        <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">
+        <p className="mt-2 text-[13px] leading-relaxed text-ink/70">
           {isGolden
             ? "Golden bricks are laser-engraved the same way — your name cut into the brick itself before it is gilded and laid in the sanctum sanctorum."
             : `For every ₹${price.toLocaleString("en-IN")} ${unitName} you sponsor, your name is laser-engraved on that very brick before it is laid in the temple.`}
         </p>
-        <p className="mt-3 flex items-start gap-1.5 text-[11px] leading-relaxed text-muted-foreground">
-          <PenLine className="mt-0.5 h-3.5 w-3.5 shrink-0 text-vk-500" />
-          Engraved by laser at the temple — no paint, nothing that fades.
+        <p className="mt-3 border-t border-[#EADFC8] pt-3 text-[12px] font-medium leading-relaxed text-vk-700">
+          Cut by laser at the temple — no paint, nothing that fades.
         </p>
       </div>
     </aside>
