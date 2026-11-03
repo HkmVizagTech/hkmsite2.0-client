@@ -3,7 +3,7 @@ import {
   Clock, Image, Calendar, Snowflake,
   Heart, Utensils, Beef, BookOpen, Shirt, Gift,
   CalendarDays, PartyPopper, HandHeart, FileText, Flower2, Building2,
-  ShoppingBag, Package, Megaphone, MapPin, Landmark, Briefcase,
+  ShoppingBag, Package, Megaphone, MapPin, Landmark, Briefcase, Globe,
   type LucideIcon,
 } from "lucide-react";
 
@@ -46,6 +46,7 @@ export const navEntries: NavEntry[] = [
       icon: Info,
       items: [
         { label: "About Us", href: "/about", description: "Our mission, history & values", icon: Info },
+        { label: "Our Centers", href: "/centers", description: "Hare Krishna Movement temples worldwide", icon: Globe },
         { label: "Contact Us", href: "/contact", description: "Visit, call, or write to us", icon: Phone },
         { label: "Donor Login", href: "/donor/login", description: "View your donations & receipts", icon: User },
         { label: "My Orders", href: "/shop/orders", description: "Track your Matchless Gifts orders", icon: Package },
@@ -75,6 +76,7 @@ export const navEntries: NavEntry[] = [
       items: [
         { label: "Square Foot Seva", href: "/sqft-seva-campaign", description: "Sponsor the temple foundation", icon: Heart },
         { label: "Brick Seva", href: "/brick-seva-campaign", description: "Sponsor a brick for the temple", icon: Heart },
+        { label: "Become a Patron", href: "/patron", description: "Inscribe your family name in the temple", icon: Landmark },
         { label: "Anna Daan", href: "/anna-daan-seva", description: "Feed the hungry", icon: Utensils },
         { label: "Gau Seva", href: "/gau-seva", description: "Cow care & protection", icon: Beef },
         { label: "Gita Daan", href: "/gita-daan-seva", description: "Distribute Bhagavad Gita", icon: BookOpen },
