@@ -10,6 +10,8 @@ interface Tile {
   blurb: string;
   href: string;
   img: string;
+  /** Optional object-position class when the default centre crop misses the subject. */
+  pos?: string;
   /** Grid placement on lg (4-col, 3-row bento) and on mobile (2-col). */
   cls: string;
 }
@@ -20,7 +22,8 @@ const tiles: Tile[] = [
     title: "Temple Festivals",
     blurb: "Janmashtami, Radhashtami, Govardhan Puja & more",
     href: "/festival",
-    img: "/assets/janmashtami-sk2.webp",
+    img: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793769920965-1793769920113-GlimpesesfromSriRadhastamiCelebrationsSriRadhastamiwascelebratedwithgreatdevotionat1.jpg",
+    pos: "object-[50%_43%]",
     cls: "col-span-2 lg:col-span-2",
   },
   {
@@ -48,7 +51,8 @@ const tiles: Tile[] = [
     title: "Daily Aarti",
     blurb: "Seven aartis from 4:30 AM",
     href: "/daily-schedule",
-    img: "/assets/janmashtami-sk6.webp",
+    img: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793768928445-1793768925803-DevoteeOfferingAartitoKrishnaandRadha.png",
+    pos: "object-[55%_50%]",
     cls: "",
   },
   {
@@ -95,7 +99,7 @@ export default function ExploreBento({ lang }: { lang: string }) {
                   alt={t(tile.title)}
                   fill
                   sizes="(min-width: 1024px) 33vw, 50vw"
-                  className="object-cover"
+                  className={`object-cover ${tile.pos ?? ""}`}
                 />
                 <div className="vk-tile-caption flex items-end justify-between gap-3">
                   <div className="min-w-0">
