@@ -158,6 +158,7 @@ export default async function BlogPostPage({
   const { html: bodyHtml, toc } = withHeadingIds(demoteH1(blog.content));
   const showToc = toc.length >= 3;
   const catHref = `/blogs/categories/${catSlug(blog.category)}`;
+  const isGitaPost = /gita|geeta/i.test(`${blog.title} ${blog.slug} ${(blog.tags || []).join(" ")}`);
 
   // Build share URLs
   const fullUrl = `${SITE_URL}/blogs/${blog.slug}`;
@@ -305,8 +306,25 @@ export default async function BlogPostPage({
             {/* HTML content from CKEditor */}
             <div id="article-body" className="blog-content" dangerouslySetInnerHTML={{ __html: bodyHtml }} />
 
+            {/* A reading about the Gita also points to Gita Daan, the seva that matches it */}
+            {isGitaPost && (
+              <Link
+                href={`/gita-daan-seva?utm_source=blog&utm_medium=post-cta&utm_campaign=${blog.slug}`}
+                className={`group mt-12 flex items-center justify-between gap-4 rounded-2xl border ${LINE} bg-white/80 p-5 transition-colors hover:border-vk-600/40 md:p-6`}
+              >
+                <div>
+                  <Eyebrow>Gita Daan Seva</Eyebrow>
+                  <div className={`${SERIF} mt-1 text-[1.25rem] font-semibold leading-snug text-ink`}>
+                    Gift a Bhagavad-gita to a seeker from ₹250
+                  </div>
+                  <p className="mt-1 text-sm text-ink/65">Place Bhagavad-gita As It Is in the hands of a student or seeker who may never find it alone.</p>
+                </div>
+                <ArrowRight className="h-5 w-5 shrink-0 text-vk-700 transition-transform group-hover:translate-x-1" />
+              </Link>
+            )}
+
             {/* Offer a seva: every reading ends with an invitation to Brick Seva */}
-            <div className="relative mt-12 overflow-hidden rounded-2xl border border-gold/40 bg-gradient-to-br from-[#FFF7E0] via-[#FBF1D4] to-[#F6E7BD] p-6 md:p-8">
+            <div className={`relative ${isGitaPost ? "mt-6" : "mt-12"} overflow-hidden rounded-2xl border border-gold/40 bg-gradient-to-br from-[#FFF7E0] via-[#FBF1D4] to-[#F6E7BD] p-6 md:p-8`}>
               <div aria-hidden className="absolute -bottom-16 -right-12 h-44 w-44 rounded-full bg-gold/20 blur-2xl" />
               <div className="relative">
                 <Eyebrow>Offer a seva</Eyebrow>

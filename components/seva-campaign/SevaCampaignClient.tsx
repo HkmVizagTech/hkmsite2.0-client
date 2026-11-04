@@ -16,6 +16,7 @@ import { SEVA_WHATSAPP_NUMBER } from "@/components/WhatsAppFloatButton";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
 import { useScrollToDonate } from "@/lib/useScrollToDonate";
 import { newEventId, getMetaBrowserData, trackPurchase } from "@/lib/metaPixel";
+import { EdHero, EdAbout, EdImpact, EdFeatures, EdPrivileges, EdTestimonials, EdReadMore } from "@/components/seva-campaign/EditorialSections";
 import ImportanceSection from "@/components/sqft-campaign/ImportanceSection";
 import FaqSection from "@/components/sqft-campaign/FaqSection";
 import FounderSection from "@/components/sqft-campaign/FounderSection";
@@ -73,6 +74,8 @@ function unitImpact(amount: number, config: SevaCampaignConfig): string | null {
 
 export default function SevaCampaignClient({ slug }: { slug: string }) {
   const config: SevaCampaignConfig = getSevaCampaignConfig(slug) ?? GAU_CAMPAIGN;
+  // Pages that set theme: "editorial" get the warm cream/serif sections; the form is the same for all.
+  const ed = config.theme === "editorial";
   const [searchParams, setSearchParams] = useState<URLSearchParams>(() => new URLSearchParams());
   const attribution = useAttribution(config.path);
   const razorpayReady = useRazorpayPreload();
@@ -341,7 +344,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
     <PageLayout whatsappNumber={SEVA_WHATSAPP_NUMBER}>
       {upiFallbackDialog}
       <SearchParamsWatcher onChange={setSearchParams} />
-      <main className="bg-white pt-[var(--header-h)] dark:bg-background">
+      <main className={`pt-[var(--header-h)] ${ed ? "overflow-x-hidden bg-[#FBF7EE]" : "bg-white dark:bg-background"}`}>
         {/* ── Hero Banner (plain banner image — no content overlay) ── */}
         <section className="bg-gradient-to-b from-vk-50 to-white">
           <div>
@@ -373,6 +376,10 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
           </div>
         </section>
 
+        {ed ? (
+          <EdHero config={config} onDonate={scrollToDonate} />
+        ) : (
+          <>
         {/* A real, visible H1 — the banner above is a pure image (no
             selectable/crawlable text), so without this the page has no
             text-based top-level heading at all, which hurts both SEO and
@@ -382,6 +389,9 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
             {config.heroHeading1} <span className="text-vk-600">— {config.heroHeading2}</span>
           </h1>
         </div>
+
+          </>
+        )}
 
         {/* ── Donation Form ── */}
         <section id="donate" ref={formRef} className="scroll-mt-28 py-8 md:py-12">
@@ -705,6 +715,10 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
           </div>
         </section>
 
+        {ed ? (
+          <EdAbout config={config} onDonate={scrollToDonate} />
+        ) : (
+          <>
         {/* ── About ── */}
         <section className="vk-section vk-band">
           <div className="vk-container">
@@ -746,6 +760,13 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
           </div>
         </section>
 
+          </>
+        )}
+
+        {ed ? (
+          <EdImpact config={config} />
+        ) : (
+          <>
         {/* ── Impact ── */}
         <section className="vk-section">
           <div className="vk-container">
@@ -777,6 +798,13 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
           </div>
         </section>
 
+          </>
+        )}
+
+        {ed ? (
+          <EdFeatures config={config} />
+        ) : (
+          <>
         {/* ── What your donation does ── */}
         <section className="vk-section vk-band">
           <div className="vk-container">
@@ -808,6 +836,13 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
           </div>
         </section>
 
+          </>
+        )}
+
+        {ed ? (
+          <EdPrivileges config={config} onDonate={scrollToDonate} />
+        ) : (
+          <>
         {/* ── Donor privileges ── */}
         <section className="vk-section">
           <div className="vk-container">
@@ -849,6 +884,13 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
           </div>
         </section>
 
+          </>
+        )}
+
+        {ed ? (
+          <EdTestimonials config={config} />
+        ) : (
+          <>
         {/* ── Testimonials ── */}
         <section className="vk-section">
           <div className="vk-container">
@@ -912,6 +954,11 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
             </motion.div>
           </div>
         </section>
+
+          </>
+        )}
+
+        {ed && <EdReadMore config={config} />}
 
         {/* ── Recent devotees supporting this seva ── */}
         {stats && stats.donors.length > 0 && (
