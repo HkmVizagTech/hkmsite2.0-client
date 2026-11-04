@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/seo";
 import { CENTERS } from "@/lib/centers";
+import { WEB_STORIES } from "@/lib/webStories";
 import { isTeIndexable, localizedPath } from "@/lib/i18n/routing";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
@@ -159,5 +160,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.4,
   }));
 
-  return [...withLanguages, ...centerPages, ...blogPages, ...blogCategoryPages, ...eventPages, ...productPages, ...festivalPages];
+  const storyPages: MetadataRoute.Sitemap = [
+    { url: `${SITE_URL}/web-stories`, changeFrequency: "weekly" as const, priority: 0.5 },
+    ...WEB_STORIES.map((s) => ({
+      url: `${SITE_URL}/web-stories/${s.slug}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.4,
+    })),
+  ];
+
+  return [...withLanguages, ...centerPages, ...storyPages, ...blogPages, ...blogCategoryPages, ...eventPages, ...productPages, ...festivalPages];
 }
