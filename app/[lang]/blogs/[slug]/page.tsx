@@ -307,8 +307,28 @@ export default async function BlogPostPage({
             {/* HTML content from CKEditor */}
             <div id="article-body" className="blog-content" dangerouslySetInnerHTML={{ __html: bodyHtml }} />
 
+            {/* Offer a seva: every reading ends with an invitation to Brick Seva */}
+            <div className="relative mt-12 overflow-hidden rounded-2xl border border-gold/40 bg-gradient-to-br from-[#FFF7E0] via-[#FBF1D4] to-[#F6E7BD] p-6 md:p-8">
+              <div aria-hidden className="absolute -bottom-16 -right-12 h-44 w-44 rounded-full bg-gold/20 blur-2xl" />
+              <div className="relative">
+                <Eyebrow>Offer a seva</Eyebrow>
+                <h3 className={`${SERIF} mt-2 text-[1.5rem] font-semibold leading-snug text-ink md:text-[1.75rem]`}>
+                  Your brick stays as long as the temple stands
+                </h3>
+                <p className="mt-2 max-w-xl text-[15px] leading-relaxed text-ink/70">
+                  Every brick becomes a permanent part of the Lord&apos;s abode. Sponsor one in the Hare Krishna Vaikuntham temple in Visakhapatnam, and it remains there for as long as the temple stands.
+                </p>
+                <Link
+                  href={`/brick-seva-campaign?utm_source=blog&utm_medium=post-cta&utm_campaign=${blog.slug}`}
+                  className="vk-btn mt-5 min-h-[46px] bg-vk-700 px-6 text-white shadow hover:bg-vk-800"
+                >
+                  Offer Brick Seva <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </div>
+
             {/* Share */}
-            <div className={`mt-12 rounded-2xl border ${LINE} bg-white/70 p-5`}>
+            <div className={`mt-6 rounded-2xl border ${LINE} bg-white/70 p-5`}>
               <h4 className="mb-3 text-xs font-bold uppercase tracking-[0.16em] text-gold-deep">Share this reading</h4>
               <div className="flex flex-wrap gap-2">
                 <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className={`${shareBtn} bg-[#25D366]`}>

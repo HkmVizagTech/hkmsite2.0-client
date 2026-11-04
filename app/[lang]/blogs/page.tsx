@@ -374,14 +374,14 @@ export default async function BlogsListPage() {
                 <Eyebrow>Be part of it</Eyebrow>
               </div>
               <h2 className={`${SERIF} mx-auto mt-3 max-w-2xl text-[1.75rem] font-semibold leading-tight text-ink md:text-4xl`}>
-                Read, reflect, and then serve
+                Be part of the temple for as long as it stands
               </h2>
               <p className="mx-auto mt-3 max-w-xl text-ink/70">
-                Every article here is written from the temple&apos;s own experience of feeding, worship and service. Come and be part of it.
+                Every brick you sponsor becomes a permanent part of the Lord&apos;s abode in Visakhapatnam, and stays there for as long as the temple stands.
               </p>
               <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                <Link href="/donations" className="vk-btn min-h-[46px] bg-vk-700 px-6 text-white shadow hover:bg-vk-800">
-                  Offer a seva
+                <Link href="/brick-seva-campaign?utm_source=blog&utm_medium=cta&utm_campaign=blogs-index" className="vk-btn min-h-[46px] bg-vk-700 px-6 text-white shadow hover:bg-vk-800">
+                  Offer Brick Seva
                 </Link>
                 <Link
                   href="/iskcon-vizag-temple"
