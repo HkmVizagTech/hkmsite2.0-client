@@ -38,6 +38,13 @@ export interface SevaCampaignConfig {
   ogDesc: string;
   ogImage: string;
 
+  /** "editorial" gives the page the warm cream / serif look (sections only; the form is unchanged). */
+  theme?: "editorial";
+  /** Articles linked from an editorial page, so readers and search engines can follow the topic. */
+  readMore?: { title: string; text: string; href: string }[];
+  /** Short figures shown under the heading on an editorial page. */
+  stats?: { value: string; label: string }[];
+
   heroTagline: string;
   heroHeading1: string;
   heroHeading2: string;
@@ -73,6 +80,8 @@ export interface SevaCampaignConfig {
     paragraphs: string[];
     image: string;
     ctaLabel: string;
+    /** A line set apart as a quotation. */
+    pullQuote?: { text: string; by: string };
   };
 
   impactItems: { icon: ComponentType<{ className?: string }>; title: string; text: string }[];
@@ -407,6 +416,35 @@ export const GITA_DAAN_CAMPAIGN: SevaCampaignConfig = {
     "There is no greater gift than transcendental knowledge. Gift Bhagavad-Gita As It Is to a seeker and plant a seed that can transform a life forever.",
   ogImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783672760162-1783672758959-ChatGPTImageJul92026043444PM.png",
 
+  theme: "editorial",
+  readMore: [
+    {
+      title: "Reading the Bhagavad-gita for the First Time",
+      text: "A gentle roadmap for anyone opening the Gita for the first time.",
+      href: "/blogs/reading-the-bhagavad-gita-for-the-first-time-a-gentle-roadmap",
+    },
+    {
+      title: "11 Benefits of Reading Bhagavad Gita",
+      text: "What a daily reading of the Gita can change in an ordinary life.",
+      href: "/blogs/benefits-of-reading-bhagavad-gita",
+    },
+    {
+      title: "Gita Jayanti: Celebrating the Wisdom of the Gita",
+      text: "The day Krishna spoke the Gita, and how devotees observe it.",
+      href: "/blogs/gita-jayanti",
+    },
+    {
+      title: "Fearless and Mentally Strong: Lessons from the Gita",
+      text: "Krishna's advice to Arjuna for facing fear and doubt.",
+      href: "/blogs/how-to-be-fearless-mentally-strong-bhagavad-gita",
+    },
+  ],
+  stats: [
+    { value: "40M+", label: "lives touched" },
+    { value: "89+", label: "languages" },
+    { value: "₹250", label: "per Gita" },
+  ],
+
   heroTagline: "A seva initiative of Hare Krishna Movement Visakhapatnam",
   heroHeading1: "Gita Daan Seva",
   heroHeading2: "The Gift of Knowledge",
@@ -453,6 +491,7 @@ export const GITA_DAAN_CAMPAIGN: SevaCampaignConfig = {
     ],
     image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783672760162-1783672758959-ChatGPTImageJul92026043444PM.png",
     ctaLabel: "Gift a Gita",
+    pullQuote: { text: "The essence of India's spiritual wisdom.", by: "Srila Prabhupada on the Bhagavad Gita" },
   },
 
   impactItems: [
