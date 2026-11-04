@@ -4,9 +4,9 @@ import { pageSeo, siteKeywords } from "@/lib/seo";
 
 import { localized } from "@/lib/i18n/seo";
 const baseMetadata: Metadata = pageSeo({
-  title: "Krishna Katha Blog",
+  title: "Blog: Krishna Katha, Festivals, Ekadashi & Vaishnava Wisdom",
   description:
-    "Articles on Krishna Katha, festivals, Srila Prabhupada's teachings and Vaishnava wisdom from ISKCON Gambheeram Visakhapatnam.",
+    "Read Krishna Katha, the meaning of Hindu festivals, Ekadashi dates and fasting rules, Bhagavad Gita wisdom and Srila Prabhupada's teachings from ISKCON Gambheeram, Visakhapatnam.",
   path: "/blogs",
   childTemplate: true,
   keywords: ["ISKCON blog", "Krishna Katha", "Hare Krishna articles", "Vaishnava festivals", ...siteKeywords],

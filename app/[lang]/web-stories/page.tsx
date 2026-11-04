@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronRight, Home, Layers } from "lucide-react";
+import { ArrowRight, ChevronRight, Home, Layers } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import JsonLd from "@/components/seo/JsonLd";
 import { pageSeo, siteKeywords, breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import { WEB_STORIES } from "@/lib/webStories";
+import { CREAM, Eyebrow, LINE, SERIF } from "@/components/blogs/parts";
 
 import { localized } from "@/lib/i18n/seo";
 
@@ -38,10 +39,14 @@ export default function WebStoriesPage() {
     <PageLayout>
       <JsonLd data={breadcrumbJsonLd([{ name: "Blog", path: "/blogs" }, { name: "Web Stories", path: PATH }])} />
       <JsonLd data={listJsonLd} />
-      <main className="bg-white pt-[var(--header-h)]">
-        <section className="bg-gradient-to-b from-vk-50 to-white pb-6 pt-6">
-          <div className="vk-container">
-            <nav aria-label="Breadcrumb" className="mb-4 flex items-center gap-1.5 text-xs font-medium text-ink/55">
+      <main className={`overflow-x-hidden ${CREAM} pt-[var(--header-h)]`}>
+        <section className="relative overflow-hidden">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 top-0 h-full bg-[radial-gradient(60%_80%_at_50%_0%,rgba(212,175,55,0.16),transparent_70%)]"
+          />
+          <div className="vk-container relative pb-8 pt-10 text-center md:pb-12 md:pt-16">
+            <nav aria-label="Breadcrumb" className="mb-6 inline-flex items-center gap-1.5 text-xs font-medium text-ink/55 md:text-[13px]">
               <Link href="/" className="inline-flex items-center gap-1 hover:text-vk-700">
                 <Home className="h-3.5 w-3.5" /> Home
               </Link>
@@ -50,37 +55,53 @@ export default function WebStoriesPage() {
                 Blog
               </Link>
               <ChevronRight className="h-3.5 w-3.5 opacity-60" />
-              <span className="text-ink" aria-current="page">
+              <span className="font-semibold text-vk-700" aria-current="page">
                 Web Stories
               </span>
             </nav>
-            <h1 className="text-3xl font-bold tracking-tight text-ink md:text-4xl">Web Stories</h1>
-            <p className="mt-2 max-w-2xl text-ink/65">
+            <div className="flex justify-center">
+              <Eyebrow>Tap through · One minute each</Eyebrow>
+            </div>
+            <h1 className={`${SERIF} mx-auto mt-4 max-w-3xl text-[2.1rem] font-semibold leading-[1.15] text-ink sm:text-5xl lg:text-[3.2rem]`}>
+              Web Stories
+            </h1>
+            <p className="mx-auto mt-4 max-w-2xl text-[15px] leading-relaxed text-ink/65 md:text-base">
               Short, full-screen stories you can tap through in a minute: Krishna&apos;s pastimes, Ekadashi guidance, prayers, recipes and festival ideas.
             </p>
+            <div className="mt-6 flex justify-center">
+              <Link
+                href="/blogs"
+                className={`inline-flex min-h-[40px] items-center gap-2 rounded-full border ${LINE} bg-white/80 px-4 text-sm font-medium text-ink/80 transition-colors hover:border-vk-600 hover:text-vk-700`}
+              >
+                Prefer reading? Browse the blog <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
           </div>
         </section>
 
-        <section className="vk-section">
+        <section className="pb-14 pt-2 md:pb-24">
           <div className="vk-container">
             <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:gap-6 lg:grid-cols-4 xl:grid-cols-5">
               {WEB_STORIES.map((s) => (
                 <li key={s.slug}>
                   <Link
                     href={`${PATH}/${s.slug}`}
-                    className="group relative block aspect-[9/16] overflow-hidden rounded-2xl bg-vk-900 shadow-sm ring-1 ring-vk-100 transition-shadow hover:shadow-lg"
+                    className="group relative block aspect-[9/16] overflow-hidden rounded-[1.4rem] bg-vk-900 shadow-[0_22px_40px_-26px_rgba(40,25,5,0.65)] ring-1 ring-[#EBDFC6] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_30px_50px_-26px_rgba(40,25,5,0.75)]"
                   >
                     <Image
                       src={s.poster}
                       alt={s.title}
                       fill
                       sizes="(min-width: 1280px) 220px, (min-width: 1024px) 24vw, (min-width: 640px) 30vw, 46vw"
-                      className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                      className="object-cover transition-transform duration-700 group-hover:scale-[1.05]"
                     />
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/45 to-transparent p-3 pt-12">
-                      <h2 className="text-sm font-semibold leading-snug text-white">{s.title}</h2>
-                      <span className="mt-1 inline-flex items-center gap-1 text-[11px] font-medium text-white/75">
-                        <Layers className="h-3 w-3" /> {s.pages.length} {s.pages.length === 1 ? "slide" : "slides"}
+                    <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-black/45 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur">
+                      <Layers className="h-3 w-3" /> {s.pages.length}
+                    </span>
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#120d05]/90 via-[#120d05]/50 to-transparent p-4 pt-16">
+                      <h2 className={`${SERIF} line-clamp-3 text-[0.98rem] font-semibold leading-snug text-white`}>{s.title}</h2>
+                      <span className="mt-2 inline-flex items-center gap-1 text-[11px] font-semibold text-[#F3DFA6]">
+                        Watch story <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
                       </span>
                     </div>
                   </Link>

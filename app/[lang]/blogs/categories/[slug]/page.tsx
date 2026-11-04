@@ -1,236 +1,238 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, ChevronRight, Home } from "lucide-react";
+import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, Home } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
-import SectionHeading from "@/components/site/SectionHeading";
-import { pageSeo, clampDescription, breadcrumbJsonLd } from "@/lib/seo";
+import { pageSeo, clampDescription, breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import JsonLd from "@/components/seo/JsonLd";
+import { CREAM, Eyebrow, LINE, PostCard, SERIF, ShelfHeading, type Blog } from "@/components/blogs/parts";
 
 import { localizedFn } from "@/lib/i18n/seo";
-interface Blog {
-  _id: string;
-  title: string;
-  slug: string;
-  excerpt: string;
-  coverImage?: string;
-  category: string;
-  author: { name: string; avatar?: string };
-  publishedAt?: string;
-  createdAt: string;
-  readTime: number;
-}
 
-interface CategoryEntry {
+interface Category {
   name: string;
   slug: string;
   count: number;
 }
 
+const PER_PAGE = 12;
+
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:3000";
 
-async function getCategories(): Promise<CategoryEntry[]> {
+// A few lines of real copy for each topic, so a category page is more than a list of links.
+const BLURBS: Record<string, string> = {
+  "Krishna Katha":
+    "The pastimes of Lord Krishna, from His childhood in Vrindavan to the Bhagavad Gita, told simply and with devotion.",
+  "Vaishnava Songs and Prayers":
+    "Prayers, stotras and kirtans that Vaishnavas sing every day, with their meaning and the mood behind them.",
+  "Our Acharyas":
+    "The lives and teachings of Srila Prabhupada and the acharyas who carried the message of Krishna consciousness to the world.",
+  "Spiritual Knowledge":
+    "Clear answers on bhakti, the Bhagavad Gita, fasting rules, offerings and the practices of Vaishnava life.",
+  "Sacred Festivals & Occasions":
+    "The meaning, dates and observances of Janmashtami, Ekadashi, Rath Yatra, Diwali and every major festival of the Vaishnava calendar.",
+  "Spiritual News & Events": "Happenings from the temple and the wider Hare Krishna Movement.",
+  "Spiritual Charity":
+    "Why feeding the hungry, protecting cows and sharing the Gita are acts of devotion, and how you can take part.",
+  "Timeless Wisdom": "Short reflections from the scriptures that stay true in every age.",
+  "Divine Poetics": "Verses and poetry in praise of Krishna and His devotees.",
+  "Krishna Consciousness": "What it means to live a Krishna conscious life, step by step.",
+  Recipes: "Simple, offering-ready prasadam recipes made the temple way.",
+  Pilgrimage: "Guides to holy places, temples and how to make a pilgrimage meaningful.",
+};
+
+async function getCategories(): Promise<Category[]> {
   try {
     const res = await fetch(`${API_URL}/blogs/categories`, { next: { revalidate: 300 } });
     if (!res.ok) return [];
     return (await res.json()).categories || [];
-  } catch (_) {
+  } catch {
     return [];
   }
 }
-async function getBlogsForCategory(name: string): Promise<Blog[]> {
+
+async function getBlogsForCategory(name: string, page: number): Promise<{ blogs: Blog[]; totalPages: number }> {
   try {
-    const res = await fetch(
-      `${API_URL}/blogs?category=${encodeURIComponent(name)}&limit=50`,
-      { next: { revalidate: 300 } }
-    );
-    if (!res.ok) return [];
-    return (await res.json()).blogs || [];
-  } catch (_) {
-    return [];
+    const res = await fetch(`${API_URL}/blogs?category=${encodeURIComponent(name)}&limit=${PER_PAGE}&page=${page}`, {
+      next: { revalidate: 300 },
+    });
+    if (!res.ok) return { blogs: [], totalPages: 1 };
+    const j = await res.json();
+    return { blogs: j.blogs || [], totalPages: j.totalPages || 1 };
+  } catch {
+    return { blogs: [], totalPages: 1 };
   }
 }
 
-const fmtDate = (s?: string) =>
-  s
-    ? new Date(s).toLocaleDateString("en-IN", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
-    : "";
+const pageNum = (v: string | string[] | undefined) => Math.max(1, parseInt(Array.isArray(v) ? v[0] : v || "1", 10) || 1);
 
-async function baseGenerateMetadata({ params }: { params: Promise<{ slug: string; lang: string }> }) {
+async function baseGenerateMetadata({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string; lang: string }>;
+  searchParams: Promise<{ page?: string }>;
+}) {
   const { slug } = await params;
+  const page = pageNum((await searchParams).page);
   const categories = await getCategories();
   const cat = categories.find((c) => c.slug === slug);
   if (!cat) return { title: "Blog Category", robots: { index: false, follow: true } };
+  const blurb = BLURBS[cat.name] || `Read ${cat.name} articles from ISKCON Gambheeram, Visakhapatnam.`;
   return pageSeo({
-    title: `${cat.name} — Blog`,
-    description: clampDescription(
-      `Read ${cat.name} articles from ISKCON Gambheeram Visakhapatnam — Krishna katha, festivals and Srila Prabhupada's teachings.`
-    ),
-    path: `/blogs/categories/${cat.slug}`,
+    title: page > 1 ? `${cat.name}: Blog (Page ${page})` : `${cat.name}: Blog`,
+    description: clampDescription(`${blurb} ${cat.count} articles from ISKCON Gambheeram, Visakhapatnam.`),
+    path: `/blogs/categories/${cat.slug}${page > 1 ? `?page=${page}` : ""}`,
   });
 }
 
 export default async function CategoryPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ page?: string }>;
 }) {
   const { slug } = await params;
+  const page = pageNum((await searchParams).page);
   const categories = await getCategories();
   const cat = categories.find((c) => c.slug === slug);
   if (!cat) notFound();
 
-  const blogs = await getBlogsForCategory(cat.name);
-  const otherCats = categories.filter((c) => c.slug !== slug && c.count > 0).slice(0, 8);
+  const { blogs, totalPages } = await getBlogsForCategory(cat.name, page);
+  if (page > 1 && blogs.length === 0) notFound();
+  const otherCats = categories.filter((c) => c.slug !== slug && c.count > 0).slice(0, 10);
+  const base = `/blogs/categories/${cat.slug}`;
+  const hrefFor = (p: number) => (p <= 1 ? base : `${base}?page=${p}`);
+  const blurb = BLURBS[cat.name];
+
+  const listJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: `${cat.name}: Blog`,
+    url: `${SITE_URL}${hrefFor(page)}`,
+    description: blurb,
+    isPartOf: { "@type": "Blog", "@id": `${SITE_URL}/blogs` },
+    mainEntity: {
+      "@type": "ItemList",
+      itemListElement: blogs.map((b, i) => ({
+        "@type": "ListItem",
+        position: (page - 1) * PER_PAGE + i + 1,
+        name: b.title,
+        url: `${SITE_URL}/blogs/${b.slug}`,
+      })),
+    },
+  };
 
   return (
     <PageLayout>
-    <JsonLd
-      data={breadcrumbJsonLd([
-        { name: "Blog", path: "/blogs" },
-        { name: cat.name, path: `/blogs/categories/${cat.slug}` },
-      ])}
-    />
-    <main className="overflow-x-hidden bg-white pt-[var(--header-h)]">
-      {/* ─── Tinted hero ─── */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-vk-100 via-vk-50 to-white">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-vk-300/30 blur-3xl"
-        />
-        <div className="vk-container relative pb-8 pt-8 md:pb-12 md:pt-14">
-          {/* Breadcrumb */}
-          <nav
-            aria-label="Breadcrumb"
-            className="mb-5 inline-flex max-w-full items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-medium text-ink/70 shadow-sm md:text-[13px]"
-          >
-            <Link href="/" className="inline-flex shrink-0 items-center gap-1 transition-colors hover:text-vk-700">
-              <Home className="h-3.5 w-3.5" />
-              Home
-            </Link>
-            <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-60" />
-            <Link href="/blogs" className="shrink-0 transition-colors hover:text-vk-700">Blogs</Link>
-            <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-60" />
-            <span className="truncate font-semibold text-vk-700" aria-current="page">{cat.name}</span>
-          </nav>
-
-          <header className="max-w-3xl">
-            <span className="vk-pill mb-3">Category</span>
-            <h1 className="vk-h1">{cat.name}</h1>
-            <p className="vk-lead mt-3">
-              {cat.count} {cat.count === 1 ? "post" : "posts"} in this category
-            </p>
-          </header>
-        </div>
-      </section>
-
-      <section className="pb-12 pt-4 md:pb-16">
-        <div className="vk-container">
-          {blogs.length === 0 ? (
-            <div className="vk-card mx-auto max-w-md p-10 text-center">
-              <p className="text-muted-foreground">No posts in this category yet.</p>
-              <Link href="/blogs" className="vk-btn-outline mt-5">
-                <ArrowLeft className="h-4 w-4" /> Back to all blogs
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Blog", path: "/blogs" },
+          { name: cat.name, path: base },
+        ])}
+      />
+      <JsonLd data={listJsonLd} />
+      <main className={`overflow-x-hidden ${CREAM} pt-[var(--header-h)]`}>
+        <section className="relative overflow-hidden">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 top-0 h-full bg-[radial-gradient(60%_80%_at_50%_0%,rgba(212,175,55,0.16),transparent_70%)]"
+          />
+          <div className="vk-container relative pb-8 pt-10 text-center md:pb-12 md:pt-16">
+            <nav aria-label="Breadcrumb" className="mb-6 inline-flex max-w-full items-center gap-1.5 text-xs font-medium text-ink/55 md:text-[13px]">
+              <Link href="/" className="inline-flex shrink-0 items-center gap-1 transition-colors hover:text-vk-700">
+                <Home className="h-3.5 w-3.5" />
+                Home
               </Link>
+              <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-60" />
+              <Link href="/blogs" className="shrink-0 transition-colors hover:text-vk-700">
+                Blogs
+              </Link>
+              <ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-60" />
+              <span className="truncate font-semibold text-vk-700" aria-current="page">
+                {cat.name}
+              </span>
+            </nav>
+            <div className="flex justify-center">
+              <Eyebrow>{cat.count} {cat.count === 1 ? "article" : "articles"}</Eyebrow>
             </div>
-          ) : (
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:gap-6 lg:grid-cols-3">
-              {blogs.map((b) => (
-                <Link
-                  key={b._id}
-                  href={`/blogs/${b.slug}`}
-                  className="vk-card vk-card-hover group flex h-full flex-col overflow-hidden"
-                >
-                  <div className="relative aspect-[16/10] overflow-hidden bg-vk-100">
-                    {b.coverImage ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={b.coverImage}
-                        alt={b.title}
-                        loading="lazy"
-                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 bg-gradient-to-br from-vk-700 via-vk-600 to-vk-400" />
-                    )}
-                    <span className="absolute left-3 top-3 max-w-[85%] truncate rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-vk-800 shadow">
-                      {b.category || cat.name}
-                    </span>
-                  </div>
-                  <div className="flex flex-1 flex-col p-5">
-                    <h3 className="mb-2 line-clamp-2 text-base font-bold leading-snug text-ink transition-colors group-hover:text-vk-700 md:text-lg">
-                      {b.title}
-                    </h3>
-                    {b.excerpt && (
-                      <p className="mb-3 line-clamp-2 text-sm text-muted-foreground">
-                        {b.excerpt}
-                      </p>
-                    )}
-                    <div className="mt-auto flex items-center gap-2 pt-1 text-xs text-muted-foreground">
-                      {b.author?.avatar ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={b.author.avatar}
-                          alt=""
-                          className="h-6 w-6 rounded-full object-cover"
-                        />
-                      ) : (
-                        <div className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-vk-100 text-[10px] font-bold text-vk-700">
-                          {(b.author?.name || "A").charAt(0)}
-                        </div>
-                      )}
-                      <span className="truncate">By {b.author?.name || "Admin"}</span>
-                      <span aria-hidden>·</span>
-                      <span className="whitespace-nowrap">{fmtDate(b.publishedAt || b.createdAt)}</span>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* Other categories — chips */}
-      {otherCats.length > 0 && (
-        <section className="vk-section vk-band">
-          <div className="vk-container">
-            <SectionHeading
-              eyebrow="Keep Exploring"
-              title="Other Categories"
-              action={{ href: "/blogs", label: "All Blogs" }}
-            />
-            <div className="flex flex-wrap gap-2">
-              {otherCats.map((c) => (
-                <Link
-                  key={c.slug}
-                  href={`/blogs/categories/${c.slug}`}
-                  className="group inline-flex min-h-[44px] items-center gap-2 rounded-full border border-vk-200 bg-white px-4 text-sm font-medium text-ink/85 shadow-sm transition-colors hover:border-vk-700 hover:text-vk-700"
-                >
-                  {c.name}
-                  <span className="rounded-full bg-vk-100 px-1.5 py-0.5 text-[11px] font-bold text-vk-700">
-                    {c.count}
-                  </span>
-                  <ArrowRight className="h-3.5 w-3.5 opacity-0 transition-opacity group-hover:opacity-100" />
-                </Link>
-              ))}
-            </div>
+            <h1 className={`${SERIF} mx-auto mt-4 max-w-3xl text-[2.1rem] font-semibold leading-[1.15] text-ink sm:text-5xl lg:text-[3.2rem]`}>
+              {cat.name}
+            </h1>
+            {blurb && <p className="mx-auto mt-4 max-w-2xl text-[15px] leading-relaxed text-ink/65 md:text-base">{blurb}</p>}
           </div>
         </section>
-      )}
-    </main>
+
+        <section className="pb-14 pt-4 md:pb-20">
+          <div className="vk-container">
+            {blogs.length === 0 ? (
+              <div className="vk-card mx-auto max-w-md p-10 text-center">
+                <p className="text-muted-foreground">No posts in this category yet.</p>
+                <Link href="/blogs" className="vk-btn-outline mt-5">
+                  <ArrowLeft className="h-4 w-4" /> Back to all blogs
+                </Link>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 gap-x-7 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+                  {blogs.map((b) => (
+                    <PostCard key={b._id} blog={b} showCategory={false} />
+                  ))}
+                </div>
+
+                {totalPages > 1 && (
+                  <nav aria-label="Pagination" className="mt-14 flex items-center justify-center gap-2">
+                    {page > 1 && (
+                      <Link
+                        href={hrefFor(page - 1)}
+                        rel="prev"
+                        className={`inline-flex min-h-[42px] items-center gap-1.5 rounded-full border ${LINE} bg-white/80 px-4 text-sm font-medium text-ink/80 hover:border-vk-600 hover:text-vk-700`}
+                      >
+                        <ChevronLeft className="h-4 w-4" /> Newer
+                      </Link>
+                    )}
+                    <span className="px-3 text-sm text-ink/60">
+                      Page {page} of {totalPages}
+                    </span>
+                    {page < totalPages && (
+                      <Link
+                        href={hrefFor(page + 1)}
+                        rel="next"
+                        className="inline-flex min-h-[42px] items-center gap-1.5 rounded-full bg-vk-700 px-5 text-sm font-semibold text-white hover:bg-vk-800"
+                      >
+                        Older <ChevronRight className="h-4 w-4" />
+                      </Link>
+                    )}
+                  </nav>
+                )}
+              </>
+            )}
+          </div>
+        </section>
+
+        {otherCats.length > 0 && (
+          <section className="border-t border-[#EFE5CE] bg-white/60 py-12 md:py-16">
+            <div className="vk-container">
+              <ShelfHeading eyebrow="Keep exploring" title="Other topics" href="/blogs" hrefLabel="All blogs" />
+              <div className="flex flex-wrap gap-2">
+                {otherCats.map((c) => (
+                  <Link
+                    key={c.slug}
+                    href={`/blogs/categories/${c.slug}`}
+                    className={`group inline-flex min-h-[44px] items-center gap-2 rounded-full border ${LINE} bg-white/80 px-4 text-sm font-medium text-ink/80 transition-colors hover:border-vk-600 hover:text-vk-700`}
+                  >
+                    {c.name}
+                    <span className="text-[11px] font-semibold text-gold-deep">{c.count}</span>
+                    <ArrowRight className="h-3.5 w-3.5 opacity-0 transition-opacity group-hover:opacity-100" />
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+      </main>
     </PageLayout>
   );
 }
 
 export const generateMetadata = localizedFn(baseGenerateMetadata);
-
-// Built on first visit, then served from cache and refreshed every 5
-// minutes (ISR) instead of rendered per request. An empty list is what
-// lets Next cache these paths at runtime.
-export async function generateStaticParams() {
-  return [];
-}
