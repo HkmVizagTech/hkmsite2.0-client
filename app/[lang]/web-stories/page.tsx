@@ -43,7 +43,7 @@ export default function WebStoriesPage() {
         <section className="relative overflow-hidden">
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-x-0 top-0 h-full bg-[radial-gradient(60%_80%_at_50%_0%,rgba(212,175,55,0.16),transparent_70%)]"
+            className="pointer-events-none absolute inset-x-0 top-0 h-full bg-[radial-gradient(60%_80%_at_50%_0%,rgba(47,91,211,0.07),transparent_70%)]"
           />
           <div className="vk-container relative pb-8 pt-10 text-center md:pb-12 md:pt-16">
             <nav aria-label="Breadcrumb" className="mb-6 inline-flex items-center gap-1.5 text-xs font-medium text-ink/55 md:text-[13px]">
@@ -86,7 +86,7 @@ export default function WebStoriesPage() {
                 <li key={s.slug}>
                   <Link
                     href={`${PATH}/${s.slug}`}
-                    className="group relative block aspect-[9/16] overflow-hidden rounded-[1.4rem] bg-vk-900 shadow-[0_22px_40px_-26px_rgba(40,25,5,0.65)] ring-1 ring-[#EBDFC6] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_30px_50px_-26px_rgba(40,25,5,0.75)]"
+                    className="group relative block aspect-[9/16] overflow-hidden rounded-[1.4rem] bg-vk-900 shadow-[0_22px_40px_-26px_rgba(20,30,80,0.65)] ring-1 ring-vk-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_30px_50px_-26px_rgba(20,30,80,0.75)]"
                   >
                     <Image
                       src={s.poster}
@@ -98,9 +98,9 @@ export default function WebStoriesPage() {
                     <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-black/45 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur">
                       <Layers className="h-3 w-3" /> {s.pages.length}
                     </span>
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#120d05]/90 via-[#120d05]/50 to-transparent p-4 pt-16">
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#0b1230]/90 via-[#0b1230]/50 to-transparent p-4 pt-16">
                       <h2 className={`${SERIF} line-clamp-3 text-[0.98rem] font-semibold leading-snug text-white`}>{s.title}</h2>
-                      <span className="mt-2 inline-flex items-center gap-1 text-[11px] font-semibold text-[#F3DFA6]">
+                      <span className="mt-2 inline-flex items-center gap-1 text-[11px] font-semibold text-[#BFD0FF]">
                         Watch story <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
                       </span>
                     </div>

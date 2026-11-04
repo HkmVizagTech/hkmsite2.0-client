@@ -1,4 +1,4 @@
-import { donationMetadata, donationJsonLd } from "@/lib/donationSeo";
+import { donationMetadata, donationJsonLd, faqJsonLd } from "@/lib/donationSeo";
 import JsonLd from "@/components/seo/JsonLd";
 import SevaCampaignClient from "@/components/seva-campaign/SevaCampaignClient";
 import { GAU_CAMPAIGN } from "@/lib/sevaCampaignConfig";
@@ -10,6 +10,7 @@ export default function GauSevaPage() {
   return (
     <>
       <JsonLd data={donationJsonLd("gau-seva")} />
+      <JsonLd data={faqJsonLd(GAU_CAMPAIGN.faqs)} />
       <SevaCampaignClient slug={GAU_CAMPAIGN.slug} />
     </>
   );

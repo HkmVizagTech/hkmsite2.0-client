@@ -23,8 +23,8 @@ export interface Blog {
 }
 
 export const SERIF = "font-serif-display";
-export const CREAM = "bg-[#FBF7EE]";
-export const LINE = "border-[#EBDFC6]";
+export const CREAM = "bg-white";
+export const LINE = "border-[#E4E9F7]";
 
 export const fmtDate = (s?: string, long = false) => {
   if (!s) return "";
@@ -34,7 +34,7 @@ export const fmtDate = (s?: string, long = false) => {
 /** Cover image, or a soft gradient when the post has none. */
 export function Cover({ blog, className = "", priority = false }: { blog: Blog; className?: string; priority?: boolean }) {
   return (
-    <div className={`relative overflow-hidden bg-[#F1E8D3] ${className}`}>
+    <div className={`relative overflow-hidden bg-[#EEF2FF] ${className}`}>
       {blog.coverImage ? (
         <img
           src={blog.coverImage}
@@ -64,10 +64,10 @@ export function Eyebrow({ children, light = false }: { children: ReactNode; ligh
   return (
     <span
       className={`inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] ${
-        light ? "text-[#F3DFA6]" : "text-gold-deep"
+        light ? "text-[#BFD0FF]" : "text-vk-600"
       }`}
     >
-      <span aria-hidden className={`h-px w-6 ${light ? "bg-[#F3DFA6]/70" : "bg-gold-deep/60"}`} />
+      <span aria-hidden className={`h-px w-6 ${light ? "bg-[#BFD0FF]/70" : "bg-vk-600/60"}`} />
       {children}
     </span>
   );
@@ -113,10 +113,10 @@ export function ShelfHeading({
 export function PostCard({ blog, showCategory = true }: { blog: Blog; showCategory?: boolean }) {
   return (
     <Link href={`/blogs/${blog.slug}`} className="group flex h-full flex-col">
-      <Cover blog={blog} className="aspect-[3/2] rounded-2xl shadow-[0_14px_30px_-22px_rgba(60,40,10,0.55)]" />
+      <Cover blog={blog} className="aspect-[3/2] rounded-2xl shadow-[0_14px_30px_-22px_rgba(30,58,138,0.55)]" />
       <div className="flex flex-1 flex-col pt-4">
         {showCategory && blog.category && (
-          <span className="mb-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-gold-deep">{blog.category}</span>
+          <span className="mb-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-vk-600">{blog.category}</span>
         )}
         <h3 className={`${SERIF} line-clamp-2 text-[1.2rem] font-semibold leading-snug text-ink transition-colors group-hover:text-vk-700`}>
           {blog.title}

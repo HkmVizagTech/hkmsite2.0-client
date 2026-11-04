@@ -136,7 +136,7 @@ export default async function CategoryPage({
         <section className="relative overflow-hidden">
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-x-0 top-0 h-full bg-[radial-gradient(60%_80%_at_50%_0%,rgba(212,175,55,0.16),transparent_70%)]"
+            className="pointer-events-none absolute inset-x-0 top-0 h-full bg-[radial-gradient(60%_80%_at_50%_0%,rgba(47,91,211,0.07),transparent_70%)]"
           />
           <div className="vk-container relative pb-8 pt-10 text-center md:pb-12 md:pt-16">
             <nav aria-label="Breadcrumb" className="mb-6 inline-flex max-w-full items-center gap-1.5 text-xs font-medium text-ink/55 md:text-[13px]">
@@ -211,7 +211,7 @@ export default async function CategoryPage({
         </section>
 
         {otherCats.length > 0 && (
-          <section className="border-t border-[#EFE5CE] bg-white/60 py-12 md:py-16">
+          <section className="border-t border-[#E4E9F7] bg-white/60 py-12 md:py-16">
             <div className="vk-container">
               <ShelfHeading eyebrow="Keep exploring" title="Other topics" href="/blogs" hrefLabel="All blogs" />
               <div className="flex flex-wrap gap-2">
@@ -222,7 +222,7 @@ export default async function CategoryPage({
                     className={`group inline-flex min-h-[44px] items-center gap-2 rounded-full border ${LINE} bg-white/80 px-4 text-sm font-medium text-ink/80 transition-colors hover:border-vk-600 hover:text-vk-700`}
                   >
                     {c.name}
-                    <span className="text-[11px] font-semibold text-gold-deep">{c.count}</span>
+                    <span className="text-[11px] font-semibold text-vk-600">{c.count}</span>
                     <ArrowRight className="h-3.5 w-3.5 opacity-0 transition-opacity group-hover:opacity-100" />
                   </Link>
                 ))}

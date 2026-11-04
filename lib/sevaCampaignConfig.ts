@@ -42,6 +42,8 @@ export interface SevaCampaignConfig {
   theme?: "editorial";
   /** Articles linked from an editorial page, so readers and search engines can follow the topic. */
   readMore?: { title: string; text: string; href: string }[];
+  /** Heading above the readMore links. */
+  readMoreHeading?: string;
   /** Short figures shown under the heading on an editorial page. */
   stats?: { value: string; label: string }[];
 
@@ -117,6 +119,36 @@ export const GAU_CAMPAIGN: SevaCampaignConfig = {
     "Serve the sacred cows. Sponsor fodder, green grass, medicines and yearly adoption sevas at the Hare Krishna Vaikuntham Temple.",
   ogImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1784305732825-1784305730000-ChatGPTImageJul172026095835PM.png",
 
+  theme: "editorial",
+  stats: [
+    { value: "₹1,500", label: "feeds 10 cows a day" },
+    { value: "₹3,500", label: "feeds a cow a month" },
+    { value: "80G", label: "tax benefit" },
+  ],
+  readMoreHeading: "Learn more about Gau Seva and cow protection",
+  readMore: [
+    {
+      title: "ISKCON Gau Seva: Meaning, Importance & Guide",
+      text: "What cow protection means in Vaishnava tradition, and how to take part.",
+      href: "/blogs/gau-seva",
+    },
+    {
+      title: "Gopashtami: The Day Krishna Became a Cowherd",
+      text: "The festival that honours Krishna's service to the cows of Vrindavan.",
+      href: "/blogs/gopashtami-when-krishna-became-a-cowherd",
+    },
+    {
+      title: "Govardhan Puja: The Day Krishna Lifted a Mountain",
+      text: "The pastime in which Krishna protected the cows and the people of Vraja.",
+      href: "/blogs/govardhan-puja-the-day-krishna-lifted-a-mountain",
+    },
+    {
+      title: "Significance of Govardhan Puja: Why Is Cow Dung Used?",
+      text: "The meaning behind the cow's place in the worship of Govardhan.",
+      href: "/blogs/govardhan-puja-date-muhurat-vidhi-significance",
+    },
+  ],
+
   heroTagline: "A seva initiative of Hare Krishna Movement Visakhapatnam",
   heroHeading1: "Gau Seva",
   heroHeading2: "Serve the Sacred Cows",
@@ -163,6 +195,7 @@ export const GAU_CAMPAIGN: SevaCampaignConfig = {
     ],
     image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783676646237-1783676645536-ChatGPTImageJul102026031357PM.png",
     ctaLabel: "Serve the Cows",
+    pullQuote: { text: "Cow protection, go-raksha, is one of the most meritorious of all services.", by: "The scriptures" },
   },
 
   impactItems: [
@@ -266,6 +299,36 @@ export const ANNA_DAAN_CAMPAIGN: SevaCampaignConfig = {
     "Feed the hungry with sanctified prasadam. Anna Daan — the donation of food — is the highest form of charity in the Vedic tradition.",
   ogImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677363792-1783677363601-462395264797134589073566144398536696847591n.jpg",
 
+  theme: "editorial",
+  stats: [
+    { value: "₹25", label: "feeds one person" },
+    { value: "₹500", label: "feeds 20 people" },
+    { value: "80G", label: "tax benefit" },
+  ],
+  readMoreHeading: "Learn more about Anna Daan and prasadam",
+  readMore: [
+    {
+      title: "Anna Daan: Why Feeding Comes Before Everything Else",
+      text: "Why the Vedic tradition places the gift of food above every other charity.",
+      href: "/blogs/anna-daan-why-feeding-comes-before-everything-else",
+    },
+    {
+      title: "56 Bhog List: Chappan Bhog Offered to Lord Krishna",
+      text: "The fifty-six preparations offered to Krishna, and what they mean.",
+      href: "/blogs/56-bhog-list",
+    },
+    {
+      title: "Temple-Style Khichdi: A Simple Prasadam Recipe",
+      text: "A humble offering you can cook and share at home.",
+      href: "/blogs/temple-style-khichdi-a-simple-prasadam-recipe",
+    },
+    {
+      title: "ISKCON Khichdi Recipe",
+      text: "How khichdi prasadam is prepared in ISKCON kitchens.",
+      href: "/blogs/iskcon-khichdi-recipe",
+    },
+  ],
+
   heroTagline: "A seva initiative of Hare Krishna Movement Visakhapatnam",
   heroHeading1: "Anna Daan Seva",
   heroHeading2: "The Highest Charity",
@@ -312,6 +375,7 @@ export const ANNA_DAAN_CAMPAIGN: SevaCampaignConfig = {
     ],
     image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677363792-1783677363601-462395264797134589073566144398536696847591n.jpg",
     ctaLabel: "Sponsor Meals",
+    pullQuote: { text: "Anna Daan, the donation of food, is the highest of all charities, for it sustains life itself.", by: "The Vedic tradition" },
   },
 
   impactItems: [
@@ -417,6 +481,7 @@ export const GITA_DAAN_CAMPAIGN: SevaCampaignConfig = {
   ogImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783672760162-1783672758959-ChatGPTImageJul92026043444PM.png",
 
   theme: "editorial",
+  readMoreHeading: "Learn more about the Bhagavad-gita",
   readMore: [
     {
       title: "Reading the Bhagavad-gita for the First Time",

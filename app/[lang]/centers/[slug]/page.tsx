@@ -59,7 +59,7 @@ function featureIcon(title: string): LucideIcon {
 
 function Eyebrow({ children, light = false }: { children: React.ReactNode; light?: boolean }) {
   return (
-    <span className={`inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] ${light ? "text-gold" : "text-gold-deep"}`}>
+    <span className={`inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] ${light ? "text-gold" : "text-vk-600"}`}>
       <span className="h-px w-6 bg-current opacity-70" />
       {children}
     </span>
@@ -126,7 +126,7 @@ export default async function CenterPage({ params }: Props) {
                 <div>
                   <h1 className="text-2xl font-bold tracking-tight text-ink md:text-3xl">{c.name}</h1>
                   <p className="mt-1.5 flex items-center gap-2 text-ink/65">
-                    <MapPin className="h-4 w-4 text-gold-deep" /> {c.city}, {c.state}
+                    <MapPin className="h-4 w-4 text-vk-600" /> {c.city}, {c.state}
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2.5">
@@ -345,8 +345,8 @@ export default async function CenterPage({ params }: Props) {
                 {c.features.map((f) => {
                   const Icon = featureIcon(f.title);
                   return (
-                    <li key={f.title} className="rounded-2xl border border-vk-100 bg-vk-50/50 p-5 transition-colors hover:border-gold/50 hover:bg-white">
-                      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gold/15 text-gold-deep">
+                    <li key={f.title} className="rounded-2xl border border-vk-100 bg-vk-50/50 p-5 transition-colors hover:border-vk-200 hover:bg-white">
+                      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-vk-50 text-vk-600">
                         <Icon className="h-5 w-5" />
                       </span>
                       <h3 className="mt-4 font-semibold text-ink">{f.title}</h3>
