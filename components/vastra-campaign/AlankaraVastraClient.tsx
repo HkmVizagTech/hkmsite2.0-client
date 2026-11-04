@@ -157,7 +157,7 @@ export default function AlankaraVastraClient() {
   const [tierIndex, setTierIndex] = useState(0);
   const [customAmount, setCustomAmount] = useState("");
   const [useCustom, setUseCustom] = useState(false);
-  const [form, setForm] = useState({ name: "", email: "", mobile: "", panNumber: "", sevakName: "", dob: "" });
+  const [form, setForm] = useState({ name: "", email: "", mobile: "", panNumber: "", sevakName: "", dob: "", dedicationOccasion: "", dedicationNote: "" });
   const [want80G, setWant80G] = useState(false);
   const [monthly, setMonthly] = useState(false);
   const [wantsMahaPrasadam, setWantsMahaPrasadam] = useState(false);
@@ -281,7 +281,11 @@ export default function AlankaraVastraClient() {
         mobile: form.mobile.trim(),
         amount: finalAmount,
         sevakName: form.sevakName.trim() || undefined,
-        dob: form.dob || undefined,
+        // `dob` stays a real date of birth only; the date for any other occasion travels as dedicationDate.
+        dob: form.dedicationOccasion === "birthday" ? form.dob || undefined : undefined,
+        dedicationOccasion: form.dedicationOccasion || undefined,
+        dedicationNote: form.dedicationOccasion === "other" ? form.dedicationNote.trim() || undefined : undefined,
+        dedicationDate: form.dedicationOccasion ? form.dob || undefined : undefined,
         certificate: want80G,
         panNumber: want80G ? form.panNumber.trim() : undefined,
         metaEventId,
@@ -659,8 +663,12 @@ export default function AlankaraVastraClient() {
                   <DonorExtrasFields
                     sevakName={form.sevakName}
                     dob={form.dob}
-                    onSevakNameChange={(v) => setForm({ ...form, sevakName: v })}
-                    onDobChange={(v) => setForm({ ...form, dob: v })}
+                    onSevakNameChange={(v) => setForm((f) => ({ ...f, sevakName: v }))}
+                    onDobChange={(v) => setForm((f) => ({ ...f, dob: v }))}
+                    occasion={form.dedicationOccasion}
+                    occasionNote={form.dedicationNote}
+                    onOccasionChange={(v) => setForm((f) => ({ ...f, dedicationOccasion: v }))}
+                    onOccasionNoteChange={(v) => setForm((f) => ({ ...f, dedicationNote: v }))}
                     collapsible
                   />
 
