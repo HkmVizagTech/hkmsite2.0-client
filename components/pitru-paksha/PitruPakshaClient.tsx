@@ -80,6 +80,8 @@ type CheckoutForm = {
   pincode: string;
   sevakName: string;
   dob: string;
+  dedicationOccasion: string;
+  dedicationNote: string;
 };
 
 type SelectedOffering = {
@@ -295,6 +297,8 @@ const initialForm: CheckoutForm = {
   pincode: "",
   sevakName: "",
   dob: "",
+  dedicationOccasion: "",
+  dedicationNote: "",
 };
 
 const apiBase = () =>
@@ -494,7 +498,11 @@ export default function PitruPakshaClient() {
           mobile: form.donorMobile,
           amount: finalAmount,
           sevakName: form.sevakName.trim() || undefined,
-          dob: form.dob || undefined,
+          // `dob` stays a real date of birth only; the date for any other occasion travels as dedicationDate.
+          dob: form.dedicationOccasion === "birthday" ? form.dob || undefined : undefined,
+          dedicationOccasion: form.dedicationOccasion || undefined,
+          dedicationNote: form.dedicationOccasion === "other" ? form.dedicationNote.trim() || undefined : undefined,
+          dedicationDate: form.dedicationOccasion ? form.dob || undefined : undefined,
           certificate: form.want80G,
           panNumber: form.want80G ? form.panNumber : undefined,
           mahaprasadam: form.wantPrasadam,
@@ -1149,6 +1157,10 @@ export default function PitruPakshaClient() {
                   dob={form.dob}
                   onSevakNameChange={(v) => updateForm({ sevakName: v })}
                   onDobChange={(v) => updateForm({ dob: v })}
+                  occasion={form.dedicationOccasion}
+                  occasionNote={form.dedicationNote}
+                  onOccasionChange={(v) => updateForm({ dedicationOccasion: v })}
+                  onOccasionNoteChange={(v) => updateForm({ dedicationNote: v })}
                   collapsible
                 />
 
