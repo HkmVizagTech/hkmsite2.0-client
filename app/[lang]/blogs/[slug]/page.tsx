@@ -2,7 +2,6 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import PageLayout from "@/components/PageLayout";
-import ReadingProgress from "@/components/blogs/ReadingProgress";
 import { CREAM, Eyebrow, LINE, PostCard, SERIF, ShelfHeading } from "@/components/blogs/parts";
 import { Calendar, Clock, ArrowRight, Tag, ChevronRight, Home, ListTree } from "lucide-react";
 import { stripBrand, clampDescription, htmlToText, withBrand, absUrl, BRAND, DEFAULT_OG_IMAGE, SITE_URL, breadcrumbJsonLd } from "@/lib/seo";
@@ -207,7 +206,6 @@ export default async function BlogPostPage({
         { name: blog.title, path: `/blogs/${blog.slug}` },
       ])}
     />
-    <ReadingProgress targetId="article-body" />
     <main className={`overflow-x-hidden ${CREAM} pt-[var(--header-h)]`}>
       {/* ─── Header: calm, centred, serif ─── */}
       <header className="relative overflow-hidden">
