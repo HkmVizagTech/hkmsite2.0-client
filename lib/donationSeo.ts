@@ -48,7 +48,7 @@ export const DONATION_SEO = {
     title: "Annadanam Seva Donation",
     description:
       "Sponsor Annadanam at ISKCON Gambheeram Visakhapatnam. Feed devotees and the needy with sanctified prasadam — ₹25 feeds one person. 80G tax benefit.",
-    keywords: ["annadanam donation Visakhapatnam", "anna daan seva Vizag", "food donation Vizag", "annadanam ISKCON Vizag", "donate meals Visakhapatnam", "prasadam distribution", ...LOCAL],
+    keywords: ["annadanam donation Visakhapatnam", "anna daan seva Vizag", "anna daan online", "donate food online", "sponsor meals for the needy", "food donation Vizag", "annadanam ISKCON Vizag", "donate meals Visakhapatnam", "prasadam distribution", ...LOCAL],
     ogImage: ANNA_DAAN_CAMPAIGN.ogImage,
     breadcrumb: "Anna Daan Seva",
     h1: "Anna Daan Seva — Annadanam in Visakhapatnam",
@@ -60,7 +60,7 @@ export const DONATION_SEO = {
     title: "Gau Seva Donation",
     description:
       "Serve the sacred cows at ISKCON Gambheeram Visakhapatnam — fodder, green grass, medicines and shelter. ₹1,500 feeds 10 cows for a day. 80G benefit.",
-    keywords: ["gau seva donation Visakhapatnam", "cow seva Vizag", "goshala donation Vizag", "gau seva ISKCON", "donate for cows Visakhapatnam", ...LOCAL],
+    keywords: ["gau seva donation Visakhapatnam", "gau seva online", "donate for cow protection", "cow seva Vizag", "goshala donation Vizag", "gau seva ISKCON", "donate for cows Visakhapatnam", ...LOCAL],
     ogImage: GAU_CAMPAIGN.ogImage,
     breadcrumb: "Gau Seva",
     h1: "Gau Seva — Serve the Sacred Cows",
@@ -517,4 +517,17 @@ export function donationJsonLd(key: DonationSeoKey) {
     });
   }
   return { "@context": "https://schema.org", "@graph": graph };
+}
+
+/** schema.org FAQPage for a campaign page's question list. */
+export function faqJsonLd(faqs: { q: string; a: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  };
 }

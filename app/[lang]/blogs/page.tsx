@@ -99,7 +99,7 @@ export default async function BlogsListPage() {
         <section className="relative overflow-hidden">
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-x-0 top-0 h-full bg-[radial-gradient(60%_70%_at_50%_0%,rgba(212,175,55,0.16),transparent_70%)]"
+            className="pointer-events-none absolute inset-x-0 top-0 h-full bg-[radial-gradient(60%_70%_at_50%_0%,rgba(47,91,211,0.08),transparent_70%)]"
           />
           <div className="vk-container relative pb-8 pt-10 text-center md:pb-12 md:pt-16">
             <nav aria-label="Breadcrumb" className="mb-6 inline-flex items-center gap-1.5 text-xs font-medium text-ink/55 md:text-[13px]">
@@ -131,12 +131,12 @@ export default async function BlogsListPage() {
                     className={`inline-flex min-h-[40px] shrink-0 items-center gap-2 rounded-full border ${LINE} bg-white/80 px-4 text-sm font-medium text-ink/80 transition-colors hover:border-vk-600 hover:bg-white hover:text-vk-700`}
                   >
                     {cat.name}
-                    <span className="text-[11px] font-semibold text-gold-deep">{cat.count}</span>
+                    <span className="text-[11px] font-semibold text-vk-600">{cat.count}</span>
                   </Link>
                 ))}
                 <Link
                   href="/web-stories"
-                  className="inline-flex min-h-[40px] shrink-0 items-center gap-1.5 rounded-full border border-gold/50 bg-gold/15 px-4 text-sm font-semibold text-gold-deep transition-colors hover:bg-gold/25"
+                  className="inline-flex min-h-[40px] shrink-0 items-center gap-1.5 rounded-full border border-vk-200 bg-vk-50 px-4 text-sm font-semibold text-vk-600 transition-colors hover:bg-vk-100"
                 >
                   <Layers className="h-4 w-4" /> Web Stories
                 </Link>
@@ -152,7 +152,7 @@ export default async function BlogsListPage() {
               <div className="grid gap-8 lg:grid-cols-[1.45fr_1fr] lg:gap-12">
                 <Reveal>
                   <Link href={`/blogs/${featured.slug}`} className="group block">
-                    <Cover blog={featured} priority className="aspect-[16/10] rounded-[1.75rem] shadow-[0_30px_60px_-34px_rgba(60,40,10,0.6)]" />
+                    <Cover blog={featured} priority className="aspect-[16/10] rounded-[1.75rem] shadow-[0_30px_60px_-34px_rgba(30,58,138,0.6)]" />
                     <div className="pt-6">
                       <Eyebrow>{featured.category || "Latest"}</Eyebrow>
                       <h2 className={`${SERIF} mt-3 text-[1.9rem] font-semibold leading-tight text-ink transition-colors group-hover:text-vk-700 md:text-[2.5rem]`}>
@@ -175,7 +175,7 @@ export default async function BlogsListPage() {
                 {alsoNew.length > 0 && (
                   <aside className={`rounded-[1.75rem] border ${LINE} bg-white/70 p-5 md:p-7`}>
                     <Eyebrow>Fresh from the journal</Eyebrow>
-                    <ul className="mt-3 divide-y divide-[#EFE5CE]">
+                    <ul className="mt-3 divide-y divide-[#E4E9F7]">
                       {alsoNew.map((b) => (
                         <li key={b._id}>
                           <Link href={`/blogs/${b.slug}`} className="group flex items-center gap-4 py-4">
@@ -201,17 +201,17 @@ export default async function BlogsListPage() {
 
         {/* ─── EXPLORE BY TOPIC ─── */}
         {chips.length > 0 && (
-          <section className="border-y border-[#EFE5CE] bg-white/60 py-12 md:py-16">
+          <section className="border-y border-[#E4E9F7] bg-white/60 py-12 md:py-16">
             <div className="vk-container">
               <ShelfHeading eyebrow="Explore" title="Find what your heart is looking for" subtitle="Choose a topic and read at your own pace." />
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 lg:grid-cols-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {chips.map((cat) => {
                   const img = imageOf(cat.slug);
                   return (
                     <Link
                       key={cat.slug}
                       href={`/blogs/categories/${cat.slug}`}
-                      className="group relative block aspect-[5/4] overflow-hidden rounded-2xl bg-vk-900 shadow-[0_14px_30px_-24px_rgba(30,20,5,0.7)]"
+                      className="group relative block aspect-video overflow-hidden rounded-2xl bg-vk-900 shadow-[0_14px_30px_-24px_rgba(20,30,80,0.7)]"
                     >
                       {img && (
                         <img
@@ -221,10 +221,10 @@ export default async function BlogsListPage() {
                           className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                         />
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#1b1408]/90 via-[#1b1408]/40 to-[#1b1408]/10" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#0b1230]/85 via-[#0b1230]/15 to-transparent" />
                       <div className="absolute inset-x-0 bottom-0 p-4">
-                        <h3 className={`${SERIF} line-clamp-2 text-[1.05rem] font-semibold leading-snug text-white md:text-lg`}>{cat.name}</h3>
-                        <span className="mt-1 block text-xs font-medium text-[#F3DFA6]">
+                        <h3 className={`${SERIF} line-clamp-1 text-[1.1rem] font-semibold leading-snug text-white md:text-[1.2rem]`}>{cat.name}</h3>
+                        <span className="mt-0.5 block text-xs font-medium text-[#BFD0FF]">
                           {cat.count} {cat.count === 1 ? "article" : "articles"}
                         </span>
                       </div>
@@ -250,7 +250,7 @@ export default async function BlogsListPage() {
           <section className="relative overflow-hidden bg-gradient-to-b from-[#1F2A5C] to-[#141B3F] py-12 text-white md:py-16">
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-0 bg-[radial-gradient(50%_60%_at_80%_0%,rgba(212,175,55,0.18),transparent_70%)]"
+              className="pointer-events-none absolute inset-0 bg-[radial-gradient(50%_60%_at_80%_0%,rgba(47,91,211,0.08),transparent_70%)]"
             />
             <div className="vk-container relative">
               <div className="mb-7 flex flex-col gap-3 md:mb-9 md:flex-row md:items-end md:justify-between">
@@ -260,7 +260,7 @@ export default async function BlogsListPage() {
                     A minute of Krishna, one tap at a time
                   </h2>
                 </div>
-                <Link href="/web-stories" className="group inline-flex shrink-0 items-center gap-1.5 text-sm font-semibold text-[#F3DFA6] hover:text-white">
+                <Link href="/web-stories" className="group inline-flex shrink-0 items-center gap-1.5 text-sm font-semibold text-[#BFD0FF] hover:text-white">
                   See all stories
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                 </Link>
@@ -311,12 +311,12 @@ export default async function BlogsListPage() {
 
         {/* ─── MOST READ ─── */}
         {data.popular.length > 0 && (
-          <section className="border-t border-[#EFE5CE] py-12 md:py-16">
+          <section className="border-t border-[#E4E9F7] py-12 md:py-16">
             <div className="vk-container">
               <ShelfHeading eyebrow="Most read" title="What devotees are reading" />
               <div className="grid gap-8 lg:grid-cols-5 lg:gap-12">
                 <Link href={`/blogs/${data.popular[0].slug}`} className="group block lg:col-span-2">
-                  <Cover blog={data.popular[0]} className="aspect-[4/3] rounded-[1.5rem] shadow-[0_26px_50px_-32px_rgba(60,40,10,0.6)]" />
+                  <Cover blog={data.popular[0]} className="aspect-[4/3] rounded-[1.5rem] shadow-[0_26px_50px_-32px_rgba(30,58,138,0.6)]" />
                   <h3 className={`${SERIF} mt-5 text-[1.5rem] font-semibold leading-snug text-ink transition-colors group-hover:text-vk-700`}>
                     {data.popular[0].title}
                   </h3>
@@ -326,9 +326,9 @@ export default async function BlogsListPage() {
                 </Link>
                 <ol className="lg:col-span-3">
                   {data.popular.slice(0, 6).map((b, i) => (
-                    <li key={b._id} className={`border-b border-[#EFE5CE] ${i === 0 ? "border-t" : ""}`}>
+                    <li key={b._id} className={`border-b border-[#E4E9F7] ${i === 0 ? "border-t" : ""}`}>
                       <Link href={`/blogs/${b.slug}`} className="group flex items-center gap-5 py-5">
-                        <span className={`${SERIF} w-10 shrink-0 text-4xl font-semibold leading-none text-gold/70`}>
+                        <span className={`${SERIF} w-10 shrink-0 text-4xl font-semibold leading-none text-vk-300`}>
                           {String(i + 1).padStart(2, "0")}
                         </span>
                         <div className="min-w-0 flex-1">
@@ -368,8 +368,8 @@ export default async function BlogsListPage() {
         {/* ─── CLOSING INVITATION ─── */}
         <section className="py-12 md:py-20">
           <div className="vk-container">
-            <div className="relative isolate overflow-hidden rounded-[1.75rem] border border-gold/40 bg-gradient-to-br from-[#FFF7E0] via-[#FBF1D4] to-[#F6E7BD] p-7 text-center md:p-14">
-              <div aria-hidden className="absolute -bottom-20 -right-16 -z-10 h-56 w-56 rounded-full bg-gold/20 blur-2xl" />
+            <div className="relative isolate overflow-hidden rounded-[1.75rem] border border-vk-200 bg-gradient-to-br from-vk-50 via-white to-vk-100 p-7 text-center md:p-14">
+              <div aria-hidden className="absolute -bottom-20 -right-16 -z-10 h-56 w-56 rounded-full bg-vk-100 blur-2xl" />
               <div className="flex justify-center">
                 <Eyebrow>Be part of it</Eyebrow>
               </div>

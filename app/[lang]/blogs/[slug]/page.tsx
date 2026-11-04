@@ -212,7 +212,7 @@ export default async function BlogPostPage({
       <header className="relative overflow-hidden">
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 h-full bg-[radial-gradient(60%_80%_at_50%_0%,rgba(212,175,55,0.15),transparent_70%)]"
+          className="pointer-events-none absolute inset-x-0 top-0 h-full bg-[radial-gradient(60%_80%_at_50%_0%,rgba(47,91,211,0.07),transparent_70%)]"
         />
         <div className="vk-container relative pb-8 pt-8 text-center md:pb-12 md:pt-12">
           <nav
@@ -248,22 +248,22 @@ export default async function BlogPostPage({
             <span className="inline-flex items-center gap-2 font-semibold text-ink">
               {blog.author?.avatar ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={blog.author.avatar} alt="" className="h-8 w-8 rounded-full object-cover ring-2 ring-[#EBDFC6]" />
+                <img src={blog.author.avatar} alt="" className="h-8 w-8 rounded-full object-cover ring-2 ring-vk-100" />
               ) : (
-                <span className="grid h-8 w-8 place-items-center rounded-full bg-[#F3E9D0] text-xs font-bold text-gold-deep">
+                <span className="grid h-8 w-8 place-items-center rounded-full bg-[#EEF2FF] text-xs font-bold text-vk-600">
                   {(blog.author?.name || "A").charAt(0)}
                 </span>
               )}
               {blog.author?.name || "Admin"}
             </span>
-            <span aria-hidden className="text-gold/70">•</span>
+            <span aria-hidden className="text-vk-300">•</span>
             <span className="inline-flex items-center gap-1.5">
-              <Calendar className="h-4 w-4 text-gold-deep" />
+              <Calendar className="h-4 w-4 text-vk-600" />
               <time dateTime={blog.publishedAt || blog.createdAt}>{fmtDate(blog.publishedAt || blog.createdAt)}</time>
             </span>
-            <span aria-hidden className="text-gold/70">•</span>
+            <span aria-hidden className="text-vk-300">•</span>
             <span className="inline-flex items-center gap-1.5">
-              <Clock className="h-4 w-4 text-gold-deep" />
+              <Clock className="h-4 w-4 text-vk-600" />
               {blog.readTime} min read
             </span>
           </div>
@@ -273,7 +273,7 @@ export default async function BlogPostPage({
       {/* Cover */}
       {blog.coverImage && (
         <div className="vk-container">
-          <div className="mx-auto max-w-4xl overflow-hidden rounded-[1.75rem] bg-[#F1E8D3] shadow-[0_34px_70px_-38px_rgba(60,40,10,0.65)]">
+          <div className="mx-auto max-w-4xl overflow-hidden rounded-[1.75rem] bg-[#EEF2FF] shadow-[0_34px_70px_-38px_rgba(30,58,138,0.65)]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={blog.coverImage} alt={blog.title} fetchPriority="high" className="h-auto w-full object-cover" />
           </div>
@@ -289,7 +289,7 @@ export default async function BlogPostPage({
               <details className={`group mb-8 rounded-2xl border ${LINE} bg-white/70 p-5 lg:hidden`}>
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-ink">
                   <span className="inline-flex items-center gap-2">
-                    <ListTree className="h-4 w-4 text-gold-deep" /> In this article
+                    <ListTree className="h-4 w-4 text-vk-600" /> In this article
                   </span>
                   <ChevronRight className="h-4 w-4 transition-transform group-open:rotate-90" />
                 </summary>
@@ -324,8 +324,8 @@ export default async function BlogPostPage({
             )}
 
             {/* Offer a seva: every reading ends with an invitation to Brick Seva */}
-            <div className={`relative ${isGitaPost ? "mt-6" : "mt-12"} overflow-hidden rounded-2xl border border-gold/40 bg-gradient-to-br from-[#FFF7E0] via-[#FBF1D4] to-[#F6E7BD] p-6 md:p-8`}>
-              <div aria-hidden className="absolute -bottom-16 -right-12 h-44 w-44 rounded-full bg-gold/20 blur-2xl" />
+            <div className={`relative ${isGitaPost ? "mt-6" : "mt-12"} overflow-hidden rounded-2xl border border-vk-200 bg-gradient-to-br from-vk-50 via-white to-vk-100 p-6 md:p-8`}>
+              <div aria-hidden className="absolute -bottom-16 -right-12 h-44 w-44 rounded-full bg-vk-100 blur-2xl" />
               <div className="relative">
                 <Eyebrow>Offer a seva</Eyebrow>
                 <h3 className={`${SERIF} mt-2 text-[1.5rem] font-semibold leading-snug text-ink md:text-[1.75rem]`}>
@@ -345,7 +345,7 @@ export default async function BlogPostPage({
 
             {/* Share */}
             <div className={`mt-6 rounded-2xl border ${LINE} bg-white/70 p-5`}>
-              <h4 className="mb-3 text-xs font-bold uppercase tracking-[0.16em] text-gold-deep">Share this reading</h4>
+              <h4 className="mb-3 text-xs font-bold uppercase tracking-[0.16em] text-vk-600">Share this reading</h4>
               <div className="flex flex-wrap gap-2">
                 <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className={`${shareBtn} bg-[#25D366]`}>
                   <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
@@ -392,14 +392,14 @@ export default async function BlogPostPage({
             <div className={`mt-10 flex items-start gap-4 rounded-2xl border ${LINE} bg-white/70 p-5 md:p-6`}>
               {blog.author?.avatar ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={blog.author.avatar} alt={blog.author.name} className="h-14 w-14 shrink-0 rounded-full object-cover ring-4 ring-[#F3E9D0]" />
+                <img src={blog.author.avatar} alt={blog.author.name} className="h-14 w-14 shrink-0 rounded-full object-cover ring-4 ring-[#EEF2FF]" />
               ) : (
-                <div className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-[#F3E9D0] text-lg font-bold text-gold-deep">
+                <div className="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-[#EEF2FF] text-lg font-bold text-vk-600">
                   {(blog.author?.name || "A").charAt(0)}
                 </div>
               )}
               <div className="min-w-0">
-                <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-gold-deep">Written by</div>
+                <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-vk-600">Written by</div>
                 <div className={`${SERIF} text-lg font-semibold leading-tight text-ink`}>{blog.author?.name || "Admin"}</div>
                 <div className="mt-0.5 text-sm text-ink/55">
                   Updated {fmtDate(blog.updatedAt || blog.publishedAt || blog.createdAt)}
@@ -413,10 +413,10 @@ export default async function BlogPostPage({
           <aside className="space-y-6 lg:sticky lg:top-[calc(var(--header-h)+1.5rem)] lg:self-start">
             {showToc && (
               <nav aria-label="In this article" className={`hidden rounded-2xl border ${LINE} bg-white/70 p-5 lg:block`}>
-                <div className="mb-3 inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-gold-deep">
+                <div className="mb-3 inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-vk-600">
                   <ListTree className="h-4 w-4" /> In this article
                 </div>
-                <ol className="space-y-2 border-l border-[#EBDFC6] text-[14px]">
+                <ol className="space-y-2 border-l border-[#E4E9F7] text-[14px]">
                   {toc.map((t) => (
                     <li key={t.id}>
                       <a href={`#${t.id}`} className="-ml-px block border-l border-transparent py-0.5 pl-3 leading-snug text-ink/70 transition-colors hover:border-vk-700 hover:text-vk-700">
@@ -430,16 +430,16 @@ export default async function BlogPostPage({
 
             {populatedCats.length > 0 && (
               <div className={`rounded-2xl border ${LINE} bg-white/70 p-5`}>
-                <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-gold-deep">Explore topics</div>
+                <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-vk-600">Explore topics</div>
                 <div className="space-y-0.5">
                   {populatedCats.map((cat) => (
                     <Link
                       key={cat.slug}
                       href={`/blogs/categories/${cat.slug}`}
-                      className="group flex min-h-[38px] items-center justify-between gap-3 rounded-lg px-2 transition-colors hover:bg-[#F8F0DC]"
+                      className="group flex min-h-[38px] items-center justify-between gap-3 rounded-lg px-2 transition-colors hover:bg-[#F5F7FF]"
                     >
                       <span className="text-sm font-medium text-ink/80 transition-colors group-hover:text-vk-700">{cat.name}</span>
-                      <span className="text-[11px] font-semibold text-gold-deep">{cat.count}</span>
+                      <span className="text-[11px] font-semibold text-vk-600">{cat.count}</span>
                     </Link>
                   ))}
                 </div>
@@ -448,7 +448,7 @@ export default async function BlogPostPage({
 
             {/* Seva promotions — real pages on this site, with each seva's actual image */}
             <div>
-              <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-gold-deep">Support our sevas</div>
+              <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-vk-600">Support our sevas</div>
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
                 {[
                   {
@@ -503,7 +503,7 @@ export default async function BlogPostPage({
 
       {/* ─── KEEP READING ─── */}
       {related.length > 0 && (
-        <section className="border-t border-[#EFE5CE] bg-white/60 py-12 md:py-16">
+        <section className="border-t border-[#E4E9F7] bg-white/60 py-12 md:py-16">
           <div className="vk-container">
             <ShelfHeading eyebrow="Keep reading" title="More from the journal" href="/blogs" hrefLabel="All blogs" />
             <div className="grid grid-cols-1 gap-x-7 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
@@ -517,38 +517,38 @@ export default async function BlogPostPage({
 
       {/* Reading typography for the article body (CKEditor / imported HTML). */}
       <style>{`
-        .blog-content { font-size: 1.1rem; line-height: 1.9; color: #2b2418; }
+        .blog-content { font-size: 1.1rem; line-height: 1.9; color: #1b2440; }
         .blog-content > *:first-child { margin-top: 0; }
         .blog-content p { margin: 0 0 1.35rem; }
         .blog-content h1, .blog-content h2, .blog-content h3, .blog-content h4 {
-          font-family: var(--font-playfair), Georgia, serif; color: #1c160b; line-height: 1.25; scroll-margin-top: calc(var(--header-h) + 1.5rem);
+          font-family: var(--font-playfair), Georgia, serif; color: #1b2440; line-height: 1.25; scroll-margin-top: calc(var(--header-h) + 1.5rem);
         }
-        .blog-content h2 { font-size: 1.75rem; font-weight: 600; margin: 3rem 0 1rem; padding-top: 1.1rem; border-top: 1px solid #EBDFC6; }
+        .blog-content h2 { font-size: 1.75rem; font-weight: 600; margin: 3rem 0 1rem; padding-top: 1.1rem; border-top: 1px solid #E4E9F7; }
         .blog-content h2:first-child { border-top: 0; padding-top: 0; margin-top: 0; }
         .blog-content h3 { font-size: 1.3rem; font-weight: 600; margin: 2.1rem 0 0.7rem; }
         .blog-content h4 { font-size: 1.1rem; font-weight: 600; margin: 1.6rem 0 0.5rem; }
-        .blog-content strong { font-weight: 700; color: #1c160b; }
-        .blog-content a { color: #2F5BD3; font-weight: 500; text-decoration: underline; text-decoration-color: #D9C48A; text-underline-offset: 4px; }
+        .blog-content strong { font-weight: 700; color: #1b2440; }
+        .blog-content a { color: #2F5BD3; font-weight: 500; text-decoration: underline; text-decoration-color: #B9C8FB; text-underline-offset: 4px; }
         .blog-content a:hover { text-decoration-color: #2F5BD3; }
         .blog-content ul, .blog-content ol { margin: 0 0 1.4rem; padding-left: 1.4rem; }
         .blog-content ul { list-style: disc; }
         .blog-content ol { list-style: decimal; }
         .blog-content li { margin: 0.45rem 0; padding-left: 0.25rem; }
-        .blog-content li::marker { color: #B8860B; }
+        .blog-content li::marker { color: #2F5BD3; }
         .blog-content blockquote {
-          margin: 2rem 0; padding: 1.1rem 1.4rem; border-left: 4px solid #D4AF37; border-radius: 0 1rem 1rem 0;
-          background: #F8F0DC; font-family: var(--font-playfair), Georgia, serif; font-style: italic; color: #3a2e12;
+          margin: 2rem 0; padding: 1.1rem 1.4rem; border-left: 4px solid #2F5BD3; border-radius: 0 1rem 1rem 0;
+          background: #F5F7FF; font-family: var(--font-playfair), Georgia, serif; font-style: italic; color: #1b2440;
         }
         .blog-content blockquote p:last-child { margin-bottom: 0; }
-        .blog-content img { max-width: 100%; height: auto; display: block; margin: 2rem auto; border-radius: 1.1rem; box-shadow: 0 22px 44px -30px rgba(60,40,10,.55); }
+        .blog-content img { max-width: 100%; height: auto; display: block; margin: 2rem auto; border-radius: 1.1rem; box-shadow: 0 22px 44px -30px rgba(30,58,138,.55); }
         .blog-content iframe, .blog-content video { max-width: 100%; border-radius: 1rem; }
-        .blog-content hr { border: 0; height: 1px; background: #EBDFC6; margin: 2.5rem 0; }
+        .blog-content hr { border: 0; height: 1px; background: #E4E9F7; margin: 2.5rem 0; }
         .blog-content table {
           display: block; overflow-x: auto; width: 100%; margin: 1.8rem 0; border-collapse: separate; border-spacing: 0;
-          border: 1px solid #EBDFC6; border-radius: 1rem; background: #fff; font-size: 0.98rem; line-height: 1.55;
+          border: 1px solid #E4E9F7; border-radius: 1rem; background: #fff; font-size: 0.98rem; line-height: 1.55;
         }
-        .blog-content th { background: #F8F0DC; text-align: left; font-weight: 600; color: #1c160b; }
-        .blog-content th, .blog-content td { padding: 0.7rem 1rem; border-bottom: 1px solid #F0E6CF; vertical-align: top; }
+        .blog-content th { background: #F5F7FF; text-align: left; font-weight: 600; color: #1b2440; }
+        .blog-content th, .blog-content td { padding: 0.7rem 1rem; border-bottom: 1px solid #E4E9F7; vertical-align: top; }
         .blog-content tr:last-child td { border-bottom: 0; }
         .blog-content code { background: #EEF2FF; color: #1E3A8A; padding: 0.15rem 0.4rem; border-radius: 6px; font-size: 0.9em; font-family: ui-monospace, SFMono-Regular, monospace; }
         @media (max-width: 640px) { .blog-content { font-size: 1.04rem; line-height: 1.85; } .blog-content h2 { font-size: 1.5rem; } }

@@ -344,7 +344,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
     <PageLayout whatsappNumber={SEVA_WHATSAPP_NUMBER}>
       {upiFallbackDialog}
       <SearchParamsWatcher onChange={setSearchParams} />
-      <main className={`pt-[var(--header-h)] ${ed ? "overflow-x-hidden bg-[#FBF7EE]" : "bg-white dark:bg-background"}`}>
+      <main className={`pt-[var(--header-h)] ${ed ? "overflow-x-hidden bg-white" : "bg-white dark:bg-background"}`}>
         {/* ── Hero Banner (plain banner image — no content overlay) ── */}
         <section className="bg-gradient-to-b from-vk-50 to-white">
           <div>

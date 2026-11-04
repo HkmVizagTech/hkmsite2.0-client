@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ZoomIn, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronRight, Home, Images, LayoutGrid, X } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import PageLayout from "@/components/PageLayout";
-import PageHero from "@/components/PageHero";
-import SectionHeading from "@/components/site/SectionHeading";
+import FadeImage from "@/components/gallery/FadeImage";
+import Lightbox from "@/components/gallery/Lightbox";
+import { CREAM, Eyebrow, LINE, SERIF } from "@/components/blogs/parts";
 import DailyDarshanGallery from "@/components/DailyDarshanGallery";
 import { getGalleryImages, GALLERY_CATEGORIES } from "@/lib/galleryApi";
 import { getRecentDarshan, type DarshanPhoto } from "@/lib/darshanApi";
@@ -33,9 +35,20 @@ type LightboxState = { images: string[]; index: number; group: GalleryImage } | 
 
 const categories = ["All", ...GALLERY_CATEGORIES];
 
+// Some albums were saved with a throw-away title ("1", "121"). Show something readable instead.
+const albumTitle = (g: { title: string; category: string }) => {
+  const t = (g.title || "").replace(/[-_]+/g, " ").trim();
+  if (t.length < 3 || /^[\d\s.]+$/.test(t)) return `${g.category} photos`;
+  return t.charAt(0).toUpperCase() + t.slice(1);
+};
+
 export default function GalleryPage() {
   const [activeCategory, setActiveCategory] = useState<string>("All");
   const [activeDate, setActiveDate] = useState<string>("All Dates");
+  // "photos": every picture on one masonry wall; "albums": one card per album.
+  const [view, setView] = useState<"photos" | "albums">("photos");
+  const [visible, setVisible] = useState(24);
+  const [photoLightbox, setPhotoLightbox] = useState<number | null>(null);
   const [groupModal, setGroupModal] = useState<GroupModalState>(null);
   const [lightbox, setLightbox] = useState<LightboxState>(null);
   const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
@@ -80,27 +93,10 @@ export default function GalleryPage() {
 
 
   useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") {
-        if (lightbox) setLightbox(null);
-        else if (groupModal) setGroupModal(null);
-      }
-      if (!lightbox) return;
-      if (e.key === "ArrowLeft") {
-        setLightbox((lb) => {
-          if (!lb) return lb;
-          const prev = (lb.index - 1 + lb.images.length) % lb.images.length;
-          return { ...lb, index: prev };
-        });
-      }
-      if (e.key === "ArrowRight") {
-        setLightbox((lb) => {
-          if (!lb) return lb;
-          const next = (lb.index + 1) % lb.images.length;
-          return { ...lb, index: next };
-        });
-      }
-    }
+    // Escape closes the album, unless the photo viewer is open (it closes itself first).
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && !lightbox && groupModal) setGroupModal(null);
+    };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [groupModal, lightbox]);
@@ -123,27 +119,61 @@ export default function GalleryPage() {
     }
   }
 
-
   const grouped = groupImages(
     activeCategory === "All" ? galleryImages : galleryImages.filter((img) => img.category === activeCategory)
   );
-
-  // Don't block rendering of the full page while images load.
-  // Previously we returned early which made the whole page show a single
-  // "Loading gallery..." message until the client fetch completed. Keep the
-  // PageHero and surrounding UI visible and show skeleton cards in the grid
-  // while the gallery data is being fetched.
-
+  const allGrouped = groupImages(galleryImages);
+  const photos = grouped
+    .slice()
+    .sort((a, b) => (b.date || "").localeCompare(a.date || ""))
+    .flatMap((g) => g.images.map((src) => ({ src, title: albumTitle(g), subtitle: `${g.category} · ${formatGalleryDate(g.date)}`, group: g })));
+  const totalPhotos = allGrouped.reduce((n, g) => n + g.images.length, 0);
+  const dayCount = Object.keys(dateData).length;
 
   return (
     <PageLayout>
-      <div className="pt-[var(--header-h)]">
-        <PageHero
-          title="Darshan & Temple Gallery"
-          subtitle="Divine moments captured — Darshan, Festivals, Seva & Community"
-          breadcrumb="Gallery"
-          backgroundImage="https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677419371-1783677418690-DietyPhotos.jpeg"
-        />
+      <div className={`${CREAM} pt-[var(--header-h)]`}>
+        {/* ─── Hero: calm and centred ─── */}
+        <section className="relative overflow-hidden">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 top-0 h-full bg-[radial-gradient(60%_80%_at_50%_0%,rgba(47,91,211,0.07),transparent_70%)]"
+          />
+          <div className="vk-container relative pb-6 pt-10 text-center md:pb-10 md:pt-16">
+            <nav aria-label="Breadcrumb" className="mb-6 inline-flex items-center gap-1.5 text-xs font-medium text-ink/55 md:text-[13px]">
+              <Link href="/" className="inline-flex items-center gap-1 transition-colors hover:text-vk-700">
+                <Home className="h-3.5 w-3.5" /> Home
+              </Link>
+              <ChevronRight className="h-3.5 w-3.5 opacity-60" />
+              <span className="font-semibold text-vk-700" aria-current="page">
+                Gallery
+              </span>
+            </nav>
+            <div className="flex justify-center">
+              <Eyebrow>Darshan · Festivals · Seva · Community</Eyebrow>
+            </div>
+            <h1 className={`${SERIF} mx-auto mt-4 max-w-3xl text-[2.1rem] font-semibold leading-[1.15] text-ink sm:text-5xl lg:text-[3.3rem]`}>
+              Darshan &amp; Temple Gallery
+            </h1>
+            <p className="mx-auto mt-4 max-w-2xl text-[15px] leading-relaxed text-ink/65 md:text-base">
+              Divine moments from the temple: the daily darshan of Their Lordships, festivals, seva and the life of the community.
+            </p>
+            {!loading && totalPhotos > 0 && (
+              <div className={`mx-auto mt-7 inline-flex divide-x divide-[#E4E9F7] rounded-2xl border ${LINE} bg-white/75 py-3 text-center shadow-[0_18px_40px_-30px_rgba(30,58,138,0.5)]`}>
+                {[
+                  { v: allGrouped.length, l: "albums" },
+                  { v: totalPhotos, l: "photos" },
+                  { v: dayCount, l: "darshan days" },
+                ].map((x) => (
+                  <div key={x.l} className="px-5 md:px-8">
+                    <div className={`${SERIF} text-xl font-semibold text-vk-600 md:text-2xl`}>{x.v}</div>
+                    <div className="text-[11px] font-medium uppercase tracking-[0.08em] text-ink/55">{x.l}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
 
         <DailyDarshanGallery
           selectedDate={activeDate === "All Dates" ? undefined : activeDate}
@@ -151,15 +181,21 @@ export default function GalleryPage() {
           dateData={dateData}
         />
 
-        <section className="vk-section vk-band">
+        {/* ─── Albums ─── */}
+        <section className="border-t border-[#E4E9F7] bg-white/60 py-12 md:py-20">
           <div className="vk-container">
-            <SectionHeading align="center" eyebrow="Albums" title="Browse by Category" />
+            <div className="mb-8 text-center md:mb-10">
+              <div className="flex justify-center">
+                <Eyebrow>Albums</Eyebrow>
+              </div>
+              <h2 className={`${SERIF} mt-3 text-[1.8rem] font-semibold leading-tight text-ink md:text-[2.4rem]`}>Browse by category</h2>
+            </div>
 
             {/* Category chips — scroll sideways on phones, wrap on larger screens */}
             <div
               role="tablist"
               aria-label="Gallery categories"
-              className="-mx-4 mb-8 flex gap-2 overflow-x-auto px-4 pb-1 scrollbar-hide md:mx-0 md:mb-10 md:flex-wrap md:justify-center md:overflow-visible md:px-0"
+              className="-mx-4 mb-10 flex gap-2 overflow-x-auto px-4 pb-1 scrollbar-hide md:mx-0 md:mb-12 md:flex-wrap md:justify-center md:overflow-visible md:px-0"
             >
               {categories.map((cat) => {
                 const on = activeCategory === cat;
@@ -169,11 +205,14 @@ export default function GalleryPage() {
                     type="button"
                     role="tab"
                     aria-selected={on}
-                    onClick={() => setActiveCategory(cat)}
+                    onClick={() => {
+                      setActiveCategory(cat);
+                      setVisible(24);
+                    }}
                     className={`min-h-[40px] shrink-0 rounded-full px-5 py-2 text-sm font-semibold transition-all duration-300 ${
                       on
-                        ? "bg-vk-700 text-white shadow-[0_6px_16px_-6px_rgba(30,58,138,0.55)]"
-                        : "border border-vk-200 bg-white text-ink/70 hover:border-vk-700 hover:text-vk-700"
+                        ? "bg-gradient-to-b from-[#1F2A5C] to-[#141B3F] text-white shadow-[0_10px_22px_-10px_rgba(20,27,63,0.8)]"
+                        : `border ${LINE} bg-white/80 text-ink/70 hover:border-vk-400 hover:text-ink`
                     }`}
                   >
                     {cat}
@@ -182,115 +221,155 @@ export default function GalleryPage() {
               })}
             </div>
 
-            <motion.div layout className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-3 xl:grid-cols-4">
-              <AnimatePresence mode="popLayout">
-                {loading
-                  ? // Render 8 skeleton cards while loading so layout doesn't jump
-                    Array.from({ length: 8 }).map((_, i) => (
-                      <div key={`skeleton-${i}`} className="aspect-square animate-pulse rounded-2xl bg-vk-100" />
-                    ))
-                  : grouped.map((group, i) => (
-                      <motion.button
-                        type="button"
-                        key={group.title + group.date + group.category}
-                        layout
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.9 }}
-                        transition={{ duration: 0.4, delay: Math.min(i, 8) * 0.05 }}
-                        className="vk-tile group aspect-square w-full cursor-pointer text-left"
-                        onClick={() => setGroupModal({ group })}
-                        aria-label={`Open album ${group.title}`}
-                      >
-                        <Image
-                          src={group.images[0]}
-                          alt={group.title}
-                          fill
-                          loading="lazy"
-                          sizes="(max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
-                          className="object-cover"
-                        />
-                        <span className="vk-tile-caption block">
-                          <span className="line-clamp-2 block text-[13px] font-semibold leading-snug text-white md:text-[15px]">
-                            {group.title}
-                          </span>
-                          <span className="mt-0.5 block text-xs text-white/70">{formatGalleryDate(group.date)}</span>
-                        </span>
-                        <span className="absolute right-3 top-3 z-[2] flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100">
-                          <ZoomIn className="h-4 w-4" />
-                        </span>
-                        {group.images.length > 1 && (
-                          <span className="absolute left-3 top-3 z-[2] rounded-full bg-white/90 px-2.5 py-0.5 text-xs font-semibold text-vk-800 shadow-sm">
-                            +{group.images.length}
-                          </span>
-                        )}
-                      </motion.button>
-                    ))}
-              </AnimatePresence>
-            </motion.div>
+            <div className="mb-8 flex justify-center md:mb-10">
+              <div className={`inline-flex rounded-full border ${LINE} bg-white/80 p-1`}>
+                {([
+                  ["photos", "All photos", LayoutGrid],
+                  ["albums", "Albums", Images],
+                ] as const).map(([key, label, Icon]) => (
+                  <button
+                    key={key}
+                    type="button"
+                    aria-pressed={view === key}
+                    onClick={() => setView(key)}
+                    className={`inline-flex min-h-[38px] items-center gap-1.5 rounded-full px-4 text-sm font-semibold transition-colors ${
+                      view === key ? "bg-vk-700 text-white shadow" : "text-ink/65 hover:text-vk-700"
+                    }`}
+                  >
+                    <Icon className="h-4 w-4" /> {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {loading ? (
+              <div className="columns-2 gap-4 md:columns-3 lg:columns-4">
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <div key={`skeleton-${i}`} className="mb-6 w-full animate-pulse break-inside-avoid rounded-2xl bg-[#EEF2FF]" style={{ height: [260, 340, 300, 380][i % 4] }} />
+                ))}
+              </div>
+            ) : grouped.length === 0 ? (
+              <p className="py-12 text-center text-ink/50">No photos in this category yet.</p>
+            ) : view === "photos" ? (
+              <>
+                <div className="columns-2 gap-3 md:columns-3 md:gap-4 lg:columns-4">
+                  {photos.slice(0, visible).map((ph, i) => (
+                    <button
+                      type="button"
+                      key={ph.src + i}
+                      onClick={() => setPhotoLightbox(i)}
+                      aria-label={`View ${ph.title}`}
+                      className="group relative mb-3 block w-full cursor-pointer break-inside-avoid overflow-hidden rounded-2xl bg-[#EEF2FF] text-left align-top shadow-[0_18px_36px_-26px_rgba(30,58,138,0.6)] md:mb-4"
+                    >
+                      <FadeImage src={ph.src} alt={ph.title} sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw" className="group-hover:scale-[1.04]" />
+                      <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#0b1230]/85 to-transparent p-3 pt-10 opacity-0 transition-opacity duration-300 group-hover:opacity-100 md:p-4">
+                        <span className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-[#BFD0FF]">{ph.group.category}</span>
+                        <span className="line-clamp-2 text-[13px] font-semibold leading-snug text-white md:text-sm">{ph.title}</span>
+                      </span>
+                    </button>
+                  ))}
+                </div>
+                {visible < photos.length && (
+                  <div className="mt-8 text-center">
+                    <button
+                      type="button"
+                      onClick={() => setVisible((v) => v + 24)}
+                      className="vk-btn min-h-[46px] border border-vk-700/30 bg-white px-7 text-vk-800 hover:bg-vk-50"
+                    >
+                      Show more photos ({photos.length - visible} left)
+                    </button>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-5 lg:grid-cols-4">
+                {grouped.map((group, i) => (
+                  <motion.button
+                    type="button"
+                    key={group.title + group.date + group.category}
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: Math.min(i, 8) * 0.05 }}
+                    className="group relative aspect-[4/5] w-full cursor-pointer overflow-hidden rounded-2xl bg-[#EEF2FF] text-left shadow-[0_20px_40px_-28px_rgba(30,58,138,0.65)]"
+                    onClick={() => setGroupModal({ group })}
+                    aria-label={`Open album ${albumTitle(group)}`}
+                  >
+                    <Image
+                      src={group.images[0]}
+                      alt={albumTitle(group)}
+                      fill
+                      loading="lazy"
+                      sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                      className="object-cover object-top transition-transform duration-700 group-hover:scale-[1.05]"
+                    />
+                    <span className="absolute inset-0 bg-gradient-to-t from-[#0b1230]/85 via-[#0b1230]/15 to-transparent" />
+                    {group.images.length > 1 && (
+                      <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-black/45 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur">
+                        <Images className="h-3 w-3" /> {group.images.length}
+                      </span>
+                    )}
+                    <span className="absolute inset-x-0 bottom-0 block p-4 md:p-5">
+                      <span className="block text-[10px] font-semibold uppercase tracking-[0.16em] text-[#BFD0FF]">{group.category}</span>
+                      <span className={`${SERIF} mt-1 line-clamp-2 block text-[1.05rem] font-semibold leading-snug text-white md:text-[1.2rem]`}>
+                        {albumTitle(group)}
+                      </span>
+                      <span className="mt-1 block text-xs text-white/70">{formatGalleryDate(group.date)}</span>
+                    </span>
+                  </motion.button>
+                ))}
+              </div>
+            )}
           </div>
         </section>
       </div>
 
+      {/* ─── Album: opens as a warm sheet ─── */}
       <AnimatePresence>
         {groupModal && groupModal.group && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-vk-900/90 p-3 backdrop-blur-sm md:p-4"
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0b1230]/85 p-3 backdrop-blur-sm md:p-6"
             onClick={() => setGroupModal(null)}
           >
             <motion.div
-              initial={{ scale: 0.98, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.98, opacity: 0 }}
-              className="relative max-h-[90vh] w-[95vw] max-w-[1200px] overflow-y-auto rounded-3xl bg-white p-5 shadow-2xl md:p-8"
+              initial={{ y: 16, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 16, opacity: 0 }}
+              className={`relative max-h-[92vh] w-[96vw] max-w-[1200px] overflow-y-auto rounded-[1.75rem] ${CREAM} p-5 shadow-2xl md:p-10`}
               onClick={(e) => e.stopPropagation()}
             >
               <button
                 type="button"
                 aria-label="Close album"
-                className="absolute right-3 top-3 flex h-11 w-11 items-center justify-center rounded-full bg-vk-100 text-vk-700 transition-colors hover:bg-vk-700 hover:text-white md:right-5 md:top-5"
+                className="sticky top-0 z-10 float-right -mr-1 -mt-1 flex h-11 w-11 items-center justify-center rounded-full border border-[#D5DDF5] bg-white text-vk-700 shadow-sm transition-colors hover:bg-vk-700 hover:text-white"
                 onClick={() => setGroupModal(null)}
               >
                 <X className="h-5 w-5" />
               </button>
-              <div className="mb-6 px-10 text-center">
-                <span className="vk-pill-soft mb-2">{groupModal.group.category}</span>
-                <h2 className="vk-h3">{groupModal.group.title}</h2>
+              <div className="mb-8 px-2 text-center md:px-12">
+                <div className="flex justify-center">
+                  <Eyebrow>{groupModal.group.category}</Eyebrow>
+                </div>
+                <h2 className={`${SERIF} mt-3 text-[1.6rem] font-semibold leading-tight text-ink md:text-[2.2rem]`}>{albumTitle(groupModal.group)}</h2>
+                <p className="mt-2 text-sm text-ink/55">
+                  {formatGalleryDate(groupModal.group.date)} · {groupModal.group.images.length} {groupModal.group.images.length === 1 ? "photo" : "photos"}
+                </p>
                 {groupModal.group.description && (
-                  <p className="mx-auto mt-2 max-w-2xl text-[15px] text-muted-foreground">{groupModal.group.description}</p>
+                  <p className="mx-auto mt-3 max-w-2xl text-[15px] leading-relaxed text-ink/65">{groupModal.group.description}</p>
                 )}
               </div>
-              <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
+              <div className="columns-2 gap-3 md:columns-3 md:gap-4">
                 {groupModal.group.images.map((src, idx) => (
                   <button
                     type="button"
                     key={src}
-                    className="vk-tile group relative aspect-[4/5] w-full cursor-pointer md:aspect-square"
-                    onClick={() =>
-                      setLightbox({
-                        images: groupModal.group.images,
-                        index: idx,
-                        group: groupModal.group,
-                      })
-                    }
-                    aria-label={`View image ${idx + 1} of ${groupModal.group.title}`}
+                    className={`group relative mb-3 block w-full cursor-pointer break-inside-avoid overflow-hidden rounded-2xl bg-[#EEF2FF] shadow-[0_16px_32px_-24px_rgba(30,58,138,0.6)] md:mb-4`}
+                    onClick={() => setLightbox({ images: groupModal.group.images, index: idx, group: groupModal.group })}
+                    aria-label={`View photo ${idx + 1} of ${groupModal.group.title}`}
                   >
-                    <Image
-                      src={src}
-                      alt={groupModal.group.title}
-                      fill
-                      loading="lazy"
-                      sizes="(max-width: 768px) 45vw, 30vw"
-                      className="object-cover"
-                    />
-                    <span className="absolute inset-0 z-[2] flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100">
-                      <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white/25 text-white backdrop-blur-sm">
-                        <ZoomIn className="h-5 w-5" />
-                      </span>
-                    </span>
+                    <FadeImage src={src} alt={albumTitle(groupModal.group)} sizes="(max-width: 768px) 45vw, 30vw" className="group-hover:scale-[1.04]" />
                   </button>
                 ))}
               </div>
@@ -298,107 +377,29 @@ export default function GalleryPage() {
           </motion.div>
         )}
       </AnimatePresence>
+
       <AnimatePresence>
-        {lightbox && lightbox.images && typeof lightbox.index === "number" && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-vk-900/95 p-4 backdrop-blur-sm"
-            onClick={() => setLightbox(null)}
-          >
-            <button
-              type="button"
-              aria-label="Close"
-              className="absolute right-4 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 md:right-6 md:top-6"
-              onClick={() => setLightbox(null)}
-            >
-              <X className="h-6 w-6" />
-            </button>
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="relative flex h-[90vh] w-[94vw] items-center justify-center md:w-[90vw]"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <GallerySingleImage images={lightbox.images} startIndex={lightbox.index} />
-            </motion.div>
-            <div className="pointer-events-none absolute inset-x-4 bottom-6 text-center md:bottom-8">
-              <p className="text-lg font-semibold text-white md:text-2xl">
-                {lightbox.group ? lightbox.group.title : ""}
-              </p>
-              <p className="mt-1 text-sm text-white/60 md:text-base">
-                {lightbox.group ? formatGalleryDate(lightbox.group.date) : ""}
-              </p>
-            </div>
-          </motion.div>
+        {photoLightbox !== null && photos[photoLightbox] && (
+          <Lightbox
+            items={photos.map((p) => ({ src: p.src, title: p.title, subtitle: p.subtitle }))}
+            index={photoLightbox}
+            onIndex={setPhotoLightbox}
+            onClose={() => setPhotoLightbox(null)}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {lightbox && (
+          <Lightbox
+            items={lightbox.images.map((src) => ({ src, title: albumTitle(lightbox.group) }))}
+            index={lightbox.index}
+            onIndex={(i) => setLightbox((lb) => (lb ? { ...lb, index: i } : lb))}
+            onClose={() => setLightbox(null)}
+            subtitle={formatGalleryDate(lightbox.group.date)}
+          />
         )}
       </AnimatePresence>
     </PageLayout>
-  );
-}
-
-type GallerySingleImageProps = { images: string[]; startIndex?: number };
-
-function GallerySingleImage({ images, startIndex = 0 }: GallerySingleImageProps) {
-  const [index, setIndex] = useState<number>(startIndex);
-  useEffect(() => {
-    setIndex(startIndex);
-  }, [startIndex]);
-  if (!images || images.length === 0) return null;
-  return (
-    <div className="relative flex h-full w-full items-center justify-center">
-      <button
-        type="button"
-        aria-label="Previous image"
-        className="absolute left-1 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-vk-800 shadow-lg transition-colors hover:bg-white disabled:opacity-40 md:left-6 md:h-12 md:w-12"
-        onClick={(e) => {
-          e.stopPropagation();
-          setIndex((i) => (i - 1 + images.length) % images.length);
-        }}
-        disabled={images.length <= 1}
-      >
-        <ChevronLeft className="h-6 w-6" />
-      </button>
-      <div className="relative flex h-full max-h-[80vh] w-full max-w-[1200px] items-center justify-center">
-        <Image
-          src={images[index]}
-          alt="Gallery Image"
-          fill
-          loading="lazy"
-          sizes="90vw"
-          className="rounded-2xl object-contain"
-        />
-      </div>
-      <button
-        type="button"
-        aria-label="Next image"
-        className="absolute right-1 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-vk-800 shadow-lg transition-colors hover:bg-white disabled:opacity-40 md:right-6 md:h-12 md:w-12"
-        onClick={(e) => {
-          e.stopPropagation();
-          setIndex((i) => (i + 1) % images.length);
-        }}
-        disabled={images.length <= 1}
-      >
-        <ChevronRight className="h-6 w-6" />
-      </button>
-      <div className="absolute bottom-20 left-1/2 flex max-w-[90%] -translate-x-1/2 flex-wrap justify-center gap-2.5 md:bottom-24">
-        {images.map((img, i) => (
-          <button
-            type="button"
-            key={img + i}
-            className={`h-2.5 cursor-pointer rounded-full transition-all focus:outline-none ${
-              i === index ? "w-6 bg-white" : "w-2.5 bg-white/40 hover:bg-white/70"
-            }`}
-            onClick={(e) => {
-              e.stopPropagation();
-              setIndex(i);
-            }}
-            aria-label={`Go to image ${i + 1}`}
-          />
-        ))}
-      </div>
-    </div>
   );
 }

@@ -55,7 +55,7 @@ export default function CentersExplorer() {
           <li className="sm:col-span-2 lg:col-span-3">
             <Link
               href="/iskcon-vizag-temple"
-              className="group grid overflow-hidden rounded-2xl border border-gold/40 bg-white shadow-sm transition-shadow hover:shadow-md lg:grid-cols-[1.5fr_1fr]"
+              className="group grid overflow-hidden rounded-2xl border border-vk-200 bg-white shadow-sm transition-shadow hover:shadow-md lg:grid-cols-[1.5fr_1fr]"
             >
               <div className="relative aspect-[16/9] overflow-hidden bg-vk-100">
                 <Image

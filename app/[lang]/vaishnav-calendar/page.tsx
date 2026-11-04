@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import PageLayout from "@/components/PageLayout";
-import PageHero from "@/components/PageHero";
+import Image from "next/image";
 import SectionHeading from "@/components/site/SectionHeading";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -120,6 +120,21 @@ const discoverCards = [
 const pad = (n: number) => String(n).padStart(2, "0");
 const dateStrOf = (month: number, day: number) => `${YEAR}-${pad(month + 1)}-${pad(day)}`;
 
+/** A ready-to-save Google Calendar link for an all-day event. */
+function googleCalendarUrl(e: { date: string; title: string; description?: string }) {
+  const start = e.date.replace(/-/g, "");
+  const end = new Date(`${e.date}T00:00:00Z`);
+  end.setUTCDate(end.getUTCDate() + 1);
+  const endStr = end.toISOString().slice(0, 10).replace(/-/g, "");
+  const params = new URLSearchParams({
+    action: "TEMPLATE",
+    text: e.title,
+    dates: `${start}/${endStr}`,
+    details: `${e.description ? e.description + "\n\n" : ""}Vaishnava Calendar, ISKCON Gambheeram Visakhapatnam`,
+  });
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}
+
 /** Below lg the detail panel is hidden, so taps open a bottom sheet instead. */
 function useIsCompactView() {
   const [isCompact, setIsCompact] = useState(false);
@@ -215,14 +230,15 @@ function EventCard({ event, index = 0 }: { event: VaishnavaDate; index?: number 
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
-      className="rounded-xl border border-border/50 bg-card p-3.5 transition-all hover:border-primary/30 hover:shadow-sm"
+      style={{ borderLeftColor: TYPE_HEX[event.type] }}
+      className="rounded-xl border border-l-4 border-border/50 bg-card p-3.5 transition-all hover:shadow-md"
     >
       <div className="flex items-start gap-2.5">
         <div className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${config.badge}`}>
           <Icon className="h-3.5 w-3.5" />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-semibold leading-snug text-foreground">{event.title}</p>
+          <p className="font-serif-display text-[0.98rem] font-semibold leading-snug text-foreground">{event.title}</p>
           {event.description && (
             <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{event.description}</p>
           )}
@@ -241,6 +257,14 @@ function EventCard({ event, index = 0 }: { event: VaishnavaDate; index?: number 
               </span>
             )}
           </div>
+          <a
+            href={googleCalendarUrl(event)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-2.5 inline-flex items-center gap-1 text-[11px] font-semibold text-vk-700 hover:text-vk-900"
+          >
+            <CalendarCheck className="h-3 w-3" /> Add to Google Calendar
+          </a>
         </div>
       </div>
     </motion.div>
@@ -376,6 +400,13 @@ function DayCell({
       aria-label={`${day} ${MONTHS[parseInt(dateStr.slice(5, 7), 10) - 1]} ${dateStr.slice(0, 4)}${hasAny ? ", has events" : ""}`}
     >
       <span className="leading-none">{day}</span>
+      {hasVisible && (
+        <span className="mt-1 flex items-center gap-0.5" aria-hidden>
+          {types.slice(0, 3).map((t) => (
+            <span key={t} className="h-1 w-1 rounded-full" style={{ background: isSelected ? "#fff" : TYPE_HEX[t] }} />
+          ))}
+        </span>
+      )}
       {hasCompleteFast && !isSelected && (
         <span className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-red-500/90" aria-hidden />
       )}
@@ -498,12 +529,55 @@ export default function VaishnavCalendarPage() {
   return (
     <PageLayout>
       <div className="pt-[var(--header-h)]">
-        <PageHero
-          eyebrow="Gaudiya Vaishnava Almanac"
-          title="Vaishnava Calendar 2026"
-          subtitle="Ekadashis, festivals & sacred observances — computed for Mayapur (IST)"
-          breadcrumb="Vaishnava Calendar"
-        />
+        {/* ── Hero: the title beside the day's deity darshan ───── */}
+        <section className="relative overflow-hidden bg-gradient-to-b from-vk-50 to-white">
+          <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-vk-200/40 blur-3xl" />
+          <div className="vk-container relative grid items-center gap-10 py-10 md:py-16 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
+            <div className="text-center lg:text-left">
+              <nav aria-label="Breadcrumb" className="mb-5 inline-flex items-center gap-1.5 text-xs font-medium text-ink/55 md:text-[13px]">
+                <Link href="/" className="transition-colors hover:text-vk-700">Home</Link>
+                <ChevronRight className="h-3.5 w-3.5 opacity-60" />
+                <span className="font-semibold text-vk-700" aria-current="page">Vaishnava Calendar</span>
+              </nav>
+              <div>
+                <span className="vk-pill">Gaudiya Vaishnava Almanac</span>
+              </div>
+              <h1 className="vk-h1 mt-4 !text-[2.2rem] md:!text-[3.1rem]">Vaishnava Calendar 2026</h1>
+              <p className="mx-auto mt-4 max-w-xl text-[15px] leading-relaxed text-ink/65 md:text-lg lg:mx-0">
+                Ekadashis, festivals and sacred observances for the year, computed for Mayapur (IST), so you always know when to fast, feast and celebrate.
+              </p>
+              <div className="mx-auto mt-7 grid max-w-md grid-cols-3 gap-3 lg:mx-0">
+                {[
+                  { n: vaishnavaCalendar2026.filter((e) => e.type === "Ekadashi").length, l: "Ekadashis" },
+                  { n: vaishnavaCalendar2026.filter((e) => e.type === "Festival").length, l: "Festivals" },
+                  { n: vaishnavaCalendar2026.filter((e) => e.type === "Appearance" || e.type === "Disappearance").length, l: "Acharya days" },
+                ].map((x) => (
+                  <div key={x.l} className="rounded-2xl border border-vk-100 bg-white px-3 py-3 text-center shadow-[0_14px_28px_-22px_rgba(30,58,138,0.5)]">
+                    <div className="font-heading text-2xl font-extrabold text-vk-700">{x.n}</div>
+                    <div className="text-[11px] font-medium text-ink/60">{x.l}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="relative mx-auto w-full max-w-sm lg:max-w-md">
+              <div aria-hidden className="absolute -inset-3 translate-x-3 translate-y-3 rounded-[2rem] border border-vk-200" />
+              <div className="relative aspect-[4/5] overflow-hidden rounded-[1.75rem] bg-vk-100 shadow-[0_34px_70px_-38px_rgba(30,58,138,0.7)]">
+                <Image
+                  src="https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677419371-1783677418690-DietyPhotos.jpeg"
+                  alt="Sri Sri Radha Madan Mohan, Hare Krishna Vaikuntham, Visakhapatnam"
+                  fill
+                  priority
+                  sizes="(min-width: 1024px) 420px, 90vw"
+                  className="object-cover"
+                />
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-vk-900/80 to-transparent p-5 pt-16">
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-vk-200">Sri Sri Radha Madan Mohan</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
         {/* ── Next-upcoming countdown card ────────────────── */}
         {nextEvent && (
@@ -601,7 +675,7 @@ export default function VaishnavCalendarPage() {
                 transition={{ duration: 0.25 }}
               >
                 {/* ── 3-Panel Calendar Card ── */}
-                <div className="vk-card overflow-hidden rounded-3xl">
+                <div className="vk-card overflow-hidden rounded-[1.75rem] shadow-[0_30px_60px_-40px_rgba(30,58,138,0.55)]">
                   <div className="flex flex-col lg:flex-row">
                     {/* Left: Month sidebar */}
                     <div className="hidden min-w-[210px] max-w-[210px] flex-col bg-gradient-to-b from-vk-700 to-vk-800 p-4 text-white lg:flex">
@@ -684,7 +758,7 @@ export default function VaishnavCalendarPage() {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -6 }}
                             transition={{ duration: 0.18 }}
-                            className="font-heading text-lg font-bold text-foreground md:text-xl"
+                            className="font-serif-display text-xl font-semibold text-foreground md:text-[1.6rem]"
                           >
                             {MONTHS[selectedMonth]} 2026
                           </motion.h2>
@@ -701,7 +775,7 @@ export default function VaishnavCalendarPage() {
                       {/* Weekday headers */}
                       <div className="mb-1.5 grid grid-cols-7 gap-1">
                         {WEEKDAYS_SHORT.map((day, i) => (
-                          <div key={`wd-${i}`} className="py-1 text-center text-[11px] font-semibold text-muted-foreground">
+                          <div key={`wd-${i}`} className="py-1 text-center text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
                             {day}
                           </div>
                         ))}
@@ -771,7 +845,7 @@ export default function VaishnavCalendarPage() {
                     {/* Right: day detail panel (desktop only — mobile uses the bottom sheet) */}
                     <div className="hidden border-vk-100 bg-vk-50/50 p-4 md:p-6 lg:block lg:min-w-[300px] lg:max-w-[340px] lg:border-l lg:border-t-0">
                       <div className="mb-4 flex items-center justify-between">
-                        <h3 className="font-heading text-sm font-bold text-foreground">{formatSelectedDate()}</h3>
+                        <h3 className="font-serif-display text-base font-semibold text-foreground">{formatSelectedDate()}</h3>
                         {selectedDate && (
                           <button
                             onClick={() => setSelectedDate(null)}
