@@ -1,6 +1,6 @@
 "use client";
 
-import { Smartphone } from "lucide-react";
+import Image from "next/image";
 
 /**
  * Vaikuntham — the temple's official app.
@@ -95,9 +95,13 @@ export default function VaikunthamAppPromo({ className = "" }: { className?: str
       className={`flex flex-col gap-5 rounded-2xl border border-white/10 bg-white/[0.07] p-5 backdrop-blur-sm md:flex-row md:items-center md:justify-between md:gap-6 md:px-6 ${className}`}
     >
       <div className="flex items-start gap-4">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-vk-500 text-white shadow-[0_8px_20px_-8px_rgba(47,91,211,0.8)]">
-          <Smartphone className="h-6 w-6" />
-        </div>
+        <Image
+          src="/assets/vaikuntham-app-icon.png"
+          alt="Vaikuntham app icon"
+          width={56}
+          height={56}
+          className="h-14 w-14 shrink-0 rounded-[14px] shadow-[0_8px_20px_-8px_rgba(0,0,0,0.6)] ring-1 ring-white/20"
+        />
         <div>
           <p className="text-base font-bold leading-tight text-white">
             Get the Vaikuntham App
