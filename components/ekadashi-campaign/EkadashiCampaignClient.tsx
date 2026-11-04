@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import SectionHeading from "@/components/site/SectionHeading";
+import { Eyebrow, SERIF } from "@/components/blogs/parts";
 import Reveal from "@/components/site/Reveal";
 import AddressForm from "@/components/AddressForm";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
@@ -55,12 +56,49 @@ const stepLabelClass = "mb-2 text-[13px] font-bold uppercase tracking-[0.08em] t
 const addOnBoxClass = "rounded-xl border border-vk-100 bg-vk-50/60 px-3.5 py-3";
 const addOnLabelClass = "flex cursor-pointer items-start gap-2.5 text-[13px] font-medium text-ink";
 
+// The smallest offering card shown on this page. Smaller amounts are not offered as cards (a donor
+// can still type any amount in "Other amount").
+const MIN_TIER = 1000;
+
+/**
+ * Drops offering cards below the minimum. A seva priced per unit (meals, plates, Gitas) then starts at
+ * exactly the minimum, so the first card is always MIN_TIER.
+ */
+const raiseTiers = (list: EkadashiSeva[]): EkadashiSeva[] =>
+  list.map((seva) => {
+    if (seva.tiers.length === 0) return seva;
+    let tiers = seva.tiers.filter((t) => t.amount >= MIN_TIER);
+    if (seva.unit && (tiers.length === 0 || tiers[0].amount > MIN_TIER)) tiers = [{ amount: MIN_TIER }, ...tiers];
+    // The pre-selected card may have been removed; keep exactly one default.
+    if (!tiers.some((t) => t.default)) tiers = tiers.map((t, i) => (i === 0 ? { ...t, default: true } : { ...t, default: false }));
+    return { ...seva, tiers };
+  });
+
 // The tier pre-selected when a seva is first shown. Falls back to the first
 // tier when none is explicitly flagged as the default.
 const defaultTierIndex = (seva: EkadashiSeva) => {
   const i = seva.tiers.findIndex((t) => t.default);
   return i === -1 ? 0 : i;
 };
+
+/** Centred section heading: a small blue label with a rule, then a serif title. */
+function EkHeading({ eyebrow, title }: { eyebrow: string; title: React.ReactNode }) {
+  return (
+    <div className="mb-9 text-center md:mb-12">
+      <div className="flex justify-center">
+        <Eyebrow>{eyebrow}</Eyebrow>
+      </div>
+      <h2 className={`${SERIF} mx-auto mt-3 max-w-3xl text-[1.75rem] font-semibold leading-tight text-foreground md:text-[2.4rem]`}>{title}</h2>
+    </div>
+  );
+}
+
+const OBSERVE_STEPS = [
+  { icon: UtensilsCrossed, title: "Fast from grains and beans", text: "Ekadashi is kept by avoiding grains and beans. Many devotees also fast fully, as their health allows." },
+  { icon: Heart, title: "Chant the Holy Names", text: "Chant extra rounds of the Hare Krishna Maha-mantra and spend the day remembering Lord Vishnu." },
+  { icon: BookOpen, title: "Hear and read", text: "Read the Bhagavad-gita and Srimad-Bhagavatam, or listen to the glories of the Lord and His devotees." },
+  { icon: Flower2, title: "Serve and give", text: "Offer seva and charity. A gift made on Ekadashi, such as prasadam for others, carries special merit." },
+];
 
 interface EkadashiCampaignClientProps {
   campaign: EkadashiCampaign;
@@ -84,7 +122,7 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
   }, [name]);
 
   const sevas = campaign.sevas.length > 0
-    ? campaign.sevas
+    ? raiseTiers(campaign.sevas)
     : [{ key: "general", label: "General Seva", icon: "🛕", sevaName: "General Seva", category: "GENERAL", tiers: [] }];
   const [sevaIndex, setSevaIndex] = useState(0);
   const [tierIndex, setTierIndex] = useState(() => defaultTierIndex(sevas[0]));
@@ -648,24 +686,41 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
           </div>
         </section>
 
+        {/* ── How to observe Ekadashi ── */}
+        <section className="vk-section">
+          <div className="vk-container max-w-6xl">
+            <EkHeading eyebrow="Observe the day" title="How to observe Ekadashi" />
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
+              {OBSERVE_STEPS.map((step, i) => (
+                <Reveal key={step.title} delay={i * 0.08} className="vk-card relative overflow-hidden p-6">
+                  <span aria-hidden className={`${SERIF} absolute right-4 top-1 text-6xl font-semibold text-vk-100`}>{String(i + 1).padStart(2, "0")}</span>
+                  <span className="relative mb-4 flex h-11 w-11 items-center justify-center rounded-full bg-vk-50 text-vk-700">
+                    <step.icon className="h-5 w-5" />
+                  </span>
+                  <h3 className={`${SERIF} relative text-[1.1rem] font-semibold leading-snug text-foreground`}>{step.title}</h3>
+                  <p className="relative mt-2 text-sm leading-relaxed text-muted-foreground">{step.text}</p>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* ── Spiritual Significance ── */}
         <section className="vk-section vk-band">
           <div className="vk-container max-w-4xl">
-            <SectionHeading
-              align="center"
-              eyebrow="The divine occasion"
-              title={<>Spiritual Significance of {campaign.campaignName}</>}
-            />
+            <EkHeading eyebrow="The divine occasion" title={<>Spiritual Significance of {campaign.campaignName}</>} />
 
             {/* Shloka */}
-            <Reveal className="vk-card mb-6 p-6 text-center md:p-8">
-              <p className="mb-4 font-heading text-lg leading-relaxed text-vk-800 md:text-xl">
+            <Reveal className="relative isolate mb-8 overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-vk-700 via-vk-800 to-vk-900 px-6 py-10 text-center md:px-12 md:py-14">
+              <div aria-hidden className="absolute -right-12 -top-12 -z-10 h-48 w-48 rounded-full bg-white/10" />
+              <div aria-hidden className="absolute -bottom-16 -left-10 -z-10 h-44 w-44 rounded-full bg-vk-500/25" />
+              <p className="mb-5 font-serif-display text-2xl leading-relaxed text-white md:text-[2rem]">
                 {campaign.shloka.sanskrit}
               </p>
-              <p className="mb-2 font-serif-display text-[15px] italic leading-relaxed text-ink/75 md:text-base">
+              <p className="mx-auto mb-3 max-w-2xl font-serif-display text-[15px] italic leading-relaxed text-white/85 md:text-lg">
                 &ldquo;{campaign.shloka.translation}&rdquo;
               </p>
-              <p className="text-xs font-semibold text-vk-600">— {campaign.shloka.reference}</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-vk-200">— {campaign.shloka.reference}</p>
             </Reveal>
 
             <Reveal delay={0.1}>
@@ -681,11 +736,7 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
         {/* ── Ekadashi Daan ── */}
         <section className="vk-section">
           <div className="vk-container max-w-6xl">
-            <SectionHeading
-              align="center"
-              eyebrow="Sacred offerings"
-              title={<>{campaign.campaignName} Daan</>}
-            />
+            <EkHeading eyebrow="Sacred offerings" title={<>{campaign.campaignName} Daan</>} />
 
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {campaign.sevaCards.map((seva, i) => {
@@ -694,7 +745,7 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
                   <Reveal
                     key={seva.title + i}
                     delay={i * 0.08}
-                    className="vk-card vk-card-hover group flex flex-col overflow-hidden"
+                    className="vk-card vk-card-hover group flex flex-col overflow-hidden !rounded-[1.5rem]"
                   >
                     <div className="relative aspect-[4/3] overflow-hidden bg-vk-900">
                       <Image
@@ -710,7 +761,7 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
                       </span>
                     </div>
                     <div className="flex flex-1 flex-col p-5">
-                      <h3 className="mb-2 font-heading text-base font-bold text-ink md:text-lg">
+                      <h3 className={`${SERIF} mb-2 text-[1.15rem] font-semibold text-ink md:text-xl`}>
                         {seva.title}
                       </h3>
                       <p className="mb-4 text-[13px] leading-relaxed text-muted-foreground">
@@ -734,25 +785,24 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
         {/* ── Significance Points ── */}
         <section className="vk-section vk-band">
           <div className="vk-container max-w-4xl">
-            <SectionHeading
-              align="center"
-              eyebrow="Why this day matters"
-              title={<>Significance of {campaign.campaignName}</>}
-            />
+            <EkHeading eyebrow="Why this day matters" title={<>Significance of {campaign.campaignName}</>} />
 
-            <div className="space-y-3">
+            <div className="grid gap-4 md:grid-cols-2">
               {campaign.significancePoints.map((point, i) => (
                 <Reveal
                   key={point.title + i}
                   delay={i * 0.08}
-                  className="vk-card p-5 md:p-6"
+                  className="vk-card relative overflow-hidden p-5 md:p-6"
                 >
-                  <div className="flex items-start gap-4">
+                  <span aria-hidden className="absolute right-4 top-1 font-serif-display text-6xl font-semibold text-vk-100">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <div className="relative flex items-start gap-4">
                     <span className="vk-icon-chip !h-9 !w-9 !rounded-full font-heading text-sm font-bold">
                       {i + 1}
                     </span>
                     <div className="min-w-0">
-                      <h3 className="mb-1.5 font-heading text-base font-bold text-ink md:text-lg">
+                      <h3 className="mb-1.5 font-serif-display text-[1.1rem] font-semibold text-ink md:text-xl">
                         {point.title}
                       </h3>
                       <p className="text-sm leading-relaxed text-muted-foreground md:text-[15px]">
@@ -769,20 +819,16 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
         {/* ── Why Donate on Ekadashi ── */}
         <section className="vk-section">
           <div className="vk-container max-w-4xl">
-            <SectionHeading
-              align="center"
-              eyebrow="The divine merit"
-              title={<>Why Donate on {campaign.campaignName}?</>}
-            />
+            <EkHeading eyebrow="The divine merit" title={<>Why Donate on {campaign.campaignName}?</>} />
 
             <div className="space-y-4">
               {campaign.whyDonateSections.map((section, i) => (
                 <Reveal
                   key={section.title + i}
                   delay={i * 0.08}
-                  className="vk-card p-6 md:p-8"
+                  className="vk-card relative overflow-hidden !rounded-[1.5rem] border-l-4 !border-l-vk-500 p-6 md:p-8"
                 >
-                  <h3 className="vk-h3 mb-3">
+                  <h3 className="vk-h3 mb-3 font-serif-display">
                     {section.title}
                   </h3>
                   <p className="vk-lead">
