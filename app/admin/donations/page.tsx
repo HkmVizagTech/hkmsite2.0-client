@@ -60,6 +60,7 @@ interface Stats {
   totalDonors: number;
   needsAttentionCount: number;
   thisMonth: { value: number; changePct: number | null; label: string };
+  today?: { value: number; count: number };
   monthly: { month: string; amount: number; count: number }[];
   sevaWise: { name: string; value: number; count: number }[];
 }
@@ -247,9 +248,10 @@ export default function AdminDonations() {
         </div>
       ) : stats ? (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
             {[
               { label: "Total Collected", value: `₹${stats.totalCollected.toLocaleString("en-IN")}`, icon: IndianRupee, sub: `${stats.totalCompletedCount} completed`, color: "text-green-600" },
+              { label: "Today", value: `₹${(stats.today?.value || 0).toLocaleString("en-IN")}`, icon: IndianRupee, sub: `${stats.today?.count || 0} completed today`, color: "text-green-600" },
               { label: "This Month", value: `₹${stats.thisMonth.value.toLocaleString("en-IN")}`, icon: TrendingUp, sub: stats.thisMonth.changePct !== null ? `${stats.thisMonth.changePct >= 0 ? "+" : ""}${stats.thisMonth.changePct}% vs last month` : stats.thisMonth.label, color: "text-primary" },
               { label: "Total Donors", value: stats.totalDonors.toLocaleString("en-IN"), icon: Users, sub: "Unique donors", color: "text-blue-500" },
               { label: "Transactions", value: stats.totalTransactions.toLocaleString("en-IN"), icon: Calendar, sub: "All records", color: "text-purple-500" },
