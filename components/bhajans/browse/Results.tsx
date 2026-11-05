@@ -153,7 +153,7 @@ function SkeletonGrid({ n = 6 }: { n?: number }) {
 /** Results: Spotify songs list (default) or grid, with active-filter title, sort, composer matches and Load more. */
 export default function Results() {
   const { meta, searchText, filters, filtering, list, loading, loadMore, apply, setSort, query } = useBrowse();
-  const [view, setView] = useState<"list" | "grid">("list");
+  const [view, setView] = useState<"list" | "grid">("grid");
   const lbl = (arr: FacetCount[], s: string) => (s ? arr.find((x) => x.slug === s)?.label : undefined);
   const parts = [
     lbl(meta.categories, filters.category),
