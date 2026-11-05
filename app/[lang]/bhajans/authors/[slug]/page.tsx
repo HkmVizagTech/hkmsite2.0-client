@@ -104,7 +104,7 @@ export default async function AuthorPage({ params }: P) {
             </section>
           )}
           <SongRows initial={list.items} total={total} pages={list.pages} query={{ ...query, sort: "title" }} moodLabels={moodLabels} showMoodColumn title="All bhajans" />
-          <AuthorShelf title="Fans also like" items={fans} lang={lang} />
+          <AuthorShelf title="Devotees also like" items={fans} lang={lang} />
         </div>
       </main>
     </PageLayout>

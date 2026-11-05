@@ -11,7 +11,7 @@ export interface Filters {
   category: string;
   hasAudio: boolean;
   featured: boolean;
-  sort: "" | "plays";
+  sort: "" | "new" | "title" | "plays";
 }
 export const NO_FILTERS: Filters = { mood: "", festival: "", artist: "", category: "", hasAudio: false, featured: false, sort: "" };
 
@@ -24,6 +24,7 @@ interface Ctx {
   filters: Filters;
   /** Replace the filters (search text is kept unless `keepSearch` is false). */
   apply: (f: Partial<Filters>, opts?: { keepSearch?: boolean; scroll?: boolean }) => void;
+  setSort: (s: Filters["sort"]) => void;
   toggle: <K extends keyof Filters>(key: K, value: Filters[K]) => void;
   filtering: boolean;
   list: BhajanList;
@@ -136,13 +137,15 @@ export function BrowseProvider({ meta, initial, children }: { meta: BhajanMeta; 
     [scrollToResults],
   );
 
+  const setSort = useCallback((sort: Filters["sort"]) => setFilters((f) => ({ ...f, sort })), []);
+
   const clear = useCallback(() => {
     setQ("");
     setDq("");
     setFilters(NO_FILTERS);
   }, []);
 
-  const value: Ctx = { meta, q, setQ, searchText: dq, filters, apply, toggle, filtering, list, loading, loadMore, clear, scrollToResults, query };
+  const value: Ctx = { meta, q, setQ, searchText: dq, filters, apply, setSort, toggle, filtering, list, loading, loadMore, clear, scrollToResults, query };
   return <BrowseCtx.Provider value={value}>{children}</BrowseCtx.Provider>;
 }
 

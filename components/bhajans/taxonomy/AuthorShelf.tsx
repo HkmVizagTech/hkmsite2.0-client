@@ -3,7 +3,7 @@ import Avatar from "./Avatar";
 import { FOCUS } from "./ui";
 import { pickL10n, type TaxonomyItem } from "@/lib/bhajansTaxonomy";
 
-/** "Fans also like": swipeable row of round composer avatars (peeks the next one on phones). */
+/** "Devotees also like": swipeable row of round composer avatars (peeks the next one on phones). */
 export default function AuthorShelf({ title, items, lang }: { title: string; items: TaxonomyItem[]; lang: string }) {
   if (!items.length) return null;
   return (
