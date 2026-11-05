@@ -36,15 +36,18 @@ export default function DiwaliClient() {
     setDaysLeft(dayDiff(istDate(new Date()), DIWALI_DATE_ISO));
   }, []);
 
-  // A ?seva= deep link (the pending-payment reminder) goes to that seva's card; everyone else stays at the top.
+  // A ?seva= deep link (the pending-payment reminder) goes to that seva's card; everyone else lands on the offer-seva section.
   useEffect(() => {
     if (scrolledRef.current) return;
     scrolledRef.current = true;
     const slug = new URLSearchParams(window.location.search).get("seva");
     const matched = slug && SEVAS.some((s) => s.slug === slug) ? slug : null;
-    if (!matched) return;
-    setHighlightedSlug(matched);
-    const timer = window.setTimeout(() => document.getElementById(`seva-card-${matched}`)?.scrollIntoView({ behavior: "smooth", block: "center" }), 450);
+    if (matched) setHighlightedSlug(matched);
+    const targetId = matched ? `seva-card-${matched}` : "offer-seva";
+    const timer = window.setTimeout(
+      () => document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth", block: matched ? "center" : "start" }),
+      450
+    );
     return () => window.clearTimeout(timer);
   }, []);
 
