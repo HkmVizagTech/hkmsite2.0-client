@@ -7,7 +7,7 @@ import CoverArt from "@/components/bhajans/CoverArt";
 import Shelf from "@/components/bhajans/Shelf";
 import { ActionRow, LyricsPanel, TrackList } from "@/components/bhajans/DetailClient";
 import { fetchBhajanBySlug, fetchBhajanList, fetchBhajanMeta, labelOf, lyricsAsText, tracksToQueue, type BhajanSummary } from "@/lib/bhajans";
-import { BHAJANS_SONG_BANNER, LANG_LABEL, fmtDuration } from "@/lib/bhajans";
+import { LANG_LABEL, fmtDuration } from "@/lib/bhajans";
 import { breadcrumbJsonLd, clampDescription, SITE_URL, absUrl, DEFAULT_OG_IMAGE, BRAND, withBrand } from "@/lib/seo";
 import { localizedFn } from "@/lib/i18n/seo";
 import BrowseByStrip from "@/components/bhajans/taxonomy/BrowseByStrip";
@@ -61,6 +61,13 @@ export default async function BhajanPage({ params }: P) {
   const path = `/bhajans/${b.slug}`;
   const fullUrl = `${SITE_URL}${path}`;
   const text = lyricsAsText(b, b.languages.includes("en") || !b.languages.length ? "en" : b.languages[0]);
+  let hh = 2166136261;
+  for (let i = 0; i < b.title.length; i++) { hh ^= b.title.charCodeAt(i); hh = Math.imul(hh, 16777619); }
+  hh = hh >>> 0;
+  const aura = { h1: 212 + (hh % 36), h2: 255 + ((hh >> 6) % 50), h3: 188 + ((hh >> 12) % 40) };
+  const firstVerse = b.verses.find((v) => v.text?.en?.length) || b.verses.find((v) => Object.values(v.text || {}).some((l) => l?.length));
+  const openingLines: string[] = ((firstVerse?.text?.en?.length ? firstVerse.text.en : Object.values(firstVerse?.text || {}).find((l) => l?.length)) || []).slice(0, 3);
+  const openingTranslation: string = (firstVerse?.translation?.en as string | undefined) || "";
   const verseCount = b.verses.filter((v) => Object.values(v.text || {}).some((l) => l?.length)).length;
   const totalSec = queue.reduce((n, t) => n + (t.duration || 0), 0);
   const langNames = b.languages.filter((l) => LANG_LABEL[l]).map((l) => (l === "en" ? "English" : l === "te" ? "Telugu" : "Hindi"));
@@ -107,15 +114,28 @@ export default async function BhajanPage({ params }: P) {
       <JsonLd data={ld} />
       <JsonLd data={breadcrumbJsonLd([{ name: "Vaishnava Bhajans", path: "/bhajans" }, { name: b.title, path }])} />
       <main className="overflow-x-clip bg-white pt-[var(--header-h)] text-ink">
-        <header className="relative isolate overflow-hidden">
-          {/* Light wash with Srila Prabhupada's portrait shown whole (face clear), fading softly towards the text. */}
-          <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden bg-[linear-gradient(180deg,#eef3ff_0%,#ffffff_100%)]">
-            <div className="absolute inset-x-0 top-0 h-[260px] [-webkit-mask-image:linear-gradient(to_bottom,#000_62%,transparent_100%)] [mask-image:linear-gradient(to_bottom,#000_62%,transparent_100%)] md:inset-y-0 md:left-auto md:right-0 md:h-auto md:w-[54%] md:[-webkit-mask-image:linear-gradient(to_left,#000_58%,transparent_100%)] md:[mask-image:linear-gradient(to_left,#000_58%,transparent_100%)]">
-              <Image src={BHAJANS_SONG_BANNER} alt="" fill priority unoptimized sizes="(min-width: 768px) 54vw, 100vw" className="object-cover object-top" />
-            </div>
-            <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-b from-transparent to-white" />
+        <header className="relative isolate overflow-hidden md:min-h-[480px] lg:min-h-[520px]">
+          {/* A soft aurora in the site's blue-violet family; the hues are chosen per bhajan so every header is different. */}
+          <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden" style={{ backgroundImage: `radial-gradient(60% 90% at 12% 18%, hsl(${aura.h1} 95% 80% / .85), transparent 70%), radial-gradient(55% 85% at 88% 22%, hsl(${aura.h2} 92% 78% / .8), transparent 70%), radial-gradient(70% 70% at 55% 105%, hsl(${aura.h3} 96% 86% / .9), transparent 70%), linear-gradient(180deg, #f3f6ff 0%, #ffffff 100%)` }}>
+            <div className="absolute inset-0 opacity-[0.5]" style={{ backgroundImage: "radial-gradient(rgba(255,255,255,.9) 1px, transparent 1.2px)", backgroundSize: "22px 22px" }} />
+            <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-b from-transparent to-white" />
           </div>
-          <div className="vk-container pb-10 pt-[200px] md:pb-14 md:pt-8">
+          {/* Lyric poster: the opening lines of this bhajan, set large on a frosted card (desktop). */}
+          {openingLines.length > 0 && (
+            <div aria-hidden className="pointer-events-none absolute inset-y-0 left-0 right-0 hidden items-center lg:flex">
+              <div className="vk-container flex justify-end">
+                <figure className="relative w-[320px] rounded-[1.75rem] bg-white/55 p-7 ring-1 ring-white/70 backdrop-blur-md xl:w-[360px]">
+                  <span className="font-serif-display absolute -top-3 left-5 text-[5rem] leading-none text-vk-700/25">&ldquo;</span>
+                  <blockquote className="font-serif-display relative pt-6 text-[1.35rem] font-semibold leading-snug text-ink xl:text-[1.5rem]">
+                    {openingLines.map((l, i) => <span key={i} className="block">{l}</span>)}
+                  </blockquote>
+                  {openingTranslation && <p className="mt-4 line-clamp-3 text-[14px] italic leading-relaxed text-ink/70">{openingTranslation}</p>}
+                  {b.artist && <figcaption className="mt-4 text-[11px] font-bold uppercase tracking-[0.18em] text-vk-700">{b.artist}</figcaption>}
+                </figure>
+              </div>
+            </div>
+          )}
+          <div className="vk-container pb-10 pt-[200px] md:pb-14 md:pt-8 lg:pr-[300px] xl:pr-[380px]">
             <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-1.5 text-xs text-ink/65">
               <Link href="/" className="inline-flex items-center gap-1 hover:text-vk-700"><Home className="h-3.5 w-3.5" aria-hidden /> Home</Link>
               <ChevronRight className="h-3.5 w-3.5 opacity-60" aria-hidden />
