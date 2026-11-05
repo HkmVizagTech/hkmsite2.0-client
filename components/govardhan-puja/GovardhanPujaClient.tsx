@@ -21,7 +21,6 @@ import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
 import { useAttribution } from "@/lib/useAttribution";
 import SearchParamsWatcher from "@/components/SearchParamsWatcher";
 import { usePaymentStatusPoller } from "@/lib/usePaymentStatusPoller";
-import { useScrollToDonate } from "@/lib/useScrollToDonate";
 import PhonePeUpiCard from "@/components/PhonePeUpiCard";
 import {
   newEventId,
@@ -167,7 +166,7 @@ const sevas: Seva[] = [
     description:
       "Feed visiting devotees and guests with sanctified prasadam on this auspicious day of Govardhan Puja.",
     icon: "🍛",
-    image: "/assets/janmashtami-sk1.webp",
+    image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1790144104776-1790144104666-sadhuBhojan.webp",
     options: [
       { legacySevaId: 3450, label: "Donate Rs. 7,777", amount: 7777 },
       { legacySevaId: 3451, label: "Donate Rs. 5,555", amount: 5555 },
@@ -176,6 +175,27 @@ const sevas: Seva[] = [
       { legacySevaId: 3454, label: "Donate Any Other Amount", amount: null },
     ],
   },
+];
+
+const GOVARDHAN_DATE_ISO = "2026-11-10";
+const GOVARDHAN_DATE_LABEL = "10 November 2026";
+const istDate = (d: Date) => d.toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+const dayDiff = (a: string, b: string) => Math.round((Date.parse(`${b}T00:00:00Z`) - Date.parse(`${a}T00:00:00Z`)) / 86_400_000);
+
+const SEVA_TAGLINES: Record<string, string> = {
+  govardhan: "Worship the sacred hill",
+  "gau-seva": "Serve the cows Krishna loves",
+  bhog: "Food offered to the Lord",
+  alankar: "Flowers for Their Lordships",
+  annakoot: "The mountain of food",
+  "vaishnav-bhojan": "Feed every devotee",
+};
+
+const STORY = [
+  { n: "1", title: "Indra's pride", text: "The people of Vrindavan were preparing a great sacrifice for Indra. Krishna asked them to worship Govardhan Hill instead, which fed their cows and gave them forests, water and grass." },
+  { n: "2", title: "The storm", text: "Angered, Indra sent torrential rain over Vraja. The people and their cows ran to Krishna for shelter." },
+  { n: "3", title: "Krishna lifts Govardhan", text: "Krishna lifted Govardhan Hill on the little finger of His left hand and held it for seven days, sheltering everyone beneath it." },
+  { n: "4", title: "Annakoot", text: "Indra bowed down and the rains stopped. Each year devotees remember this day by offering Annakoot, a mountain of vegetarian dishes, and sharing it as Maha Prasadam." },
 ];
 
 const TRUST_BADGES = [
@@ -262,7 +282,7 @@ const formatAmount = (amount: number) => amount.toLocaleString("en-IN");
 
 // Shared field styling for the checkout modal inputs (merged over ui/Input defaults).
 const inputCls =
-  "mt-1.5 h-11 rounded-xl border-vk-200 text-[15px] focus-visible:border-vk-500 focus-visible:ring-vk-500/20 focus-visible:ring-offset-0 md:text-[15px]";
+  "mt-1.5 h-12 rounded-xl border-vk-200 text-base focus-visible:border-vk-500 focus-visible:ring-vk-500/20 focus-visible:ring-offset-0 md:text-[15px]";
 
 // ─── Color tokens ────────────────────────────────────────────────────────────
 // Page chrome is styled with the Vaikuntham Blue vk-* classes; these hexes are
@@ -289,7 +309,28 @@ export default function GovardhanPujaClient() {
       );
     },
   });
-  useScrollToDonate("offer-seva");
+  // Land on the seva cards. The banner and hero photos load after first paint and push the cards down, so the scroll is repeated
+  // as they load, and stops as soon as the visitor scrolls, touches or presses a key. A ?seva= link goes to its own card instead.
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("seva")) return;
+    let stopped = false;
+    const go = () => {
+      if (stopped) return;
+      document.getElementById("offer-seva")?.scrollIntoView({ behavior: "auto", block: "start" });
+    };
+    const stop = () => {
+      stopped = true;
+    };
+    const events = ["wheel", "touchstart", "keydown", "mousedown"] as const;
+    events.forEach((e) => window.addEventListener(e, stop, { passive: true, once: true }));
+    const timers = [300, 900, 1800].map((ms) => window.setTimeout(go, ms));
+    window.addEventListener("load", go, { once: true });
+    return () => {
+      timers.forEach(window.clearTimeout);
+      window.removeEventListener("load", go);
+      events.forEach((e) => window.removeEventListener(e, stop));
+    };
+  }, []);
 
   const [selected, setSelected] = useState<SelectedOffering | null>(null);
   const [form, setForm] = useState<CheckoutForm>(initialForm);
@@ -300,6 +341,38 @@ export default function GovardhanPujaClient() {
   }>({ type: "idle", message: "" });
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [highlightedSlug, setHighlightedSlug] = useState<string | null>(null);
+  const [daysLeft, setDaysLeft] = useState<number | null>(null);
+  const [pastHero, setPastHero] = useState(false);
+  const [hideBar, setHideBar] = useState(false);
+
+  // Days to Govardhan Puja, worked out after mount so the server and the first client render agree.
+  useEffect(() => {
+    setDaysLeft(dayDiff(istDate(new Date()), GOVARDHAN_DATE_ISO));
+  }, []);
+
+  // The floating "Offer Seva" bar appears after the banner and hides while a donation section is on screen.
+  useEffect(() => {
+    const onScroll = () => setPastHero(window.scrollY > window.innerHeight * 0.7);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    const targets = ["offer-seva", "finale"].map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
+    const visible = new Set<string>();
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => (e.isIntersecting ? visible.add(e.target.id) : visible.delete(e.target.id)));
+        setHideBar(visible.size > 0);
+      },
+      { threshold: 0.12 }
+    );
+    targets.forEach((el) => io.observe(el));
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      io.disconnect();
+    };
+  }, []);
+
+  const countdown =
+    daysLeft === null ? null : daysLeft > 1 ? `${daysLeft} days to go` : daysLeft === 1 ? "Tomorrow" : daysLeft === 0 ? "Today" : null;
 
   const finalAmount = selected?.option.amount ?? Number(form.customAmount || 0);
   const showTaxField = finalAmount >= 500;
@@ -539,116 +612,236 @@ export default function GovardhanPujaClient() {
     <PageLayout>
       {upiFallbackDialog}
       <SearchParamsWatcher onChange={setSearchParams} />
-      <main className="min-h-screen bg-white pt-[var(--header-h)] text-ink">
+      <main className="min-h-screen overflow-x-clip bg-white pt-[var(--header-h)] text-ink">
         <WhatsAppFloatButton />
 
-      {/* ═══════════════════════════════════════════════════════════════════
-          HERO — campaign banner in an inset rounded card
-      ═══════════════════════════════════════════════════════════════════ */}
-      <section className="bg-gradient-to-b from-vk-50 to-white">
-        <div>
-          <div className="overflow-hidden bg-vk-900">
-            <a href="#offer-seva" className="block">
-              <picture>
-                <source media="(max-width: 640px)" srcSet={MOBILE_BANNER} />
-                <img
-                  src={DESKTOP_BANNER}
-                  alt="Sri Govardhan Puja celebrations at Hare Krishna Movement Vizag"
-                  className="block h-auto w-full"
-                />
-              </picture>
-            </a>
-          </div>
-        </div>
+      {/* ══ BANNER ═════════════════════════════════════════════════════ */}
+      <section className="bg-vk-900">
+        <h1 className="sr-only">Sri Govardhan Puja, {GOVARDHAN_DATE_LABEL}</h1>
+        <a href="#offer-seva" className="block" aria-label="Offer Your Seva">
+          <picture>
+            <source media="(max-width: 640px)" srcSet={MOBILE_BANNER} />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={DESKTOP_BANNER}
+              alt="Sri Govardhan Puja celebrations at Hare Krishna Movement Vizag"
+              fetchPriority="high"
+              className="block h-auto w-full"
+            />
+          </picture>
+        </a>
       </section>
 
-      {/* ═══════════════════════════════════════════════════════════════════
-          SEVA CARDS
-      ═══════════════════════════════════════════════════════════════════ */}
-      <section id="offer-seva" className="vk-section">
-        <div className="vk-container">
-          <SectionHeading
-            eyebrow="Choose Your Offering"
-            title="Govardhan Puja Sevas"
-            subtitle="Select a sacred seva and receive the divine blessings of Govardhan"
-            align="center"
-          />
+      {/* ══ THE HILL — text on the left, a photo collage on the right ═══ */}
+      <section className="bg-white px-3 pb-2 pt-8 sm:px-5 md:pt-14 xl:px-8">
+      <div className="relative isolate mx-auto max-w-[88rem] overflow-hidden rounded-[2rem] bg-[linear-gradient(160deg,#0b1745_0%,#15308a_55%,#2b52c9_100%)] text-white shadow-[0_40px_80px_-40px_rgba(15,31,92,0.85)] md:rounded-[2.75rem]">
+        <div
+          aria-hidden
+          className="absolute inset-0 -z-10 opacity-[0.07] [background-image:radial-gradient(#fff_1.2px,transparent_1.2px)] [background-size:26px_26px]"
+        />
+        <div aria-hidden className="absolute -left-24 top-10 -z-10 h-80 w-80 rounded-full bg-[radial-gradient(circle,rgba(120,160,255,0.35),transparent_70%)]" />
+        <div aria-hidden className="absolute -right-20 bottom-24 -z-10 h-96 w-96 rounded-full bg-[radial-gradient(circle,rgba(255,214,120,0.22),transparent_70%)]" />
+        <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-10 px-5 pb-20 pt-10 md:px-12 md:pb-32 md:pt-16 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
+          <div className="text-center lg:text-left">
+            <p className="inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-[#BFD0FF] md:text-xs">
+              Annakoot · {GOVARDHAN_DATE_LABEL}
+            </p>
+            <h2 className="mt-4 font-heading text-[2.4rem] font-bold leading-[1.08] sm:text-5xl xl:text-[3.6rem]">
+              The Hill That Krishna <span className="text-[hsl(var(--gold))]">Lifted</span>
+            </h2>
+            <p className="mx-auto mt-5 max-w-xl text-[15px] leading-relaxed text-white/80 md:text-lg md:leading-8 lg:mx-0">
+              On Govardhan Puja we worship the hill that feeds the cows of Vraja, offer Annakoot, a mountain of food, to the Lord, and
+              share it as Maha Prasadam. Take part with a seva at Hare Krishna Vaikuntham, Gambheeram.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+              <a href="#offer-seva" className="vk-btn-gold h-[3.25rem] px-8 text-base font-bold">
+                Offer Your Seva <ArrowRight className="h-4 w-4" />
+              </a>
+              <a
+                href="#story"
+                className="inline-flex h-[3.25rem] items-center rounded-full border border-white/30 px-6 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+              >
+                Read the pastime
+              </a>
+            </div>
+            <ul className="mt-6 flex flex-wrap items-center justify-center gap-2 lg:justify-start">
+              {["Sankalpa in your name", "80G eligible", "Maha Prasadam"].map((x) => (
+                <li key={x} className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-xs font-semibold text-white/90 ring-1 ring-white/20">
+                  <Check className="h-3.5 w-3.5 text-[hsl(var(--gold))]" /> {x}
+                </li>
+              ))}
+            </ul>
+            {countdown && (
+              <div className="mt-6 inline-flex items-center gap-3 rounded-2xl bg-white/10 px-4 py-3 ring-1 ring-white/20 backdrop-blur">
+                <span className="font-heading text-3xl font-extrabold leading-none text-[hsl(var(--gold))]">
+                  {daysLeft !== null && daysLeft > 1 ? daysLeft : daysLeft === 1 ? "1" : "0"}
+                </span>
+                <span className="text-left text-xs font-semibold uppercase leading-tight tracking-[0.14em] text-white/80">
+                  {daysLeft !== null && daysLeft > 1 ? "days to" : daysLeft === 1 ? "day to" : "it is"}
+                  <br />
+                  {daysLeft === 0 ? "today" : "Govardhan Puja"}
+                </span>
+              </div>
+            )}
+          </div>
 
-          {/* Seva cards grid */}
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
-            {sevas.map((seva, idx) => {
-              const primary = seva.options[0];
-              const tiers = seva.options.slice(1, 4);
+          {/* Photo collage */}
+          <div className="relative mx-auto w-full max-w-[34rem] pb-10 sm:pb-12">
+            <div className="relative aspect-[5/4] overflow-hidden rounded-[2rem] shadow-[0_40px_70px_-30px_rgba(0,0,0,0.7)] ring-4 ring-white/25">
+              <Image src={sevas[0].image} alt="Govardhan Hill worship" fill unoptimized priority sizes="(max-width: 1024px) 90vw, 540px" className="object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0b1745]/55 via-transparent to-transparent" />
+              <span className="absolute left-4 top-4 rounded-full bg-white/95 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-vk-800">Govardhan Puja</span>
+            </div>
+            <div className="absolute -bottom-0 -left-2 w-[40%] rotate-[-4deg] overflow-hidden rounded-2xl shadow-[0_24px_44px_-20px_rgba(0,0,0,0.7)] ring-4 ring-white sm:-left-6">
+              <div className="relative aspect-[4/3]">
+                <Image src={sevas[4].image} alt="Annakoot, the mountain of food" fill unoptimized sizes="220px" className="object-cover" />
+              </div>
+              <p className="bg-white px-3 py-1.5 text-center text-[11px] font-bold uppercase tracking-wider text-vk-800">Annakoot</p>
+            </div>
+            <div className="absolute -bottom-2 -right-2 w-[36%] rotate-[3deg] overflow-hidden rounded-2xl shadow-[0_24px_44px_-20px_rgba(0,0,0,0.7)] ring-4 ring-white sm:-right-5">
+              <div className="relative aspect-[4/3]">
+                <Image src={sevas[1].image} alt="Cows at the goshala" fill unoptimized sizes="200px" className="object-cover" />
+              </div>
+              <p className="bg-white px-3 py-1.5 text-center text-[11px] font-bold uppercase tracking-wider text-vk-800">Gau Puja</p>
+            </div>
+          </div>
+        </div>
+        <svg aria-hidden viewBox="0 0 1440 160" preserveAspectRatio="none" className="absolute inset-x-0 bottom-0 h-16 w-full md:h-24">
+          <path d="M0 110 C 240 40, 420 40, 700 95 S 1200 150, 1440 70 V160 H0Z" fill="#ffffff" fillOpacity="0.18" />
+          <path d="M0 135 C 260 80, 520 80, 760 125 S 1220 160, 1440 110 V160 H0Z" fill="#ffffff" fillOpacity="0.35" />
+        </svg>
+      </div>
+      </section>
+
+      {/* ══ SEVAS ══════════════════════════════════════════════════════ */}
+      <section id="offer-seva" className="vk-section scroll-mt-16 !pt-4 md:!pt-6">
+        <div className="vk-container">
+          <Reveal>
+            <SectionHeading
+              eyebrow="Choose Your Offering"
+              title="Govardhan Puja Sevas"
+              subtitle="Pick a seva and an amount. Sankalpa is taken in your name and your receipt reaches you as soon as the payment is confirmed."
+              align="center"
+            />
+          </Reveal>
+
+          {/* Featured seva: Govardhan Seva */}
+          {(() => {
+            const seva = sevas[0];
+            const amounts = seva.options.filter((o) => o.amount != null);
+            const custom = seva.options.find((o) => !o.amount) || seva.options[seva.options.length - 1];
+            return (
+              <Reveal>
+                <article
+                  id={`seva-card-${seva.slug}`}
+                  className={`grid scroll-mt-24 overflow-hidden rounded-[2rem] bg-white text-ink shadow-[0_30px_64px_-34px_rgba(30,58,138,0.6)] ring-1 ring-vk-100 lg:grid-cols-[1.05fr_1fr] ${
+                    highlightedSlug === seva.slug ? "ring-4 ring-[hsl(var(--gold))]" : ""
+                  }`}
+                >
+                  <div className="relative aspect-[4/3] bg-vk-900 lg:aspect-auto lg:min-h-[26rem]">
+                    <Image src={seva.image} alt={seva.title} fill unoptimized sizes="(max-width: 1024px) 100vw, 55vw" className="object-cover" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0b1745]/40 via-transparent to-transparent" />
+                    <span className="absolute left-4 top-4 rounded-full bg-[hsl(var(--gold))] px-3.5 py-1.5 text-[11px] font-extrabold uppercase tracking-wider text-ink shadow">
+                      Most dear to the Lord
+                    </span>
+                  </div>
+                  <div className="flex flex-col justify-center p-6 md:p-10">
+                    <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-vk-500">{SEVA_TAGLINES[seva.slug]}</p>
+                    <h3 className="mt-2 font-heading text-3xl text-ink font-bold leading-tight md:text-4xl">{seva.title}</h3>
+                    <p className="mt-3 text-[15px] leading-relaxed text-muted-foreground md:text-base">{seva.description}</p>
+                    <p className="mt-6 text-xs font-bold uppercase tracking-[0.18em] text-vk-600">Choose an amount</p>
+                    <div className="mt-3 grid grid-cols-2 gap-3">
+                      {amounts.map((o, i) => (
+                        <button
+                          key={o.legacySevaId}
+                          type="button"
+                          onClick={() => openCheckout(seva, o)}
+                          className={`flex min-h-[3.4rem] items-center justify-between rounded-2xl px-4 text-left font-heading text-xl font-extrabold transition-all hover:-translate-y-0.5 ${
+                            i === 0
+                              ? "bg-gradient-to-r from-[#F6C752] to-[#E0A92B] text-ink shadow-[0_14px_28px_-14px_rgba(246,199,82,0.9)]"
+                              : "bg-vk-50 text-vk-800 ring-1 ring-vk-200 hover:bg-vk-700 hover:text-white hover:ring-vk-700"
+                          }`}
+                        >
+                          ₹{formatAmount(o.amount as number)}
+                          <ArrowRight className="h-4 w-4 opacity-70" />
+                        </button>
+                      ))}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => openCheckout(seva, custom)}
+                      className="mt-3 inline-flex min-h-[3rem] items-center justify-center gap-2 rounded-2xl border border-dashed border-vk-300 text-sm font-bold text-vk-700 transition-colors hover:bg-vk-50"
+                    >
+                      <Plus className="h-4 w-4" /> Donate any other amount
+                    </button>
+                  </div>
+                </article>
+              </Reveal>
+            );
+          })()}
+
+          {/* The other sevas */}
+          <p className="mt-8 flex items-center justify-between px-1 text-xs font-bold uppercase tracking-[0.16em] text-vk-600 sm:hidden">
+            More sevas <span className="inline-flex items-center gap-1 font-semibold normal-case tracking-normal text-muted-foreground">Swipe <ArrowRight className="h-3.5 w-3.5" /></span>
+          </p>
+          <div className="-mx-4 mt-3 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4 [scrollbar-width:none] sm:mx-0 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-5 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3 lg:gap-6 [&::-webkit-scrollbar]:hidden">
+            {sevas.slice(1).map((seva, idx) => {
+              const amounts = seva.options.filter((o) => o.amount != null).slice(0, 4);
               const custom = seva.options.find((o) => !o.amount) || seva.options[seva.options.length - 1];
               const highlighted = highlightedSlug === seva.slug;
               return (
-                <Reveal key={seva.slug} delay={reduce ? 0 : (idx % 3) * 0.06} className="h-full">
+                <Reveal key={seva.slug} delay={reduce ? 0 : (idx % 3) * 0.06} className="h-auto w-[82%] shrink-0 snap-center sm:h-full sm:w-auto">
                   <article
                     id={`seva-card-${seva.slug}`}
-                    className={`vk-card vk-card-hover group flex h-full scroll-mt-24 flex-col overflow-hidden ${
-                      highlighted ? "ring-2 ring-vk-500 ring-offset-2" : ""
+                    className={`group flex h-full scroll-mt-24 flex-col overflow-hidden rounded-3xl bg-white shadow-[0_20px_44px_-28px_rgba(30,58,138,0.55)] ring-1 ring-vk-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_28px_56px_-26px_rgba(30,58,138,0.7)] ${
+                      highlighted ? "ring-2 ring-vk-500" : ""
                     }`}
                   >
-                    {/* Card image */}
-                    <div className="relative h-44 overflow-hidden bg-vk-900 md:h-48">
+                    <div className="relative aspect-[16/10] overflow-hidden bg-vk-900">
                       <Image
                         src={seva.image}
                         alt={seva.title}
                         fill
                         unoptimized
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        className="object-cover object-top transition-transform duration-700 group-hover:scale-105"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-vk-900/60 via-vk-900/5 to-transparent" />
-                      <span
-                        className="absolute left-3 top-3 flex h-10 w-10 items-center justify-center rounded-xl bg-white/90 text-xl shadow-sm backdrop-blur"
-                        aria-hidden
-                      >
-                        {seva.icon}
-                      </span>
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#0b1745]/85 via-[#0b1745]/20 to-transparent" />
+                      <div className="absolute inset-x-0 bottom-0 flex items-end gap-3 p-4">
+                        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-white/95 text-xl shadow-md" aria-hidden>
+                          {seva.icon}
+                        </span>
+                        <div className="min-w-0">
+                          <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#BFD0FF]">{SEVA_TAGLINES[seva.slug]}</p>
+                          <h3 className="font-heading text-lg font-bold leading-tight text-white md:text-xl">{seva.title}</h3>
+                        </div>
+                      </div>
                     </div>
-
-                    {/* Card body */}
                     <div className="flex flex-1 flex-col p-5">
-                      <h3 className="vk-h3 !text-xl">{seva.title}</h3>
-                      <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground md:text-sm">
-                        {seva.description}
-                      </p>
-                      <div className="mt-auto space-y-2.5 pt-5">
-                        <button
-                          type="button"
-                          onClick={() => openCheckout(seva, primary)}
-                          className="vk-btn-gold h-12 w-full justify-between px-4 text-[14px] font-bold"
-                        >
-                          <span>
-                            Sponsor for{" "}
-                            <span className="font-extrabold">
-                              ₹{primary.amount != null ? formatAmount(primary.amount) : "—"}
-                            </span>
-                          </span>
-                          <ArrowRight className="h-4 w-4 shrink-0" />
-                        </button>
-
-                        <div className="grid grid-cols-3 gap-2">
-                          {tiers.map((t) => (
+                      <p className="line-clamp-3 text-[13px] leading-relaxed text-muted-foreground md:text-sm">{seva.description}</p>
+                      <div className="mt-auto pt-5">
+                        <div className="grid grid-cols-2 gap-2">
+                          {amounts.map((o, i) => (
                             <button
-                              key={t.legacySevaId}
+                              key={o.legacySevaId}
                               type="button"
-                              onClick={() => openCheckout(seva, t)}
-                              className="min-h-[44px] rounded-xl border border-vk-200 bg-white px-1 py-2.5 text-center text-sm font-bold text-vk-800 transition-all hover:border-vk-500 hover:bg-vk-50"
+                              onClick={() => openCheckout(seva, o)}
+                              className={`min-h-[44px] rounded-xl px-3 text-[15px] font-extrabold transition-all ${
+                                i === 0
+                                  ? "bg-gradient-to-r from-[#F6C752] to-[#E0A92B] text-ink shadow-sm hover:shadow-md"
+                                  : "bg-vk-50 text-vk-800 ring-1 ring-vk-200 hover:bg-vk-700 hover:text-white hover:ring-vk-700"
+                              }`}
                             >
-                              ₹{t.amount != null ? formatAmount(t.amount) : "—"}
+                              ₹{formatAmount(o.amount as number)}
                             </button>
                           ))}
                         </div>
-
                         <button
                           type="button"
                           onClick={() => openCheckout(seva, custom)}
-                          className="vk-btn-outline h-11 w-full text-[13px] font-bold"
+                          className="mt-2 inline-flex min-h-[40px] w-full items-center justify-center gap-1.5 rounded-xl text-sm font-semibold text-vk-700 hover:bg-vk-50"
                         >
-                          <Plus className="h-4 w-4" />
-                          <span>Donate Other Amount</span>
+                          <Plus className="h-4 w-4" /> Other amount
                         </button>
                       </div>
                     </div>
@@ -657,72 +850,26 @@ export default function GovardhanPujaClient() {
               );
             })}
           </div>
+          <p className="mt-8 text-center text-xs text-muted-foreground">
+            80G Tax Exemption available · Secured by Razorpay · Donations go to Hare Krishna Movement India, Visakhapatnam
+          </p>
         </div>
       </section>
 
       {/* Direct PhonePe / UPI payment, for donors who can't use Razorpay */}
       <PhonePeUpiCard campaign="Govardhan Puja" />
 
-      {/* ═══════════════════════════════════════════════════════════════════
-          INTRO / ABOUT + TRUST BADGES
-      ═══════════════════════════════════════════════════════════════════ */}
-      <section className="vk-section vk-band">
+      {/* ══ TRUST ══════════════════════════════════════════════════════ */}
+      <section className="vk-section !pb-2 !pt-6">
         <div className="vk-container">
-          <Reveal>
-            <div className="grid gap-6 lg:grid-cols-[1.35fr_0.65fr] lg:items-center lg:gap-10">
-              <div>
-                <span className="vk-pill mb-4">Hare Krishna Movement</span>
-                <h1 className="vk-h1">Sri Govardhan Puja</h1>
-                <p className="vk-lead mt-4 max-w-3xl md:!text-lg">
-                  Celebrate the divine pastime of Lord Krishna&apos;s lifting of
-                  Govardhan Hill — the day He taught the world that protecting the
-                  sacred earth and its creatures pleases the Lord most. Offer sacred
-                  sevas and receive the unlimited blessings of Govardhan at HKM
-                  Vizag.
-                </p>
-                <p className="mt-5 max-w-3xl border-l-4 border-vk-300 pl-4 font-serif-display text-[15px] italic leading-7 text-vk-700 md:text-base">
-                  &ldquo;Just as Govardhan Hill protects all who shelter at its
-                  base, Lord Krishna protects every soul who takes shelter of Him.
-                  Worship Govardhan — the very form of the Lord&apos;s protection.&rdquo;
-                </p>
-              </div>
-              <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-vk-700 via-vk-600 to-vk-500 p-6 text-white shadow-[0_24px_50px_-24px_rgba(30,58,138,0.7)]">
-                <div aria-hidden className="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-white/10" />
-                <div className="relative flex items-start gap-3">
-                  <span className="vk-icon-chip bg-white/15 text-[hsl(var(--gold))]">
-                    <ShieldCheck className="h-5 w-5" />
-                  </span>
-                  <div>
-                    <h2 className="text-lg font-bold text-white">
-                      Offer Seva This Govardhan Puja
-                    </h2>
-                    <p className="mt-2 text-sm leading-6 text-white/80">
-                      Your offering sustains the sacred worship of Govardhan Hill,
-                      the grand Annakoot feast, bhog preparations and every divine
-                      ritual performed at ISKCON Gambheeram Visakhapatnam on this auspicious day.
-                    </p>
-                  </div>
-                </div>
-                <a
-                  href="#offer-seva"
-                  className="vk-btn-gold relative mt-5 h-12 w-full text-[15px] font-bold"
-                >
-                  Offer Seva
-                </a>
-              </div>
-            </div>
-          </Reveal>
-
-          <div className="mt-8 grid grid-cols-2 gap-3 md:mt-10 md:grid-cols-4 md:gap-4">
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
             {TRUST_BADGES.map((b, i) => (
               <Reveal key={b.label} delay={reduce ? 0 : i * 0.05} className="h-full">
                 <div className="vk-card flex h-full items-center gap-3 p-3.5 md:p-4">
                   <span className="vk-icon-chip h-10 w-10">
                     <b.icon className="h-5 w-5" />
                   </span>
-                  <span className="text-[13px] font-semibold leading-snug text-ink md:text-sm">
-                    {b.label}
-                  </span>
+                  <span className="text-[13px] font-semibold leading-snug text-ink md:text-sm">{b.label}</span>
                 </div>
               </Reveal>
             ))}
@@ -730,30 +877,74 @@ export default function GovardhanPujaClient() {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════════════════════════
-          BANK TRANSFER + NOTE
-      ═══════════════════════════════════════════════════════════════════ */}
-      <section className="vk-section">
+      {/* ══ THE PASTIME — four chapters ════════════════════════════════ */}
+      <section id="story" className="vk-section vk-band scroll-mt-20">
         <div className="vk-container">
           <Reveal>
-            <div className="vk-card mx-auto max-w-4xl p-5 md:p-8">
+            <SectionHeading eyebrow="The divine pastime" title="Why We Worship Govardhan" align="center" />
+          </Reveal>
+          <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
+            {STORY.map((s, i) => (
+              <Reveal as="li" key={s.n} delay={reduce ? 0 : i * 0.06} className="h-full">
+                <div className="relative h-full overflow-hidden rounded-3xl bg-white p-6 ring-1 ring-vk-100">
+                  <span aria-hidden className="absolute -right-2 -top-4 font-heading text-[5.5rem] font-extrabold leading-none text-vk-100">
+                    {s.n}
+                  </span>
+                  <h3 className="relative font-heading text-lg font-bold text-vk-800">{s.title}</h3>
+                  <p className="relative mt-2 text-[14px] leading-relaxed text-muted-foreground">{s.text}</p>
+                </div>
+              </Reveal>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* ══ FINAL CALL + BANK ══════════════════════════════════════════ */}
+      <section id="finale" className="vk-section scroll-mt-16">
+        <div className="vk-container">
+          <Reveal>
+            <div className="relative overflow-hidden rounded-[2rem] bg-[linear-gradient(135deg,#0f1f5c_0%,#1c3a9e_60%,#2f5bd3_100%)] px-6 py-10 text-center text-white md:px-12 md:py-14">
+              <div aria-hidden className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-white/10" />
+              <div aria-hidden className="absolute -bottom-20 -left-10 h-56 w-56 rounded-full bg-white/5" />
+              <h2 className="relative mx-auto max-w-2xl font-heading text-[1.9rem] font-bold leading-tight md:text-4xl">
+                Offer a seva, and take shelter of <span className="text-[hsl(var(--gold))]">Govardhan</span>
+              </h2>
+              <p className="relative mx-auto mt-4 max-w-xl text-[15px] leading-relaxed text-white/80 md:text-base">
+                Every offering, whatever the amount, is received with love, with sankalpa in your name.
+              </p>
+              <a href="#offer-seva" className="vk-btn-gold relative mt-7 h-[3.25rem] px-8 text-base font-bold">
+                <Heart className="h-4 w-4" /> Offer Your Seva
+              </a>
+            </div>
+          </Reveal>
+
+          <div className="mx-auto mt-10 grid max-w-6xl gap-5 lg:grid-cols-2 lg:items-start">
+            <div className="rounded-2xl border border-vk-100 bg-vk-50 px-5 py-4 text-sm leading-7 text-ink/80 md:text-base">
+              While making UPI/Bank payments, please send a screenshot with your name, mobile, address and PAN details to our WhatsApp{" "}
+              <a className="font-bold text-vk-700 hover:text-vk-500" href="tel:+918977761187">
+                +91 89777 61187
+              </a>{" "}
+              or email{" "}
+              <a className="break-all font-bold text-vk-700 hover:text-vk-500" href="mailto:social@hkmvizag.org">
+                social@hkmvizag.org
+              </a>
+              , so your receipt is issued against the right donor.
+            </div>
+            <div className="vk-card p-5 md:p-7">
               <div className="flex items-center gap-3">
                 <span className="vk-icon-chip">
                   <Landmark className="h-5 w-5" />
                 </span>
                 <h2 className="vk-h3">Donation Through Bank (NEFT / RTGS)</h2>
               </div>
-              <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              <div className="mt-4 grid gap-2.5 sm:grid-cols-2">
                 {[
                   { label: "Beneficiary Name", value: "HARE KRISHNA MOVEMENT INDIA" },
                   { label: "Bank Name", value: "IDFC FIRST BANK LTD" },
                   { label: "A/c No", value: "10091415313" },
                   { label: "IFSC Code", value: "IDFB0080412" },
                 ].map(({ label, value }) => (
-                  <div
-                    key={label}
-                    className="flex items-center justify-between gap-3 rounded-xl bg-vk-50 p-4 text-sm"
-                  >
+                  <div key={label} className="flex items-center justify-between gap-3 rounded-xl bg-vk-50 p-4 text-sm">
                     <div className="min-w-0">
                       <p className="text-xs font-medium text-muted-foreground">{label}</p>
                       <p className="mt-0.5 select-all break-words font-semibold text-ink">{value}</p>
@@ -769,77 +960,13 @@ export default function GovardhanPujaClient() {
                       title={`Copy ${label}`}
                       aria-label={`Copy ${label}`}
                     >
-                      {copiedField === label ? (
-                        <Check className="h-4 w-4 text-green-600" />
-                      ) : (
-                        <Copy className="h-4 w-4 text-vk-400" />
-                      )}
+                      {copiedField === label ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4 text-vk-400" />}
                     </button>
                   </div>
                 ))}
               </div>
-              <p className="mt-5 rounded-xl border border-vk-100 bg-vk-50/60 px-4 py-3 text-sm leading-relaxed text-ink/80">
-                While making UPI/Bank payments, please send a screenshot with your
-                name, mobile, address and PAN details to our WhatsApp{" "}
-                <a
-                  className="font-semibold text-vk-700 underline-offset-2 hover:underline"
-                  href="tel:+918977761187"
-                >
-                  +91 89777 61187
-                </a>{" "}
-                or email{" "}
-                <a
-                  className="font-semibold text-vk-700 underline-offset-2 hover:underline"
-                  href="mailto:social@hkmvizag.org"
-                >
-                  social@hkmvizag.org
-                </a>
-                .
-              </p>
             </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════════════════════════
-          ABOUT GOVARDHAN PUJA
-      ═══════════════════════════════════════════════════════════════════ */}
-      <section className="vk-section vk-band">
-        <div className="vk-container">
-          <SectionHeading
-            eyebrow="The Divine Significance"
-            title="Why Govardhan Puja Matters"
-            align="center"
-          />
-          <Reveal className="mx-auto max-w-3xl">
-            <div className="vk-card space-y-5 p-6 text-[15px] leading-relaxed text-ink/80 md:p-10 md:text-base">
-              <p>
-                Govardhan Puja commemorates the famous pastime in which Lord
-                Krishna lifted Govardhan Hill on His little finger for seven
-                days, sheltering the residents of Vrindavan from torrential rains
-                sent by an angry Indra. He taught that worship of Govardhan — the
-                sustainer of the cows, the forests and the community — and service
-                to one&apos;s dependents is dearer to Him than proud sacrifices.
-              </p>
-              <p>
-                On this blessed day, also called Annakoot, the Deities of Sri Sri
-                Radha Madan Mohan are adorned in beautiful Alankar, and a grand
-                mountain of vegetarian delicacies — a feast of devotion — is
-                offered to the Lord and distributed to all as Maha Prasadam. The
-                temple reverberates with kirtan and the chanting of the holy
-                names.
-              </p>
-              <p>
-                By offering seva on Govardhan Puja, you participate directly in
-                these sacred ceremonies. Your Govardhan Seva honours the divine
-                hill, your Annakoot Seva provides the mountain of food, your Bhog
-                and Vaishnav Bhojan feed the hungry, your Alankar adorns the
-                Lordships with beauty, and your Gau Seva pleases the Lord who is
-                ever-protective of His cows. Every offering — no matter the
-                amount — is received with love.
-              </p>
-            </div>
-          </Reveal>
+          </div>
         </div>
       </section>
 
@@ -902,7 +1029,7 @@ export default function GovardhanPujaClient() {
       ═══════════════════════════════════════════════════════════════════ */}
       {selected && (
         <div className="fixed inset-0 z-[100] flex items-end justify-center bg-vk-900/60 backdrop-blur-sm sm:items-center sm:p-4">
-          <div className="govardhan-form-scroll relative max-h-[92vh] w-full max-w-2xl overflow-x-hidden overflow-y-auto rounded-t-3xl bg-white shadow-[0_24px_60px_-28px_rgba(10,18,51,0.6)] sm:rounded-3xl">
+          <div className="govardhan-form-scroll relative max-h-[94dvh] w-full max-w-2xl overflow-x-hidden overflow-y-auto overscroll-contain rounded-t-[1.75rem] bg-white shadow-[0_24px_60px_-28px_rgba(10,18,51,0.6)] sm:rounded-3xl">
             <style>{`
               .govardhan-form-scroll::-webkit-scrollbar { width: 6px; }
               .govardhan-form-scroll::-webkit-scrollbar-track { background: transparent; }
@@ -912,79 +1039,92 @@ export default function GovardhanPujaClient() {
             `}</style>
 
             <div className="relative z-10">
-              {/* Sticky header */}
-              <div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-vk-100 bg-white/95 px-5 py-4 backdrop-blur md:px-6">
-                <div className="flex min-w-0 items-center gap-3">
-                  <span className="vk-icon-chip text-2xl" aria-hidden>
-                    {selected.seva.icon}
-                  </span>
-                  <div className="min-w-0">
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-vk-600">
-                      Govardhan Puja Seva
-                    </p>
-                    <h2 className="vk-h3 !text-lg md:!text-xl">
-                      {selected.seva.title}
-                    </h2>
-                  </div>
-                </div>
+              {/* Floating close button (stays in view while the form scrolls) */}
+              <div className="sticky top-0 z-20 h-0">
                 <button
                   type="button"
                   onClick={closeCheckout}
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-vk-200 bg-white text-vk-700 transition hover:bg-vk-50"
+                  className="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-full bg-white/95 text-vk-800 shadow-md ring-1 ring-black/5 transition hover:bg-white"
                   aria-label="Close checkout"
                 >
                   <X className="h-5 w-5" />
                 </button>
               </div>
 
-              <form onSubmit={submitDonation} className="space-y-5 p-5 md:p-6">
-                {/* Summary */}
-                <div className="grid gap-4 rounded-2xl bg-gradient-to-br from-vk-700 via-vk-600 to-vk-500 px-5 py-4 text-white sm:grid-cols-2">
-                  <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/70">
-                      Seva Name
-                    </p>
-                    <p className="mt-1 text-lg font-bold text-white">
-                      {selected.seva.title}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/70">
-                      Seva Amount
-                    </p>
-                    <p className="mt-1 font-heading text-2xl font-extrabold text-[hsl(var(--gold))]">
-                      {selected.option.amount
-                        ? `₹${formatAmount(selected.option.amount)}`
-                        : "Enter amount below"}
-                    </p>
+              {/* Photo: clear and uncovered, so the seva can be seen */}
+              <div className="relative h-44 overflow-hidden bg-vk-900 sm:h-56 [@media(max-height:700px)]:h-28">
+                <span aria-hidden className="absolute left-1/2 top-2 z-10 h-1.5 w-10 -translate-x-1/2 rounded-full bg-white/80 shadow sm:hidden" />
+                <Image src={selected.seva.image} alt={selected.seva.title} fill unoptimized sizes="672px" className="object-cover object-center" />
+                <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/30 to-transparent" />
+              </div>
+
+              {/* Seva name and the amount chosen */}
+              <div className="relative z-10 -mt-8 flex items-start justify-between gap-3 px-5 pb-1 md:px-6">
+                <div className="flex min-w-0 items-start gap-3">
+                  <span className="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white text-3xl shadow-lg ring-4 ring-white" aria-hidden>
+                    {selected.seva.icon}
+                  </span>
+                  <div className="min-w-0 pt-10">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-vk-500">Govardhan Puja Seva</p>
+                    <h2 className="font-heading text-xl font-bold leading-tight text-ink md:text-2xl">{selected.seva.title}</h2>
                   </div>
                 </div>
+                <div className="shrink-0 rounded-2xl bg-gradient-to-r from-[#F6C752] to-[#E0A92B] px-3.5 py-2 text-right shadow-lg ring-4 ring-white">
+                  <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-ink/70">Your seva</p>
+                  <p className="font-heading text-lg font-extrabold leading-tight text-ink">{finalAmount ? `₹${formatAmount(finalAmount)}` : "₹ —"}</p>
+                </div>
+              </div>
 
-                {/* Custom amount */}
-                {!selected.option.amount && (
-                  <label className="block max-w-sm">
-                    <span className="block text-[13px] font-semibold text-ink/80">
-                      Enter Seva Amount *
-                    </span>
-                    <Input
-                      type="number"
-                      min={100}
-                      value={form.customAmount}
-                      onChange={(e) =>
-                        updateForm({
-                          customAmount: e.target.value,
-                          want80G: false,
-                          wantPrasadam: false,
-                        })
-                      }
-                      placeholder="Enter amount"
-                      className={inputCls}
-                    />
-                    <span className="mt-1 block text-xs text-muted-foreground">
-                      Amount must be at least Rs.100.
-                    </span>
-                  </label>
-                )}
+              <form onSubmit={submitDonation} className="space-y-5 p-5 md:p-6">
+                {/* Amount: switch between the seva's amounts, or type your own */}
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-vk-600">Choose an amount</p>
+                  <div className="mt-2.5 flex flex-wrap gap-2">
+                    {selected.seva.options.map((o) => {
+                      const active = o.legacySevaId === selected.option.legacySevaId;
+                      return (
+                        <button
+                          key={o.legacySevaId}
+                          type="button"
+                          onClick={() => {
+                            setSelected({ seva: selected.seva, option: o });
+                            updateForm({ customAmount: "", want80G: false, wantPrasadam: false });
+                          }}
+                          className={`min-h-[44px] rounded-full px-4 text-sm font-bold transition-all ${
+                            active
+                              ? "bg-vk-700 text-white shadow-md ring-1 ring-vk-700"
+                              : "bg-vk-50 text-vk-800 ring-1 ring-vk-200 hover:bg-vk-100"
+                          }`}
+                        >
+                          {o.amount ? `₹${formatAmount(o.amount)}` : "Other"}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {!selected.option.amount && (
+                    <label className="mt-3 block">
+                      <span className="relative block">
+                        <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 font-heading text-lg font-bold text-vk-700">₹</span>
+                        <Input
+                          type="number"
+                          min={100}
+                          value={form.customAmount}
+                          onChange={(e) =>
+                            updateForm({
+                              customAmount: e.target.value,
+                              want80G: false,
+                              wantPrasadam: false,
+                            })
+                          }
+                          placeholder="Enter your amount"
+                          className={`${inputCls} !h-14 pl-9 text-lg font-semibold`}
+                          autoFocus
+                        />
+                      </span>
+                      <span className="mt-1 block text-xs text-muted-foreground">Amount must be at least Rs.100.</span>
+                    </label>
+                  )}
+                </div>
 
                 {/* Donor fields */}
                 <div className="grid gap-4 md:grid-cols-2">
@@ -1181,7 +1321,7 @@ export default function GovardhanPujaClient() {
                   </p>
                 )}
 
-                <div>
+                <div className="sticky bottom-0 z-10 -mx-5 -mb-5 border-t border-vk-100 bg-white/95 px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur md:-mx-6 md:-mb-6 md:px-6">
                   <button
                     type="submit"
                     disabled={submitting}
@@ -1213,7 +1353,7 @@ export default function GovardhanPujaClient() {
           STICKY MOBILE DONATE BAR (sits above the site's mobile bottom nav,
           leaving room for the WhatsApp button on the right)
       ═══════════════════════════════════════════════════════════════════ */}
-      {!selected && (
+      {!selected && pastHero && !hideBar && (
         <div className="fixed bottom-[calc(var(--bottom-nav-space)+4px+env(safe-area-inset-bottom))] left-3 right-[76px] z-40 lg:hidden">
           <div className="flex items-center justify-between gap-3 rounded-2xl border border-vk-100 bg-white/95 p-2 pl-4 shadow-lift backdrop-blur">
             <span className="min-w-0 text-[13px] font-semibold leading-tight text-ink">
