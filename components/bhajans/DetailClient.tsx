@@ -10,6 +10,9 @@ import { usePlayer, usePlayerActions } from "./playerContext";
 import { Equaliser } from "./player/controls";
 import LyricsBody, { hasWordByWord, type LyricsTab } from "./player/LyricsBody";
 
+// Spotify-style round icon buttons for the secondary actions (the label stays for screen readers and as a tooltip).
+const ICON_BTN =
+  "inline-flex h-11 w-11 items-center justify-center rounded-full text-ink/85 ring-1 ring-vk-200 transition-colors hover:bg-vk-100 hover:text-vk-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-vk-500 disabled:opacity-40";
 const GHOST_BTN =
   "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full px-4 text-sm font-semibold text-ink/90 ring-1 ring-vk-200 transition-colors hover:bg-vk-100 hover:text-vk-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-vk-500 disabled:opacity-40";
 
@@ -34,9 +37,10 @@ export function ShareButton({ title, path, iconOnly = false }: { title: string; 
           /* user cancelled */
         }
       }}
-      className={GHOST_BTN}
+      title={iconOnly ? "Share" : undefined}
+      className={iconOnly ? ICON_BTN : GHOST_BTN}
     >
-      {done ? <Check className="h-4 w-4" aria-hidden /> : <Share2 className="h-4 w-4" aria-hidden />}
+      {done ? <Check className={iconOnly ? "h-5 w-5" : "h-4 w-4"} aria-hidden /> : <Share2 className={iconOnly ? "h-5 w-5" : "h-4 w-4"} aria-hidden />}
       <span className={iconOnly ? "sr-only" : ""}>{done ? "Link copied" : "Share"}</span>
     </button>
   );
@@ -75,9 +79,10 @@ export function ActionRow({ queue, title, path, copyText, song }: { queue: Queue
               playNext(queue);
               showToast(empty ? `Playing “${title}”` : `“${title}” will play next`);
             }}
-            className={GHOST_BTN}
+            className={ICON_BTN}
+            title="Play next"
           >
-            <ListPlus className="h-4 w-4" aria-hidden /> Play next
+            <ListPlus className="h-5 w-5" aria-hidden /><span className="sr-only">Play next</span>
           </button>
           <button
             type="button"
@@ -86,14 +91,15 @@ export function ActionRow({ queue, title, path, copyText, song }: { queue: Queue
               enqueue(queue);
               showToast(empty ? `Playing “${title}”` : `Added “${title}” to your queue`);
             }}
-            className={GHOST_BTN}
+            className={ICON_BTN}
+            title={inQueue && !empty ? "In queue" : "Add to queue"}
           >
-            {inQueue && !empty ? <Check className="h-4 w-4" aria-hidden /> : <ListEnd className="h-4 w-4" aria-hidden />}
-            {inQueue && !empty ? "In queue" : "Add to queue"}
+            {inQueue && !empty ? <Check className="h-5 w-5" aria-hidden /> : <ListEnd className="h-5 w-5" aria-hidden />}
+            <span className="sr-only">{inQueue && !empty ? "In queue" : "Add to queue"}</span>
           </button>
         </>
       )}
-      <ShareButton title={title} path={path} />
+      <ShareButton title={title} path={path} iconOnly />
       {copyText && (
         <button
           type="button"
@@ -106,10 +112,11 @@ export function ActionRow({ queue, title, path, copyText, song }: { queue: Queue
               /* ignore */
             }
           }}
-          className={GHOST_BTN}
+          className={ICON_BTN}
+          title="Copy lyrics"
         >
-          {copied ? <Check className="h-4 w-4" aria-hidden /> : <Copy className="h-4 w-4" aria-hidden />}
-          {copied ? "Copied" : "Copy lyrics"}
+          {copied ? <Check className="h-5 w-5" aria-hidden /> : <Copy className="h-5 w-5" aria-hidden />}
+          <span className="sr-only">{copied ? "Copied" : "Copy lyrics"}</span>
         </button>
       )}
     </div>

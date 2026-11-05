@@ -120,22 +120,7 @@ export default async function BhajanPage({ params }: P) {
             <div className="absolute inset-0 opacity-[0.5]" style={{ backgroundImage: "radial-gradient(rgba(255,255,255,.9) 1px, transparent 1.2px)", backgroundSize: "22px 22px" }} />
             <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-b from-transparent to-white" />
           </div>
-          {/* Lyric poster: the opening lines of this bhajan, set large on a frosted card (desktop). */}
-          {openingLines.length > 0 && (
-            <div aria-hidden className="pointer-events-none absolute inset-y-0 left-0 right-0 hidden items-center lg:flex">
-              <div className="vk-container flex justify-end">
-                <figure className="relative w-[320px] rounded-[1.75rem] bg-white/55 p-7 ring-1 ring-white/70 backdrop-blur-md xl:w-[360px]">
-                  <span className="font-serif-display absolute -top-3 left-5 text-[5rem] leading-none text-vk-700/25">&ldquo;</span>
-                  <blockquote className="font-serif-display relative pt-6 text-[1.35rem] font-semibold leading-snug text-ink xl:text-[1.5rem]">
-                    {openingLines.map((l, i) => <span key={i} className="block">{l}</span>)}
-                  </blockquote>
-                  {openingTranslation && <p className="mt-4 line-clamp-3 text-[14px] italic leading-relaxed text-ink/70">{openingTranslation}</p>}
-                  {b.artist && <figcaption className="mt-4 text-[11px] font-bold uppercase tracking-[0.18em] text-vk-700">{b.artist}</figcaption>}
-                </figure>
-              </div>
-            </div>
-          )}
-          <div className="vk-container pb-10 pt-[200px] md:pb-14 md:pt-8 lg:pr-[300px] xl:pr-[380px]">
+          <div className="vk-container pb-10 pt-[200px] md:pb-14 md:pt-8">
             <nav aria-label="Breadcrumb" className="mb-6 flex items-center gap-1.5 text-xs text-ink/65">
               <Link href="/" className="inline-flex items-center gap-1 hover:text-vk-700"><Home className="h-3.5 w-3.5" aria-hidden /> Home</Link>
               <ChevronRight className="h-3.5 w-3.5 opacity-60" aria-hidden />
@@ -143,7 +128,7 @@ export default async function BhajanPage({ params }: P) {
               <ChevronRight className="hidden h-3.5 w-3.5 opacity-60 sm:block" aria-hidden />
               <span className="hidden max-w-[40ch] truncate text-ink sm:inline" aria-current="page">{b.title}</span>
             </nav>
-            <div className="mx-auto flex max-w-5xl flex-col items-center gap-7 text-center md:flex-row md:items-end md:gap-9 md:text-left">
+            <div className="grid grid-cols-1 items-center justify-items-center gap-7 text-center md:grid-cols-[240px_minmax(0,1fr)] md:items-end md:justify-items-stretch md:gap-9 md:text-left lg:grid-cols-[240px_minmax(0,1fr)_minmax(300px,360px)] lg:gap-10">
               <div className="relative aspect-square w-[70vw] max-w-[300px] shrink-0 overflow-hidden rounded-xl bg-vk-100 shadow-[0_30px_60px_-20px_rgba(11,23,69,.45)] ring-1 ring-vk-100 md:w-[240px]">
                 <CoverArt title={b.title} src={b.coverImage} priority sizes="300px" />
               </div>
@@ -166,6 +151,16 @@ export default async function BhajanPage({ params }: P) {
                 )}
                 <ActionRow queue={queue} title={b.title} path={path} copyText={copyText} song={{ slug: b.slug, title: b.title, artist: b.artist, coverImage: b.coverImage }} />
               </div>
+              {openingLines.length > 0 && (
+                <figure aria-hidden className="relative hidden w-full self-center rounded-[1.75rem] bg-white/60 p-7 ring-1 ring-white/80 backdrop-blur-md lg:block">
+                  <span className="font-serif-display absolute -top-3 left-5 text-[5rem] leading-none text-vk-700/25">&ldquo;</span>
+                  <blockquote className="font-serif-display relative pt-6 text-[1.3rem] font-semibold leading-snug text-ink xl:text-[1.45rem]">
+                    {openingLines.map((l, i) => <span key={i} className="block">{l}</span>)}
+                  </blockquote>
+                  {openingTranslation && <p className="mt-4 line-clamp-3 text-[14px] italic leading-relaxed text-ink/70">{openingTranslation}</p>}
+                  {b.artist && <figcaption className="mt-4 text-[11px] font-bold uppercase tracking-[0.18em] text-vk-700">{b.artist}</figcaption>}
+                </figure>
+              )}
             </div>
           </div>
         </header>
