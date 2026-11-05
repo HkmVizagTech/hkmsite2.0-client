@@ -75,6 +75,19 @@ const catSlug = (name: string) =>
 
 // The post title is the page's only <h1>; headings typed as H1 inside the
 // article body are shown as <h2> (same look via .blog-content h2).
+// The imported posts end with a big "Donate Now" button picture that is not a link. Show it smaller and send it to Anna Daan Seva.
+const DONATE_BUTTON_IMAGE = "1793778231671-rath-yatra-1krhgjby.webp";
+function linkDonateButton(html: string, href: string): string {
+  return (html || "").replace(
+    new RegExp(`<p>\\s*<img\\b[^>]*${DONATE_BUTTON_IMAGE.replace(/\./g, "\\.")}[^>]*>\\s*</p>|<img\\b[^>]*${DONATE_BUTTON_IMAGE.replace(/\./g, "\\.")}[^>]*>`, "gi"),
+    (match) => {
+      const src = match.match(/src="([^"]+)"/i)?.[1];
+      if (!src) return match;
+      return `<p style="text-align:center;margin:1.75rem 0"><a href="${href}" aria-label="Donate to Anna Daan Seva"><img src="${src}" alt="Donate Now, Anna Daan Seva" loading="lazy" style="display:inline-block;width:200px;max-width:60%;height:auto;margin:0"/></a></p>`;
+    }
+  );
+}
+
 const demoteH1 = (html: string) => (html || "").replace(/<(\/?)h1(\b[^>]*)>/gi, "<$1h2$2>");
 
 const slugifyHeading = (t: string) =>
@@ -149,13 +162,13 @@ export default async function BlogPostPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const { slug } = await params;
+  const { slug, lang } = (await params) as { slug: string; lang?: string };
   const [blog, categories] = await Promise.all([getBlog(slug), getCategories()]);
   if (!blog) notFound();
 
   const related = await getRelated(blog._id);
   const populatedCats = categories.filter((c) => c.count > 0).slice(0, 8);
-  const { html: bodyHtml, toc } = withHeadingIds(demoteH1(blog.content));
+  const { html: bodyHtml, toc } = withHeadingIds(linkDonateButton(demoteH1(blog.content), lang === "te" ? "/te/anna-daan-seva" : "/anna-daan-seva"));
   const showToc = toc.length >= 3;
   const catHref = `/blogs/categories/${catSlug(blog.category)}`;
   const isGitaPost = /gita|geeta/i.test(`${blog.title} ${blog.slug} ${(blog.tags || []).join(" ")}`);

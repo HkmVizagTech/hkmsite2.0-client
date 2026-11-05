@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { LocaleProvider } from "@/components/i18n/LocaleProvider";
 import LanguageToggle from "@/components/i18n/LanguageToggle";
+import PlayerProvider from "@/components/bhajans/PlayerProvider";
 import { LOCALES, isLocale } from "@/lib/i18n/config";
 
 // Every public page sits under this segment: /en/… (served at /… — see the
@@ -26,7 +27,7 @@ export default async function LangLayout({
       {lang !== "en" && (
         <script dangerouslySetInnerHTML={{ __html: `document.documentElement.lang=${JSON.stringify(lang)}` }} />
       )}
-      {children}
+      <PlayerProvider>{children}</PlayerProvider>
       <LanguageToggle />
     </LocaleProvider>
   );

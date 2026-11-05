@@ -20,6 +20,7 @@ const exploreLinks = [
   { label: "Events", href: "/events" },
   { label: "Festivals", href: "/festival" },
   { label: "Blogs", href: "/blogs" },
+  { label: "Vaishnava Bhajans", href: "/bhajans" },
   { label: "Volunteer", href: "/volunteer" },
   { label: "Contact Us", href: "/contact" },
 ];

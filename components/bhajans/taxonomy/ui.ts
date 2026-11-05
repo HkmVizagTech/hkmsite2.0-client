@@ -1,0 +1,3 @@
+export const FOCUS = "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-vk-500";
+export const PILL = `inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full px-5 text-sm font-semibold ring-1 ring-vk-200 bg-white text-vk-800 transition-colors motion-reduce:transition-none hover:bg-vk-50 ${FOCUS}`;
+export const GOLD_BTN = `inline-flex min-h-[52px] items-center justify-center gap-2 rounded-full bg-[#F6C752] px-7 text-base font-bold text-[#0b1745] transition duration-150 motion-reduce:transition-none hover:brightness-105 active:scale-95 disabled:opacity-60 ${FOCUS}`;
