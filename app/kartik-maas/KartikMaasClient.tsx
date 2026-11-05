@@ -24,8 +24,8 @@ import type { CampaignConfig } from "@/lib/campaignConfig";
 const FESTIVAL_DATE_LABEL = "26 October – 24 November 2026";
 const FESTIVAL_DATE_ISO = "2026-10-26";
 
-const DESKTOP_BANNER = "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1792847552701-1792847546420-DamodaraMonthDesktop1920x730.png";
-const MOBILE_BANNER = "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1792847553526-1792847550588-DamodaraMonthMobile962x1635.png";
+const DESKTOP_BANNER = "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793859966653-1793859966061-damodaramonthlandscape1920x730.png";
+const MOBILE_BANNER = "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793860285969-1793860285458-damodaramonthmobile962x1635fullbleed.png";
 
 // `category` is sent to the API as the donation `type`, and `title` as
 // `sevaName`, together with festivalSlug "kartik-maas".
@@ -468,17 +468,18 @@ export default function KartikMaasClient() {
                   Offer Your Seva
                 </button>
               </div>
-              <div className="vk-card p-6 md:p-7">
-                <span className="vk-icon-chip">
+              <div className="relative overflow-hidden rounded-3xl bg-[linear-gradient(150deg,#0b1745_0%,#15308a_60%,#2b52c9_100%)] p-6 text-white shadow-[0_30px_60px_-34px_rgba(15,31,92,0.9)] md:p-8">
+                <div aria-hidden className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-[radial-gradient(circle,rgba(255,214,120,0.35),transparent_70%)]" />
+                <span className="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-white/15 text-[hsl(var(--gold))] ring-1 ring-white/25">
                   <Flame className="h-5 w-5" />
                 </span>
-                <div className="mt-4 space-y-1.5 font-serif-display text-[15px] italic leading-7 text-vk-800 md:text-base">
+                <div className="relative mt-5 space-y-1.5 font-serif-display text-lg italic leading-8 text-amber-200 md:text-xl">
                   {SHLOKA.sanskrit.map((line) => (
                     <p key={line}>{line}</p>
                   ))}
                 </div>
-                <p className="mt-4 border-l-4 border-vk-300 pl-4 text-sm leading-6 text-muted-foreground">{SHLOKA.meaning}</p>
-                <p className="mt-3 text-xs font-bold uppercase tracking-[0.08em] text-vk-700">{SHLOKA.source}</p>
+                <p className="relative mt-5 border-l-4 border-[hsl(var(--gold))] pl-4 text-sm leading-6 text-white/80">{SHLOKA.meaning}</p>
+                <p className="relative mt-4 text-xs font-bold uppercase tracking-[0.14em] text-[hsl(var(--gold))]">{SHLOKA.source}</p>
               </div>
             </Reveal>
           </div>
@@ -514,6 +515,27 @@ export default function KartikMaasClient() {
                 </Reveal>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* ══ FINAL CALL ═════════════════════════════════════════════════ */}
+        <section className="vk-section !pb-2">
+          <div className="vk-container">
+            <Reveal>
+              <div className="relative overflow-hidden rounded-[2rem] bg-[linear-gradient(135deg,#0b1745_0%,#1c3a9e_60%,#2f5bd3_100%)] px-6 py-10 text-center text-white md:px-12 md:py-14">
+                <div aria-hidden className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-white/10" />
+                <div aria-hidden className="absolute -bottom-20 -left-10 h-56 w-56 rounded-full bg-white/5" />
+                <h2 className="relative mx-auto max-w-2xl font-heading text-[1.9rem] font-bold leading-tight md:text-4xl">
+                  Light a lamp for <span className="text-[hsl(var(--gold))]">Lord Damodar</span> this Kartik
+                </h2>
+                <p className="relative mx-auto mt-4 max-w-xl text-[15px] leading-relaxed text-white/80 md:text-base">
+                  Sankalpa is taken in your name for the whole of Damodar month, and your receipt reaches your WhatsApp as soon as the payment is confirmed.
+                </p>
+                <button type="button" onClick={scrollToDonate} className="vk-btn-gold relative mt-7 h-[3.25rem] px-8 text-base font-bold">
+                  <Heart className="h-4 w-4" /> Offer Your Seva
+                </button>
+              </div>
+            </Reveal>
           </div>
         </section>
 
