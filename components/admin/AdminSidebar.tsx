@@ -13,6 +13,7 @@ import {
   IndianRupee,
   ChevronRight,
   PenSquare, // <-- NEW
+  Music2,
   MessageSquare,
   GalleryHorizontal,
   Megaphone,
@@ -63,6 +64,7 @@ const contentItems: NavItem[] = [
   { title: "Festivals", url: "/admin/festivals", icon: PartyPopper },
   { title: "Blogs", url: "/admin/blogs", icon: PenSquare }, // <-- NEW
   { title: "Pending Deletions", url: "/admin/blogs/deletion-requests", icon: Trash2 },
+  { title: "Bhajans", url: "/admin/bhajans", icon: Music2 },
   { title: "Content", url: "/admin/content", icon: FileText },
 ];
 

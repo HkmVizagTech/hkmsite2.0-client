@@ -75,6 +75,8 @@ export const nav: Record<string, string> = {
   "Get Involved": "పాల్గొనండి",
   "Blogs": "బ్లాగులు",
   "Articles & spiritual insights": "వ్యాసాలు & ఆధ్యాత్మిక విషయాలు",
+  "Vaishnava Bhajans": "వైష్ణవ భజనలు",
+  "Lyrics & audio of the Acharyas' songs": "ఆచార్యుల భజనల సాహిత్యం & ఆడియో",
   "Events": "కార్యక్రమాలు",
   "Upcoming programs & registrations": "రాబోయే కార్యక్రమాలు & నమోదు",
   "Festivals": "పండుగలు",

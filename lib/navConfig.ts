@@ -3,7 +3,7 @@ import {
   Clock, Image, Calendar, Snowflake,
   Heart, Utensils, Beef, BookOpen, Shirt, Gift,
   CalendarDays, PartyPopper, HandHeart, FileText, Flower2, Building2,
-  ShoppingBag, Package, Megaphone, MapPin, Landmark, Briefcase, Globe,
+  ShoppingBag, Package, Megaphone, MapPin, Landmark, Briefcase, Globe, Music2,
   type LucideIcon,
 } from "lucide-react";
 
@@ -93,6 +93,7 @@ export const navEntries: NavEntry[] = [
       icon: HandHeart,
       items: [
         { label: "Blogs", href: "/blogs", description: "Articles & spiritual insights", icon: FileText },
+        { label: "Vaishnava Bhajans", href: "/bhajans", description: "Lyrics & audio of the Acharyas' songs", icon: Music2 },
         { label: "Events", href: "/events", description: "Upcoming programs & registrations", icon: CalendarDays },
         { label: "Festivals", href: "/festival", description: "Grand celebrations at the temple", icon: PartyPopper },
         { label: "Volunteer", href: "/volunteer", description: "Serve with us", icon: HandHeart },

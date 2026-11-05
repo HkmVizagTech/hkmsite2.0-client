@@ -17,6 +17,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/gallery`, changeFrequency: "weekly", priority: 0.6 },
     { url: `${SITE_URL}/events`, changeFrequency: "daily", priority: 0.9 },
     { url: `${SITE_URL}/blogs`, changeFrequency: "daily", priority: 0.9 },
+    { url: `${SITE_URL}/bhajans`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${SITE_URL}/daily-schedule`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${SITE_URL}/subhojanam`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE_URL}/csr`, changeFrequency: "monthly", priority: 0.8 },
@@ -72,6 +73,42 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       if (list.length < 50) break;
     }
   } catch {}
+
+  // Dynamic: published bhajans. The API caps a page at 60.
+  let bhajanPages: MetadataRoute.Sitemap = [];
+  try {
+    for (let page = 1; page <= 30; page++) {
+      const res = await fetch(`${API_URL}/bhajans?limit=60&page=${page}`, { next: { revalidate: 3600 } });
+      if (!res.ok) break;
+      const list: any[] = (await res.json()).items || [];
+      bhajanPages.push(
+        ...list
+          .filter((b: any) => b?.slug)
+          .map((b: any) => ({
+            url: `${SITE_URL}/bhajans/${b.slug}`,
+            lastModified: b.updatedAt ? new Date(b.updatedAt) : undefined,
+            changeFrequency: "monthly" as const,
+            priority: 0.5,
+          }))
+      );
+      if (list.length < 60) break;
+    }
+  } catch {}
+
+  // Bhajan taxonomy pages: composers, categories, moods and festivals (index + one page per item).
+  for (const [type, seg] of [["author", "authors"], ["category", "categories"], ["mood", "moods"], ["festival", "festivals"]] as const) {
+    bhajanPages.push({ url: `${SITE_URL}/bhajans/${seg}`, changeFrequency: "weekly" as const, priority: 0.6 });
+    try {
+      const res = await fetch(`${API_URL}/bhajans/taxonomy/${type}?limit=500`, { next: { revalidate: 3600 } });
+      if (!res.ok) continue;
+      const items: any[] = (await res.json()).items || [];
+      bhajanPages.push(
+        ...items
+          .filter((t: any) => t?.slug && (type !== "author" || t.songCount > 0))
+          .map((t: any) => ({ url: `${SITE_URL}/bhajans/${seg}/${t.slug}`, changeFrequency: "monthly" as const, priority: 0.5 }))
+      );
+    } catch {}
+  }
 
   // Dynamic: blog category pages that have posts
   let blogCategoryPages: MetadataRoute.Sitemap = [];
@@ -169,5 +206,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   ];
 
-  return [...withLanguages, ...centerPages, ...storyPages, ...blogPages, ...blogCategoryPages, ...eventPages, ...productPages, ...festivalPages];
+  return [...withLanguages, ...centerPages, ...storyPages, ...blogPages, ...bhajanPages, ...blogCategoryPages, ...eventPages, ...productPages, ...festivalPages];
 }
