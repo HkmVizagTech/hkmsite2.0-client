@@ -12,7 +12,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  Image as ImageIcon, Upload, Search, Copy, Check, Trash2, Loader2, Pencil, X,
+  Image as ImageIcon, Upload, Search, Copy, Check, Trash2, Loader2, Pencil, X, ChevronLeft, ChevronRight,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
@@ -28,6 +28,8 @@ interface MediaItem {
   tags?: string;
   createdAt: string;
 }
+
+const PAGE_SIZE = 60;
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 
@@ -45,22 +47,36 @@ export default function AdminMedia() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [editing, setEditing] = useState<MediaItem | null>(null);
   const [editForm, setEditForm] = useState({ name: "", tags: "" });
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(1);
+  const [total, setTotal] = useState(0);
   const fileInput = useRef<HTMLInputElement>(null);
 
-  const fetchMedia = async (query = q) => {
+  const fetchMedia = async (query = q, targetPage = 1) => {
     setLoading(true);
     try {
-      const params = new URLSearchParams({ limit: "60" });
+      const params = new URLSearchParams({ limit: String(PAGE_SIZE), page: String(targetPage) });
       if (query.trim()) params.set("q", query.trim());
       const res = await authFetch(`${API_URL}/media?${params.toString()}`, { credentials: "include" });
       const json = await res.json();
-      if (res.ok) setItems(json.items || []);
-      else toast({ title: "Failed to load media", description: json.message, variant: "destructive" });
+      if (res.ok) {
+        setItems(json.items || []);
+        setPage(json.page || targetPage);
+        setPages(Math.max(1, json.pages || 1));
+        setTotal(json.total || 0);
+      } else toast({ title: "Failed to load media", description: json.message, variant: "destructive" });
     } catch (e: any) {
       toast({ title: "Network error", description: e.message, variant: "destructive" });
     } finally {
       setLoading(false);
     }
+  };
+
+  const goToPage = (p: number) => {
+    const next = Math.min(Math.max(1, p), pages);
+    if (next === page) return;
+    fetchMedia(q, next);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   useEffect(() => {
@@ -81,7 +97,8 @@ export default function AdminMedia() {
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.message || "Upload failed");
-      setItems((prev) => [...(json.items || []), ...prev]);
+      // New uploads sort first, so reload the first page to show them in place.
+      await fetchMedia(q, 1);
       toast({ title: `Uploaded ${json.items?.length || 0} file(s)` });
     } catch (e: any) {
       toast({ title: "Upload failed", description: e.message, variant: "destructive" });
@@ -136,7 +153,8 @@ export default function AdminMedia() {
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.message || "Delete failed");
-      setItems((list) => list.filter((x) => x._id !== item._id));
+      // Reload so the page refills from the next one (and steps back if this page is now empty).
+      await fetchMedia(q, items.length === 1 && page > 1 ? page - 1 : page);
       toast({ title: "Deleted", description: item.name });
     } catch (e: any) {
       toast({ title: "Failed to delete", description: e.message, variant: "destructive" });
@@ -161,7 +179,7 @@ export default function AdminMedia() {
               placeholder="Search name or tags…"
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && fetchMedia()}
+              onKeyDown={(e) => e.key === "Enter" && fetchMedia(q, 1)}
               className="pl-9"
             />
           </div>
@@ -179,6 +197,12 @@ export default function AdminMedia() {
           />
         </div>
       </div>
+
+      {!loading && total > 0 && (
+        <p className="text-xs text-muted-foreground">
+          Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, total)} of {total} images
+        </p>
+      )}
 
       {loading ? (
         <p className="py-10 text-center text-sm text-muted-foreground">Loading media…</p>
@@ -277,6 +301,48 @@ export default function AdminMedia() {
           ))}
         </div>
       )}
+
+      {!loading && pages > 1 && <Pager page={page} pages={pages} onGo={goToPage} />}
     </div>
+  );
+}
+
+function pageWindow(page: number, pages: number): (number | "…")[] {
+  const set = new Set<number>([1, pages, page - 1, page, page + 1]);
+  const nums = [...set].filter((n) => n >= 1 && n <= pages).sort((a, b) => a - b);
+  const out: (number | "…")[] = [];
+  nums.forEach((n, i) => {
+    if (i > 0 && n - nums[i - 1] > 1) out.push("…");
+    out.push(n);
+  });
+  return out;
+}
+
+function Pager({ page, pages, onGo }: { page: number; pages: number; onGo: (p: number) => void }) {
+  return (
+    <nav aria-label="Pagination" className="flex flex-wrap items-center justify-center gap-1.5 pt-2">
+      <Button size="sm" variant="outline" disabled={page <= 1} onClick={() => onGo(page - 1)}>
+        <ChevronLeft className="mr-1 h-4 w-4" /> Prev
+      </Button>
+      {pageWindow(page, pages).map((n, i) =>
+        n === "…" ? (
+          <span key={`gap-${i}`} className="px-1 text-sm text-muted-foreground">…</span>
+        ) : (
+          <Button
+            key={n}
+            size="sm"
+            variant={n === page ? "default" : "outline"}
+            className="min-w-9"
+            aria-current={n === page ? "page" : undefined}
+            onClick={() => onGo(n)}
+          >
+            {n}
+          </Button>
+        )
+      )}
+      <Button size="sm" variant="outline" disabled={page >= pages} onClick={() => onGo(page + 1)}>
+        Next <ChevronRight className="ml-1 h-4 w-4" />
+      </Button>
+    </nav>
   );
 }

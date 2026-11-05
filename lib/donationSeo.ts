@@ -317,7 +317,7 @@ export const DONATION_SEO = {
     description:
       "Offer Deep Daan, Annadana, Gau Seva, Pushpalankara, Vaishnav Bhojan, Brick and Square Foot seva for Kartik Maas (Damodar month) 2026 at ISKCON Gambheeram Visakhapatnam. 80G tax benefit.",
     keywords: ["damodar month seva Visakhapatnam", "deep daan Visakhapatnam", "deepa daan Kartik Maas Vizag", "108 deep daan", "vaishnav bhojan seva", "kartika masam seva ISKCON Vizag", "damodar masa 2026", "damodarashtakam Visakhapatnam", ...LOCAL],
-    ogImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1792847552701-1792847546420-DamodaraMonthDesktop1920x730.png",
+    ogImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793859966653-1793859966061-damodaramonthlandscape1920x730.png",
     breadcrumb: "Kartik Maas",
     h1: "Kartik Maas Seva — Damodar Month 2026 in Visakhapatnam",
     intro: [
