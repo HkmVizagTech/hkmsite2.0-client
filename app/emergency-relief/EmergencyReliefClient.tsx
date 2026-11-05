@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Check, Clock, Copy, FileCheck2, HeartHandshake, MapPin, ShieldCheck, Truck, UtensilsCrossed } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import SectionHeading from "@/components/site/SectionHeading";
@@ -60,6 +60,12 @@ const FAQS = [
 
 export default function EmergencyReliefClient() {
   const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  // Land straight on the donation cards when the page opens.
+  useEffect(() => {
+    const t = window.setTimeout(() => document.getElementById("give-relief")?.scrollIntoView({ block: "start" }), 120);
+    return () => window.clearTimeout(t);
+  }, []);
 
   const scrollToDonate = () => document.getElementById("give-relief")?.scrollIntoView({ behavior: "smooth", block: "start" });
   const copyField = (label: string, value: string) => {
