@@ -194,12 +194,6 @@ export default async function BhajanPage({ params }: P) {
           </div>
         </section>
 
-        {b.source?.name && (
-          <p className="vk-container pt-6 text-center text-[13px] text-ink/70">
-            Lyrics source: {b.source.url ? <a href={b.source.url} target="_blank" rel="noopener noreferrer" className="underline">{b.source.name}</a> : b.source.name}
-          </p>
-        )}
-
         <div className="vk-container pt-6"><BrowseByStrip /></div>
         <div className="pb-12 pt-4">
           <Shelf title="More like this" subtitle="Same composer, mood or theme" items={related.slice(0, 12)} />
