@@ -121,10 +121,10 @@ export default async function BhajansPage() {
       <main className="overflow-x-clip bg-white pt-[var(--header-h)] text-ink">
         <BrowseProvider meta={meta} initial={all}>
           <section className="bg-white">
-            {/* Banner: the Acharyas artwork on its own, so every face stays clear */}
-            <div className="relative h-[260px] overflow-hidden bg-[#0b1745] sm:h-[320px] lg:h-[400px]">
-              <Image src={BHAJANS_HERO_BANNER_MOBILE} alt="" fill priority unoptimized sizes="100vw" className="object-cover object-top md:hidden" />
-              <Image src={BHAJANS_HERO_BANNER} alt="" fill priority unoptimized sizes="100vw" className="hidden object-cover object-center md:block" />
+            {/* Banner: shown whole (never cropped) so every face stays clear; the title card only overlaps the empty dark fade (mobile) or the bottom edge (desktop) */}
+            <div className="relative aspect-[2080/2048] overflow-hidden bg-[#0b1745] md:aspect-[3840/840]">
+              <Image src={BHAJANS_HERO_BANNER_MOBILE} alt="" fill priority unoptimized sizes="100vw" className="object-cover md:hidden" />
+              <Image src={BHAJANS_HERO_BANNER} alt="" fill priority unoptimized sizes="100vw" className="hidden object-cover md:block" />
               <div className="vk-container relative z-10 pt-5 md:pt-7">
                 <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-white/85">
                   <Link href="/" className="inline-flex items-center gap-1 hover:text-white"><Home className="h-3.5 w-3.5" aria-hidden /> Home</Link>
@@ -135,7 +135,7 @@ export default async function BhajansPage() {
             </div>
 
             {/* Title card: overlaps the banner's lower edge */}
-            <div className="vk-container relative z-10 -mt-20 pb-8 sm:-mt-24 md:pb-12 lg:-mt-28">
+            <div className="vk-container relative z-10 -mt-24 pb-8 md:-mt-9 md:pb-12">
               <div className="mx-auto max-w-3xl rounded-[1.75rem] bg-white px-5 pb-7 pt-8 text-center ring-1 ring-vk-100 shadow-[0_24px_50px_-40px_rgba(15,31,92,.35)] sm:px-10 sm:pb-9 sm:pt-10">
                 <p className="mx-auto inline-block rounded-full bg-vk-50 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-vk-700 ring-1 ring-vk-100">Gaudiya Vaishnava songs</p>
                 <h1 className="font-serif-display mt-4 text-[2rem] font-semibold leading-[1.1] text-ink sm:text-5xl">
