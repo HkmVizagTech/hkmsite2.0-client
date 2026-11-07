@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Hare Krishna Vaikuntham · Vizag — Home</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<style>
+.hero { position: relative; background: linear-gradient(135deg, #0F1A4D 0%, #1F36A0 45%, #2A47C7 100%); overflow: hidden; min-height: 620px; padding: 2rem 0 4rem; margin-top: 1rem; }
+.hero .container { display: grid; grid-template-columns: 1fr 1.2fr; gap: 2rem; align-items: center; min-height: 540px; position: relative; z-index: 2; }
+@media (max-width: 900px) { .hero .container { grid-template-columns: 1fr; text-align: center; } }
+.hero-image-wrap { position: relative; height: 480px; display: flex; align-items: flex-end; justify-content: center; }
+.hero-temple { width: 100%; max-width: 520px; height: 460px; border-radius: 24px; background: linear-gradient(180deg, #1a2a6e 0%, #4a3b8a 45%, #6b5a9a 85%); position: relative; overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,0.4); }
+.hero-temple svg { position: absolute; bottom: 0; left: 0; right: 0; width: 100%; height: 70%; }
+.hero-circle-img { position: absolute; top: 4%; right: -8%; width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, #d4a35a 0%, #8b6b3a 100%); box-shadow: 0 0 60px rgba(212,163,90,0.5); display: flex; align-items: center; justify-content: center; font-family: var(--font-heading); color: #fff; font-size: 0.95rem; text-align: center; padding: 1rem; line-height: 1.3; }
+.hero-circle-img b { font-size: 1.05rem; display: block; }
+.hero-text { color: #fff; }
+.hero-script { font-family: var(--font-italic); font-style: italic; color: #F6C341; font-size: clamp(1.7rem, 3vw, 2.4rem); font-weight: 500; margin-bottom: 0.5rem; }
+.hero-title { font-family: var(--font-heading); font-weight: 800; font-size: clamp(2.4rem, 5vw, 4rem); letter-spacing: -0.02em; line-height: 1; color: #fff; margin-bottom: 1.25rem; }
+.hero-sub { color: rgba(255,255,255,0.9); font-size: 1.05rem; margin-bottom: 1.5rem; max-width: 540px; }
+.hero-prasadam-strip { display: inline-flex; align-items: center; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: var(--r-pill); padding: 0.5rem 1rem 0.5rem 1.25rem; color: #fff; font-size: 0.85rem; font-weight: 500; gap: 14px; margin-bottom: 1.5rem; letter-spacing: 0.04em; text-transform: uppercase; }
+.hero-prasadam-strip-thumb { width: 60px; height: 50px; background: linear-gradient(135deg, #a85a3a, #8b3a1a); border-radius: 8px; margin-left: 8px; }
+.hero-cta-row { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
+.hero-80g { color: rgba(255,255,255,0.85); font-size: 0.85rem; font-style: italic; }
+.hero-dots-bg { position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(255,255,255,0.08) 1.2px, transparent 1.2px); background-size: 28px 28px; pointer-events: none; z-index: 1; }
+
+.welcome { padding: 6rem 0; }
+.welcome .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+@media (max-width: 900px) { .welcome .grid { grid-template-columns: 1fr; } }
+.welcome-circle-wrap { position: relative; width: 420px; height: 420px; margin: 0 auto; }
+.welcome-blob-1, .welcome-blob-2 { position: absolute; border-radius: 50%; pointer-events: none; }
+.welcome-blob-1 { inset: 0; background: var(--blue-100); transform: translate(-20px, 20px); opacity: 0.6; }
+.welcome-blob-2 { inset: 0; background: var(--blue-200); transform: translate(20px, -10px); opacity: 0.4; }
+.welcome-circle { position: absolute; inset: 30px; border-radius: 50%; overflow: hidden; background: linear-gradient(180deg, #0F1A4D 0%, #4a3b8a 60%, #d4a35a 100%); display: flex; align-items: flex-end; justify-content: center; box-shadow: var(--shadow-lg); }
+.welcome-circle svg { position: absolute; bottom: 0; width: 80%; left: 10%; }
+.welcome-play { position: absolute; bottom: 30%; left: 50%; transform: translateX(-50%); width: 56px; height: 56px; border-radius: 50%; background: rgba(255,255,255,0.95); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+.welcome-h1 { font-size: clamp(2.2rem, 3.6vw, 3.2rem); margin-bottom: 1.5rem; }
+.welcome-body { color: var(--ink-soft); font-size: 1.02rem; margin-bottom: 1.25rem; }
+.welcome-body b { color: var(--ink); font-weight: 600; }
+.welcome-quote { color: var(--ink-soft); font-style: italic; margin-bottom: 1.75rem; }
+.welcome-quote b { color: var(--ink); font-weight: 600; font-style: normal; }
+.welcome-dots { position: absolute; bottom: 0; right: 0; width: 200px; height: 100px; background-image: radial-gradient(circle, var(--blue-200) 2px, transparent 2px); background-size: 18px 18px; opacity: 0.6; }
+.welcome-text-wrap { position: relative; }
+
+.countdown-section { background: var(--blue-50); position: relative; padding: 4rem 0; overflow: hidden; }
+.countdown-section::before { content: ''; position: absolute; right: -100px; top: 50%; transform: translateY(-50%); width: 300px; height: 300px; border-radius: 50%; background: var(--blue-100); opacity: 0.5; }
+.countdown-inner { display: flex; align-items: center; justify-content: space-between; gap: 2rem; flex-wrap: wrap; position: relative; z-index: 2; }
+.countdown-left { font-weight: 600; color: var(--blue-700); font-size: 1.15rem; max-width: 280px; }
+.countdown-left .small { display: block; color: var(--ink-soft); font-weight: 500; font-size: 0.85rem; margin-top: 4px; }
+.countdown-divider { width: 1px; height: 50px; background: var(--blue-300); }
+.countdown-units { display: flex; gap: 1rem; align-items: center; }
+.countdown-unit { text-align: center; min-width: 70px; }
+.countdown-num { font-family: var(--font-heading); font-size: 2.6rem; font-weight: 700; color: var(--blue-700); line-height: 1; }
+.countdown-label { font-size: 0.78rem; color: var(--ink-soft); margin-top: 4px; }
+.countdown-colon { font-size: 2rem; color: var(--blue-400); font-weight: 300; align-self: flex-start; margin-top: 4px; }
+
+.explore { padding: 5rem 0; background: #fff; }
+.explore-grid { display: grid; grid-template-columns: 1.3fr 1fr 1fr 1.3fr; grid-template-rows: 1fr 1fr; grid-template-areas: "gau anna guest temple" "gau hall ramp temple"; gap: 14px; height: 540px; }
+@media (max-width: 900px) { .explore-grid { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(3, 200px); grid-template-areas: "gau anna" "guest hall" "ramp temple"; height: auto; } }
+.explore-card { position: relative; border-radius: var(--r-lg); overflow: hidden; cursor: pointer; transition: transform 0.4s; }
+.explore-card:hover { transform: translateY(-4px); }
+.explore-card .overlay { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(63,95,229,0.6) 100%); }
+.explore-card .label { position: absolute; bottom: 16px; left: 18px; right: 18px; color: #fff; font-family: var(--font-heading); font-weight: 700; font-size: 1.25rem; display: flex; align-items: center; gap: 8px; }
+.explore-card.gau { grid-area: gau; }
+.explore-card.anna { grid-area: anna; }
+.explore-card.guest { grid-area: guest; }
+.explore-card.hall { grid-area: hall; }
+.explore-card.ramp { grid-area: ramp; }
+.explore-card.temple { grid-area: temple; }
+
+.seva-cta { padding: 6rem 0; background: var(--bg-soft); }
+.seva-cta-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+@media (max-width: 900px) { .seva-cta-inner { grid-template-columns: 1fr; } }
+.seva-image { background: linear-gradient(135deg, var(--blue-200), var(--blue-400)); border-radius: var(--r-xl); aspect-ratio: 4/3; position: relative; overflow: hidden; box-shadow: var(--shadow-md); }
+.seva-image svg { position: absolute; bottom: 0; left: 0; right: 0; width: 100%; }
+.seva-h2 { font-size: clamp(2rem, 3.2vw, 2.8rem); margin-bottom: 1.25rem; }
+.seva-text { color: var(--ink-soft); margin-bottom: 1.5rem; }
+.seva-text b { color: var(--ink); font-weight: 600; }
+.seva-progress { margin: 1.5rem 0; background: var(--blue-50); border-radius: var(--r-md); padding: 1.25rem 1.5rem; }
+.seva-progress-label { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; }
+.seva-progress-bar { height: 10px; background: var(--blue-100); border-radius: var(--r-pill); overflow: hidden; }
+.seva-progress-fill { height: 100%; width: 32%; background: linear-gradient(90deg, var(--blue-500), var(--blue-700)); }
+.seva-progress-stats { display: flex; justify-content: space-between; margin-top: 12px; font-size: 0.92rem; color: var(--ink-soft); }
+.seva-progress-stats b { color: var(--blue-700); font-weight: 700; }
+
+.donate-cats { position: relative; padding: 6rem 0; background: var(--bg-tint); overflow: hidden; }
+.donate-cats::before { content: ''; position: absolute; top: -1px; left: 0; right: 0; height: 80px; background: url("data:image/svg+xml,%3Csvg width='1440' height='80' viewBox='0 0 1440 80' xmlns='http://www.w3.org/2000/svg' fill='%23F1F4FF'%3E%3Cpath d='M0 0 Q360 80 720 40 T1440 0 V80 H0Z'/%3E%3C/svg%3E") center top / cover no-repeat; }
+.donate-cats::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 80px; background: url("data:image/svg+xml,%3Csvg width='1440' height='80' viewBox='0 0 1440 80' xmlns='http://www.w3.org/2000/svg' fill='%23FFFFFF'%3E%3Cpath d='M0 80 Q360 0 720 40 T1440 80 H0Z'/%3E%3C/svg%3E") center top / cover no-repeat; }
+.donate-cats .container { position: relative; z-index: 2; }
+.donate-cats-head { text-align: center; max-width: 720px; margin: 0 auto 3rem; }
+.donate-cats-head h2 { font-size: clamp(2rem, 3.4vw, 2.8rem); margin-bottom: 1rem; }
+.donate-cats-head p { color: var(--ink-soft); } .donate-cats-head p b { color: var(--ink); font-weight: 600; }
+.donate-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; }
+@media (max-width: 900px) { .donate-grid { grid-template-columns: repeat(2, 1fr); } }
+.donate-card { background: #fff; border-radius: var(--r-lg); padding: 1.5rem 1rem 1.25rem; text-align: center; box-shadow: var(--shadow-sm); cursor: pointer; transition: all 0.25s; }
+.donate-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.donate-card .img-circle { width: 88px; height: 88px; border-radius: 50%; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 2rem; }
+.donate-card h4 { font-size: 0.95rem; font-weight: 600; }
+
+.fest-strip { padding: 4rem 0 6rem; background: var(--bg-tint); }
+.fest-chips { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; max-width: 980px; margin: 0 auto; }
+.fest-chip { background: #fff; border: 1px solid var(--blue-100); padding: 0.7rem 1.4rem; border-radius: var(--r-pill); font-size: 0.92rem; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+.fest-chip:hover { background: var(--blue-500); color: #fff; border-color: var(--blue-500); }
+
+.photos { padding: 6rem 0; }
+.photo-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1.4fr; grid-template-rows: 200px 200px; gap: 14px; }
+@media (max-width: 900px) { .photo-grid { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(3, 200px); } }
+.photo-tile { border-radius: var(--r-lg); overflow: hidden; position: relative; cursor: pointer; }
+.photo-tile.tall { grid-row: span 2; }
+.photo-tile .label { position: absolute; left: 16px; bottom: 16px; background: rgba(255,255,255,0.95); border-radius: var(--r-pill); padding: 5px 14px; font-size: 0.82rem; font-weight: 600; }
+
+.programs { padding: 5rem 0; background: var(--bg-soft); }
+.programs-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; }
+@media (max-width: 900px) { .programs-grid { grid-template-columns: 1fr 1fr; } }
+.program-card { background: #fff; border-radius: var(--r-lg); padding: 1.5rem; box-shadow: var(--shadow-sm); cursor: pointer; transition: all 0.25s; display: flex; flex-direction: column; gap: 0.75rem; }
+.program-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.program-icon { width: 56px; height: 56px; border-radius: var(--r-md); background: var(--blue-50); display: flex; align-items: center; justify-content: center; color: var(--blue-600); }
+.program-card h4 { font-size: 1.05rem; }
+.program-card p { color: var(--ink-soft); font-size: 0.88rem; }
+
+.projects { padding: 5rem 0; }
+.projects-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+@media (max-width: 900px) { .projects-grid { grid-template-columns: 1fr 1fr; } }
+.project-tile { position: relative; border-radius: var(--r-lg); overflow: hidden; aspect-ratio: 3/4; cursor: pointer; }
+.project-tile .overlay { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 50%, rgba(31,54,160,0.8) 100%); }
+.project-tile .label { position: absolute; bottom: 16px; left: 16px; right: 16px; color: #fff; font-family: var(--font-heading); font-weight: 700; font-size: 1.1rem; }
+.project-tile .arrow { position: absolute; top: 16px; right: 16px; width: 36px; height: 36px; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; }
+
+.blogs { padding: 6rem 0; background: #fff; }
+.blogs-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 3rem; align-items: start; }
+@media (max-width: 900px) { .blogs-grid { grid-template-columns: 1fr; } }
+.blog-featured { border-radius: var(--r-lg); overflow: hidden; aspect-ratio: 5/4; position: relative; background: linear-gradient(135deg, #b87a3a, #d4a35a); }
+.blog-featured-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 2rem; font-family: var(--font-heading); color: #fff; font-size: 2.5rem; font-weight: 800; text-align: center; text-shadow: 0 4px 20px rgba(0,0,0,0.3); line-height: 1.1; }
+.blog-list { display: flex; flex-direction: column; gap: 1rem; }
+.blog-item { display: flex; gap: 1rem; background: var(--bg-soft); padding: 1rem; border-radius: var(--r-lg); cursor: pointer; transition: background 0.2s; }
+.blog-item:hover { background: var(--blue-50); }
+.blog-item-thumb { width: 100px; height: 80px; border-radius: var(--r-md); flex-shrink: 0; }
+.blog-meta { color: var(--ink-soft); font-size: 0.78rem; margin-bottom: 4px; }
+.blog-meta b { color: var(--blue-600); font-weight: 600; }
+.blog-item h4 { font-size: 0.98rem; margin-bottom: 4px; line-height: 1.3; }
+.blog-item p { color: var(--ink-soft); font-size: 0.84rem; line-height: 1.4; }
+
+.faq { padding: 6rem 0; background: var(--bg-soft); }
+.faq-head { text-align: center; max-width: 720px; margin: 0 auto 3rem; }
+.faq-head h2 { font-size: clamp(1.9rem, 3vw, 2.6rem); margin-bottom: 1rem; }
+.faq-head p { color: var(--ink-soft); } .faq-head p b { color: var(--ink); font-weight: 600; }
+.faq-list { max-width: 880px; margin: 0 auto; }
+.faq-item { background: #fff; border-radius: var(--r-lg); padding: 1.1rem 1.5rem; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s; border: 1px solid var(--border-soft); }
+.faq-item:hover { border-color: var(--blue-200); transform: translateX(2px); }
+.faq-item-q { display: flex; align-items: center; gap: 14px; font-weight: 500; }
+.faq-item-num { color: var(--blue-500); font-weight: 700; font-family: var(--font-heading); }
+.faq-icon { width: 32px; height: 32px; border-radius: 50%; background: var(--blue-50); color: var(--blue-600); display: flex; align-items: center; justify-content: center; }
+
+.volunteer-banner { padding: 5rem 0; background: linear-gradient(135deg, #1F36A0, #2A47C7); color: #fff; }
+.volunteer-banner .container { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+@media (max-width: 900px) { .volunteer-banner .container { grid-template-columns: 1fr; text-align: center; } }
+.volunteer-banner h2 { color: #fff; font-size: clamp(1.9rem, 3vw, 2.6rem); margin-bottom: 1rem; }
+.volunteer-banner p { color: rgba(255,255,255,0.9); margin-bottom: 1.75rem; line-height: 1.6; }
+.volunteer-image { border-radius: var(--r-xl); aspect-ratio: 4/3; background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05)); border: 1px solid rgba(255,255,255,0.15); }
+
+.longform { padding: 6rem 0; background: #fff; }
+.longform-content { max-width: 880px; margin: 0 auto; }
+.longform-content h2 { font-size: clamp(1.9rem, 3vw, 2.4rem); margin-bottom: 1.5rem; }
+.longform-content h3 { font-size: 1.3rem; margin: 2rem 0 1rem; color: var(--blue-700); }
+.longform-content p { color: var(--ink-soft); margin-bottom: 1.25rem; line-height: 1.7; }
+.longform-content p b { color: var(--ink); font-weight: 600; }
+</style>
+</head>
+<body>
+<div id="top-bar"></div>
+<div id="main-nav"></div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-dots-bg"></div>
+  <div class="container">
+    <div class="hero-image-wrap">
+      <div class="hero-temple">
+        <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYEnd meet">
+          <defs><linearGradient id="tg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d4a35a"/><stop offset="0.5" stop-color="#c89060"/><stop offset="1" stop-color="#5a4080"/></linearGradient></defs>
+          <path d="M180 280 L180 100 Q200 50 220 100 L220 280 Z" fill="url(#tg1)"/>
+          <rect x="120" y="160" width="60" height="120" fill="url(#tg1)" opacity="0.85"/>
+          <rect x="220" y="160" width="60" height="120" fill="url(#tg1)" opacity="0.85"/>
+          <ellipse cx="150" cy="160" rx="30" ry="20" fill="#5a4080"/>
+          <ellipse cx="250" cy="160" rx="30" ry="20" fill="#5a4080"/>
+          <rect x="135" y="200" width="12" height="30" rx="6" fill="#7bb37b" opacity="0.8"/>
+          <rect x="155" y="200" width="12" height="30" rx="6" fill="#7bb37b" opacity="0.8"/>
+          <rect x="234" y="200" width="12" height="30" rx="6" fill="#7bb37b" opacity="0.8"/>
+          <rect x="254" y="200" width="12" height="30" rx="6" fill="#7bb37b" opacity="0.8"/>
+          <path d="M180 240 Q180 220 200 220 Q220 220 220 240 L220 280 L180 280Z" fill="#a07050"/>
+          <line x1="200" y1="100" x2="200" y2="60" stroke="#d4a35a" stroke-width="3"/>
+          <circle cx="200" cy="58" r="4" fill="#f4c54e"/>
+        </svg>
+        <div class="hero-circle-img"><span>श्री राधा कृष्ण<br/><b>Mandir Nirman</b></span></div>
+      </div>
+    </div>
+    <div class="hero-text">
+      <div class="hero-script">Hare Krishna Vaikuntham</div>
+      <h1 class="hero-title">MANDIR NIRMAN SEVA</h1>
+      <p class="hero-sub">Donate for the construction of Radha Krishna Temple at Vizag</p>
+      <div class="hero-prasadam-strip">Receive Special Prasadam At Your Home<span class="hero-prasadam-strip-thumb"></span></div>
+      <div class="hero-cta-row">
+        <a href="donate-seva.html" class="btn btn-pill-gold"><svg class="icon" viewBox="0 0 24 24" style="font-size:18px;color:#1F36A0"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill="currentColor" stroke="none"/></svg> Donate Now</a>
+        <span class="hero-80g">Avail 80G Tax Benefit</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WELCOME -->
+<section class="welcome">
+  <div class="container">
+    <div class="grid">
+      <div class="welcome-circle-wrap">
+        <div class="welcome-blob-1"></div>
+        <div class="welcome-blob-2"></div>
+        <div class="welcome-circle">
+          <svg viewBox="0 0 200 130" preserveAspectRatio="xMidYEnd meet">
+            <path d="M80 130 L80 70 Q100 30 120 70 L120 130 Z" fill="#d4a35a"/>
+            <rect x="50" y="90" width="40" height="40" fill="#c89060"/>
+            <rect x="110" y="90" width="40" height="40" fill="#c89060"/>
+            <ellipse cx="70" cy="90" rx="20" ry="14" fill="#5a4080"/>
+            <ellipse cx="130" cy="90" rx="20" ry="14" fill="#5a4080"/>
+          </svg>
+          <div class="welcome-play"><svg width="20" height="20" viewBox="0 0 24 24" fill="#1F36A0"><path d="M5 3l14 9-14 9V3z"/></svg></div>
+        </div>
+      </div>
+      <div class="welcome-text-wrap">
+        <h2 class="welcome-h1">Welcome to Hare Krishna Vaikuntham</h2>
+        <p class="welcome-body"><b>Hare Krishna Vaikuntham</b>, the spiritual and cultural initiative of <b>Hare Krishna Movement Visakhapatnam</b>, lovingly known as the "Hare Krishna Mandir," aspires to uplift society through the timeless teachings of the <b>Bhagavad Gita</b> and <b>Srimad Bhagavatam</b>, along with the authentic practices of Vedic spiritual culture.</p>
+        <p class="welcome-quote"><b>Srila Prabhupada</b>, the Founder-Acharya of the International Society for Krishna Consciousness, stated, <em>"Unless you change the society, how can you make social welfare?"</em></p>
+        <a href="about.html" class="btn btn-pill-blue">Discover More <svg class="icon" viewBox="0 0 24 24" style="font-size:14px"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        <div class="welcome-dots"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COUNTDOWN -->
+<section class="countdown-section">
+  <div class="container">
+    <div class="countdown-inner">
+      <div class="countdown-left">Grand Opening Countdown<br/>to 12 May 2027<span class="small">Vizag's Largest Krishna Temple</span></div>
+      <div class="countdown-divider"></div>
+      <div class="countdown-units">
+        <div class="countdown-unit"><div class="countdown-num">358</div><div class="countdown-label">Days</div></div>
+        <span class="countdown-colon">:</span>
+        <div class="countdown-unit"><div class="countdown-num">02</div><div class="countdown-label">Hours</div></div>
+        <span class="countdown-colon">:</span>
+        <div class="countdown-unit"><div class="countdown-num">38</div><div class="countdown-label">Minutes</div></div>
+        <span class="countdown-colon">:</span>
+        <div class="countdown-unit"><div class="countdown-num">29</div><div class="countdown-label">Seconds</div></div>
+      </div>
+      <a href="donate-seva.html" class="btn btn-pill-gold">Set Reminder</a>
+    </div>
+  </div>
+</section>
+
+<!-- EXPLORE TEMPLE -->
+<section class="explore">
+  <div class="container">
+    <div class="section-head">
+      <div><h2>Explore Temple</h2></div>
+      <a href="about.html" class="view-all-btn">View All</a>
+    </div>
+    <p class="section-sub">Become acquainted with the various services of the <b>Hare Krishna Mandir</b>, immerse yourself in the transcendental environment, and feel invigorated.</p>
+    <div class="explore-grid">
+      <div class="explore-card gau" style="background:linear-gradient(135deg,#5d4a8a,#2a47c7)"><div class="overlay"></div><div class="label">Gau Shala</div></div>
+      <div class="explore-card anna" style="background:linear-gradient(135deg,#7a6a3a,#a08840)"><div class="overlay"></div><div class="label">Annakoot Restaurant</div></div>
+      <div class="explore-card guest" style="background:linear-gradient(135deg,#3a4a7a,#5d6aa0)"><div class="overlay"></div><div class="label">Guest House</div></div>
+      <div class="explore-card hall" style="background:linear-gradient(135deg,#8a3a5a,#c25a7a)"><div class="overlay"></div><div class="label">Function Hall</div></div>
+      <div class="explore-card ramp" style="background:linear-gradient(135deg,#5a8a6a,#7ab38a)"><div class="overlay"></div><div class="label">Spiritual Ramp</div></div>
+      <div class="explore-card temple" style="background:linear-gradient(135deg,#3a3a7a,#5d4a8a)"><div class="overlay"></div><div class="label">Main Temple</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SEVA CTA -->
+<section class="seva-cta">
+  <div class="container">
+    <div class="seva-cta-inner">
+      <div class="seva-image">
+        <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYEnd meet">
+          <path d="M180 280 L180 100 Q200 50 220 100 L220 280 Z" fill="#d4a35a"/>
+          <rect x="120" y="160" width="60" height="120" fill="#c89060"/>
+          <rect x="220" y="160" width="60" height="120" fill="#c89060"/>
+          <ellipse cx="150" cy="160" rx="30" ry="20" fill="#5a4080"/>
+          <ellipse cx="250" cy="160" rx="30" ry="20" fill="#5a4080"/>
+          <rect x="190" y="220" width="20" height="60" fill="#a07050"/>
+        </svg>
+      </div>
+      <div>
+        <h2 class="seva-h2">Square Feet Seva</h2>
+        <p class="seva-text">A fundraising initiative to build a grand temple for <b>Lord Sri Krishna</b>. Contribute to the construction of Vizag's biggest temple – <b>Hare Krishna Vaikuntham</b> through Square Feet Seva. Donate now and receive special prasadam delivered to your home.</p>
+        <div class="seva-progress">
+          <div class="seva-progress-label"><span>Goal Achieved</span><span>32%</span></div>
+          <div class="seva-progress-bar"><div class="seva-progress-fill"></div></div>
+          <div class="seva-progress-stats"><span><b>1,12,000</b> sq ft raised</span><span>of 3,50,000 Sq. Ft.</span></div>
+        </div>
+        <a href="donate-home.html" class="btn btn-pill-blue">Donate Now <svg class="icon" viewBox="0 0 24 24" style="font-size:14px"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DONATE CATEGORIES -->
+<section class="donate-cats">
+  <div class="container">
+    <div class="donate-cats-head">
+      <h2>Donate Generously to uphold culture</h2>
+      <p>With your support and contributions, the <b>Hare Krishna Vaikuntham</b> can remarkably uplift the cultural practices of society, making it happier, healthier, and more prosperous.</p>
+    </div>
+    <div class="donate-grid">
+      <a href="donate-seva.html" class="donate-card"><div class="img-circle" style="background:linear-gradient(135deg,#1F36A0,#3F5FE5);color:#fff">🛕</div><h4>Temple Donation</h4></a>
+      <a href="donate-seva.html" class="donate-card"><div class="img-circle" style="background:linear-gradient(135deg,#a08840,#d4a35a);color:#fff">🍛</div><h4>Anna Daan Seva</h4></a>
+      <a href="donate-seva.html" class="donate-card"><div class="img-circle" style="background:linear-gradient(135deg,#5d4a8a,#7a6aa0);color:#fff">🏠</div><h4>Cow Shed Seva</h4></a>
+      <a href="donate-seva.html" class="donate-card"><div class="img-circle" style="background:linear-gradient(135deg,#5a8a6a,#7ab38a);color:#fff">🐄</div><h4>Gau Seva</h4></a>
+      <a href="donate-home.html" class="donate-card"><div class="img-circle" style="background:linear-gradient(135deg,#3F5FE5,#2A47C7);color:#fff">📐</div><h4>Square Feet Seva</h4></a>
+    </div>
+  </div>
+</section>
+
+<!-- FESTIVAL CHIPS -->
+<section class="fest-strip">
+  <div class="container">
+    <div class="section-head" style="justify-content:center"><h2 style="text-align:center">Upcoming Festivals</h2></div>
+    <div class="fest-chips">
+      <div class="fest-chip">Pandava Ekadashi</div>
+      <div class="fest-chip">Yogini Ekadashi</div>
+      <div class="fest-chip">Shayani Ekadashi</div>
+      <div class="fest-chip">Rath Yatra</div>
+      <div class="fest-chip">Balaram Purnima</div>
+      <div class="fest-chip">Janmashtami</div>
+      <div class="fest-chip">Radha Ashtami</div>
+      <div class="fest-chip">Gita Jayanti</div>
+    </div>
+  </div>
+</section>
+
+<!-- PHOTOS -->
+<section class="photos">
+  <div class="container">
+    <div class="section-head"><div><h2>Photos</h2></div><a href="#" class="view-all-btn">View All</a></div>
+    <p class="section-sub">View the highlights of programs and cultural festivities celebrated by the <b>Hare Krishna Vaikuntham</b>.</p>
+    <div class="photo-grid">
+      <div class="photo-tile tall" style="background:linear-gradient(135deg,#5d4a8a,#3F5FE5)"><span class="label">Temple Festivals</span></div>
+      <div class="photo-tile" style="background:linear-gradient(135deg,#a08840,#d4a35a)"><span class="label">Cultural Complex</span></div>
+      <div class="photo-tile" style="background:linear-gradient(135deg,#3a4a7a,#5d6aa0)"><span class="label">Activities</span></div>
+      <div class="photo-tile tall" style="background:linear-gradient(135deg,#8a3a5a,#c25a7a)"><span class="label">Folk Residency</span></div>
+      <div class="photo-tile" style="background:linear-gradient(135deg,#5a8a6a,#7ab38a)"><span class="label">Events</span></div>
+      <div class="photo-tile" style="background:linear-gradient(135deg,#3a3a7a,#5d4a8a)"><span class="label">Kirtan</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROGRAMS -->
+<section class="programs">
+  <div class="container">
+    <div class="section-head"><div><h2>Programs &amp; Activities</h2></div><a href="category.html" class="view-all-btn">View All</a></div>
+    <p class="section-sub">Discover and join the regular spiritual activities organized by the <b>Hare Krishna Vaikuntham</b>.</p>
+    <div class="programs-grid">
+      <div class="program-card"><div class="program-icon"><svg class="icon" viewBox="0 0 24 24" style="font-size:24px"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2zM22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></div><h4>Education</h4><p>Vedic gurukul, Bhagavad Gita classes, and value-based education for children and adults.</p></div>
+      <div class="program-card"><div class="program-icon"><svg class="icon" viewBox="0 0 24 24" style="font-size:24px"><path d="M3 11h18M5 11V7a7 7 0 0114 0v4M5 11v6a3 3 0 003 3h8a3 3 0 003-3v-6"/></svg></div><h4>Food Distribution</h4><p>Daily Anna Daan serving thousands of prasadam meals to underprivileged communities.</p></div>
+      <div class="program-card"><div class="program-icon"><svg class="icon" viewBox="0 0 24 24" style="font-size:24px"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 010 20"/></svg></div><h4>Yuga Dharma</h4><p>Spreading the Hare Krishna mahamantra through harinama sankirtan across Vizag.</p></div>
+      <div class="program-card"><div class="program-icon"><svg class="icon" viewBox="0 0 24 24" style="font-size:24px"><path d="M3 18h18M5 18V8a7 7 0 0114 0v10"/></svg></div><h4>Cow Protection</h4><p>Dedicated Gau Shala caring for indigenous cows with love, organic fodder, and shelter.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section class="projects">
+  <div class="container">
+    <div class="section-head"><div><h2>Our Projects</h2></div><a href="#" class="view-all-btn">View All</a></div>
+    <p class="section-sub">Support our cultural, educational, and temple projects. These efforts help spread Krishna consciousness and give society a divine opportunity to reconnect with India's eternal spiritual heritage.</p>
+    <div class="projects-grid">
+      <a href="category.html" class="project-tile" style="background:linear-gradient(180deg,#5d4a8a,#3F5FE5)"><div class="overlay"></div><div class="arrow"><svg class="icon" viewBox="0 0 24 24" style="font-size:14px"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg></div><span class="label">Events</span></a>
+      <a href="category.html" class="project-tile" style="background:linear-gradient(180deg,#a08840,#d4a35a)"><div class="overlay"></div><div class="arrow"><svg class="icon" viewBox="0 0 24 24" style="font-size:14px"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg></div><span class="label">Our Services</span></a>
+      <a href="category.html" class="project-tile" style="background:linear-gradient(180deg,#3a4a7a,#5d6aa0)"><div class="overlay"></div><div class="arrow"><svg class="icon" viewBox="0 0 24 24" style="font-size:14px"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg></div><span class="label">Hare Krishna Seva Mandir</span></a>
+      <a href="donate-seva.html" class="project-tile" style="background:linear-gradient(180deg,#5a8a6a,#7ab38a)"><div class="overlay"></div><div class="arrow"><svg class="icon" viewBox="0 0 24 24" style="font-size:14px"><path d="M7 17L17 7M17 7H8M17 7v9"/></svg></div><span class="label">Subhojanam</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- BLOGS -->
+<section class="blogs">
+  <div class="container">
+    <div class="section-head"><div><h2>Latest Blogs</h2></div><a href="blog.html" class="view-all-btn">View All</a></div>
+    <div class="blogs-grid">
+      <a href="blog.html" class="blog-featured"><div class="blog-featured-overlay">एकादशी कैलेंडर<br/><span style="font-size:1.2rem;font-weight:600">2026</span></div></a>
+      <div class="blog-list">
+        <a href="blog.html" class="blog-item"><div class="blog-item-thumb" style="background:linear-gradient(135deg,#d4a35a,#a08840)"></div><div><div class="blog-meta">May 18, 2026 · <b>Rahul Parashar</b></div><h4>Ekadashi List 2026: जानें सभी 24 ग्यारस की सही तारीख</h4></div></a>
+        <a href="blog.html" class="blog-item"><div class="blog-item-thumb" style="background:linear-gradient(135deg,#3F5FE5,#5d4a8a)"></div><div><div class="blog-meta">May 8, 2026 · <b>Rahul Kalwani</b></div><h4>Yogini Ekadashi: Date, Vrat Katha &amp; Puja Vidhi</h4><p>Story of Yogini Ekadasi, puja vidhi, and the benefits of fasting on this sacred day.</p></div></a>
+        <a href="blog.html" class="blog-item"><div class="blog-item-thumb" style="background:linear-gradient(135deg,#5a8a6a,#a08840)"></div><div><div class="blog-meta">May 2, 2026 · <b>Rahul Kalwani</b></div><h4>Best Places to Visit in Vizag</h4><p>This guide helps you identify best spots in Vizag with facilities and activities.</p></div></a>
+        <a href="blog.html" class="blog-item"><div class="blog-item-thumb" style="background:linear-gradient(135deg,#8a3a5a,#c25a7a)"></div><div><div class="blog-meta">Apr 24, 2026 · <b>Rahul Parashar</b></div><h4>Hidden Places to Visit in Vizag</h4><p>List of scenic and spiritual spots in Vizag — peaceful and mesmerizing.</p></div></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq">
+  <div class="container">
+    <div class="faq-head"><h2>Frequently Asked Questions!</h2><p><b>Hare Krishna Vaikuntham</b>, the largest temple in Vizag, is not only a place of worship but a beacon of social service and cultural preservation.</p></div>
+    <div class="faq-list">
+      <div class="faq-item"><div class="faq-item-q"><span class="faq-item-num">1.</span> Why is Vizag the perfect home for Hare Krishna Vaikuntham?</div><span class="faq-icon"><svg class="icon" viewBox="0 0 24 24" style="font-size:14px"><path d="M6 9l6 6 6-6"/></svg></span></div>
+      <div class="faq-item"><div class="faq-item-q"><span class="faq-item-num">2.</span> What activities does the Hare Krishna Movement Vizag conduct?</div><span class="faq-icon"><svg class="icon" viewBox="0 0 24 24" style="font-size:14px"><path d="M6 9l6 6 6-6"/></svg></span></div>
+      <div class="faq-item"><div class="faq-item-q"><span class="faq-item-num">3.</span> Who is the founder acharya of the Hare Krishna Movement?</div><span class="faq-icon"><svg class="icon" viewBox="0 0 24 24" style="font-size:14px"><path d="M6 9l6 6 6-6"/></svg></span></div>
+      <div class="faq-item"><div class="faq-item-q"><span class="faq-item-num">4.</span> How can I visit Hare Krishna Vaikuntham?</div><span class="faq-icon"><svg class="icon" viewBox="0 0 24 24" style="font-size:14px"><path d="M6 9l6 6 6-6"/></svg></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- VOLUNTEER BANNER -->
+<section class="volunteer-banner">
+  <div class="container">
+    <div>
+      <h2>Volunteer to Serve</h2>
+      <p>Offer your talents and heart in the loving service of <b style="color:#F6C341">Sri Sri Krishna Balaram</b>. Support the temple's spiritual and outreach activities by volunteering and become an instrument in Srila Prabhupada's mission. Come serve — and be spiritually transformed.</p>
+      <a href="contact.html" class="btn btn-pill-gold">Become a Volunteer</a>
+    </div>
+    <div class="volunteer-image"></div>
+  </div>
+</section>
+
+<!-- LONG-FORM -->
+<section class="longform">
+  <div class="container">
+    <div class="longform-content">
+      <h2>Hare Krishna Vaikuntham · Biggest Temple of Vizag</h2>
+      <p><b>Hare Krishna Vaikuntham</b> is the largest temple cum cultural complex in Vizag with a grand footprint of 3.5 lakh square feet area. The complex is built with the vision to nurture and preserve the ancient divine culture of Vedic India. Through the multiple initiatives of the Centre, we provide opportunities to inculcate cultural values.</p>
+      <h3>Vizag — the spiritual heart of Andhra Pradesh</h3>
+      <p>The coastal city of Visakhapatnam holds a deep spiritual significance — home to the ancient Simhachalam temple of Lord Narasimha, and a long tradition of Krishna devotion. Hare Krishna Vaikuntham extends this sacred legacy, building a magnificent abode for Lord Sri Krishna.</p>
+      <h3>Continuing Srila Prabhupada's vision</h3>
+      <p>Hare Krishna Movement is building this biggest temple cum cultural complex to fulfill the desires of <b>Srila Prabhupada</b> and amplify the glories of Lord Krishna. The Centre will facilitate cow protection, propagate the Hare Krishna sankirtan, educate the society on the basis of Vedic principles from Srimad Bhagavad-Gita and Srimad Bhagavatam, distribute sanctified food among the needy, and expand the culture through multiple projects.</p>
+    </div>
+  </div>
+</section>
+
+<div id="main-footer"></div>
+<script src="shared.js"></script>
+</body>
+</html>

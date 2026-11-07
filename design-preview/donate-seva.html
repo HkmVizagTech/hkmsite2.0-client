@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Anna Daan Seva · Hare Krishna Vaikuntham Donations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<style>
+:root {
+  --peach: #FCDDC2;
+  --peach-soft: #FFF1E5;
+  --peach-deep: #7B2E0F;
+  --peach-card: #4A1E0D;
+}
+body { background: var(--peach-soft); }
+
+/* Seva banner */
+.seva-banner {
+  background: linear-gradient(135deg, var(--peach), var(--peach-soft));
+  padding: 5rem 0 4rem;
+  position: relative;
+  overflow: hidden;
+}
+.seva-banner-inner { text-align: center; max-width: 880px; margin: 0 auto; padding: 0 1.75rem; position: relative; z-index: 2; }
+.seva-banner h1 { font-family: var(--font-heading); font-weight: 800; font-size: clamp(2.4rem, 5vw, 3.6rem); color: var(--peach-deep); margin-bottom: 0.75rem; line-height: 1.1; }
+.seva-banner-deva { font-size: 1.4rem; color: var(--peach-deep); margin-bottom: 1.25rem; font-family: 'Manrope', serif; font-style: italic; }
+.seva-banner p { color: var(--peach-deep); opacity: 0.9; font-size: 1.05rem; line-height: 1.6; }
+.seva-banner-ornament {
+  display: flex; align-items: center; justify-content: center; gap: 0.75rem;
+  margin: 1.5rem auto; color: var(--peach-deep);
+}
+.seva-banner-ornament .line { width: 80px; height: 1px; background: currentColor; opacity: 0.5; }
+.seva-banner-ornament svg { width: 32px; height: 14px; opacity: 0.7; }
+
+/* Donation rate strip */
+.rate-strip {
+  background: var(--peach);
+  border-radius: var(--r-lg);
+  padding: 1.25rem 1.5rem;
+  margin: 0 auto 2.5rem;
+  max-width: 1140px;
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+  font-weight: 700;
+  color: var(--peach-deep);
+  letter-spacing: 0.02em;
+}
+.rate-strip-amt { font-size: 1.05rem; }
+.rate-toggle { display: flex; gap: 4px; padding: 4px; background: var(--peach-card); border-radius: var(--r-pill); }
+.rate-toggle button { padding: 6px 14px; border: none; background: transparent; color: rgba(255,255,255,0.6); cursor: pointer; font-weight: 600; font-size: 0.85rem; border-radius: var(--r-pill); transition: all 0.2s; }
+.rate-toggle button.active { background: #fff; color: var(--peach-deep); }
+
+/* Thali cards grid */
+.thali-section { padding: 0 0 5rem; }
+.thali-grid {
+  max-width: 1140px; margin: 0 auto; padding: 0 1.75rem;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem;
+}
+@media (max-width: 900px) { .thali-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 500px) { .thali-grid { grid-template-columns: 1fr; } }
+
+.thali-card {
+  display: grid; grid-template-columns: 100px 1fr;
+  background: var(--peach-card); color: #fff;
+  border-radius: var(--r-lg); overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+}
+.thali-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(74,30,13,0.2); }
+.thali-card-img { background: var(--peach-deep); }
+.thali-card-body { padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between; }
+.thali-card-body h4 { color: #fff; font-size: 1.15rem; margin-bottom: 0.5rem; }
+.thali-amount { font-family: var(--font-heading); font-weight: 700; font-size: 1.4rem; color: var(--peach); margin-bottom: 0.5rem; }
+.thali-donate {
+  background: var(--peach-soft); color: var(--peach-deep);
+  padding: 6px 14px; border-radius: var(--r-pill);
+  font-size: 0.85rem; font-weight: 700;
+  border: none; cursor: pointer;
+  align-self: flex-start;
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.thali-donate:hover { background: #fff; }
+
+/* Live donor wall */
+.donor-wall { background: var(--peach-soft); padding: 4rem 0; }
+.donor-wall-head { text-align: center; max-width: 700px; margin: 0 auto 2.5rem; padding: 0 1.75rem; }
+.donor-wall-head .live { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; background: rgba(123, 46, 15, 0.1); color: var(--peach-deep); border-radius: var(--r-pill); font-size: 0.78rem; font-weight: 700; margin-bottom: 0.75rem; letter-spacing: 0.05em; text-transform: uppercase; }
+.donor-wall-head .live::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #16a34a; animation: pulse 2s infinite; }
+.donor-wall-head h2 { font-size: clamp(2rem, 3.4vw, 2.6rem); color: var(--peach-deep); margin-bottom: 0.5rem; }
+.donor-wall-head p { color: var(--peach-deep); opacity: 0.7; }
+.donor-grid {
+  max-width: 1140px; margin: 0 auto; padding: 0 1.75rem;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem;
+}
+@media (max-width: 900px) { .donor-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 500px) { .donor-grid { grid-template-columns: 1fr; } }
+.donor-card {
+  background: var(--peach);
+  border-radius: var(--r-md);
+  padding: 0.85rem 1rem;
+  display: flex; align-items: center; gap: 10px;
+  color: var(--peach-deep);
+}
+.donor-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--peach-card); color: var(--peach);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 0.95rem;
+  flex-shrink: 0;
+}
+.donor-info { flex: 1; min-width: 0; }
+.donor-name { font-weight: 700; font-size: 0.88rem; line-height: 1.2; }
+.donor-amount { font-size: 0.78rem; opacity: 0.85; margin-top: 1px; }
+.donor-time { font-size: 0.7rem; opacity: 0.65; margin-top: 1px; }
+
+.view-more-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: transparent; color: var(--peach-deep);
+  border: 1.5px solid var(--peach-deep);
+  padding: 0.7rem 1.5rem; border-radius: var(--r-pill);
+  font-size: 0.88rem; font-weight: 600;
+  cursor: pointer;
+  margin: 2rem auto 0; display: flex; justify-content: center; max-width: max-content;
+}
+.view-more-btn:hover { background: var(--peach-deep); color: var(--peach-soft); }
+
+/* Offer Seva form */
+.offer-section {
+  background: var(--peach);
+  padding: 5rem 0 3rem;
+}
+.offer-head { text-align: center; max-width: 880px; margin: 0 auto 2.5rem; padding: 0 1.75rem; color: var(--peach-deep); }
+.offer-head h2 { color: var(--peach-deep); font-size: clamp(2rem, 3.6vw, 2.8rem); line-height: 1.2; margin-bottom: 0.5rem; }
+.offer-head p { color: var(--peach-deep); opacity: 0.85; font-size: 1.02rem; }
+
+.currency-tabs { display: grid; grid-template-columns: 1fr 1fr; max-width: 880px; margin: 0 auto 2rem; padding: 0 1.75rem; }
+.currency-tab { padding: 1rem 1.25rem; text-align: center; font-weight: 700; font-size: 0.95rem; color: var(--peach-deep); opacity: 0.5; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; background: transparent; border-top: none; border-left: none; border-right: none; }
+.currency-tab.active { opacity: 1; background: var(--peach-card); color: var(--peach-soft); border-bottom-color: var(--peach-deep); border-radius: var(--r-md) var(--r-md) 0 0; }
+
+.offer-form {
+  background: var(--peach-soft);
+  max-width: 880px; margin: 0 auto;
+  border-radius: var(--r-lg);
+  padding: 2rem;
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.25rem;
+}
+@media (max-width: 700px) { .offer-form { grid-template-columns: 1fr; } }
+.offer-form-field label { display: block; font-size: 0.78rem; color: var(--peach-deep); margin-bottom: 6px; font-weight: 600; }
+.offer-form-field select,
+.offer-form-field input {
+  width: 100%; padding: 0.75rem 0.85rem;
+  border: 1.5px solid var(--peach); border-radius: var(--r-md);
+  font-family: var(--font-body); font-size: 0.95rem;
+  background: #fff; color: var(--peach-deep);
+}
+.offer-form-pay {
+  background: var(--peach); border-radius: var(--r-md);
+  padding: 1rem; display: flex; gap: 0.85rem; align-items: center;
+  color: var(--peach-deep);
+}
+.offer-form-pay svg { color: var(--peach-deep); }
+.offer-form-pay-text { flex: 1; font-size: 0.85rem; line-height: 1.4; font-weight: 600; }
+
+.offer-submit {
+  grid-column: span 3;
+  background: var(--peach-card); color: #fff;
+  padding: 1rem 2rem;
+  border: none; border-radius: var(--r-pill);
+  font-family: var(--font-body); font-size: 1rem; font-weight: 700;
+  cursor: pointer;
+  justify-self: center;
+  display: inline-flex; align-items: center; gap: 8px;
+  letter-spacing: 0.04em;
+}
+@media (max-width: 700px) { .offer-submit { grid-column: 1; } }
+.offer-submit:hover { background: var(--peach-deep); }
+
+/* Sticky bottom CTA bar */
+.sticky-bottom {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+  background: var(--peach-card); color: #fff;
+  padding: 0.85rem 1.75rem;
+  display: flex; justify-content: space-between; align-items: center;
+  box-shadow: 0 -8px 24px rgba(0,0,0,0.15);
+}
+.sticky-bottom-name { font-weight: 700; font-size: 1.05rem; }
+.sticky-bottom .btn-pill-gold { padding: 0.55rem 1.3rem; font-size: 0.85rem; }
+
+/* Override base nav for donate sub-section */
+nav.donate-nav .logo-text { color: #fff; }
+</style>
+</head>
+<body>
+<div id="top-bar"></div>
+<div id="main-nav"></div>
+
+<!-- Seva banner -->
+<section class="seva-banner">
+  <div class="seva-banner-inner">
+    <h1>Annadana Donation Online</h1>
+    <p class="seva-banner-deva">अन्नदान सेवा · Feed thousands of devotees with prasadam</p>
+    <div class="seva-banner-ornament">
+      <span class="line"></span>
+      <svg viewBox="0 0 80 14"><path d="M10 7 Q20 0 40 7 Q60 14 70 7" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="40" cy="7" r="3" fill="currentColor"/></svg>
+      <span class="line"></span>
+    </div>
+    <p>The most blessed of all charities is feeding the hungry. Every contribution allows us to serve sanctified, freshly cooked prasadam to thousands of devotees and the underprivileged every single day.</p>
+  </div>
+</section>
+
+<!-- Rate strip -->
+<div style="padding: 0 1.75rem;">
+  <div class="rate-strip">
+    <div class="rate-strip-amt">ANNADANAM DONATION: <span style="color:var(--peach-card)">₹55 PER PLATE</span></div>
+    <div class="rate-toggle">
+      <button class="active">Cards</button>
+      <button>List</button>
+    </div>
+  </div>
+</div>
+
+<!-- Thali tier cards -->
+<section class="thali-section">
+  <div class="thali-grid">
+    <div class="thali-card">
+      <div class="thali-card-img" style="background:linear-gradient(135deg,#7B2E0F,#4A1E0D)"></div>
+      <div class="thali-card-body">
+        <h4>Annadana Seva</h4>
+        <div class="thali-amount">₹551</div>
+        <button class="thali-donate">Donate <svg class="icon" viewBox="0 0 24 24" style="font-size:12px"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+      </div>
+    </div>
+    <div class="thali-card">
+      <div class="thali-card-img" style="background:linear-gradient(135deg,#8B5A2B,#5C3917)"></div>
+      <div class="thali-card-body">
+        <h4>10 Thali</h4>
+        <div class="thali-amount">₹550</div>
+        <button class="thali-donate">Donate <svg class="icon" viewBox="0 0 24 24" style="font-size:12px"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+      </div>
+    </div>
+    <div class="thali-card">
+      <div class="thali-card-img" style="background:linear-gradient(135deg,#A06434,#6B3F1E)"></div>
+      <div class="thali-card-body">
+        <h4>20 Thali</h4>
+        <div class="thali-amount">₹1,100</div>
+        <button class="thali-donate">Donate <svg class="icon" viewBox="0 0 24 24" style="font-size:12px"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+      </div>
+    </div>
+    <div class="thali-card">
+      <div class="thali-card-img" style="background:linear-gradient(135deg,#B97540,#7C481E)"></div>
+      <div class="thali-card-body">
+        <h4>51 Thali</h4>
+        <div class="thali-amount">₹2,805</div>
+        <button class="thali-donate">Donate <svg class="icon" viewBox="0 0 24 24" style="font-size:12px"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+      </div>
+    </div>
+    <div class="thali-card">
+      <div class="thali-card-img" style="background:linear-gradient(135deg,#7B2E0F,#4A1E0D)"></div>
+      <div class="thali-card-body">
+        <h4>101 Thali</h4>
+        <div class="thali-amount">₹5,555</div>
+        <button class="thali-donate">Donate <svg class="icon" viewBox="0 0 24 24" style="font-size:12px"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+      </div>
+    </div>
+    <div class="thali-card">
+      <div class="thali-card-img" style="background:linear-gradient(135deg,#8B5A2B,#5C3917)"></div>
+      <div class="thali-card-body">
+        <h4>200 Thali</h4>
+        <div class="thali-amount">₹11,000</div>
+        <button class="thali-donate">Donate <svg class="icon" viewBox="0 0 24 24" style="font-size:12px"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Live donor wall -->
+<section class="donor-wall">
+  <div class="donor-wall-head">
+    <div class="live">Live</div>
+    <h2>Generous Souls Supporting This Seva</h2>
+    <p>Recent contributions to Anna Daan Seva</p>
+  </div>
+
+  <div class="donor-grid">
+    <div class="donor-card"><div class="donor-avatar">P</div><div class="donor-info"><div class="donor-name">Pratima Agarwal</div><div class="donor-amount">Donated ₹501</div><div class="donor-time">about 1 hour ago</div></div></div>
+    <div class="donor-card"><div class="donor-avatar">M</div><div class="donor-info"><div class="donor-name">Mohan Iyer</div><div class="donor-amount">Donated ₹103</div><div class="donor-time">about 3 hours ago</div></div></div>
+    <div class="donor-card"><div class="donor-avatar">G</div><div class="donor-info"><div class="donor-name">Gayatri Devi</div><div class="donor-amount">Donated ₹511</div><div class="donor-time">about 4 hours ago</div></div></div>
+    <div class="donor-card"><div class="donor-avatar">B</div><div class="donor-info"><div class="donor-name">Balaji R.</div><div class="donor-amount">Donated ₹510</div><div class="donor-time">about 40 minutes ago</div></div></div>
+    <div class="donor-card"><div class="donor-avatar">R</div><div class="donor-info"><div class="donor-name">Rameshwar Nikam</div><div class="donor-amount">Donated ₹333</div><div class="donor-time">about 7 hours ago</div></div></div>
+    <div class="donor-card"><div class="donor-avatar">S</div><div class="donor-info"><div class="donor-name">Swati Saini</div><div class="donor-amount">Donated ₹1,100</div><div class="donor-time">about 7 hours ago</div></div></div>
+    <div class="donor-card"><div class="donor-avatar">A</div><div class="donor-info"><div class="donor-name">Akash Srivastava</div><div class="donor-amount">Donated ₹2,805</div><div class="donor-time">about 4 hours ago</div></div></div>
+    <div class="donor-card"><div class="donor-avatar">S</div><div class="donor-info"><div class="donor-name">Shree Swami</div><div class="donor-amount">Donated ₹111</div><div class="donor-time">about 6 hours ago</div></div></div>
+    <div class="donor-card"><div class="donor-avatar">N</div><div class="donor-info"><div class="donor-name">Nilesh Joshi</div><div class="donor-amount">Donated ₹501</div><div class="donor-time">about 8 hours ago</div></div></div>
+    <div class="donor-card"><div class="donor-avatar">S</div><div class="donor-info"><div class="donor-name">Seema Jindal</div><div class="donor-amount">Donated ₹1,100</div><div class="donor-time">about 8 hours ago</div></div></div>
+    <div class="donor-card"><div class="donor-avatar">S</div><div class="donor-info"><div class="donor-name">Shipra Gupta</div><div class="donor-amount">Donated ₹1,100</div><div class="donor-time">about 8 hours ago</div></div></div>
+    <div class="donor-card"><div class="donor-avatar">A</div><div class="donor-info"><div class="donor-name">Abhishek Sharma</div><div class="donor-amount">Donated ₹255</div><div class="donor-time">about 8 hours ago</div></div></div>
+  </div>
+
+  <button class="view-more-btn">View More <svg class="icon" viewBox="0 0 24 24" style="font-size:14px"><path d="M6 9l6 6 6-6"/></svg></button>
+</section>
+
+<!-- Offer your Seva -->
+<section class="offer-section">
+  <div class="offer-head">
+    <h2>Offer your Seva and receive the<br/>blessings of Sri Radha Krishna</h2>
+    <p>Complete your contribution securely. All donations are 80G tax exempt.</p>
+  </div>
+
+  <div class="currency-tabs">
+    <button class="currency-tab active">Indian Currency</button>
+    <button class="currency-tab">Non-Indian Currency</button>
+  </div>
+
+  <form class="offer-form" onsubmit="event.preventDefault(); alert('Payment preview only')">
+    <div class="offer-form-field">
+      <label>Select Seva</label>
+      <select>
+        <option>Anna Daan Seva</option>
+        <option>10 Thali (₹550)</option>
+        <option>20 Thali (₹1,100)</option>
+        <option>51 Thali (₹2,805)</option>
+        <option>101 Thali (₹5,555)</option>
+        <option>200 Thali (₹11,000)</option>
+      </select>
+    </div>
+    <div class="offer-form-field">
+      <label>Amount (₹)</label>
+      <input type="number" value="550" min="55" />
+    </div>
+    <div class="offer-form-field">
+      <label>For UPI &amp; QR / Bank Transfer</label>
+      <div class="offer-form-pay">
+        <svg class="icon" viewBox="0 0 24 24" style="font-size:24px"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h2M11 15h2"/></svg>
+        <div class="offer-form-pay-text">Razorpay / UPI / Cards / Net Banking</div>
+      </div>
+    </div>
+    <button type="submit" class="offer-submit">
+      <svg class="icon" viewBox="0 0 24 24" style="font-size:18px"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill="currentColor" stroke="none"/></svg>
+      DONATE ₹550 NOW
+    </button>
+  </form>
+</section>
+
+<!-- Sticky bottom bar -->
+<div class="sticky-bottom" id="stickyBar">
+  <div class="sticky-bottom-name">Anna Daan Seva</div>
+  <a href="#" onclick="document.querySelector('.offer-section').scrollIntoView({behavior:'smooth'}); return false" class="btn btn-pill-gold">
+    <svg class="icon" viewBox="0 0 24 24" style="font-size:14px;color:#1F36A0"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill="currentColor" stroke="none"/></svg>
+    Donate Now
+  </a>
+</div>
+
+<div id="main-footer"></div>
+<script src="shared.js"></script>
+<script>
+// Make currency tabs work
+document.querySelectorAll('.currency-tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.currency-tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+  });
+});
+// Rate toggle
+document.querySelectorAll('.rate-toggle button').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.rate-toggle button').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

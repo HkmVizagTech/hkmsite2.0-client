@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Srila Prabhupada · Hare Krishna Vaikuntham</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<style>
+.prabhu-intro { padding: 5rem 0; }
+.prabhu-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 4rem; align-items: start; max-width: 1140px; margin: 0 auto; }
+@media (max-width: 900px) { .prabhu-grid { grid-template-columns: 1fr; } }
+.prabhu-portrait { position: relative; aspect-ratio: 3/4; border-radius: var(--r-xl); overflow: hidden; background: linear-gradient(180deg, #d4a35a 0%, #a85a3a 60%, #5a2010 100%); box-shadow: var(--shadow-lg); }
+.prabhu-portrait-name { position: absolute; bottom: 24px; left: 24px; right: 24px; color: #fff; }
+.prabhu-portrait-name h3 { color: #fff; font-size: 1.4rem; margin-bottom: 4px; }
+.prabhu-portrait-name p { color: rgba(255,255,255,0.85); font-size: 0.9rem; }
+.prabhu-text h2 { font-size: clamp(2rem, 3.4vw, 2.8rem); margin-bottom: 1.5rem; }
+.prabhu-text > p { color: var(--ink-soft); margin-bottom: 1.25rem; line-height: 1.75; font-size: 1.02rem; }
+.prabhu-text > p b { color: var(--ink); font-weight: 600; }
+.prabhu-quote { background: var(--blue-50); padding: 1.5rem 2rem; border-left: 4px solid var(--blue-500); border-radius: var(--r-md); margin: 1.5rem 0; }
+.prabhu-quote p { color: var(--blue-700); font-style: italic; font-size: 1.05rem; font-family: var(--font-italic); }
+.prabhu-quote cite { display: block; margin-top: 8px; color: var(--ink-soft); font-style: normal; font-size: 0.85rem; }
+
+.timeline-section { padding: 5rem 0; background: var(--bg-soft); }
+.timeline { max-width: 880px; margin: 0 auto; position: relative; }
+.timeline::before { content: ''; position: absolute; left: 24px; top: 0; bottom: 0; width: 2px; background: var(--blue-200); }
+.timeline-item { display: grid; grid-template-columns: 80px 1fr; gap: 1.5rem; margin-bottom: 2rem; position: relative; }
+.timeline-year { background: var(--blue-500); color: #fff; padding: 8px 14px; border-radius: var(--r-pill); font-size: 0.85rem; font-weight: 700; text-align: center; height: fit-content; box-shadow: var(--shadow-sm); position: relative; z-index: 2; }
+.timeline-content { background: #fff; padding: 1.5rem; border-radius: var(--r-lg); box-shadow: var(--shadow-sm); }
+.timeline-content h4 { font-size: 1.1rem; margin-bottom: 6px; }
+.timeline-content p { color: var(--ink-soft); font-size: 0.92rem; line-height: 1.6; }
+
+.teachings { padding: 5rem 0; }
+.teachings-head { text-align: center; max-width: 700px; margin: 0 auto 3rem; }
+.teachings-head h2 { font-size: clamp(2rem, 3.4vw, 2.6rem); margin-bottom: 0.75rem; }
+.teachings-head p { color: var(--ink-soft); }
+.teachings-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; max-width: 1140px; margin: 0 auto; }
+@media (max-width: 900px) { .teachings-grid { grid-template-columns: 1fr; } }
+.teach-card { background: linear-gradient(135deg, var(--blue-50), #fff); padding: 2rem; border-radius: var(--r-lg); border: 1px solid var(--blue-100); }
+.teach-card .num { font-family: var(--font-heading); color: var(--blue-300); font-size: 3rem; font-weight: 800; line-height: 1; }
+.teach-card h4 { font-size: 1.2rem; margin: 0.5rem 0; }
+.teach-card p { color: var(--ink-soft); line-height: 1.6; font-size: 0.92rem; }
+
+.books { padding: 5rem 0; background: linear-gradient(135deg, #1F36A0, #2A47C7); color: #fff; }
+.books-head { text-align: center; max-width: 700px; margin: 0 auto 3rem; }
+.books-head h2 { color: #fff; font-size: clamp(2rem, 3.4vw, 2.6rem); margin-bottom: 0.75rem; }
+.books-head p { color: rgba(255,255,255,0.85); }
+.books-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; max-width: 1140px; margin: 0 auto; }
+@media (max-width: 900px) { .books-grid { grid-template-columns: repeat(2, 1fr); } }
+.book-card { background: rgba(255,255,255,0.08); padding: 1.5rem; border-radius: var(--r-lg); border: 1px solid rgba(255,255,255,0.15); cursor: pointer; transition: all 0.2s; }
+.book-card:hover { background: rgba(255,255,255,0.12); transform: translateY(-2px); }
+.book-cover { aspect-ratio: 3/4; border-radius: var(--r-md); background: linear-gradient(135deg, #d4a35a, #a85a3a); margin-bottom: 1rem; box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+.book-card h4 { color: #fff; font-size: 1rem; margin-bottom: 4px; }
+.book-card p { color: rgba(255,255,255,0.7); font-size: 0.82rem; }
+</style>
+</head>
+<body>
+<div id="top-bar"></div>
+<div id="main-nav"></div>
+
+<section class="subpage-hero">
+  <div>
+    <h1>His Divine Grace Srila Prabhupada</h1>
+    <div class="breadcrumb"><a href="home.html">Home</a><span class="sep">/</span><a href="prabhupada.html">Prabhupada</a><span class="sep">/</span><span style="opacity:0.7">Biography</span></div>
+  </div>
+</section>
+
+<section class="prabhu-intro">
+  <div class="container">
+    <div class="prabhu-grid">
+      <div class="prabhu-portrait">
+        <div class="prabhu-portrait-name">
+          <h3>A.C. Bhaktivedanta Swami Prabhupada</h3>
+          <p>1 September 1896 — 14 November 1977</p>
+        </div>
+      </div>
+      <div class="prabhu-text">
+        <h2>Founder–Acharya of ISKCON</h2>
+        <p><b>His Divine Grace A.C. Bhaktivedanta Swami Prabhupada</b> is the Founder-Acharya of the International Society for Krishna Consciousness, founded in 1966 in New York City.</p>
+        <div class="prabhu-quote">
+          <p>"Chant Hare Krishna and be happy."</p>
+          <cite>— Srila Prabhupada</cite>
+        </div>
+        <p>As a 70-year-old, Srila Prabhupada travelled to New York with the sole purpose of fulfilling his guru's dream of spreading the message of Krishna Consciousness. Starting from a tiny office, he went on to ignite a worldwide phenomenon.</p>
+        <p>Born on 1st September 1896 in Calcutta, he first met his spiritual master <b>Srila Bhaktisiddhanta Saraswati Goswami</b> in 1922. In 1944, he launched <em>'Back to Godhead'</em>, an English fortnightly magazine now published in forty languages.</p>
+        <p>Over a span of twelve years, he authored more than 80 volumes of authoritative English translations and commentaries on India's most important religious classics — including the <b>Bhagavad-Gita As It Is</b> and the multi-volume <b>Srimad-Bhagavatam</b>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="timeline-section">
+  <div class="container">
+    <div class="section-head" style="justify-content:center;text-align:center"><h2 style="text-align:center">Life Timeline</h2></div>
+    <div class="timeline">
+      <div class="timeline-item"><div class="timeline-year">1896</div><div class="timeline-content"><h4>Birth in Calcutta</h4><p>Born as Abhay Charan De on 1st September 1896 in Calcutta, India.</p></div></div>
+      <div class="timeline-item"><div class="timeline-year">1922</div><div class="timeline-content"><h4>First Meeting</h4><p>Met his spiritual master Srila Bhaktisiddhanta Saraswati Goswami who instructed him to spread Krishna consciousness in the English language.</p></div></div>
+      <div class="timeline-item"><div class="timeline-year">1944</div><div class="timeline-content"><h4>Back to Godhead</h4><p>Started the magazine "Back to Godhead" single-handedly — writing, printing, and distributing it on his own.</p></div></div>
+      <div class="timeline-item"><div class="timeline-year">1959</div><div class="timeline-content"><h4>Took Sannyasa</h4><p>Renounced material life and accepted the sannyasa order to dedicate himself fully to spiritual mission.</p></div></div>
+      <div class="timeline-item"><div class="timeline-year">1965</div><div class="timeline-content"><h4>Voyage to America</h4><p>At the age of 70, embarked on a 40-day cargo voyage to America with only 40 rupees, suffering two heart attacks along the way.</p></div></div>
+      <div class="timeline-item"><div class="timeline-year">1966</div><div class="timeline-content"><h4>Founded ISKCON</h4><p>Established the International Society for Krishna Consciousness in New York — what began in a small storefront grew into a global movement.</p></div></div>
+      <div class="timeline-item"><div class="timeline-year">1977</div><div class="timeline-content"><h4>Mahasamadhi</h4><p>Left this world on 14th November 1977 in Vrindavan, leaving behind over 100 temples, millions of books, and a worldwide movement.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="teachings">
+  <div class="container">
+    <div class="teachings-head"><h2>Core Teachings</h2><p>Three pillars of devotional life as taught by Srila Prabhupada</p></div>
+    <div class="teachings-grid">
+      <div class="teach-card"><div class="num">01</div><h4>Chant Hare Krishna</h4><p>Chanting the mahamantra is the easiest and most effective spiritual practice for this age of Kali.</p></div>
+      <div class="teach-card"><div class="num">02</div><h4>Read the Bhagavad-Gita</h4><p>The Gita As It Is presents Krishna's eternal words without any speculative interpretation.</p></div>
+      <div class="teach-card"><div class="num">03</div><h4>Serve Krishna with Love</h4><p>Bhakti yoga — devotional service performed with love and faith — is the ultimate goal of life.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="books">
+  <div class="container">
+    <div class="books-head"><h2>Books &amp; Contributions</h2><p>Over 80 volumes of translations and commentaries published in 89 languages</p></div>
+    <div class="books-grid">
+      <div class="book-card"><div class="book-cover"></div><h4>Bhagavad-Gita As It Is</h4><p>The most-read translation worldwide</p></div>
+      <div class="book-card"><div class="book-cover" style="background:linear-gradient(135deg,#5a4080,#a85a8a)"></div><h4>Srimad-Bhagavatam</h4><p>30-volume commentary set</p></div>
+      <div class="book-card"><div class="book-cover" style="background:linear-gradient(135deg,#3a7a8a,#5d9aa0)"></div><h4>Sri Caitanya-Caritamrta</h4><p>Pastimes of Sri Caitanya</p></div>
+      <div class="book-card"><div class="book-cover" style="background:linear-gradient(135deg,#7a4a3a,#a87a5a)"></div><h4>The Nectar of Devotion</h4><p>Science of bhakti-yoga</p></div>
+    </div>
+  </div>
+</section>
+
+<div id="main-footer"></div>
+<script src="shared.js"></script>
+</body>
+</html>
