@@ -1375,3 +1375,8 @@ html.lenis, html.lenis body { height: auto; }
 .lenis [data-lenis-prevent] { overscroll-behavior: contain; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 .lenis.lenis-scrolling iframe { pointer-events: none; }
+
+/* Understand Gita page: slow keyword marquee */
+@keyframes ug-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.ug-marquee { animation: ug-marquee 38s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .ug-marquee { animation: none; } }
