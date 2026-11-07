@@ -112,9 +112,17 @@ export default function UnderstandGitaClient() {
 
         {/* KEYWORD MARQUEE */}
         <div aria-hidden className="overflow-hidden border-b border-vk-100 bg-white py-3">
-          <div className="ug-marquee flex w-max gap-10 whitespace-nowrap font-serif-display text-lg font-semibold text-vk-600">
-            {[...KEYWORDS, ...KEYWORDS].map((k, i) => (
-              <span key={i} className="inline-flex items-center gap-10">{k}<span className="text-[hsl(var(--gold))]">✦</span></span>
+          {/* Two identical groups, each wider than any screen and spaced with padding (not gap), so -50% lands exactly on the start: a seamless loop. */}
+          <div className="ug-marquee flex w-max font-serif-display text-lg font-semibold text-vk-600">
+            {[0, 1].map((g) => (
+              <div key={g} className="flex shrink-0 items-center whitespace-nowrap">
+                {[...KEYWORDS, ...KEYWORDS, ...KEYWORDS].map((k, i) => (
+                  <span key={i} className="inline-flex items-center pr-10">
+                    {k}
+                    <span className="pl-10 text-[hsl(var(--gold))]">✦</span>
+                  </span>
+                ))}
+              </div>
             ))}
           </div>
         </div>
