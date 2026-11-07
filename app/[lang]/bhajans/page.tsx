@@ -11,6 +11,8 @@ import GenreTiles, { type FacetTile } from "@/components/bhajans/browse/GenreTil
 import ContinueListening from "@/components/bhajans/browse/ContinueListening";
 import BhajanOfTheDay from "@/components/bhajans/browse/BhajanOfTheDay";
 import BrowseByStrip from "@/components/bhajans/taxonomy/BrowseByStrip";
+import CountUp from "@/components/bhajans/CountUp";
+import Reveal from "@/components/site/Reveal";
 import Results from "@/components/bhajans/browse/Results";
 import type { BhajanSummary, FacetCount } from "@/lib/bhajans";
 import { PlayQueueButton } from "@/components/bhajans/PlayButtons";
@@ -151,9 +153,9 @@ export default async function BhajansPage() {
                   )}
                   {meta.totals.bhajans > 0 && (
                     <p className="text-sm text-muted-foreground">
-                      <strong className="text-lg font-semibold text-ink">{meta.totals.bhajans}</strong> bhajans
+                      <CountUp value={meta.totals.bhajans} className="text-lg font-semibold text-ink" /> bhajans
                       <span className="mx-2 text-vk-200">·</span>
-                      <strong className="text-lg font-semibold text-ink">{meta.totals.withAudio}</strong> with audio
+                      <CountUp value={meta.totals.withAudio} className="text-lg font-semibold text-ink" /> with audio
                     </p>
                   )}
                 </div>
@@ -168,13 +170,13 @@ export default async function BhajansPage() {
             <QuickPicks items={picks} />
             <div className="vk-container pt-6"><BrowseByStrip /></div>
             {dayDoc && <BhajanOfTheDay doc={dayDoc} meta={meta} dateLabel={dayLabel} />}
-            <SpotShelf title="Featured" poster items={featured.items} showAll={{ featured: true }} />
-            <SpotShelf title="With audio" poster items={withAudio.items} showAll={{ hasAudio: true }} />
-            <SpotShelf title="Popular" poster items={popular.items} showAll={{ sort: "plays" }} />
+            <Reveal><SpotShelf title="Featured" poster items={featured.items} showAll={{ featured: true }} /></Reveal>
+            <Reveal><SpotShelf title="With audio" poster items={withAudio.items} showAll={{ hasAudio: true }} /></Reveal>
+            <Reveal><SpotShelf title="Popular" poster items={popular.items} showAll={{ sort: "plays" }} /></Reveal>
             {festivalShelves.map(({ f, list }) => (
-              <SpotShelf key={f.slug} title={f.label} items={list.items} showAll={{ festival: f.slug }} />
+              <Reveal key={f.slug}><SpotShelf title={f.label} items={list.items} showAll={{ festival: f.slug }} /></Reveal>
             ))}
-            <Acharyas portraits={portraits} />
+            <Reveal><Acharyas portraits={portraits} /></Reveal>
             <GenreTiles categories={buildTiles("category", live(meta.categories))} moods={buildTiles("mood", live(meta.moods))} festivals={buildTiles("festival", live(meta.festivals))} />
           </ShelvesGate>
 

@@ -8,6 +8,7 @@ import ReduxProvider from "@/components/ReduxProvider";
 import MetaPixel from "@/components/MetaPixel";
 import ThemeProvider from "@/components/ThemeProvider";
 import BottomNavSpace from "@/components/BottomNavSpace";
+import SmoothScroll from "@/components/SmoothScroll";
 import { siteKeywords, ORG_ALT_NAMES, TITLE_TEMPLATE, DEFAULT_OG_IMAGE } from "@/lib/seo";
 import { TEMPLE, DARSHAN_HOURS, MAPS_URL } from "@/lib/templeInfo";
 
@@ -226,6 +227,7 @@ export default function RootLayout({
         <ReduxProvider>
           <ThemeProvider>
             <AuthProvider>
+              <SmoothScroll />
               {children}
               <Toaster />
             </AuthProvider>
