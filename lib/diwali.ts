@@ -34,6 +34,17 @@ export const SEVAS: Seva[] = [
     ...base,
   },
   {
+    slug: "deep-daan-seva",
+    title: "Deep Daan Seva",
+    shortTitle: "Deep Daan",
+    image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793155977517-1793155976914-108deepskrishnayashodha1500x1000.webp",
+    tagline: "Light lamps for the Lord this Diwali",
+    description: "Sponsor ghee lamps offered to Sri Sri Radha Madan Mohan on Diwali, the festival of lights, and light your own path toward Krishna.",
+    tiers: tiers([1100, 2100, 3100, 5555, 9000, 11000]),
+    icon: "🪔",
+    ...base,
+  },
+  {
     slug: "gau-seva",
     title: "Gau Seva",
     shortTitle: "Gau Seva",
