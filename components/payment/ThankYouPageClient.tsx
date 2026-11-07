@@ -102,6 +102,26 @@ export default function ThankYouPageClient() {
   const [copied, setCopied] = useState(false);
   const [petals, setPetals] = useState<{ id: number; left: number; delay: number; duration: number; size: number }[]>([]);
 
+  // One short confetti burst (blue + gold) when the donor lands here; not repeated on refresh, skipped for reduced motion.
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    try {
+      const key = `hkm-confetti:${window.location.search}`;
+      if (sessionStorage.getItem(key)) return;
+      sessionStorage.setItem(key, "1");
+    } catch {}
+    let cancelled = false;
+    import("canvas-confetti").then(({ default: confetti }) => {
+      if (cancelled) return;
+      const colors = ["#F6C752", "#1d3fa8", "#7fa0ff", "#ffffff"];
+      confetti({ particleCount: 70, spread: 70, startVelocity: 38, origin: { x: 0.2, y: 0.7 }, colors, disableForReducedMotion: true });
+      confetti({ particleCount: 70, spread: 70, startVelocity: 38, origin: { x: 0.8, y: 0.7 }, colors, disableForReducedMotion: true });
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   // Falling flower petals — gentle, not distracting
   useEffect(() => {
     setPetals(
