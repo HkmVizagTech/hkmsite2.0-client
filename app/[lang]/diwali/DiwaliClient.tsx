@@ -15,11 +15,9 @@ import FestivalCheckoutModal from "@/components/festival/FestivalCheckoutModal";
 import StoryTimeline from "@/components/festival/StoryTimeline";
 import DiyaRow from "@/components/festival/DiyaRow";
 import { Mandala, OrnamentDivider } from "@/components/festival/FestivalDecor";
-import { BANK_DETAILS, BANNER_DESKTOP, BANNER_MOBILE, DAYS, DIWALI_DATE_ISO, DIWALI_DATE_LABEL, FAQS, IMPACTS, OG_IMAGE, PRIVILEGE_CONFIG, SEVAS, STRIP } from "@/lib/diwali";
+import { BANK_DETAILS, BANNER_DESKTOP, BANNER_MOBILE, DAYS, DIWALI_DATE_LABEL, FAQS, IMPACTS, OG_IMAGE, PRIVILEGE_CONFIG, SEVAS, STRIP } from "@/lib/diwali";
 
 const SLUG = "diwali";
-const istDate = (d: Date) => d.toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
-const dayDiff = (a: string, b: string) => Math.round((Date.parse(`${b}T00:00:00Z`) - Date.parse(`${a}T00:00:00Z`)) / 86_400_000);
 
 export default function DiwaliClient() {
   const t = useT();
@@ -28,13 +26,7 @@ export default function DiwaliClient() {
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [pastHero, setPastHero] = useState(false);
   const [hideBar, setHideBar] = useState(false);
-  const [daysLeft, setDaysLeft] = useState<number | null>(null);
   const scrolledRef = useRef(false);
-
-  // Days to Diwali, worked out after mount so the server and the first client render agree.
-  useEffect(() => {
-    setDaysLeft(dayDiff(istDate(new Date()), DIWALI_DATE_ISO));
-  }, []);
 
   // A ?seva= deep link (the pending-payment reminder) goes to that seva's card; everyone else lands on the offer-seva section.
   useEffect(() => {
@@ -79,17 +71,6 @@ export default function DiwaliClient() {
     window.setTimeout(() => setCopiedField(null), 1500);
   };
 
-  const countdown =
-    daysLeft === null
-      ? null
-      : daysLeft > 1
-        ? t("{n} days to Diwali", { n: daysLeft })
-        : daysLeft === 1
-          ? t("1 day to Diwali")
-          : daysLeft === 0
-            ? t("Diwali is today")
-            : null;
-
   const GOLD = { backgroundImage: "var(--gradient-gold)", WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" } as const;
 
   return (
@@ -113,11 +94,7 @@ export default function DiwaliClient() {
         <section className="relative isolate overflow-hidden bg-[radial-gradient(120%_100%_at_50%_0%,#fff3d6_0%,#fffaf0_55%,#ffffff_100%)]">
           <Mandala className="absolute -right-24 -top-10 -z-10 h-[360px] w-[360px] md:right-10 md:h-[440px] md:w-[440px]" />
           <div className="vk-container flex flex-col items-center py-10 text-center md:py-14">
-            <p className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-[hsl(var(--gold-deep))] md:text-xs">
-              {t("Dipavali")} · {t(DIWALI_DATE_LABEL)}
-              {countdown && <span className="rounded-full bg-gradient-gold px-2.5 py-0.5 text-[10px] tracking-wider text-ink">{countdown}</span>}
-            </p>
-            <p className="mt-4 max-w-2xl text-[15px] leading-relaxed text-muted-foreground md:text-lg md:leading-8">
+            <p className="max-w-2xl text-[15px] leading-relaxed text-muted-foreground md:text-lg md:leading-8">
               {t("The festival of lights is the lighting of lamps for the Lord. Offer a seva at Hare Krishna Vaikuntham, Gambheeram, with sankalpa taken in your name.")}
             </p>
             <DiyaRow count={7} className="mt-7" />
