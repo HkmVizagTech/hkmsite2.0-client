@@ -368,7 +368,7 @@ export default function AdminBanners() {
       ) : (
         <div className="space-y-3">
           {banners.map((banner, i) => (
-            <Card key={banner._id} className={!banner.active ? "opacity-50" : ""}>
+            <Card key={banner._id} className={!banner.active || scheduleState(banner).label === "Ended" ? "opacity-50" : ""}>
               <CardContent className="flex flex-col gap-3 p-4">
                 <div className="flex items-center gap-4">
                   <div className="relative h-16 w-28 shrink-0 overflow-hidden rounded-lg bg-muted">
