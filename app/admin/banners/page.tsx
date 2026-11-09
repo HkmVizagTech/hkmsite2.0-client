@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   GalleryHorizontal, Upload, Trash2, Eye, EyeOff, ArrowUp, ArrowDown,
-  Monitor, Smartphone, Loader2, Plus, X, Link2, Pencil, Check,
+  Monitor, Smartphone, Loader2, Plus, X, Link2, Pencil, Check, CalendarClock,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
@@ -27,6 +27,27 @@ interface Banner {
   linkUrl?: string;
   order: number;
   active: boolean;
+  startsAt?: string | null;
+  endsAt?: string | null;
+}
+
+// The schedule is entered and shown in India time (IST), whatever the browser's own time zone is.
+const IST_OFFSET = "+05:30";
+const toIsoIst = (local: string) => (local ? new Date(`${local}:00${IST_OFFSET}`).toISOString() : "");
+const toLocalIst = (iso?: string | null) => {
+  if (!iso) return "";
+  const parts = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).formatToParts(new Date(iso));
+  const g = (t: string) => parts.find((p) => p.type === t)?.value || "";
+  return `${g("year")}-${g("month")}-${g("day")}T${g("hour")}:${g("minute")}`;
+};
+const fmtIst = (iso?: string | null) =>
+  iso ? new Date(iso).toLocaleString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit", hour12: true }) : "";
+function scheduleState(b: Banner): { label: string; cls: string } {
+  if (!b.active) return { label: "Hidden", cls: "bg-muted text-muted-foreground" };
+  const now = Date.now();
+  if (b.startsAt && new Date(b.startsAt).getTime() > now) return { label: "Scheduled", cls: "bg-amber-100 text-amber-800" };
+  if (b.endsAt && new Date(b.endsAt).getTime() <= now) return { label: "Ended", cls: "bg-red-100 text-red-700" };
+  return { label: "Live", cls: "bg-green-100 text-green-700" };
 }
 
 export default function AdminBanners() {
@@ -35,6 +56,12 @@ export default function AdminBanners() {
   const [showForm, setShowForm] = useState(false);
   const [title, setTitle] = useState("");
   const [linkUrl, setLinkUrl] = useState("");
+  const [startsAt, setStartsAt] = useState("");
+  const [endsAt, setEndsAt] = useState("");
+  const [editingScheduleId, setEditingScheduleId] = useState<string | null>(null);
+  const [schedStart, setSchedStart] = useState("");
+  const [schedEnd, setSchedEnd] = useState("");
+  const [savingSchedule, setSavingSchedule] = useState(false);
   const [desktopFile, setDesktopFile] = useState<File | null>(null);
   const [mobileFile, setMobileFile] = useState<File | null>(null);
   const [desktopPreview, setDesktopPreview] = useState("");
@@ -65,6 +92,8 @@ export default function AdminBanners() {
   const resetForm = () => {
     setTitle("");
     setLinkUrl("");
+    setStartsAt("");
+    setEndsAt("");
     setDesktopFile(null);
     setMobileFile(null);
     setDesktopPreview("");
@@ -77,9 +106,15 @@ export default function AdminBanners() {
       toast({ title: "Both images required", description: "Please select a desktop and a mobile image.", variant: "destructive" });
       return;
     }
+    if (startsAt && endsAt && new Date(toIsoIst(endsAt)) <= new Date(toIsoIst(startsAt))) {
+      toast({ title: "Check the dates", description: "The end time must be after the start time.", variant: "destructive" });
+      return;
+    }
     setSubmitting(true);
     try {
       const fd = new FormData();
+      fd.append("startsAt", toIsoIst(startsAt));
+      fd.append("endsAt", toIsoIst(endsAt));
       fd.append("title", title || `Banner ${banners.length + 1}`);
       fd.append("order", String(banners.length));
       fd.append("linkUrl", linkUrl.trim());
@@ -89,7 +124,7 @@ export default function AdminBanners() {
       const res = await authFetch(`${API_URL}/hero-banners`, { method: "POST", body: fd });
       const json = await res.json();
       if (res.ok) {
-        toast({ title: "Banner uploaded", description: "Now live on the homepage hero." });
+        toast({ title: "Banner uploaded", description: startsAt ? "It will go live at the start time you set." : "Now live on the homepage hero." });
         resetForm();
         fetchBanners();
       } else {
@@ -135,6 +170,38 @@ export default function AdminBanners() {
       toast({ title: "Network error", description: e.message, variant: "destructive" });
     } finally {
       setSavingLink(false);
+    }
+  };
+
+  const startEditSchedule = (banner: Banner) => {
+    setEditingScheduleId(banner._id);
+    setSchedStart(toLocalIst(banner.startsAt));
+    setSchedEnd(toLocalIst(banner.endsAt));
+  };
+
+  const saveSchedule = async (bannerId: string) => {
+    if (schedStart && schedEnd && new Date(toIsoIst(schedEnd)) <= new Date(toIsoIst(schedStart))) {
+      toast({ title: "Check the dates", description: "The end time must be after the start time.", variant: "destructive" });
+      return;
+    }
+    setSavingSchedule(true);
+    try {
+      const fd = new FormData();
+      fd.append("startsAt", toIsoIst(schedStart));
+      fd.append("endsAt", toIsoIst(schedEnd));
+      const res = await authFetch(`${API_URL}/hero-banners/${bannerId}`, { method: "PUT", body: fd });
+      const json = await res.json().catch(() => ({}));
+      if (res.ok) {
+        setBanners((bs) => bs.map((b) => (b._id === bannerId ? { ...b, startsAt: json.banner?.startsAt ?? null, endsAt: json.banner?.endsAt ?? null } : b)));
+        setEditingScheduleId(null);
+        toast({ title: schedStart || schedEnd ? "Schedule saved" : "Schedule cleared" });
+      } else {
+        toast({ title: "Failed to save schedule", description: json.message, variant: "destructive" });
+      }
+    } catch (e: any) {
+      toast({ title: "Network error", description: e.message, variant: "destructive" });
+    } finally {
+      setSavingSchedule(false);
     }
   };
 
@@ -199,6 +266,23 @@ export default function AdminBanners() {
               />
               <p className="mt-1 text-xs text-muted-foreground">
                 Leave empty for a banner that just displays with no click-through. Use a path starting with / for pages on this site, or a full https:// link for elsewhere.
+              </p>
+            </div>
+
+            <div className="rounded-xl border border-border bg-muted/20 p-4">
+              <p className="flex items-center gap-1.5 text-sm font-semibold"><CalendarClock className="h-4 w-4 text-primary" /> Show this banner</p>
+              <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-muted-foreground">From (India time)</label>
+                  <Input type="datetime-local" value={startsAt} onChange={(e) => setStartsAt(e.target.value)} />
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-muted-foreground">Until (India time)</label>
+                  <Input type="datetime-local" value={endsAt} min={startsAt || undefined} onChange={(e) => setEndsAt(e.target.value)} />
+                </div>
+              </div>
+              <p className="mt-2 text-xs text-muted-foreground">
+                Leave both empty to show it right away with no end. Set only &quot;From&quot; to start later, or only &quot;Until&quot; to stop on a date. Changes can take up to 5 minutes to appear on the site.
               </p>
             </div>
 
@@ -294,8 +378,17 @@ export default function AdminBanners() {
                     <Image src={banner.mobileImage} alt={banner.title} fill sizes="60px" className="object-cover" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate font-medium">{banner.title}</p>
+                    <p className="flex items-center gap-2 font-medium">
+                      <span className="truncate">{banner.title}</span>
+                      <span className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-semibold ${scheduleState(banner).cls}`}>{scheduleState(banner).label}</span>
+                    </p>
                     <p className="text-xs text-muted-foreground">Position {i + 1} of {banners.length}</p>
+                    <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
+                      <CalendarClock className="h-3 w-3 shrink-0" />
+                      {banner.startsAt || banner.endsAt
+                        ? `${banner.startsAt ? `From ${fmtIst(banner.startsAt)}` : "From now"}${banner.endsAt ? ` · Until ${fmtIst(banner.endsAt)}` : " · No end date"}`
+                        : "Always on (no schedule)"}
+                    </p>
                     {banner.linkUrl ? (
                       <p className="mt-0.5 flex items-center gap-1 truncate text-xs text-primary">
                         <Link2 className="h-3 w-3 shrink-0" /> {banner.linkUrl}
@@ -305,6 +398,9 @@ export default function AdminBanners() {
                     )}
                   </div>
                   <div className="flex shrink-0 items-center gap-1">
+                    <Button size="sm" variant="ghost" onClick={() => startEditSchedule(banner)} className="h-8 w-8 p-0" title="Edit schedule">
+                      <CalendarClock className="h-4 w-4" />
+                    </Button>
                     <Button size="sm" variant="ghost" onClick={() => startEditLink(banner)} className="h-8 w-8 p-0" title="Edit link">
                       <Pencil className="h-4 w-4" />
                     </Button>
@@ -322,6 +418,27 @@ export default function AdminBanners() {
                     </Button>
                   </div>
                 </div>
+                {editingScheduleId === banner._id && (
+                  <div className="space-y-3 rounded-lg border border-border bg-muted/30 p-3">
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                      <div>
+                        <label className="mb-1 block text-xs font-medium text-muted-foreground">From (India time)</label>
+                        <Input type="datetime-local" value={schedStart} onChange={(e) => setSchedStart(e.target.value)} className="h-9 text-sm" />
+                      </div>
+                      <div>
+                        <label className="mb-1 block text-xs font-medium text-muted-foreground">Until (India time)</label>
+                        <Input type="datetime-local" value={schedEnd} min={schedStart || undefined} onChange={(e) => setSchedEnd(e.target.value)} className="h-9 text-sm" />
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button size="sm" onClick={() => saveSchedule(banner._id)} disabled={savingSchedule} className="h-8 px-3">
+                        {savingSchedule ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" /> : <Check className="mr-1.5 h-3.5 w-3.5" />} Save schedule
+                      </Button>
+                      <Button size="sm" variant="ghost" onClick={() => { setSchedStart(""); setSchedEnd(""); }} className="h-8 px-3 text-xs">Clear dates</Button>
+                      <Button size="sm" variant="ghost" onClick={() => setEditingScheduleId(null)} className="ml-auto h-8 w-8 p-0"><X className="h-3.5 w-3.5" /></Button>
+                    </div>
+                  </div>
+                )}
                 {editingLinkId === banner._id && (
                   <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/30 p-2.5">
                     <Link2 className="h-4 w-4 shrink-0 text-muted-foreground" />
