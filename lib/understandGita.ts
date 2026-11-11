@@ -41,7 +41,7 @@ export const FEATURES: Feature[] = [
   { icon: "youtube", title: "Live and recorded videos", text: "Missed a session? Watch the recording on the YouTube channel whenever suits you." },
   { icon: "book", title: "Study material provided", text: "Online study material is shared with you, so you can revise at your own pace." },
   { icon: "quiz", title: "Test your knowledge", text: "Take the online quiz to check what you have understood and what to revisit." },
-  { icon: "languages", title: "Multilingual classes", text: "Learn in the language you are most comfortable with." },
+  { icon: "languages", title: "English and Telugu classes", text: "Choose the batch in the language you are most comfortable with: English or Telugu." },
   { icon: "users", title: "Separate batches", text: "Different batches for adults and kids, so everyone learns at the right level." },
   { icon: "clock", title: "Indian Standard Time", text: "All classes run on IST, with timings that suit working people, students and homemakers." },
 ];
@@ -145,7 +145,7 @@ export const AUDIENCES = [
   },
 ];
 
-export const LANGUAGES = ["English", "Telugu", "Hindi"];
+export const LANGUAGES = ["English", "Telugu"];
 export const TIMES = ["Morning (5 AM to 9 AM)", "Afternoon (12 PM to 4 PM)", "Evening (5 PM to 8 PM)", "Night (8 PM to 10 PM)"];
 
 export const STEPS = [
@@ -161,5 +161,5 @@ export const FAQS = [
   { q: "What if I miss a class?", a: "Live and recorded videos are available on the YouTube channel, so you can catch up whenever you like." },
   { q: "Can my children join?", a: "Yes. There are separate batches for kids, and for adults and youth." },
   { q: "Do I have to buy a book?", a: "No. You receive online study material. If you would like a hard copy of Bhagavad-gita As It Is, you can get one, but it is entirely optional." },
-  { q: "Which languages are the classes in?", a: "Classes are multilingual. Message us on WhatsApp and we will tell you the languages and timings of the batches that are open." },
+  { q: "Which languages are the classes in?", a: "Classes are held in English and Telugu. Choose your language when you register, and we will add you to that batch." },
 ];

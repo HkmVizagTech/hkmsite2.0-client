@@ -39,6 +39,10 @@ export default function RegisterForm({ tone = "light" }: { tone?: "light" | "dar
     const f = new FormData(e.currentTarget);
     const body = Object.fromEntries(f.entries()) as Record<string, string>;
     body.batch = batch;
+    if (!body.language) {
+      setError("Please choose the class language: English or Telugu.");
+      return;
+    }
     setBusy(true);
     try {
       const res = await fetch(`${API_URL}/gita-course/register`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
@@ -114,9 +118,9 @@ export default function RegisterForm({ tone = "light" }: { tone?: "light" | "dar
           <input id="g-city" name="city" autoComplete="address-level2" className={field} placeholder="Visakhapatnam" />
         </div>
         <div>
-          <label htmlFor="g-lang" className={label}>Preferred language</label>
+          <label htmlFor="g-lang" className={label}>Class language *</label>
           <select id="g-lang" name="language" defaultValue="" className={field}>
-            <option value="">Select a language</option>
+            <option value="">English or Telugu</option>
             {LANGUAGES.map((l) => <option key={l} value={l}>{l}</option>)}
           </select>
         </div>
