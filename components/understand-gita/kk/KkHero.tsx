@@ -48,7 +48,16 @@ export default function KkHero() {
     } catch {}
   }, []);
   const onReady = useCallback(() => setReady3d(true), []);
-  const use3d = webgl && !reduce;
+  // 3D on larger screens only. Phones get the painted layers, which load faster and stay sharp.
+  const [wide, setWide] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const on = () => setWide(mq.matches);
+    on();
+    mq.addEventListener("change", on);
+    return () => mq.removeEventListener("change", on);
+  }, []);
+  const use3d = webgl && !reduce && wide;
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const skyY = useTransform(scrollYProgress, [0, 1], ["0%", "12%"]);
   const armyY = useTransform(scrollYProgress, [0, 1], ["0%", "7%"]);
@@ -66,7 +75,9 @@ export default function KkHero() {
       <div className={`transition-opacity duration-700 ${ready3d ? "pointer-events-none opacity-0" : "opacity-100"}`}>
       {/* sky */}
       <motion.div style={reduce ? undefined : { y: skyY }} className="absolute inset-0 -z-30 scale-105">
-        <div className={`absolute inset-0 ${reduce ? "" : "kk-push"}`}><Image src={KK.sky} alt="" fill priority sizes="100vw" className="object-cover object-[70%_70%] [filter:saturate(1.15)_contrast(1.05)]" /></div>
+        <div className={`absolute inset-0 hidden md:block ${reduce ? "" : "kk-push"}`}><Image src={KK.sky} alt="" fill priority sizes="100vw" className="object-cover object-[70%_70%] [filter:saturate(1.15)_contrast(1.05)]" /></div>
+        {/* phones: the portrait battlefield (armies on both sides, sun on the horizon, open ground for the chariot) */}
+        <div className={`absolute inset-0 md:hidden ${reduce ? "" : "kk-push"}`}><Image src={KK.fieldPortrait} alt="" fill priority sizes="100vw" className="object-cover object-[50%_62%]" /></div>
       </motion.div>
       {/* sun glow breathing near the horizon */}
       <div aria-hidden className="kk-sun absolute bottom-[14%] right-[18%] -z-20 h-[46vmin] w-[46vmin] rounded-full bg-[radial-gradient(circle,rgba(255,214,120,.55),rgba(255,180,80,.18)_40%,transparent_70%)]" />
@@ -77,7 +88,7 @@ export default function KkHero() {
 
       <div className={`transition-opacity duration-700 ${ready3d ? "pointer-events-none opacity-0" : "opacity-100"}`}>
       {/* armies on the horizon */}
-      <motion.div style={reduce ? undefined : { y: armyY }} className="absolute inset-x-0 bottom-0 -z-10">
+      <motion.div style={reduce ? undefined : { y: armyY }} className="absolute inset-x-0 bottom-0 -z-10 hidden md:block">
         <div className="relative left-1/2 w-[190vw] -translate-x-1/2 md:w-full">
           <Image src={KK.armies} alt="" width={2172} height={724} sizes="(min-width:768px) 100vw, 190vw" priority className="h-auto w-full" />
         </div>
@@ -90,7 +101,7 @@ export default function KkHero() {
       {!ready3d && <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-28 bg-gradient-to-t from-[#06080F] to-transparent" />}
 
       {/* the chariot */}
-      <div className={`absolute bottom-[3%] left-[3vw] z-[3] w-[94vw] transition-opacity duration-700 md:bottom-[4%] md:left-[46%] md:w-[min(46vw,760px)] ${ready3d ? "pointer-events-none opacity-0" : "opacity-100"}`}>
+      <div className={`absolute bottom-[4%] left-[6vw] z-[3] w-[88vw] transition-opacity duration-700 md:bottom-[4%] md:left-[46%] md:w-[min(46vw,760px)] ${ready3d ? "pointer-events-none opacity-0" : "opacity-100"}`}>
       <motion.div style={reduce ? undefined : { x: chariotX }}>
         <motion.div
           initial={reduce ? false : { x: "-70vw", opacity: 0 }}

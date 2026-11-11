@@ -158,6 +158,9 @@ export const HIDE_BOTTOM_NAV_PREFIXES = [
   "/radhashtami",
   "/chaturmas",
   "/special-occasion",
+  // Free Gita course page: full-screen story with its own Register buttons
+  "/understand-gita",
+  "/te/understand-gita",
   "/subhojanam",
   "/janmashtami",
   "/janmashtami3",
