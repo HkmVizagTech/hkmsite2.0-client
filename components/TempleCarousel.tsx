@@ -199,6 +199,7 @@ const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true }: TempleCa
                     }}
                     className={`relative aspect-[962/1635] overflow-hidden bg-vk-900 md:aspect-[1920/730] ${slide.linkUrl || !isActive ? "cursor-pointer" : ""}`}
                   >
+                    <div className="absolute inset-0">
                     <SlidePicture
                       mobileSrc={mobileBroken ? FALLBACK_IMG_MOBILE : slide.mobileSrc}
                       desktopSrc={desktopBroken ? FALLBACK_IMG : slide.src}
@@ -206,6 +207,7 @@ const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true }: TempleCa
                       first={i === 0}
                       onError={() => setImgErrors((prev) => ({ ...prev, [slide.mobileSrc]: true, [slide.src]: true }))}
                     />
+                    </div>
                   </div>
                 </div>
               );
@@ -220,7 +222,7 @@ const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true }: TempleCa
               type="button"
               onClick={scrollPrev}
               aria-label={t("Previous slide")}
-              className="absolute left-3 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-vk-800 shadow-lg backdrop-blur transition hover:bg-white md:flex lg:left-6"
+              className="absolute left-3 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-vk-800 ring-1 ring-black/5 transition hover:bg-white md:flex lg:left-6"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
@@ -228,7 +230,7 @@ const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true }: TempleCa
               type="button"
               onClick={scrollNext}
               aria-label={t("Next slide")}
-              className="absolute right-3 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-vk-800 shadow-lg backdrop-blur transition hover:bg-white md:flex lg:right-6"
+              className="absolute right-3 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-vk-800 ring-1 ring-black/5 transition hover:bg-white md:flex lg:right-6"
             >
               <ChevronRight className="h-5 w-5" />
             </button>
@@ -236,7 +238,10 @@ const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true }: TempleCa
         )}
       </div>
 
-      {/* Dots */}
+      {/* Bottom scrim keeps the progress dots readable on any banner */}
+      {slides.length > 1 && <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/35 to-transparent md:h-20" />}
+
+      {/* Progress dots: the active one fills over the 6s autoplay and resets on every slide change */}
       {slides.length > 1 && (
         <div className="absolute inset-x-0 bottom-3 z-10 flex items-center justify-center gap-1.5 md:bottom-5" role="tablist" aria-label={t("Choose slide")}>
           {slides.map((s, i) => (
@@ -247,10 +252,16 @@ const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true }: TempleCa
               aria-selected={i === selected}
               aria-label={t("Go to slide {n}: {title}", { n: i + 1, title: t(s.title) })}
               onClick={() => emblaApi?.scrollTo(i)}
-              className={`h-2 rounded-full transition-all duration-300 ${
-                i === selected ? "w-7 bg-white" : "w-2 bg-white/50 hover:bg-white/80"
-              }`}
-            />
+              className={`relative h-1.5 overflow-hidden rounded-full bg-white/45 transition-all duration-300 hover:bg-white/70 ${i === selected ? "w-10" : "w-3"}`}
+            >
+              {i === selected && (
+                <span
+                  key={`fill-${selected}-${paused}`}
+                  className="hero-progress absolute inset-y-0 left-0 rounded-full bg-white"
+                  style={{ animationPlayState: paused ? "paused" : "running" }}
+                />
+              )}
+            </button>
           ))}
         </div>
       )}
