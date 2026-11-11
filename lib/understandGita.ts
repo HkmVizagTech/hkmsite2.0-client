@@ -105,7 +105,8 @@ export const CHAPTER_IMAGES: (string | null)[] = [
   "/assets/gita/ch07.webp",
   "/assets/gita/ch08.webp",
   "/assets/gita/ch09.webp",
-  ...Array(9).fill(null),
+  "/assets/gita/ch10.webp",
+  ...Array(8).fill(null),
 ];
 export const CHAPTER_PLACEHOLDERS = ["/assets/gita/kk-scene-field.webp", "/assets/gita/kk-moment.webp"];
 
