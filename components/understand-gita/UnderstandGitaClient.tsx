@@ -12,6 +12,8 @@ import FaqSection from "@/components/sqft-campaign/FaqSection";
 import ChapterTimeline from "./ChapterTimeline";
 import SpotlightCard from "./SpotlightCard";
 import RegisterForm from "./RegisterForm";
+import ChapterWheel from "./ChapterWheel";
+import TiltCard from "./TiltCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AUDIENCES, ENROL_PHONE_LABEL, ENROL_URL, FAQS, FEATURES, STATS, STEPS, VERSE } from "@/lib/understandGita";
 
@@ -76,7 +78,7 @@ export default function UnderstandGitaClient() {
             </div>
 
             <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: [0.22, 0.8, 0.3, 1] }} className="mx-auto w-full max-w-md">
-              <div className="relative rounded-[2rem] border border-white/20 bg-white/10 p-3 backdrop-blur-sm">
+              <TiltCard className="relative rounded-[2rem] border border-white/20 bg-white/10 p-3 backdrop-blur-sm">
                 <div className="relative aspect-[4/5] overflow-hidden rounded-[1.5rem]">
                   <Image src={HERO_IMAGE} alt="Bhagavad-gita As It Is being offered at the temple" fill priority unoptimized sizes="(min-width:1024px) 420px, 90vw" className="object-cover object-[50%_42%]" />
                   <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-vk-900/90 via-vk-900/10 to-transparent" />
@@ -91,7 +93,7 @@ export default function UnderstandGitaClient() {
                     <span key={a} className="rounded-xl bg-white/10 py-2">{a}</span>
                   ))}
                 </div>
-              </div>
+              </TiltCard>
             </motion.div>
           </div>
         </section>
@@ -163,6 +165,17 @@ export default function UnderstandGitaClient() {
             <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-white/90">&ldquo;{VERSE.meaning}&rdquo;</p>
             <p className="mt-3 text-sm font-semibold text-white/60">{VERSE.ref}</p>
           </Reveal>
+        </section>
+
+        {/* THE WHEEL: 18 spokes, one per chapter (3D when available) */}
+        <section id="wheel" className="relative isolate scroll-mt-16 overflow-hidden bg-vk-900 py-14 text-white md:py-24">
+          <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(60%_70%_at_30%_50%,rgba(47,91,211,.35),transparent_70%),radial-gradient(40%_50%_at_85%_20%,rgba(246,199,82,.14),transparent_70%)]" />
+          <div className="vk-container">
+            <Reveal>
+              <SectionHeading align="center" light eyebrow="The Wheel of the Gita" title="18 spokes, 18 chapters" subtitle="The chariot wheel at Kurukshetra, turning through the whole Gita. Explore each chapter." />
+            </Reveal>
+            <ChapterWheel />
+          </div>
         </section>
 
         {/* CHAPTERS */}
