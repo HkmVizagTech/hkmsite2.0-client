@@ -77,6 +77,7 @@ export default function AdminPreachers() {
   const [to, setTo] = useState("");
   const [rows, setRows] = useState<Row[]>([]);
   const [totals, setTotals] = useState({ count: 0, total: 0 });
+  const [today, setToday] = useState({ count: 0, total: 0 });
   const [list, setList] = useState<Devotee[]>([]);
   const [pick, setPick] = useState("");
   const [detail, setDetail] = useState<Detail | null>(null);
@@ -111,6 +112,7 @@ export default function AdminPreachers() {
       if (res.ok) {
         setRows(data.preachers || []);
         setTotals(data.totals || { count: 0, total: 0 });
+        setToday(data.today || { count: 0, total: 0 });
         setList(data.devotees || []);
         setDetail(data.donations || null);
       } else toast({ title: "Could not load", description: data.message, variant: "destructive" });
@@ -224,14 +226,22 @@ export default function AdminPreachers() {
             </CardContent>
           </Card>
 
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
             {[
+              { label: "Today's amount", value: inr(today.total), icon: IndianRupee, sub: "Completed, India time", hl: true },
+              { label: "Today's donations", value: String(today.count), icon: Users, sub: pick ? "This preacher" : "All preachers", hl: true },
               { label: pick ? "Amount" : "Total amount", value: inr(pick ? chosen?.total || 0 : totals.total), icon: IndianRupee },
               { label: pick ? "Donations" : "Total donations", value: String(pick ? chosen?.count || 0 : totals.count), icon: Users },
               { label: pick ? "Unique donors" : "Active preachers", value: String(pick ? chosen?.donors || 0 : rows.length), icon: UserCheck },
               { label: "Average gift", value: inr(pick ? (chosen?.count ? chosen.total / chosen.count : 0) : totals.count ? totals.total / totals.count : 0), icon: IndianRupee },
             ].map((s) => (
-              <Card key={s.label}><CardContent className="p-4"><p className="text-xs text-muted-foreground">{s.label}</p><p className="mt-1 text-2xl font-bold">{s.value}</p></CardContent></Card>
+              <Card key={s.label} className={"hl" in s && s.hl ? "border-primary/30 bg-primary/5" : ""}>
+                <CardContent className="p-4">
+                  <p className="text-xs text-muted-foreground">{s.label}</p>
+                  <p className="mt-1 text-2xl font-bold">{s.value}</p>
+                  {"sub" in s && s.sub && <p className="text-[11px] text-muted-foreground">{s.sub}</p>}
+                </CardContent>
+              </Card>
             ))}
           </div>
 
