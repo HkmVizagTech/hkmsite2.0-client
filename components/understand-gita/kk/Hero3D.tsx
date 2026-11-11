@@ -56,7 +56,7 @@ export default function Hero3D({ go, onReady }: { go: boolean; onReady: () => vo
       return m;
     };
 
-    let sky: THREE.Mesh, armies: THREE.Mesh, chariot: THREE.Mesh, sun: THREE.Sprite, ground: THREE.Mesh;
+    let sky: THREE.Mesh, armies: THREE.Mesh, chariot: THREE.Mesh, sun: THREE.Sprite, ground: THREE.Mesh, shadow: THREE.Sprite, plume: THREE.Sprite;
     const hazes: { s: THREE.Sprite; speed: number }[] = [];
     let embers: THREE.Points;
     let emberVel: Float32Array;
@@ -84,15 +84,15 @@ export default function Hero3D({ go, onReady }: { go: boolean; onReady: () => vo
       if (armies) {
         const vh = visH(D.armies), vw = vh * camera.aspect;
         if (portrait) {
-          // phones: a wide battlefield with its horizon about 58% down the screen, earth filling everything below it
-          const aw = vw * 3.4, ah = aw / armyAR;
-          const yc = -0.08 * vh + 0.1 * ah;
+          // phones: like desktop, both armies stand on the horizon on either side of the chariot, earth below them
+          const aw = vw * 1.55, ah = aw / armyAR;
+          const yc = -vh / 2 + ah / 2 + vh * 0.075;
           armies.scale.set(aw, ah, 1);
           armies.position.set(0, yc, -D.armies);
-          const top = yc - ah * 0.3, bottom = -vh / 2 - vh * 0.1;
+          const top = yc - ah * 0.36, bottom = -vh / 2 - vh * 0.1;
           ground.visible = true;
           ground.scale.set(vw * 1.6, top - bottom, 1);
-          ground.position.set(0, (top + bottom) / 2, -D.armies - 0.2);
+          ground.position.set(0, (top + bottom) / 2, -D.armies + 0.1);
         } else {
           const aw = vw * 1.15, ah = aw / armyAR;
           armies.scale.set(aw, ah, 1);
@@ -102,11 +102,11 @@ export default function Hero3D({ go, onReady }: { go: boolean; onReady: () => vo
       }
       if (chariot) {
         const vh = visH(D.chariot), vw = vh * camera.aspect;
-        chariotW = portrait ? vw * 0.94 : Math.min(vw * 0.46, vh * 1.25);
+        chariotW = portrait ? vw * 0.82 : Math.min(vw * 0.46, vh * 1.25);
         const ch = chariotW / chariotAR;
         chariot.scale.set(chariotW, ch, 1);
-        chariotTargetX = portrait ? 0 : -vw / 2 + vw * 0.46 + chariotW / 2;
-        chariotBaseY = -vh / 2 + ch / 2 + vh * (portrait ? 0.09 : 0.045);
+        chariotTargetX = portrait ? vw * 0.04 : -vw / 2 + vw * 0.46 + chariotW / 2;
+        chariotBaseY = -vh / 2 + ch / 2 + vh * (portrait ? 0.06 : 0.045);
         startX = -vw / 2 - chariotW;
         if (entranceT < 0) chariot.position.set(startX, chariotBaseY, -D.chariot);
       }
@@ -134,14 +134,15 @@ export default function Hero3D({ go, onReady }: { go: boolean; onReady: () => vo
         gc.width = 4; gc.height = 256;
         const gg = gc.getContext("2d")!;
         const gr = gg.createLinearGradient(0, 0, 0, 256);
-        gr.addColorStop(0, "#9b7a4e");
-        gr.addColorStop(0.35, "#6e5434");
-        gr.addColorStop(1, "#1a140e");
+        gr.addColorStop(0, "rgba(74,58,40,0)");
+        gr.addColorStop(0.12, "rgba(74,58,40,1)");
+        gr.addColorStop(0.5, "#3a2c1f");
+        gr.addColorStop(1, "#140f0a");
         gg.fillStyle = gr;
         gg.fillRect(0, 0, 4, 256);
         const gt = new THREE.CanvasTexture(gc);
         gt.colorSpace = THREE.SRGBColorSpace;
-        ground = plane(gt);
+        ground = plane(gt, { transparent: true });
         ground.renderOrder = 1;
         ground.visible = false;
         armies = plane(tArmy, { transparent: true });
@@ -153,6 +154,12 @@ export default function Hero3D({ go, onReady }: { go: boolean; onReady: () => vo
           scene.add(s);
           hazes.push({ s, speed: 0.15 + Math.random() * 0.25 });
         }
+        shadow = new THREE.Sprite(new THREE.SpriteMaterial({ map: softTex("rgba(10,6,4,0.75)", "rgba(10,6,4,0)"), transparent: true, depthWrite: false }));
+        shadow.renderOrder = 4;
+        scene.add(shadow);
+        plume = new THREE.Sprite(new THREE.SpriteMaterial({ map: softTex("rgba(255,215,160,0.55)", "rgba(255,215,160,0)"), transparent: true, depthWrite: false }));
+        plume.renderOrder = 4;
+        scene.add(plume);
         chariot = plane(tChariot, { transparent: true });
         chariot.renderOrder = 5;
 
@@ -223,6 +230,11 @@ export default function Hero3D({ go, onReady }: { go: boolean; onReady: () => vo
         }
         chariot.position.x = x;
         chariot.position.y = chariotBaseY + Math.abs(Math.sin(t * 7)) * chariotW * 0.006;
+        const ch = chariotW / chariotAR;
+        shadow.position.set(x + chariotW * 0.02, chariotBaseY - ch * 0.44, -D.chariot - 0.05);
+        shadow.scale.set(chariotW * 1.05, ch * 0.16, 1);
+        plume.position.set(x - chariotW * 0.42, chariotBaseY - ch * 0.3, -D.chariot - 0.1);
+        plume.scale.set(chariotW * (0.45 + Math.sin(t * 5) * 0.04), ch * 0.35, 1);
       }
       if (sun) (sun.material as THREE.SpriteMaterial).opacity = 0.75 + Math.sin(t * 0.8) * 0.2;
       hazes.forEach(({ s, speed }) => {
