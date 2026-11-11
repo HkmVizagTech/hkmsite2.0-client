@@ -154,7 +154,7 @@ export default function FestivalSevaGrid({
               </div>
               <div className="relative z-20 flex items-center gap-3 px-5 pt-3">
                 <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full border text-2xl ${theme.icon}`} aria-hidden>
-                  {seva.icon}
+                  {seva.iconNode ?? seva.icon}
                 </span>
                 <div>
                   <h3 className={`text-xl font-bold leading-tight md:text-2xl ${theme.title}`}>{t(seva.title)}</h3>
@@ -162,7 +162,7 @@ export default function FestivalSevaGrid({
                 </div>
               </div>
               <div className="relative z-20 flex flex-1 flex-col px-5 pb-5 pt-3">
-                <p className={`text-[13.5px] leading-relaxed ${theme.body}`}>{t(seva.description)}</p>
+                {seva.description && <p className={`text-[13.5px] leading-relaxed ${theme.body}`}>{t(seva.description)}</p>}
                 <div className="mt-auto grid grid-cols-3 gap-2 pt-4">
                   {seva.tiers.map((tier) => (
                     <button
@@ -222,7 +222,7 @@ export default function FestivalSevaGrid({
             {!vk && (
               <div className="absolute bottom-3 left-4 right-4 flex items-center gap-2">
                 <span className="text-2xl drop-shadow" aria-hidden>
-                  {seva.icon}
+                  {seva.iconNode ?? seva.icon}
                 </span>
                 <h3 className="text-lg font-bold text-white drop-shadow-md md:text-xl">{t(seva.title)}</h3>
               </div>
@@ -233,7 +233,7 @@ export default function FestivalSevaGrid({
             <div className="px-5 pt-4 text-center">
               <h3 className="font-heading text-[1.35rem] font-extrabold leading-tight text-vk-800">
                 <span className="mr-1.5 align-middle text-xl" aria-hidden>
-                  {seva.icon}
+                  {seva.iconNode ?? seva.icon}
                 </span>
                 {t(seva.title)}
               </h3>
@@ -242,7 +242,7 @@ export default function FestivalSevaGrid({
           )}
 
           <div className="flex flex-1 flex-col p-4 sm:p-5">
-            <p className={`min-h-[40px] text-[13px] leading-relaxed md:text-sm ${dark ? "text-white/70" : vk ? "text-center text-ink/70" : "text-muted-foreground"}`}>{t(seva.description)}</p>
+            {seva.description && <p className={`min-h-[40px] text-[13px] leading-relaxed md:text-sm ${dark ? "text-white/70" : vk ? "text-center text-ink/70" : "text-muted-foreground"}`}>{t(seva.description)}</p>}
             <div className={`space-y-2.5 ${vk ? "mt-auto pt-4" : "mt-4"}`}>
               <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
                 {seva.tiers.map((tier) => (

@@ -9,12 +9,16 @@ import SectionHeading from "@/components/site/SectionHeading";
 import Reveal from "@/components/site/Reveal";
 import CountUp from "@/components/bhajans/CountUp";
 import LifeJourney from "./LifeJourney";
+import { KalashIcon, RicePlateIcon } from "./SevaIcons";
 import PhonePeUpiCard from "@/components/PhonePeUpiCard";
 import { DiwaliFaq } from "@/components/festival/DiwaliSections";
 import OtherDonationsCarousel from "@/components/pitru-paksha/OtherDonationsCarousel";
 import FestivalSevaGrid, { type SevaSelection } from "@/components/festival/FestivalSevaGrid";
 import FestivalCheckoutModal from "@/components/festival/FestivalCheckoutModal";
 import { BANK_DETAILS, FAQS, IMPACTS, PRABHUPADA_PORTRAIT, QUOTES, SEVAS, SP_BANNER_MOBILE, SP_BANNER_WIDE, SP_DATE_LABEL, SP_SLUG, STATS } from "@/lib/srilaPrabhupada";
+
+const SEVA_ICONS: Record<string, React.ReactNode> = { "abhisheka-seva": <KalashIcon className="h-9 w-9" />, "annadana-seva": <RicePlateIcon className="h-9 w-9" /> };
+const SEVA_CARDS = SEVAS.map((s) => ({ ...s, description: "", iconNode: SEVA_ICONS[s.slug] }));
 
 const ease = [0.22, 0.8, 0.3, 1] as const;
 const GOLD_TEXT = "bg-[linear-gradient(180deg,#FFF1C9_0%,#F6C752_50%,#C98B1E_100%)] bg-clip-text text-transparent";
@@ -133,7 +137,7 @@ export default function SrilaPrabhupadaClient() {
             <Reveal>
               <SectionHeading align="center" eyebrow="Offer Your Seva" title="Sevas for Srila Prabhupada" />
             </Reveal>
-            <FestivalSevaGrid featuredStyle="midnight" featuredBadge={false} featuredSlugs={SEVAS.map((x) => x.slug)} sevas={SEVAS} impacts={IMPACTS} highlightedSlug={null} onSelect={setSelected} />
+            <FestivalSevaGrid featuredStyle="midnight" featuredBadge={false} featuredSlugs={SEVAS.map((x) => x.slug)} sevas={SEVA_CARDS} impacts={IMPACTS} highlightedSlug={null} onSelect={setSelected} />
             <p className="mt-8 text-center text-xs text-muted-foreground">Minimum donation Rs. 100 · Annadana Seva is eligible for 80G · Secured by Razorpay · Donations go to Hare Krishna Movement India, Visakhapatnam</p>
           </div>
         </section>

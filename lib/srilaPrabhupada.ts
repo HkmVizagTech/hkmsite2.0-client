@@ -21,9 +21,9 @@ export const SEVAS: Seva[] = [
     shortTitle: "Abhisheka",
     // The full portrait (head to grass) over a soft blurred backdrop, so the wide card never crops his face.
     image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/srila-prabhupada/abhisheka-card.webp",
-    tagline: "Bathe Srila Prabhupada's murti in loving offering",
+    tagline: "Pañcāmṛta abhiṣekam for the Founder-Ācārya",
     description:
-      "Sponsor the milk, curd, honey, fruit juices and flowers for the abhishekam of Srila Prabhupada on his disappearance day.",
+      "As the Hari-bhakti-vilāsa prescribes, the murti is bathed in pañcāmṛta (milk, yogurt, ghee, honey and sugar), then fragrant water and flowers. Sponsor this abhishekam of Srila Prabhupada on his disappearance day.",
     tiers: tiers([1100, 2100, 3100, 5100, 11000]),
     icon: "🥛",
     ...base,
