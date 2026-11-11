@@ -18,16 +18,21 @@ export default function LifeJourney() {
   const refs = useRef<(HTMLLIElement | null)[]>([]);
 
   useEffect(() => {
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) setActive(Number((e.target as HTMLElement).dataset.i));
-        });
-      },
-      { rootMargin: "-45% 0px -45% 0px" }
-    );
-    refs.current.forEach((el) => el && io.observe(el));
-    return () => io.disconnect();
+    // The active milestone is the last one whose top has passed the middle of the screen, so the year is right even
+    // when the page is opened or reloaded below the timeline.
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const mid = window.innerHeight / 2;
+      let i = 0;
+      refs.current.forEach((el, k) => { if (el && el.getBoundingClientRect().top < mid) i = k; });
+      setActive(i);
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => { window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); if (raf) cancelAnimationFrame(raf); };
   }, []);
 
   const m = LIFE[active];

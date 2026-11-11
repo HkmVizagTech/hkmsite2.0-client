@@ -157,7 +157,9 @@ export default function SrilaPrabhupadaClient() {
         {/* ══ HIS LIFE ══ */}
         <LifeJourney />
 
-        <PhonePeUpiCard campaign="Srila Prabhupada Disappearance Day" />
+        <div className="bg-white py-10 md:py-14">
+          <PhonePeUpiCard campaign="Srila Prabhupada Disappearance Day" />
+        </div>
 
         {/* ══ FINALE + BANK ═════════════════════════════════════════════ */}
         <section id="finale" className="relative isolate overflow-hidden bg-[#0A1233] py-16 text-white md:py-24">
