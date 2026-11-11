@@ -51,8 +51,8 @@ export const srilaPrabhupada: Record<string, string> = {
   // His life
   "A life of pure devotion": "శుద్ధ భక్తితో నిండిన జీవితం",
   "From Calcutta to the whole world": "కలకత్తా నుండి ప్రపంచమంతటికీ",
-  "How one devotee, at the age of seventy, gave Krishna consciousness to every continent.":
-    "డెబ్బై ఏళ్ల వయసులో ఒక భక్తుడు ప్రతి ఖండానికీ కృష్ణ చైతన్యాన్ని ఎలా అందించారో చూడండి.",
+  "How a pure devotee, at the age of seventy, gave Krishna consciousness to every continent.":
+    "డెబ్బై ఏళ్ల వయసులో ఒక శుద్ధ భక్తుడు ప్రతి ఖండానికీ కృష్ణ చైతన్యాన్ని ఎలా అందించారో చూడండి.",
   "Appearance in Calcutta": "కలకత్తాలో ఆవిర్భావం",
   "Born Abhay Charan De on 1 September 1896, the day after Janmashtami, in a devout Vaishnava family.":
     "1 సెప్టెంబర్ 1896న, జన్మాష్టమి మరునాడు, ఒక భక్తిపరులైన వైష్ణవ కుటుంబంలో అభయ్ చరణ్ దే గా జన్మించారు.",
