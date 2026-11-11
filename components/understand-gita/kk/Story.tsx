@@ -130,8 +130,16 @@ export function Journey() {
         {CHAPTERS.map((_, i) =>
           Math.abs(i - day) <= 1 ? (
             <div key={i} aria-hidden className="absolute inset-0 transition-opacity duration-1000 ease-out" style={{ opacity: i === day ? 1 : 0 }}>
-              <div className="absolute inset-0 transition-transform ease-out" style={{ transform: i === day ? "scale(1.09)" : "scale(1.0)", transitionDuration: i === day ? "9000ms" : "0ms" }}>
-                <Image src={chapterImage(i)} alt="" fill sizes="100vw" className="object-cover object-[50%_28%]" />
+              {/* phones: the same picture blurred to fill the tall screen behind the full, uncropped picture */}
+              <div className="absolute inset-0 md:hidden">
+                <Image src={chapterImage(i)} alt="" fill sizes="40vw" className="scale-125 object-cover blur-2xl [filter:brightness(.45)_saturate(1.2)]" />
+              </div>
+              <div className="absolute inset-x-0 top-[11%] aspect-[3/2] overflow-hidden md:inset-0 md:top-0 md:aspect-auto">
+                <div className="absolute inset-0 transition-transform ease-out" style={{ transform: i === day ? "scale(1.09)" : "scale(1.0)", transitionDuration: i === day ? "9000ms" : "0ms" }}>
+                  <Image src={chapterImage(i)} alt="" fill sizes="100vw" className="object-cover object-[50%_28%]" />
+                </div>
+                {/* soft edges so the band melts into the blurred backdrop on phones */}
+                <div aria-hidden className="absolute inset-0 bg-[linear-gradient(180deg,rgba(4,6,14,.55),transparent_18%,transparent_82%,rgba(4,6,14,.55))] md:hidden" />
               </div>
             </div>
           ) : null
