@@ -131,34 +131,28 @@ export function Journey() {
           Math.abs(i - day) <= 1 ? (
             <div key={i} aria-hidden className="absolute inset-0 transition-opacity duration-1000 ease-out" style={{ opacity: i === day ? 1 : 0 }}>
               <div className="absolute inset-0 transition-transform ease-out" style={{ transform: i === day ? "scale(1.09)" : "scale(1.0)", transitionDuration: i === day ? "9000ms" : "0ms" }}>
-                <Image src={chapterImage(i)} alt="" fill sizes="100vw" className="object-cover" />
+                <Image src={chapterImage(i)} alt="" fill sizes="100vw" className="object-cover object-[50%_28%]" />
               </div>
             </div>
           ) : null
         )}
-        <div aria-hidden className="absolute inset-0 bg-[linear-gradient(180deg,rgba(4,6,14,.78)_0%,rgba(4,6,14,.15)_38%,rgba(4,6,14,.25)_62%,rgba(4,6,14,.92)_100%)]" />
-        <div aria-hidden className="pointer-events-none absolute inset-0 shadow-[inset_0_0_200px_70px_rgba(4,6,14,.85)]" />
+        <div aria-hidden className="absolute inset-0 bg-[linear-gradient(180deg,rgba(4,6,14,.55)_0%,rgba(4,6,14,0)_16%,rgba(4,6,14,0)_52%,rgba(4,6,14,.7)_72%,rgba(4,6,14,.95)_100%)]" />
+        <div aria-hidden className="pointer-events-none absolute inset-0 shadow-[inset_0_0_160px_40px_rgba(4,6,14,.7)]" />
         <Embers className="absolute inset-0 h-full w-full opacity-70" count={26} />
 
-        {/* title at the top */}
-        <div className="vk-container relative z-[1] pt-7 text-center md:pt-12">
+        {/* only a small label at the top, so the picture (often a vision in the sky) stays clear */}
+        <div className="vk-container relative z-[1] pt-6 text-center md:pt-8">
           <Eyebrow>The 18-day journey</Eyebrow>
-          <div className="mt-3 min-h-[120px] md:min-h-[160px]">
-            <AnimatePresence mode="wait">
-              <motion.p key={day} initial={{ opacity: 0, y: 12, filter: "blur(8px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} exit={{ opacity: 0, y: -8, filter: "blur(6px)" }} transition={{ duration: 0.45 }} className="kk-gold-text font-[family-name:var(--font-cinzel)] text-6xl font-bold md:text-8xl">
-                Day {day + 1}
-              </motion.p>
-            </AnimatePresence>
-          </div>
         </div>
 
         {/* chapter text at the bottom */}
         <div className="absolute inset-x-0 bottom-0 z-[1] pb-10 md:pb-14">
           <div className="vk-container text-center">
             <AnimatePresence mode="wait">
-              <motion.div key={day} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.45, delay: 0.1 }}>
-                <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#F6C752]">Chapter {day + 1} · {CHAPTERS[day].sa}</p>
-                <h3 className="mx-auto mt-3 max-w-3xl font-[family-name:var(--font-cinzel)] text-2xl font-bold uppercase leading-tight tracking-[0.04em] [text-shadow:0_2px_20px_rgba(0,0,0,.7)] md:text-4xl">{CHAPTERS[day].en}</h3>
+              <motion.div key={day} initial={{ opacity: 0, y: 16, filter: "blur(6px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} exit={{ opacity: 0, y: -10, filter: "blur(4px)" }} transition={{ duration: 0.45 }}>
+                <p className="kk-gold-text font-[family-name:var(--font-cinzel)] text-5xl font-bold leading-none md:text-7xl">Day {day + 1}</p>
+                <p className="mt-3 text-[11px] font-bold uppercase tracking-[0.3em] text-[#F6C752]">Chapter {day + 1} · {CHAPTERS[day].sa}</p>
+                <h3 className="mx-auto mt-2 max-w-3xl font-[family-name:var(--font-cinzel)] text-xl font-bold uppercase leading-tight tracking-[0.04em] [text-shadow:0_2px_20px_rgba(0,0,0,.7)] md:text-4xl">{CHAPTERS[day].en}</h3>
                 <p className="mx-auto mt-3 max-w-2xl font-serif-display text-base italic text-[#FFE6A3] [text-shadow:0_2px_14px_rgba(0,0,0,.8)] md:text-xl">{CHAPTER_SUMMARIES[day]}</p>
               </motion.div>
             </AnimatePresence>
