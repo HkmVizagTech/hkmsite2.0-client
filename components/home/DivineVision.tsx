@@ -4,7 +4,8 @@ import { ArrowRight, BookOpen, Globe2, Home as HomeIcon } from "lucide-react";
 import Reveal from "@/components/site/Reveal";
 import { getT } from "@/lib/i18n/server";
 
-const PRABHUPADA_IMG = "https://res.cloudinary.com/ddmzeqpkc/image/upload/prabhupada_home";
+// Cloudinary (ddmzeqpkc) now answers 401, so the image is served from R2 (same picture the Founder page uses).
+const PRABHUPADA_IMG = "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793324889281-1793324889228-prabhupada-home.avif";
 
 const facts = [
   { icon: Globe2, label: "Took Krishna consciousness worldwide", value: "1965" },
