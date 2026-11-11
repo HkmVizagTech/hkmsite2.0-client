@@ -1,0 +1,285 @@
+"use client";
+
+import Image from "next/image";
+import { useRef, useState } from "react";
+import { AnimatePresence, motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { ArrowRight, Compass, HeartHandshake, Scale, Sun } from "lucide-react";
+import Embers from "./Embers";
+import { EpicTitle, Eyebrow, FadeIn, Panel } from "./Epic";
+import { KK } from "./KkHero";
+import { useT } from "@/components/i18n/LocaleProvider";
+import { CHAPTERS, CHAPTER_IMAGES, CHAPTER_PLACEHOLDERS, CHAPTER_SUMMARIES, VERSE } from "@/lib/understandGita";
+
+const ease = [0.22, 0.8, 0.3, 1] as const;
+
+function RegisterButton({ label = "Register Free", className = "" }: { label?: string; className?: string }) {
+  const t = useT();
+  return (
+    <a href="#register" className={`vk-btn-gold inline-flex h-12 items-center gap-2 px-7 text-[15px] font-bold ${className}`}>
+      {t(label)} <ArrowRight className="h-5 w-5" />
+    </a>
+  );
+}
+
+/* ── Act 1: Arjuna's dilemma ─────────────────────────────────────────── */
+const QUESTIONS = [
+  "How do I stay calm when life gets heavy?",
+  "What is my real purpose?",
+  "How do I know the right decision?",
+  "Why do I feel empty, even after success?",
+];
+
+export function Dilemma() {
+  const reduce = useReducedMotion();
+  const t = useT();
+  return (
+    <section id="dilemma" className="relative isolate scroll-mt-16 overflow-hidden bg-[#06080F] py-24 text-white md:py-36">
+      <div aria-hidden className="absolute inset-0 -z-10">
+        <Image src="https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/gita/kk-despair.webp" alt="" fill sizes="100vw" className="object-cover object-[30%_60%] [filter:brightness(.55)_saturate(.85)]" />
+      </div>
+      <div aria-hidden className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,#06080F_0%,rgba(6,8,15,.72)_22%,rgba(6,8,15,.55)_55%,#06080F_100%)]" />
+      <Embers className="absolute inset-0 -z-10 h-full w-full opacity-60" count={28} />
+      <div className="vk-container max-w-4xl text-center">
+        <Eyebrow>The dilemma</Eyebrow>
+        <EpicTitle text="Arjuna had the same questions you have" className="mx-auto mt-6 max-w-3xl text-3xl md:text-5xl" />
+        <FadeIn delay={0.2}>
+          <p className="mx-auto mt-6 max-w-2xl text-[15px] leading-8 text-white/75 md:text-lg">
+            {t("Standing between two armies, the greatest warrior of his age put down his bow. He did not know what was right, what to choose, or why any of it mattered. Five thousand years later, we still ask the same things.")}
+          </p>
+        </FadeIn>
+        <div className="mx-auto mt-12 grid max-w-3xl gap-3 sm:grid-cols-2">
+          {QUESTIONS.map((q, i) => (
+            <motion.div key={q} initial={reduce ? false : { opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.7, delay: 0.12 * i, ease }}>
+              <Panel className="px-5 py-4 text-left font-serif-display text-lg italic text-[#FFE6A3]/90">&ldquo;{t(q)}&rdquo;</Panel>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── Act 2: Krishna's answer ─────────────────────────────────────────── */
+export function Moment() {
+  const reduce = useReducedMotion();
+  const t = useT();
+  return (
+    <section className="relative isolate overflow-hidden bg-[#070A16] py-24 text-white md:py-32">
+      <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(50%_60%_at_25%_50%,rgba(246,199,82,.16),transparent_70%)]" />
+      <div className="vk-container grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+        <motion.div
+          initial={reduce ? false : { clipPath: "inset(10% 10% 10% 10% round 1.5rem)", opacity: 0, scale: 1.05 }}
+          whileInView={{ clipPath: "inset(0% 0% 0% 0% round 1.5rem)", opacity: 1, scale: 1 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 1.4, ease }}
+          className="relative mx-auto aspect-square w-full max-w-[580px] overflow-hidden rounded-3xl ring-1 ring-[#F6C752]/40 shadow-[0_0_80px_-10px_rgba(246,199,82,.35)]"
+        >
+          <Image src={KK.moment} alt={t("Lord Krishna speaking the Bhagavad-gita to Arjuna on the chariot")} fill sizes="(min-width:1024px) 580px, 92vw" className="object-cover" />
+          <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-[#070A16]/60 via-transparent to-transparent" />
+        </motion.div>
+        <div className="text-center lg:text-left">
+          <Eyebrow className="lg:justify-start">The answer</Eyebrow>
+          <EpicTitle text="Then Krishna spoke" className="mt-6 text-4xl md:text-6xl" />
+          <FadeIn delay={0.15}>
+            <p className="mx-auto mt-5 max-w-xl text-[15px] leading-8 text-white/75 md:text-lg lg:mx-0">
+              {t("On that chariot, Lord Krishna gave Arjuna the wisdom we now call the Bhagavad-gita: how to act without fear, how to find peace, and who we really are.")}
+            </p>
+          </FadeIn>
+          <FadeIn delay={0.3}>
+            <blockquote className="mt-8 border-l-2 border-[#F6C752] pl-6 text-left">
+              <p lang="sa" className="kk-gold-text font-serif-display text-2xl font-semibold leading-snug md:text-4xl">{VERSE.sanskrit}</p>
+              <p className="mt-2 text-sm italic text-white/55">{VERSE.translit}</p>
+              <p className="mt-4 text-[17px] leading-relaxed text-white/90">&ldquo;{t(VERSE.meaning)}&rdquo;</p>
+              <footer className="mt-3 text-xs font-bold uppercase tracking-[0.2em] text-[#F6C752]">{t(VERSE.ref)}</footer>
+            </blockquote>
+          </FadeIn>
+          <FadeIn delay={0.4}>
+            <p className="mt-10 font-serif-display text-lg italic text-[#FFE6A3]">{t("The same answers are waiting for you.")}</p>
+            <RegisterButton className="mt-4" />
+          </FadeIn>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── Act 3: the 18-day journey: one full-screen scene per chapter, dissolving into the next as you scroll ── */
+const chapterImage = (i: number) => CHAPTER_IMAGES[i] || CHAPTER_PLACEHOLDERS[i % CHAPTER_PLACEHOLDERS.length];
+
+export function Journey() {
+  const ref = useRef<HTMLElement>(null);
+  const t = useT();
+  const reduce = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
+  const [day, setDay] = useState(0);
+  useMotionValueEvent(scrollYProgress, "change", (p) => {
+    const d = Math.min(17, Math.max(0, Math.floor(p * 18)));
+    setDay((prev) => (prev === d ? prev : d));
+  });
+
+  if (reduce) {
+    return (
+      <section id="journey" className="scroll-mt-16 bg-[#06080F] py-20 text-white">
+        <div className="vk-container">
+          <EpicTitle text="Your 18-day journey" className="text-center text-3xl" />
+          <ChapterGrid />
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section id="journey" ref={ref} className="relative scroll-mt-16 bg-[#06080F]" style={{ height: `${18 * 60 + 40}vh` }}>
+      <div className="sticky top-[var(--header-h)] h-[calc(100svh-var(--header-h)-var(--bottom-nav-space,0px))] overflow-hidden text-white md:h-[calc(100svh-var(--header-h))]">
+        {/* desktop: each chapter fills the screen and slowly pushes in. phones: a soft colour wash of the same picture */}
+        {CHAPTERS.map((_, i) =>
+          Math.abs(i - day) <= 1 ? (
+            <div key={i} aria-hidden className="absolute inset-0 transition-opacity duration-1000 ease-out" style={{ opacity: i === day ? 1 : 0 }}>
+              <div className="absolute inset-0 hidden transition-transform ease-out md:block" style={{ transform: i === day ? "scale(1.09)" : "scale(1.0)", transitionDuration: i === day ? "9000ms" : "0ms" }}>
+                <Image src={chapterImage(i)} alt="" fill sizes="100vw" className="object-cover object-[50%_28%]" />
+              </div>
+              <div className="absolute inset-0 bg-[radial-gradient(90%_55%_at_50%_32%,rgba(246,199,82,.16),transparent_70%)] md:hidden" />
+            </div>
+          ) : null
+        )}
+        <div aria-hidden className="absolute inset-0 hidden bg-[linear-gradient(180deg,rgba(4,6,14,.55)_0%,rgba(4,6,14,0)_16%,rgba(4,6,14,0)_52%,rgba(4,6,14,.7)_72%,rgba(4,6,14,.95)_100%)] md:block" />
+        <div aria-hidden className="absolute inset-0 bg-[radial-gradient(120%_70%_at_50%_35%,transparent,rgba(4,6,14,.85))] md:hidden" />
+        <div aria-hidden className="pointer-events-none absolute inset-0 hidden shadow-[inset_0_0_160px_40px_rgba(4,6,14,.7)] md:block" />
+        <Embers className="absolute inset-0 h-full w-full opacity-70" count={26} />
+
+        <div className="relative z-[1] flex h-full flex-col justify-center gap-6 pb-6 md:block md:pb-0">
+          <div className="vk-container text-center md:pt-8">
+            <Eyebrow>The 18-day journey</Eyebrow>
+          </div>
+
+          {/* phones: the whole picture, uncropped (16:9), cross-fading between chapters */}
+          <div
+            className="relative mx-3 block aspect-video overflow-hidden rounded-2xl ring-1 ring-[#F6C752]/35 shadow-[0_0_50px_-12px_rgba(246,199,82,.4)] md:hidden"
+          >
+            {CHAPTERS.map((_, i) =>
+              Math.abs(i - day) <= 1 ? (
+                <div key={i} className="absolute inset-0 transition-opacity duration-700 ease-out" style={{ opacity: i === day ? 1 : 0 }}>
+                  <Image src={chapterImage(i)} alt="" fill sizes="100vw" className="object-cover" />
+                </div>
+              ) : null
+            )}
+          </div>
+
+          {/* chapter text: below the picture on phones, over the bottom of the scene on desktop */}
+          <div className="md:absolute md:inset-x-0 md:bottom-0 md:pb-14">
+            <div className="vk-container text-center">
+              <AnimatePresence mode="wait">
+                <motion.div key={day} initial={{ opacity: 0, y: 16, filter: "blur(6px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} exit={{ opacity: 0, y: -10, filter: "blur(4px)" }} transition={{ duration: 0.45 }}>
+                  <p className="kk-gold-text font-[family-name:var(--font-cinzel),var(--font-telugu)] text-5xl font-bold leading-none md:text-7xl">{t("Day {n}", { n: day + 1 })}</p>
+                  <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.28em] text-[#F6C752] md:text-[11px]">{t("Chapter {n}", { n: day + 1 })} · {CHAPTERS[day].sa}</p>
+                  <h3 className="mx-auto mt-2 max-w-3xl font-[family-name:var(--font-cinzel),var(--font-telugu)] text-lg font-bold uppercase leading-tight tracking-[0.04em] [text-shadow:0_2px_20px_rgba(0,0,0,.7)] md:text-4xl">{t(CHAPTERS[day].en)}</h3>
+                  <p className="mx-auto mt-2 max-w-2xl px-2 font-serif-display text-[15px] italic leading-snug text-[#FFE6A3] [text-shadow:0_2px_14px_rgba(0,0,0,.8)] md:mt-3 md:text-xl">{t(CHAPTER_SUMMARIES[day])}</p>
+                </motion.div>
+              </AnimatePresence>
+              <div className="mx-auto mt-5 flex max-w-md items-center justify-center gap-1.5 md:mt-8" aria-hidden>
+                {CHAPTERS.map((_, i) => (
+                  <span key={i} className={`h-1 rounded-full transition-all duration-500 ${i === day ? "w-6 bg-[#F6C752]" : i < day ? "w-2 bg-[#F6C752]/70" : "w-2 bg-white/25"}`} />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/** All 18 chapters as a plain list (for reading, search engines and reduced motion). Phones show six until opened. */
+export function ChapterGrid() {
+  const [all, setAll] = useState(false);
+  const t = useT();
+  return (
+    <>
+      <ol className="mx-auto mt-8 grid max-w-6xl gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+        {CHAPTERS.map((c, i) => (
+          <li key={c.en} className={`${!all && i >= 6 ? "hidden sm:flex" : "flex"} items-center gap-3 rounded-2xl border border-[#F6C752]/15 bg-white/[0.03] p-3.5`}>
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#F6C752]/50 font-[family-name:var(--font-cinzel),var(--font-telugu)] text-sm font-bold text-[#F6C752]">{i + 1}</span>
+            <span className="min-w-0">
+              <span className="block text-[14px] font-semibold leading-snug text-white">{t(c.en)}</span>
+              <span className="block text-[12px] italic text-[#FFE6A3]/60">{c.sa}</span>
+            </span>
+          </li>
+        ))}
+      </ol>
+      {!all && (
+        <div className="mt-5 text-center sm:hidden">
+          <button type="button" onClick={() => setAll(true)} className="rounded-full border border-[#F6C752]/40 px-5 py-2.5 text-sm font-semibold text-[#F6C752]">
+            {t("Show all 18 chapters")}
+          </button>
+        </div>
+      )}
+    </>
+  );
+}
+
+/* ── Act 4: what changes for you ─────────────────────────────────────── */
+const BENEFITS = [
+  { icon: Sun, title: "Peace of mind", text: "Learn why the mind gets restless and practical ways to steady it, every day." },
+  { icon: Compass, title: "Clear purpose", text: "Understand who you are beyond your job and roles, and what life is really for." },
+  { icon: Scale, title: "Better decisions", text: "Act with confidence, like Arjuna did, guided by wisdom instead of fear." },
+  { icon: HeartHandshake, title: "Stronger relationships", text: "Bring patience, gratitude and service into your family and work." },
+];
+
+export function Benefits() {
+  const reduce = useReducedMotion();
+  const t = useT();
+  return (
+    <section className="relative isolate overflow-hidden bg-[#06080F] py-24 text-white md:py-32">
+      <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(50%_60%_at_50%_0%,rgba(47,91,211,.22),transparent_70%)]" />
+      <div className="vk-container">
+        <div className="text-center">
+          <Eyebrow>After 18 days</Eyebrow>
+          <EpicTitle text="What changes for you" className="mt-6 text-3xl md:text-5xl" />
+        </div>
+        <div className="-mx-4 mt-10 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-auto sm:mt-12 sm:grid sm:max-w-6xl sm:snap-none sm:grid-cols-2 sm:gap-4 sm:overflow-visible sm:px-0 lg:grid-cols-4 [&::-webkit-scrollbar]:hidden">
+          {BENEFITS.map((b, i) => (
+            <motion.div key={b.title} className="w-[78%] shrink-0 snap-center sm:w-auto" initial={reduce ? false : { opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.7, delay: i * 0.1, ease }}>
+              <Panel className="group h-full p-7 transition-colors duration-300 hover:border-[#F6C752]/50 hover:bg-white/[0.06]">
+                <span className="flex h-14 w-14 items-center justify-center rounded-full border border-[#F6C752]/40 text-[#F6C752] transition-shadow duration-300 group-hover:shadow-[0_0_30px_rgba(246,199,82,.35)]"><b.icon className="h-6 w-6" /></span>
+                <h3 className="mt-5 font-[family-name:var(--font-cinzel),var(--font-telugu)] text-lg font-bold uppercase tracking-[0.04em] text-white">{t(b.title)}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-white/65">{t(b.text)}</p>
+              </Panel>
+            </motion.div>
+          ))}
+        </div>
+        <div className="mt-12 text-center"><RegisterButton label="Start my 18 days" /></div>
+      </div>
+    </section>
+  );
+}
+
+/* ── Close: Arjuna rises, ready to act (chapter 18) ──────────────────── */
+export function SunsetClose() {
+  const t = useT();
+  const ref = useRef<HTMLElement>(null);
+  const reduce = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end end"] });
+  const scale = useTransform(scrollYProgress, [0, 1], [1.12, 1]);
+  return (
+    <section id="kk-close" ref={ref} className="relative isolate overflow-hidden bg-[#06080F] text-white">
+      {/* the closing painting: full-bleed on desktop, a wide band on phones */}
+      <div className="relative aspect-[16/10] w-full overflow-hidden md:absolute md:inset-0 md:aspect-auto">
+        <motion.div style={reduce ? undefined : { scale }} className="absolute inset-0">
+          <Image src={CHAPTER_IMAGES[17] || KK.sky} alt="" fill sizes="100vw" className="object-cover object-[50%_35%]" />
+        </motion.div>
+        <div aria-hidden className="absolute inset-0 bg-[linear-gradient(180deg,transparent_55%,#06080F_100%)] md:bg-[linear-gradient(90deg,transparent_0%,transparent_38%,rgba(6,8,15,.75)_62%,rgba(6,8,15,.96)_100%)]" />
+        <div aria-hidden className="absolute inset-x-0 bottom-0 hidden h-40 bg-gradient-to-t from-[#06080F] to-transparent md:block" />
+      </div>
+      <Embers className="absolute inset-0 h-full w-full opacity-70" count={30} />
+
+      <div className="vk-container relative -mt-10 pb-20 text-center md:mt-0 md:flex md:min-h-[86vh] md:items-center md:justify-end md:py-24 md:text-left">
+        <div className="md:max-w-[520px]">
+          <Eyebrow className="md:justify-start">{t("Arjuna's doubts ended in 18 chapters.")}</Eyebrow>
+          <EpicTitle text="Your 18-day journey begins today" className="mx-auto mt-5 text-3xl md:mx-0 md:text-[3.4rem]" />
+          <p className="mt-5 text-[15px] text-white/80 md:text-lg">{t("Free · Live · Online · For adults, youth and kids")}</p>
+          <RegisterButton className="mt-8" label="Register Free" />
+        </div>
+      </div>
+    </section>
+  );
+}

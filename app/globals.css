@@ -1366,3 +1366,37 @@ html.lenis, html.lenis body { height: auto; }
 .lenis [data-lenis-prevent] { overscroll-behavior: contain; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 .lenis.lenis-scrolling iframe { pointer-events: none; }
+
+/* Understand Gita page: slow keyword marquee */
+@keyframes ug-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.ug-marquee { animation: ug-marquee 38s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .ug-marquee { animation: none; } }
+
+/* Kurukshetra (Understand Gita) page */
+@keyframes kk-gallop { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-0.6%); } }
+.kk-gallop { animation: kk-gallop 0.7s ease-in-out infinite; }
+@keyframes kk-sun { 0%, 100% { opacity: .75; transform: scale(1); } 50% { opacity: 1; transform: scale(1.08); } }
+.kk-sun { animation: kk-sun 7s ease-in-out infinite; }
+@keyframes kk-plume { 0%, 100% { opacity: .55; transform: scaleX(1); } 50% { opacity: .85; transform: scaleX(1.15); } }
+.kk-plume { animation: kk-plume 1.4s ease-in-out infinite; transform-origin: right center; }
+@media (prefers-reduced-motion: reduce) { .kk-gallop, .kk-sun, .kk-plume { animation: none; } }
+
+/* Kurukshetra page: gold gradient text, film grain, vignette */
+.kk-gold-text {
+  background: linear-gradient(180deg, #FFF1C9 0%, #F6C752 45%, #C98B1E 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 2px 18px rgba(246, 199, 82, .18));
+}
+@media (min-width: 768px) { .kk-grain::after {
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 40; opacity: .07; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+} }
+@keyframes kk-push { from { transform: scale(1.04); } to { transform: scale(1.12); } }
+.kk-push { animation: kk-push 24s ease-out forwards; }
+@media (prefers-reduced-motion: reduce) { .kk-push { animation: none; } }
+
+/* Immersive pages (the Kurukshetra Gita page) hide the floating WhatsApp / language buttons, which sit over the story text */
+html[data-immersive] [data-float] { display: none !important; }
+
+/* Telugu on the Gita page: wide letter-spacing breaks Telugu letter clusters apart */
+html[lang="te"] .kk-grain [class*="tracking-["] { letter-spacing: 0.02em; }
