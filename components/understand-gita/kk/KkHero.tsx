@@ -1,11 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { ArrowDown, ArrowRight, CheckCircle2 } from "lucide-react";
 import Dust from "./Dust";
 import Embers from "./Embers";
+import { INTRO_DONE } from "./Intro";
 
 export const KK = {
   sky: "/assets/gita/kk-sky.webp",
@@ -18,6 +19,14 @@ export const KK = {
 export default function KkHero() {
   const ref = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
+  // The chariot waits for the opening sequence to lift, then charges in.
+  const [go, setGo] = useState(false);
+  useEffect(() => {
+    const on = () => setGo(true);
+    window.addEventListener(INTRO_DONE, on);
+    const fallback = setTimeout(on, 4200);
+    return () => { window.removeEventListener(INTRO_DONE, on); clearTimeout(fallback); };
+  }, []);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const skyY = useTransform(scrollYProgress, [0, 1], ["0%", "12%"]);
   const armyY = useTransform(scrollYProgress, [0, 1], ["0%", "7%"]);
@@ -54,8 +63,8 @@ export default function KkHero() {
       <motion.div style={reduce ? undefined : { x: chariotX }}>
         <motion.div
           initial={reduce ? false : { x: "-70vw", opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 2.4, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+          animate={reduce || go ? { x: 0, opacity: 1 } : { x: "-70vw", opacity: 0 }}
+          transition={{ duration: 2.4, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
         >
           <div className={reduce ? "" : "kk-gallop"}>
             <Image src={KK.chariot} alt="Lord Krishna and Arjuna on the golden chariot at Kurukshetra" width={1316} height={699} priority sizes="(min-width:768px) 46vw, 94vw" className="h-auto w-full drop-shadow-[0_18px_24px_rgba(10,18,51,.35)]" />

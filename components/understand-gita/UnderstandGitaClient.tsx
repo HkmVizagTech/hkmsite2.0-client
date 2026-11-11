@@ -8,6 +8,7 @@ import PageLayout from "@/components/PageLayout";
 import CountUp from "@/components/bhajans/CountUp";
 import RegisterForm from "./RegisterForm";
 import KkHero, { KK } from "./kk/KkHero";
+import Intro from "./kk/Intro";
 import { Benefits, ChapterGrid, Dilemma, Journey, Moment, SunsetClose } from "./kk/Story";
 import { EpicTitle, Eyebrow, FadeIn, Panel } from "./kk/Epic";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -57,7 +58,8 @@ export default function UnderstandGitaClient({ fontClass = "" }: { fontClass?: s
   return (
     <PageLayout background="#06080F">
       <div className={`kk-grain overflow-x-clip bg-[#06080F] pt-[var(--header-h)] text-white ${fontClass}`}>
-        {/* ACT 0: the battlefield at sunrise */}
+        {/* opening title sequence, then the battlefield at sunrise */}
+        <Intro />
         <KkHero />
 
         {/* numbers */}
