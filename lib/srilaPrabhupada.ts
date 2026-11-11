@@ -42,9 +42,8 @@ export const SEVAS: Seva[] = [
   },
 ];
 
-export const IMPACTS: Record<string, Record<number, string>> = {
-  "annadana-seva": { 5000: "200 meals", 9000: "360 meals", 11000: "440 meals", 21000: "840 meals", 31000: "1,240 meals", 51000: "2,040 meals" },
-};
+// No meal counts under the amounts on this page.
+export const IMPACTS: Record<string, Record<number, string>> = {};
 
 /** Milestones of Srila Prabhupada's life (from his biography, Srila Prabhupada-lilamrta). */
 export const LIFE = [
