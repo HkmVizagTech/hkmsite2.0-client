@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { LIFE, PRABHUPADA_PORTRAIT } from "@/lib/srilaPrabhupada";
+import { useT } from "@/components/i18n/LocaleProvider";
 
 const GOLD_TEXT = "bg-[linear-gradient(180deg,#FFF1C9_0%,#F6C752_50%,#C98B1E_100%)] bg-clip-text text-transparent";
 
@@ -13,6 +14,7 @@ const GOLD_TEXT = "bg-[linear-gradient(180deg,#FFF1C9_0%,#F6C752_50%,#C98B1E_100
  * its year in large gold numerals, joined by a gold thread.
  */
 export default function LifeJourney() {
+  const t = useT();
   const reduce = useReducedMotion();
   const [active, setActive] = useState(0);
   const refs = useRef<(HTMLLIElement | null)[]>([]);
@@ -42,10 +44,10 @@ export default function LifeJourney() {
       <div className="vk-container">
         <div className="text-center">
           <p className="flex items-center justify-center gap-3 text-[11px] font-bold uppercase tracking-[0.3em] text-[#F6C752]">
-            <span aria-hidden className="h-px w-10 bg-gradient-to-r from-transparent to-[#F6C752]" /> A life of pure devotion <span aria-hidden className="h-px w-10 bg-gradient-to-l from-transparent to-[#F6C752]" />
+            <span aria-hidden className="h-px w-10 bg-gradient-to-r from-transparent to-[#F6C752]" /> {t("A life of pure devotion")} <span aria-hidden className="h-px w-10 bg-gradient-to-l from-transparent to-[#F6C752]" />
           </p>
-          <h2 className={`mx-auto mt-4 max-w-3xl font-serif-display text-4xl font-bold leading-tight md:text-6xl ${GOLD_TEXT}`}>From Calcutta to the whole world</h2>
-          <p className="mx-auto mt-4 max-w-xl text-white/70">How one devotee, at the age of seventy, gave Krishna consciousness to every continent.</p>
+          <h2 className={`mx-auto mt-4 max-w-3xl font-serif-display text-4xl font-bold leading-tight md:text-6xl ${GOLD_TEXT}`}>{t("From Calcutta to the whole world")}</h2>
+          <p className="mx-auto mt-4 max-w-xl text-white/70">{t("How one devotee, at the age of seventy, gave Krishna consciousness to every continent.")}</p>
         </div>
 
         <div className="mt-12 grid gap-10 lg:mt-16 lg:grid-cols-[.9fr_1.1fr] lg:gap-16">
@@ -61,7 +63,7 @@ export default function LifeJourney() {
                   <AnimatePresence mode="wait">
                     <motion.div key={active} initial={reduce ? false : { opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.4 }}>
                       <p className={`font-serif-display text-8xl font-bold leading-none ${GOLD_TEXT}`}>{m.year}</p>
-                      <p className="mt-3 font-serif-display text-2xl italic text-white">{m.title}</p>
+                      <p className="mt-3 font-serif-display text-2xl italic text-white">{t(m.title)}</p>
                     </motion.div>
                   </AnimatePresence>
                   <div className="mt-6 flex gap-1.5" aria-hidden>
@@ -76,13 +78,13 @@ export default function LifeJourney() {
           <div className="sticky top-[calc(var(--header-h)+12px)] z-20 -mb-4 lg:hidden">
             <div className="flex items-center gap-4 rounded-2xl border border-[#F6C752]/35 bg-[#0A1233]/[.97] p-3 pr-4 shadow-[0_12px_40px_rgba(0,0,0,.45)] backdrop-blur-md">
               <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full ring-2 ring-[#F6C752] ring-offset-2 ring-offset-[#0A1233]">
-                <Image src={PRABHUPADA_PORTRAIT} alt="Srila Prabhupada" fill sizes="64px" className="object-cover object-top" />
+                <Image src={PRABHUPADA_PORTRAIT} alt={t("Srila Prabhupada")} fill sizes="64px" className="object-cover object-top" />
               </div>
               <div className="min-w-0 flex-1">
                 <AnimatePresence mode="wait">
                   <motion.div key={active} initial={reduce ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.3 }}>
                     <p className={`font-serif-display text-3xl font-bold leading-none ${GOLD_TEXT}`}>{m.year}</p>
-                    <p className="mt-1 truncate font-serif-display text-sm italic text-white/85">{m.title}</p>
+                    <p className="mt-1 truncate font-serif-display text-sm italic text-white/85">{t(m.title)}</p>
                   </motion.div>
                 </AnimatePresence>
                 <div className="mt-2 flex gap-1" aria-hidden>
@@ -112,8 +114,8 @@ export default function LifeJourney() {
                 <div className={`rounded-2xl border p-5 transition-all duration-500 md:p-6 ${i === active ? "border-[#F6C752]/50 bg-white/[0.07]" : "border-white/10 bg-white/[0.03]"}`}>
                   <p className={`font-serif-display text-4xl font-bold leading-none md:text-5xl lg:hidden ${GOLD_TEXT}`}>{x.year}</p>
                   <p className="hidden text-xs font-bold uppercase tracking-[0.22em] text-[#F6C752] lg:block">{x.year}</p>
-                  <h3 className="mt-2 font-serif-display text-xl font-semibold text-white md:text-2xl">{x.title}</h3>
-                  <p className="mt-2 text-[15px] leading-relaxed text-white/70">{x.text}</p>
+                  <h3 className="mt-2 font-serif-display text-xl font-semibold text-white md:text-2xl">{t(x.title)}</h3>
+                  <p className="mt-2 text-[15px] leading-relaxed text-white/70">{t(x.text)}</p>
                 </div>
               </motion.li>
             ))}

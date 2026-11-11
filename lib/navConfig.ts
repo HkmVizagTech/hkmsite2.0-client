@@ -162,6 +162,7 @@ export const HIDE_BOTTOM_NAV_PREFIXES = [
   "/understand-gita",
   "/srila-prabhupada",
   "/te/understand-gita",
+  "/te/srila-prabhupada",
   "/subhojanam",
   "/janmashtami",
   "/janmashtami3",

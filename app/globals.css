@@ -1407,3 +1407,8 @@ html[lang="te"] .kk-grain [class*="tracking-["] { letter-spacing: 0.02em; }
 @keyframes sp-spin { to { transform: translateY(-50%) rotate(360deg); } }
 .sp-rays { background: repeating-conic-gradient(from 0deg, rgba(246,199,82,.16) 0deg 6deg, transparent 6deg 18deg); border-radius: 9999px; mask-image: radial-gradient(circle, #000 20%, transparent 68%); animation: sp-spin 120s linear infinite; }
 @media (prefers-reduced-motion: reduce) { .sp-petal, .sp-rays { animation: none; } }
+
+/* Srila Prabhupada page in Telugu: letter-spacing pulls Telugu conjuncts apart, and the tight line-height of the gold
+   (background-clipped) headings cuts off the vowel signs and subscript letters below the line. */
+html[lang="te"] .sp-page [class*="tracking-"] { letter-spacing: normal; }
+html[lang="te"] .sp-page .bg-clip-text { line-height: 1.45; padding-bottom: 0.08em; }
