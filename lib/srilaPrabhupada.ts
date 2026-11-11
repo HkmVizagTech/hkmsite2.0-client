@@ -24,7 +24,7 @@ export const SEVAS: Seva[] = [
     tagline: "Pañcāmṛta abhiṣekam for the Founder-Ācārya",
     description:
       "As the Hari-bhakti-vilāsa prescribes, the murti is bathed in pañcāmṛta (milk, yogurt, ghee, honey and sugar), then fragrant water and flowers. Sponsor this abhishekam of Srila Prabhupada on his disappearance day.",
-    tiers: tiers([1100, 2100, 3100, 5100, 11000]),
+    tiers: tiers([3100, 5100, 7100, 11000, 21000, 51000]),
     icon: "🥛",
     ...base,
   },
@@ -36,14 +36,14 @@ export const SEVAS: Seva[] = [
     tagline: "Feed the devotees in his honour",
     description:
       "Srila Prabhupada wanted that no one within ten miles of a temple should go hungry. Sponsor prasadam for the devotees and guests on this day.",
-    tiers: tiers([1100, 2100, 3100, 5555, 9000, 11000]),
+    tiers: tiers([5555, 9000, 11000, 21000, 31000, 51000]),
     icon: "🍚",
     ...base,
   },
 ];
 
 export const IMPACTS: Record<string, Record<number, string>> = {
-  "annadana-seva": { 1100: "44 meals", 2100: "84 meals", 3100: "124 meals", 5555: "222 meals", 9000: "360 meals", 11000: "440 meals" },
+  "annadana-seva": { 5555: "222 meals", 9000: "360 meals", 11000: "440 meals", 21000: "840 meals", 31000: "1,240 meals", 51000: "2,040 meals" },
 };
 
 /** Milestones of Srila Prabhupada's life (from his biography, Srila Prabhupada-lilamrta). */
