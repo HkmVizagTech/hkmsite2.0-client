@@ -6,7 +6,7 @@
 const KEY = "hkm_preacher_ref";
 // Keep in sync with next.config.ts (PREACHER_REF / SEVA_PAGE).
 const REF = /^(\d{1,4}|[A-Za-z]{2,5}|[A-Za-z]-[A-Za-z])$/;
-const NOT_SEVA = /^(admin|api|blogs|bhajans|centers|donate|donations|donor|events|festivals|festival|shop|track|volunteer|web-stories|payment)$/;
+const NOT_SEVA = /^(admin|api|blogs|bhajans|centers|donate|donations|donor|events|festivals|festival|shop|track|volunteer|web-stories|payment|preacher)$/;
 
 /** The ref in a path like "/anna-daan-seva/ABRD" or "/te/gau-seva/1", else null. */
 export function refFromPath(pathname: string): string | null {

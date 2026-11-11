@@ -81,7 +81,7 @@ const nextConfig: NextConfig = {
     const TE = [{ type: "cookie" as const, key: "hk_lang", value: "te" }];
     // Keep in sync with lib/preacherRef.ts.
     const PREACHER_REF = "\\d{1,4}|[A-Za-z]{2,5}|[A-Za-z]-[A-Za-z]";
-    const SEVA_PAGE = "(?!(?:te|en|admin|api|_next|_vercel|blogs|bhajans|centers|donate|donations|donor|events|festivals|festival|shop|track|volunteer|web-stories|payment|kartik-maas|emergency-relief)(?:/|$))[a-z0-9-]+";
+    const SEVA_PAGE = "(?!(?:te|en|admin|api|_next|_vercel|blogs|bhajans|centers|donate|donations|donor|events|festivals|festival|shop|track|volunteer|web-stories|payment|preacher|kartik-maas|emergency-relief)(?:/|$))[a-z0-9-]+";
     const PUBLIC = "/:path((?!(?:te|en|admin|api|_next|_vercel)(?:/|$)|donations/admin(?:/|$)).+)";
     return {
       // "/" is its own route (app/page.tsx, the English home); Telugu

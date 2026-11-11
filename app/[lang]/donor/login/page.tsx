@@ -125,7 +125,7 @@ export default function DonorLoginPage() {
     e?.preventDefault();
     setError(null);
     if (otp.length !== 6) {
-      setError("Please enter the 6-digit OTP sent to your WhatsApp.");
+      setError("Please enter the 6-digit OTP sent to your phone.");
       return;
     }
     setLoading(true);
@@ -210,7 +210,7 @@ export default function DonorLoginPage() {
                     "Enter the mobile number you've donated with."
                   ) : (
                     <>
-                      Sent on WhatsApp to{" "}
+                      Sent by SMS to{" "}
                       <span className="font-semibold text-ink">+91 {mobile}</span>
                     </>
                   )}
@@ -275,7 +275,7 @@ export default function DonorLoginPage() {
                         </>
                       ) : (
                         <>
-                          <MessageCircle className="h-4 w-4" /> Send code on WhatsApp
+                          <MessageCircle className="h-4 w-4" /> Send code
                         </>
                       )}
                     </button>
@@ -312,7 +312,7 @@ export default function DonorLoginPage() {
                         </>
                       ) : sent ? (
                         <>
-                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> Code sent — check WhatsApp
+                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> Code sent — check your SMS
                         </>
                       ) : null}
                     </p>
