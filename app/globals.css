@@ -1366,8 +1366,3 @@ html.lenis, html.lenis body { height: auto; }
 .lenis [data-lenis-prevent] { overscroll-behavior: contain; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 .lenis.lenis-scrolling iframe { pointer-events: none; }
-
-/* Home hero: the active progress dot fills over the 6s autoplay interval */
-@keyframes hero-progress { from { width: 0%; } to { width: 100%; } }
-.hero-progress { animation: hero-progress 6s linear forwards; }
-@media (prefers-reduced-motion: reduce) { .hero-progress { animation: none; width: 100%; } }
