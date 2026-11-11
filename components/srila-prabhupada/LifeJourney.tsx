@@ -67,6 +67,26 @@ export default function LifeJourney() {
             </div>
           </div>
 
+          {/* phones: sticky portrait strip with the year being read */}
+          <div className="sticky top-[calc(var(--header-h)+12px)] z-20 -mb-4 lg:hidden">
+            <div className="flex items-center gap-4 rounded-2xl border border-[#F6C752]/35 bg-[#0A1233]/[.97] p-3 pr-4 shadow-[0_12px_40px_rgba(0,0,0,.45)] backdrop-blur-md">
+              <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full ring-2 ring-[#F6C752] ring-offset-2 ring-offset-[#0A1233]">
+                <Image src={PRABHUPADA_PORTRAIT} alt="Srila Prabhupada" fill sizes="64px" className="object-cover object-top" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <AnimatePresence mode="wait">
+                  <motion.div key={active} initial={reduce ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.3 }}>
+                    <p className={`font-serif-display text-3xl font-bold leading-none ${GOLD_TEXT}`}>{m.year}</p>
+                    <p className="mt-1 truncate font-serif-display text-sm italic text-white/85">{m.title}</p>
+                  </motion.div>
+                </AnimatePresence>
+                <div className="mt-2 flex gap-1" aria-hidden>
+                  {LIFE.map((_, i) => <span key={i} className={`h-[3px] flex-1 rounded-full transition-colors duration-500 ${i <= active ? "bg-[#F6C752]" : "bg-white/20"}`} />)}
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* milestones */}
           <ol className="relative">
             <span aria-hidden className="absolute bottom-6 left-[19px] top-6 w-px bg-gradient-to-b from-[#F6C752] via-[#F6C752]/40 to-transparent lg:left-[23px]" />
