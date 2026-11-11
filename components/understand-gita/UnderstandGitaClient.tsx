@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowRight, BookOpen, CheckCircle2, ChevronDown, Clock, Languages, MessageCircleQuestion, MonitorPlay, ScrollText, Users, Video, Youtube, type LucideIcon } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import CountUp from "@/components/bhajans/CountUp";
@@ -55,6 +55,11 @@ function DarkFaq() {
 const section = "relative isolate overflow-hidden bg-[#06080F] py-20 text-white md:py-28";
 
 export default function UnderstandGitaClient({ fontClass = "" }: { fontClass?: string }) {
+  // Immersive page: hide the site's floating WhatsApp / language buttons while it is open (they cover the story text).
+  useEffect(() => {
+    document.documentElement.setAttribute("data-immersive", "");
+    return () => document.documentElement.removeAttribute("data-immersive");
+  }, []);
   return (
     <PageLayout background="#06080F">
       <div className={`kk-grain overflow-x-clip bg-[#06080F] pt-[var(--header-h)] text-white ${fontClass}`}>
@@ -101,12 +106,13 @@ export default function UnderstandGitaClient({ fontClass = "" }: { fontClass?: s
               <Eyebrow>Course details</Eyebrow>
               <EpicTitle text="Everything you need" className="mt-6 text-3xl md:text-5xl" />
               <p className="mx-auto mt-4 max-w-xl text-white/65">A complete, free course built around daily live classes.</p>
+              <p className="mt-2 text-xs text-white/40 sm:hidden">Swipe to see all nine →</p>
             </div>
-            <div className="mx-auto mt-12 grid max-w-6xl gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="-mx-4 mt-10 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-auto sm:mt-12 sm:grid sm:max-w-6xl sm:snap-none sm:grid-cols-2 sm:gap-4 sm:overflow-visible sm:px-0 lg:grid-cols-3 [&::-webkit-scrollbar]:hidden">
               {FEATURES.map((f, i) => {
                 const Icon = ICONS[f.icon] || CheckCircle2;
                 return (
-                  <FadeIn key={f.title} delay={(i % 3) * 0.08}>
+                  <FadeIn key={f.title} delay={(i % 3) * 0.08} className="w-[78%] shrink-0 snap-center sm:w-auto">
                     <Panel className="group h-full p-6 transition-colors duration-300 hover:border-[#F6C752]/45 hover:bg-white/[0.06]">
                       <span className="flex h-12 w-12 items-center justify-center rounded-full border border-[#F6C752]/40 text-[#F6C752] transition-shadow group-hover:shadow-[0_0_26px_rgba(246,199,82,.35)]">
                         <Icon className="h-5 w-5" />

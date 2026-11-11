@@ -186,20 +186,30 @@ export function Journey() {
   );
 }
 
-/** All 18 chapters as a plain list (for reading, search engines and reduced motion). */
+/** All 18 chapters as a plain list (for reading, search engines and reduced motion). Phones show six until opened. */
 export function ChapterGrid() {
+  const [all, setAll] = useState(false);
   return (
-    <ol className="mx-auto mt-8 grid max-w-6xl gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
-      {CHAPTERS.map((c, i) => (
-        <li key={c.en} className="flex items-center gap-3 rounded-2xl border border-[#F6C752]/15 bg-white/[0.03] p-3.5">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#F6C752]/50 font-[family-name:var(--font-cinzel)] text-sm font-bold text-[#F6C752]">{i + 1}</span>
-          <span className="min-w-0">
-            <span className="block text-[14px] font-semibold leading-snug text-white">{c.en}</span>
-            <span className="block text-[12px] italic text-[#FFE6A3]/60">{c.sa}</span>
-          </span>
-        </li>
-      ))}
-    </ol>
+    <>
+      <ol className="mx-auto mt-8 grid max-w-6xl gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+        {CHAPTERS.map((c, i) => (
+          <li key={c.en} className={`${!all && i >= 6 ? "hidden sm:flex" : "flex"} items-center gap-3 rounded-2xl border border-[#F6C752]/15 bg-white/[0.03] p-3.5`}>
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#F6C752]/50 font-[family-name:var(--font-cinzel)] text-sm font-bold text-[#F6C752]">{i + 1}</span>
+            <span className="min-w-0">
+              <span className="block text-[14px] font-semibold leading-snug text-white">{c.en}</span>
+              <span className="block text-[12px] italic text-[#FFE6A3]/60">{c.sa}</span>
+            </span>
+          </li>
+        ))}
+      </ol>
+      {!all && (
+        <div className="mt-5 text-center sm:hidden">
+          <button type="button" onClick={() => setAll(true)} className="rounded-full border border-[#F6C752]/40 px-5 py-2.5 text-sm font-semibold text-[#F6C752]">
+            Show all 18 chapters
+          </button>
+        </div>
+      )}
+    </>
   );
 }
 
@@ -221,9 +231,9 @@ export function Benefits() {
           <Eyebrow>After 18 days</Eyebrow>
           <EpicTitle text="What changes for you" className="mt-6 text-3xl md:text-5xl" />
         </div>
-        <div className="mx-auto mt-12 grid max-w-6xl gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="-mx-4 mt-10 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-auto sm:mt-12 sm:grid sm:max-w-6xl sm:snap-none sm:grid-cols-2 sm:gap-4 sm:overflow-visible sm:px-0 lg:grid-cols-4 [&::-webkit-scrollbar]:hidden">
           {BENEFITS.map((b, i) => (
-            <motion.div key={b.title} initial={reduce ? false : { opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.7, delay: i * 0.1, ease }}>
+            <motion.div key={b.title} className="w-[78%] shrink-0 snap-center sm:w-auto" initial={reduce ? false : { opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.7, delay: i * 0.1, ease }}>
               <Panel className="group h-full p-7 transition-colors duration-300 hover:border-[#F6C752]/50 hover:bg-white/[0.06]">
                 <span className="flex h-14 w-14 items-center justify-center rounded-full border border-[#F6C752]/40 text-[#F6C752] transition-shadow duration-300 group-hover:shadow-[0_0_30px_rgba(246,199,82,.35)]"><b.icon className="h-6 w-6" /></span>
                 <h3 className="mt-5 font-[family-name:var(--font-cinzel)] text-lg font-bold uppercase tracking-[0.04em] text-white">{b.title}</h3>

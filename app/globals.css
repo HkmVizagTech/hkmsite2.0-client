@@ -1403,3 +1403,6 @@ html.lenis, html.lenis body { height: auto; }
 @keyframes kk-push { from { transform: scale(1.04); } to { transform: scale(1.12); } }
 .kk-push { animation: kk-push 24s ease-out forwards; }
 @media (prefers-reduced-motion: reduce) { .kk-push { animation: none; } }
+
+/* Immersive pages (the Kurukshetra Gita page) hide the floating WhatsApp / language buttons, which sit over the story text */
+html[data-immersive] [data-float] { display: none !important; }

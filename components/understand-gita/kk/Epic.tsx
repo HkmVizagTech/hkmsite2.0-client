@@ -16,26 +16,30 @@ export function Eyebrow({ children, className = "" }: { children: ReactNode; cla
   );
 }
 
-/** Epic gold title in Cinzel; words rise in one after another. */
+/** Epic gold title in Cinzel; words rise in one after another (one scroll trigger for the whole title). */
 export function EpicTitle({ text, as: Tag = "h2", className = "" }: { text: string; as?: "h1" | "h2" | "h3"; className?: string }) {
   const reduce = useReducedMotion();
   const words = text.split(" ");
+  const MotionTag = motion[Tag];
   return (
-    <Tag className={`kk-gold-text font-[family-name:var(--font-cinzel)] font-bold uppercase leading-[1.08] tracking-[0.04em] ${className}`}>
+    <MotionTag
+      className={`kk-gold-text font-[family-name:var(--font-cinzel)] font-bold uppercase leading-[1.08] tracking-[0.04em] ${className}`}
+      initial={reduce ? false : "hidden"}
+      whileInView="show"
+      viewport={{ once: true, amount: 0.3 }}
+      variants={{ hidden: {}, show: { transition: { staggerChildren: 0.08 } } }}
+    >
       {words.map((w, i) => (
         <motion.span
           key={i}
           className="inline-block"
-          initial={reduce ? false : { opacity: 0, y: "0.4em", filter: "blur(6px)" }}
-          whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.7, delay: i * 0.08, ease }}
+          variants={{ hidden: { opacity: 0, y: "0.4em", filter: "blur(6px)" }, show: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.7, ease } } }}
         >
           {w}
-          {i < words.length - 1 ? " " : ""}
+          {i < words.length - 1 ? "\u00A0" : ""}
         </motion.span>
       ))}
-    </Tag>
+    </MotionTag>
   );
 }
 
