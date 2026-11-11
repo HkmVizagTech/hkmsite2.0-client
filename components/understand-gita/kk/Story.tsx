@@ -126,49 +126,58 @@ export function Journey() {
   return (
     <section id="journey" ref={ref} className="relative scroll-mt-16 bg-[#06080F]" style={{ height: `${18 * 60 + 40}vh` }}>
       <div className="sticky top-[var(--header-h)] h-[calc(100svh-var(--header-h)-var(--bottom-nav-space,0px))] overflow-hidden text-white md:h-[calc(100svh-var(--header-h))]">
-        {/* scenes: only the current one and its neighbours are mounted */}
+        {/* desktop: each chapter fills the screen and slowly pushes in. phones: a soft colour wash of the same picture */}
         {CHAPTERS.map((_, i) =>
           Math.abs(i - day) <= 1 ? (
             <div key={i} aria-hidden className="absolute inset-0 transition-opacity duration-1000 ease-out" style={{ opacity: i === day ? 1 : 0 }}>
-              {/* phones: the same picture blurred to fill the tall screen behind the full, uncropped picture */}
-              <div className="absolute inset-0 md:hidden">
-                <Image src={chapterImage(i)} alt="" fill sizes="40vw" className="scale-125 object-cover blur-2xl [filter:brightness(.45)_saturate(1.2)]" />
+              <div className="absolute inset-0 hidden transition-transform ease-out md:block" style={{ transform: i === day ? "scale(1.09)" : "scale(1.0)", transitionDuration: i === day ? "9000ms" : "0ms" }}>
+                <Image src={chapterImage(i)} alt="" fill sizes="100vw" className="object-cover object-[50%_28%]" />
               </div>
-              <div className="absolute inset-x-0 top-[11%] aspect-[3/2] overflow-hidden md:inset-0 md:top-0 md:aspect-auto">
-                <div className="absolute inset-0 transition-transform ease-out" style={{ transform: i === day ? "scale(1.09)" : "scale(1.0)", transitionDuration: i === day ? "9000ms" : "0ms" }}>
-                  <Image src={chapterImage(i)} alt="" fill sizes="100vw" className="object-cover object-[50%_28%]" />
-                </div>
-                {/* soft edges so the band melts into the blurred backdrop on phones */}
-                <div aria-hidden className="absolute inset-0 bg-[linear-gradient(180deg,rgba(4,6,14,.55),transparent_18%,transparent_82%,rgba(4,6,14,.55))] md:hidden" />
+              <div className="absolute inset-0 overflow-hidden opacity-50 md:hidden">
+                <Image src={chapterImage(i)} alt="" fill sizes="30vw" className="scale-[1.8] object-cover blur-[60px] saturate-150" />
               </div>
             </div>
           ) : null
         )}
-        <div aria-hidden className="absolute inset-0 bg-[linear-gradient(180deg,rgba(4,6,14,.55)_0%,rgba(4,6,14,0)_16%,rgba(4,6,14,0)_52%,rgba(4,6,14,.7)_72%,rgba(4,6,14,.95)_100%)]" />
-        <div aria-hidden className="pointer-events-none absolute inset-0 shadow-[inset_0_0_160px_40px_rgba(4,6,14,.7)]" />
+        <div aria-hidden className="absolute inset-0 hidden bg-[linear-gradient(180deg,rgba(4,6,14,.55)_0%,rgba(4,6,14,0)_16%,rgba(4,6,14,0)_52%,rgba(4,6,14,.7)_72%,rgba(4,6,14,.95)_100%)] md:block" />
+        <div aria-hidden className="absolute inset-0 bg-[radial-gradient(120%_70%_at_50%_35%,transparent,rgba(4,6,14,.85))] md:hidden" />
+        <div aria-hidden className="pointer-events-none absolute inset-0 hidden shadow-[inset_0_0_160px_40px_rgba(4,6,14,.7)] md:block" />
         <Embers className="absolute inset-0 h-full w-full opacity-70" count={26} />
 
-        {/* only a small label at the top, so the picture (often a vision in the sky) stays clear */}
-        <div className="vk-container relative z-[1] pt-6 text-center md:pt-8">
-          <Eyebrow>The 18-day journey</Eyebrow>
-        </div>
+        <div className="relative z-[1] flex h-full flex-col justify-center gap-5 pb-4 md:block md:pb-0">
+          <div className="vk-container text-center md:pt-8">
+            <Eyebrow>The 18-day journey</Eyebrow>
+          </div>
 
-        {/* chapter text at the bottom */}
-        <div className="absolute inset-x-0 bottom-0 z-[1] pb-10 md:pb-14">
-          <div className="vk-container text-center">
-            <AnimatePresence mode="wait">
-              <motion.div key={day} initial={{ opacity: 0, y: 16, filter: "blur(6px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} exit={{ opacity: 0, y: -10, filter: "blur(4px)" }} transition={{ duration: 0.45 }}>
-                <p className="kk-gold-text font-[family-name:var(--font-cinzel)] text-5xl font-bold leading-none md:text-7xl">Day {day + 1}</p>
-                <p className="mt-3 text-[11px] font-bold uppercase tracking-[0.3em] text-[#F6C752]">Chapter {day + 1} · {CHAPTERS[day].sa}</p>
-                <h3 className="mx-auto mt-2 max-w-3xl font-[family-name:var(--font-cinzel)] text-xl font-bold uppercase leading-tight tracking-[0.04em] [text-shadow:0_2px_20px_rgba(0,0,0,.7)] md:text-4xl">{CHAPTERS[day].en}</h3>
-                <p className="mx-auto mt-3 max-w-2xl font-serif-display text-base italic text-[#FFE6A3] [text-shadow:0_2px_14px_rgba(0,0,0,.8)] md:text-xl">{CHAPTER_SUMMARIES[day]}</p>
-              </motion.div>
-            </AnimatePresence>
-            {/* 18 gold ticks */}
-            <div className="mx-auto mt-6 flex max-w-md items-center justify-center gap-1.5 md:mt-8" aria-hidden>
-              {CHAPTERS.map((_, i) => (
-                <span key={i} className={`h-1 rounded-full transition-all duration-500 ${i === day ? "w-6 bg-[#F6C752]" : i < day ? "w-2 bg-[#F6C752]/70" : "w-2 bg-white/25"}`} />
-              ))}
+          {/* phones: the whole picture, framed, cross-fading between chapters */}
+          <div className="relative mx-3 aspect-[4/3] overflow-hidden rounded-2xl ring-1 ring-[#F6C752]/30 shadow-[0_0_60px_-10px_rgba(246,199,82,.35)] md:hidden">
+            {CHAPTERS.map((_, i) =>
+              Math.abs(i - day) <= 1 ? (
+                <div key={i} className="absolute inset-0 transition-opacity duration-700 ease-out" style={{ opacity: i === day ? 1 : 0 }}>
+                  <div className="absolute inset-0 transition-transform ease-out" style={{ transform: i === day ? "scale(1.06)" : "scale(1.0)", transitionDuration: i === day ? "8000ms" : "0ms" }}>
+                    <Image src={chapterImage(i)} alt="" fill sizes="100vw" className="object-cover object-[50%_40%]" />
+                  </div>
+                </div>
+              ) : null
+            )}
+          </div>
+
+          {/* chapter text: below the picture on phones, over the bottom of the scene on desktop */}
+          <div className="md:absolute md:inset-x-0 md:bottom-0 md:pb-14">
+            <div className="vk-container text-center">
+              <AnimatePresence mode="wait">
+                <motion.div key={day} initial={{ opacity: 0, y: 16, filter: "blur(6px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} exit={{ opacity: 0, y: -10, filter: "blur(4px)" }} transition={{ duration: 0.45 }}>
+                  <p className="kk-gold-text font-[family-name:var(--font-cinzel)] text-5xl font-bold leading-none md:text-7xl">Day {day + 1}</p>
+                  <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.28em] text-[#F6C752] md:text-[11px]">Chapter {day + 1} · {CHAPTERS[day].sa}</p>
+                  <h3 className="mx-auto mt-2 max-w-3xl font-[family-name:var(--font-cinzel)] text-lg font-bold uppercase leading-tight tracking-[0.04em] [text-shadow:0_2px_20px_rgba(0,0,0,.7)] md:text-4xl">{CHAPTERS[day].en}</h3>
+                  <p className="mx-auto mt-2 max-w-2xl px-2 font-serif-display text-[15px] italic leading-snug text-[#FFE6A3] [text-shadow:0_2px_14px_rgba(0,0,0,.8)] md:mt-3 md:text-xl">{CHAPTER_SUMMARIES[day]}</p>
+                </motion.div>
+              </AnimatePresence>
+              <div className="mx-auto mt-5 flex max-w-md items-center justify-center gap-1.5 md:mt-8" aria-hidden>
+                {CHAPTERS.map((_, i) => (
+                  <span key={i} className={`h-1 rounded-full transition-all duration-500 ${i === day ? "w-6 bg-[#F6C752]" : i < day ? "w-2 bg-[#F6C752]/70" : "w-2 bg-white/25"}`} />
+                ))}
+              </div>
             </div>
           </div>
         </div>
