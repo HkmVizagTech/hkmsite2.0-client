@@ -47,7 +47,7 @@ export default function LifeJourney() {
             <span aria-hidden className="h-px w-10 bg-gradient-to-r from-transparent to-[#F6C752]" /> {t("A life of pure devotion")} <span aria-hidden className="h-px w-10 bg-gradient-to-l from-transparent to-[#F6C752]" />
           </p>
           <h2 className={`mx-auto mt-4 max-w-3xl font-serif-display text-4xl font-bold leading-tight md:text-6xl ${GOLD_TEXT}`}>{t("From Calcutta to the whole world")}</h2>
-          <p className="mx-auto mt-4 max-w-xl text-white/70">{t("How one devotee, at the age of seventy, gave Krishna consciousness to every continent.")}</p>
+          <p className="mx-auto mt-4 max-w-xl text-white/70">{t("How a pure devotee, at the age of seventy, gave Krishna consciousness to every continent.")}</p>
         </div>
 
         <div className="mt-12 grid gap-10 lg:mt-16 lg:grid-cols-[.9fr_1.1fr] lg:gap-16">
