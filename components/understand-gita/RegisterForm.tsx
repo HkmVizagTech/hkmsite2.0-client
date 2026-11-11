@@ -17,7 +17,7 @@ const LIGHT = {
 const DARK = {
   field: "h-12 w-full rounded-xl border border-[#F6C752]/25 bg-white/[0.06] px-4 text-[15px] text-white placeholder:text-white/35 outline-none transition focus:border-[#F6C752] focus:ring-2 focus:ring-[#F6C752]/25 [&>option]:text-ink",
   label: "mb-1.5 block text-[13px] font-semibold text-[#FFE6A3]",
-  card: "rounded-3xl border border-[#F6C752]/25 bg-[#0A0E1C]/80 p-6 backdrop-blur-sm md:p-9",
+  card: "rounded-3xl border border-[#F6C752]/25 bg-[#0A0E1C]/95 p-6 md:p-9",
   on: "border-[#F6C752] bg-[#F6C752] text-[#0A1233]",
   off: "border-[#F6C752]/25 bg-white/[0.04] text-white hover:bg-white/[0.08]",
   hint: "text-white/55",

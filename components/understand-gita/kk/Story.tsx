@@ -133,9 +133,7 @@ export function Journey() {
               <div className="absolute inset-0 hidden transition-transform ease-out md:block" style={{ transform: i === day ? "scale(1.09)" : "scale(1.0)", transitionDuration: i === day ? "9000ms" : "0ms" }}>
                 <Image src={chapterImage(i)} alt="" fill sizes="100vw" className="object-cover object-[50%_28%]" />
               </div>
-              <div className="absolute inset-0 overflow-hidden opacity-35 md:hidden">
-                <Image src={chapterImage(i)} alt="" fill sizes="30vw" className="scale-[1.8] object-cover blur-[60px] saturate-150" />
-              </div>
+              <div className="absolute inset-0 bg-[radial-gradient(90%_55%_at_50%_32%,rgba(246,199,82,.16),transparent_70%)] md:hidden" />
             </div>
           ) : null
         )}

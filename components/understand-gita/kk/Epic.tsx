@@ -45,7 +45,7 @@ export function EpicTitle({ text, as: Tag = "h2", className = "" }: { text: stri
 
 /** Dark glass panel with a fine gold edge. */
 export function Panel({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return <div className={`rounded-2xl border border-[#F6C752]/20 bg-white/[0.035] backdrop-blur-[2px] ${className}`}>{children}</div>;
+  return <div className={`rounded-2xl border border-[#F6C752]/20 bg-white/[0.04] ${className}`}>{children}</div>;
 }
 
 export function FadeIn({ children, delay = 0, className = "" }: { children: ReactNode; delay?: number; className?: string }) {

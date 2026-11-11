@@ -11,10 +11,19 @@ export default function Embers({ className = "", count = 60 }: { className?: str
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
     let w = 0, h = 0, raf = 0, running = false;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr = Math.min(window.devicePixelRatio || 1, window.innerWidth < 768 ? 1.25 : 2);
     const resize = () => { w = canvas.clientWidth; h = canvas.clientHeight; canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); };
     resize();
     const rand = (a: number, b: number) => a + Math.random() * (b - a);
+    const sprite = document.createElement("canvas");
+    sprite.width = sprite.height = 32;
+    const sg = sprite.getContext("2d")!;
+    const grd = sg.createRadialGradient(16, 16, 0, 16, 16, 16);
+    grd.addColorStop(0, "rgba(255,214,120,1)");
+    grd.addColorStop(0.4, "rgba(255,170,60,.55)");
+    grd.addColorStop(1, "rgba(255,140,40,0)");
+    sg.fillStyle = grd;
+    sg.fillRect(0, 0, 32, 32);
     const spawn = (y?: number) => ({ x: rand(0, w), y: y ?? h + rand(0, 40), r: rand(0.8, 2.2), vy: rand(0.25, 0.9), vx: rand(-0.25, 0.25), life: rand(0, Math.PI * 2), hue: rand(28, 46) });
     const ps = Array.from({ length: count }, () => spawn(rand(0, h)));
     const tick = () => {
@@ -26,12 +35,11 @@ export default function Embers({ className = "", count = 60 }: { className?: str
         if (p.y < -10) ps[i] = spawn();
         const fade = Math.min(1, p.y / (h * 0.6));
         const a = (0.45 + Math.sin(p.life * 2) * 0.35) * fade;
-        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 4);
-        g.addColorStop(0, `hsla(${p.hue},100%,70%,${a})`);
-        g.addColorStop(1, `hsla(${p.hue},100%,50%,0)`);
-        ctx.fillStyle = g;
-        ctx.beginPath(); ctx.arc(p.x, p.y, p.r * 4, 0, Math.PI * 2); ctx.fill();
+        ctx.globalAlpha = Math.max(0, Math.min(1, a));
+        const size = p.r * 8;
+        ctx.drawImage(sprite, p.x - size / 2, p.y - size / 2, size, size);
       }
+      ctx.globalAlpha = 1;
       ctx.globalCompositeOperation = "source-over";
       raf = requestAnimationFrame(tick);
     };
