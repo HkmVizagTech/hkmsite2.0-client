@@ -31,10 +31,10 @@ export function Dilemma() {
   const reduce = useReducedMotion();
   return (
     <section id="dilemma" className="relative isolate scroll-mt-16 overflow-hidden bg-[#06080F] py-24 text-white md:py-36">
-      <div aria-hidden className="absolute inset-x-0 bottom-0 -z-10 opacity-30 blur-[2px] [filter:grayscale(.6)_brightness(.6)]">
-        <Image src={KK.armies} alt="" width={2172} height={724} sizes="100vw" className="h-auto w-full" />
+      <div aria-hidden className="absolute inset-0 -z-10">
+        <Image src="/assets/gita/kk-despair.webp" alt="" fill sizes="100vw" className="object-cover object-[30%_60%] [filter:brightness(.55)_saturate(.85)]" />
       </div>
-      <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(60%_50%_at_50%_30%,rgba(246,199,82,.10),transparent_70%),linear-gradient(180deg,#06080F_0%,rgba(6,8,15,.85)_60%,rgba(6,8,15,.7)_100%)]" />
+      <div aria-hidden className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,#06080F_0%,rgba(6,8,15,.72)_22%,rgba(6,8,15,.55)_55%,#06080F_100%)]" />
       <Embers className="absolute inset-0 -z-10 h-full w-full opacity-60" count={28} />
       <div className="vk-container max-w-4xl text-center">
         <Eyebrow>The dilemma</Eyebrow>
