@@ -4,11 +4,10 @@ import Image from "next/image";
 import { useRef, useState } from "react";
 import { AnimatePresence, motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, Compass, HeartHandshake, Scale, Sun } from "lucide-react";
-import Dust from "./Dust";
 import Embers from "./Embers";
 import { EpicTitle, Eyebrow, FadeIn, Panel } from "./Epic";
 import { KK } from "./KkHero";
-import { CHAPTERS, VERSE } from "@/lib/understandGita";
+import { CHAPTERS, CHAPTER_IMAGES, CHAPTER_PLACEHOLDERS, CHAPTER_SUMMARIES, VERSE } from "@/lib/understandGita";
 
 const ease = [0.22, 0.8, 0.3, 1] as const;
 
@@ -100,18 +99,18 @@ export function Moment() {
   );
 }
 
-/* ── Act 3: the 18-day journey (chariot rides across the field as you scroll) ── */
+/* ── Act 3: the 18-day journey: one full-screen scene per chapter, dissolving into the next as you scroll ── */
+const chapterImage = (i: number) => CHAPTER_IMAGES[i] || CHAPTER_PLACEHOLDERS[i % CHAPTER_PLACEHOLDERS.length];
+
 export function Journey() {
   const ref = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
-  const fill = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
   const [day, setDay] = useState(0);
   useMotionValueEvent(scrollYProgress, "change", (p) => {
     const d = Math.min(17, Math.max(0, Math.floor(p * 18)));
     setDay((prev) => (prev === d ? prev : d));
   });
-  const c = CHAPTERS[day];
 
   if (reduce) {
     return (
@@ -125,56 +124,52 @@ export function Journey() {
   }
 
   return (
-    <section id="journey" ref={ref} className="relative h-[300vh] scroll-mt-16 bg-[#06080F] md:h-[360vh]">
+    <section id="journey" ref={ref} className="relative scroll-mt-16 bg-[#06080F]" style={{ height: `${18 * 60 + 40}vh` }}>
       <div className="sticky top-[var(--header-h)] h-[calc(100svh-var(--header-h)-var(--bottom-nav-space,0px))] overflow-hidden text-white md:h-[calc(100svh-var(--header-h))]">
-        <Image src={KK.sky} alt="" fill sizes="100vw" className="object-cover object-[70%_75%] [filter:brightness(.62)_saturate(1.1)]" />
-        <div aria-hidden className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,18,51,.75)_0%,rgba(10,18,51,.25)_45%,transparent_70%)]" />
-        <div aria-hidden className="absolute inset-x-0 bottom-[18%] opacity-70">
-          <div className="relative left-1/2 w-[200vw] -translate-x-1/2 md:w-full">
-            <Image src={KK.armies} alt="" width={2172} height={724} sizes="(min-width:768px) 100vw, 200vw" className="h-auto w-full" />
-          </div>
-        </div>
-        <div aria-hidden className="absolute inset-x-0 bottom-0 h-[20%] bg-[linear-gradient(180deg,#8a6a3d,#5e4524)]" />
-        <Dust className="absolute inset-x-0 bottom-0 h-1/2 w-full" count={50} />
-        <Embers className="absolute inset-0 h-full w-full opacity-70" count={30} />
-        <div aria-hidden className="pointer-events-none absolute inset-0 shadow-[inset_0_0_160px_50px_rgba(4,6,14,.8)]" />
+        {/* scenes: only the current one and its neighbours are mounted */}
+        {CHAPTERS.map((_, i) =>
+          Math.abs(i - day) <= 1 ? (
+            <div key={i} aria-hidden className="absolute inset-0 transition-opacity duration-1000 ease-out" style={{ opacity: i === day ? 1 : 0 }}>
+              <div className="absolute inset-0 transition-transform ease-out" style={{ transform: i === day ? "scale(1.09)" : "scale(1.0)", transitionDuration: i === day ? "9000ms" : "0ms" }}>
+                <Image src={chapterImage(i)} alt="" fill sizes="100vw" className="object-cover" />
+              </div>
+            </div>
+          ) : null
+        )}
+        <div aria-hidden className="absolute inset-0 bg-[linear-gradient(180deg,rgba(4,6,14,.78)_0%,rgba(4,6,14,.15)_38%,rgba(4,6,14,.25)_62%,rgba(4,6,14,.92)_100%)]" />
+        <div aria-hidden className="pointer-events-none absolute inset-0 shadow-[inset_0_0_200px_70px_rgba(4,6,14,.85)]" />
+        <Embers className="absolute inset-0 h-full w-full opacity-70" count={26} />
 
-        {/* the day card */}
-        <div className="vk-container relative z-[1] pt-8 text-center md:pt-14">
+        {/* title at the top */}
+        <div className="vk-container relative z-[1] pt-7 text-center md:pt-12">
           <Eyebrow>The 18-day journey</Eyebrow>
-          <div className="mx-auto mt-4 min-h-[150px] max-w-2xl">
+          <div className="mt-3 min-h-[120px] md:min-h-[160px]">
             <AnimatePresence mode="wait">
-              <motion.div key={day} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.3 }}>
-                <p className="kk-gold-text font-[family-name:var(--font-cinzel)] text-6xl font-bold md:text-8xl">Day {day + 1}</p>
-                <h3 className="mt-2 font-[family-name:var(--font-cinzel)] text-xl font-bold uppercase leading-tight tracking-[0.04em] md:text-3xl">{c.en}</h3>
-                <p className="mt-1 font-serif-display italic text-[#FFE6A3]/80">{c.sa}</p>
-              </motion.div>
+              <motion.p key={day} initial={{ opacity: 0, y: 12, filter: "blur(8px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} exit={{ opacity: 0, y: -8, filter: "blur(6px)" }} transition={{ duration: 0.45 }} className="kk-gold-text font-[family-name:var(--font-cinzel)] text-6xl font-bold md:text-8xl">
+                Day {day + 1}
+              </motion.p>
             </AnimatePresence>
           </div>
         </div>
 
-        {/* track with 18 markers */}
-        <div className="absolute inset-x-[6%] bottom-[9%]">
-          <div className="relative h-1 rounded-full bg-white/25">
-            <motion.div style={{ width: fill }} className="absolute inset-y-0 left-0 rounded-full bg-[hsl(var(--gold))]" />
-            {/* the chariot rides along the track: its horses' noses sit on the current day */}
-            <motion.div style={{ left: fill }} className="absolute bottom-3 w-[62vw] md:w-[min(32vw,500px)]">
-              <div className="-translate-x-[62%] md:-translate-x-[94%]">
-                <div className="kk-gallop">
-                  <Image src={KK.chariot} alt="" width={1316} height={699} sizes="(min-width:768px) 32vw, 62vw" className="h-auto w-full drop-shadow-[0_14px_18px_rgba(0,0,0,.35)]" />
-                </div>
-              </div>
-            </motion.div>
-            {CHAPTERS.map((_, i) => (
-              <span
-                key={i}
-                style={{ left: `${(i / 17) * 100}%` }}
-                className={`absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-vk-900 transition-colors ${i <= day ? "bg-[hsl(var(--gold))]" : "bg-white/60"}`}
-              />
-            ))}
+        {/* chapter text at the bottom */}
+        <div className="absolute inset-x-0 bottom-0 z-[1] pb-10 md:pb-14">
+          <div className="vk-container text-center">
+            <AnimatePresence mode="wait">
+              <motion.div key={day} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.45, delay: 0.1 }}>
+                <p className="text-[11px] font-bold uppercase tracking-[0.3em] text-[#F6C752]">Chapter {day + 1} · {CHAPTERS[day].sa}</p>
+                <h3 className="mx-auto mt-3 max-w-3xl font-[family-name:var(--font-cinzel)] text-2xl font-bold uppercase leading-tight tracking-[0.04em] [text-shadow:0_2px_20px_rgba(0,0,0,.7)] md:text-4xl">{CHAPTERS[day].en}</h3>
+                <p className="mx-auto mt-3 max-w-2xl font-serif-display text-base italic text-[#FFE6A3] [text-shadow:0_2px_14px_rgba(0,0,0,.8)] md:text-xl">{CHAPTER_SUMMARIES[day]}</p>
+              </motion.div>
+            </AnimatePresence>
+            {/* 18 gold ticks */}
+            <div className="mx-auto mt-6 flex max-w-md items-center justify-center gap-1.5 md:mt-8" aria-hidden>
+              {CHAPTERS.map((_, i) => (
+                <span key={i} className={`h-1 rounded-full transition-all duration-500 ${i === day ? "w-6 bg-[#F6C752]" : i < day ? "w-2 bg-[#F6C752]/70" : "w-2 bg-white/25"}`} />
+              ))}
+            </div>
           </div>
         </div>
-
       </div>
     </section>
   );

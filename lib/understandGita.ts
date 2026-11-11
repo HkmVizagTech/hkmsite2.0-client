@@ -67,6 +67,37 @@ export const CHAPTERS: { en: string; sa: string }[] = [
   { en: "Conclusion: The Perfection of Renunciation", sa: "Mokṣa-sannyāsa-yoga" },
 ];
 
+/**
+ * One line per chapter: what that day's class covers. Shown on the 18-day journey.
+ */
+export const CHAPTER_SUMMARIES = [
+  "Arjuna sees his family and teachers on both sides and lays down his bow, overwhelmed by grief.",
+  "Krishna begins: you are the eternal soul, not the body. Act without fear.",
+  "Work done as an offering frees you instead of binding you.",
+  "The ancient wisdom, and why the Lord appears in this world.",
+  "Give up the fruits, not the work, and find peace in action.",
+  "Meditation and the art of mastering the mind.",
+  "Knowing Krishna as the source of everything.",
+  "What we remember at the end decides where we go.",
+  "The most confidential knowledge: pure devotion.",
+  "Krishna's glories, seen in everything wonderful.",
+  "Arjuna is shown the universal form.",
+  "Devotional service, and the qualities dear to Krishna.",
+  "The body, the soul and the Supersoul.",
+  "Goodness, passion and ignorance, and how to rise above them.",
+  "The tree of material life, and the Supreme Person.",
+  "Divine and demoniac qualities.",
+  "The three kinds of faith: in food, sacrifice and charity.",
+  "Surrender. Arjuna rises, ready to act.",
+];
+
+/**
+ * Picture for each chapter on the 18-day journey (index 0 = chapter 1). Drop a file in /public/assets/gita/ and set it here.
+ * Until a chapter has its own picture, it uses one of the placeholders below.
+ */
+export const CHAPTER_IMAGES: (string | null)[] = Array(18).fill(null);
+export const CHAPTER_PLACEHOLDERS = ["/assets/gita/kk-scene-field.webp", "/assets/gita/kk-moment.webp"];
+
 export const VERSE = {
   sanskrit: "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन",
   translit: "karmaṇy evādhikāras te mā phaleṣu kadācana",
