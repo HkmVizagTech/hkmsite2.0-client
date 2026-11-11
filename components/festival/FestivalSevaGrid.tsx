@@ -90,6 +90,7 @@ const FEATURED_THEMES = {
     tile: "border-amber-300/40 bg-white/[0.06] shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur",
     amount: "text-white",
     rupee: "text-amber-300",
+    impact: "text-amber-200/85",
     cta: "bg-gradient-to-r from-amber-300 via-yellow-200 to-amber-300 text-[#2a1405] shadow-[0_0_24px_-4px_rgba(255,190,60,0.7)]",
   },
 };
@@ -176,7 +177,7 @@ export default function FestivalSevaGrid({
                         {formatAmount(tier.amount)}
                       </span>
                       {impacts[seva.slug]?.[tier.amount] && (
-                        <span className="mt-1 block text-[10.5px] font-semibold leading-[1.2] text-ink/60 sm:text-[11px]">{t(impacts[seva.slug][tier.amount])}</span>
+                        <span className={`mt-1 block text-[10.5px] font-semibold leading-[1.2] ${(theme as { impact?: string }).impact ?? "text-ink/60"} sm:text-[11px]`}>{t(impacts[seva.slug][tier.amount])}</span>
                       )}
                     </button>
                   ))}

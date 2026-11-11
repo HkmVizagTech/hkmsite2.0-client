@@ -37,6 +37,11 @@ export const srilaPrabhupada: Record<string, string> = {
   "Minimum donation Rs. 100 · Annadana Seva is eligible for 80G · Secured by Razorpay · Donations go to Hare Krishna Movement India, Visakhapatnam":
     "కనీస విరాళం Rs. 100 · అన్నదాన సేవకు 80G వర్తిస్తుంది · Razorpay ద్వారా సురక్షితం · విరాళాలు హరే కృష్ణ మూవ్‌మెంట్ ఇండియా, విశాఖపట్నంకు చేరుతాయి",
 
+  "200 meals": "200 భోజనాలు",
+  "840 meals": "840 భోజనాలు",
+  "1,240 meals": "1,240 భోజనాలు",
+  "2,040 meals": "2,040 భోజనాలు",
+
   // Numbers
   "Temples founded": "స్థాపించిన ఆలయాలు",
   "Volumes of books": "గ్రంథ సంపుటాలు",
