@@ -8,6 +8,7 @@ import { ArrowDown, ArrowRight, CheckCircle2 } from "lucide-react";
 import Dust from "./Dust";
 import Embers from "./Embers";
 import { INTRO_DONE } from "./Intro";
+import { useLocale } from "@/components/i18n/LocaleProvider";
 
 // three.js scene, loaded in the browser only; the painted 2D layers below show until it is ready (and stay if WebGL is unavailable).
 const Hero3D = dynamic(() => import("./Hero3D"), { ssr: false });
@@ -24,6 +25,7 @@ export const KK = {
 export default function KkHero() {
   const ref = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
+  const { t, locale, setLocale } = useLocale();
   // The chariot waits for the opening sequence to lift, then charges in.
   const [go, setGo] = useState(false);
   useEffect(() => {
@@ -91,7 +93,7 @@ export default function KkHero() {
           transition={{ duration: 2.4, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
         >
           <div className={reduce ? "" : "kk-gallop"}>
-            <Image src={KK.chariot} alt="Lord Krishna and Arjuna on the golden chariot at Kurukshetra" width={1316} height={699} priority sizes="(min-width:768px) 46vw, 94vw" className="h-auto w-full drop-shadow-[0_18px_24px_rgba(10,18,51,.35)]" />
+            <Image src={KK.chariot} alt={t("Lord Krishna and Arjuna on the golden chariot at Kurukshetra")} width={1316} height={699} priority sizes="(min-width:768px) 46vw, 94vw" className="h-auto w-full drop-shadow-[0_18px_24px_rgba(10,18,51,.35)]" />
           </div>
         </motion.div>
         {/* dust kicked up behind the wheels */}
@@ -102,29 +104,39 @@ export default function KkHero() {
       {/* headline */}
       <motion.div style={reduce ? undefined : { y: textY, opacity: textO }} className="vk-container relative z-[5] pt-9 text-center md:pt-[8vh] md:text-left">
         <motion.div initial={reduce ? false : { opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.1 }} className="max-w-2xl md:max-w-[600px]">
-          <span className="inline-flex items-center gap-2 rounded-full border border-[hsl(var(--gold)/0.55)] bg-vk-900/40 px-3.5 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-[hsl(var(--gold))] backdrop-blur-sm">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[hsl(var(--gold))]" /> Free live course · Online
-          </span>
-          <p className="mt-4 font-serif-display text-base italic text-[#FFE6A3] md:mt-5 md:text-2xl">Every life has its Kurukshetra.</p>
-          <h1 className="mt-3 font-[family-name:var(--font-cinzel)] text-[1.75rem] font-bold uppercase leading-[1.08] tracking-[0.03em] md:text-[3.4rem]">
-            <span className="block text-white [text-shadow:0_2px_28px_rgba(0,0,0,.6)]">Understand the</span>
-            <span className="kk-gold-text block">Bhagavad-gita</span>
-            <span className="block text-white [text-shadow:0_2px_28px_rgba(0,0,0,.6)]">in 18 days</span>
+          <div className="flex flex-wrap items-center justify-center gap-2 md:justify-start">
+            <span className="inline-flex items-center gap-2 rounded-full border border-[hsl(var(--gold)/0.55)] bg-vk-900/40 px-3.5 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-[hsl(var(--gold))]">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[hsl(var(--gold))]" /> {t("Free live course · Online")}
+            </span>
+            {/* English / Telugu switch (the site's floating language button is hidden on this page) */}
+            <span className="inline-flex rounded-full border border-white/25 bg-vk-900/40 p-0.5 text-[11px] font-bold" role="group" aria-label="Language">
+              {(["en", "te"] as const).map((l) => (
+                <button key={l} type="button" onClick={() => l !== locale && setLocale(l)} aria-pressed={locale === l} className={`rounded-full px-3 py-1 transition ${locale === l ? "bg-[#F6C752] text-[#0A1233]" : "text-white/80 hover:text-white"}`}>
+                  {l === "en" ? "English" : "తెలుగు"}
+                </button>
+              ))}
+            </span>
+          </div>
+          <p className="mt-4 font-serif-display text-base italic text-[#FFE6A3] md:mt-5 md:text-2xl">{t("Every life has its Kurukshetra.")}</p>
+          <h1 className="mt-3 font-[family-name:var(--font-cinzel),var(--font-telugu)] text-[1.75rem] font-bold uppercase leading-[1.08] tracking-[0.03em] md:text-[3.4rem]">
+            <span className="block text-white [text-shadow:0_2px_28px_rgba(0,0,0,.6)]">{t("Understand the")}</span>
+            <span className="kk-gold-text block">{t("Bhagavad-gita")}</span>
+            <span className="block text-white [text-shadow:0_2px_28px_rgba(0,0,0,.6)]">{t("in 18 days")}</span>
           </h1>
           <p className="mx-auto mt-3 max-w-xl text-[14px] leading-6 text-white/90 md:mx-0 md:mt-4 md:max-w-[520px] md:text-lg md:leading-8">
-            Arjuna found clarity on the battlefield. In one hour a day, live and free, you can find it too.
+            {t("Arjuna found clarity on the battlefield. In one hour a day, live and free, you can find it too.")}
           </p>
           <div className="mt-5 flex flex-row flex-wrap items-center justify-center gap-2.5 md:mt-7 md:justify-start md:gap-3">
             <a href="#register" className="vk-btn-gold inline-flex h-11 items-center gap-2 px-5 text-[14px] font-bold md:h-12 md:px-7 md:text-[15px]">
-              Register Free <ArrowRight className="h-5 w-5" />
+              {t("Register Free")} <ArrowRight className="h-5 w-5" />
             </a>
             <a href="#dilemma" className="inline-flex h-11 items-center gap-2 rounded-full border border-white/50 bg-vk-900/30 px-5 text-[14px] font-semibold md:h-12 md:px-6 md:text-[15px] text-white backdrop-blur-sm transition hover:bg-white/10">
-              Begin the story <ArrowDown className="h-4 w-4" />
+              {t("Begin the story")} <ArrowDown className="h-4 w-4" />
             </a>
           </div>
           <ul className="mt-5 hidden flex-wrap gap-x-5 gap-y-2 text-[13px] text-white/85 sm:flex md:justify-start">
-            {["100% free", "Live Q&A every day", "Adults, youth and kids"].map((t) => (
-              <li key={t} className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-[hsl(var(--gold))]" /> {t}</li>
+            {["100% free", "Live Q&A every day", "Adults, youth and kids"].map((x) => (
+              <li key={x} className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-[hsl(var(--gold))]" /> {t(x)}</li>
             ))}
           </ul>
         </motion.div>

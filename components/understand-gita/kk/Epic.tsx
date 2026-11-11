@@ -2,11 +2,14 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import type { ReactNode } from "react";
+import { useT } from "@/components/i18n/LocaleProvider";
 
 const ease = [0.22, 0.8, 0.3, 1] as const;
 
 /** "— THE DILEMMA —": small gold caps between two fine gold lines. */
 export function Eyebrow({ children, className = "" }: { children: ReactNode; className?: string }) {
+  const t = useT();
+  if (typeof children === "string") children = t(children);
   return (
     <p className={`flex items-center justify-center gap-3 text-[11px] font-bold uppercase tracking-[0.32em] text-[#F6C752] ${className}`}>
       <span aria-hidden className="h-px w-8 bg-gradient-to-r from-transparent to-[#F6C752] md:w-14" />
@@ -19,11 +22,12 @@ export function Eyebrow({ children, className = "" }: { children: ReactNode; cla
 /** Epic gold title in Cinzel; words rise in one after another (one scroll trigger for the whole title). */
 export function EpicTitle({ text, as: Tag = "h2", className = "" }: { text: string; as?: "h1" | "h2" | "h3"; className?: string }) {
   const reduce = useReducedMotion();
-  const words = text.split(" ");
+  const t = useT();
+  const words = t(text).split(" ");
   const MotionTag = motion[Tag];
   return (
     <MotionTag
-      className={`kk-gold-text font-[family-name:var(--font-cinzel)] font-bold uppercase leading-[1.08] tracking-[0.04em] ${className}`}
+      className={`kk-gold-text font-[family-name:var(--font-cinzel),var(--font-telugu)] font-bold uppercase leading-[1.08] tracking-[0.04em] ${className}`}
       initial={reduce ? false : "hidden"}
       whileInView="show"
       viewport={{ once: true, amount: 0.3 }}

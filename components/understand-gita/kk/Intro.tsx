@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useT } from "@/components/i18n/LocaleProvider";
 
 const LINES = ["5,000 years ago", "on the field of Kurukshetra", "a warrior lost his way."];
 const KEY = "kk-intro-seen";
@@ -9,6 +10,7 @@ export const INTRO_DONE = "kk-intro-done";
 
 /** Opening title sequence: gold lines on black, then it lifts to reveal the battlefield. Once per visit, skippable. */
 export default function Intro() {
+  const t = useT();
   const [show, setShow] = useState(false);
   const [step, setStep] = useState(0);
 
@@ -43,14 +45,14 @@ export default function Intro() {
                 initial={{ opacity: 0, y: 10, filter: "blur(8px)" }}
                 animate={step >= i ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
                 transition={{ duration: 0.8, ease: "easeOut" }}
-                className={i === 2 ? "kk-gold-text font-[family-name:var(--font-cinzel)] text-2xl font-bold uppercase tracking-[0.06em] md:text-5xl" : "font-serif-display text-lg italic text-[#FFE6A3]/85 md:text-3xl"}
+                className={i === 2 ? "kk-gold-text font-[family-name:var(--font-cinzel),var(--font-telugu)] text-2xl font-bold uppercase tracking-[0.06em] md:text-5xl" : "font-serif-display text-lg italic text-[#FFE6A3]/85 md:text-3xl"}
               >
-                {l}
+                {t(l)}
               </motion.p>
             ))}
           </div>
           <button type="button" onClick={finish} className="absolute bottom-8 right-6 rounded-full border border-white/25 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-white/70 hover:text-white">
-            Skip
+            {t("Skip")}
           </button>
         </motion.div>
       )}

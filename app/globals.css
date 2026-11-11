@@ -1406,3 +1406,6 @@ html.lenis, html.lenis body { height: auto; }
 
 /* Immersive pages (the Kurukshetra Gita page) hide the floating WhatsApp / language buttons, which sit over the story text */
 html[data-immersive] [data-float] { display: none !important; }
+
+/* Telugu on the Gita page: wide letter-spacing breaks Telugu letter clusters apart */
+html[lang="te"] .kk-grain [class*="tracking-["] { letter-spacing: 0.02em; }
