@@ -1,12 +1,16 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { ArrowDown, ArrowRight, CheckCircle2 } from "lucide-react";
 import Dust from "./Dust";
 import Embers from "./Embers";
 import { INTRO_DONE } from "./Intro";
+
+// three.js scene, loaded in the browser only; the painted 2D layers below show until it is ready (and stay if WebGL is unavailable).
+const Hero3D = dynamic(() => import("./Hero3D"), { ssr: false });
 
 export const KK = {
   sky: "/assets/gita/kk-sky.webp",
@@ -27,6 +31,16 @@ export default function KkHero() {
     const fallback = setTimeout(on, 4200);
     return () => { window.removeEventListener(INTRO_DONE, on); clearTimeout(fallback); };
   }, []);
+  const [webgl, setWebgl] = useState(false);
+  const [ready3d, setReady3d] = useState(false);
+  useEffect(() => {
+    try {
+      const c = document.createElement("canvas");
+      setWebgl(!!(c.getContext("webgl2") || c.getContext("webgl")));
+    } catch {}
+  }, []);
+  const onReady = useCallback(() => setReady3d(true), []);
+  const use3d = webgl && !reduce;
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const skyY = useTransform(scrollYProgress, [0, 1], ["0%", "12%"]);
   const armyY = useTransform(scrollYProgress, [0, 1], ["0%", "7%"]);
@@ -36,16 +50,24 @@ export default function KkHero() {
 
   return (
     <section ref={ref} className="relative isolate h-[calc(100svh-var(--header-h)-var(--bottom-nav-space,0px))] min-h-[600px] overflow-hidden bg-[#06080F] text-white md:h-[calc(100svh-var(--header-h))] md:min-h-[640px] md:max-h-[920px]">
+      {use3d && (
+        <div className={`absolute inset-0 -z-20 transition-opacity duration-700 ${ready3d ? "opacity-100" : "opacity-0"}`}>
+          <Hero3D go={go} onReady={onReady} />
+        </div>
+      )}
+      <div className={`transition-opacity duration-700 ${ready3d ? "pointer-events-none opacity-0" : "opacity-100"}`}>
       {/* sky */}
       <motion.div style={reduce ? undefined : { y: skyY }} className="absolute inset-0 -z-30 scale-105">
         <div className={`absolute inset-0 ${reduce ? "" : "kk-push"}`}><Image src={KK.sky} alt="" fill priority sizes="100vw" className="object-cover object-[70%_70%] [filter:saturate(1.15)_contrast(1.05)]" /></div>
       </motion.div>
       {/* sun glow breathing near the horizon */}
       <div aria-hidden className="kk-sun absolute bottom-[14%] right-[18%] -z-20 h-[46vmin] w-[46vmin] rounded-full bg-[radial-gradient(circle,rgba(255,214,120,.55),rgba(255,180,80,.18)_40%,transparent_70%)]" />
+      </div>
       {/* readability scrim for the headline */}
       <div aria-hidden className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(4,6,14,.82)_0%,rgba(4,6,14,.35)_45%,transparent_70%)] md:bg-[linear-gradient(90deg,rgba(4,6,14,.9)_0%,rgba(4,6,14,.55)_36%,transparent_62%)]" />
-      <div aria-hidden className="pointer-events-none absolute inset-0 z-[1] shadow-[inset_0_0_180px_60px_rgba(4,6,14,.85)]" />
+      <div aria-hidden className={`pointer-events-none absolute inset-0 z-[1] ${ready3d ? "shadow-[inset_0_0_90px_10px_rgba(4,6,14,.6)]" : "shadow-[inset_0_0_180px_60px_rgba(4,6,14,.85)]"}`} />
 
+      <div className={`transition-opacity duration-700 ${ready3d ? "pointer-events-none opacity-0" : "opacity-100"}`}>
       {/* armies on the horizon */}
       <motion.div style={reduce ? undefined : { y: armyY }} className="absolute inset-x-0 bottom-0 -z-10">
         <div className="relative left-1/2 w-[190vw] -translate-x-1/2 md:w-full">
@@ -53,13 +75,14 @@ export default function KkHero() {
         </div>
       </motion.div>
 
-      {/* dust low on the ground, embers rising */}
-      <Dust className="absolute inset-x-0 bottom-0 h-1/3 w-full" count={50} />
-      <Embers className="absolute inset-0 z-[4] h-full w-full" count={55} />
-      <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-28 bg-gradient-to-t from-[#06080F] to-transparent" />
+      </div>
+      {/* dust low on the ground, embers rising (the 3D scene draws its own) */}
+      {!ready3d && <Dust className="absolute inset-x-0 bottom-0 h-1/3 w-full" count={50} />}
+      {!ready3d && <Embers className="absolute inset-0 z-[4] h-full w-full" count={55} />}
+      {!ready3d && <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-28 bg-gradient-to-t from-[#06080F] to-transparent" />}
 
       {/* the chariot */}
-      <div className="absolute bottom-[3%] left-[3vw] z-[3] w-[94vw] md:bottom-[4%] md:left-[46%] md:w-[min(46vw,760px)]">
+      <div className={`absolute bottom-[3%] left-[3vw] z-[3] w-[94vw] transition-opacity duration-700 md:bottom-[4%] md:left-[46%] md:w-[min(46vw,760px)] ${ready3d ? "pointer-events-none opacity-0" : "opacity-100"}`}>
       <motion.div style={reduce ? undefined : { x: chariotX }}>
         <motion.div
           initial={reduce ? false : { x: "-70vw", opacity: 0 }}

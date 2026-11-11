@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { AnimatePresence, motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from "framer-motion";
-import { ArrowRight, Compass, HeartHandshake, Maximize2, Scale, Sun, X } from "lucide-react";
+import { ArrowRight, Compass, HeartHandshake, Scale, Sun } from "lucide-react";
 import Embers from "./Embers";
 import { EpicTitle, Eyebrow, FadeIn, Panel } from "./Epic";
 import { KK } from "./KkHero";
@@ -107,7 +107,6 @@ export function Journey() {
   const reduce = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
   const [day, setDay] = useState(0);
-  const [viewer, setViewer] = useState<number | null>(null);
   useMotionValueEvent(scrollYProgress, "change", (p) => {
     const d = Math.min(17, Math.max(0, Math.floor(p * 18)));
     setDay((prev) => (prev === d ? prev : d));
@@ -150,11 +149,8 @@ export function Journey() {
             <Eyebrow>The 18-day journey</Eyebrow>
           </div>
 
-          {/* phones: the whole picture, uncropped (16:9), cross-fading between chapters; tap to view it full screen */}
-          <button
-            type="button"
-            onClick={() => setViewer(day)}
-            aria-label={`View the chapter ${day + 1} picture full screen`}
+          {/* phones: the whole picture, uncropped (16:9), cross-fading between chapters */}
+          <div
             className="relative mx-3 block aspect-video overflow-hidden rounded-2xl ring-1 ring-[#F6C752]/35 shadow-[0_0_50px_-12px_rgba(246,199,82,.4)] md:hidden"
           >
             {CHAPTERS.map((_, i) =>
@@ -164,10 +160,7 @@ export function Journey() {
                 </div>
               ) : null
             )}
-            <span className="absolute bottom-2 right-2 inline-flex items-center gap-1 rounded-full bg-black/45 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white/90 backdrop-blur-sm">
-              <Maximize2 className="h-3 w-3" /> View
-            </span>
-          </button>
+          </div>
 
           {/* chapter text: below the picture on phones, over the bottom of the scene on desktop */}
           <div className="md:absolute md:inset-x-0 md:bottom-0 md:pb-14">
@@ -189,29 +182,6 @@ export function Journey() {
           </div>
         </div>
       </div>
-      <AnimatePresence>
-        {viewer !== null && (
-          <motion.div
-            key="viewer"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setViewer(null)}
-            className="fixed inset-0 z-[90] flex flex-col items-center justify-center bg-black p-3"
-            role="dialog"
-            aria-label={`Chapter ${viewer + 1} picture`}
-          >
-            <div className="relative aspect-video w-full max-w-5xl">
-              <Image src={chapterImage(viewer)} alt={`Chapter ${viewer + 1}: ${CHAPTERS[viewer].en}`} fill sizes="100vw" quality={90} className="object-contain" />
-            </div>
-            <p className="mt-4 px-4 text-center font-[family-name:var(--font-cinzel)] text-sm font-bold uppercase tracking-[0.06em] text-[#F6C752]">Day {viewer + 1} · {CHAPTERS[viewer].en}</p>
-            <p className="mt-1 text-xs text-white/50">Turn your phone sideways for a bigger view · tap to close</p>
-            <button type="button" aria-label="Close" onClick={() => setViewer(null)} className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white">
-              <X className="h-5 w-5" />
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </section>
   );
 }
