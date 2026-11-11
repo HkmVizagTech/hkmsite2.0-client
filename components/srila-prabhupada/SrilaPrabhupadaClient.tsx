@@ -14,7 +14,7 @@ import { DiwaliFaq } from "@/components/festival/DiwaliSections";
 import OtherDonationsCarousel from "@/components/pitru-paksha/OtherDonationsCarousel";
 import FestivalSevaGrid, { type SevaSelection } from "@/components/festival/FestivalSevaGrid";
 import FestivalCheckoutModal from "@/components/festival/FestivalCheckoutModal";
-import { BANK_DETAILS, FAQS, IMPACTS, PRABHUPADA_PORTRAIT, QUOTES, SEVAS, SP_DATE_LABEL, SP_SLUG, STATS } from "@/lib/srilaPrabhupada";
+import { BANK_DETAILS, FAQS, IMPACTS, PRABHUPADA_PORTRAIT, QUOTES, SEVAS, SP_BANNER_MOBILE, SP_BANNER_WIDE, SP_DATE_LABEL, SP_SLUG, STATS } from "@/lib/srilaPrabhupada";
 
 const ease = [0.22, 0.8, 0.3, 1] as const;
 const GOLD_TEXT = "bg-[linear-gradient(180deg,#FFF1C9_0%,#F6C752_50%,#C98B1E_100%)] bg-clip-text text-transparent";
@@ -64,45 +64,53 @@ export default function SrilaPrabhupadaClient() {
     <PageLayout background="#ffffff">
       <div className="overflow-x-clip bg-white pt-[var(--header-h)]">
         {/* ══ HERO ═══════════════════════════════════════════════════════ */}
-        <section className="relative isolate overflow-hidden bg-[#0A1233] text-white">
-          <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(60%_70%_at_70%_45%,rgba(246,199,82,.28),transparent_65%),radial-gradient(50%_60%_at_10%_90%,rgba(47,91,211,.45),transparent_70%)]" />
-          <div aria-hidden className="sp-rays absolute right-[-10%] top-1/2 -z-10 h-[140vmin] w-[140vmin] -translate-y-1/2 opacity-40 md:right-[2%]" />
-          <Petals />
-          <div className="vk-container grid items-center gap-10 py-12 md:py-20 lg:grid-cols-[1.1fr_.9fr]">
-            <motion.div initial={reduce ? false : { opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease }} className="text-center lg:text-left">
-              <span className="inline-flex items-center gap-2 rounded-full border border-[#F6C752]/50 bg-white/5 px-3.5 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-[#F6C752]">
-                Tirobhava Mahotsava · {SP_DATE_LABEL}
-              </span>
-              <p className="mt-5 font-serif-display text-lg italic text-[#FFE6A3] md:text-2xl">His Divine Grace A.C. Bhaktivedanta Swami</p>
-              <h1 className={`mt-1 font-serif-display text-5xl font-bold leading-[1.02] md:text-7xl ${GOLD_TEXT}`}>Srila Prabhupada</h1>
-              <p className="mt-2 text-[13px] font-semibold uppercase tracking-[0.22em] text-white/70">Founder-Acharya of ISKCON · 1896 – 1977</p>
-              <p className="mx-auto mt-6 max-w-xl text-[15px] leading-7 text-white/85 md:text-lg md:leading-8 lg:mx-0">
+        <section className="relative isolate overflow-hidden bg-[#0B1430] text-white">
+          <h1 className="sr-only">Srila Prabhupada 49th Disappearance Day — Annadaan Seva and Abhisheka Seva, {SP_DATE_LABEL}</h1>
+
+          {/* phones: Prabhupada under the light, the banner's words set as text below */}
+          <div className="md:hidden">
+            <motion.div initial={reduce ? false : { opacity: 0, scale: 1.04 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.2, ease }} className="relative aspect-[665/724] w-full">
+              <Image src={SP_BANNER_MOBILE} alt="Srila Prabhupada" fill priority sizes="100vw" className="object-cover object-top" />
+              <div aria-hidden className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-[#0B1430] via-[#0B1430]/70 to-transparent" />
+              <div className="absolute left-4 top-4 rounded-2xl border border-[#F6C752]/40 bg-[#0B1430]/70 px-3 py-2 text-center backdrop-blur">
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#F6C752]">November</p>
+                <p className="font-serif-display text-3xl font-bold leading-none">13</p>
+                <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-white/80">Fri · 2026</p>
+              </div>
+            </motion.div>
+            <motion.div initial={reduce ? false : { opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease, delay: 0.2 }} className="relative -mt-20 px-4 pb-10 text-center">
+              <span className="inline-block rounded-lg border border-[#F6C752]/70 bg-[linear-gradient(180deg,#9A4A12,#6B2E07)] px-4 py-1 font-serif-display text-sm font-bold tracking-[0.12em] text-[#FFE6A3] shadow-[0_0_20px_rgba(246,199,82,.35)]">VISHWAGURU</span>
+              <p aria-hidden className={`mt-3 font-serif-display text-[2.6rem] font-bold uppercase leading-none tracking-wide ${GOLD_TEXT}`}>Srila Prabhupada</p>
+              <p className="mt-2 text-lg font-medium tracking-wide text-white">49th Disappearance Day</p>
+              <div aria-hidden className="mx-auto mt-4 flex items-center justify-center gap-2 text-[#F6C752]"><span className="h-px w-16 bg-gradient-to-r from-transparent to-[#F6C752]" />✦<span className="h-px w-16 bg-gradient-to-l from-transparent to-[#F6C752]" /></div>
+              <div className="mx-auto mt-4 flex max-w-sm items-center justify-center gap-3 rounded-2xl border-2 border-[#F6C752]/80 bg-black/30 px-4 py-2.5 font-serif-display text-base font-semibold text-[#FFE6A3]">
+                Annadaan Seva <span className="text-[#F6C752]">|</span> Abhisheka Seva
+              </div>
+              <button type="button" onClick={toSevas} className="vk-btn-gold mt-6 h-12 w-full max-w-sm px-8 text-[15px] font-bold">
+                <Heart className="h-4 w-4" /> Offer your seva
+              </button>
+            </motion.div>
+          </div>
+
+          {/* tablets and computers: the full banner */}
+          <div className="hidden md:block">
+            <motion.div initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, ease }} className="relative aspect-[2172/724] w-full">
+              <Image src={SP_BANNER_WIDE} alt="Vishwaguru Srila Prabhupada, 49th Disappearance Day, Friday 13 November 2026 — Annadaan Seva and Abhisheka Seva" fill priority sizes="100vw" className="object-cover" />
+              <div aria-hidden className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#0B1430] to-transparent" />
+            </motion.div>
+            <div className="vk-container flex items-center justify-between gap-8 py-7">
+              <p className="max-w-2xl text-[15px] leading-7 text-white/80 lg:text-base">
                 On his disappearance day we remember the pure devotee who carried Lord Chaitanya&apos;s message across the world. Offer a seva in his honour at Hare Krishna Vaikuntham, Gambheeram.
               </p>
-              <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row lg:justify-start">
+              <div className="flex shrink-0 items-center gap-3">
                 <button type="button" onClick={toSevas} className="vk-btn-gold h-12 px-8 text-[15px] font-bold">
                   <Heart className="h-4 w-4" /> Offer your seva
                 </button>
                 <a href="#life" className="inline-flex h-12 items-center rounded-full border border-white/40 px-6 text-[15px] font-semibold text-white hover:bg-white/10">His life</a>
               </div>
-            </motion.div>
-
-            <motion.div initial={reduce ? false : { opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.1, ease, delay: 0.1 }} className="mx-auto w-full max-w-[340px] md:max-w-[400px]">
-              <div className="relative">
-                <div aria-hidden className="absolute -inset-5 rounded-t-[999px] rounded-b-[2rem] bg-[radial-gradient(circle,rgba(246,199,82,.35),transparent_70%)] blur-xl" />
-                <div className="relative overflow-hidden rounded-t-[999px] rounded-b-[2rem] border-[3px] border-[#F6C752]/80 bg-[#0A1233] p-2 shadow-[0_0_60px_-10px_rgba(246,199,82,.55)]">
-                  <div className="relative aspect-[491/625] overflow-hidden rounded-t-[999px] rounded-b-[1.6rem]">
-                    <Image src={PRABHUPADA_PORTRAIT} alt="His Divine Grace A.C. Bhaktivedanta Swami Srila Prabhupada" fill priority sizes="(min-width:768px) 400px, 340px" className="object-cover object-top" />
-                    <div aria-hidden className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#0A1233]/80 to-transparent" />
-                  </div>
-                </div>
-                {/* garland of marigolds along the arch */}
-                <div aria-hidden className="absolute -bottom-3 left-1/2 flex -translate-x-1/2 gap-1">
-                  {Array.from({ length: 9 }).map((_, i) => <span key={i} className="h-3.5 w-3.5 rounded-full bg-[radial-gradient(circle_at_35%_35%,#FFD27A,#F59E0B_60%,#C2410C)]" />)}
-                </div>
-              </div>
-            </motion.div>
+            </div>
           </div>
+          <Petals />
         </section>
 
         {/* ══ QUOTE ═════════════════════════════════════════════════════ */}
@@ -123,7 +131,7 @@ export default function SrilaPrabhupadaClient() {
         <section id="offer-seva" className="vk-section scroll-mt-16">
           <div className="vk-container">
             <Reveal>
-              <SectionHeading align="center" eyebrow="Offer Your Seva" title="Sevas for Srila Prabhupada" subtitle={`On ${SP_DATE_LABEL}. Tap an amount to offer the seva; your receipt reaches you on WhatsApp.`} />
+              <SectionHeading align="center" eyebrow="Offer Your Seva" title="Sevas for Srila Prabhupada" />
             </Reveal>
             <FestivalSevaGrid featuredStyle="midnight" featuredBadge={false} featuredSlugs={SEVAS.map((x) => x.slug)} sevas={SEVAS} impacts={IMPACTS} highlightedSlug={null} onSelect={setSelected} />
             <p className="mt-8 text-center text-xs text-muted-foreground">Minimum donation Rs. 100 · Annadana Seva is eligible for 80G · Secured by Razorpay · Donations go to Hare Krishna Movement India, Visakhapatnam</p>

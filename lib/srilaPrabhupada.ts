@@ -86,3 +86,7 @@ export const FAQS = [
   { q: "How will I receive my receipt?", a: "Your receipt is sent to your WhatsApp number as soon as the payment is confirmed, usually within a minute." },
   { q: "Is there a minimum donation?", a: "The smallest donation we can accept is Rs. 100." },
 ];
+
+/** The festival banner: full width on tablets and computers, and a crop around Srila Prabhupada for phones. */
+export const SP_BANNER_WIDE = "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/srila-prabhupada/banner-wide.webp";
+export const SP_BANNER_MOBILE = "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/srila-prabhupada/banner-mobile.webp";
