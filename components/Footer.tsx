@@ -57,7 +57,8 @@ const socials = [
 // resolves to the same Google Maps listing).
 const MAPS_DIRECTIONS_URL = "https://maps.app.goo.gl/Yg2imkSEDxuY5u2K9?g_st=aw";
 
-const PRABHUPADA_IMG = "https://res.cloudinary.com/ddmzeqpkc/image/upload/prabhupada_home";
+// Cloudinary (ddmzeqpkc) now answers 401, so the image is served from R2 (same picture the Founder page uses).
+const PRABHUPADA_IMG = "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793324889281-1793324889228-prabhupada-home.avif";
 
 const colTitle = "mb-5 text-xs font-bold uppercase tracking-[0.16em] text-white/90";
 
