@@ -69,7 +69,6 @@ const Footer = () => {
     <footer className="relative mt-16 md:mt-24">
       <div className="relative overflow-hidden bg-gradient-navy text-white/75">
         {/* Temple line-art + soft glows */}
-        <div aria-hidden className="vk-footer-art pointer-events-none absolute inset-0" />
         <div aria-hidden className="pointer-events-none absolute -left-32 top-10 h-96 w-96 rounded-full bg-vk-500/20 blur-3xl" />
         <div aria-hidden className="pointer-events-none absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-vk-400/10 blur-3xl" />
 

@@ -35,6 +35,8 @@ const telugu = Noto_Sans_Telugu({
   subsets: ["telugu"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-telugu",
+  // Only fetched when Telugu text is on the page; English visitors never pay for it.
+  preload: false,
 });
 
 const playfair = Playfair_Display({
@@ -42,6 +44,8 @@ const playfair = Playfair_Display({
   weight: ["500", "600", "700"],
   style: ["normal", "italic"],
   variable: "--font-playfair",
+  // Used on a few display headings, not on the first screen, so it must not compete with the hero image.
+  preload: false,
 });
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.harekrishnavizag.org";

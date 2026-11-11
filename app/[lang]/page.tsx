@@ -1,4 +1,5 @@
 import Navbar from "@/components/Navbar";
+import ScrollProgress from "@/components/site/ScrollProgress";
 import TempleCarousel from "@/components/TempleCarousel";
 import DarshanCountdown from "@/components/home/DarshanCountdown";
 import WelcomeSection from "@/components/home/WelcomeSection";
@@ -54,6 +55,7 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
   return (
     <div className="min-h-screen bg-white pt-[var(--header-h)]">
       <JsonLd data={homeFaqJsonLd} />
+      <ScrollProgress />
       <Navbar />
       <WhatsAppFloatButton />
       <main className="home-theme">
