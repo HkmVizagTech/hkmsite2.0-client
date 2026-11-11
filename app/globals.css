@@ -1261,15 +1261,6 @@
   .vk-prose th { @apply bg-[#F5F7FF] font-semibold; }
 }
 
-/* Footer temple line-art backdrop */
-.vk-footer-art {
-  background-image: url("/assets/home-footer-bg.webp");
-  background-repeat: no-repeat;
-  background-position: right bottom;
-  background-size: min(720px, 70%) auto;
-  opacity: 0.08;
-}
-
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Play, X } from "lucide-react";
 import Reveal from "@/components/site/Reveal";
+import CountText from "@/components/site/CountText";
 import { useT } from "@/components/i18n/LocaleProvider";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
@@ -72,9 +73,7 @@ export default function WelcomeSection() {
           <div className="mt-7 grid max-w-md grid-cols-3 gap-3">
             {stats.map((s) => (
               <div key={s.label} className="rounded-2xl border border-vk-100 bg-vk-50 px-3 py-3 text-center">
-                <p className="text-xl font-extrabold text-vk-700 md:text-2xl" style={{ fontFamily: "var(--font-heading)" }}>
-                  {t(s.value)}
-                </p>
+                <CountText text={t(s.value)} className="text-xl font-extrabold text-vk-700 md:text-2xl" style={{ fontFamily: "var(--font-heading)" }} />
                 <p className="text-[11px] font-medium text-ink/60">{t(s.label)}</p>
               </div>
             ))}
