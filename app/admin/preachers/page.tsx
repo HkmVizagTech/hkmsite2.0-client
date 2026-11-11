@@ -13,7 +13,44 @@ import { Check, Copy, Download, IndianRupee, Loader2, Pencil, Plus, UserCheck, U
 import { toast } from "@/hooks/use-toast";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
-const SITE = (process.env.NEXT_PUBLIC_SITE_URL || "https://www.hkmvizag.org").replace(/\/+$/, "");
+// Links use the site the admin is on (www.hkmvizag.org in production).
+const siteBase = () =>
+  typeof window !== "undefined" && !/localhost|127\.0\.0\.1/.test(window.location.hostname) ? window.location.origin : "https://www.hkmvizag.org";
+
+// Seva pages a preacher can share (each works with /CODE or /ID added). Festival pages only take donations while
+// the festival is on.
+const SEVA_LINKS: { group: string; items: { label: string; path: string }[] }[] = [
+  {
+    group: "Main sevas",
+    items: [
+      { label: "Anna Daan", path: "anna-daan-seva" },
+      { label: "Gau Seva", path: "gau-seva" },
+      { label: "Square Foot Seva", path: "sqft-seva-campaign" },
+      { label: "Brick Seva", path: "brick-seva-campaign" },
+      { label: "Gita Daan", path: "gita-daan-seva" },
+      { label: "Alankara Vastra", path: "alankara-vastra-seva" },
+      { label: "Subhojanam", path: "subhojanam" },
+      { label: "Patron", path: "patron" },
+      { label: "Special Occasion", path: "special-occasion" },
+      { label: "Emergency Relief", path: "emergency-relief" },
+    ],
+  },
+  {
+    group: "Festival sevas",
+    items: [
+      { label: "Kartik Maas", path: "kartik-maas" },
+      { label: "Diwali", path: "diwali" },
+      { label: "Govardhan Puja", path: "govardhan-puja" },
+      { label: "Vaikuntha Ekadashi", path: "vaikuntha-ekadashi" },
+      { label: "Ekadashi", path: "ekadashi" },
+      { label: "Pitru Paksha", path: "pitru-paksha" },
+      { label: "Janmashtami", path: "janmashtami" },
+      { label: "Radhashtami", path: "radhashtami" },
+      { label: "Chaturmas", path: "chaturmas" },
+      { label: "Vijayadashami", path: "vijayadashami" },
+    ],
+  },
+];
 
 interface Devotee { _id: string; name: string; code?: string; dccEnrolledById?: number | null; mobile?: string; email?: string; status: "active" | "hidden" }
 interface Row { dccEnrolledById: number; name: string; code: string; count: number; total: number; donors: number; last: string }
@@ -227,16 +264,44 @@ export default function AdminPreachers() {
             </Card>
           ) : (
             <>
-              {chosenDevotee?.code && (
-                <Card>
-                  <CardContent className="flex flex-wrap items-center gap-3 p-4 text-sm">
-                    <span className="text-muted-foreground">{chosenDevotee.name}&apos;s link:</span>
-                    <code className="rounded bg-muted px-2 py-1">{SITE}/anna-daan-seva/{chosenDevotee.code}</code>
-                    <Button size="sm" variant="outline" className="gap-1" onClick={() => copy(`${SITE}/anna-daan-seva/${chosenDevotee.code}`)}>{copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />} Copy</Button>
-                    <span className="text-xs text-muted-foreground">Works on any seva page: add /{chosenDevotee.code} or /{chosenDevotee.dccEnrolledById} after it.</span>
-                  </CardContent>
-                </Card>
-              )}
+              {chosenDevotee && (chosenDevotee.code || chosenDevotee.dccEnrolledById != null) && (() => {
+                const key = chosenDevotee.code || String(chosenDevotee.dccEnrolledById);
+                const url = (path: string) => `${siteBase()}/${path}/${key}`;
+                const allText = [`${chosenDevotee.name} — seva links`, ...SEVA_LINKS.flatMap((g) => g.items.map((i) => `${i.label}: ${url(i.path)}`))].join("\n");
+                return (
+                  <Card>
+                    <CardContent className="p-4">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                          <p className="text-sm font-semibold">{chosenDevotee.name}&apos;s seva links</p>
+                          <p className="text-xs text-muted-foreground">Donations through these links raise the receipt under ID {chosenDevotee.dccEnrolledById}. Each page also works with /{chosenDevotee.dccEnrolledById}.</p>
+                        </div>
+                        <Button size="sm" variant="outline" className="gap-1" onClick={() => copy(allText)}>
+                          {copied === allText ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />} Copy all (for WhatsApp)
+                        </Button>
+                      </div>
+                      {SEVA_LINKS.map((g) => (
+                        <div key={g.group} className="mt-4">
+                          <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{g.group}</p>
+                          <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+                            {g.items.map((i) => (
+                              <div key={i.path} className="flex items-center gap-2 rounded-lg border border-border px-3 py-2">
+                                <div className="min-w-0 flex-1">
+                                  <p className="text-sm font-medium">{i.label}</p>
+                                  <a href={url(i.path)} target="_blank" rel="noreferrer" className="block truncate text-xs text-primary hover:underline">{url(i.path).replace(/^https?:\/\//, "")}</a>
+                                </div>
+                                <Button size="sm" variant="ghost" className="h-8 w-8 shrink-0 p-0" title="Copy link" onClick={() => copy(url(i.path))}>
+                                  {copied === url(i.path) ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
+                                </Button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </CardContent>
+                  </Card>
+                );
+              })()}
               {detail && detail.daily.length > 0 && (
                 <Card>
                   <CardContent className="p-4">
@@ -311,7 +376,8 @@ export default function AdminPreachers() {
                         <td className="p-3 text-xs capitalize">{d.status}</td>
                         <td className="p-3">
                           <div className="flex items-center gap-1">
-                            {d.code && <Button size="sm" variant="outline" className="h-8 gap-1 text-xs" onClick={() => copy(`${SITE}/anna-daan-seva/${d.code}`)}>{copied === `${SITE}/anna-daan-seva/${d.code}` ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />} /{d.code}</Button>}
+                            {d.code && <Button size="sm" variant="outline" className="h-8 gap-1 text-xs" onClick={() => copy(`${siteBase()}/anna-daan-seva/${d.code}`)}>{copied === `${siteBase()}/anna-daan-seva/${d.code}` ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />} /{d.code}</Button>}
+                            {d.dccEnrolledById != null && <Button size="sm" variant="outline" className="h-8 text-xs" onClick={() => { setPick(String(d.dccEnrolledById)); setTab("analytics"); }}>All links</Button>}
                             <Button size="sm" variant="ghost" className="h-8 w-8 p-0" onClick={() => { setEditing(d._id); setAdding(false); setDraft({ ...d }); }}><Pencil className="h-4 w-4" /></Button>
                           </div>
                         </td>
