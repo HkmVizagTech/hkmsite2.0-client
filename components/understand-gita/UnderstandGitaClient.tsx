@@ -112,11 +112,11 @@ export default function UnderstandGitaClient({ fontClass = "" }: { fontClass?: s
               <p className="mx-auto mt-4 max-w-xl text-white/65">{t("A complete, free course built around daily live classes.")}</p>
               <p className="mt-2 text-xs text-white/40 sm:hidden">{t("Swipe to see all nine →")}</p>
             </div>
-            <div className="-mx-4 mt-10 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-auto sm:mt-12 sm:grid sm:max-w-6xl sm:snap-none sm:grid-cols-2 sm:gap-4 sm:overflow-visible sm:px-0 lg:grid-cols-3 [&::-webkit-scrollbar]:hidden">
+            <div className="-mx-4 mt-7 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-4 pt-3 [scrollbar-width:none] sm:mx-auto sm:mt-12 sm:grid sm:max-w-6xl sm:snap-none sm:grid-cols-2 sm:gap-4 sm:overflow-visible sm:px-0 lg:grid-cols-3 [&::-webkit-scrollbar]:hidden">
               {FEATURES.map((f, i) => {
                 const Icon = ICONS[f.icon] || CheckCircle2;
                 return (
-                  <FadeIn key={f.title} delay={(i % 3) * 0.08} className="w-[78%] shrink-0 snap-center sm:w-auto">
+                  <FadeIn key={f.title} y={0} delay={(i % 3) * 0.08} className="w-[78%] shrink-0 snap-center sm:w-auto">
                     <Panel className="group h-full p-6 transition-colors duration-300 hover:border-[#F6C752]/45 hover:bg-white/[0.06]">
                       <span className="flex h-12 w-12 items-center justify-center rounded-full border border-[#F6C752]/40 text-[#F6C752] transition-shadow group-hover:shadow-[0_0_26px_rgba(246,199,82,.35)]">
                         <Icon className="h-5 w-5" />

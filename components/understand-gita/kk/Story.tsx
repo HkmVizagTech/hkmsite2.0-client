@@ -236,9 +236,9 @@ export function Benefits() {
           <Eyebrow>After 18 days</Eyebrow>
           <EpicTitle text="What changes for you" className="mt-6 text-3xl md:text-5xl" />
         </div>
-        <div className="-mx-4 mt-10 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:mx-auto sm:mt-12 sm:grid sm:max-w-6xl sm:snap-none sm:grid-cols-2 sm:gap-4 sm:overflow-visible sm:px-0 lg:grid-cols-4 [&::-webkit-scrollbar]:hidden">
+        <div className="-mx-4 mt-7 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-4 pt-3 [scrollbar-width:none] sm:mx-auto sm:mt-12 sm:grid sm:max-w-6xl sm:snap-none sm:grid-cols-2 sm:gap-4 sm:overflow-visible sm:px-0 lg:grid-cols-4 [&::-webkit-scrollbar]:hidden">
           {BENEFITS.map((b, i) => (
-            <motion.div key={b.title} className="w-[78%] shrink-0 snap-center sm:w-auto" initial={reduce ? false : { opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.7, delay: i * 0.1, ease }}>
+            <motion.div key={b.title} className="w-[78%] shrink-0 snap-center sm:w-auto" initial={reduce ? false : { opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.7, delay: i * 0.1, ease }}>
               <Panel className="group h-full p-7 transition-colors duration-300 hover:border-[#F6C752]/50 hover:bg-white/[0.06]">
                 <span className="flex h-14 w-14 items-center justify-center rounded-full border border-[#F6C752]/40 text-[#F6C752] transition-shadow duration-300 group-hover:shadow-[0_0_30px_rgba(246,199,82,.35)]"><b.icon className="h-6 w-6" /></span>
                 <h3 className="mt-5 font-[family-name:var(--font-cinzel),var(--font-telugu)] text-lg font-bold uppercase tracking-[0.04em] text-white">{t(b.title)}</h3>

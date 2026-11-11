@@ -20,7 +20,7 @@ export default function Hero3D({ go, onReady }: { go: boolean; onReady: () => vo
     const el: HTMLDivElement = host;
     const mobile = window.matchMedia("(max-width: 767px)").matches;
     const renderer = new THREE.WebGLRenderer({ antialias: !mobile, alpha: false, powerPreference: "high-performance" });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, mobile ? 1.5 : 1.75));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.setClearColor(0x06080f, 1);
     el.appendChild(renderer.domElement);
@@ -31,7 +31,7 @@ export default function Hero3D({ go, onReady }: { go: boolean; onReady: () => vo
     const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 200);
     const loader = new THREE.TextureLoader();
     // The images live on R2, which sends no CORS headers; loading them through Next's image route keeps them same-origin for WebGL.
-    const viaNext = (url: string) => (/^https?:/.test(url) ? `/_next/image?url=${encodeURIComponent(url)}&w=${mobile ? 1080 : 2048}&q=75` : url);
+    const viaNext = (url: string) => (/^https?:/.test(url) ? `/_next/image?url=${encodeURIComponent(url)}&w=${mobile ? 1920 : 2048}&q=75` : url);
     const tex = (url: string) =>
       new Promise<THREE.Texture>((res, rej) => loader.load(viaNext(url), (t) => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; res(t); }, undefined, rej));
 
