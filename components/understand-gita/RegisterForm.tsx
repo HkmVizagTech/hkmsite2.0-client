@@ -33,7 +33,7 @@ export default function RegisterForm({ tone = "light" }: { tone?: "light" | "dar
   const [batch, setBatch] = useState("adults");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-  const [done, setDone] = useState<{ name: string; link: string } | null>(null);
+  const [done, setDone] = useState<{ name: string; link: string; start: string; time: string } | null>(null);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -50,7 +50,12 @@ export default function RegisterForm({ tone = "light" }: { tone?: "light" | "dar
       const res = await fetch(`${API_URL}/gita-course/register`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.message || "Could not register. Please try again.");
-      setDone({ name: String(body.name || "").split(" ")[0], link: groupLink(batch, String(body.language || "")) });
+      setDone({
+        name: String(body.name || "").split(" ")[0],
+        link: data.whatsappLink || groupLink(batch, String(body.language || "")),
+        start: data.batch?.startDate ? new Date(`${data.batch.startDate}T00:00:00+05:30`).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric", timeZone: "Asia/Kolkata" }) : "",
+        time: data.batch?.classTime || "",
+      });
     } catch (err) {
       setError(err instanceof Error ? t(err.message) : t("Could not register. Please try again."));
     } finally {
@@ -63,6 +68,11 @@ export default function RegisterForm({ tone = "light" }: { tone?: "light" | "dar
       <div className={`${T.card} text-center md:p-12`}>
         <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-50 text-green-600"><CheckCircle2 className="h-9 w-9" /></span>
         <h3 className={`mt-5 font-heading text-2xl font-extrabold ${T.title}`}>{done.name ? t("Hare Krishna, {name}! You are registered.", { name: done.name }) : t("Hare Krishna! You are registered.")}</h3>
+        {done.start && (
+          <p className={`mx-auto mt-3 max-w-md text-[15px] font-semibold ${T.title}`}>
+            {t("Your batch starts on {date}", { date: done.start })}{done.time ? ` · ${done.time}` : ""}
+          </p>
+        )}
         <p className={`mx-auto mt-3 max-w-md text-[15px] leading-relaxed ${T.hint}`}>
           {t(done.link ? "Join your batch's WhatsApp group now. All class timings, joining links and study material are shared there." : "We will add you to your batch's WhatsApp group and send the class timings and joining link. You can also message us now to confirm.")}
         </p>

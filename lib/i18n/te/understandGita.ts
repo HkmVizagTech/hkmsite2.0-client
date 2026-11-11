@@ -220,6 +220,7 @@ export const understandGita: Record<string, string> = {
   "Join your batch's WhatsApp group now. All class timings, joining links and study material are shared there.": "ఇప్పుడే మీ బ్యాచ్ WhatsApp గ్రూప్‌లో చేరండి. తరగతి సమయాలు, జాయినింగ్ లింక్‌లు, అధ్యయన సామగ్రి అన్నీ అక్కడే పంపబడతాయి.",
   "We will add you to your batch's WhatsApp group and send the class timings and joining link. You can also message us now to confirm.": "మేము మిమ్మల్ని మీ బ్యాచ్ WhatsApp గ్రూప్‌లో చేర్చి, తరగతి సమయాలు, జాయినింగ్ లింక్ పంపుతాం. ధృవీకరించడానికి మీరు ఇప్పుడే మాకు సందేశం కూడా పంపవచ్చు.",
   "Join the WhatsApp group": "WhatsApp గ్రూప్‌లో చేరండి",
+  "Your batch starts on {date}": "మీ బ్యాచ్ {date} న ప్రారంభమవుతుంది",
   "Confirm on WhatsApp": "WhatsAppలో ధృవీకరించండి",
 
   // How to join
