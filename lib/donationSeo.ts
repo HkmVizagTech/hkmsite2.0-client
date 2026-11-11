@@ -396,6 +396,29 @@ export const DONATION_SEO = {
       description: "Diwali (Dipavali) at ISKCON Gambheeram, Visakhapatnam, with the lighting of lamps and festival sevas.",
     },
   },
+  "srila-prabhupada": {
+    path: "/srila-prabhupada",
+    title: "Srila Prabhupada Disappearance Day Seva",
+    description:
+      "Offer Abhisheka and Annadana seva on Srila Prabhupada's disappearance day, 13 November 2026, at ISKCON Gambheeram Visakhapatnam. Remember the Founder-Acharya of ISKCON.",
+    keywords: ["Srila Prabhupada disappearance day 2026", "Prabhupada tirobhava seva", "Srila Prabhupada abhishekam", "Prabhupada annadana seva Visakhapatnam", ...LOCAL],
+    ogImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793324889281-1793324889228-prabhupada-home.avif",
+    breadcrumb: "Srila Prabhupada",
+    h1: "Srila Prabhupada Disappearance Day Seva",
+    intro: [
+      "Srila Prabhupada's disappearance day falls on 13 November 2026. Offer Abhisheka or Annadana seva in his honour at Hare Krishna Vaikuntham, Gambheeram.",
+      "Annadana Seva is eligible for 80G tax benefit; receipts are sent on WhatsApp.",
+    ],
+    sevas: [
+      { name: "Abhisheka Seva", amounts: [1100, 2100, 3100, 5100, 11000] },
+      { name: "Annadana Seva", amounts: [1100, 2100, 3100, 5555, 9000, 11000], note: "Eligible for 80G" },
+    ],
+    event: {
+      name: "Srila Prabhupada Disappearance Day 2026",
+      startDate: "2026-11-13",
+      description: "Disappearance day of His Divine Grace A.C. Bhaktivedanta Swami Prabhupada, Founder-Acharya of ISKCON, at ISKCON Gambheeram, Visakhapatnam.",
+    },
+  },
   "special-occasion": {
     path: "/special-occasion",
     title: "Special Occasion Seva",
