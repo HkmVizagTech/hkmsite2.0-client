@@ -1,5 +1,6 @@
 import JsonLd from "@/components/seo/JsonLd";
 import UnderstandGitaClient from "@/components/understand-gita/UnderstandGitaClient";
+import { cinzel } from "@/lib/fonts/cinzel";
 import { breadcrumbJsonLd, pageSeo, SITE_URL, ORG_NAME } from "@/lib/seo";
 import { localized } from "@/lib/i18n/seo";
 import { FAQS } from "@/lib/understandGita";
@@ -36,7 +37,7 @@ export default function UnderstandGitaPage() {
       <JsonLd data={courseLd} />
       <JsonLd data={faqLd} />
       <JsonLd data={breadcrumbJsonLd([{ name: "Understand Gita in 18 Days", path: "/understand-gita" }])} />
-      <UnderstandGitaClient />
+      <UnderstandGitaClient fontClass={cinzel.variable} />
     </>
   );
 }
