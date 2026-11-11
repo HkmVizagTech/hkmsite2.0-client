@@ -95,7 +95,10 @@ export const CHAPTER_SUMMARIES = [
  * Picture for each chapter on the 18-day journey (index 0 = chapter 1). Drop a file in /public/assets/gita/ and set it here.
  * Until a chapter has its own picture, it uses one of the placeholders below.
  */
-export const CHAPTER_IMAGES: (string | null)[] = Array(18).fill(null);
+export const CHAPTER_IMAGES: (string | null)[] = [
+  "/assets/gita/ch01.webp",
+  ...Array(17).fill(null),
+];
 export const CHAPTER_PLACEHOLDERS = ["/assets/gita/kk-scene-field.webp", "/assets/gita/kk-moment.webp"];
 
 export const VERSE = {
