@@ -9,7 +9,7 @@ import type { Seva } from "@/lib/sevaConfig";
 export const SP_SLUG = "srila-prabhupada";
 export const SP_DATE_LABEL = "13 November 2026";
 export const PRABHUPADA_PORTRAIT =
-  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793324889281-1793324889228-prabhupada-home.avif";
+  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/srila-prabhupada/prabhupada-portrait.webp";
 
 const tiers = (amounts: number[]) => amounts.map((amount) => ({ label: `Rs. ${amount.toLocaleString("en-IN")}`, amount }));
 const base = { category: "Srila Prabhupada Disappearance Day", account: "default" as const };
@@ -19,7 +19,8 @@ export const SEVAS: Seva[] = [
     slug: "abhisheka-seva",
     title: "Abhisheka Seva",
     shortTitle: "Abhisheka",
-    image: PRABHUPADA_PORTRAIT,
+    // The full portrait (head to grass) over a soft blurred backdrop, so the wide card never crops his face.
+    image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/srila-prabhupada/abhisheka-card.webp",
     tagline: "Bathe Srila Prabhupada's murti in loving offering",
     description:
       "Sponsor the milk, curd, honey, fruit juices and flowers for the abhishekam of Srila Prabhupada on his disappearance day.",

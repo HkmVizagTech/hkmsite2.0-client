@@ -8,12 +8,13 @@ import PageLayout from "@/components/PageLayout";
 import SectionHeading from "@/components/site/SectionHeading";
 import Reveal from "@/components/site/Reveal";
 import CountUp from "@/components/bhajans/CountUp";
+import LifeJourney from "./LifeJourney";
 import PhonePeUpiCard from "@/components/PhonePeUpiCard";
 import { DiwaliFaq } from "@/components/festival/DiwaliSections";
 import OtherDonationsCarousel from "@/components/pitru-paksha/OtherDonationsCarousel";
 import FestivalSevaGrid, { type SevaSelection } from "@/components/festival/FestivalSevaGrid";
 import FestivalCheckoutModal from "@/components/festival/FestivalCheckoutModal";
-import { BANK_DETAILS, FAQS, IMPACTS, LIFE, PRABHUPADA_PORTRAIT, QUOTES, SEVAS, SP_DATE_LABEL, SP_SLUG, STATS } from "@/lib/srilaPrabhupada";
+import { BANK_DETAILS, FAQS, IMPACTS, PRABHUPADA_PORTRAIT, QUOTES, SEVAS, SP_DATE_LABEL, SP_SLUG, STATS } from "@/lib/srilaPrabhupada";
 
 const ease = [0.22, 0.8, 0.3, 1] as const;
 const GOLD_TEXT = "bg-[linear-gradient(180deg,#FFF1C9_0%,#F6C752_50%,#C98B1E_100%)] bg-clip-text text-transparent";
@@ -141,39 +142,8 @@ export default function SrilaPrabhupadaClient() {
           </ul>
         </section>
 
-        {/* ══ HIS LIFE ══════════════════════════════════════════════════ */}
-        <section id="life" className="vk-section scroll-mt-16 bg-[linear-gradient(180deg,#FFFFFF,#F5F7FF)]">
-          <div className="vk-container">
-            <Reveal>
-              <SectionHeading align="center" eyebrow="A Life of Pure Devotion" title="From Calcutta to the whole world" subtitle="How one devotee, at the age of seventy, gave Krishna consciousness to every continent." />
-            </Reveal>
-            <ol className="relative mx-auto max-w-4xl">
-              <span aria-hidden className="absolute bottom-2 left-[22px] top-2 w-[3px] rounded-full bg-gradient-to-b from-[#F6C752] via-[#2F5BD3] to-[#0A1233] md:left-1/2 md:-translate-x-1/2" />
-              {LIFE.map((m, i) => {
-                const right = i % 2 === 1;
-                return (
-                  <motion.li
-                    key={m.year}
-                    initial={reduce ? false : { opacity: 0, x: right ? 26 : -26 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true, margin: "-80px" }}
-                    transition={{ duration: 0.6, ease }}
-                    className={`relative flex pb-6 pl-14 md:pl-0 ${right ? "md:flex-row-reverse" : ""}`}
-                  >
-                    <span className="absolute left-0 top-1 flex h-[46px] w-[46px] items-center justify-center rounded-full border-4 border-white bg-[#0A1233] text-[11px] font-bold text-[#F6C752] ring-1 ring-[#F6C752]/50 md:left-1/2 md:-translate-x-1/2">
-                      {m.year.slice(0, 4)}
-                    </span>
-                    <div className={`w-full rounded-2xl border border-vk-100 bg-white p-5 md:w-[calc(50%-44px)] ${right ? "md:text-left" : "md:text-right"}`}>
-                      <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[hsl(var(--gold-deep))]">{m.year}</p>
-                      <h3 className="mt-1 text-lg font-bold text-ink">{m.title}</h3>
-                      <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{m.text}</p>
-                    </div>
-                  </motion.li>
-                );
-              })}
-            </ol>
-          </div>
-        </section>
+        {/* ══ HIS LIFE ══ */}
+        <LifeJourney />
 
         <PhonePeUpiCard campaign="Srila Prabhupada Disappearance Day" />
 
