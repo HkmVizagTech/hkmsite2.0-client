@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { AnimatePresence, motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from "framer-motion";
-import { ArrowRight, Compass, HeartHandshake, Scale, Sun } from "lucide-react";
+import { ArrowRight, Compass, HeartHandshake, Maximize2, Scale, Sun, X } from "lucide-react";
 import Embers from "./Embers";
 import { EpicTitle, Eyebrow, FadeIn, Panel } from "./Epic";
 import { KK } from "./KkHero";
@@ -107,6 +107,7 @@ export function Journey() {
   const reduce = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
   const [day, setDay] = useState(0);
+  const [viewer, setViewer] = useState<number | null>(null);
   useMotionValueEvent(scrollYProgress, "change", (p) => {
     const d = Math.min(17, Math.max(0, Math.floor(p * 18)));
     setDay((prev) => (prev === d ? prev : d));
@@ -133,7 +134,7 @@ export function Journey() {
               <div className="absolute inset-0 hidden transition-transform ease-out md:block" style={{ transform: i === day ? "scale(1.09)" : "scale(1.0)", transitionDuration: i === day ? "9000ms" : "0ms" }}>
                 <Image src={chapterImage(i)} alt="" fill sizes="100vw" className="object-cover object-[50%_28%]" />
               </div>
-              <div className="absolute inset-0 overflow-hidden opacity-50 md:hidden">
+              <div className="absolute inset-0 overflow-hidden opacity-35 md:hidden">
                 <Image src={chapterImage(i)} alt="" fill sizes="30vw" className="scale-[1.8] object-cover blur-[60px] saturate-150" />
               </div>
             </div>
@@ -144,23 +145,29 @@ export function Journey() {
         <div aria-hidden className="pointer-events-none absolute inset-0 hidden shadow-[inset_0_0_160px_40px_rgba(4,6,14,.7)] md:block" />
         <Embers className="absolute inset-0 h-full w-full opacity-70" count={26} />
 
-        <div className="relative z-[1] flex h-full flex-col justify-center gap-5 pb-4 md:block md:pb-0">
+        <div className="relative z-[1] flex h-full flex-col justify-center gap-6 pb-6 md:block md:pb-0">
           <div className="vk-container text-center md:pt-8">
             <Eyebrow>The 18-day journey</Eyebrow>
           </div>
 
-          {/* phones: the whole picture, framed, cross-fading between chapters */}
-          <div className="relative mx-3 aspect-[4/3] overflow-hidden rounded-2xl ring-1 ring-[#F6C752]/30 shadow-[0_0_60px_-10px_rgba(246,199,82,.35)] md:hidden">
+          {/* phones: the whole picture, uncropped (16:9), cross-fading between chapters; tap to view it full screen */}
+          <button
+            type="button"
+            onClick={() => setViewer(day)}
+            aria-label={`View the chapter ${day + 1} picture full screen`}
+            className="relative mx-3 block aspect-video overflow-hidden rounded-2xl ring-1 ring-[#F6C752]/35 shadow-[0_0_50px_-12px_rgba(246,199,82,.4)] md:hidden"
+          >
             {CHAPTERS.map((_, i) =>
               Math.abs(i - day) <= 1 ? (
                 <div key={i} className="absolute inset-0 transition-opacity duration-700 ease-out" style={{ opacity: i === day ? 1 : 0 }}>
-                  <div className="absolute inset-0 transition-transform ease-out" style={{ transform: i === day ? "scale(1.06)" : "scale(1.0)", transitionDuration: i === day ? "8000ms" : "0ms" }}>
-                    <Image src={chapterImage(i)} alt="" fill sizes="100vw" className="object-cover object-[50%_40%]" />
-                  </div>
+                  <Image src={chapterImage(i)} alt="" fill sizes="100vw" quality={85} className="object-cover" />
                 </div>
               ) : null
             )}
-          </div>
+            <span className="absolute bottom-2 right-2 inline-flex items-center gap-1 rounded-full bg-black/45 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white/90 backdrop-blur-sm">
+              <Maximize2 className="h-3 w-3" /> View
+            </span>
+          </button>
 
           {/* chapter text: below the picture on phones, over the bottom of the scene on desktop */}
           <div className="md:absolute md:inset-x-0 md:bottom-0 md:pb-14">
@@ -182,6 +189,29 @@ export function Journey() {
           </div>
         </div>
       </div>
+      <AnimatePresence>
+        {viewer !== null && (
+          <motion.div
+            key="viewer"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setViewer(null)}
+            className="fixed inset-0 z-[90] flex flex-col items-center justify-center bg-black p-3"
+            role="dialog"
+            aria-label={`Chapter ${viewer + 1} picture`}
+          >
+            <div className="relative aspect-video w-full max-w-5xl">
+              <Image src={chapterImage(viewer)} alt={`Chapter ${viewer + 1}: ${CHAPTERS[viewer].en}`} fill sizes="100vw" quality={90} className="object-contain" />
+            </div>
+            <p className="mt-4 px-4 text-center font-[family-name:var(--font-cinzel)] text-sm font-bold uppercase tracking-[0.06em] text-[#F6C752]">Day {viewer + 1} · {CHAPTERS[viewer].en}</p>
+            <p className="mt-1 text-xs text-white/50">Turn your phone sideways for a bigger view · tap to close</p>
+            <button type="button" aria-label="Close" onClick={() => setViewer(null)} className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white">
+              <X className="h-5 w-5" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
