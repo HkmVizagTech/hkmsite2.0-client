@@ -50,6 +50,7 @@ export default function WhatsAppFloatButton({
       aria-label={t("Chat on WhatsApp")}
       // Sits 20px above the mobile bottom bar (or the screen edge where the bar is hidden)
       // via --bottom-nav-space; md: resets to a small margin from the viewport.
+      data-float="wa"
       className="fixed bottom-[calc(var(--bottom-nav-space)+20px)] right-4 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366] shadow-[0_10px_24px_-8px_rgba(10,18,51,0.45)] ring-4 ring-white/90 transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-vk-300 active:scale-95 md:bottom-6 md:right-6"
     >
       <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 fill-white">

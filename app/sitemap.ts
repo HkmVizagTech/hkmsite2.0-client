@@ -24,6 +24,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/anna-daan-seva`, changeFrequency: "monthly", priority: 0.9 },
     { url: `${SITE_URL}/gau-seva`, changeFrequency: "monthly", priority: 0.9 },
     { url: `${SITE_URL}/sqft-seva-campaign`, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${SITE_URL}/understand-gita`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${SITE_URL}/gita-daan-seva`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE_URL}/alankara-vastra-seva`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE_URL}/brick-seva-campaign`, changeFrequency: "monthly", priority: 0.9 },

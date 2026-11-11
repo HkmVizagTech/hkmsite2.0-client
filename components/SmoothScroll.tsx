@@ -24,7 +24,8 @@ export default function SmoothScroll() {
       const { default: Lenis } = await import("lenis");
       if (cancelled) return;
       lenis = new Lenis({
-        duration: 1.05,
+        lerp: 0.09,
+        wheelMultiplier: 1,
         smoothWheel: true,
         // Let the browser handle scrolling whenever the page is locked by an open modal / sheet.
         prevent: () => document.body.style.overflow === "hidden" || document.documentElement.style.overflow === "hidden" || document.body.hasAttribute("data-scroll-locked"),
