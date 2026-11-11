@@ -9,6 +9,7 @@ import MetaPixel from "@/components/MetaPixel";
 import ThemeProvider from "@/components/ThemeProvider";
 import BottomNavSpace from "@/components/BottomNavSpace";
 import SmoothScroll from "@/components/SmoothScroll";
+import PreacherRefCapture from "@/components/PreacherRefCapture";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { siteKeywords, ORG_ALT_NAMES, TITLE_TEMPLATE, DEFAULT_OG_IMAGE } from "@/lib/seo";
@@ -234,6 +235,7 @@ export default function RootLayout({
           <ThemeProvider>
             <AuthProvider>
               <SmoothScroll />
+              <PreacherRefCapture />
               {children}
               <Toaster />
               <Analytics />
