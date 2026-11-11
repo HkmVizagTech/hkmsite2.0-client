@@ -92,30 +92,30 @@ export const CHAPTER_SUMMARIES = [
 ];
 
 /**
- * Picture for each chapter on the 18-day journey (index 0 = chapter 1). Drop a file in /public/assets/gita/ and set it here.
+ * Picture for each chapter on the 18-day journey (index 0 = chapter 1). Upload the image to R2 under gita/ and set its link here.
  * Until a chapter has its own picture, it uses one of the placeholders below.
  */
 export const CHAPTER_IMAGES: (string | null)[] = [
-  "/assets/gita/ch01.webp",
-  "/assets/gita/ch02.webp",
-  "/assets/gita/ch03.webp",
-  "/assets/gita/ch04.webp",
-  "/assets/gita/ch05.webp",
-  "/assets/gita/ch06.webp",
-  "/assets/gita/ch07.webp",
-  "/assets/gita/ch08.webp",
-  "/assets/gita/ch09.webp",
-  "/assets/gita/ch10.webp",
-  "/assets/gita/ch11.webp",
-  "/assets/gita/ch12.webp",
-  "/assets/gita/ch13.webp",
-  "/assets/gita/ch14.webp",
-  "/assets/gita/ch15.webp",
-  "/assets/gita/ch16.webp",
-  "/assets/gita/ch17.webp",
-  "/assets/gita/ch18.webp",
+  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/gita/ch01.webp",
+  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/gita/ch02.webp",
+  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/gita/ch03.webp",
+  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/gita/ch04.webp",
+  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/gita/ch05.webp",
+  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/gita/ch06.webp",
+  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/gita/ch07.webp",
+  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/gita/ch08.webp",
+  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/gita/ch09.webp",
+  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/gita/ch10.webp",
+  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/gita/ch11.webp",
+  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/gita/ch12.webp",
+  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/gita/ch13.webp",
+  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/gita/ch14.webp",
+  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/gita/ch15.webp",
+  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/gita/ch16.webp",
+  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/gita/ch17.webp",
+  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/gita/ch18.webp",
 ];
-export const CHAPTER_PLACEHOLDERS = ["/assets/gita/kk-scene-field.webp", "/assets/gita/kk-moment.webp"];
+export const CHAPTER_PLACEHOLDERS = ["https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/gita/kk-scene-field.webp", "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/gita/kk-moment.webp"];
 
 export const VERSE = {
   sanskrit: "कर्मण्येवाधिकारस्ते मा फलेषु कदाचन",

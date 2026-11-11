@@ -35,7 +35,7 @@ export function Dilemma() {
   return (
     <section id="dilemma" className="relative isolate scroll-mt-16 overflow-hidden bg-[#06080F] py-24 text-white md:py-36">
       <div aria-hidden className="absolute inset-0 -z-10">
-        <Image src="/assets/gita/kk-despair.webp" alt="" fill sizes="100vw" className="object-cover object-[30%_60%] [filter:brightness(.55)_saturate(.85)]" />
+        <Image src="https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/gita/kk-despair.webp" alt="" fill sizes="100vw" className="object-cover object-[30%_60%] [filter:brightness(.55)_saturate(.85)]" />
       </div>
       <div aria-hidden className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,#06080F_0%,rgba(6,8,15,.72)_22%,rgba(6,8,15,.55)_55%,#06080F_100%)]" />
       <Embers className="absolute inset-0 -z-10 h-full w-full opacity-60" count={28} />
@@ -159,7 +159,7 @@ export function Journey() {
             {CHAPTERS.map((_, i) =>
               Math.abs(i - day) <= 1 ? (
                 <div key={i} className="absolute inset-0 transition-opacity duration-700 ease-out" style={{ opacity: i === day ? 1 : 0 }}>
-                  <Image src={chapterImage(i)} alt="" fill sizes="100vw" quality={85} className="object-cover" />
+                  <Image src={chapterImage(i)} alt="" fill sizes="100vw" className="object-cover" />
                 </div>
               ) : null
             )}

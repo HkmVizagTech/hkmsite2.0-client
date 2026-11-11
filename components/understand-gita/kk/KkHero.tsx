@@ -14,11 +14,11 @@ import { useLocale } from "@/components/i18n/LocaleProvider";
 const Hero3D = dynamic(() => import("./Hero3D"), { ssr: false });
 
 export const KK = {
-  sky: "/assets/gita/kk-sky.webp",
-  armies: "/assets/gita/kk-armies.webp",
-  chariot: "/assets/gita/kk-chariot.webp",
-  fieldPortrait: "/assets/gita/kk-field-portrait.webp",
-  moment: "/assets/gita/kk-moment.webp",
+  sky: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/gita/kk-sky.webp",
+  armies: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/gita/kk-armies.webp",
+  chariot: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/gita/kk-chariot.webp",
+  fieldPortrait: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/gita/kk-field-portrait.webp",
+  moment: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/gita/kk-moment.webp",
 };
 
 /** Layered Kurukshetra sunrise: sky, armies and the chariot move at different depths; the chariot rides in on load. */

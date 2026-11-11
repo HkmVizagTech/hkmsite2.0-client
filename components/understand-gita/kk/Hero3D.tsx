@@ -30,8 +30,10 @@ export default function Hero3D({ go, onReady }: { go: boolean; onReady: () => vo
     scene.fog = new THREE.Fog(0x2a2140, 30, 60);
     const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 200);
     const loader = new THREE.TextureLoader();
+    // The images live on R2, which sends no CORS headers; loading them through Next's image route keeps them same-origin for WebGL.
+    const viaNext = (url: string) => (/^https?:/.test(url) ? `/_next/image?url=${encodeURIComponent(url)}&w=${mobile ? 1080 : 2048}&q=75` : url);
     const tex = (url: string) =>
-      new Promise<THREE.Texture>((res, rej) => loader.load(url, (t) => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; res(t); }, undefined, rej));
+      new Promise<THREE.Texture>((res, rej) => loader.load(viaNext(url), (t) => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; res(t); }, undefined, rej));
 
     // soft round sprite (embers, haze, sun glow)
     const softTex = (inner: string, outer: string) => {
