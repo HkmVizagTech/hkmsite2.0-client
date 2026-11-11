@@ -79,12 +79,22 @@ const nextConfig: NextConfig = {
   // match first; these apply before the [lang] dynamic route would catch /x.
   async rewrites() {
     const TE = [{ type: "cookie" as const, key: "hk_lang", value: "te" }];
+    // Keep in sync with lib/preacherRef.ts.
+    const PREACHER_REF = "\\d{1,4}|[A-Za-z]{2,5}|[A-Za-z]-[A-Za-z]";
+    const SEVA_PAGE = "(?!(?:te|en|admin|api|_next|_vercel|blogs|bhajans|centers|donate|donations|donor|events|festivals|festival|shop|track|volunteer|web-stories|payment|kartik-maas|emergency-relief)(?:/|$))[a-z0-9-]+";
     const PUBLIC = "/:path((?!(?:te|en|admin|api|_next|_vercel)(?:/|$)|donations/admin(?:/|$)).+)";
     return {
       // "/" is its own route (app/page.tsx, the English home); Telugu
       // visitors are sent to /te before that route is matched.
       beforeFiles: [{ source: "/", has: TE, destination: "/te" }],
       afterFiles: [
+        // Preacher links: a seva page followed by a devotee's code or DCC id (/anna-daan-seva/ABRD, /gau-seva/1)
+        // shows the same seva page; the browser keeps the full URL and the page credits the donation to that
+        // devotee (components/PreacherRefCapture.tsx). Sections that have their own sub-pages are left alone.
+        { source: `/:page(kartik-maas|emergency-relief)/:ref(${PREACHER_REF})`, destination: "/:page" },
+        { source: `/te/:page(${SEVA_PAGE})/:ref(${PREACHER_REF})`, destination: "/te/:page" },
+        { source: `/:page(${SEVA_PAGE})/:ref(${PREACHER_REF})`, has: TE, destination: "/te/:page" },
+        { source: `/:page(${SEVA_PAGE})/:ref(${PREACHER_REF})`, destination: "/en/:page" },
         { source: PUBLIC, has: TE, destination: "/te/:path" },
         { source: PUBLIC, destination: "/en/:path" },
       ],

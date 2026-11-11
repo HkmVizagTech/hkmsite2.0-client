@@ -16,10 +16,12 @@
 
 import { useEffect, useRef } from "react";
 import { captureTracking, getStoredTracking, type TrackingData } from "./tracking";
+import { capturePreacherRef, getPreacherRef } from "./preacherRef";
 
 export interface AttributionPayload {
   sourcePage: string;
-  utm: TrackingData;
+  /** UTM data, plus `ref`: the preacher link code/id for this visit (server credits the receipt to that devotee). */
+  utm: TrackingData & { ref?: string };
 }
 
 /**
@@ -33,6 +35,7 @@ export function useAttribution(sourcePage: string) {
   useEffect(() => {
     if (!captured.current) {
       captureTracking();
+      capturePreacherRef();
       captured.current = true;
     }
   }, []);
@@ -46,7 +49,8 @@ export function useAttribution(sourcePage: string) {
     const utm =
       getStoredTracking() ||
       captureTracking() || { source: "", medium: "", campaign: "", content: "", term: "" };
-    return { sourcePage, utm };
+    const ref = getPreacherRef();
+    return { sourcePage, utm: ref ? { ...utm, ref } : utm };
   };
 
   return { payload, sourcePage };
