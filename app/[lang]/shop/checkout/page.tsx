@@ -134,7 +134,7 @@ export default function CheckoutPage() {
     e?.preventDefault();
     setError(null);
     if (otp.length !== 6) {
-      setError("Enter the 6-digit code sent to your WhatsApp.");
+      setError("Enter the 6-digit code sent to your phone.");
       return;
     }
     setBusy(true);
@@ -300,7 +300,7 @@ export default function CheckoutPage() {
               ) : otpStep === "mobile" ? (
                 <form onSubmit={sendOtp} className="space-y-3">
                   <p className="text-sm text-muted-foreground">
-                    We&apos;ll send a one-time code to your WhatsApp to confirm your number — no password needed.
+                    We&apos;ll send a one-time code by SMS to confirm your number — no password needed.
                   </p>
                   <div className="relative flex h-11 items-center rounded-xl border border-vk-200 bg-white transition focus-within:border-vk-500 focus-within:ring-[3px] focus-within:ring-vk-500/15">
                     <Phone className="pointer-events-none absolute left-3.5 h-4 w-4 text-vk-400" />
@@ -318,7 +318,7 @@ export default function CheckoutPage() {
                   </div>
                   <button type="submit" disabled={busy} className="vk-btn-primary h-11 w-full">
                     {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <MessageCircle className="h-4 w-4" />}
-                    Send OTP via WhatsApp
+                    Send OTP
                   </button>
                 </form>
               ) : (

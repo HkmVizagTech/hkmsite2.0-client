@@ -52,11 +52,11 @@ export default function ShopOrdersPage() {
         <div>
           <h1 className="vk-h3">Log in to see your orders</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Use the same mobile number you ordered with — we&apos;ll send a code on WhatsApp.
+            Use the same mobile number you ordered with — we&apos;ll send a code by SMS.
           </p>
         </div>
         <Link href="/donor/login?redirect=/shop/orders" className="vk-btn-primary h-11">
-          Log in with WhatsApp OTP
+          Log in with OTP
         </Link>
       </div>
     );
