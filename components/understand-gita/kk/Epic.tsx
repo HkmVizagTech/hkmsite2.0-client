@@ -27,7 +27,7 @@ export function EpicTitle({ text, as: Tag = "h2", className = "" }: { text: stri
   const MotionTag = motion[Tag];
   return (
     <MotionTag
-      className={`kk-gold-text font-[family-name:var(--font-cinzel),var(--font-telugu)] font-bold uppercase leading-[1.08] tracking-[0.04em] ${className}`}
+      className={`font-[family-name:var(--font-cinzel),var(--font-telugu)] font-bold uppercase leading-[1.08] tracking-[0.04em] ${className}`}
       initial={reduce ? false : "hidden"}
       whileInView="show"
       viewport={{ once: true, amount: 0.3 }}
@@ -36,7 +36,7 @@ export function EpicTitle({ text, as: Tag = "h2", className = "" }: { text: stri
       {words.map((w, i) => (
         <motion.span
           key={i}
-          className="inline-block"
+          className="kk-gold-text inline-block"
           variants={{ hidden: { opacity: 0, y: "0.4em", filter: "blur(6px)" }, show: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.7, ease } } }}
         >
           {w}
