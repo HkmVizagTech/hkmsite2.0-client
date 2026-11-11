@@ -25,7 +25,7 @@ export const SEVAS: Seva[] = [
     description:
       "Sponsor the milk, curd, honey, fruit juices and flowers for the abhishekam of Srila Prabhupada on his disappearance day.",
     tiers: tiers([1100, 2100, 3100, 5100, 11000]),
-    icon: "🪔",
+    icon: "🥛",
     ...base,
   },
   {
