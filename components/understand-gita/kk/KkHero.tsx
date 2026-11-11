@@ -30,6 +30,11 @@ export default function KkHero() {
   const [go, setGo] = useState(false);
   useEffect(() => {
     const on = () => setGo(true);
+    // When the opening titles were already seen this visit (or are skipped), the intro finishes before this listener
+    // exists, so its "done" signal would be missed and the chariot would wait for the 4s fallback. Check directly.
+    let seen = false;
+    try { seen = sessionStorage.getItem("kk-intro-seen") === "1"; } catch {}
+    if (seen || window.matchMedia("(prefers-reduced-motion: reduce)").matches) { setGo(true); return; }
     window.addEventListener(INTRO_DONE, on);
     const fallback = setTimeout(on, 4200);
     return () => { window.removeEventListener(INTRO_DONE, on); clearTimeout(fallback); };
