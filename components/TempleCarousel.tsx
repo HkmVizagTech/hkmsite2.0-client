@@ -199,6 +199,7 @@ const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true }: TempleCa
                     }}
                     className={`relative aspect-[962/1635] overflow-hidden bg-vk-900 md:aspect-[1920/730] ${slide.linkUrl || !isActive ? "cursor-pointer" : ""}`}
                   >
+                    <div className="absolute inset-0">
                     <SlidePicture
                       mobileSrc={mobileBroken ? FALLBACK_IMG_MOBILE : slide.mobileSrc}
                       desktopSrc={desktopBroken ? FALLBACK_IMG : slide.src}
@@ -206,6 +207,7 @@ const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true }: TempleCa
                       first={i === 0}
                       onError={() => setImgErrors((prev) => ({ ...prev, [slide.mobileSrc]: true, [slide.src]: true }))}
                     />
+                    </div>
                   </div>
                 </div>
               );
@@ -220,7 +222,7 @@ const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true }: TempleCa
               type="button"
               onClick={scrollPrev}
               aria-label={t("Previous slide")}
-              className="absolute left-3 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-vk-800 shadow-lg backdrop-blur transition hover:bg-white md:flex lg:left-6"
+              className="absolute left-3 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-vk-800 ring-1 ring-black/5 transition hover:bg-white md:flex lg:left-6"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
@@ -228,7 +230,7 @@ const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true }: TempleCa
               type="button"
               onClick={scrollNext}
               aria-label={t("Next slide")}
-              className="absolute right-3 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-vk-800 shadow-lg backdrop-blur transition hover:bg-white md:flex lg:right-6"
+              className="absolute right-3 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-vk-800 ring-1 ring-black/5 transition hover:bg-white md:flex lg:right-6"
             >
               <ChevronRight className="h-5 w-5" />
             </button>
