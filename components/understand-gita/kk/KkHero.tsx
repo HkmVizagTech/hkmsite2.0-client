@@ -99,7 +99,7 @@ export default function KkHero() {
       </div>
 
       {/* headline */}
-      <motion.div style={reduce ? undefined : { y: textY, opacity: textO }} className="vk-container relative z-[5] pt-6 text-center md:pt-[8vh] md:text-left">
+      <motion.div style={reduce ? undefined : { y: textY, opacity: textO }} className="vk-container relative z-[5] pt-9 text-center md:pt-[8vh] md:text-left">
         <motion.div initial={reduce ? false : { opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.1 }} className="max-w-2xl md:max-w-[600px]">
           <span className="inline-flex items-center gap-2 rounded-full border border-[hsl(var(--gold)/0.55)] bg-vk-900/40 px-3.5 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-[hsl(var(--gold))] backdrop-blur-sm">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[hsl(var(--gold))]" /> Free live course · Online

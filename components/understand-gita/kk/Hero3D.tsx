@@ -56,7 +56,7 @@ export default function Hero3D({ go, onReady }: { go: boolean; onReady: () => vo
       return m;
     };
 
-    let sky: THREE.Mesh, armies: THREE.Mesh, chariot: THREE.Mesh, sun: THREE.Sprite;
+    let sky: THREE.Mesh, armies: THREE.Mesh, chariot: THREE.Mesh, sun: THREE.Sprite, ground: THREE.Mesh;
     const hazes: { s: THREE.Sprite; speed: number }[] = [];
     let embers: THREE.Points;
     let emberVel: Float32Array;
@@ -83,17 +83,30 @@ export default function Hero3D({ go, onReady }: { go: boolean; onReady: () => vo
       }
       if (armies) {
         const vh = visH(D.armies), vw = vh * camera.aspect;
-        const aw = portrait ? vw * 2.3 : vw * 1.15, ah = aw / armyAR;
-        armies.scale.set(aw, ah, 1);
-        armies.position.set(0, -vh / 2 + ah / 2 - vh * 0.02, -D.armies);
+        if (portrait) {
+          // phones: a wide battlefield with its horizon about 58% down the screen, earth filling everything below it
+          const aw = vw * 3.4, ah = aw / armyAR;
+          const yc = -0.08 * vh + 0.1 * ah;
+          armies.scale.set(aw, ah, 1);
+          armies.position.set(0, yc, -D.armies);
+          const top = yc - ah * 0.3, bottom = -vh / 2 - vh * 0.1;
+          ground.visible = true;
+          ground.scale.set(vw * 1.6, top - bottom, 1);
+          ground.position.set(0, (top + bottom) / 2, -D.armies - 0.2);
+        } else {
+          const aw = vw * 1.15, ah = aw / armyAR;
+          armies.scale.set(aw, ah, 1);
+          armies.position.set(0, -vh / 2 + ah / 2 - vh * 0.02, -D.armies);
+          ground.visible = false;
+        }
       }
       if (chariot) {
         const vh = visH(D.chariot), vw = vh * camera.aspect;
-        chariotW = portrait ? vw * 0.96 : Math.min(vw * 0.46, vh * 1.25);
+        chariotW = portrait ? vw * 0.94 : Math.min(vw * 0.46, vh * 1.25);
         const ch = chariotW / chariotAR;
         chariot.scale.set(chariotW, ch, 1);
         chariotTargetX = portrait ? 0 : -vw / 2 + vw * 0.46 + chariotW / 2;
-        chariotBaseY = -vh / 2 + ch / 2 + vh * (portrait ? 0.07 : 0.045);
+        chariotBaseY = -vh / 2 + ch / 2 + vh * (portrait ? 0.09 : 0.045);
         startX = -vw / 2 - chariotW;
         if (entranceT < 0) chariot.position.set(startX, chariotBaseY, -D.chariot);
       }
@@ -116,6 +129,21 @@ export default function Hero3D({ go, onReady }: { go: boolean; onReady: () => vo
         sun = new THREE.Sprite(new THREE.SpriteMaterial({ map: softTex("rgba(255,214,130,0.75)", "rgba(255,170,60,0)"), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true }));
         sun.renderOrder = 1;
         scene.add(sun);
+        // dusty earth below the armies (only used on tall phone screens)
+        const gc = document.createElement("canvas");
+        gc.width = 4; gc.height = 256;
+        const gg = gc.getContext("2d")!;
+        const gr = gg.createLinearGradient(0, 0, 0, 256);
+        gr.addColorStop(0, "#9b7a4e");
+        gr.addColorStop(0.35, "#6e5434");
+        gr.addColorStop(1, "#1a140e");
+        gg.fillStyle = gr;
+        gg.fillRect(0, 0, 4, 256);
+        const gt = new THREE.CanvasTexture(gc);
+        gt.colorSpace = THREE.SRGBColorSpace;
+        ground = plane(gt);
+        ground.renderOrder = 1;
+        ground.visible = false;
         armies = plane(tArmy, { transparent: true });
         armies.renderOrder = 2;
         const hazeTex = softTex("rgba(255,210,150,0.35)", "rgba(255,210,150,0)");
@@ -176,7 +204,7 @@ export default function Hero3D({ go, onReady }: { go: boolean; onReady: () => vo
       const dt = Math.min(clock.getDelta(), 0.05);
 
       // camera: mouse sway on desktop, slow drift on phones, dolly forward as the hero scrolls away
-      const drift = mobile ? Math.sin(t * 0.25) * 0.35 : 0;
+      const drift = mobile ? Math.sin(t * 0.25) * 0.08 : 0;
       cam.x += (pointer.x * 0.8 + drift - cam.x) * 0.04;
       cam.y += (-pointer.y * 0.35 - cam.y) * 0.04;
       const rect = el.getBoundingClientRect();
