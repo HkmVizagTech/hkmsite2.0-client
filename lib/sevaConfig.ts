@@ -36,6 +36,8 @@ export interface Seva {
   category: string; // used for DCC / receipt categorization
   account: "default" | "donations";
   icon: string;
+  // Optional drawn icon shown in place of the emoji (festival pages pass this in; not stored in data).
+  iconNode?: import("react").ReactNode;
   // If set, every link to this seva (homepage cards, cross-links on other
   // seva pages, the donation hub) points here instead of /donate/[slug].
   // Used for Square Foot Seva, which has a richer dedicated campaign page

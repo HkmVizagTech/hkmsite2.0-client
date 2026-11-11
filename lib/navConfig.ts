@@ -160,6 +160,7 @@ export const HIDE_BOTTOM_NAV_PREFIXES = [
   "/special-occasion",
   // Free Gita course page: full-screen story with its own Register buttons
   "/understand-gita",
+  "/srila-prabhupada",
   "/te/understand-gita",
   "/subhojanam",
   "/janmashtami",
