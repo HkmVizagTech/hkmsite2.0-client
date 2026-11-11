@@ -56,6 +56,8 @@ export default function Hero3D({ go, onReady }: { go: boolean; onReady: () => vo
       return m;
     };
 
+    let field: THREE.Mesh | null = null;
+    let fieldAR = 0.5628;
     let sky: THREE.Mesh, armies: THREE.Mesh, chariot: THREE.Mesh, sun: THREE.Sprite, ground: THREE.Mesh, shadow: THREE.Sprite, plume: THREE.Sprite;
     const hazes: { s: THREE.Sprite; speed: number }[] = [];
     let embers: THREE.Points;
@@ -72,13 +74,26 @@ export default function Hero3D({ go, onReady }: { go: boolean; onReady: () => vo
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       const portrait = w / h < 1;
+      const usePortraitField = portrait && !!field;
+      if (field) {
+        field.visible = usePortraitField;
+        if (usePortraitField) {
+          // phones: one tall painting of the whole battlefield, horizon about 58% down the screen
+          const vh = visH(D.sky) * 1.06, vw = vh * camera.aspect;
+          const pw = Math.max(vw, vh * fieldAR), ph = pw / fieldAR;
+          field.scale.set(pw, ph, 1);
+          field.position.set(0, -0.08 * vh + 0.06 * ph, -D.sky + 0.5);
+        }
+      }
+      if (sky) sky.visible = !usePortraitField;
+      if (armies) armies.visible = !usePortraitField;
       if (sky) {
         const vh = visH(D.sky) * 1.12, vw = vh * camera.aspect;
         const sw = Math.max(vw, vh * skyAR), sh = sw / skyAR;
         sky.scale.set(sw, sh, 1);
         // keep the sunrise (right third of the painting) on screen on phones
         sky.position.set(portrait ? -sw * 0.18 : 0, -vh * 0.05, -D.sky);
-        sun.position.set(portrait ? vw * 0.05 : vw * 0.2, -vh * 0.18, -D.sky + 1);
+        sun.position.set(usePortraitField ? 0 : portrait ? vw * 0.05 : vw * 0.2, usePortraitField ? -vh * 0.08 : -vh * 0.18, -D.sky + 1);
         sun.scale.setScalar(vh * 0.55);
       }
       if (armies) {
@@ -90,7 +105,7 @@ export default function Hero3D({ go, onReady }: { go: boolean; onReady: () => vo
           armies.scale.set(aw, ah, 1);
           armies.position.set(0, yc, -D.armies);
           const top = yc - ah * 0.36, bottom = -vh / 2 - vh * 0.1;
-          ground.visible = true;
+          ground.visible = !usePortraitField;
           ground.scale.set(vw * 1.6, top - bottom, 1);
           ground.position.set(0, (top + bottom) / 2, -D.armies + 0.1);
         } else {
@@ -102,10 +117,10 @@ export default function Hero3D({ go, onReady }: { go: boolean; onReady: () => vo
       }
       if (chariot) {
         const vh = visH(D.chariot), vw = vh * camera.aspect;
-        chariotW = portrait ? vw * 0.82 : Math.min(vw * 0.46, vh * 1.25);
+        chariotW = portrait ? vw * 0.92 : Math.min(vw * 0.46, vh * 1.25);
         const ch = chariotW / chariotAR;
         chariot.scale.set(chariotW, ch, 1);
-        chariotTargetX = portrait ? vw * 0.04 : -vw / 2 + vw * 0.46 + chariotW / 2;
+        chariotTargetX = portrait ? vw * 0.02 : -vw / 2 + vw * 0.46 + chariotW / 2;
         chariotBaseY = -vh / 2 + ch / 2 + vh * (portrait ? 0.06 : 0.045);
         startX = -vw / 2 - chariotW;
         if (entranceT < 0) chariot.position.set(startX, chariotBaseY, -D.chariot);
@@ -162,6 +177,16 @@ export default function Hero3D({ go, onReady }: { go: boolean; onReady: () => vo
         scene.add(plume);
         chariot = plane(tChariot, { transparent: true });
         chariot.renderOrder = 5;
+        if (mobile) {
+          try {
+            const tf = await tex(KK.fieldPortrait);
+            if (!disposed) {
+              fieldAR = (tf.image as HTMLImageElement).width / (tf.image as HTMLImageElement).height;
+              field = plane(tf);
+              field.renderOrder = 0;
+            }
+          } catch {}
+        }
 
         // embers between the layers
         const N = mobile ? 160 : 320;

@@ -16,6 +16,7 @@ export const KK = {
   sky: "/assets/gita/kk-sky.webp",
   armies: "/assets/gita/kk-armies.webp",
   chariot: "/assets/gita/kk-chariot.webp",
+  fieldPortrait: "/assets/gita/kk-field-portrait.webp",
   moment: "/assets/gita/kk-moment.webp",
 };
 
@@ -49,7 +50,7 @@ export default function KkHero() {
   const textO = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 
   return (
-    <section ref={ref} className="relative isolate h-[calc(100svh-var(--header-h)-var(--bottom-nav-space,0px))] min-h-[600px] overflow-hidden bg-[#06080F] text-white md:h-[calc(100svh-var(--header-h))] md:min-h-[640px] md:max-h-[920px]">
+    <section ref={ref} className="relative isolate h-[calc(100svh-var(--header-h)-var(--bottom-nav-space,0px))] max-h-[680px] min-h-[600px] overflow-hidden bg-[#06080F] text-white md:h-[calc(100svh-var(--header-h))] md:min-h-[640px] md:max-h-[920px]">
       {use3d && (
         <div className={`absolute inset-0 -z-20 transition-opacity duration-700 ${ready3d ? "opacity-100" : "opacity-0"}`}>
           <Hero3D go={go} onReady={onReady} />
