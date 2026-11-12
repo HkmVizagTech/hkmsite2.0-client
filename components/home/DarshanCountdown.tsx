@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
+import { WholeImage } from "@/components/home/HomeMagic";
 import Link from "next/link";
 import { ArrowRight, CalendarDays, ChevronLeft, ChevronRight, Moon, Sparkles, X } from "lucide-react";
 import { getDarshanPhotos } from "@/lib/darshanApi";
@@ -120,17 +121,11 @@ export default function DarshanCountdown() {
               <button
                 type="button"
                 onClick={() => photos.length && setLightbox(active)}
-                className="group relative block aspect-[4/3] w-full overflow-hidden rounded-2xl bg-vk-100 max-h-[380px] md:max-h-[460px] lg:aspect-auto lg:max-h-none lg:min-h-[300px] lg:flex-1"
+                className="group relative mx-auto block w-fit max-w-full overflow-hidden rounded-2xl bg-vk-100"
                 aria-label={t("Open today's darshan photo")}
               >
-                <Image
-                  src={main}
-                  alt={t("Today's darshan of Sri Sri Radha Madan Mohan")}
-                  fill
-                  sizes="(min-width: 1024px) 420px, 100vw"
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-vk-900/80 via-transparent to-transparent" />
+                <WholeImage src={main} alt={t("Today's darshan of Sri Sri Radha Madan Mohan")} sizes="(min-width: 1024px) 520px, 100vw" className="!w-auto max-h-[560px] max-w-full" />
+                <div className="absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-vk-900/75 to-transparent" />
                 <div className="absolute left-3 top-3">
                   <span className="vk-pill !bg-white/95 !text-vk-800 shadow">
                     <Sparkles className="h-3.5 w-3.5" /> {t("Today's Darshan")}
@@ -152,7 +147,7 @@ export default function DarshanCountdown() {
                         i === active ? "ring-vk-500" : "ring-transparent opacity-70 hover:opacity-100"
                       }`}
                     >
-                      <Image src={src} alt="" fill sizes="56px" className="object-cover" />
+                      <Image src={src} alt="" fill sizes="56px" className="object-cover object-top" />
                     </button>
                   ))}
                 </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { useReducedMotion } from "framer-motion";
 
 /**
@@ -63,4 +64,12 @@ export function GoldPetals({ count = 14 }: { count?: number }) {
 /** Thin gold bar at the top of the window that fills as the page is read (CSS scroll timeline). */
 export function ReadingProgress() {
   return <div aria-hidden className="hm-progress" />;
+}
+
+/**
+ * A photo shown whole at its own shape: no cropping, no blur. The box takes the picture's proportions once it
+ * loads (width/height below only reserve space until then).
+ */
+export function WholeImage({ src, alt, sizes, priority = false, className = "" }: { src: string; alt: string; sizes: string; priority?: boolean; className?: string }) {
+  return <Image src={src} alt={alt} width={1200} height={900} sizes={sizes} priority={priority} className={`block h-auto w-full ${className}`} />;
 }

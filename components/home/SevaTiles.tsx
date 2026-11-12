@@ -67,8 +67,7 @@ export default function SevaTiles() {
   const Card = ({ tile, imgClass, fit, sizes }: { tile: TileData; imgClass: string; fit: string; sizes: string }) => (
     <Link href={tile.href} className="hm-seva-card group flex h-full flex-col overflow-hidden rounded-2xl">
       <div className={`relative overflow-hidden ${imgClass}`}>
-        {fit === "object-contain" && <Image src={tile.img} alt="" aria-hidden fill sizes="160px" className="scale-125 object-cover blur-2xl saturate-150" />}
-        <Image src={tile.img} alt={t(tile.title)} fill sizes={sizes} className={`${fit} transition-transform duration-700 group-hover:scale-[1.04]`} />
+        <Image src={tile.img} alt={t(tile.title)} fill sizes={sizes} className={`${fit} transition-transform duration-700 group-hover:scale-[1.03]`} />
         {tile.badge && (
           <span className="absolute left-3 top-3 z-[2] inline-flex items-center gap-1 rounded-full bg-[#0A1640]/80 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-[#FFE6A3] ring-1 ring-[#F6C752]/60 backdrop-blur">
             <Sparkles className="h-3 w-3" /> {t(tile.badge)}
@@ -109,11 +108,11 @@ export default function SevaTiles() {
             ))}
           </div>
         )}
-        {/* Seva pictures vary in shape, so each is shown whole over a soft blurred copy of itself. */}
+        {/* Equal cards; each seva picture fits inside its frame whole. Swipe on phones. */}
         <div className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4 [scrollbar-width:none] md:mx-auto md:grid md:max-w-6xl md:grid-cols-3 md:gap-6 md:overflow-visible md:px-0 md:pb-0 [&::-webkit-scrollbar]:hidden">
           {sevaTiles.map((tile, i) => (
             <Reveal key={tile.key} delay={(i % 6) * 0.05} className="w-[78%] shrink-0 snap-center sm:w-[46%] md:w-auto">
-              <Card tile={tile} imgClass="aspect-[4/3]" fit="object-contain" sizes="(min-width: 768px) 380px, 78vw" />
+              <Card tile={tile} imgClass="aspect-[4/3] bg-[#0A1640]" fit="object-contain" sizes="(min-width: 768px) 380px, 78vw" />
             </Reveal>
           ))}
         </div>

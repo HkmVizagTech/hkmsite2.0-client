@@ -59,18 +59,18 @@ export default function MomentsSection() {
       for (const item of items || []) {
         if (item.category && !TEMPLE_GALLERY_CATEGORIES.includes(item.category)) continue;
         for (const src of item.images || []) flat.push({ src, title: item.title || "Temple moment", category: item.category });
-        if (flat.length >= 5) break;
+        if (flat.length >= 6) break;
       }
-      if (flat.length >= 5) setMoments(flat.slice(0, 5));
+      if (flat.length >= 5) setMoments(flat.slice(0, 6));
     });
   }, []);
 
-  const collage = moments.slice(0, 5);
+  const collage = moments.slice(0, 6);
 
   const Photo = ({ m, className, sizes, priority = false }: { m: Moment; className: string; sizes: string; priority?: boolean }) => (
-    <Link href="/gallery" className={`group relative block overflow-hidden rounded-2xl bg-vk-100 ring-1 ring-[#F6C752]/50 shadow-[0_18px_40px_-24px_rgba(30,58,138,.6)] ${className}`}>
-      <Image src={m.src} alt={t(m.title)} fill sizes={sizes} priority={priority} className="object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110" />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0A1640]/80 via-transparent to-transparent opacity-80 transition-opacity group-hover:opacity-100" />
+    <Link href="/gallery" className={`group relative block aspect-[4/5] overflow-hidden rounded-2xl bg-[#0A1640] ring-1 ring-[#F6C752]/50 shadow-[0_18px_40px_-24px_rgba(30,58,138,.6)] ${className}`}>
+      <Image src={m.src} alt={t(m.title)} fill sizes={sizes} priority={priority} className="object-contain transition-transform duration-700 group-hover:scale-[1.03]" />
+      <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#0A1640]/80 to-transparent" />
       <div className="absolute inset-x-0 bottom-0 translate-y-1 p-3 transition-transform duration-500 group-hover:translate-y-0 md:p-4">
         {m.category && <span className="mb-1 inline-block rounded-full bg-[#F6C752] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#1A1240]">{t(m.category)}</span>}
         <p className="line-clamp-1 text-sm font-semibold text-white">{t(m.title)}</p>
@@ -93,10 +93,10 @@ export default function MomentsSection() {
         {/* collage */}
         {collage.length >= 5 && (
           <Reveal>
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:grid-rows-2 md:gap-4">
-              <Photo m={collage[0]} priority className="col-span-2 aspect-[4/3] md:row-span-2 md:aspect-auto md:h-full" sizes="(min-width: 768px) 50vw, 100vw" />
-              {collage.slice(1).map((m, i) => (
-                <Photo key={m.src + i} m={m} className="aspect-square md:aspect-[4/3]" sizes="(min-width: 768px) 25vw, 50vw" />
+            {/* equal tiles; each photo fits inside whole */}
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
+              {collage.map((m, i) => (
+                <Photo key={m.src + i} m={m} priority={i === 0} className="" sizes="(min-width: 768px) 33vw, 50vw" />
               ))}
             </div>
           </Reveal>
