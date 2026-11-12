@@ -73,9 +73,9 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
         <ProgramsTabs />
         <LatestBlogs />
         <HomeFAQ />
-        <JoinCTA lang={lang} />
+        <JoinCTA />
       </main>
-      <Footer />
+      <Footer flush />
     </div>
   );
 }

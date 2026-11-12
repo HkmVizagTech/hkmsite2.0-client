@@ -1,84 +1,100 @@
-import Image from "next/image";
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, HandHeart, Heart, MapPin } from "lucide-react";
+import { ArrowRight, Building2, CalendarHeart, HandHeart, Heart, Sparkles, Utensils } from "lucide-react";
 import WhatsAppIcon from "@/components/WhatsAppIcon";
+import CountUp from "@/components/bhajans/CountUp";
 import Reveal from "@/components/site/Reveal";
 import { GoldPetals } from "@/components/home/HomeMagic";
-import { getT } from "@/lib/i18n/server";
+import { useT } from "@/components/i18n/LocaleProvider";
 
-const TEMPLE_IMG =
-  "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1784644186447-1784644185742-WhatsAppImage2026-07-03at1.56.13PM1.jpeg";
+const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 
 /**
- * Closing banner: "Be a part of the Lord's divine seva" on midnight blue with the temple gopuram shown clearly on the
- * right (golden rays behind it, petals falling), and "Volunteer to Serve" as a glass strip along the bottom.
+ * Closing band: the temple's impact in large gold numbers that count up as they scroll in (only figures the site
+ * already states, plus the live sq.ft offered for the new temple), then the two ways to join: Donate and Volunteer.
  */
-export default function JoinCTA({ lang }: { lang: string }) {
-  const t = getT(lang);
+export default function JoinCTA() {
+  const t = useT();
+  const [sqft, setSqft] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetch(`${API_URL}/seva-stats/sqft-campaign`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => d && Number.isFinite(Number(d.sqftRaised)) && Number(d.sqftRaised) > 0 && setSqft(Number(d.sqftRaised)))
+      .catch(() => {});
+  }, []);
+
+  const stats: { icon: typeof Utensils; value: number; suffix: string; label: string; live?: boolean }[] = [
+    { icon: Utensils, value: 2, suffix: ` ${t("Lakh+")}`, label: t("Meals served every day") },
+    { icon: CalendarHeart, value: 21, suffix: "+", label: t("Festivals a year") },
+    { icon: Sparkles, value: 2026 - 2008, suffix: "+", label: t("Years of seva in Vizag") },
+    ...(sqft ? [{ icon: Building2, value: sqft, suffix: "", label: t("Sq.ft offered for the new temple"), live: true }] : []),
+  ];
+
   return (
-    <section className="pb-6 pt-6 md:pb-10 md:pt-10">
-      <div className="vk-container">
-        <Reveal>
-          <div className="relative isolate overflow-hidden rounded-[2rem] bg-[radial-gradient(80%_100%_at_75%_30%,#22409A_0%,#11225E_50%,#0A1640_100%)] text-white shadow-[0_40px_80px_-40px_rgba(10,22,64,.85)] ring-1 ring-[#F6C752]/35">
-            <GoldPetals count={12} />
+    <section className="relative isolate mt-6 overflow-hidden bg-[radial-gradient(70%_80%_at_50%_0%,#22409A_0%,#11225E_50%,#0A1640_100%)] py-16 text-white md:mt-10 md:py-24">
+      <div aria-hidden className="sp-rays absolute left-1/2 top-0 -z-10 aspect-square w-[140vmax] -translate-x-1/2 -translate-y-1/2 opacity-60" />
+      <GoldPetals count={14} />
 
-            {/* temple gopuram: clear on the right, fading into the blue */}
-            <div className="relative h-64 sm:h-80 lg:absolute lg:inset-y-0 lg:right-0 lg:h-auto lg:w-[52%]">
-              <div aria-hidden className="sp-rays absolute left-1/2 top-[45%] -z-10 aspect-square w-[150%] -translate-x-1/2 opacity-70" />
-              <Image
-                src={TEMPLE_IMG}
-                alt={t("Hare Krishna Vaikuntham Temple, Visakhapatnam")}
-                fill
-                sizes="(min-width: 1024px) 680px, 100vw"
-                className="object-cover object-center [mask-image:linear-gradient(180deg,#000_60%,transparent)] lg:[mask-image:linear-gradient(90deg,transparent,#000_30%)]"
-              />
-            </div>
+      <div className="vk-container relative">
+        <Reveal className="text-center">
+          <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-[#F6C752]">✦ {t("Join Our Divine Journey")} ✦</p>
+          <h2 className="vk-h2 hm-gold mx-auto mt-3 max-w-3xl md:!text-[3.2rem]">{t("Join thousands who serve every day")}</h2>
+          <p className="mx-auto mt-4 max-w-2xl text-[15px] leading-relaxed text-white/75 md:text-base">
+            {t("Every contribution and every visit is an offering at the lotus feet of the Lord. Help us build Hare Krishna Vaikuntham — a centre of devotion, simplicity and spiritual awakening for Visakhapatnam.")}
+          </p>
+        </Reveal>
 
-            <div className="relative px-6 pb-6 pt-2 md:px-12 md:pb-10 lg:min-h-[560px] lg:w-[56%] lg:px-14 lg:pb-44 lg:pt-14">
-              <span className="vk-pill-light mb-4 inline-flex">{t("Join Our Divine Journey")}</span>
-              <h2 className="vk-h2 hm-gold md:!text-[3rem]">{t("Be a part of the Lord's divine seva")}</h2>
-              <p className="mt-4 max-w-lg text-[15px] leading-relaxed text-white/80 md:text-base">
-                {t("Every contribution and every visit is an offering at the lotus feet of the Lord. Help us build Hare Krishna Vaikuntham — a centre of devotion, simplicity and spiritual awakening for Visakhapatnam.")}
-              </p>
-              <div className="mt-7 flex flex-wrap gap-3">
-                <Link href="/donate" className="vk-btn-gold">
-                  <Heart className="h-4 w-4 fill-current" /> {t("Donate Now")}
-                </Link>
-                <Link href="/contact" className="vk-btn-ghost-light">
-                  <MapPin className="h-4 w-4" /> {t("Visit the temple")}
-                </Link>
-              </div>
-            </div>
-
-            {/* volunteer strip */}
-            <div className="relative mx-4 mb-4 md:mx-6 md:mb-6 lg:absolute lg:inset-x-6 lg:bottom-6 lg:m-0 lg:max-w-[56%]">
-              <div className="flex flex-col gap-4 rounded-2xl border border-[#F6C752]/35 bg-white/[0.08] p-5 backdrop-blur-md sm:flex-row sm:items-center">
-                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#F6C752] text-[#1A1240] shadow-[0_0_20px_rgba(246,199,82,.5)]">
-                  <HandHeart className="h-6 w-6" />
+        {/* impact numbers */}
+        <div className={`mx-auto mt-12 grid max-w-5xl grid-cols-2 gap-3 md:gap-5 ${stats.length === 4 ? "lg:grid-cols-4" : "lg:grid-cols-3"}`}>
+          {stats.map((s, i) => (
+            <Reveal key={s.label} delay={i * 0.08}>
+              <div className="relative h-full overflow-hidden rounded-2xl bg-white/[0.06] p-5 text-center ring-1 ring-[#F6C752]/30 backdrop-blur transition-all duration-500 hover:-translate-y-1 hover:bg-white/[0.1] hover:ring-[#F6C752]/70 md:p-7">
+                <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-[#F6C752]/15 text-[#F6C752] ring-1 ring-[#F6C752]/50">
+                  <s.icon className="h-5 w-5" />
                 </span>
-                <div className="min-w-0 flex-1">
-                  <h3 className="font-serif-display text-xl font-bold text-[#FFE6A3]">{t("Volunteer to Serve")}</h3>
-                  <p className="mt-0.5 text-[13.5px] leading-snug text-white/75">
-                    {t("Serve at festivals, prasadam distribution and outreach — and be spiritually transformed.")}
-                  </p>
-                </div>
-                <div className="flex shrink-0 flex-wrap gap-2">
-                  <Link href="/volunteer" className="vk-btn !h-10 bg-white !px-4 text-sm text-vk-800 hover:bg-vk-50">
-                    {t("Register")} <ArrowRight className="h-4 w-4" />
-                  </Link>
-                  <a
-                    href="https://whatsapp.com/channel/0029VaZDEG67T8bWHjibTy2u"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={t("WhatsApp Channel")}
-                    className="vk-btn-ghost-light !h-10 !px-4 text-sm"
-                  >
-                    <WhatsAppIcon className="h-4 w-4 fill-current" /> {t("WhatsApp")}
-                  </a>
-                </div>
+                <p className="mt-4 font-serif-display text-[2rem] font-bold leading-none sm:text-4xl md:text-5xl">
+                  <CountUp value={s.value} className="hm-gold" />
+                  <span className="hm-gold">{s.suffix}</span>
+                </p>
+                <p className="mt-2 text-[12.5px] font-medium leading-snug text-white/70 md:text-sm">{s.label}</p>
+                {s.live && (
+                  <span className="mt-2 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-emerald-300">
+                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" /> {t("Live")}
+                  </span>
+                )}
               </div>
-            </div>
+            </Reveal>
+          ))}
+        </div>
+
+        {/* two ways to join */}
+        <Reveal delay={0.2}>
+          <div className="mx-auto mt-12 grid max-w-4xl gap-4 md:grid-cols-2">
+            <Link href="/donate" className="group flex items-center gap-4 rounded-2xl bg-gradient-to-r from-[#F6C752] to-[#F2B41F] p-5 text-[#1A1240] shadow-[0_0_40px_-8px_rgba(246,199,82,.7)] transition-transform hover:-translate-y-1 md:p-6">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#1A1240] text-[#F6C752]"><Heart className="h-5 w-5 fill-current" /></span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-lg font-extrabold leading-tight md:text-xl">{t("Donate Now")}</span>
+                <span className="block text-[13px] font-medium opacity-80">{t("Temple, Anna Daan, Gau Seva, Gita Daan · 80G")}</span>
+              </span>
+              <ArrowRight className="h-5 w-5 shrink-0 transition-transform group-hover:translate-x-1" />
+            </Link>
+            <Link href="/volunteer" className="group flex items-center gap-4 rounded-2xl bg-white/[0.08] p-5 ring-1 ring-[#F6C752]/50 backdrop-blur transition-all hover:-translate-y-1 hover:bg-white/[0.12] md:p-6">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#F6C752] text-[#1A1240]"><HandHeart className="h-5 w-5" /></span>
+              <span className="min-w-0 flex-1">
+                <span className="block text-lg font-extrabold leading-tight text-[#FFE6A3] md:text-xl">{t("Volunteer to Serve")}</span>
+                <span className="block text-[13px] text-white/70">{t("Festivals, prasadam and outreach")}</span>
+              </span>
+              <ArrowRight className="h-5 w-5 shrink-0 text-[#F6C752] transition-transform group-hover:translate-x-1" />
+            </Link>
           </div>
+          <p className="mt-6 text-center">
+            <a href="https://whatsapp.com/channel/0029VaZDEG67T8bWHjibTy2u" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm font-semibold text-white/75 hover:text-white">
+              <WhatsAppIcon className="h-4 w-4 fill-current" /> {t("Follow our WhatsApp Channel")}
+            </a>
+          </p>
         </Reveal>
       </div>
     </section>

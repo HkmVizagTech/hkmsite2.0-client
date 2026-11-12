@@ -62,12 +62,13 @@ const PRABHUPADA_IMG = "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/medi
 
 const colTitle = "mb-5 text-xs font-bold uppercase tracking-[0.16em] text-white/90";
 
-const Footer = () => {
+/** `flush`: no gap above the footer (the home page ends on a dark band that runs straight into it). */
+const Footer = ({ flush = false }: { flush?: boolean } = {}) => {
   const t = useT();
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
   return (
-    <footer className="relative mt-16 md:mt-24">
+    <footer className={`relative ${flush ? "" : "mt-16 md:mt-24"}`}>
       <div className="relative overflow-hidden bg-gradient-navy text-white/75">
         {/* Temple line-art + soft glows */}
         <div aria-hidden className="pointer-events-none absolute -left-32 top-10 h-96 w-96 rounded-full bg-vk-500/20 blur-3xl" />
