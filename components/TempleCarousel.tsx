@@ -22,7 +22,7 @@ interface TempleCarouselProps {
   slides?: TempleCarouselSlide[];
   /** Set false to skip loading live banners from /hero-banners. */
   fetchApiBanners?: boolean;
-  /** Home page only: slow zoom on the showing banner and gold sparkles over it. */
+  /** Home page only: gold sparkles over the banners. */
   magic?: boolean;
 }
 
@@ -218,7 +218,6 @@ const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true, magic = fa
           </div>
         </div>
 
-        {magic && <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden"><div className="hm-sweep" /></div>}
         {magic && <GoldSparkles count={22} className="z-[5]" />}
 
         {/* Arrows — desktop only, over the edges of the full-width banner */}
