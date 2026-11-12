@@ -9,6 +9,7 @@ import { FESTIVAL_PAGE } from "@/components/FestivalDonationsSection";
 import SectionHeading from "@/components/site/SectionHeading";
 import Reveal from "@/components/site/Reveal";
 import { useT } from "@/components/i18n/LocaleProvider";
+import { GoldSparkles } from "@/components/home/HomeMagic";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 
@@ -65,9 +66,12 @@ export default function SevaTiles() {
   const tiles = [...festivals, ...sevaTiles];
 
   return (
-    <section className="vk-section">
+    <section className="vk-section hm-midnight relative isolate overflow-hidden">
+      <div aria-hidden className="sp-rays absolute left-1/2 top-0 -z-10 h-[1100px] w-[1100px] -translate-x-1/2 opacity-60" />
+      <GoldSparkles count={18} className="-z-10" />
       <div className="vk-container">
         <SectionHeading
+          light
           align="center"
           eyebrow={t("Seva Opportunities")}
           title={t("Donate Generously, Support Our Seva")}
@@ -107,7 +111,7 @@ export default function SevaTiles() {
           ))}
         </div>
         <div className="mt-10 text-center">
-          <Link href="/donate" className="vk-btn-primary">
+          <Link href="/donate" className="vk-btn-gold">
             {t("View all sevas")}
           </Link>
         </div>

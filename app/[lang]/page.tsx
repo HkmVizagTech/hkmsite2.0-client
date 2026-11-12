@@ -15,7 +15,6 @@ import WhatsAppFloatButton from "@/components/WhatsAppFloatButton";
 import Footer from "@/components/Footer";
 import JsonLd from "@/components/seo/JsonLd";
 import { OrnamentDivider } from "@/components/festival/FestivalDecor";
-import { ReadingProgress } from "@/components/home/HomeMagic";
 import { homeFaq } from "@/lib/faq";
 import { getHeroSlides } from "@/lib/heroBanners";
 import type { Metadata } from "next";
@@ -60,7 +59,6 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
       <main className="home-theme">
         {/* Banners come with the HTML; only if the server couldn't load them does
             the carousel fall back to fetching them in the browser. */}
-        <ReadingProgress />
         <TempleCarousel slides={heroSlides ?? undefined} fetchApiBanners={!heroSlides} magic />
         <DarshanCountdown />
         <WelcomeSection />

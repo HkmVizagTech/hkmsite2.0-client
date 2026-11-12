@@ -202,7 +202,7 @@ const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true, magic = fa
                     }}
                     className={`relative aspect-[962/1635] overflow-hidden bg-vk-900 md:aspect-[1920/730] ${slide.linkUrl || !isActive ? "cursor-pointer" : ""}`}
                   >
-                    <div className={`absolute inset-0 ${magic && isActive ? "hm-kb" : ""}`}>
+                    <div className="absolute inset-0">
                     <SlidePicture
                       mobileSrc={mobileBroken ? FALLBACK_IMG_MOBILE : slide.mobileSrc}
                       desktopSrc={desktopBroken ? FALLBACK_IMG : slide.src}
@@ -218,6 +218,7 @@ const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true, magic = fa
           </div>
         </div>
 
+        {magic && <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden"><div className="hm-sweep" /></div>}
         {magic && <GoldSparkles count={22} className="z-[5]" />}
 
         {/* Arrows — desktop only, over the edges of the full-width banner */}
