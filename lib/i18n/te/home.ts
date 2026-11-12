@@ -307,13 +307,4 @@ export const home: Record<string, string> = {
   "in {m} min": "{m} నిమిషాల్లో",
   "Offer Ekadashi seva": "ఏకాదశి సేవ సమర్పించండి",
   "Show photo: {caption}": "ఫోటో చూపించు: {caption}",
-  "Meals served every day": "ప్రతిరోజూ వడ్డించే భోజనాలు",
-  "Years of seva in Vizag": "వైజాగ్‌లో సేవా సంవత్సరాలు",
-  "Sq.ft offered for the new temple": "కొత్త ఆలయానికి సమర్పించిన చ.అడుగులు",
-  "Live": "ప్రత్యక్షం",
-  "Join thousands who serve every day": "ప్రతిరోజూ సేవ చేసే వేలాది మందితో చేరండి",
-  "Temple, Anna Daan, Gau Seva, Gita Daan · 80G": "ఆలయం, అన్నదానం, గో సేవ, గీతా దానం · 80G",
-  "Festivals, prasadam and outreach": "పండుగలు, ప్రసాదం, ప్రచారం",
-  "Follow our WhatsApp Channel": "మా WhatsApp ఛానెల్‌ను అనుసరించండి",
-  "Lakh+": "లక్షలు+",
 };
