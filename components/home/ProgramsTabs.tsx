@@ -118,14 +118,20 @@ export default function ProgramsTabs() {
   const reduce = useReducedMotion();
   const [active, setActive] = useState(0);
   const [held, setHeld] = useState(false);
+  // which of the open programme's photos fills the panel (its thumbnails switch it)
+  const [pic, setPic] = useState(0);
 
   useEffect(() => {
     if (reduce || held) return;
-    const id = setTimeout(() => setActive((a) => (a + 1) % programs.length), ADVANCE_MS);
+    const id = setTimeout(() => {
+      setPic(0);
+      setActive((a) => (a + 1) % programs.length);
+    }, ADVANCE_MS);
     return () => clearTimeout(id);
   }, [active, held, reduce]);
 
   const open = (i: number) => {
+    if (i !== active) setPic(0);
     setActive(i);
     setHeld(true);
   };
@@ -139,10 +145,21 @@ export default function ProgramsTabs() {
       <p className={`mt-2 text-white/80 ${compact ? "line-clamp-4 text-[14px] leading-relaxed" : "line-clamp-3 text-[15px] leading-relaxed"}`}>{t(p.text)}</p>
       {p.images.length > 1 && (
         <div className="mt-4 flex gap-2">
-          {p.images.slice(1, 4).map((img) => (
-            <div key={img.src} className="relative h-14 w-20 overflow-hidden rounded-lg ring-1 ring-[#F6C752]/50">
-              <Image src={img.src} alt={t(img.caption)} fill sizes="80px" className="object-cover" />
-            </div>
+          {p.images.slice(0, 4).map((img, k) => (
+            <button
+              key={img.src}
+              type="button"
+              aria-label={t("Show photo: {caption}", { caption: t(img.caption) })}
+              aria-pressed={k === pic}
+              onClick={(e) => {
+                e.stopPropagation();
+                setPic(k);
+                setHeld(true);
+              }}
+              className={`relative h-14 w-20 overflow-hidden rounded-lg transition-all md:h-16 md:w-24 ${k === pic ? "ring-2 ring-[#F6C752] ring-offset-2 ring-offset-[#0A1640]" : "opacity-75 ring-1 ring-white/40 hover:opacity-100"}`}
+            >
+              <Image src={img.src} alt="" fill sizes="96px" className="object-cover" />
+            </button>
           ))}
         </div>
       )}
@@ -180,11 +197,12 @@ export default function ProgramsTabs() {
                 }`}
               >
                 <Image
-                  src={p.images[0].src}
+                  key={on ? p.images[Math.min(pic, p.images.length - 1)].src : p.images[0].src}
+                  src={on ? p.images[Math.min(pic, p.images.length - 1)].src : p.images[0].src}
                   alt=""
                   fill
                   sizes="(min-width: 1024px) 700px, 100vw"
-                  className={`object-cover transition-transform duration-[1600ms] ease-out ${on ? "scale-100" : "scale-110 group-hover:scale-105"}`}
+                  className={`hm-fade object-cover transition-transform duration-[1600ms] ease-out ${on ? "scale-100" : "scale-110 group-hover:scale-105"}`}
                 />
                 <div className={`absolute inset-0 transition-all duration-700 ${on ? "bg-gradient-to-t from-[#0A1640] via-[#0A1640]/60 to-[#0A1640]/5" : "bg-[#0A1640]/65 group-hover:bg-[#0A1640]/50"}`} />
 

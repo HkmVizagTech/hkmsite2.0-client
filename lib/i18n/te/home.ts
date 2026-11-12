@@ -306,4 +306,5 @@ export const home: Record<string, string> = {
   "in {h}h {m}m": "{h}గం {m}ని లో",
   "in {m} min": "{m} నిమిషాల్లో",
   "Offer Ekadashi seva": "ఏకాదశి సేవ సమర్పించండి",
+  "Show photo: {caption}": "ఫోటో చూపించు: {caption}",
 };

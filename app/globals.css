@@ -1501,3 +1501,5 @@ html[lang="te"] .home-theme .vk-h1, html[lang="te"] .home-theme .vk-h2 { line-he
 
 /* Programs panels: progress line while they advance on their own. */
 @keyframes hm-progress-bar { from { width: 0; } to { width: 100%; } }
+@keyframes hm-fade-in { from { opacity: 0; } to { opacity: 1; } }
+.hm-fade { animation: hm-fade-in .6s ease-out; }
