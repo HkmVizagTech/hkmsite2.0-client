@@ -294,4 +294,7 @@ export const home: Record<string, string> = {
   "Every contribution and every visit is an offering at the lotus feet of the Lord. Help us build Hare Krishna Vaikuntham — a centre of devotion, simplicity and spiritual awakening for Visakhapatnam.":
     "ప్రతి విరాళం, ప్రతి సందర్శన భగవంతుని పాదపద్మాల వద్ద ఒక సమర్పణ. హరే కృష్ణ వైకుంఠాన్ని నిర్మించడంలో మాకు తోడ్పడండి — విశాఖపట్నానికి భక్తి, నిరాడంబరత, ఆధ్యాత్మిక జాగృతి కేంద్రం.",
   "Visit the temple": "ఆలయాన్ని సందర్శించండి",
+  // Home page redesign (Latest Blogs)
+  "Featured": "ప్రత్యేకం",
+  "Read more": "మరింత చదవండి",
 };

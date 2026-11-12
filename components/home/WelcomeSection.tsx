@@ -95,7 +95,7 @@ export default function WelcomeSection() {
           <div aria-hidden className="absolute -inset-6 animate-blob bg-gradient-to-br from-vk-300/60 via-vk-200/50 to-vk-100/30" />
           <div aria-hidden className="absolute -inset-2 animate-blob bg-vk-500/25 [animation-delay:-4s]" />
           {/* turning gold halo just outside the photo */}
-          <div aria-hidden className="hm-halo absolute -inset-[14px] z-[1]" />
+          <div aria-hidden className="hm-halo pointer-events-none absolute -inset-[14px] z-[1]" />
           <div className="relative aspect-square overflow-hidden rounded-full border-[6px] border-white shadow-[0_30px_60px_-24px_rgba(30,58,138,0.55)]">
             <Image
               src="/assets/home-gallery-radha-krishna.webp"
@@ -111,7 +111,7 @@ export default function WelcomeSection() {
             type="button"
             onClick={() => setVideoOpen(true)}
             aria-label={t("Play temple video")}
-            className="absolute bottom-[12%] left-[6%] flex h-16 w-16 items-center justify-center rounded-full bg-white text-vk-700 shadow-xl ring-8 ring-white/40 transition-transform hover:scale-105"
+            className="absolute bottom-[12%] left-[6%] z-[3] flex h-16 w-16 items-center justify-center rounded-full bg-white text-vk-700 shadow-xl ring-8 ring-white/40 transition-transform hover:scale-105"
           >
             <Play className="ml-1 h-6 w-6 fill-current" />
           </button>
