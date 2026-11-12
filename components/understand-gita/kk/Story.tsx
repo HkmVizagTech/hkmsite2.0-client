@@ -148,7 +148,7 @@ export function Journey() {
         <Embers className="absolute inset-0 h-full w-full opacity-70" count={26} />
 
         <div className="relative z-[1] flex h-full flex-col justify-center gap-6 pb-6 md:block md:pb-0">
-          <div className="vk-container text-center md:pt-8">
+          <div className="vk-container text-center md:pt-8 short:hidden">
             <Eyebrow>The 18-day journey</Eyebrow>
           </div>
 
@@ -166,17 +166,17 @@ export function Journey() {
           </div>
 
           {/* chapter text: below the picture on phones, over the bottom of the scene on desktop */}
-          <div className="md:absolute md:inset-x-0 md:bottom-0 md:pb-14">
+          <div className="md:absolute md:inset-x-0 md:bottom-0 md:pb-14 short:pb-5">
             <div className="vk-container text-center">
               <AnimatePresence mode="wait">
                 <motion.div key={day} initial={{ opacity: 0, y: 16, filter: "blur(6px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} exit={{ opacity: 0, y: -10, filter: "blur(4px)" }} transition={{ duration: 0.45 }}>
-                  <p className="kk-gold-text font-[family-name:var(--font-cinzel),var(--font-telugu)] text-5xl font-bold leading-none md:text-7xl">{t("Day {n}", { n: day + 1 })}</p>
-                  <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.28em] text-[#F6C752] md:text-[11px]">{t("Chapter {n}", { n: day + 1 })} · {CHAPTERS[day].sa}</p>
-                  <h3 className="mx-auto mt-2 max-w-3xl font-[family-name:var(--font-cinzel),var(--font-telugu)] text-lg font-bold uppercase leading-tight tracking-[0.04em] [text-shadow:0_2px_20px_rgba(0,0,0,.7)] md:text-4xl">{t(CHAPTERS[day].en)}</h3>
-                  <p className="mx-auto mt-2 max-w-2xl px-2 font-serif-display text-[15px] italic leading-snug text-[#FFE6A3] [text-shadow:0_2px_14px_rgba(0,0,0,.8)] md:mt-3 md:text-xl">{t(CHAPTER_SUMMARIES[day])}</p>
+                  <p className="kk-gold-text font-[family-name:var(--font-cinzel),var(--font-telugu)] text-5xl font-bold leading-none md:text-7xl short:text-4xl">{t("Day {n}", { n: day + 1 })}</p>
+                  <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.28em] text-[#F6C752] md:text-[11px] short:mt-1.5">{t("Chapter {n}", { n: day + 1 })} · {CHAPTERS[day].sa}</p>
+                  <h3 className="mx-auto mt-2 max-w-3xl font-[family-name:var(--font-cinzel),var(--font-telugu)] text-lg font-bold uppercase leading-tight tracking-[0.04em] [text-shadow:0_2px_20px_rgba(0,0,0,.7)] md:text-4xl short:mt-1 short:text-xl">{t(CHAPTERS[day].en)}</h3>
+                  <p className="mx-auto mt-2 max-w-2xl px-2 font-serif-display text-[15px] italic leading-snug text-[#FFE6A3] [text-shadow:0_2px_14px_rgba(0,0,0,.8)] md:mt-3 md:text-xl short:mt-1 short:line-clamp-2 short:text-sm">{t(CHAPTER_SUMMARIES[day])}</p>
                 </motion.div>
               </AnimatePresence>
-              <div className="mx-auto mt-5 flex max-w-md items-center justify-center gap-1.5 md:mt-8" aria-hidden>
+              <div className="mx-auto mt-5 flex max-w-md items-center justify-center gap-1.5 md:mt-8 short:mt-3" aria-hidden>
                 {CHAPTERS.map((_, i) => (
                   <span key={i} className={`h-1 rounded-full transition-all duration-500 ${i === day ? "w-6 bg-[#F6C752]" : i < day ? "w-2 bg-[#F6C752]/70" : "w-2 bg-white/25"}`} />
                 ))}
@@ -263,20 +263,20 @@ export function SunsetClose() {
   return (
     <section id="kk-close" ref={ref} className="relative isolate overflow-hidden bg-[#06080F] text-white">
       {/* the closing painting: full-bleed on desktop, a wide band on phones */}
-      <div className="relative aspect-[16/10] w-full overflow-hidden md:absolute md:inset-0 md:aspect-auto">
+      <div className="relative aspect-[16/10] w-full overflow-hidden lg:absolute lg:inset-0 lg:aspect-auto">
         <motion.div style={reduce ? undefined : { scale }} className="absolute inset-0">
           <Image src={CHAPTER_IMAGES[17] || KK.sky} alt="" fill sizes="100vw" className="object-cover object-[50%_35%]" />
         </motion.div>
-        <div aria-hidden className="absolute inset-0 bg-[linear-gradient(180deg,transparent_55%,#06080F_100%)] md:bg-[linear-gradient(90deg,transparent_0%,transparent_38%,rgba(6,8,15,.75)_62%,rgba(6,8,15,.96)_100%)]" />
-        <div aria-hidden className="absolute inset-x-0 bottom-0 hidden h-40 bg-gradient-to-t from-[#06080F] to-transparent md:block" />
+        <div aria-hidden className="absolute inset-0 bg-[linear-gradient(180deg,transparent_55%,#06080F_100%)] lg:bg-[linear-gradient(90deg,transparent_0%,transparent_38%,rgba(6,8,15,.75)_62%,rgba(6,8,15,.96)_100%)]" />
+        <div aria-hidden className="absolute inset-x-0 bottom-0 hidden h-40 bg-gradient-to-t from-[#06080F] to-transparent lg:block" />
       </div>
       <Embers className="absolute inset-0 h-full w-full opacity-70" count={30} />
 
-      <div className="vk-container relative -mt-10 pb-20 text-center md:mt-0 md:flex md:min-h-[86vh] md:items-center md:justify-end md:py-24 md:text-left">
-        <div className="md:max-w-[520px]">
-          <Eyebrow className="md:justify-start">{t("Arjuna's doubts ended in 18 chapters.")}</Eyebrow>
-          <EpicTitle text="Your 18-day journey begins today" className="mx-auto mt-5 text-3xl md:mx-0 md:text-[3.4rem]" />
-          <p className="mt-5 text-[15px] text-white/80 md:text-lg">{t("Free · Live · Online · For adults, youth and kids")}</p>
+      <div className="vk-container relative -mt-10 pb-20 text-center lg:mt-0 lg:flex lg:min-h-[86vh] lg:items-center lg:justify-end lg:py-24 lg:text-left">
+        <div className="mx-auto max-w-xl lg:mx-0 lg:max-w-[520px]">
+          <Eyebrow className="lg:justify-start">{t("Arjuna's doubts ended in 18 chapters.")}</Eyebrow>
+          <EpicTitle text="Your 18-day journey begins today" className="mx-auto mt-5 text-3xl sm:text-[2.6rem] lg:mx-0 lg:text-[3.4rem]" />
+          <p className="mt-5 text-[15px] text-white/80 lg:text-lg">{t("Free · Live · Online · For adults, youth and kids")}</p>
           <RegisterButton className="mt-8" label="Register Free" />
         </div>
       </div>

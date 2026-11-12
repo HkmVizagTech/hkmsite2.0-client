@@ -147,7 +147,7 @@ export default function RegisterForm({ tone = "light" }: { tone?: "light" | "dar
 
       {error && <p role="alert" className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">{error}</p>}
 
-      <button type="submit" disabled={busy} className="vk-btn-gold mt-6 inline-flex h-13 w-full items-center justify-center gap-2 py-3.5 text-base font-bold disabled:opacity-70">
+      <button type="submit" disabled={busy} className="vk-btn-gold mt-6 inline-flex min-h-[3.25rem] w-full items-center justify-center gap-2 !whitespace-normal px-4 py-3 text-center text-[15px] font-bold leading-snug disabled:opacity-70 sm:text-base">
         {busy ? <><Loader2 className="h-5 w-5 animate-spin" /> {t("Registering…")}</> : t("Submit & join the WhatsApp group")}
       </button>
       <p className={`mt-3 text-center text-xs ${T.hint}`}>{t("Free course. You need WhatsApp on your device. We only use your details to add you to a batch.")}</p>

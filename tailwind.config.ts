@@ -18,6 +18,8 @@ export default {
       },
     },
     extend: {
+      // landscape phones and other short screens (lets tall full-screen scenes shrink their text to fit)
+      screens: { short: { raw: "(max-height: 560px) and (orientation: landscape)" } },
       fontFamily: {
         sans: ['var(--font-poppins)', 'Poppins', 'var(--font-telugu)', 'sans-serif'],
         heading: ['var(--font-jakarta)', 'Plus Jakarta Sans', 'var(--font-poppins)', 'var(--font-telugu)', 'sans-serif'],
