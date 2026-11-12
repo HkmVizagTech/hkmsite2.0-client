@@ -297,4 +297,13 @@ export const home: Record<string, string> = {
   // Home page redesign (Latest Blogs)
   "Featured": "ప్రత్యేకం",
   "Read more": "మరింత చదవండి",
+  // Home darshan card (live status, timings)
+  "Darshan open now": "ఇప్పుడు దర్శనం తెరిచి ఉంది",
+  "Darshan closed": "దర్శనం మూసి ఉంది",
+  "closes {time}": "{time}కి మూసివేస్తారు",
+  "reopens {time}": "{time}కి మళ్లీ తెరుస్తారు",
+  "Next: {aarti} at {time}": "తదుపరి: {time}కి {aarti}",
+  "in {h}h {m}m": "{h}గం {m}ని లో",
+  "in {m} min": "{m} నిమిషాల్లో",
+  "Offer Ekadashi seva": "ఏకాదశి సేవ సమర్పించండి",
 };
