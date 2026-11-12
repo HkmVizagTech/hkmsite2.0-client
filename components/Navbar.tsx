@@ -464,9 +464,9 @@ const Navbar = () => {
 
           {/* ── Mobile: Donate Now button ─────────────────────────── */}
           <div className="flex items-center gap-1.5 lg:hidden">
-            <Link href="/donate" className="vk-btn-gold !h-9 !rounded-xl !px-3.5 !py-0 !text-[12px]">
+            <Link href="/donate" aria-label={t("Donate")} className="vk-btn-gold !h-10 !min-w-10 shrink-0 !rounded-xl !px-2.5 !py-0 !text-[12px] min-[360px]:!h-9 min-[360px]:!px-3.5">
               <Heart className="h-3.5 w-3.5 fill-current" />
-              {t("Donate")}
+              <span className="hidden min-[360px]:inline">{t("Donate")}</span>
             </Link>
           </div>
         </div>
