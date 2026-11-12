@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight, BookOpen, Globe2, Home as HomeIcon } from "lucide-react";
 import Reveal from "@/components/site/Reveal";
 import { getT } from "@/lib/i18n/server";
+import { GoldPetals } from "@/components/home/HomeMagic";
 
 // Cloudinary (ddmzeqpkc) now answers 401, so the image is served from R2 (same picture the Founder page uses).
 const PRABHUPADA_IMG = "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793324889281-1793324889228-prabhupada-home.avif";
@@ -29,10 +30,13 @@ export default function DivineVision({ lang }: { lang: string }) {
               className="-z-10 object-cover object-[70%_20%] grayscale-[35%]"
             />
             <div className="absolute inset-0 -z-10 bg-gradient-to-r from-vk-900 via-vk-900/85 to-vk-900/10" />
+            {/* slow-turning golden rays behind Srila Prabhupada, and falling petals */}
+            <div aria-hidden className="sp-rays absolute right-[-15%] top-1/2 -z-10 h-[120%] w-auto aspect-square opacity-70 mix-blend-screen" />
+            <GoldPetals count={12} />
             <div className="grid gap-8 p-6 md:p-12 lg:grid-cols-[1.15fr_1fr] lg:p-14">
               <div className="max-w-xl">
                 <span className="vk-pill-light mb-4">{t("Divine Vision")}</span>
-                <h2 className="vk-h2 !text-white md:!text-[2.6rem]">
+                <h2 className="vk-h2 hm-gold md:!text-[2.6rem]">
                   {t("Fulfilling Srila Prabhupada's mission in Visakhapatnam")}
                 </h2>
                 <p className="mt-4 text-[15px] leading-relaxed text-white/80 md:text-base">

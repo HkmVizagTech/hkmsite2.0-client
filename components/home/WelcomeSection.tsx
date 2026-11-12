@@ -7,6 +7,7 @@ import { ArrowRight, Play, X } from "lucide-react";
 import Reveal from "@/components/site/Reveal";
 import CountText from "@/components/site/CountText";
 import { useT } from "@/components/i18n/LocaleProvider";
+import { GoldSparkles } from "@/components/home/HomeMagic";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 
@@ -53,7 +54,7 @@ export default function WelcomeSection() {
           <h1 className="vk-h1 !text-[2rem] md:!text-[2.9rem]">
             {heading || (
               <>
-                {t("ISKCON Gambheeram —")} <span className="text-vk-600">{t("Visakhapatnam's home")}</span> {t("of Krishna bhakti")}
+                {t("ISKCON Gambheeram —")} <span className="hm-shine">{t("Visakhapatnam's home")}</span> {t("of Krishna bhakti")}
               </>
             )}
           </h1>
@@ -93,6 +94,8 @@ export default function WelcomeSection() {
           {/* Blob rings */}
           <div aria-hidden className="absolute -inset-6 animate-blob bg-gradient-to-br from-vk-300/60 via-vk-200/50 to-vk-100/30" />
           <div aria-hidden className="absolute -inset-2 animate-blob bg-vk-500/25 [animation-delay:-4s]" />
+          {/* turning gold halo just outside the photo */}
+          <div aria-hidden className="hm-halo absolute -inset-[14px] z-[1]" />
           <div className="relative aspect-square overflow-hidden rounded-full border-[6px] border-white shadow-[0_30px_60px_-24px_rgba(30,58,138,0.55)]">
             <Image
               src="/assets/home-gallery-radha-krishna.webp"
@@ -102,6 +105,7 @@ export default function WelcomeSection() {
               className="object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-vk-900/30 to-transparent" />
+            <GoldSparkles count={12} />
           </div>
           <button
             type="button"

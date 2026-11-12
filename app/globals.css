@@ -1412,3 +1412,59 @@ html[lang="te"] .kk-grain [class*="tracking-["] { letter-spacing: 0.02em; }
    (background-clipped) headings cuts off the vowel signs and subscript letters below the line. */
 html[lang="te"] .sp-page [class*="tracking-"] { letter-spacing: normal; }
 html[lang="te"] .sp-page .bg-clip-text { line-height: 1.45; padding-bottom: 0.08em; }
+
+/* ── Home page "magic" (Vaikuntham blue + gold only). Scroll effects use CSS scroll-driven animations, so they cost
+   no JavaScript; browsers without them simply show the page as before. All of it is off for reduced motion. ── */
+@keyframes hm-progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes hm-rise { from { opacity: 0; transform: translateY(26px); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+@keyframes hm-line { from { width: 0; opacity: 0; } to { width: 3.25rem; opacity: 1; } }
+@keyframes hm-par { from { transform: translateY(-5%) scale(1.12); } to { transform: translateY(5%) scale(1.12); } }
+@keyframes hm-shine-move { 0% { background-position: 200% 50%; } 100% { background-position: -100% 50%; } }
+@keyframes hm-sheen { from { transform: translateX(-120%) skewX(-18deg); } to { transform: translateX(260%) skewX(-18deg); } }
+@keyframes hm-kb { from { transform: scale(1); } to { transform: scale(1.07); } }
+@keyframes hm-halo { to { transform: rotate(360deg); } }
+@keyframes hm-twinkle { 0%, 100% { opacity: 0; transform: translateY(0) scale(.6); } 40% { opacity: 1; transform: translateY(-14px) scale(1); } 80% { opacity: .2; transform: translateY(-30px) scale(.7); } }
+@keyframes hm-lotus { 0%, 100% { filter: drop-shadow(0 0 0 rgba(242,180,31,0)); transform: scale(1); } 50% { filter: drop-shadow(0 0 8px rgba(242,180,31,.75)); transform: scale(1.08); } }
+
+/* Blue → gold → blue shimmer for highlighted words. */
+.hm-shine {
+  background-image: linear-gradient(100deg, #2F5BD3 0%, #1E3A8A 30%, #C98B1E 45%, #F6C752 50%, #C98B1E 55%, #1E3A8A 70%, #2F5BD3 100%);
+  background-size: 250% 100%; -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: hm-shine-move 6s ease-in-out infinite;
+}
+/* Gold heading on dark sections. */
+.hm-gold { background-image: linear-gradient(180deg, #FFF1C9 0%, #F6C752 50%, #C98B1E 100%); -webkit-background-clip: text; background-clip: text; color: transparent !important; }
+
+/* Thin gold reading-progress bar along the top of the window. */
+.hm-progress { position: fixed; inset: 0 0 auto 0; z-index: 70; height: 3px; transform-origin: 0 50%; transform: scaleX(0); pointer-events: none;
+  background: linear-gradient(90deg, #1E3A8A, #2F5BD3 35%, #F6C752 70%, #F2B41F); display: none; }
+
+/* Gold sparkles drifting up (hero banner, deity circle). */
+.hm-spark { position: absolute; width: 6px; height: 6px; border-radius: 9999px; pointer-events: none; opacity: 0;
+  background: radial-gradient(circle, #FFF6D8 0%, #F6C752 45%, rgba(246,199,82,0) 70%); animation: hm-twinkle ease-in-out infinite; }
+
+/* Turning gold halo around the deity circle. */
+.hm-halo { border-radius: 9999px; background: conic-gradient(from 0deg, transparent 0deg, rgba(246,199,82,.9) 40deg, transparent 90deg, rgba(47,91,211,.6) 180deg, transparent 230deg, rgba(246,199,82,.9) 290deg, transparent 340deg);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #000 calc(100% - 3px)); mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #000 calc(100% - 3px));
+  animation: hm-halo 14s linear infinite; }
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Slow zoom on the banner that is showing. */
+  .hm-kb { animation: hm-kb 9s ease-out forwards; }
+  .home-theme .hm-lotus svg { animation: hm-lotus 3.6s ease-in-out infinite; }
+
+  /* Gold sheen across seva and explore cards on hover. */
+  .home-theme .vk-tile::before { content: ""; position: absolute; inset: 0 auto 0 0; z-index: 2; width: 45%; pointer-events: none; opacity: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,236,170,.35), transparent); transform: translateX(-120%) skewX(-18deg); }
+  .home-theme .vk-tile:hover::before { opacity: 1; animation: hm-sheen .9s ease-out; }
+  .home-theme .vk-tile { transition: transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .5s; }
+  .home-theme .vk-tile:hover { transform: translateY(-4px); box-shadow: 0 22px 40px -18px rgba(30,58,138,.55), 0 0 0 1px rgba(246,199,82,.45); }
+
+  @supports (animation-timeline: view()) {
+    .hm-progress { display: block; animation: hm-progress linear both; animation-timeline: scroll(root); }
+    .home-theme .vk-h2, .home-theme .vk-h1 { animation: hm-rise linear both; animation-timeline: view(); animation-range: entry 0% entry 70%; }
+    .home-theme .vk-h2::after { animation: hm-line linear both; animation-timeline: view(); animation-range: entry 30% cover 40%; }
+    /* Photos drift slightly inside their cards as you scroll. */
+    .home-theme .vk-tile > img, .home-theme .vk-tile > span > img { animation: hm-par linear both; animation-timeline: view(); }
+  }
+}
