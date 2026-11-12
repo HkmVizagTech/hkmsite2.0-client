@@ -307,4 +307,6 @@ export const home: Record<string, string> = {
   "in {m} min": "{m} నిమిషాల్లో",
   "Offer Ekadashi seva": "ఏకాదశి సేవ సమర్పించండి",
   "Show photo: {caption}": "ఫోటో చూపించు: {caption}",
+  "Serve at festivals, prasadam distribution and outreach — and be spiritually transformed.": "పండుగలు, ప్రసాద వితరణ, ప్రచారంలో సేవ చేయండి — ఆధ్యాత్మికంగా పరివర్తన పొందండి.",
+  "WhatsApp": "WhatsApp",
 };
