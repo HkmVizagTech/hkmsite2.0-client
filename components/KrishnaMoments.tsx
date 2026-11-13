@@ -131,6 +131,26 @@ export default function KrishnaMoments() {
       return clear;
     }
 
+    // Gau Seva / Square Foot / Brick: the calf or brick moment plays when the donation cards come into view (once per
+    // visit to the page, not limited by the 5-minute gap), a moment after any scroll to them has settled
+    if (BRICK_PAGES.test(path) || GAU_PAGES.test(path)) {
+      let io: IntersectionObserver | null = null;
+      let fired = false;
+      const watch = () => {
+        const target = document.getElementById("donate");
+        if (!target) { timers.current.push(window.setTimeout(watch, 500)); return; }
+        io = new IntersectionObserver((entries) => {
+          if (fired || !entries.some((e) => e.isIntersecting)) return;
+          fired = true;
+          io?.disconnect();
+          timers.current.push(window.setTimeout(() => play(pickKind(path), true), 1200));
+        }, { threshold: 0.2 });
+        io.observe(target);
+      };
+      watch();
+      return () => { io?.disconnect(); clear(); };
+    }
+
     let last = 0;
     try { last = Number(localStorage.getItem(LAST_KEY)) || 0; } catch {}
     if (Date.now() - last < GAP_MS) return;
