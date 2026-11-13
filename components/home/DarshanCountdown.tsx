@@ -2,8 +2,10 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
+import { WholeImage } from "@/components/home/HomeMagic";
 import Link from "next/link";
-import { ArrowRight, CalendarDays, ChevronLeft, ChevronRight, Moon, Sparkles, X } from "lucide-react";
+import { ArrowRight, Bell, CalendarDays, ChevronLeft, ChevronRight, Clock, Moon, Sparkles, X } from "lucide-react";
+import { DARSHAN_HOURS, DAILY_SCHEDULE } from "@/lib/templeInfo";
 import { getDarshanPhotos } from "@/lib/darshanApi";
 import { vaishnavaCalendar2026, type VaishnavaDate } from "@/lib/vaishnavaCalendarData";
 import Reveal from "@/components/site/Reveal";
@@ -44,6 +46,44 @@ function useCountdown(targetIso: string | null) {
     seconds: Math.floor((diff / 1000) % 60),
     isToday: diff === 0,
   };
+}
+
+/** Minutes since midnight in IST. */
+function istMinutes(ms: number): number {
+  const p = new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit", hour12: false }).formatToParts(new Date(ms));
+  return Number(p.find((x) => x.type === "hour")?.value ?? 0) * 60 + Number(p.find((x) => x.type === "minute")?.value ?? 0);
+}
+const hm = (s: string) => Number(s.slice(0, 2)) * 60 + Number(s.slice(3, 5));
+/** "6:30 PM" -> minutes since midnight. */
+function ampm(s: string): number {
+  const m = s.match(/(\d+):(\d+)\s*(AM|PM)/i);
+  if (!m) return 0;
+  return ((Number(m[1]) % 12) + (m[3].toUpperCase() === "PM" ? 12 : 0)) * 60 + Number(m[2]);
+}
+const clock = (min: number) => {
+  const h = Math.floor(min / 60) % 24, mm = min % 60;
+  return `${((h + 11) % 12) + 1}:${String(mm).padStart(2, "0")} ${h < 12 ? "AM" : "PM"}`;
+};
+
+/** Is darshan open right now, and the next aarti (wrapping to tomorrow's Mangala Aarti). */
+function templeNow(ms: number) {
+  const now = istMinutes(ms);
+  const open = DARSHAN_HOURS.find((w) => now >= hm(w.opens) && now < hm(w.closes));
+  const nextOpen = DARSHAN_HOURS.find((w) => hm(w.opens) > now) ?? DARSHAN_HOURS[0];
+  const aartis = DAILY_SCHEDULE.filter((x) => /aarti/i.test(x.event));
+  const next = aartis.find((x) => ampm(x.time) > now) ?? aartis[0];
+  const inMin = (ampm(next.time) - now + 1440) % 1440;
+  return { open: Boolean(open), closes: open ? clock(hm(open.closes)) : "", reopens: clock(hm(nextOpen.opens)), aarti: next.event, aartiTime: next.time, inMin };
+}
+
+function useNow() {
+  const [now, setNow] = useState<number | null>(null);
+  useEffect(() => {
+    setNow(Date.now());
+    const id = setInterval(() => setNow(Date.now()), 30_000);
+    return () => clearInterval(id);
+  }, []);
+  return now;
 }
 
 type Fmt = (iso: string, opts: Intl.DateTimeFormatOptions) => string;
@@ -103,6 +143,8 @@ export default function DarshanCountdown() {
   const ekadashiToday = useMemo(() => (today ? todayOf(["Ekadashi"], today)[0] ?? null : null), [today]);
   const ekadashi = useMemo(() => (today ? nextOf(["Ekadashi"], today) : null), [today]);
   const cd = useCountdown(festival?.date ?? null);
+  const nowMs = useNow();
+  const live = nowMs ? templeNow(nowMs) : null;
 
   const shown = photos.length ? photos : [FALLBACK_DARSHAN];
   const main = shown[Math.min(active, shown.length - 1)];
@@ -114,147 +156,148 @@ export default function DarshanCountdown() {
     <section className="relative z-10 pb-6 pt-6 md:pb-10 md:pt-10">
       <div className="vk-container">
         <Reveal>
-          <div className="grid overflow-hidden rounded-3xl border border-vk-100 bg-white shadow-[0_30px_60px_-36px_rgba(10,18,51,0.45)] lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.5fr)]">
-            {/* ── Today's darshan ─────────────────────────────── */}
-            <div className="relative flex flex-col p-3 md:p-4">
+          <div className="grid gap-4 overflow-hidden rounded-[2rem] border border-vk-100 bg-white p-3 shadow-[0_30px_60px_-36px_rgba(10,18,51,0.45)] md:p-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.4fr)] lg:gap-5">
+            {/* ── Today's darshan: the photo shown whole ── */}
+            <div className="flex flex-col">
               <button
                 type="button"
                 onClick={() => photos.length && setLightbox(active)}
-                className="group relative block aspect-[4/3] w-full overflow-hidden rounded-2xl bg-vk-100 max-h-[380px] md:max-h-[460px] lg:aspect-auto lg:max-h-none lg:min-h-[300px] lg:flex-1"
+                className="group relative mx-auto block w-fit max-w-full overflow-hidden rounded-[1.5rem] bg-vk-900 ring-1 ring-[#F6C752]/40"
                 aria-label={t("Open today's darshan photo")}
               >
-                <Image
-                  src={main}
-                  alt={t("Today's darshan of Sri Sri Radha Madan Mohan")}
-                  fill
-                  sizes="(min-width: 1024px) 420px, 100vw"
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-vk-900/80 via-transparent to-transparent" />
-                <div className="absolute left-3 top-3">
-                  <span className="vk-pill !bg-white/95 !text-vk-800 shadow">
-                    <Sparkles className="h-3.5 w-3.5" /> {t("Today's Darshan")}
-                  </span>
-                </div>
-                {syncLabel && (
-                  <p className="absolute bottom-3 left-4 text-left text-sm font-semibold text-white">{syncLabel}</p>
-                )}
+                <WholeImage src={main} alt={t("Today's darshan of Sri Sri Radha Madan Mohan")} sizes="(min-width: 1024px) 480px, 100vw" className="!w-auto max-h-[520px] max-w-full" />
+                <div className="absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-vk-900/80 to-transparent" />
+                <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-white/95 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-vk-800 shadow">
+                  <Sparkles className="h-3.5 w-3.5 text-[hsl(var(--gold-deep))]" /> {t("Today's Darshan")}
+                </span>
+                {syncLabel && <p className="absolute bottom-3 left-4 text-left text-sm font-semibold text-white">{syncLabel}</p>}
               </button>
               {photos.length > 1 && (
-                <div className="mt-2.5 flex gap-2 overflow-x-auto scrollbar-hide">
+                <div className="mt-3 flex gap-2 overflow-x-auto scrollbar-hide md:justify-center">
                   {photos.slice(0, 6).map((src, i) => (
                     <button
                       key={src + i}
                       type="button"
                       onClick={() => setActive(i)}
                       aria-label={t("Show darshan photo {n}", { n: i + 1 })}
-                      className={`relative h-14 w-14 shrink-0 overflow-hidden rounded-xl ring-2 transition ${
-                        i === active ? "ring-vk-500" : "ring-transparent opacity-70 hover:opacity-100"
-                      }`}
+                      className={`relative h-14 w-14 shrink-0 overflow-hidden rounded-xl ring-2 transition ${i === active ? "ring-[#F6C752]" : "ring-transparent opacity-70 hover:opacity-100"}`}
                     >
-                      <Image src={src} alt="" fill sizes="56px" className="object-cover" />
+                      <Image src={src} alt="" fill sizes="56px" className="object-cover object-top" />
                     </button>
                   ))}
                 </div>
               )}
             </div>
 
-            {/* ── Festivals + countdown ─────────────────────── */}
-            <div className="flex flex-col gap-4 border-t border-vk-100 p-5 md:p-7 lg:border-l lg:border-t-0">
-              {/* Today's festival — the highlighted panel */}
+            {/* ── Right: live status, festival countdown, Ekadashi and timings ── */}
+            <div className="flex flex-col gap-3 md:gap-4">
+              {/* live temple status */}
+              <div className="flex flex-wrap items-center gap-x-5 gap-y-2 rounded-2xl border border-vk-100 bg-vk-50/60 px-4 py-3">
+                {live ? (
+                  <>
+                    <span className="inline-flex items-center gap-2 text-sm font-bold text-ink">
+                      <span className={`relative flex h-2.5 w-2.5`}>
+                        <span className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-60 ${live.open ? "bg-emerald-500" : "bg-amber-500"}`} />
+                        <span className={`relative inline-flex h-2.5 w-2.5 rounded-full ${live.open ? "bg-emerald-500" : "bg-amber-500"}`} />
+                      </span>
+                      {live.open ? t("Darshan open now") : t("Darshan closed")}
+                      <span className="font-medium text-ink/60">· {live.open ? t("closes {time}", { time: live.closes }) : t("reopens {time}", { time: live.reopens })}</span>
+                    </span>
+                    <span className="inline-flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-ink/75">
+                      <Bell className="h-4 w-4 text-[hsl(var(--gold-deep))]" />
+                      {t("Next: {aarti} at {time}", { aarti: t(live.aarti), time: live.aartiTime })}
+                      <span className="whitespace-nowrap rounded-full bg-white px-2 py-0.5 text-xs font-semibold text-vk-700 ring-1 ring-vk-100">
+                        {live.inMin >= 60 ? t("in {h}h {m}m", { h: Math.floor(live.inMin / 60), m: live.inMin % 60 }) : t("in {m} min", { m: live.inMin })}
+                      </span>
+                    </span>
+                  </>
+                ) : (
+                  <span className="h-5" />
+                )}
+              </div>
+
+              {/* today's festival(s) */}
               {festivalToday.map((f) => (
-                <div
-                  key={f.title}
-                  className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-vk-700 via-vk-800 to-vk-900 p-5 text-white shadow-[0_18px_40px_-22px_rgba(10,18,51,0.7)] md:p-6"
-                >
-                  <div aria-hidden className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
+                <div key={f.title} className="relative overflow-hidden rounded-2xl bg-[linear-gradient(135deg,#FFF9EC_0%,#FFFFFF_45%,#EEF3FF_100%)] ring-1 ring-[#F6C752]/45 shadow-[0_18px_40px_-26px_rgba(30,58,138,.45)] p-5 text-ink">
                   <div className="relative flex items-start gap-4">
-                    <DateChip iso={f.date} fmt={fmt} tone="dark" />
+                    <DateChip iso={f.date} fmt={fmt} />
                     <div className="min-w-0">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <h2 className="text-[11px] font-bold uppercase tracking-[0.16em] text-amber-200">{t("Today's Festival")}</h2>
-                        <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-300 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-vk-900">
-                          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-vk-900" /> {t("Today")}
-                        </span>
-                      </div>
-                      <p className="mt-1.5 text-xl font-bold leading-snug md:text-2xl" style={{ fontFamily: "var(--font-heading)" }}>
-                        {t(f.title)}
-                      </p>
-                      {f.description && <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-white/80">{t(f.description)}</p>}
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-[#F6C752] px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-[#1A1240]">
+                        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#1A1240]" /> {t("Today's Festival")}
+                      </span>
+                      <p className="mt-2 font-serif-display text-xl font-bold leading-snug text-vk-800 md:text-2xl">{t(f.title)}</p>
+                      {f.description && <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-ink/70">{t(f.description)}</p>}
                     </div>
                   </div>
                 </div>
               ))}
 
-              {/* Upcoming festival with its countdown attached */}
-              <div className="rounded-2xl border border-vk-100 bg-gradient-to-br from-vk-50/70 to-white p-4 md:p-5">
-                <div className="flex items-center justify-between gap-3">
-                  <h2 className="text-[11px] font-bold uppercase tracking-[0.16em] text-vk-600">{t("Upcoming Festival")}</h2>
-                  <Link href="/vaishnav-calendar" className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap text-[13px] font-semibold text-vk-600 hover:text-vk-800 md:text-sm">
-                    <CalendarDays className="h-4 w-4" /> {t("Vaishnava Calendar")}
+              {/* upcoming festival with a gold countdown */}
+              <div className="relative flex flex-1 flex-col justify-center overflow-hidden rounded-2xl bg-[linear-gradient(135deg,#FFF9EC_0%,#FFFFFF_45%,#EEF3FF_100%)] ring-1 ring-[#F6C752]/45 shadow-[0_18px_40px_-26px_rgba(30,58,138,.45)] p-5 text-ink md:p-6">
+                <div aria-hidden className="sp-rays absolute -right-24 -top-24 h-72 w-72 opacity-40" />
+                <div className="relative flex items-center justify-between gap-3">
+                  <h2 className="text-[11px] font-bold uppercase tracking-[0.18em] text-[hsl(var(--gold-deep))]">✦ {t("Upcoming Festival")}</h2>
+                  <Link href="/vaishnav-calendar" className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap text-[13px] font-semibold text-vk-600 hover:text-vk-800">
+                    <CalendarDays className="h-4 w-4" /> <span className="hidden sm:inline">{t("Vaishnava Calendar")}</span><span className="sm:hidden">{t("Calendar")}</span>
                   </Link>
                 </div>
                 {festival ? (
-                  <div className="mt-3 flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-                    <div className="flex min-w-0 items-start gap-4">
+                  <>
+                    <div className="relative mt-4 flex items-start gap-4">
                       <DateChip iso={festival.date} fmt={fmt} />
                       <div className="min-w-0">
-                        <p className="text-lg font-bold leading-snug text-ink" style={{ fontFamily: "var(--font-heading)" }}>
-                          {t(festival.title)}
-                        </p>
-                        {festival.description && (
-                          <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-muted-foreground">{t(festival.description)}</p>
-                        )}
+                        <p className="font-serif-display text-xl font-bold leading-snug text-vk-800 md:text-[1.7rem]">{t(festival.title)}</p>
+                        {festival.description && <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-ink/70">{t(festival.description)}</p>}
                       </div>
                     </div>
-                    <div className="shrink-0">
-                      <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-ink/50">{t("Starts in")}</p>
-                      <div className="grid grid-cols-4 gap-2">
-                        {[
-                          { v: cd?.days, l: t("Days") },
-                          { v: cd?.hours, l: t("Hours") },
-                          { v: cd?.minutes, l: t("Minutes") },
-                          { v: cd?.seconds, l: t("Seconds") },
-                        ].map((u) => (
-                          <div key={u.l} className="min-w-[58px] rounded-xl border border-vk-100 bg-white px-2 py-2 text-center shadow-sm">
-                            <p
-                              className="text-xl font-extrabold tabular-nums leading-none text-vk-700 md:text-2xl"
-                              style={{ fontFamily: "var(--font-heading)" }}
-                              suppressHydrationWarning
-                            >
-                              {u.v === undefined ? "–" : String(u.v).padStart(2, "0")}
-                            </p>
-                            <p className="mt-1 text-[10px] font-medium uppercase tracking-wide text-ink/55">{u.l}</p>
-                          </div>
-                        ))}
-                      </div>
+                    <p className="relative mb-2 mt-5 text-[11px] font-semibold uppercase tracking-wider text-ink/50">{t("Starts in")}</p>
+                    <div className="relative grid grid-cols-4 gap-2 md:gap-3">
+                      {[
+                        { v: cd?.days, l: t("Days") },
+                        { v: cd?.hours, l: t("Hours") },
+                        { v: cd?.minutes, l: t("Minutes") },
+                        { v: cd?.seconds, l: t("Seconds") },
+                      ].map((u) => (
+                        <div key={u.l} className="rounded-xl bg-white px-2 py-2.5 text-center shadow-sm ring-1 ring-[#F6C752]/50">
+                          <p className="text-2xl font-extrabold tabular-nums leading-none text-vk-700 md:text-3xl" style={{ fontFamily: "var(--font-heading)" }} suppressHydrationWarning>
+                            {u.v === undefined ? "–" : String(u.v).padStart(2, "0")}
+                          </p>
+                          <p className="mt-1 text-[10px] font-medium uppercase tracking-wide text-ink/55">{u.l}</p>
+                        </div>
+                      ))}
                     </div>
-                  </div>
+                  </>
                 ) : (
-                  <p className="mt-2 text-sm text-muted-foreground">{t("See the Vaishnava calendar for upcoming celebrations.")}</p>
+                  <p className="relative mt-3 text-sm text-ink/70">{t("See the Vaishnava calendar for upcoming celebrations.")}</p>
                 )}
               </div>
 
-              {/* Ekadashi */}
-              {[
-                ekadashiToday && { label: t("Ekadashi today"), title: ekadashiToday.title },
-                ekadashi && { label: t("Next Ekadashi · {date}", { date: fmt(ekadashi.date, { day: "numeric", month: "short" }) }), title: ekadashi.title },
-              ]
-                .filter((x): x is { label: string; title: string } => Boolean(x))
-                .map((x) => (
-                  <div key={x.label} className="flex items-center gap-3 rounded-2xl border border-vk-100 bg-white px-4 py-3">
-                    <span className="vk-icon-chip !h-9 !w-9 !bg-vk-50">
-                      <Moon className="h-4 w-4" />
-                    </span>
+              {/* Ekadashi + today's darshan timings */}
+              <div className="grid gap-3 sm:grid-cols-2 md:gap-4">
+                <div className="flex flex-col rounded-2xl border border-vk-100 bg-white p-4">
+                  <div className="flex items-center gap-3">
+                    <span className="vk-icon-chip !h-10 !w-10 !bg-vk-50"><Moon className="h-4 w-4" /></span>
                     <div className="min-w-0 text-sm">
-                      <p className="font-semibold text-ink">{x.label}</p>
-                      <p className="truncate text-muted-foreground">{t(x.title)}</p>
+                      <p className="font-bold text-ink">{ekadashiToday ? t("Ekadashi today") : ekadashi ? t("Next Ekadashi · {date}", { date: fmt(ekadashi.date, { day: "numeric", month: "short" }) }) : t("Ekadashi")}</p>
+                      <p className="truncate text-muted-foreground">{t((ekadashiToday ?? ekadashi)?.title ?? "")}</p>
                     </div>
-                    <Link href="/ekadashi" className="ml-auto shrink-0 rounded-full bg-vk-50 px-3 py-1.5 text-sm font-semibold text-vk-700 hover:bg-vk-100">
-                      {t("Seva →")}
-                    </Link>
                   </div>
-                ))}
+                  <Link href="/ekadashi" className="mt-3 inline-flex items-center justify-center gap-1.5 rounded-full bg-[#F6C752] px-4 py-2 text-sm font-bold text-[#1A1240] hover:brightness-105">
+                    {t("Offer Ekadashi seva")} <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+                <div className="rounded-2xl border border-vk-100 bg-white p-4">
+                  <p className="flex items-center gap-2 text-sm font-bold text-ink"><Clock className="h-4 w-4 text-vk-600" /> {t("Darshan timings")}</p>
+                  <ul className="mt-2 space-y-1.5 text-[13px]">
+                    {DARSHAN_HOURS.map((w) => (
+                      <li key={w.label} className="flex items-center justify-between gap-2">
+                        <span className="text-ink/70">{t(w.label)}</span>
+                        <span className="font-semibold tabular-nums text-vk-800">{w.display}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
         </Reveal>

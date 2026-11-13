@@ -5,6 +5,7 @@ import { getImageProps } from "next/image";
 import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useT } from "@/components/i18n/LocaleProvider";
+import { GoldSparkles } from "@/components/home/HomeMagic";
 
 const FALLBACK_IMG = "/assets/home-banner-chaitanya-bhavan.webp";
 const FALLBACK_IMG_MOBILE = "/assets/home-banner-chaitanya-bhavan-mobile.webp";
@@ -21,6 +22,8 @@ interface TempleCarouselProps {
   slides?: TempleCarouselSlide[];
   /** Set false to skip loading live banners from /hero-banners. */
   fetchApiBanners?: boolean;
+  /** Home page only: gold sparkles over the banners. */
+  magic?: boolean;
 }
 
 const defaultSlides: TempleCarouselSlide[] = [
@@ -97,7 +100,7 @@ const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "
  * every 6s and pausing while the visitor interacts. Banners come from the
  * admin-managed /hero-banners endpoint, with bundled fallbacks.
  */
-const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true }: TempleCarouselProps = {}) => {
+const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true, magic = false }: TempleCarouselProps = {}) => {
   const t = useT();
   const [slides, setSlides] = useState<TempleCarouselSlide[]>(propSlides || defaultSlides);
   const [imgErrors, setImgErrors] = useState<Record<string, boolean>>({});
@@ -214,6 +217,8 @@ const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true }: TempleCa
             })}
           </div>
         </div>
+
+        {magic && <GoldSparkles count={22} className="z-[5]" />}
 
         {/* Arrows — desktop only, over the edges of the full-width banner */}
         {slides.length > 1 && (
