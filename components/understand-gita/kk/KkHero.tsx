@@ -118,7 +118,7 @@ export default function KkHero() {
       </div>
 
       {/* headline */}
-      <motion.div style={reduce ? undefined : { y: textY, opacity: textO }} className="vk-container relative z-[5] pt-9 text-center md:pt-[8vh] md:text-left short:pt-4">
+      <motion.div style={reduce ? undefined : { y: textY, opacity: textO }} className="vk-container relative z-[5] pt-9 text-center md:pt-[8vh] md:text-left [@media(max-height:560px)_and_(orientation:landscape)]:pt-4">
         <motion.div initial={reduce ? false : { opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.1 }} className="max-w-2xl md:max-w-[600px]">
           <div className="flex flex-wrap items-center justify-center gap-2 md:justify-start">
             <span className="inline-flex items-center gap-2 rounded-full border border-[hsl(var(--gold)/0.55)] bg-vk-900/40 px-3.5 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-[hsl(var(--gold))]">
@@ -133,16 +133,16 @@ export default function KkHero() {
               ))}
             </span>
           </div>
-          <p className="mt-4 font-serif-display text-base italic text-[#FFE6A3] md:mt-5 md:text-2xl short:hidden">{t("Every life has its Kurukshetra.")}</p>
-          <h1 className="mt-3 font-[family-name:var(--font-cinzel),var(--font-telugu)] text-[1.75rem] font-bold uppercase leading-[1.08] tracking-[0.03em] md:text-[3.4rem] short:mt-1 short:text-[2.1rem]">
+          <p className="mt-4 font-serif-display text-base italic text-[#FFE6A3] md:mt-5 md:text-2xl [@media(max-height:560px)_and_(orientation:landscape)]:hidden">{t("Every life has its Kurukshetra.")}</p>
+          <h1 className="mt-3 font-[family-name:var(--font-cinzel),var(--font-telugu)] text-[1.75rem] font-bold uppercase leading-[1.08] tracking-[0.03em] md:text-[3.4rem] [@media(max-height:560px)_and_(orientation:landscape)]:mt-1 [@media(max-height:560px)_and_(orientation:landscape)]:text-[2.1rem]">
             <span className="block text-white [text-shadow:0_2px_28px_rgba(0,0,0,.6)]">{t("Understand the")}</span>
             <span className="kk-gold-text block">{t("Bhagavad-gita")}</span>
             <span className="block text-white [text-shadow:0_2px_28px_rgba(0,0,0,.6)]">{t("in 18 days")}</span>
           </h1>
-          <p className="mx-auto mt-3 max-w-xl text-[14px] leading-6 text-white/90 md:mx-0 md:mt-4 md:max-w-[520px] md:text-lg md:leading-8 short:mt-2 short:text-[15px] short:leading-6">
+          <p className="mx-auto mt-3 max-w-xl text-[14px] leading-6 text-white/90 md:mx-0 md:mt-4 md:max-w-[520px] md:text-lg md:leading-8 [@media(max-height:560px)_and_(orientation:landscape)]:mt-2 [@media(max-height:560px)_and_(orientation:landscape)]:text-[15px] [@media(max-height:560px)_and_(orientation:landscape)]:leading-6">
             {t("Arjuna found clarity on the battlefield. In one hour a day, live and free, you can find it too.")}
           </p>
-          <div className="mt-5 flex flex-row flex-wrap items-center justify-center gap-2.5 md:mt-7 md:justify-start md:gap-3 short:mt-3">
+          <div className="mt-5 flex flex-row flex-wrap items-center justify-center gap-2.5 md:mt-7 md:justify-start md:gap-3 [@media(max-height:560px)_and_(orientation:landscape)]:mt-3">
             <a href="#register" className="vk-btn-gold inline-flex h-11 items-center gap-2 px-5 text-[14px] font-bold md:h-12 md:px-7 md:text-[15px]">
               {t("Register Free")} <ArrowRight className="h-5 w-5" />
             </a>
@@ -150,7 +150,7 @@ export default function KkHero() {
               {t("Begin the story")} <ArrowDown className="h-4 w-4" />
             </a>
           </div>
-          <ul className="mt-5 hidden flex-wrap gap-x-5 gap-y-2 text-[13px] text-white/85 sm:flex md:justify-start short:hidden">
+          <ul className="mt-5 hidden flex-wrap gap-x-5 gap-y-2 text-[13px] text-white/85 sm:flex md:justify-start [@media(max-height:560px)_and_(orientation:landscape)]:hidden">
             {["100% free", "Live Q&A every day", "Adults, youth and kids"].map((x) => (
               <li key={x} className="inline-flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-[hsl(var(--gold))]" /> {t(x)}</li>
             ))}

@@ -171,8 +171,10 @@ export default function KrishnaMoments() {
   }, [path, reduce, play]);
 
   // bars can slide in or out while he is on screen (e.g. a sticky donate bar after scrolling): keep above them
+  // keep clear of bottom bars between moments; during a moment his height stays fixed (no bobbing while scrolling)
   useEffect(() => {
-    const id = window.setInterval(() => setLift(bottomClearance()), kind ? 300 : 900);
+    if (kind) return;
+    const id = window.setInterval(() => setLift(bottomClearance()), 900);
     return () => window.clearInterval(id);
   }, [kind]);
 
@@ -200,7 +202,7 @@ export default function KrishnaMoments() {
     <div aria-hidden className={`pointer-events-none fixed inset-0 overflow-hidden ${kind === "petals" ? "z-[200]" : "z-[60]"}`}>
       <AnimatePresence>
         {kind === "run" && (
-          <motion.button key="run" type="button" tabIndex={-1} onClick={shoo} className="pointer-events-auto absolute left-0 transition-[bottom] duration-300" style={{ bottom }}
+          <motion.button key="run" type="button" tabIndex={-1} onClick={shoo} className="pointer-events-auto absolute left-0" style={{ bottom }}
             initial={{ x: "-180px" }} animate={hopAway ?? { x: "calc(100vw + 40px)" }} exit={{ opacity: 0 }} transition={{ duration: cross.run, ease: "linear" }}>
             <span className="relative block">
               {dust}
@@ -211,7 +213,7 @@ export default function KrishnaMoments() {
         )}
 
         {kind === "calf" && (
-          <motion.button key="calf" type="button" tabIndex={-1} onClick={shoo} className="pointer-events-auto absolute left-0 flex items-end transition-[bottom] duration-300" style={{ bottom }}
+          <motion.button key="calf" type="button" tabIndex={-1} onClick={shoo} className="pointer-events-auto absolute left-0 flex items-end" style={{ bottom }}
             initial={{ x: "-460px" }} animate={hopAway ?? { x: "calc(100vw + 40px)" }} exit={{ opacity: 0 }} transition={{ duration: cross.calf, ease: "linear" }}>
             {/* the calf bounds along behind him */}
             <span className="relative -mr-2 block">
@@ -245,7 +247,7 @@ export default function KrishnaMoments() {
         )}
 
         {kind === "brick" && (
-          <motion.button key="brick" type="button" tabIndex={-1} onClick={shoo} className="pointer-events-auto absolute left-0 transition-[bottom] duration-300" style={{ bottom }}
+          <motion.button key="brick" type="button" tabIndex={-1} onClick={shoo} className="pointer-events-auto absolute left-0" style={{ bottom }}
             initial={{ x: "-180px" }} animate={hopAway ?? { x: "calc(100vw + 40px)" }} exit={{ opacity: 0 }} transition={{ duration: cross.brick, ease: "linear" }}>
             <span className="relative block">
               <GroundShadow width={runH * (169 / 280)} />
@@ -270,7 +272,7 @@ export default function KrishnaMoments() {
         )}
 
         {kind === "wave" && (
-          <motion.button key="wave" type="button" tabIndex={-1} onClick={shoo} className="pointer-events-auto absolute left-3 md:left-6" style={{ bottom }}
+          <motion.button key="wave" type="button" tabIndex={-1} onClick={shoo} className="pointer-events-auto absolute left-[78px] md:left-[104px]" style={{ bottom }}
             initial={{ scale: 0, opacity: 0, y: 30 }}
             animate={hopAway ?? { scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.6, opacity: 0, y: 20, transition: { duration: 0.35 } }}
@@ -292,7 +294,7 @@ export default function KrishnaMoments() {
     {/* the little companion, always there on public pages (tap him for a moment); own layer so his buttons stay accessible */}
     {!reduce && !EXCLUDE.test(path) && (
       <div className="pointer-events-none fixed inset-0 z-[59] overflow-hidden">
-        <Companion lift={lift} away={!!kind} />
+        <Companion lift={lift} away={false} />
       </div>
     )}
     </>

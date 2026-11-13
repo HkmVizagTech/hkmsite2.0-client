@@ -148,7 +148,7 @@ export function Journey() {
         <Embers className="absolute inset-0 h-full w-full opacity-70" count={26} />
 
         <div className="relative z-[1] flex h-full flex-col justify-center gap-6 pb-6 md:block md:pb-0">
-          <div className="vk-container text-center md:pt-8 short:hidden">
+          <div className="vk-container text-center md:pt-8 [@media(max-height:560px)_and_(orientation:landscape)]:hidden">
             <Eyebrow>The 18-day journey</Eyebrow>
           </div>
 
@@ -166,17 +166,17 @@ export function Journey() {
           </div>
 
           {/* chapter text: below the picture on phones, over the bottom of the scene on desktop */}
-          <div className="md:absolute md:inset-x-0 md:bottom-0 md:pb-14 short:pb-5">
+          <div className="md:absolute md:inset-x-0 md:bottom-0 md:pb-14 [@media(max-height:560px)_and_(orientation:landscape)]:pb-5">
             <div className="vk-container text-center">
               <AnimatePresence mode="wait">
                 <motion.div key={day} initial={{ opacity: 0, y: 16, filter: "blur(6px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} exit={{ opacity: 0, y: -10, filter: "blur(4px)" }} transition={{ duration: 0.45 }}>
-                  <p className="kk-gold-text font-[family-name:var(--font-cinzel),var(--font-telugu)] text-5xl font-bold leading-none md:text-7xl short:text-4xl">{t("Day {n}", { n: day + 1 })}</p>
-                  <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.28em] text-[#F6C752] md:text-[11px] short:mt-1.5">{t("Chapter {n}", { n: day + 1 })} · {CHAPTERS[day].sa}</p>
-                  <h3 className="mx-auto mt-2 max-w-3xl font-[family-name:var(--font-cinzel),var(--font-telugu)] text-lg font-bold uppercase leading-tight tracking-[0.04em] [text-shadow:0_2px_20px_rgba(0,0,0,.7)] md:text-4xl short:mt-1 short:text-xl">{t(CHAPTERS[day].en)}</h3>
-                  <p className="mx-auto mt-2 max-w-2xl px-2 font-serif-display text-[15px] italic leading-snug text-[#FFE6A3] [text-shadow:0_2px_14px_rgba(0,0,0,.8)] md:mt-3 md:text-xl short:mt-1 short:line-clamp-2 short:text-sm">{t(CHAPTER_SUMMARIES[day])}</p>
+                  <p className="kk-gold-text font-[family-name:var(--font-cinzel),var(--font-telugu)] text-5xl font-bold leading-none md:text-7xl [@media(max-height:560px)_and_(orientation:landscape)]:text-4xl">{t("Day {n}", { n: day + 1 })}</p>
+                  <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.28em] text-[#F6C752] md:text-[11px] [@media(max-height:560px)_and_(orientation:landscape)]:mt-1.5">{t("Chapter {n}", { n: day + 1 })} · {CHAPTERS[day].sa}</p>
+                  <h3 className="mx-auto mt-2 max-w-3xl font-[family-name:var(--font-cinzel),var(--font-telugu)] text-lg font-bold uppercase leading-tight tracking-[0.04em] [text-shadow:0_2px_20px_rgba(0,0,0,.7)] md:text-4xl [@media(max-height:560px)_and_(orientation:landscape)]:mt-1 [@media(max-height:560px)_and_(orientation:landscape)]:text-xl">{t(CHAPTERS[day].en)}</h3>
+                  <p className="mx-auto mt-2 max-w-2xl px-2 font-serif-display text-[15px] italic leading-snug text-[#FFE6A3] [text-shadow:0_2px_14px_rgba(0,0,0,.8)] md:mt-3 md:text-xl [@media(max-height:560px)_and_(orientation:landscape)]:mt-1 [@media(max-height:560px)_and_(orientation:landscape)]:line-clamp-2 [@media(max-height:560px)_and_(orientation:landscape)]:text-sm">{t(CHAPTER_SUMMARIES[day])}</p>
                 </motion.div>
               </AnimatePresence>
-              <div className="mx-auto mt-5 flex max-w-md items-center justify-center gap-1.5 md:mt-8 short:mt-3" aria-hidden>
+              <div className="mx-auto mt-5 flex max-w-md items-center justify-center gap-1.5 md:mt-8 [@media(max-height:560px)_and_(orientation:landscape)]:mt-3" aria-hidden>
                 {CHAPTERS.map((_, i) => (
                   <span key={i} className={`h-1 rounded-full transition-all duration-500 ${i === day ? "w-6 bg-[#F6C752]" : i < day ? "w-2 bg-[#F6C752]/70" : "w-2 bg-white/25"}`} />
                 ))}
