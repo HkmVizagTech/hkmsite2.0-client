@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import useEmblaCarousel from "embla-carousel-react";
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { getGalleryImages, TEMPLE_GALLERY_CATEGORIES } from "@/lib/galleryApi";
 import SectionHeading from "@/components/site/SectionHeading";
 import Reveal from "@/components/site/Reveal";
@@ -45,13 +46,11 @@ const features = [
   },
 ];
 
-/**
- * "Moments at Hare Krishna Vaikuntham": a gold-framed collage (one large photo and four smaller ones) and three
- * feature cards.
- */
+/** GVD "Moments at …" — navy band with a swipeable photo strip and three overlapping feature cards. */
 export default function MomentsSection() {
   const t = useT();
   const [moments, setMoments] = useState<Moment[]>(FALLBACK);
+  const [emblaRef, emblaApi] = useEmblaCarousel({ align: "start", dragFree: true, containScroll: "trimSnaps" });
 
   useEffect(() => {
     getGalleryImages({ status: "active" }).then((items: any[]) => {
@@ -59,65 +58,101 @@ export default function MomentsSection() {
       for (const item of items || []) {
         if (item.category && !TEMPLE_GALLERY_CATEGORIES.includes(item.category)) continue;
         for (const src of item.images || []) flat.push({ src, title: item.title || "Temple moment", category: item.category });
-        if (flat.length >= 6) break;
+        if (flat.length >= 14) break;
       }
-      if (flat.length >= 5) setMoments(flat.slice(0, 6));
+      if (flat.length >= 4) setMoments(flat.slice(0, 14));
     });
   }, []);
 
-  const collage = moments.slice(0, 6);
-
-  const Photo = ({ m, className, sizes, priority = false }: { m: Moment; className: string; sizes: string; priority?: boolean }) => (
-    <Link href="/gallery" className={`group relative block aspect-[4/5] overflow-hidden rounded-2xl bg-[#0A1640] ring-1 ring-[#F6C752]/50 shadow-[0_18px_40px_-24px_rgba(30,58,138,.6)] ${className}`}>
-      <Image src={m.src} alt={t(m.title)} fill sizes={sizes} priority={priority} className="object-contain transition-transform duration-700 group-hover:scale-[1.03]" />
-      <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-[#0A1640]/80 to-transparent" />
-      <div className="absolute inset-x-0 bottom-0 translate-y-1 p-3 transition-transform duration-500 group-hover:translate-y-0 md:p-4">
-        {m.category && <span className="mb-1 inline-block rounded-full bg-[#F6C752] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#1A1240]">{t(m.category)}</span>}
-        <p className="line-clamp-1 text-sm font-semibold text-white">{t(m.title)}</p>
-      </div>
-    </Link>
-  );
+  useEffect(() => {
+    emblaApi?.reInit();
+  }, [emblaApi, moments]);
 
   return (
-    <section className="relative overflow-hidden py-14 md:py-20">
-      <div aria-hidden className="absolute -left-32 top-10 h-96 w-96 rounded-full bg-[#F6C752]/15 blur-3xl" />
-      <div aria-hidden className="absolute -right-32 bottom-10 h-96 w-96 rounded-full bg-vk-400/15 blur-3xl" />
-      <div className="vk-container relative">
-        <SectionHeading
-          eyebrow={t("Temple Highlights")}
-          title={t("Moments at Hare Krishna Vaikuntham")}
-          subtitle={t("Festivals, darshan and everyday celebrations of devotion, captured across our temple in Visakhapatnam.")}
-          action={{ href: "/gallery", label: t("View All") }}
-        />
-
-        {/* collage */}
-        {collage.length >= 5 && (
-          <Reveal>
-            {/* equal tiles; each photo fits inside whole */}
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
-              {collage.map((m, i) => (
-                <Photo key={m.src + i} m={m} priority={i === 0} className="" sizes="(min-width: 768px) 33vw, 50vw" />
-              ))}
+    <section className="relative">
+      <div className="relative overflow-hidden bg-gradient-to-br from-vk-800 via-vk-700 to-vk-900 pb-40 pt-12 md:pb-48 md:pt-16">
+        <div aria-hidden className="absolute -left-24 -top-24 h-80 w-80 rounded-full bg-vk-500/30 blur-3xl" />
+        <div aria-hidden className="absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-vk-400/20 blur-3xl" />
+        <div className="vk-container relative">
+          <SectionHeading
+            light
+            eyebrow={t("Temple Highlights")}
+            title={t("Moments at Hare Krishna Vaikuntham")}
+            subtitle={t("Festivals, darshan and everyday celebrations of devotion, captured across our temple in Visakhapatnam.")}
+            action={{ href: "/gallery", label: t("View All") }}
+          />
+          <div className="relative">
+            <div className="overflow-hidden" ref={emblaRef}>
+              <div className="flex gap-3 md:gap-4">
+                {moments.map((m, i) => (
+                  <Link
+                    key={m.src + i}
+                    href="/gallery"
+                    className="group relative h-56 w-[72%] shrink-0 overflow-hidden rounded-2xl bg-vk-900 sm:w-[45%] md:h-72 md:w-[30%] lg:w-[23%]"
+                  >
+                    <Image
+                      src={m.src}
+                      alt={t(m.title)}
+                      fill
+                      sizes="(min-width: 1024px) 300px, 70vw"
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/0 to-black/0" />
+                    <div className="absolute inset-x-0 bottom-0 p-4">
+                      {m.category && (
+                        <span className="mb-1.5 inline-block rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white backdrop-blur">
+                          {t(m.category)}
+                        </span>
+                      )}
+                      <p className="line-clamp-1 text-sm font-semibold text-white">{t(m.title)}</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
             </div>
-          </Reveal>
-        )}
+            <div className="mt-5 hidden justify-end gap-2 md:flex">
+              <button
+                type="button"
+                aria-label={t("Previous photos")}
+                onClick={() => emblaApi?.scrollPrev()}
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/30 text-white hover:bg-white/10"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </button>
+              <button
+                type="button"
+                aria-label={t("Next photos")}
+                onClick={() => emblaApi?.scrollNext()}
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-white/30 text-white hover:bg-white/10"
+              >
+                <ChevronRight className="h-5 w-5" />
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* feature cards */}
-      <div className="vk-container relative mt-10 md:mt-12">
+      {/* Overlapping feature cards */}
+      <div className="vk-container relative -mt-28 md:-mt-32">
         <div className="grid gap-4 md:grid-cols-3">
           {features.map((f, i) => (
             <Reveal key={f.title} delay={i * 0.08}>
-              <Link href={f.href} className="vk-card vk-card-hover group block h-full overflow-hidden ring-1 ring-[#F6C752]/30">
+              <Link href={f.href} className="vk-card vk-card-hover group block h-full overflow-hidden">
                 <div className="relative h-44 overflow-hidden">
-                  <Image src={f.img} alt={t(f.title)} fill sizes="(min-width: 768px) 33vw, 100vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <Image
+                    src={f.img}
+                    alt={t(f.title)}
+                    fill
+                    sizes="(min-width: 768px) 33vw, 100vw"
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
                 </div>
                 <div className="flex items-start gap-3 p-5">
                   <div className="min-w-0 flex-1">
                     <h3 className="text-lg font-bold text-ink">{t(f.title)}</h3>
                     <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{t(f.text)}</p>
                   </div>
-                  <span className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-vk-100 text-vk-700 transition-colors group-hover:bg-[#F6C752] group-hover:text-[#1A1240]">
+                  <span className="mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-vk-100 text-vk-700 transition-colors group-hover:bg-vk-700 group-hover:text-white">
                     <ArrowRight className="h-4 w-4" />
                   </span>
                 </div>

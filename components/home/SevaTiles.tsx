@@ -9,7 +9,6 @@ import { FESTIVAL_PAGE } from "@/components/FestivalDonationsSection";
 import SectionHeading from "@/components/site/SectionHeading";
 import Reveal from "@/components/site/Reveal";
 import { useT } from "@/components/i18n/LocaleProvider";
-import { GoldSparkles } from "@/components/home/HomeMagic";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 
@@ -63,61 +62,52 @@ export default function SevaTiles() {
     from: s.tiers.length ? Math.min(...s.tiers.map((t) => t.amount)) : undefined,
   }));
 
-
-  const Card = ({ tile, imgClass, fit, sizes }: { tile: TileData; imgClass: string; fit: string; sizes: string }) => (
-    <Link href={tile.href} className="hm-seva-card group flex h-full flex-col overflow-hidden rounded-2xl">
-      <div className={`relative overflow-hidden ${imgClass}`}>
-        <Image src={tile.img} alt={t(tile.title)} fill sizes={sizes} className={`${fit} transition-transform duration-700 group-hover:scale-[1.03]`} />
-        {tile.badge && (
-          <span className="absolute left-3 top-3 z-[2] inline-flex items-center gap-1 rounded-full bg-[#0A1640]/80 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-[#FFE6A3] ring-1 ring-[#F6C752]/60 backdrop-blur">
-            <Sparkles className="h-3 w-3" /> {t(tile.badge)}
-          </span>
-        )}
-      </div>
-      <div className="flex flex-1 items-center justify-between gap-3 p-4">
-        <div className="min-w-0">
-          <h3 className="text-[16px] font-bold leading-snug text-white md:text-[17px]">{t(tile.title)}</h3>
-          {tile.from ? <p className="mt-1 text-[13px] font-semibold text-[#F6C752]">{t("From ₹{amount}", { amount: inr(tile.from) })}</p> : null}
-        </div>
-        <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#F6C752] text-[#1A1240] shadow-[0_0_16px_rgba(246,199,82,.55)] transition-transform group-hover:rotate-45">
-          <ArrowUpRight className="h-4 w-4" />
-        </span>
-      </div>
-    </Link>
-  );
+  const tiles = [...festivals, ...sevaTiles];
 
   return (
-    <section className="vk-section hm-midnight relative isolate overflow-hidden">
-      <div aria-hidden className="sp-rays absolute left-1/2 top-0 -z-10 h-[1100px] w-[1100px] -translate-x-1/2 opacity-60" />
-      <GoldSparkles count={18} className="-z-10" />
+    <section className="vk-section">
       <div className="vk-container">
         <SectionHeading
-          light
           align="center"
           eyebrow={t("Seva Opportunities")}
           title={t("Donate Generously, Support Our Seva")}
           subtitle={t("Every contribution to Hare Krishna Vaikuntham — temple construction, Anna Daan, Gau Seva or Gita Daan — helps share Krishna's mercy with thousands. All donations are eligible for 80G tax benefits.")}
         />
-        {/* Festival posters are wide (about 21:8), so they get their own row of cards in exactly that shape. */}
-        {festivals.length > 0 && (
-          <div className="-mx-4 mb-6 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-2 [scrollbar-width:none] md:mx-auto md:mb-8 md:grid md:max-w-6xl md:grid-cols-3 md:gap-6 md:overflow-visible md:px-0 md:pb-0 [&::-webkit-scrollbar]:hidden">
-            {festivals.map((tile, i) => (
-              <Reveal key={tile.key} delay={i * 0.06} className="w-[86%] shrink-0 snap-center sm:w-[60%] md:w-auto">
-                <Card tile={tile} imgClass="aspect-[21/8]" fit="object-cover" sizes="(min-width: 768px) 380px, 86vw" />
-              </Reveal>
-            ))}
-          </div>
-        )}
-        {/* Equal cards; each seva picture fits inside its frame whole. Swipe on phones. */}
-        <div className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-4 [scrollbar-width:none] md:mx-auto md:grid md:max-w-6xl md:grid-cols-3 md:gap-6 md:overflow-visible md:px-0 md:pb-0 [&::-webkit-scrollbar]:hidden">
-          {sevaTiles.map((tile, i) => (
-            <Reveal key={tile.key} delay={(i % 6) * 0.05} className="w-[78%] shrink-0 snap-center sm:w-[46%] md:w-auto">
-              <Card tile={tile} imgClass="aspect-[4/3] bg-[#0A1640]" fit="object-contain" sizes="(min-width: 768px) 380px, 78vw" />
+        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-3 sm:grid-cols-3 md:gap-5 lg:grid-cols-4">
+          {tiles.map((tile, i) => (
+            <Reveal key={tile.key} delay={(i % 8) * 0.04}>
+              <Link href={tile.href} className="vk-tile group block aspect-square">
+                <Image
+                  src={tile.img}
+                  alt={t(tile.title)}
+                  fill
+                  sizes="(min-width: 1024px) 280px, (min-width: 640px) 33vw, 50vw"
+                  className="object-cover"
+                />
+                {tile.badge && (
+                  <span className="absolute left-3 top-3 z-[2] inline-flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-vk-800 shadow">
+                    <Sparkles className="h-3 w-3" /> {t(tile.badge)}
+                  </span>
+                )}
+                <div className="vk-tile-caption">
+                  <h3 className="text-[15px] font-bold leading-tight text-white md:text-lg">{t(tile.title)}</h3>
+                  <div className="mt-1.5 flex items-end justify-between gap-2">
+                    {tile.from ? (
+                      <p className="text-xs text-white/80 md:text-[13px]">{t("From ₹{amount}", { amount: inr(tile.from) })}</p>
+                    ) : (
+                      <span />
+                    )}
+                    <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur transition-colors group-hover:bg-white group-hover:text-vk-800 md:h-9 md:w-9">
+                      <ArrowUpRight className="h-4 w-4" />
+                    </span>
+                  </div>
+                </div>
+              </Link>
             </Reveal>
           ))}
         </div>
         <div className="mt-10 text-center">
-          <Link href="/donate" className="vk-btn-gold">
+          <Link href="/donate" className="vk-btn-primary">
             {t("View all sevas")}
           </Link>
         </div>

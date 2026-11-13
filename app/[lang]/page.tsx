@@ -59,16 +59,16 @@ export default async function Home({ params }: { params: Promise<{ lang: string 
       <main className="home-theme">
         {/* Banners come with the HTML; only if the server couldn't load them does
             the carousel fall back to fetching them in the browser. */}
-        <TempleCarousel slides={heroSlides ?? undefined} fetchApiBanners={!heroSlides} magic />
+        <TempleCarousel slides={heroSlides ?? undefined} fetchApiBanners={!heroSlides} />
         <DarshanCountdown />
         <WelcomeSection />
-        <OrnamentDivider className="hm-lotus my-2 md:my-4" />
+        <OrnamentDivider className="my-2 md:my-4" />
         <ExploreBento lang={lang} />
         <TempleConstructionFeature />
-        <OrnamentDivider className="hm-lotus my-2 md:my-4" />
+        <OrnamentDivider className="my-2 md:my-4" />
         <MomentsSection />
         <SevaTiles />
-        <OrnamentDivider className="hm-lotus my-2 md:my-4" />
+        <OrnamentDivider className="my-2 md:my-4" />
         <DivineVision lang={lang} />
         <ProgramsTabs />
         <LatestBlogs />

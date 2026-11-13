@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useReducedMotion } from "framer-motion";
-import { ArrowRight, BookOpen, Building2, ChevronDown, HandHeart, PartyPopper, Utensils, Beef, type LucideIcon } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowRight, BookOpen, Building2, HandHeart, PartyPopper, Utensils, Beef, type LucideIcon } from "lucide-react";
 import SectionHeading from "@/components/site/SectionHeading";
 import { useT } from "@/components/i18n/LocaleProvider";
 
@@ -106,68 +106,11 @@ const programs: Program[] = [
   },
 ];
 
-const ADVANCE_MS = 7000;
-
-/**
- * "Programs & Activities" as expanding photo panels. On computers six tall panels sit side by side; the open one
- * widens to tell its story and the rest become narrow strips with a vertical label. On phones they stack and the
- * open one grows in height. They advance on their own (with a gold progress line) until someone hovers or taps.
- */
+/** GVD "Programs & Activities" — vertical tab list on the left, story + photo strip on the right. */
 export default function ProgramsTabs() {
   const t = useT();
-  const reduce = useReducedMotion();
-  const [active, setActive] = useState(0);
-  const [held, setHeld] = useState(false);
-  // which of the open programme's photos fills the panel (its thumbnails switch it)
-  const [pic, setPic] = useState(0);
-
-  useEffect(() => {
-    if (reduce || held) return;
-    const id = setTimeout(() => {
-      setPic(0);
-      setActive((a) => (a + 1) % programs.length);
-    }, ADVANCE_MS);
-    return () => clearTimeout(id);
-  }, [active, held, reduce]);
-
-  const open = (i: number) => {
-    if (i !== active) setPic(0);
-    setActive(i);
-    setHeld(true);
-  };
-
-  const Content = ({ p, compact = false }: { p: Program; compact?: boolean }) => (
-    <>
-      <span className="inline-flex items-center gap-2 rounded-full bg-[#F6C752] px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-[#1A1240]">
-        <p.icon className="h-3.5 w-3.5" /> {t(p.label)}
-      </span>
-      <h3 className={`mt-3 font-serif-display font-bold leading-tight text-[#FFE6A3] ${compact ? "text-2xl" : "text-[2.1rem]"}`}>{t(p.title)}</h3>
-      <p className={`mt-2 text-white/80 ${compact ? "line-clamp-4 text-[14px] leading-relaxed" : "line-clamp-3 text-[15px] leading-relaxed"}`}>{t(p.text)}</p>
-      {p.images.length > 1 && (
-        <div className="mt-4 flex gap-2">
-          {p.images.slice(0, 4).map((img, k) => (
-            <button
-              key={img.src}
-              type="button"
-              aria-label={t("Show photo: {caption}", { caption: t(img.caption) })}
-              aria-pressed={k === pic}
-              onClick={(e) => {
-                e.stopPropagation();
-                setPic(k);
-                setHeld(true);
-              }}
-              className={`relative h-14 w-20 overflow-hidden rounded-lg transition-all md:h-16 md:w-24 ${k === pic ? "ring-2 ring-[#F6C752] ring-offset-2 ring-offset-[#0A1640]" : "opacity-75 ring-1 ring-white/40 hover:opacity-100"}`}
-            >
-              <Image src={img.src} alt="" fill sizes="96px" className="object-cover" />
-            </button>
-          ))}
-        </div>
-      )}
-      <Link href={p.href} className="vk-btn-gold mt-5 w-fit" onClick={(e) => e.stopPropagation()}>
-        {t(p.cta)} <ArrowRight className="h-4 w-4" />
-      </Link>
-    </>
-  );
+  const [active, setActive] = useState(programs[0].key);
+  const p = programs.find((x) => x.key === active) || programs[0];
 
   return (
     <section className="vk-section vk-band">
@@ -178,59 +121,72 @@ export default function ProgramsTabs() {
           title={t("Programs & Activities")}
           subtitle={t("Discover the spiritual programmes and seva opportunities that bring Krishna consciousness to Visakhapatnam every day.")}
         />
-
-        <div role="tablist" aria-label={t("Programs")} className="flex flex-col gap-3 lg:h-[540px] lg:flex-row" onMouseLeave={() => setHeld(false)}>
-          {programs.map((p, i) => {
-            const on = i === active;
-            return (
-              <div
-                key={p.key}
-                role="tab"
-                tabIndex={0}
-                aria-selected={on}
-                aria-label={t(p.label)}
-                onClick={() => open(i)}
-                onMouseEnter={() => open(i)}
-                onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && (e.preventDefault(), open(i))}
-                className={`group relative cursor-pointer overflow-hidden rounded-[1.75rem] bg-[#0A1640] shadow-[0_24px_50px_-28px_rgba(10,22,64,.8)] ring-1 ring-[#F6C752]/40 transition-all duration-700 ease-[cubic-bezier(.2,.7,.2,1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F6C752] ${
-                  on ? "h-[480px] lg:h-auto lg:flex-[5.5]" : "h-[84px] lg:h-auto lg:flex-[1]"
-                }`}
-              >
-                <Image
-                  key={on ? p.images[Math.min(pic, p.images.length - 1)].src : p.images[0].src}
-                  src={on ? p.images[Math.min(pic, p.images.length - 1)].src : p.images[0].src}
-                  alt=""
-                  fill
-                  sizes="(min-width: 1024px) 700px, 100vw"
-                  className={`hm-fade object-cover transition-transform duration-[1600ms] ease-out ${on ? "scale-100" : "scale-110 group-hover:scale-105"}`}
-                />
-                <div className={`absolute inset-0 transition-all duration-700 ${on ? "bg-gradient-to-t from-[#0A1640] via-[#0A1640]/60 to-[#0A1640]/5" : "bg-[#0A1640]/65 group-hover:bg-[#0A1640]/50"}`} />
-
-                {/* number */}
-                <span className="absolute left-5 top-4 font-serif-display text-xl font-bold text-[#F6C752] lg:top-5">{String(i + 1).padStart(2, "0")}</span>
-
-                {/* closed: phones show a row, computers a vertical label */}
-                <div className={`absolute inset-0 flex items-center gap-3 pl-14 pr-5 transition-opacity duration-300 lg:flex-col lg:justify-end lg:gap-4 lg:p-0 lg:pb-7 ${on ? "pointer-events-none opacity-0" : "opacity-100"}`}>
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#F6C752]/15 text-[#F6C752] ring-1 ring-[#F6C752]/50">
-                    <p.icon className="h-5 w-5" />
+        <div className="grid gap-6 lg:grid-cols-[280px_1fr] lg:gap-10">
+          {/* Tabs */}
+          <div
+            role="tablist"
+            aria-label={t("Programs")}
+            className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 scrollbar-hide lg:mx-0 lg:flex-col lg:overflow-visible lg:px-0"
+          >
+            {programs.map((x) => {
+              const on = x.key === active;
+              return (
+                <button
+                  key={x.key}
+                  type="button"
+                  role="tab"
+                  aria-selected={on}
+                  aria-controls={`program-${x.key}`}
+                  onClick={() => setActive(x.key)}
+                  className={`flex shrink-0 items-center gap-3 rounded-2xl px-4 py-3 text-left text-[15px] font-semibold transition-all ${
+                    on
+                      ? "bg-vk-700 text-white shadow-[0_12px_24px_-12px_rgba(30,58,138,0.7)]"
+                      : "bg-white text-ink/80 shadow-sm hover:text-vk-700"
+                  }`}
+                >
+                  <span
+                    className={`flex h-8 w-8 items-center justify-center rounded-lg ${
+                      on ? "bg-white/15 text-white" : "bg-vk-100 text-vk-700"
+                    }`}
+                  >
+                    <x.icon className="h-4 w-4" />
                   </span>
-                  <span className="whitespace-nowrap text-[15px] font-semibold text-white lg:rotate-180 lg:[writing-mode:vertical-rl]">{t(p.label)}</span>
-                  <ChevronDown className="ml-auto h-5 w-5 text-white/70 lg:hidden" />
-                </div>
+                  {t(x.label)}
+                </button>
+              );
+            })}
+          </div>
 
-                {/* open: the story */}
-                <div className={`absolute inset-x-0 bottom-0 p-5 transition-all duration-500 md:p-8 ${on ? "translate-y-0 opacity-100 delay-300" : "pointer-events-none translate-y-6 opacity-0"}`}>
-                  <div className="hidden w-[560px] max-w-full lg:block"><Content p={p} /></div>
-                  <div className="lg:hidden"><Content p={p} compact /></div>
-                </div>
-
-                {/* gold progress line while it advances on its own */}
-                {on && !held && !reduce && (
-                  <span key={`bar-${active}`} aria-hidden className="absolute bottom-0 left-0 h-[3px] bg-gradient-to-r from-[#F6C752] to-[#FFE6A3]" style={{ animation: `hm-progress-bar ${ADVANCE_MS}ms linear forwards` }} />
-                )}
+          {/* Panel */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={p.key}
+              id={`program-${p.key}`}
+              role="tabpanel"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.3 }}
+              className="min-w-0"
+            >
+              <h3 className="vk-h3 md:!text-[1.75rem]">{t(p.title)}</h3>
+              <p className="vk-lead mt-3 max-w-3xl">{t(p.text)}</p>
+              <div className="vk-scroller -mx-4 mt-6 px-4 lg:mx-0 lg:px-0">
+                {p.images.map((img) => (
+                  <div
+                    key={img.src}
+                    className="vk-tile relative h-56 w-[70%] shrink-0 sm:w-[46%] md:h-64 md:w-[32%]"
+                  >
+                    <Image src={img.src} alt={t(img.caption)} fill sizes="(min-width: 768px) 300px, 70vw" className="object-cover" />
+                    <p className="vk-tile-caption text-base font-bold">{t(img.caption)}</p>
+                  </div>
+                ))}
               </div>
-            );
-          })}
+              <Link href={p.href} className="vk-btn-primary mt-6">
+                {t(p.cta)} <ArrowRight className="h-4 w-4" />
+              </Link>
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
     </section>

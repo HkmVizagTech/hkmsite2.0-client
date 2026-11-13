@@ -294,17 +294,4 @@ export const home: Record<string, string> = {
   "Every contribution and every visit is an offering at the lotus feet of the Lord. Help us build Hare Krishna Vaikuntham — a centre of devotion, simplicity and spiritual awakening for Visakhapatnam.":
     "ప్రతి విరాళం, ప్రతి సందర్శన భగవంతుని పాదపద్మాల వద్ద ఒక సమర్పణ. హరే కృష్ణ వైకుంఠాన్ని నిర్మించడంలో మాకు తోడ్పడండి — విశాఖపట్నానికి భక్తి, నిరాడంబరత, ఆధ్యాత్మిక జాగృతి కేంద్రం.",
   "Visit the temple": "ఆలయాన్ని సందర్శించండి",
-  // Home page redesign (Latest Blogs)
-  "Featured": "ప్రత్యేకం",
-  "Read more": "మరింత చదవండి",
-  // Home darshan card (live status, timings)
-  "Darshan open now": "ఇప్పుడు దర్శనం తెరిచి ఉంది",
-  "Darshan closed": "దర్శనం మూసి ఉంది",
-  "closes {time}": "{time}కి మూసివేస్తారు",
-  "reopens {time}": "{time}కి మళ్లీ తెరుస్తారు",
-  "Next: {aarti} at {time}": "తదుపరి: {time}కి {aarti}",
-  "in {h}h {m}m": "{h}గం {m}ని లో",
-  "in {m} min": "{m} నిమిషాల్లో",
-  "Offer Ekadashi seva": "ఏకాదశి సేవ సమర్పించండి",
-  "Show photo: {caption}": "ఫోటో చూపించు: {caption}",
 };
