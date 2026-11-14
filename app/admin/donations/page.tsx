@@ -478,11 +478,18 @@ export default function AdminDonations() {
                         </Badge>
                       </td>
                       <td className="px-4 py-3 whitespace-nowrap text-xs">
-                        {new Date(d.createdAt || d.date).toLocaleString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}
+                        {/* the payment date (what the From/To filter uses); manual entries also say when they were entered */}
+                        {new Date(d.date || d.createdAt).toLocaleString("en-IN", { day: "2-digit", month: "short", year: "numeric", timeZone: "Asia/Kolkata" })}
                         <br />
-                        <span className="text-muted-foreground">
-                          {new Date(d.createdAt || d.date).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
-                        </span>
+                        {d.manualEntry ? (
+                          <span className="text-amber-700" title="Manual entry: payment date as entered">
+                            entered {new Date(d.createdAt).toLocaleString("en-IN", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Asia/Kolkata" })}
+                          </span>
+                        ) : (
+                          <span className="text-muted-foreground">
+                            {new Date(d.date || d.createdAt).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Kolkata" })}
+                          </span>
+                        )}
                       </td>
                       <td className="px-4 py-3 flex gap-2">
                         <Button className="p-2 h-auto bg-transparent border border-border text-foreground hover:bg-muted" onClick={() => setSelectedDonation(d)}>
@@ -576,7 +583,10 @@ export default function AdminDonations() {
               <div className="flex justify-between"><span className="text-muted-foreground">Seva</span><span>{selectedDonation.sevaName || selectedDonation.type || "-"}</span></div>
               <div className="flex justify-between"><span className="text-muted-foreground">Phone</span><span>{selectedDonation.donorMobile || "-"}</span></div>
               <div className="flex justify-between"><span className="text-muted-foreground">Amount</span><span className="font-semibold">₹{(selectedDonation.amount || 0).toLocaleString("en-IN")}</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Donated On</span><span>{selectedDonation.createdAt || selectedDonation.date ? new Date(selectedDonation.createdAt || selectedDonation.date).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" }) : "-"}</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">{selectedDonation.manualEntry ? "Payment date" : "Donated On"}</span><span>{selectedDonation.date || selectedDonation.createdAt ? new Date(selectedDonation.date || selectedDonation.createdAt).toLocaleString("en-IN", selectedDonation.manualEntry ? { dateStyle: "medium", timeZone: "Asia/Kolkata" } : { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata" }) : "-"}</span></div>
+              {selectedDonation.manualEntry && selectedDonation.createdAt && (
+                <div className="flex justify-between"><span className="text-muted-foreground">Entered in admin</span><span>{new Date(selectedDonation.createdAt).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata" })}</span></div>
+              )}
               <div className="flex justify-between"><span className="text-muted-foreground">Source Page</span><span className="text-right max-w-[60%] break-words">{selectedDonation.sourcePage || "-"}</span></div>
               <div className="flex justify-between"><span className="text-muted-foreground">UTM Source</span><span>{selectedDonation.utm?.source || "-"}</span></div>
               <div className="flex justify-between"><span className="text-muted-foreground">UTM Medium</span><span>{selectedDonation.utm?.medium || "-"}</span></div>
