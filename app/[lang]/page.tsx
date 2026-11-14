@@ -29,7 +29,7 @@ const baseMetadata: Metadata = {
   // its translated title and description (lib/i18n/seo.ts).
   title: { absolute: "ISKCON Vizag | ISKCON Gambheeram Visakhapatnam, Hare Krishna Vaikuntham Temple" },
   description:
-    "ISKCON Vizag at Gambheeram, Visakhapatnam — the Hare Krishna Vaikuntham temple on IIM Road. Darshan & aarti timings, prasadam, festivals and seva since 2008.",
+    "ISKCON temple in Vizag at Gambheeram, Visakhapatnam — the Hare Krishna Vaikuntham temple on IIM Road. Darshan & aarti timings, prasadam, festivals and seva since 2008.",
   alternates: { canonical: "/" },
 };
 

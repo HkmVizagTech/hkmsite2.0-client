@@ -15,6 +15,8 @@ export const ORG_ALT_NAMES = [
   "Hare Krishna Movement Vizag",
   "Hare Krishna Vaikuntham Cultural Centre",
   "Hare Krishna Vaikuntham Temple",
+  "ISKCON Temple Vizag",
+  "ISKCON Temple Visakhapatnam",
   "ISKCON Vizag",
   "ISKCON Visakhapatnam",
   "Hare Krishna Temple Visakhapatnam",
@@ -29,6 +31,11 @@ export const ORG_ALT_NAMES = [
 // keeping every page honest with the same core vocabulary is harmless.
 export const siteKeywords = [
   "ISKCON",
+  "ISKCON temple",
+  "ISKCON temple Vizag",
+  "ISKCON temple Visakhapatnam",
+  "ISKCON Vizag temple",
+  "ISKCON temple near me",
   "ISKCON Vizag",
   "ISKCON Visakhapatnam",
   "ISKCON Gambheeram Visakhapatnam",

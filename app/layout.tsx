@@ -61,7 +61,7 @@ export const metadata: Metadata = {
     template: TITLE_TEMPLATE,
   },
   description:
-    "ISKCON Vizag at Gambheeram, Visakhapatnam — the Hare Krishna Vaikuntham temple on IIM Road. Darshan & aarti timings, prasadam, festivals and seva since 2008.",
+    "ISKCON temple in Vizag at Gambheeram, Visakhapatnam — the Hare Krishna Vaikuntham temple on IIM Road. Darshan & aarti timings, prasadam, festivals and seva since 2008.",
   keywords: siteKeywords,
   // NOTE: no sitewide `alternates.canonical` here on purpose. It was
   // previously set to "/" at this root level, which Next.js's metadata
