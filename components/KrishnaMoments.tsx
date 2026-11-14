@@ -272,7 +272,7 @@ export default function KrishnaMoments() {
         )}
 
         {kind === "wave" && (
-          <motion.button key="wave" type="button" tabIndex={-1} onClick={shoo} className="pointer-events-auto absolute left-[78px] md:left-[104px]" style={{ bottom }}
+          <motion.button key="wave" type="button" tabIndex={-1} onClick={shoo} className="pointer-events-auto absolute left-3 md:left-6" style={{ bottom }}
             initial={{ scale: 0, opacity: 0, y: 30 }}
             animate={hopAway ?? { scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.6, opacity: 0, y: 20, transition: { duration: 0.35 } }}
@@ -294,7 +294,7 @@ export default function KrishnaMoments() {
     {/* the little companion, always there on public pages (tap him for a moment); own layer so his buttons stay accessible */}
     {!reduce && !EXCLUDE.test(path) && (
       <div className="pointer-events-none fixed inset-0 z-[59] overflow-hidden">
-        <Companion lift={lift} away={false} />
+        <Companion lift={lift} away={!!kind} gau={GAU_PAGES.test(path)} />
       </div>
     )}
     </>
