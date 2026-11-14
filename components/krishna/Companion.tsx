@@ -18,7 +18,7 @@ const EAT: Sheet = { file: "companion-eat", frames: 49, w: 87, h: 112, ms: 4083,
 
 // things he does between flute playing: the sheet and how many times to play it
 const SLEEP: Sheet = { file: "companion-sleep", frames: 61, w: 78, h: 112, ms: 5083, stridePerSec: 0 };
-const BALL: Sheet = { file: "companion-ball", frames: 15, w: 87, h: 112, ms: 1250, stridePerSec: 0 };
+const BALL: Sheet = { file: "companion-ball2", frames: 24, w: 87, h: 112, ms: 2000, stridePerSec: 0 };
 // Gau Seva pages: feeding and patting the calf, continuously (wider: Krishna + calf)
 const GAU: Sheet = { file: "companion-gau", frames: 27, w: 158, h: 112, ms: 2208, stridePerSec: 0 };
 
@@ -27,7 +27,7 @@ const ACTS: { sheet: Sheet; times: number }[] = [
   { sheet: EAT, times: 1 },
   { sheet: CLAP, times: 2 },
   { sheet: SLEEP, times: 1 },
-  { sheet: BALL, times: 3 },
+  { sheet: BALL, times: 2 },
 ];
 
 export default function Companion({ lift, away, gau = false }: { lift: number; away: boolean; gau?: boolean }) {
@@ -55,7 +55,7 @@ export default function Companion({ lift, away, gau = false }: { lift: number; a
     let last = -1;
     // testing: ?companion=wave|eat|clap|sleep|ball plays that act first, after a second
     const force = new URLSearchParams(window.location.search).get("companion");
-    let forced = ACTS.findIndex((a) => a.sheet.file === "companion-" + force);
+    let forced = ACTS.findIndex((a) => a.sheet.file.replace(/\d+$/, "") === "companion-" + force);
     const loop = () => {
       t = window.setTimeout(() => {
         let i = Math.floor(Math.random() * ACTS.length);
