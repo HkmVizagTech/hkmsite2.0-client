@@ -9,7 +9,7 @@ import PageLayout from "@/components/PageLayout";
 import { useT } from "@/components/i18n/LocaleProvider";
 import { COUNCIL, type CouncilMember, type Video } from "@/lib/governance";
 import { scrollToTopNow } from "@/lib/scrollTop";
-import { Eyebrow, INK, IVORY, Medallion } from "./GovernanceView";
+import { Eyebrow, INK, IVORY } from "./GovernanceView";
 
 const ease = [0.22, 0.8, 0.3, 1] as const;
 
@@ -127,34 +127,48 @@ export default function MemberView({ m }: { m: CouncilMember }) {
   return (
     <PageLayout background={IVORY}>
       <div className="overflow-x-clip pt-[var(--header-h)]" style={{ background: IVORY }}>
-        {/* ══ HERO ══ */}
-        <section className="relative pb-14 pt-8 md:pb-20 md:pt-14">
-          <div aria-hidden className="absolute inset-x-0 top-0 h-[70%] bg-[radial-gradient(60%_60%_at_80%_20%,rgba(201,150,43,.10),transparent_70%)]" />
+        {/* ══ HERO: dark, cinematic (matches the Governance header); the portrait stands large on the bottom edge ══ */}
+        <section className="relative isolate overflow-hidden" style={{ background: "#05090C" }}>
+          <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(55%_75%_at_75%_100%,#22465A_0%,#0F2230_45%,transparent_80%),radial-gradient(40%_50%_at_15%_0%,rgba(201,150,43,.12),transparent_70%)]" />
           <div className="vk-container relative">
-            <Link href="/governance" className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-[#0F1E4A]/60 hover:text-[#0F1E4A]">
-              <ArrowLeft className="h-4 w-4" /> {t("Governing Council")}
-            </Link>
-            <div className="mt-6 grid items-center gap-10 lg:grid-cols-[1.15fr_.85fr] lg:gap-14">
-              <motion.div initial={reduce ? false : { opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease }} className="order-2 lg:order-1">
-                <Eyebrow>{t(m.roles[0])}</Eyebrow>
-                <h1 className="mt-4 font-heading text-[2.5rem] font-bold leading-[1.05] text-[#0F1E4A] md:text-[4.2rem]">{m.name}</h1>
-                <p className="mt-5 max-w-2xl text-[16px] leading-8 text-[#0F1E4A]/75 md:text-[17.5px]">{m.summary}</p>
+            <div className="grid items-end gap-6 lg:grid-cols-[1.1fr_.9fr] lg:gap-10">
+              <motion.div initial={reduce ? false : { opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease }} className="order-2 pb-12 lg:order-1 lg:self-center lg:py-20">
+                <Link href="/governance" className="inline-flex items-center gap-1.5 text-[13px] font-semibold text-white/55 hover:text-white">
+                  <ArrowLeft className="h-4 w-4" /> {t("Governing Council")}
+                </Link>
+                <p className="mt-6 flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.26em] text-[#E9C46A]"><span aria-hidden className="h-px w-8 bg-[#E9C46A]/70" />{t(m.roles[0])}</p>
+                <h1 className="mt-4 break-words font-heading text-[2.1rem] font-bold leading-[1.05] tracking-tight text-[#FBF7EE] sm:text-[2.6rem] md:text-[4.4rem]">{m.name}</h1>
+                <p className="mt-5 max-w-2xl text-[15.5px] leading-8 text-white/70 md:text-[17px]">{m.summary}</p>
                 <ul className="mt-6 flex flex-wrap gap-2">
                   {m.roles.map((r) => (
-                    <li key={r} className="rounded-full bg-white px-3.5 py-1.5 text-[12.5px] font-semibold text-[#0F1E4A] ring-1 ring-[#E7DCC3]">{t(r)}</li>
+                    <li key={r} className="rounded-full bg-white/[.07] px-3.5 py-1.5 text-[12.5px] font-semibold text-white/90 ring-1 ring-white/15 backdrop-blur">{t(r)}</li>
                   ))}
                 </ul>
-                {m.honours.length > 0 && <p className="mt-5 text-[12px] font-bold uppercase leading-6 tracking-[0.16em] text-[#A87A1E]">{m.honours.join("  ·  ")}</p>}
-              </motion.div>
-              <motion.div initial={reduce ? false : { opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, ease, delay: 0.1 }} className="relative order-1 mx-auto w-full max-w-[320px] md:max-w-[400px] lg:order-2">
-                <Medallion m={m} size="400px" priority />
-                <div className="absolute -left-2 bottom-6 rounded-2xl bg-white px-4 py-3 text-center shadow-[0_20px_40px_-20px_rgba(15,30,74,.5)] ring-1 ring-[#E7DCC3] md:-left-6">
-                  <p className="font-heading text-3xl font-bold leading-none text-[#0F1E4A]">{m.years}</p>
-                  <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.16em] text-[#A87A1E]">{t("Years of devotion")}</p>
+                {m.honours.length > 0 && <p className="mt-5 text-[12px] font-bold uppercase leading-6 tracking-[0.16em] text-[#E9C46A]">{m.honours.join("  ·  ")}</p>}
+                <div className="mt-8 flex items-center gap-4">
+                  <div className="flex items-baseline gap-2 rounded-2xl bg-[#FBF7EE] px-4 py-2.5 shadow-[0_20px_40px_-20px_rgba(0,0,0,.6)]">
+                    <span className="font-heading text-3xl font-bold leading-none text-[#0F1E4A]">{m.years}+</span>
+                    <span className="text-[10px] font-bold uppercase leading-tight tracking-[0.16em] text-[#A87A1E]">{t("Years of devotion")}</span>
+                  </div>
                 </div>
+              </motion.div>
+
+              <motion.div initial={reduce ? false : { opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease, delay: 0.1 }}
+                className="relative order-1 mx-auto mt-8 aspect-[5/6] w-full max-w-[420px] md:max-w-[520px] lg:order-2 lg:mt-12 lg:max-w-none">
+                {/* halo and fine gold rings behind the head */}
+                <span aria-hidden className="absolute left-1/2 top-[2%] h-[62%] w-[86%] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(246,199,82,.28),rgba(70,130,170,.18)_55%,transparent)]" />
+                <svg aria-hidden viewBox="0 0 100 120" className="absolute inset-0 h-full w-full">
+                  <circle cx="50" cy="34" r="30" fill="none" stroke="#F6C752" strokeOpacity=".35" strokeWidth=".3" />
+                  <circle cx="50" cy="34" r="37" fill="none" stroke="#F6C752" strokeOpacity=".18" strokeWidth=".25" strokeDasharray="1 2" />
+                  <circle cx="50" cy="34" r="45" fill="none" stroke="#F6C752" strokeOpacity=".08" strokeWidth=".25" />
+                </svg>
+                <Image src={m.cutout} alt={m.name} fill priority quality={90} sizes="(min-width: 1024px) 560px, 90vw"
+                  className="object-contain object-bottom"
+                  style={{ maskImage: "linear-gradient(to bottom,#000 86%,transparent), linear-gradient(to right,transparent,#000 7%,#000 93%,transparent)", WebkitMaskImage: "linear-gradient(to bottom,#000 86%,transparent), linear-gradient(to right,transparent,#000 7%,#000 93%,transparent)", maskComposite: "intersect", WebkitMaskComposite: "source-in" }} />
               </motion.div>
             </div>
           </div>
+          <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[#E9C46A]/60 to-transparent" />
         </section>
 
         {/* ══ BIOGRAPHY (right after the hero: their photograph beside the story) ══ */}

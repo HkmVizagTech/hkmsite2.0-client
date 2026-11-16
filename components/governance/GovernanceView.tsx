@@ -55,27 +55,26 @@ function CouncilCard({ m, i }: { m: CouncilMember; i: number }) {
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.75, ease, delay: (i % 4) * 0.08 }}
     >
-      <Link href={`/governance/${m.slug}`} className="group flex h-full flex-col">
-        {/* tile with the cut-out rising out of its top edge */}
-        <div className="relative isolate aspect-[4/5] overflow-hidden rounded-[1.6rem] [transform:translateZ(0)] bg-[radial-gradient(90%_70%_at_50%_15%,#2A4BA8_0%,#14286A_60%,#0A1640_100%)] shadow-[0_26px_50px_-30px_rgba(15,30,74,.75)] ring-1 ring-[#C9962B]/0 transition-all duration-500 group-hover:ring-[#C9962B]/70">
-          {/* soft halo behind the head */}
-          <span aria-hidden className="absolute left-1/2 top-[6%] h-[46%] w-[72%] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(246,199,82,.20),rgba(80,120,230,.12)_55%,transparent)]" />
-          <svg aria-hidden viewBox="0 0 100 125" className="absolute inset-0 h-full w-full"><circle cx="50" cy="33" r="30" fill="none" stroke="#F6C752" strokeOpacity=".25" strokeWidth=".35" /><circle cx="50" cy="33" r="36" fill="none" stroke="#F6C752" strokeOpacity=".12" strokeWidth=".3" strokeDasharray="1 2" /></svg>
-          {/* the person fills the tile: head near the top, shoulders to the edges */}
-          <div className="absolute -inset-x-[12%] -bottom-[6%] top-[4%] transition-transform duration-700 ease-out group-hover:scale-[1.04]" style={{ transformOrigin: "50% 100%" }}>
-            <Image src={m.cutout} alt={m.name} fill quality={90} sizes="(min-width: 1280px) 380px, (min-width: 768px) 40vw, 60vw" className="object-cover object-top drop-shadow-[0_14px_16px_rgba(5,10,30,.45)]" />
+      <Link href={`/governance/${m.slug}`} className="group block">
+        {/* the whole card is the portrait; name and role sit on a deep band across its foot */}
+        <div className="relative isolate aspect-[3/4] overflow-hidden rounded-[1.4rem] bg-[radial-gradient(95%_70%_at_50%_18%,#3157C0_0%,#16307A_55%,#0A1640_100%)] shadow-[0_30px_60px_-34px_rgba(15,30,74,.85)] ring-1 ring-[#C9962B]/0 transition-all duration-500 [transform:translateZ(0)] group-hover:-translate-y-1 group-hover:shadow-[0_40px_70px_-34px_rgba(15,30,74,.95)] group-hover:ring-[#E9C46A]/80">
+          <span aria-hidden className="absolute left-1/2 top-[4%] h-[44%] w-[80%] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(246,199,82,.22),rgba(90,130,240,.12)_55%,transparent)]" />
+          <svg aria-hidden viewBox="0 0 120 160" className="absolute inset-0 h-full w-full"><circle cx="60" cy="40" r="34" fill="none" stroke="#F6C752" strokeOpacity=".28" strokeWidth=".4" /><circle cx="60" cy="40" r="41" fill="none" stroke="#F6C752" strokeOpacity=".14" strokeWidth=".3" strokeDasharray="1 2" /></svg>
+          <div className="absolute -inset-x-[14%] -bottom-[2%] top-[3%] transition-transform duration-700 ease-out group-hover:scale-[1.04]" style={{ transformOrigin: "50% 30%" }}>
+            <Image src={m.cutout} alt={m.name} fill quality={90} sizes="(min-width: 1280px) 420px, (min-width: 768px) 42vw, 64vw" className="object-cover object-top drop-shadow-[0_14px_16px_rgba(5,10,30,.45)]" />
           </div>
-          <span aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-[#0A1640]/45 to-transparent" />
           <span className="absolute right-3 top-3 rounded-full bg-[#FBF7EE]/95 px-2.5 py-1 text-[10.5px] font-bold text-[#0F1E4A] shadow">
             {m.years}+ {t("yrs")}
           </span>
-        </div>
-        <div className="flex flex-1 flex-col px-1 pt-4">
-          <h3 className="font-heading text-[17px] font-bold leading-snug text-[#0F1E4A] md:text-xl">{m.name}</h3>
-          <p className="mt-1 line-clamp-2 text-[12.5px] leading-snug text-[#0F1E4A]/65 md:text-[13px]">{t(m.roles[0])}</p>
-          <span className="mt-auto inline-flex items-center gap-1 self-start pt-3 text-[12.5px] font-bold uppercase tracking-[0.12em] text-[#A87A1E]">
-            {t("View profile")} <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-          </span>
+          {/* caption band */}
+          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#081236] via-[#0A1640]/90 to-transparent px-4 pb-4 pt-16 md:px-5 md:pb-5">
+            <h3 className="font-heading text-[16px] font-bold leading-tight text-white md:text-[19px]">{m.name}</h3>
+            <p className="mt-1 line-clamp-2 min-h-[2.5em] text-[11.5px] leading-snug text-white/70 md:text-[12.5px]">{t(m.roles[0])}</p>
+            <span className="mt-3 flex items-center justify-between border-t border-white/15 pt-3 text-[11px] font-bold uppercase tracking-[0.14em] text-[#F6C752] md:text-[12px]">
+              {t("View profile")}
+              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#F6C752] text-[#0F1E4A] transition-transform duration-300 group-hover:rotate-45"><ArrowUpRight className="h-4 w-4" /></span>
+            </span>
+          </div>
         </div>
       </Link>
     </motion.li>
@@ -228,7 +227,7 @@ export default function GovernanceView() {
               <Eyebrow center>{t("Governing Council")}</Eyebrow>
               <h2 className="mt-4 font-heading text-3xl font-bold leading-tight text-[#0F1E4A] md:text-5xl">{t("Guided by devotion, serving with excellence")}</h2>
             </div>
-            <ul className="mx-auto grid max-w-6xl grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 md:grid-cols-3 lg:grid-cols-4 lg:gap-x-8 lg:gap-y-14">
+            <ul className="mx-auto grid max-w-7xl grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 lg:grid-cols-4 lg:gap-6">
               {rest.map((m, i) => <CouncilCard key={m.slug} m={m} i={i} />)}
             </ul>
           </div>
