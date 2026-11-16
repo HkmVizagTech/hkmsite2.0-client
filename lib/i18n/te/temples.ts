@@ -127,4 +127,5 @@ export const temples: Record<string, string> = {
   "From Vizag": "విశాఖ నుండి",
   "Confirm with the temple": "ఆలయంతో నిర్ధారించుకోండి",
   "The temple does not publish a fixed timetable online. Please check the latest darshan timings with the temple before you travel.": "ఆలయం స్థిరమైన సమయ పట్టికను ఆన్‌లైన్‌లో ప్రచురించదు. ప్రయాణానికి ముందు తాజా దర్శన సమయాలను ఆలయంతో నిర్ధారించుకోండి.",
+  "The temple's story": "ఆలయ కథ",
 };

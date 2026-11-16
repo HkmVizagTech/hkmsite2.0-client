@@ -8,7 +8,7 @@ import {
   MapPin, Navigation, Plane, Plus, Sparkles, TrainFront,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
-import { useT } from "@/components/i18n/LocaleProvider";
+import { useLocale, useT } from "@/components/i18n/LocaleProvider";
 import type { Temple } from "@/lib/templesData";
 import { Lightbox, type Photo, TempleArt } from "./parts";
 import type { TempleCardData } from "./TemplesList";
@@ -117,6 +117,7 @@ function Mosaic({ photos, name, onOpen, fallback }: { photos: Photo[]; name: str
 
 export default function TempleView({ temple: tm, photos, nearby }: { temple: Temple; photos: Photo[]; nearby: TempleCardData[] }) {
   const t = useT();
+  const en = useLocale().locale === "en";
   const reduce = useReducedMotion();
   const [lightbox, setLightbox] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
@@ -150,7 +151,7 @@ export default function TempleView({ temple: tm, photos, nearby }: { temple: Tem
                   <span className="rounded-full bg-white/15 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-white ring-1 ring-white/25 backdrop-blur-md">{tm.district} · {t(tm.state)}</span>
                 </div>
                 <h1 className="mt-4 max-w-4xl font-heading text-[2.2rem] font-extrabold leading-[1.03] tracking-[-0.02em] text-white [text-shadow:0_8px_30px_rgba(0,0,0,.4)] sm:text-[2.8rem] md:text-[3.8rem]">{tm.name}</h1>
-                <p className="mt-2 font-heading text-[17px] font-semibold text-[#F6E3B0]">{tm.teluguName}</p>
+                {tm.teluguName !== tm.name && <p className="mt-2 font-heading text-[17px] font-semibold text-[#F6E3B0]">{tm.teluguName}</p>}
                 <div className="mt-6 flex flex-wrap gap-2.5">
                   <a href={directions} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full bg-[#F6C752] px-5 py-3 text-[13.5px] font-bold text-[#0A1233] shadow-[0_14px_30px_-12px_rgba(246,199,82,.7)] transition hover:-translate-y-0.5 hover:bg-[#FFD777]"><Navigation className="h-4 w-4" />{t("Get directions")}</a>
                   {photos.length > 1 && <button type="button" onClick={() => setLightbox(0)} className="inline-flex items-center gap-2 rounded-full bg-white/15 px-5 py-3 text-[13.5px] font-bold text-white ring-1 ring-white/30 backdrop-blur-md transition hover:bg-white/25"><Grid2x2 className="h-4 w-4" />{photos.length} {t("photos")}</button>}
@@ -197,10 +198,10 @@ export default function TempleView({ temple: tm, photos, nearby }: { temple: Tem
               <section id="history" className="scroll-mt-40">
                 <Rise>
                   <Kicker>{t("History & significance")}</Kicker>
-                  <H2>{t("The story of")} {tm.shortName}</H2>
+                  <H2>{en ? `${t("The story of")} ${tm.shortName}` : t("The temple's story")}</H2>
                   <div className="mt-6 space-y-5 text-[16px] leading-[1.95] text-[#0A1233]/80">
                     {tm.history.map((p, k) => (
-                      <p key={k} className={k === 0 ? "first-letter:float-left first-letter:mr-3 first-letter:mt-1 first-letter:font-heading first-letter:text-[3.6rem] first-letter:font-extrabold first-letter:leading-[0.8] first-letter:text-[#1E3A8A]" : ""}>{p}</p>
+                      <p key={k} className={k === 0 && en ? "first-letter:float-left first-letter:mr-3 first-letter:mt-1 first-letter:font-heading first-letter:text-[3.6rem] first-letter:font-extrabold first-letter:leading-[0.8] first-letter:text-[#1E3A8A]" : ""}>{p}</p>
                     ))}
                   </div>
                 </Rise>
@@ -223,7 +224,7 @@ export default function TempleView({ temple: tm, photos, nearby }: { temple: Tem
               {photos.length > 1 && (
                 <section id="photos" className="scroll-mt-40">
                   <Kicker>{t("Gallery")}</Kicker>
-                  <H2>{tm.shortName} {t("in pictures")}</H2>
+                  <H2>{en ? `${tm.shortName} ${t("in pictures")}` : t("Temple Photos")}</H2>
                   <div className="mt-6">
                     <Mosaic photos={photos} name={tm.name} onOpen={setLightbox} fallback={<TempleArt telugu={tm.teluguName} form={tm.form} />} />
                   </div>
@@ -268,7 +269,7 @@ export default function TempleView({ temple: tm, photos, nearby }: { temple: Tem
               <section id="reach" className="scroll-mt-40">
                 <Rise>
                   <Kicker>{t("How to reach")}</Kicker>
-                  <H2>{t("Getting to")} {tm.shortName}</H2>
+                  <H2>{en ? `${t("Getting to")} ${tm.shortName}` : t("How to reach")}</H2>
                   <p className="mt-5 text-[16px] leading-8 text-[#0A1233]/75">{tm.fromVizag}</p>
                   <div className="mt-7 grid gap-3">
                     {[
