@@ -1287,6 +1287,7 @@ const TEMPLES_AP: Temple[] = [
 import { TEMPLES_MORE } from "./templesDataMore";
 import { TEMPLES_MORE2 } from "./templesDataMore2";
 import { TEMPLES_MORE3 } from "./templesDataMore3";
+import { TEMPLES_GAUDIYA } from "./templesDataGaudiya";
 
 /** Guide order: Andhra Pradesh first (Simhachalam, closest to Vizag, leading), then the famous temples of India. */
 const FIRST_AP = [
@@ -1296,17 +1297,24 @@ const FIRST_AP = [
   "dwaraka-tirumala-sri-venkateswara-swamy-temple", "srikurmam-sri-kurmanatha-swamy-temple", "srikalahasti-temple",
 ];
 const FIRST_INDIA = [
-  "puri-jagannath-temple", "iskcon-mayapur-chandrodaya-mandir", "iskcon-vrindavan-krishna-balaram-mandir", "dwarkadhish-temple-dwarka",
+  "puri-jagannath-temple", "iskcon-mayapur-chandrodaya-mandir", "iskcon-vrindavan-krishna-balaram-mandir",
+  "sri-chaitanya-math-mayapur", "yogapith-mayapur", "radha-madana-mohana-temple-vrindavan", "radha-govindaji-temple-vrindavan",
+  "radha-gopinath-temple-vrindavan", "radha-damodara-temple-vrindavan", "radha-shyamasundara-temple-vrindavan", "govind-dev-ji-temple-jaipur",
+  "tota-gopinath-temple-puri", "sakshi-gopal-temple-odisha", "alarnath-temple-brahmagiri", "iskcon-bangalore-sri-radha-krishna-mandir",
+  "hare-krishna-golden-temple-hyderabad", "vrindavan-chandrodaya-mandir", "iskcon-juhu-radha-rasabihari-mumbai", "iskcon-delhi-radha-parthasarathi",
+  "dwarkadhish-temple-dwarka",
   "kashi-vishwanath-temple-varanasi", "ram-mandir-ayodhya", "srirangam-ranganathaswamy-temple", "sripuram-golden-temple-vellore",
   "madurai-meenakshi-amman-temple", "guruvayur-sri-krishna-temple", "udupi-sri-krishna-matha", "padmanabhaswamy-temple-thiruvananthapuram",
   "banke-bihari-temple-vrindavan", "radha-raman-temple-vrindavan", "prem-mandir-vrindavan", "krishna-janmabhoomi-mathura",
   "shrinathji-temple-nathdwara", "badrinath-temple", "kedarnath-temple", "somnath-temple-gujarat", "vaishno-devi-katra",
   "rameswaram-ramanathaswamy-temple", "mahakaleshwar-temple-ujjain",
 ];
-const ALL = [...TEMPLES_AP, ...TEMPLES_MORE, ...TEMPLES_MORE2, ...TEMPLES_MORE3];
+const ALL = [...TEMPLES_AP, ...TEMPLES_MORE, ...TEMPLES_MORE2, ...TEMPLES_MORE3, ...TEMPLES_GAUDIYA];
 const isAP = (t: Temple) => t.state === "Andhra Pradesh";
 const rank = (list: string[], t: Temple) => { const i = list.indexOf(t.slug); return i < 0 ? 999 : i; };
 export const TEMPLES: Temple[] = [
   ...ALL.filter(isAP).sort((x, y) => rank(FIRST_AP, x) - rank(FIRST_AP, y)),
   ...ALL.filter((t) => !isAP(t)).sort((x, y) => rank(FIRST_INDIA, x) - rank(FIRST_INDIA, y)),
 ];
+
+export { OWN_TEMPLE_SLUG, templeHref } from "./templeHref";

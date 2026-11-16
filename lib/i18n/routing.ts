@@ -16,8 +16,8 @@ import { DEFAULT_LOCALE, type Locale } from "./config";
 export const TE_INDEXABLE = ["/", "/iskcon-vizag-temple", "/vaikuntham", "/pitru-paksha", "/vaikuntha-ekadashi", "/diwali", "/understand-gita", "/srila-prabhupada"];
 export const isTeIndexable = (path: string) => {
   const p = stripLocale(path);
-  // The temple guide is fully translated (lib/templesTe*.ts), except the photo credits page.
-  if ((p === "/temples" || p.startsWith("/temples/")) && p !== "/temples/photo-credits") return true;
+  // The temple guide is fully translated (lib/templesTe*.ts).
+  if ((p === "/temples" || p.startsWith("/temples/"))) return true;
   return TE_INDEXABLE.includes(p);
 };
 

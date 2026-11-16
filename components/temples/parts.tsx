@@ -68,7 +68,7 @@ export function TempleArt({ telugu, form }: { telugu: string; form: string }) {
 
 /**
  * Full-screen photo viewer: the photo's own colours glow softly behind it, title and "Photo n of N" on top with
- * Download / Close, arrows + keyboard + swipe, a thumbnail strip that follows along. Credits live on /temples/photo-credits.
+ * Download / Close, arrows + keyboard + swipe, a thumbnail strip that follows along.
  */
 export function Lightbox({ photos, index, onClose, onIndex, title, kicker }: { photos: Photo[]; index: number | null; onClose: () => void; onIndex: (i: number) => void; title?: string; kicker?: string }) {
   const [dir, setDir] = useState(1);

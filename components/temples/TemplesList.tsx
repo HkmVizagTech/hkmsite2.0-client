@@ -7,6 +7,7 @@ import { ArrowRight, ArrowUpRight, ChevronDown, Landmark, MapPin, Navigation, Se
 import PageLayout from "@/components/PageLayout";
 import { useT } from "@/components/i18n/LocaleProvider";
 import type { Temple } from "@/lib/templesData";
+import { templeHref } from "@/lib/templeHref";
 import { TempleArt } from "./parts";
 
 export type TempleCardData = Pick<Temple, "slug" | "name" | "shortName" | "teluguName" | "deity" | "form" | "town" | "state" | "district" | "region" | "summary" | "fromVizag"> & {
@@ -29,7 +30,7 @@ function Card({ c, i }: { c: TempleCardData; i: number }) {
   const reduce = useReducedMotion();
   return (
     <motion.li layout initial={reduce ? false : { opacity: 0, y: 26 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.65, ease, delay: (i % 3) * 0.07 }}>
-      <Link href={`/temples/${c.slug}`} className="group block">
+      <Link href={templeHref(c.slug)} className="group block">
         <div className="relative aspect-[4/5] overflow-hidden rounded-[1.6rem] bg-[#EEF2FF] shadow-[0_30px_60px_-40px_rgba(10,18,51,.7)]">
           {c.photo ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -60,7 +61,7 @@ function Card({ c, i }: { c: TempleCardData; i: number }) {
 function Featured({ c }: { c: TempleCardData }) {
   const t = useT();
   return (
-    <Link href={`/temples/${c.slug}`} className="group grid overflow-hidden rounded-[2rem] bg-white shadow-[0_40px_90px_-55px_rgba(10,18,51,.6)] ring-1 ring-[#E6EBF7] lg:grid-cols-[.85fr_1.15fr]">
+    <Link href={templeHref(c.slug)} className="group grid overflow-hidden rounded-[2rem] bg-white shadow-[0_40px_90px_-55px_rgba(10,18,51,.6)] ring-1 ring-[#E6EBF7] lg:grid-cols-[.85fr_1.15fr]">
       <div className="order-2 flex flex-col justify-center p-7 md:p-11 lg:order-1">
         <span className="inline-flex w-fit items-center gap-2 rounded-full bg-[#FFF4D6] px-3.5 py-1.5 text-[10.5px] font-bold uppercase tracking-[0.18em] text-[#8A6414] ring-1 ring-[#F6E3B0]"><Landmark className="h-3.5 w-3.5" />{t("Closest to Vizag")}</span>
         <h2 className="mt-5 font-heading text-[2.1rem] font-extrabold leading-[1.04] tracking-tight text-[#0A1233] md:text-[2.8rem]">{c.shortName}</h2>
@@ -265,7 +266,6 @@ export default function TemplesList({ temples }: { temples: TempleCardData[] }) 
                 <Link href="/anna-daan-seva" className="inline-flex items-center rounded-full bg-white px-6 py-3 text-[14px] font-bold text-[#0A1233] ring-1 ring-[#E9D49B] hover:ring-[#0A1233]">{t("Offer Anna Daan")}</Link>
               </div>
             </div>
-            <p className="mx-auto mt-6 max-w-6xl text-right text-[11px] text-[#0A1233]/35"><Link href="/temples/photo-credits" className="hover:text-[#0A1233]/60">{t("Photo credits")}</Link></p>
           </div>
         </section>
       </div>

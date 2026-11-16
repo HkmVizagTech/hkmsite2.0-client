@@ -11,6 +11,7 @@ import {
 import PageLayout from "@/components/PageLayout";
 import { useLocale, useT } from "@/components/i18n/LocaleProvider";
 import type { Temple } from "@/lib/templesData";
+import { templeHref } from "@/lib/templeHref";
 import { Lightbox, type Photo, TempleArt } from "./parts";
 import type { TempleCardData } from "./TemplesList";
 
@@ -388,7 +389,7 @@ export default function TempleView({ temple: tm, photos, nearby }: { temple: Tem
                 <ul className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                   {nearby.map((n) => (
                     <li key={n.slug}>
-                      <Link href={`/temples/${n.slug}`} className="group block">
+                      <Link href={templeHref(n.slug)} className="group block">
                         <div className="relative aspect-[4/3] overflow-hidden rounded-[1.3rem] bg-[#EEF2FF]">
                           {n.photo ? (
                             // eslint-disable-next-line @next/next/no-img-element

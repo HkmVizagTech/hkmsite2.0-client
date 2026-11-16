@@ -1,8 +1,8 @@
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import TempleView from "@/components/temples/TempleView";
 import type { TempleCardData } from "@/components/temples/TemplesList";
 import JsonLd from "@/components/seo/JsonLd";
-import { TEMPLES } from "@/lib/templesData";
+import { OWN_TEMPLE_SLUG, TEMPLES } from "@/lib/templesData";
 import { localizeTemple } from "@/lib/templesTe";
 import { TEMPLE_PHOTOS } from "@/lib/templePhotos";
 import { pageSeo, SITE_URL } from "@/lib/seo";
@@ -11,7 +11,7 @@ import { localizedFn } from "@/lib/i18n/seo";
 type Props = { params: Promise<{ lang: string; slug: string }> };
 
 export function generateStaticParams() {
-  return TEMPLES.map((t) => ({ slug: t.slug }));
+  return TEMPLES.filter((t) => t.slug !== OWN_TEMPLE_SLUG).map((t) => ({ slug: t.slug }));
 }
 
 const find = (slug: string) => TEMPLES.find((t) => t.slug === slug);
@@ -34,6 +34,7 @@ export const generateMetadata = localizedFn(baseGenerateMetadata);
 
 export default async function TemplePage({ params }: Props) {
   const { slug, lang } = await params;
+  if (slug === OWN_TEMPLE_SLUG) permanentRedirect(lang === "en" ? "/iskcon-vizag-temple" : `/${lang}/iskcon-vizag-temple`);
   const base = find(slug);
   if (!base) notFound();
   const tm = localizeTemple(base, lang);

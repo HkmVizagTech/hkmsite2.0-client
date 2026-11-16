@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/seo";
 import { COUNCIL } from "@/lib/governance";
-import { TEMPLES } from "@/lib/templesData";
+import { OWN_TEMPLE_SLUG, TEMPLES } from "@/lib/templesData";
 import { CENTERS } from "@/lib/centers";
 import { WEB_STORIES } from "@/lib/webStories";
 import { isTeIndexable, localizedPath } from "@/lib/i18n/routing";
@@ -19,7 +19,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/governance`, changeFrequency: "monthly", priority: 0.6 },
     ...COUNCIL.map((m) => ({ url: `${SITE_URL}/governance/${m.slug}`, changeFrequency: "yearly" as const, priority: 0.4 })),
     { url: `${SITE_URL}/temples`, changeFrequency: "monthly", priority: 0.6 },
-    ...TEMPLES.map((t) => ({ url: `${SITE_URL}/temples/${t.slug}`, changeFrequency: "monthly" as const, priority: 0.5 })),
+    ...TEMPLES.filter((t) => t.slug !== OWN_TEMPLE_SLUG).map((t) => ({ url: `${SITE_URL}/temples/${t.slug}`, changeFrequency: "monthly" as const, priority: 0.5 })),
     { url: `${SITE_URL}/gallery`, changeFrequency: "weekly", priority: 0.6 },
     { url: `${SITE_URL}/events`, changeFrequency: "daily", priority: 0.9 },
     { url: `${SITE_URL}/blogs`, changeFrequency: "daily", priority: 0.9 },

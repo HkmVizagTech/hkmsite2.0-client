@@ -1,5 +1,5 @@
 // Photos for the temple guide, hosted on our R2 (temples/<slug>/<n>.webp). All from Wikimedia Commons under
-// free licences (CC BY / CC BY-SA / CC0 / public domain); the credit and licence are shown with each photo.
+// free licences (CC BY / CC BY-SA / CC0 / public domain).
 import type { Photo } from "@/components/temples/parts";
 
 export const TEMPLE_PHOTOS: Record<string, Photo[]> = {
