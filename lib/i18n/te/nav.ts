@@ -116,4 +116,5 @@ export const nav: Record<string, string> = {
   "Books & devotional gifts": "పుస్తకాలు & భక్తి కానుకలు",
   "For companies": "సంస్థల కోసం",
   "Darshan daily: 4:30 – 5:00 AM, 7:15 AM – 12:20 PM, 4:15 – 8:15 PM": "రోజూ దర్శనం: ఉదయం 4:30 – 5:00, ఉదయం 7:15 – మధ్యాహ్నం 12:20, సాయంత్రం 4:15 – రాత్రి 8:15",
+  "Sponsor the new temple, foot by foot": "కొత్త ఆలయానికి అడుగు అడుగునా సహకరించండి",
 };

@@ -26,7 +26,8 @@ const footerCols: { title: string; links: { label: string; href: string }[] }[] 
     links: [
       { label: "Anna Daan", href: "/anna-daan-seva" },
       { label: "Gau Seva", href: "/gau-seva" },
-      { label: "Temple Construction", href: "/sqft-seva-campaign" },
+      { label: "Square Foot Seva", href: "/sqft-seva-campaign" },
+      { label: "Brick Seva", href: "/brick-seva-campaign" },
       { label: "All Sevas", href: "/donate" },
     ],
   },
