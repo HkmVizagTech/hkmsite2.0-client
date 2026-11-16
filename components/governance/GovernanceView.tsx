@@ -86,49 +86,51 @@ export default function GovernanceView() {
   return (
     <PageLayout background={IVORY}>
       <div className="overflow-x-clip pt-[var(--header-h)]" style={{ background: IVORY }}>
-        {/* ══ HERO: title first, then the council photograph shown in full (nothing laid over the faces) ══ */}
-        <section className="relative pt-10 md:pt-16">
-          <div aria-hidden className="absolute inset-x-0 top-0 h-[60%] bg-[radial-gradient(50%_70%_at_50%_0%,rgba(201,150,43,.12),transparent_70%)]" />
-          <div className="vk-container relative">
-            <motion.div
-              initial={reduce ? false : { opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.9, ease }}
-              className="mx-auto max-w-3xl text-center"
-            >
-              <Eyebrow center>{t("Hare Krishna Movement")}</Eyebrow>
-              <h1 className="mt-4 font-serif-display text-[2.8rem] font-bold leading-none text-[#0F1E4A] md:text-[5.5rem]">{t("Governance")}</h1>
-              <div aria-hidden className="mx-auto mt-5 flex items-center justify-center gap-2 text-[#C9962B]">
+        {/* ══ HERO: the council photograph edge to edge, its own deep-teal sky continued upward behind the title,
+              and its warm lower edge melting into the ivory page ══ */}
+        <section className="relative isolate overflow-hidden" style={{ background: "#05090C" }}>
+          <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(70%_60%_at_50%_100%,#1E3946_0%,#0E1C24_45%,transparent_80%),radial-gradient(40%_50%_at_50%_0%,rgba(201,150,43,.14),transparent_70%)]" />
+          <motion.div
+            initial={reduce ? false : { opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, ease }}
+            className="vk-container relative z-10 pt-10 text-center md:pt-14"
+          >
+            <p className="flex items-center justify-center gap-3 text-[11px] font-bold uppercase tracking-[0.3em] text-[#E9C46A]">
+              <span aria-hidden className="h-px w-8 bg-[#E9C46A]/70" />{t("Hare Krishna Movement")}<span aria-hidden className="h-px w-8 bg-[#E9C46A]/70" />
+            </p>
+            <h1 className="mt-4 font-serif-display text-[3rem] font-bold leading-none tracking-tight text-[#FBF7EE] [text-shadow:0_6px_30px_rgba(0,0,0,.5)] md:text-[6.2rem]">{t("Governance")}</h1>
+            <p className="mt-4 text-[13px] font-semibold uppercase tracking-[0.22em] text-[#FBF7EE]/60 md:text-sm">{t("The Governing Council of the Hare Krishna Movement")}</p>
+          </motion.div>
+
+          <motion.div
+            initial={reduce ? false : { opacity: 0, scale: 1.03 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.4, ease, delay: 0.1 }}
+            className="relative -mt-14 md:-mt-10 xl:-mt-16"
+          >
+            {/* phones: the stacked group; larger screens: the full line-up, full width */}
+            <div className="relative mx-auto aspect-[1560/1500] w-full max-w-[640px] md:hidden [mask-image:linear-gradient(to_bottom,transparent_0%,#000_22%)]">
+              <Image src={COUNCIL_BANNER_MOBILE} alt={t("The Governing Council of the Hare Krishna Movement")} fill priority sizes="(max-width: 640px) 100vw, 640px" className="object-cover" />
+            </div>
+            <div className="relative hidden aspect-[3058/760] w-full md:block [mask-image:linear-gradient(to_bottom,transparent_0%,#000_16%)]">
+              <Image src={COUNCIL_BANNER} alt={t("The Governing Council of the Hare Krishna Movement")} fill priority sizes="100vw" className="object-cover" />
+            </div>
+            <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-[22%] bg-gradient-to-b from-transparent to-[#FBF7EE]" />
+          </motion.div>
+        </section>
+
+        {/* intro, set like a lead paragraph */}
+        <section className="relative pb-4 pt-8 md:pt-10">
+          <div className="vk-container">
+            <motion.div initial={reduce ? false : { opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8, ease }} className="mx-auto max-w-3xl text-center">
+              <div aria-hidden className="mx-auto flex items-center justify-center gap-2 text-[#C9962B]">
                 <span className="h-px w-16 bg-gradient-to-r from-transparent to-[#C9962B]" />◆<span className="h-px w-16 bg-gradient-to-l from-transparent to-[#C9962B]" />
               </div>
-              <p className="mx-auto mt-5 max-w-2xl text-[15px] leading-7 text-[#0F1E4A]/75 md:text-[17px] md:leading-8">
+              <p className="mt-6 font-serif-display text-xl leading-[1.6] text-[#0F1E4A] md:text-[1.7rem] md:leading-[1.55]">
                 {t("Every movement thrives through inspired leadership. These are the torchbearers, teachers, and guides who transform timeless wisdom into living practice, bringing Krishna consciousness to life across the world.")}
               </p>
             </motion.div>
-
-            <motion.figure
-              initial={reduce ? false : { opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.1, ease, delay: 0.15 }}
-              className="relative mx-auto mt-10 max-w-7xl md:mt-14"
-            >
-              {/* gold hairline frame offset behind the photo */}
-              <div className="relative">
-              <span aria-hidden className="absolute -inset-2 rounded-[2rem] ring-1 ring-[#C9962B]/45 md:-inset-3 md:rounded-[2.6rem]" />
-              <div className="relative isolate overflow-hidden rounded-[1.6rem] bg-[#0A1640] shadow-[0_50px_90px_-50px_rgba(15,30,74,.9)] md:rounded-[2.2rem]">
-                <div className="relative aspect-[1000/962] md:hidden">
-                  <Image src={COUNCIL_BANNER_MOBILE} alt={t("The Governing Council of the Hare Krishna Movement")} fill priority sizes="100vw" className="object-cover" />
-                </div>
-                <div className="relative hidden aspect-[2400/596] md:block">
-                  <Image src={COUNCIL_BANNER} alt={t("The Governing Council of the Hare Krishna Movement")} fill priority sizes="(min-width: 1312px) 1280px, 100vw" className="object-cover" />
-                </div>
-                <div aria-hidden className="pointer-events-none absolute inset-0 rounded-[inherit] ring-1 ring-inset ring-white/10" />
-              </div>
-              </div>
-              <figcaption className="mt-6 text-center text-[11px] font-bold uppercase tracking-[0.26em] text-[#0F1E4A]/50 md:mt-6">
-                {t("The Governing Council of the Hare Krishna Movement")}
-              </figcaption>
-            </motion.figure>
           </div>
         </section>
 

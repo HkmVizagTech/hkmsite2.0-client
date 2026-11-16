@@ -10,8 +10,8 @@ export type CouncilMember = {
   contributions: Contribution[]; videos: Video[]; bio: string[];
 };
 
-export const COUNCIL_BANNER = "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/council-banner.webp";
-export const COUNCIL_BANNER_MOBILE = "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/council-banner-mobile.webp";
+export const COUNCIL_BANNER = "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/council-banner-hd.webp";
+export const COUNCIL_BANNER_MOBILE = "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/council-banner-mobile-hd.webp";
 
 export const COUNCIL: CouncilMember[] = [
   {
