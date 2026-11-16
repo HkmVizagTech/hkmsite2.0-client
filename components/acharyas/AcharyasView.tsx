@@ -37,41 +37,82 @@ function CountUp({ to }: { to: number }) {
   return <span ref={ref}>{n}</span>;
 }
 
+const FAN = ["srila-bhaktivinoda-thakura", "srila-bhaktisiddhanta-sarasvati-thakura", "srila-prabhupada"];
+
+/** Three portraits of the most recent acharyas, fanned like cards; each links to its profile. */
+function PortraitFan() {
+  const reduce = useReducedMotion();
+  const cards = FAN.map((slug) => ACHARYAS.find((a) => a.slug === slug)).filter(Boolean) as Acharya[];
+  // left, top, width (%), rotation (deg), stacking
+  const pose: [number, number, number, number, number][] = [[0, 16, 42, -9, 10], [58, 16, 42, 9, 10], [23, 0, 54, 0, 20]];
+  return (
+    <div className="relative mx-auto aspect-[6/5] w-full max-w-[460px] lg:max-w-[520px]">
+      <div aria-hidden className="absolute left-[7%] top-[4%] h-[86%] w-[86%] rounded-full bg-[radial-gradient(closest-side,rgba(246,199,82,.35),rgba(246,199,82,.08)_60%,transparent)]" />
+      {cards.map((a, i) => {
+        const [l, tp, w, r, z] = pose[i];
+        return (
+          <div key={a.slug} className="absolute" style={{ left: `${l}%`, top: `${tp}%`, width: `${w}%`, zIndex: z }}>
+            <motion.div initial={reduce ? false : { opacity: 0, y: 40 }} animate={reduce ? { opacity: 1 } : { opacity: 1, y: [0, i === 2 ? -10 : -6, 0] }}
+              transition={reduce ? undefined : { opacity: { duration: 0.8, delay: 0.2 + i * 0.15 }, y: { duration: 6 + i, repeat: Infinity, ease: "easeInOut", delay: 0.2 + i * 0.15 } }}>
+              <div style={{ transform: `rotate(${r}deg)` }}>
+                <Link href={`/acharyas/${a.slug}`} className="group block rounded-[1.4rem] bg-white p-1.5 shadow-[0_30px_60px_-28px_rgba(15,30,74,.55)] ring-1 ring-[#E7DCC3] transition hover:ring-[#C9962B]">
+                  <Portrait src={a.portrait} alt={a.name} sizes="(min-width: 1024px) 280px, 45vw" priority={i === 2} zoom className="rounded-[1.1rem]" />
+                  <span className="block truncate px-2 pb-1.5 pt-2 text-center font-heading text-[11px] font-bold text-[#0F1E4A] min-[400px]:text-[12.5px]">{a.shortName}</span>
+                </Link>
+              </div>
+            </motion.div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 function Hero() {
   const t = useT();
   const reduce = useReducedMotion();
   return (
     <section className="relative">
-      {/* one continuous sky: deep navy at the top fading to the painting's own sky blue, so the title sits in the sky
-          above the acharyas and the painting below stays vivid and untouched */}
-      <div className="relative isolate overflow-hidden bg-[linear-gradient(180deg,#0A1233_0%,#13256B_38%,#3B6FC9_72%,#79B1F0_100%)]">
-        <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(45%_60%_at_50%_10%,rgba(246,199,82,.22),transparent_70%)]" />
-        <div aria-hidden className="absolute inset-0 -z-10 opacity-60 [background-image:radial-gradient(1px_1px_at_12%_18%,#fff,transparent),radial-gradient(1px_1px_at_28%_8%,#fff,transparent),radial-gradient(1.5px_1.5px_at_44%_22%,#FFE6A3,transparent),radial-gradient(1px_1px_at_63%_12%,#fff,transparent),radial-gradient(1px_1px_at_78%_26%,#fff,transparent),radial-gradient(1.5px_1.5px_at_90%_10%,#FFE6A3,transparent)]" />
-        <motion.div initial={reduce ? false : { opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease }}
-          className="vk-container relative pb-16 pt-12 text-center md:pb-24 md:pt-16">
-          <Eyebrow center light>{t("Disciplic succession")}</Eyebrow>
-          <h1 className="mt-4 font-heading text-[2.7rem] font-bold leading-[1.02] tracking-tight text-white [text-shadow:0_8px_30px_rgba(10,18,51,.45)] min-[380px]:text-[3.1rem] md:text-[5.2rem]">
-            {t("Our")}{" "}
-            <span className="bg-gradient-to-br from-[#FFE6A3] via-[#F6C752] to-[#E0A93A] bg-clip-text text-transparent">{t("Acharyas")}</span>
-          </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-[15px] leading-7 text-white/85 md:text-[17px] md:leading-8">
-            {t("The spiritual teachers through whom the teachings of Lord Chaitanya have come down to us: their lives, their instructions, their books and their pastimes.")}
-          </p>
-          <div className="mx-auto mt-7 flex max-w-sm flex-col gap-2.5 min-[400px]:max-w-none min-[400px]:flex-row min-[400px]:justify-center">
-            <a href="#acharyas" className="group/btn rounded-full"><CtaPill label={t("Meet the acharyas")} className="w-full justify-between min-[400px]:w-auto" /></a>
-            <a href="#parampara" className="group/btn rounded-full"><CtaPill label={t("See the parampara")} variant="ghost" className="w-full justify-between min-[400px]:w-auto" /></a>
-          </div>
-        </motion.div>
+      <div className="relative isolate overflow-hidden" style={{ background: IVORY }}>
+        {/* soft gold light and a faint lotus-mandala line drawing behind the title */}
+        <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(45%_60%_at_80%_40%,rgba(246,199,82,.22),transparent_70%),radial-gradient(40%_50%_at_0%_0%,rgba(47,91,211,.08),transparent_70%)]" />
+        <svg aria-hidden viewBox="0 0 200 200" className="absolute -left-24 top-1/2 -z-10 h-[520px] w-[520px] -translate-y-1/2 text-[#C9962B]/[.09]">
+          {Array.from({ length: 16 }).map((_, i) => (
+            <ellipse key={i} cx="100" cy="60" rx="14" ry="40" fill="none" stroke="currentColor" strokeWidth=".8" transform={`rotate(${i * 22.5} 100 100)`} />
+          ))}
+          <circle cx="100" cy="100" r="96" fill="none" stroke="currentColor" strokeWidth=".6" />
+          <circle cx="100" cy="100" r="22" fill="none" stroke="currentColor" strokeWidth=".8" />
+        </svg>
 
-        {/* the painting rises out of the sky: its top edge melts into the matching blue, everything else is untouched */}
-        <motion.div initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.2, ease, delay: 0.1 }}
-          className="relative h-[clamp(230px,66vw,340px)] overflow-hidden lg:h-auto lg:aspect-[1526/375]">
-          <div className={`absolute inset-y-0 left-0 aspect-[1526/375] lg:inset-0 lg:aspect-auto ${reduce ? "" : "animate-[acharya-hero-pan_40s_ease-in-out_infinite_alternate] lg:animate-none"}`}>
-            <Image src={ACHARYAS_PAINTING} alt={t("A painting of Srila Prabhupada and the acharyas before him seated in a riverside garden")} fill loading="eager" fetchPriority="high" quality={90} sizes="(min-width: 1024px) 100vw, 1400px"
-              className="object-cover [mask-image:linear-gradient(180deg,transparent_0%,#000_9%)]" />
+        <div className="vk-container grid items-center gap-10 pb-12 pt-10 md:pb-16 md:pt-14 lg:grid-cols-[1.05fr_.95fr] lg:gap-6">
+          <motion.div initial={reduce ? false : { opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease }}
+            className="order-2 text-center lg:order-1 lg:text-left">
+            <div className="lg:[&>p]:justify-start"><Eyebrow center>{t("Disciplic succession")}</Eyebrow></div>
+            <h1 className="mt-4 font-heading text-[2.8rem] font-bold leading-[0.98] tracking-tight text-[#0F1E4A] min-[380px]:text-[3.3rem] md:text-[5.6rem]">
+              {t("Our")}<br className="hidden lg:block" />{" "}
+              <span className="bg-gradient-to-br from-[#C9962B] via-[#E7B847] to-[#A87A1E] bg-clip-text text-transparent">{t("Acharyas")}</span>
+            </h1>
+            <p className="mx-auto mt-5 max-w-xl text-[15px] leading-7 text-[#0F1E4A]/70 md:text-[17px] md:leading-8 lg:mx-0">
+              {t("The spiritual teachers through whom the teachings of Lord Chaitanya have come down to us: their lives, their instructions, their books and their pastimes.")}
+            </p>
+            <div className="mx-auto mt-7 flex max-w-sm flex-col gap-2.5 min-[400px]:max-w-none min-[400px]:flex-row min-[400px]:justify-center lg:justify-start">
+              <a href="#acharyas" className="group/btn rounded-full"><CtaPill label={t("Meet the acharyas")} className="w-full justify-between min-[400px]:w-auto" /></a>
+              <a href="#parampara" className="group/btn rounded-full"><CtaPill label={t("See the parampara")} variant="outline" className="w-full justify-between min-[400px]:w-auto" /></a>
+            </div>
+          </motion.div>
+          <div className="order-1 lg:order-2"><PortraitFan /></div>
+        </div>
+
+        {/* the group painting as a cinematic band, vivid and untouched */}
+        <motion.figure initial={reduce ? false : { opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 1.2, ease }} className="relative">
+          <div aria-hidden className="h-px bg-gradient-to-r from-transparent via-[#C9962B] to-transparent" />
+          <div className="relative h-[clamp(200px,60vw,320px)] overflow-hidden lg:h-auto lg:aspect-[1526/375]">
+            <div className={`absolute inset-y-0 left-0 aspect-[1526/375] lg:inset-0 lg:aspect-auto ${reduce ? "" : "animate-[acharya-hero-pan_40s_ease-in-out_infinite_alternate] lg:animate-none"}`}>
+              <Image src={ACHARYAS_PAINTING} alt={t("A painting of Srila Prabhupada and the acharyas before him seated in a riverside garden")} fill quality={90} sizes="(min-width: 1024px) 100vw, 1400px" className="object-cover" />
+            </div>
+            <span aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-[#FBF7EE] to-transparent" />
           </div>
-          <span aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-[#FBF7EE] to-transparent" />
-        </motion.div>
+        </motion.figure>
       </div>
 
       {/* glass strip of counts across the hero's foot, with clear space before the next section */}
