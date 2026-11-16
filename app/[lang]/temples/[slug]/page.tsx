@@ -3,6 +3,7 @@ import TempleView from "@/components/temples/TempleView";
 import type { TempleCardData } from "@/components/temples/TemplesList";
 import JsonLd from "@/components/seo/JsonLd";
 import { TEMPLES } from "@/lib/templesData";
+import { localizeTemple } from "@/lib/templesTe";
 import { TEMPLE_PHOTOS } from "@/lib/templePhotos";
 import { pageSeo, SITE_URL } from "@/lib/seo";
 import { localizedFn } from "@/lib/i18n/seo";
@@ -16,9 +17,10 @@ export function generateStaticParams() {
 const find = (slug: string) => TEMPLES.find((t) => t.slug === slug);
 
 async function baseGenerateMetadata({ params }: Props) {
-  const { slug } = await params;
-  const tm = find(slug);
-  if (!tm) return {};
+  const { slug, lang } = await params;
+  const base = find(slug);
+  if (!base) return {};
+  const tm = localizeTemple(base, lang);
   return pageSeo({
     title: `${tm.shortName} Temple Timings, History & How to Reach`,
     description: tm.summary,
@@ -29,12 +31,13 @@ async function baseGenerateMetadata({ params }: Props) {
 export const generateMetadata = localizedFn(baseGenerateMetadata);
 
 export default async function TemplePage({ params }: Props) {
-  const { slug } = await params;
-  const tm = find(slug);
-  if (!tm) notFound();
+  const { slug, lang } = await params;
+  const base = find(slug);
+  if (!base) notFound();
+  const tm = localizeTemple(base, lang);
 
   // up to 3 other temples in the same region (fallback: any), with their first Google photo
-  const others = TEMPLES.filter((t) => t.slug !== tm.slug);
+  const others = TEMPLES.filter((t) => t.slug !== tm.slug).map((t) => localizeTemple(t, lang));
   const same = others.filter((t) => t.region === tm.region);
   const pick = [...same, ...others.filter((t) => t.region !== tm.region)].slice(0, 3);
   const nearby: TempleCardData[] = pick.map((t) => ({

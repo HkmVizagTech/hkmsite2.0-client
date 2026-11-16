@@ -1,6 +1,7 @@
 import TemplesList, { type TempleCardData } from "@/components/temples/TemplesList";
 import JsonLd from "@/components/seo/JsonLd";
 import { TEMPLES } from "@/lib/templesData";
+import { localizeTemple } from "@/lib/templesTe";
 import { TEMPLE_PHOTOS } from "@/lib/templePhotos";
 import { pageSeo, SITE_URL } from "@/lib/seo";
 import { localized } from "@/lib/i18n/seo";
@@ -14,8 +15,9 @@ const baseMetadata = pageSeo({
 
 export const generateMetadata = localized(baseMetadata);
 
-export default function TemplesPage() {
-  const cards: TempleCardData[] = TEMPLES.map((t) => ({
+export default async function TemplesPage({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
+  const cards: TempleCardData[] = TEMPLES.map((x) => localizeTemple(x, lang)).map((t) => ({
     slug: t.slug, name: t.name, shortName: t.shortName, teluguName: t.teluguName, deity: t.deity, form: t.form,
     town: t.town, state: t.state, district: t.district, region: t.region, summary: t.summary, fromVizag: t.fromVizag,
     photo: TEMPLE_PHOTOS[t.slug]?.[0]?.src,
