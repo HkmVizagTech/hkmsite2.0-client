@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Star, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Download, Info, Star, X } from "lucide-react";
 
 /* Shared pieces for the temple guide: white pages, brand blue + gold accents. */
 
@@ -66,9 +66,16 @@ export function TempleArt({ telugu, form }: { telugu: string; form: string }) {
   );
 }
 
-/** Full-screen photo viewer with arrows, keyboard and credit line. */
-export function Lightbox({ photos, index, onClose, onIndex }: { photos: Photo[]; index: number | null; onClose: () => void; onIndex: (i: number) => void }) {
-  const go = useCallback((d: number) => index !== null && onIndex((index + d + photos.length) % photos.length), [index, onIndex, photos.length]);
+/**
+ * Full-screen photo viewer: the photo's own colours glow softly behind it, title and "Photo n of N" on top with
+ * Download / Close, arrows + keyboard + swipe, a thumbnail strip that follows along. The photographer's credit (needed
+ * by the free licences) is tucked behind the ⓘ button instead of sitting on the photo.
+ */
+export function Lightbox({ photos, index, onClose, onIndex, title, kicker }: { photos: Photo[]; index: number | null; onClose: () => void; onIndex: (i: number) => void; title?: string; kicker?: string }) {
+  const [dir, setDir] = useState(1);
+  const [info, setInfo] = useState(false);
+  const [strip, setStrip] = useState<HTMLDivElement | null>(null);
+  const go = useCallback((d: number) => { if (index === null) return; setDir(d); onIndex((index + d + photos.length) % photos.length); }, [index, onIndex, photos.length]);
   useEffect(() => {
     if (index === null) return;
     const k = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); if (e.key === "ArrowRight") go(1); if (e.key === "ArrowLeft") go(-1); };
@@ -76,27 +83,79 @@ export function Lightbox({ photos, index, onClose, onIndex }: { photos: Photo[];
     const o = document.body.style.overflow; document.body.style.overflow = "hidden";
     return () => { window.removeEventListener("keydown", k); document.body.style.overflow = o; };
   }, [index, go, onClose]);
+  useEffect(() => { setInfo(false); strip?.querySelector<HTMLElement>(`[data-i="${index}"]`)?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" }); }, [index, strip]);
   const p = index !== null ? photos[index] : null;
+  const download = async () => {
+    if (!p) return;
+    try {
+      const blob = await (await fetch(p.src)).blob();
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = `${(title ?? "temple").replace(/\s+/g, "-").toLowerCase()}-${(index ?? 0) + 1}.${blob.type.split("/")[1] || "jpg"}`;
+      a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    } catch { window.open(p.src, "_blank", "noopener"); }
+  };
+  const btn = "inline-flex h-11 items-center gap-2 rounded-full bg-white/[.08] px-4 text-[13.5px] font-semibold text-white ring-1 ring-white/15 backdrop-blur transition hover:bg-white/[.16]";
   return (
     <AnimatePresence>
       {p && (
-        <motion.div role="dialog" aria-modal="true" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[130] flex flex-col bg-[#0A1233]/95 backdrop-blur-sm" onClick={onClose}>
-          <div className="flex items-center justify-between px-4 py-3 text-white/80">
-            <span className="text-[13px] font-semibold">{(index ?? 0) + 1} / {photos.length}</span>
-            <button type="button" aria-label="Close" onClick={onClose} className="rounded-full bg-white/10 p-2 hover:bg-white/20"><X className="h-5 w-5" /></button>
+        <motion.div role="dialog" aria-modal="true" aria-label={title} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}
+          className="fixed inset-0 z-[130] flex flex-col overflow-hidden bg-[#070C24] text-white">
+          {/* ambient glow from the current photo */}
+          <AnimatePresence>
+            { }
+            <motion.img key={`bg-${p.src}`} src={p.src} alt="" aria-hidden initial={{ opacity: 0 }} animate={{ opacity: 0.45 }} exit={{ opacity: 0 }} transition={{ duration: 0.8 }}
+              className="pointer-events-none absolute inset-0 h-full w-full scale-125 object-cover blur-[80px] saturate-150" />
+          </AnimatePresence>
+          <span aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(80%_70%_at_50%_45%,rgba(7,12,36,.35),rgba(7,12,36,.92))]" />
+
+          {/* top bar */}
+          <div className="relative z-10 flex items-start justify-between gap-4 px-4 pt-4 md:px-8 md:pt-6">
+            <div className="min-w-0">
+              {kicker && <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-[#F6C752]">{kicker}</p>}
+              {title && <p className="mt-1 truncate font-heading text-lg font-bold md:text-2xl">{title}</p>}
+              <p className="mt-0.5 text-[12.5px] text-white/60">Photo {(index ?? 0) + 1} of {photos.length}</p>
+            </div>
+            <div className="flex shrink-0 gap-2">
+              <button type="button" onClick={download} className={btn} aria-label="Download photo"><Download className="h-4 w-4" /><span className="hidden sm:inline">Download</span></button>
+              {p.credit && <button type="button" onClick={() => setInfo((v) => !v)} className={`${btn} px-3.5 ${info ? "bg-white/20" : ""}`} aria-label="Photo info" aria-expanded={info}><Info className="h-4 w-4" /></button>}
+              <button type="button" onClick={onClose} className={`${btn} px-3.5`} aria-label="Close"><X className="h-5 w-5" /></button>
+            </div>
           </div>
-          <div className="relative flex flex-1 items-center justify-center px-4 pb-4" onClick={(e) => e.stopPropagation()}>
-            <button type="button" aria-label="Previous photo" onClick={() => go(-1)} className="absolute left-3 z-10 rounded-full bg-white/10 p-2.5 text-white hover:bg-white/20 md:left-6"><ChevronLeft className="h-6 w-6" /></button>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img key={p.src} src={p.src} alt={p.alt ?? ""} className="max-h-[78vh] max-w-full rounded-xl object-contain shadow-2xl" />
-            <button type="button" aria-label="Next photo" onClick={() => go(1)} className="absolute right-3 z-10 rounded-full bg-white/10 p-2.5 text-white hover:bg-white/20 md:right-6"><ChevronRight className="h-6 w-6" /></button>
+          <AnimatePresence>
+            {info && p.credit && (
+              <motion.p initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}
+                className="absolute right-4 top-[4.6rem] z-20 max-w-xs rounded-2xl bg-white px-4 py-3 text-[12.5px] leading-5 text-[#0A1233] shadow-2xl md:right-8 md:top-[5.5rem]">
+                Photo: {p.source ? <a href={p.source} target="_blank" rel="noopener noreferrer nofollow" className="font-semibold text-[#1E3A8A] underline">{p.credit}</a> : p.credit}
+                {p.license ? <span className="text-[#0A1233]/55"> · {p.license}</span> : null}
+              </motion.p>
+            )}
+          </AnimatePresence>
+
+          {/* photo */}
+          <div className="relative z-0 flex min-h-0 flex-1 items-center justify-center px-3 py-4 md:px-24">
+            <button type="button" aria-label="Previous photo" onClick={() => go(-1)} className="absolute left-3 z-10 hidden h-14 w-14 items-center justify-center rounded-full bg-white/[.08] ring-1 ring-white/20 backdrop-blur transition hover:bg-white hover:text-[#0A1233] md:left-8 md:flex"><ChevronLeft className="h-6 w-6" /></button>
+            <AnimatePresence mode="popLayout" initial={false} custom={dir}>
+              <motion.img key={p.src} src={p.src} alt={p.alt ?? title ?? ""} custom={dir}
+                initial={{ opacity: 0, x: dir * 60, scale: 0.98 }} animate={{ opacity: 1, x: 0, scale: 1 }} exit={{ opacity: 0, x: dir * -60, scale: 0.98 }}
+                transition={{ duration: 0.4, ease: [0.22, 0.8, 0.3, 1] }}
+                drag="x" dragConstraints={{ left: 0, right: 0 }} dragElastic={0.25}
+                onDragEnd={(_, i) => { if (i.offset.x < -70) go(1); else if (i.offset.x > 70) go(-1); }}
+                className="max-h-full max-w-full cursor-grab select-none rounded-2xl object-contain shadow-[0_40px_120px_-30px_rgba(0,0,0,.8)] ring-1 ring-white/10 active:cursor-grabbing" draggable={false} />
+            </AnimatePresence>
+            <button type="button" aria-label="Next photo" onClick={() => go(1)} className="absolute right-3 z-10 hidden h-14 w-14 items-center justify-center rounded-full bg-white/[.08] ring-1 ring-white/20 backdrop-blur transition hover:bg-white hover:text-[#0A1233] md:right-8 md:flex"><ChevronRight className="h-6 w-6" /></button>
           </div>
-          {p.credit && (
-            <p className="px-4 pb-5 text-center text-[12px] text-white/55" onClick={(e) => e.stopPropagation()}>
-              {p.source ? <a href={p.source} target="_blank" rel="noopener noreferrer nofollow" className="hover:underline">{p.credit}</a> : p.credit}
-              {p.license ? ` · ${p.license}` : ""}
-            </p>
-          )}
+
+          {/* thumbnails */}
+          <div ref={setStrip} className="relative z-10 flex justify-start gap-2.5 overflow-x-auto px-4 pb-5 pt-1 [scrollbar-width:none] md:justify-center md:pb-7 [&::-webkit-scrollbar]:hidden">
+            {photos.map((ph, i) => (
+              <button key={ph.src} data-i={i} type="button" onClick={() => { setDir(i > (index ?? 0) ? 1 : -1); onIndex(i); }} aria-label={`Photo ${i + 1}`}
+                className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-xl transition md:h-[72px] md:w-[72px] ${i === index ? "ring-2 ring-[#F6C752] ring-offset-2 ring-offset-[#070C24]" : "opacity-50 hover:opacity-100"}`}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={ph.src} alt="" loading="lazy" className="h-full w-full object-cover" />
+              </button>
+            ))}
+          </div>
         </motion.div>
       )}
     </AnimatePresence>

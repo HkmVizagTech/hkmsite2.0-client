@@ -121,4 +121,7 @@ export const temples: Record<string, string> = {
   "Results": "ఫలితాలు",
   "Clear filters": "ఫిల్టర్లు తొలగించు",
   "State": "రాష్ట్రం",
+  "Temple photos": "ఆలయ ఫోటోలు",
+  "Photo credits": "ఫోటో క్రెడిట్స్",
+  "via Wikimedia Commons": "వికీమీడియా కామన్స్ ద్వారా",
 };
