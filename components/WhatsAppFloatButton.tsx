@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import { stripLocale } from "@/lib/i18n/routing";
 import { useT } from "@/components/i18n/LocaleProvider";
 
 // Floating WhatsApp contact button — same number and pattern used on
@@ -19,14 +21,57 @@ const WHATSAPP_NUMBER = "918977761187"; // 91 + 8977761187
 // number instead: +91 79950 97108.
 export const SEVA_WHATSAPP_NUMBER = "917995097108";
 
+// What the visitor is asking about, by page: the WhatsApp message names it so the team knows at once.
+const TOPICS: Record<string, string> = {
+  "/": "the temple",
+  "/gau-seva": "Gau Seva",
+  "/anna-daan-seva": "Anna Daan",
+  "/gita-daan-seva": "Gita Daan",
+  "/alankara-vastra-seva": "Alankara Vastra Seva",
+  "/sqft-seva-campaign": "Square Foot Seva for the new temple",
+  "/brick-seva-campaign": "Brick Seva for the new temple",
+  "/patron": "becoming a Patron",
+  "/subhojanam": "Subhojanam",
+  "/ekadashi": "Ekadashi Seva",
+  "/donate": "the sevas",
+  "/iskcon-vizag-temple": "visiting the temple",
+  "/daily-schedule": "the darshan and aarti timings",
+  "/events": "the upcoming events",
+  "/festival": "the festivals",
+  "/volunteer": "volunteering",
+  "/csr": "CSR partnership",
+  "/shop": "the Matchless Gifts shop",
+  "/contact": "contacting the temple",
+  "/founder": "Srila Prabhupada",
+  "/acharyas": "the acharyas",
+  "/blogs": "the articles on your website",
+  "/bhajans": "the Vaishnava bhajans",
+  "/gallery": "the temple",
+  "/about": "the temple",
+  "/governance": "the temple",
+  "/centers": "the Hare Krishna centres",
+};
+
+/** "Hare Krishna! I'd like to know about Gau Seva." — from the page the visitor is on (falls back to its title). */
+function pageMessage(pathname: string): string {
+  const path = stripLocale(pathname || "/").replace(/\/+$/, "") || "/";
+  const base = "/" + (path.split("/")[1] ?? "");
+  let topic = TOPICS[path] ?? TOPICS[base];
+  if (!topic && path.startsWith("/donate/")) topic = path.split("/")[2]?.replace(/-/g, " ");
+  if (!topic && typeof document !== "undefined") topic = document.title.split(/\s[|–-]\s/)[0]?.trim();
+  const url = typeof window !== "undefined" ? window.location.origin + pathname : "";
+  return `Hare Krishna! I'd like to know more about ${topic || "the temple"}.${url ? ` (${url})` : ""}`;
+}
+
 export default function WhatsAppFloatButton({
-  message = "Hare Krishna! I have a question about making a donation.",
+  message,
   number = WHATSAPP_NUMBER,
 }: {
   message?: string;
   number?: string;
 }) {
   const t = useT();
+  const pathname = usePathname() || "/";
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -40,7 +85,7 @@ export default function WhatsAppFloatButton({
 
   if (!visible) return null;
 
-  const href = `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
+  const href = `https://wa.me/${number}?text=${encodeURIComponent(message ?? pageMessage(pathname))}`;
 
   return (
     <a
