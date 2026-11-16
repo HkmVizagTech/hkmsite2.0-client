@@ -16,6 +16,7 @@ import WhatsAppIcon from "@/components/WhatsAppIcon";
 import { useT } from "@/components/i18n/LocaleProvider";
 
 import { navEntries, isGroupActive, shouldHideBottomNav } from "@/lib/navConfig";
+import { stripLocale } from "@/lib/i18n/routing";
 import { NavListItem } from "@/components/NavListItem";
 import { resolveMajorFestival, type MajorFestival } from "@/lib/majorFestival";
 import { resolveCustomNavLink, type CustomNavLink } from "@/lib/customNavLink";
@@ -82,6 +83,9 @@ const Navbar = () => {
 
   // Dark mode removed sitewide — theme is forced to light in ThemeProvider.
   const pathname = usePathname();
+  // the menu item for the page being viewed (sub-pages count too, e.g. a temple under Hindu Temples)
+  const here = stripLocale(pathname || "/");
+  const isItemActive = (href: string) => href !== "/" && !href.startsWith("http") && (here === href || here.startsWith(href + "/"));
 
   // ── Darshan interval ──────────────────────────────────────────────
   useEffect(() => {
@@ -437,6 +441,7 @@ const Navbar = () => {
                           title={t(item.label)}
                           description={item.description && t(item.description)}
                           icon={item.icon}
+                          active={isItemActive(item.href)}
                         />
                       ))}
                     </ul>
@@ -603,7 +608,7 @@ const Navbar = () => {
                                 key={item.href}
                                 href={item.href}
                                 className={`flex items-center gap-2 rounded-lg px-3 py-2.5 text-[14px] transition-colors ${
-                                  pathname === item.href
+                                  isItemActive(item.href)
                                     ? "bg-vk-100 font-semibold text-vk-700"
                                     : "text-ink/75 hover:bg-vk-50 hover:text-vk-700"
                                 }`}
