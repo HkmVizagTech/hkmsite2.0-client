@@ -12,7 +12,7 @@ import { DEFAULT_LOCALE, LOCALES, type Locale } from "./config";
  * /<code>/ page is still served (menus and buttons translated) but points Google
  * at the English page, so a mostly-English copy is never indexed as a duplicate.
  */
-export const TRANSLATED_PAGES = ["/", "/iskcon-vizag-temple", "/vaikuntham", "/pitru-paksha", "/vaikuntha-ekadashi", "/diwali", "/understand-gita", "/srila-prabhupada"];
+export const TRANSLATED_PAGES = ["/", "/iskcon-vizag-temple", "/pitru-paksha", "/vaikuntha-ekadashi", "/diwali", "/understand-gita", "/srila-prabhupada"];
 export const isTranslatedPage = (path: string) => {
   const p = stripLocale(path);
   // the Acharyas pages are translated in full (lib/acharyas-i18n)

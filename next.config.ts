@@ -126,6 +126,9 @@ const nextConfig: NextConfig = {
       { source: "/sevas", destination: "/donate", permanent: true },
       { source: "/sevas/:path*", destination: "/donate", permanent: true },
       { source: "/aboutfounder", destination: "/founder", permanent: true },
+      // The Vaikuntham page was retired; the temple page covers it.
+      { source: "/vaikuntham", destination: "/iskcon-vizag-temple", permanent: true },
+      { source: "/:lang(te|hi|ta|kn|ml|or|bn|mr|gu)/vaikuntham", destination: "/:lang/iskcon-vizag-temple", permanent: true },
       { source: "/about-founder", destination: "/founder", permanent: true },
     ];
   },

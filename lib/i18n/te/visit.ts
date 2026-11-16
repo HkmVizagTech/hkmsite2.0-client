@@ -164,4 +164,5 @@ export const visit: Record<string, string> = {
   "Twice a month, 6:00 AM – 8:00 PM": "నెలకు రెండుసార్లు, 6:00 AM – 8:00 PM",
   "Extended kirtan, scripture readings and spiritual discussions on the fasting day.":
     "ఉపవాస దినాన సుదీర్ఘ కీర్తన, శాస్త్ర పఠనం, ఆధ్యాత్మిక చర్చలు.",
+  "Support the new temple": "కొత్త ఆలయానికి సహకరించండి",
 };

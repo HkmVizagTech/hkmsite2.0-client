@@ -188,7 +188,7 @@ export default async function IskconVizagTemplePage({ params }: { params: Promis
               </p>
               <p className="mt-4 text-ink/80">
                 {t("The temple campus at Gambheeram, on IIM Road, is also home to the Hare Krishna Vaikuntham Cultural Centre now being built — a grand new temple where Sri Srinivasa Govinda will reside, with a prasadam hall, a festival hall and spaces for meditation, children and youth.")}{" "}
-                <Link href="/vaikuntham" className="font-semibold text-vk-700 hover:underline">{t("Read about Vaikuntham")}</Link>
+                <Link href="/sqft-seva-campaign" className="font-semibold text-vk-700 hover:underline">{t("Support the new temple")}</Link>
               </p>
             </div>
             <div className="relative aspect-[16/9] overflow-hidden rounded-3xl bg-vk-900">

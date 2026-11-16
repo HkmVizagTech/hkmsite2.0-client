@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  Facebook, Instagram, Youtube, Phone, Mail, Heart, ArrowUp, ArrowUpRight, Navigation, MapPin, ChevronRight,
+  Facebook, Instagram, Youtube, Phone, Mail, Heart, ArrowUp, Navigation, MapPin, Clock,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -10,44 +10,37 @@ import { useT } from "@/components/i18n/LocaleProvider";
 import VaikunthamAppPromo from "@/components/VaikunthamAppPromo";
 import HKVTLogo from "@/assets/HKMV_logo.png";
 
-const exploreLinks = [
-  { label: "About Us", href: "/about" },
-  { label: "Visit the Temple in Vizag", href: "/iskcon-vizag-temple" },
-  { label: "Hare Krishna Vaikuntham", href: "/vaikuntham" },
-  { label: "Srila Prabhupada", href: "/founder" },
-  { label: "Governance", href: "/governance" },
-  { label: "Our Acharyas", href: "/acharyas" },
-  { label: "Daily Schedule", href: "/daily-schedule" },
-  { label: "Gallery", href: "/gallery" },
-  { label: "Events", href: "/events" },
-  { label: "Festivals", href: "/festival" },
-  { label: "Blogs", href: "/blogs" },
-  { label: "Vaishnava Bhajans", href: "/bhajans" },
-  { label: "Volunteer", href: "/volunteer" },
-  { label: "Contact Us", href: "/contact" },
+// Four short, clearly named columns (the full menu lives in the header).
+const footerCols: { title: string; links: { label: string; href: string }[] }[] = [
+  {
+    title: "Temple",
+    links: [
+      { label: "Plan Your Visit", href: "/iskcon-vizag-temple" },
+      { label: "Daily Schedule", href: "/daily-schedule" },
+      { label: "Festivals", href: "/festival" },
+      { label: "Gallery", href: "/gallery" },
+    ],
+  },
+  {
+    title: "Seva",
+    links: [
+      { label: "Anna Daan", href: "/anna-daan-seva" },
+      { label: "Gau Seva", href: "/gau-seva" },
+      { label: "Temple Construction", href: "/sqft-seva-campaign" },
+      { label: "All Sevas", href: "/donate" },
+    ],
+  },
+  {
+    title: "About",
+    links: [
+      { label: "About Us", href: "/about" },
+      { label: "Srila Prabhupada", href: "/founder" },
+      { label: "Our Acharyas", href: "/acharyas" },
+      { label: "Contact Us", href: "/contact" },
+    ],
+  },
 ];
 
-// GVD shows "Our Activities" as pill chips — ours are the seva programmes.
-const sevaChips = [
-  { label: "Subhojanam", href: "/subhojanam" },
-  { label: "Anna Daan", href: "/anna-daan-seva" },
-  { label: "Gau Seva", href: "/gau-seva" },
-  { label: "Gita Daan", href: "/gita-daan-seva" },
-  { label: "Square Foot Seva", href: "/sqft-seva-campaign" },
-  { label: "Vastra Seva", href: "/alankara-vastra-seva" },
-  { label: "Matchless Gifts Shop", href: "/shop" },
-  { label: "CSR Partnership", href: "/csr" },
-];
-
-const scheduleItems = [
-  { name: "Mangala Aarti", time: "4:30 AM" },
-  { name: "Shringar Aarti", time: "7:30 AM" },
-  { name: "Bhagavatam Class", time: "8:15 AM" },
-  { name: "Rajbhog Aarti", time: "12:00 PM" },
-  { name: "Dhoop Aarti", time: "4:30 PM" },
-  { name: "Sandhya Aarti", time: "7:00 PM" },
-  { name: "Shayan Aarti", time: "8:15 PM" },
-];
 
 const socials = [
   { icon: Youtube, href: "https://www.youtube.com/user/harekrishnavizag", label: "YouTube" },
@@ -117,70 +110,9 @@ const Footer = () => {
           </div>
 
           {/* ── Link columns ───────────────────────────────────────── */}
-          <div className="grid grid-cols-1 gap-10 py-12 sm:grid-cols-2 lg:grid-cols-[1.1fr_1.2fr_0.8fr_1.1fr] lg:gap-12">
-            {/* Timings */}
-            <div>
-              <h3 className={colTitle}>{t("Temple Timings")}</h3>
-              <ul className="space-y-2.5">
-                {scheduleItems.map((s) => (
-                  <li key={s.name} className="flex items-center justify-between gap-4 text-sm">
-                    <span className="flex items-center gap-2.5">
-                      <span className="h-1.5 w-1.5 rounded-full bg-vk-400 ring-4 ring-vk-400/15" />
-                      {t(s.name)}
-                    </span>
-                    <span className="font-medium italic text-white/55">{s.time}</span>
-                  </li>
-                ))}
-              </ul>
-              <Link
-                href="/daily-schedule"
-                className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-white hover:text-[hsl(var(--gold))]"
-              >
-                {t("Full schedule")} <ChevronRight className="h-4 w-4" />
-              </Link>
-            </div>
-
-            {/* Sevas as chips */}
-            <div>
-              <h3 className={colTitle}>{t("Our Sevas")}</h3>
-              <div className="flex flex-wrap gap-2">
-                {sevaChips.map((c) => (
-                  <Link
-                    key={c.href}
-                    href={c.href}
-                    className="group inline-flex items-center gap-1 rounded-full border border-white/15 bg-white/[0.06] px-3.5 py-1.5 text-[13px] font-medium text-white/85 transition-colors hover:border-white/40 hover:bg-white/15 hover:text-white"
-                  >
-                    {t(c.label)}
-                    <ArrowUpRight className="h-3.5 w-3.5 opacity-60 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                  </Link>
-                ))}
-              </div>
-              <Link href="/donate" className="vk-btn-gold mt-6">
-                <Heart className="h-4 w-4 fill-current" />
-                {t("Donate Now")}
-              </Link>
-            </div>
-
-            {/* Explore */}
-            <div>
-              <h3 className={colTitle}>{t("Explore")}</h3>
-              <ul className="space-y-2.5">
-                {exploreLinks.map((l) => (
-                  <li key={l.href}>
-                    <Link
-                      href={l.href}
-                      className="group inline-flex items-center gap-1.5 text-sm transition-colors hover:text-white"
-                    >
-                      <ChevronRight className="h-3.5 w-3.5 text-vk-400 transition-transform group-hover:translate-x-0.5" />
-                      {t(l.label)}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
+          <div className="grid grid-cols-2 gap-x-6 gap-y-10 py-12 md:grid-cols-4 lg:grid-cols-[1.4fr_1fr_1fr_1fr] lg:gap-12">
             {/* Visit */}
-            <div>
+            <div className="col-span-2 md:col-span-4 lg:col-span-1">
               <h3 className={colTitle}>{t("Visit Us")}</h3>
               <address className="flex gap-3 text-sm not-italic leading-relaxed">
                 <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-vk-400" />
@@ -188,30 +120,42 @@ const Footer = () => {
                   {t("Hare Krishna Vaikuntham Cultural Centre, Door No: 8-22, IIM Rd, near Akshaya Patra Foundation Kitchen, Gambhiram, Visakhapatnam, Andhra Pradesh 531163")}
                 </span>
               </address>
-              <a
-                href={MAPS_DIRECTIONS_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="vk-btn-ghost-light mt-4"
-              >
-                <Navigation className="h-4 w-4" />
-                {t("Get Directions")}
-              </a>
-              <div className="mt-6 space-y-2.5 text-sm">
+              <p className="mt-3 flex gap-3 text-sm leading-relaxed">
+                <Clock className="mt-0.5 h-4 w-4 shrink-0 text-vk-400" />
+                <span>{t("Darshan daily: 4:30 – 5:00 AM, 7:15 AM – 12:20 PM, 4:15 – 8:15 PM")}</span>
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <a href={MAPS_DIRECTIONS_URL} target="_blank" rel="noopener noreferrer" className="vk-btn-ghost-light">
+                  <Navigation className="h-4 w-4" />
+                  {t("Get Directions")}
+                </a>
+                <Link href="/donate" className="vk-btn-gold">
+                  <Heart className="h-4 w-4 fill-current" />
+                  {t("Donate")}
+                </Link>
+              </div>
+              <div className="mt-5 space-y-2 text-sm">
                 <a href="tel:+918977761187" className="flex items-center gap-3 transition-colors hover:text-white">
-                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10">
-                    <Phone className="h-4 w-4" />
-                  </span>
-                  +91 89777 61187
+                  <Phone className="h-4 w-4 text-vk-400" /> +91 89777 61187
                 </a>
                 <a href="mailto:social@hkmvizag.org" className="flex items-center gap-3 transition-colors hover:text-white">
-                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10">
-                    <Mail className="h-4 w-4" />
-                  </span>
-                  social@hkmvizag.org
+                  <Mail className="h-4 w-4 text-vk-400" /> social@hkmvizag.org
                 </a>
               </div>
             </div>
+
+            {footerCols.map((col) => (
+              <div key={col.title}>
+                <h3 className={colTitle}>{t(col.title)}</h3>
+                <ul className="space-y-2.5">
+                  {col.links.map((l) => (
+                    <li key={l.href}>
+                      <Link href={l.href} className="text-sm transition-colors hover:text-white">{t(l.label)}</Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
 
           {/* ── App promo ─────────────────────────────────────────── */}
@@ -253,7 +197,9 @@ const Footer = () => {
             <p className="text-[13px] text-white/50">
               {t("© {year} Hare Krishna Movement India, Visakhapatnam. All rights reserved.", { year: new Date().getFullYear() })}
             </p>
-            <div className="flex items-center gap-4 text-[13px] text-white/50">
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[13px] text-white/50">
+              <Link href="/donor/login" className="transition-colors hover:text-white">{t("Donor Login")}</Link>
+              <span className="text-white/20">·</span>
               <Link href="/privacy-policy" className="transition-colors hover:text-white">{t("Privacy Policy")}</Link>
               <span className="text-white/20">·</span>
               <Link href="/terms-and-conditions" className="transition-colors hover:text-white">{t("Terms")}</Link>

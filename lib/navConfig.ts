@@ -1,9 +1,9 @@
 import {
   Home, Info, User, Phone,
-  Clock, Image, Calendar, Snowflake,
+  Clock, Image, Calendar,
   Heart, Utensils, Beef, BookOpen, Shirt, Gift,
   CalendarDays, PartyPopper, HandHeart, FileText, Flower2, Building2,
-  ShoppingBag, Package, Megaphone, MapPin, Landmark, Briefcase, Globe, Music2, ScrollText,
+  ShoppingBag, Megaphone, MapPin, Landmark, Briefcase, Globe, Music2, ScrollText,
   type LucideIcon,
 } from "lucide-react";
 
@@ -26,18 +26,15 @@ export type NavEntry =
   | { kind: "customLink"; icon?: LucideIcon }
   | { kind: "group"; group: NavGroup };
 
+// Five clear groups and Donate; the header stays short. Account links (Donor Login, My Orders) live in the
+// footer and the mobile menu, not in the main menu.
 export const navEntries: NavEntry[] = [
   { kind: "link", label: "Home", href: "/", icon: Home },
-  { kind: "link", label: "Founder", href: "/founder", icon: User },
-  { kind: "link", label: "Subhojanam", href: "/subhojanam", icon: Utensils },
-  { kind: "link", label: "Shop", href: "/shop", icon: ShoppingBag },
   // The current major festival, auto-picked from the Vaishnava calendar (or
   // overridden by an admin). Rendered by Navbar only when one is active.
   { kind: "festival", icon: Flower2 },
   // An optional custom nav link (name + URL) an admin can turn on, separate
-  // from the major-festival highlight. Rendered by Navbar only when enabled,
-  // the same way the festival highlight is (desktop link + mobile "More"
-  // sheet row).
+  // from the major-festival highlight. Rendered by Navbar only when enabled.
   { kind: "customLink", icon: Megaphone },
   {
     kind: "group",
@@ -46,12 +43,11 @@ export const navEntries: NavEntry[] = [
       icon: Info,
       items: [
         { label: "About Us", href: "/about", description: "Our mission, history & values", icon: Info },
-        { label: "Our Centers", href: "/centers", description: "Hare Krishna Movement temples worldwide", icon: Globe },
-        { label: "Governance", href: "/governance", description: "The Governing Council of the movement", icon: Landmark },
-        { label: "Our Acharyas", href: "/acharyas", description: "The disciplic succession of teachers", icon: ScrollText },
+        { label: "Srila Prabhupada", href: "/founder", description: "Our Founder-Acharya", icon: User },
+        { label: "Our Acharyas", href: "/acharyas", description: "The disciplic succession", icon: ScrollText },
+        { label: "Governance", href: "/governance", description: "The Governing Council", icon: Landmark },
+        { label: "Our Centers", href: "/centers", description: "Hare Krishna Movement temples", icon: Globe },
         { label: "Contact Us", href: "/contact", description: "Visit, call, or write to us", icon: Phone },
-        { label: "Donor Login", href: "/donor/login", description: "View your donations & receipts", icon: User },
-        { label: "My Orders", href: "/shop/orders", description: "Track your Matchless Gifts orders", icon: Package },
       ],
     },
   },
@@ -62,11 +58,10 @@ export const navEntries: NavEntry[] = [
       icon: Clock,
       items: [
         { label: "Plan Your Visit", href: "/iskcon-vizag-temple", description: "Timings, address & map", icon: MapPin },
-        { label: "Vaikuntham", href: "/vaikuntham", description: "The new temple being built", icon: Landmark },
         { label: "Daily Schedule", href: "/daily-schedule", description: "Aarti timings & daily programs", icon: Clock },
+        { label: "Festivals", href: "/festival", description: "Celebrations at the temple", icon: PartyPopper },
+        { label: "Vaishnav Calendar", href: "/vaishnav-calendar", description: "Festivals & Ekadashis", icon: Calendar },
         { label: "Gallery", href: "/gallery", description: "Photos from the temple", icon: Image },
-        { label: "Vaishnav Calendar", href: "/vaishnav-calendar", description: "2026 festivals & Ekadashis", icon: Calendar },
-        { label: "Chaturmas", href: "/chaturmas", description: "Sacred four-month observance", icon: Snowflake },
       ],
     },
   },
@@ -76,31 +71,28 @@ export const navEntries: NavEntry[] = [
       label: "Seva",
       icon: Heart,
       items: [
-        { label: "Square Foot Seva", href: "/sqft-seva-campaign", description: "Sponsor the temple foundation", icon: Heart },
-        { label: "Brick Seva", href: "/brick-seva-campaign", description: "Sponsor a brick for the temple", icon: Heart },
-        { label: "Become a Patron", href: "/patron", description: "Inscribe your family name in the temple", icon: Landmark },
         { label: "Anna Daan", href: "/anna-daan-seva", description: "Feed the hungry", icon: Utensils },
+        { label: "Subhojanam", href: "/subhojanam", description: "Free meals for patients' families", icon: Utensils },
         { label: "Gau Seva", href: "/gau-seva", description: "Cow care & protection", icon: Beef },
         { label: "Gita Daan", href: "/gita-daan-seva", description: "Distribute Bhagavad Gita", icon: BookOpen },
+        { label: "Temple Construction", href: "/sqft-seva-campaign", description: "Square foot, brick & patron seva", icon: Landmark },
         { label: "Vastra Seva", href: "/alankara-vastra-seva", description: "Deity garments & ornaments", icon: Shirt },
-        { label: "Ekadashi Seva", href: "/ekadashi", description: "Donate on the sacred Ekadashi day", icon: Calendar },
-        { label: "All Sevas", href: "/donate", description: "View every seva opportunity", icon: Gift },
+        { label: "All Sevas", href: "/donate", description: "Every seva opportunity", icon: Gift },
       ],
     },
   },
   {
     kind: "group",
     group: {
-      label: "Get Involved",
-      icon: HandHeart,
+      label: "Learn & Connect",
+      icon: BookOpen,
       items: [
         { label: "Blogs", href: "/blogs", description: "Articles & spiritual insights", icon: FileText },
         { label: "Vaishnava Bhajans", href: "/bhajans", description: "Lyrics & audio of the Acharyas' songs", icon: Music2 },
-        { label: "Events", href: "/events", description: "Upcoming programs & registrations", icon: CalendarDays },
-        { label: "Festivals", href: "/festival", description: "Grand celebrations at the temple", icon: PartyPopper },
+        { label: "Events", href: "/events", description: "Programs & registrations", icon: CalendarDays },
         { label: "Volunteer", href: "/volunteer", description: "Serve with us", icon: HandHeart },
-        { label: "CSR Partnership", href: "/csr", description: "Corporate social responsibility programs", icon: Building2 },
-        // External: the careers site is its own deployment on a subdomain.
+        { label: "Matchless Gifts Shop", href: "/shop", description: "Books & devotional gifts", icon: ShoppingBag },
+        { label: "CSR Partnership", href: "/csr", description: "For companies", icon: Building2 },
         { label: "Careers", href: "https://careers.harekrishnavizag.org", description: "Work and serve with us", icon: Briefcase },
       ],
     },
