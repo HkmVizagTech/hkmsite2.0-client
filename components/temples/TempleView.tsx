@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { scrollToTopNow } from "@/lib/scrollTop";
 import { motion, useReducedMotion } from "framer-motion";
 import {
   ArrowLeft, ArrowRight, ArrowUpRight, Bus, CalendarDays, Check, Clock, Copy, ExternalLink, Flower2, Globe, Grid2x2, Landmark,
@@ -118,6 +119,8 @@ function Mosaic({ photos, name, onOpen, fallback }: { photos: Photo[]; name: str
 export default function TempleView({ temple: tm, photos, nearby }: { temple: Temple; photos: Photo[]; nearby: TempleCardData[] }) {
   const t = useT();
   const en = useLocale().locale === "en";
+  // opening another temple (e.g. from "More temples you may like") always starts at the top
+  useEffect(() => { scrollToTopNow(); }, [tm.slug]);
   const reduce = useReducedMotion();
   const [lightbox, setLightbox] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
