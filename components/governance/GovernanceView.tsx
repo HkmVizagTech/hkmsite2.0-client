@@ -89,8 +89,8 @@ const ASPECT: Record<string, number> = {
 };
 // [slug, centre x %, height %, bottom %] — front row of five with the Chairman in the middle, four standing behind
 const BACK: [string, number, number, number][] = [
-  ["sri-vasudev-keshav-dasa", 21, 65, 21], ["sri-rajiv-lochan-dasa", 40, 65, 21],
-  ["sri-satya-gaura-chandra-swami", 60, 65, 21], ["sri-suvyakta-narasimha-dasa", 79, 65, 21],
+  ["sri-vasudev-keshav-dasa", 21, 60, 26], ["sri-rajiv-lochan-dasa", 40, 60, 26],
+  ["sri-satya-gaura-chandra-swami", 60, 60, 26], ["sri-suvyakta-narasimha-dasa", 79, 60, 26],
 ];
 const FRONT: [string, number, number, number][] = [
   ["sri-stoka-krishna-swami", 12, 75, 0], ["sri-chanchalapathi-dasa", 30.5, 75, 0], ["sri-madhu-pandit-dasa", 50, 81, 0],
@@ -115,7 +115,7 @@ function CouncilGroup() {
       >
         <Link href={`/governance/${m.slug}`} aria-label={m.name} className="relative block h-full w-full">
           <Image src={m.cutout} alt={m.name} fill quality={90} priority sizes="(min-width: 1280px) 400px, 32vw"
-            className={`object-contain object-bottom transition-[filter] duration-500 group-hover/f:brightness-110 ${row ? "drop-shadow-[0_-10px_30px_rgba(0,0,0,.35)]" : "brightness-[.9]"}`} />
+            className={`object-contain object-bottom transition-[filter] duration-500 group-hover/f:brightness-110 ${row ? "drop-shadow-[0_-10px_30px_rgba(0,0,0,.35)]" : "brightness-[.92] saturate-[.92] [mask-image:linear-gradient(to_bottom,#000_38%,rgba(0,0,0,.55)_62%,rgba(0,0,0,.15)_80%,transparent_92%)]"}`} />
           <span className="pointer-events-none absolute left-1/2 top-[-7%] z-[60] -translate-x-1/2 whitespace-nowrap rounded-full bg-[#0F1E4A]/90 px-3.5 py-1.5 text-[12px] font-semibold text-[#FBF7EE] opacity-0 shadow-[0_8px_24px_rgba(0,0,0,.4)] ring-1 ring-[#E9C46A]/50 backdrop-blur transition duration-300 group-hover/f:opacity-100">
             {m.name}
           </span>
