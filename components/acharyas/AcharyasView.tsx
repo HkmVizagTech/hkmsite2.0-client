@@ -447,8 +447,8 @@ function AllAcharyas() {
           {groups.map((g) => (
             <div key={g.c} className="mt-10 md:mt-14">
               <div className="mb-5 flex items-center gap-4 md:mb-7">
-                <h3 className="shrink-0 font-heading text-[19px] font-bold text-[#0F1E4A] md:text-2xl">{t(g.c)}</h3>
-                <span aria-hidden className="h-px min-w-0 flex-1 bg-gradient-to-r from-[#C9962B]/60 to-transparent" />
+                <h3 className="min-w-0 max-w-[80%] break-words font-heading text-[19px] leading-snug font-bold text-[#0F1E4A] md:text-2xl">{t(g.c)}</h3>
+                <span aria-hidden className="h-px min-w-[24px] flex-1 bg-gradient-to-r from-[#C9962B]/60 to-transparent" />
                 <span className="shrink-0 text-[11px] font-bold uppercase tracking-[0.18em] text-[#A87A1E]">{g.list.length}</span>
               </div>
               <motion.ul layout className="grid grid-cols-2 gap-x-3 gap-y-7 sm:gap-x-5 md:grid-cols-3 lg:grid-cols-4 lg:gap-x-6 lg:gap-y-10">
