@@ -1,8 +1,12 @@
 import AcharyasView from "@/components/acharyas/AcharyasView";
 import JsonLd from "@/components/seo/JsonLd";
-import { ACHARYAS, ACHARYAS_PAINTING, acharyaPersonJsonLd } from "@/lib/acharyas";
+import { ACHARYAS_PAINTING, acharyaPersonJsonLd } from "@/lib/acharyas";
 import { pageSeo, SITE_URL } from "@/lib/seo";
 import { localized } from "@/lib/i18n/seo";
+import { AcharyasProvider } from "@/components/acharyas/data";
+import { acharyasIn, lite } from "@/lib/acharyasLocalized";
+import { localizedPath } from "@/lib/i18n/routing";
+import { isLocale } from "@/lib/i18n/config";
 
 const seo = pageSeo({
   title: "Acharyas of the Gaudiya Vaishnava Parampara",
@@ -15,30 +19,35 @@ const seo = pageSeo({
 // 58 characters: an absolute title, so the long brand suffix is not added
 const baseMetadata = { ...seo, title: { absolute: "Acharyas of the Gaudiya Vaishnava Parampara | ISKCON Vizag" } };
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
-        { "@type": "ListItem", position: 2, name: "Acharyas", item: `${SITE_URL}/acharyas` },
-      ],
-    },
-    {
-      "@type": "ItemList",
-      name: "Acharyas of the Brahma-Madhva-Gaudiya Sampradaya",
-      numberOfItems: ACHARYAS.length,
-      itemListElement: ACHARYAS.map((a, i) => ({ "@type": "ListItem", position: i + 1, item: acharyaPersonJsonLd(a, SITE_URL, false) })),
-    },
-  ],
-};
-
-export default function AcharyasPage() {
+export default async function AcharyasPage({ params }: { params: Promise<{ lang: string }> }) {
+  const { lang } = await params;
+  const list = await acharyasIn(lang);
+  const url = `${SITE_URL}${localizedPath("/acharyas", isLocale(lang) ? lang : "en")}`;
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+          { "@type": "ListItem", position: 2, name: "Acharyas", item: url },
+        ],
+      },
+      {
+        "@type": "ItemList",
+        name: "Acharyas of the Brahma-Madhva-Gaudiya Sampradaya",
+        inLanguage: lang,
+        numberOfItems: list.length,
+        itemListElement: list.map((a, i) => ({ "@type": "ListItem", position: i + 1, item: acharyaPersonJsonLd(a, SITE_URL, false) })),
+      },
+    ],
+  };
   return (
     <>
       <JsonLd data={jsonLd} />
-      <AcharyasView />
+      <AcharyasProvider list={list.map(lite)}>
+        <AcharyasView />
+      </AcharyasProvider>
     </>
   );
 }

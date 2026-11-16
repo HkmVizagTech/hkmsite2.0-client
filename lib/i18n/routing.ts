@@ -13,7 +13,12 @@ import { DEFAULT_LOCALE, LOCALES, type Locale } from "./config";
  * at the English page, so a mostly-English copy is never indexed as a duplicate.
  */
 export const TRANSLATED_PAGES = ["/", "/iskcon-vizag-temple", "/vaikuntham", "/pitru-paksha", "/vaikuntha-ekadashi", "/diwali", "/understand-gita", "/srila-prabhupada"];
-export const isTranslatedPage = (path: string) => TRANSLATED_PAGES.includes(stripLocale(path));
+export const isTranslatedPage = (path: string) => {
+  const p = stripLocale(path);
+  // the Acharyas pages are translated in full (lib/acharyas-i18n)
+  if (p === "/acharyas" || p.startsWith("/acharyas/")) return true;
+  return TRANSLATED_PAGES.includes(p);
+};
 /** Languages other than English (each has its own /<code>/ URLs). */
 export const OTHER_LOCALES = LOCALES.filter((l) => l !== DEFAULT_LOCALE);
 

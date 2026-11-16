@@ -7,7 +7,8 @@ import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring } from 
 import { ArrowDown, ArrowLeft, ArrowRight, BookOpen, CalendarDays, ChevronDown, Flower2, Layers, MapPin, Sparkles, Users } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { useT } from "@/components/i18n/LocaleProvider";
-import { ACHARYAS, acharyaBySlug, asList, type Acharya, type Block, type Pastime } from "@/lib/acharyas";
+import { asList, type Acharya, type Block, type Pastime } from "@/lib/acharyas";
+import { useAcharyaData } from "./data";
 import { scrollToTopNow } from "@/lib/scrollTop";
 import { CtaPill, Divider, Eyebrow, Portrait, IVORY, Rise, ease } from "./shared";
 
@@ -80,6 +81,7 @@ function Hero({ a }: { a: Acharya }) {
 
 /* ══ QUICK FACTS ══ one floating bar across the foot of the hero */
 function Facts({ a }: { a: Acharya }) {
+  const { acharyaBySlug } = useAcharyaData();
   const t = useT();
   const guru = a.lineage?.guru ? acharyaBySlug(a.lineage.guru) : undefined;
   const items = [
@@ -252,6 +254,7 @@ function Timeline({ a }: { a: Acharya }) {
 
 /** Guru → this acharya → disciple, as linked portrait cards (stacked on phones). */
 function Lineage({ a }: { a: Acharya }) {
+  const { acharyaBySlug } = useAcharyaData();
   const t = useT();
   const guru = a.lineage?.guru ? acharyaBySlug(a.lineage.guru) : undefined;
   const disciple = a.lineage?.disciple ? acharyaBySlug(a.lineage.disciple) : undefined;
@@ -453,6 +456,7 @@ function Band({ id, kicker, label, tone, wide = false, children }: { id: string;
 
 /* ══ PAGE ══ */
 export default function AcharyaView({ a }: { a: Acharya }) {
+  const { ACHARYAS } = useAcharyaData();
   const t = useT();
   useEffect(() => { scrollToTopNow(); }, [a.slug]);
   const i = ACHARYAS.findIndex((x) => x.slug === a.slug);

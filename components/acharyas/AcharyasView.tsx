@@ -7,10 +7,14 @@ import { AnimatePresence, motion, useInView, useReducedMotion } from "framer-mot
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, ArrowUpRight, GitBranch, Layers, MapPin, Search, Users, X } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { useT } from "@/components/i18n/LocaleProvider";
-import { ACHARYAS, ACHARYAS_PAINTING, CATEGORIES, PARAMPARA, acharyaBySlug, type Acharya, type AcharyaCategory } from "@/lib/acharyas";
+import { ACHARYAS_PAINTING, type Acharya, type AcharyaCategory } from "@/lib/acharyas";
+import { useAcharyaData } from "./data";
 import { CtaPill, Divider, Eyebrow, Portrait, IVORY, Rise, ease } from "./shared";
 
-const prabhupada = ACHARYAS.find((a) => a.featured) ?? ACHARYAS[0];
+function usePrabhupada() {
+  const { ACHARYAS } = useAcharyaData();
+  return ACHARYAS.find((a) => a.featured) ?? ACHARYAS[0];
+}
 const MANTRA = "Hare Kṛṣṇa Hare Kṛṣṇa Kṛṣṇa Kṛṣṇa Hare Hare / Hare Rāma Hare Rāma Rāma Rāma Hare Hare";
 
 /* ══ HERO ══ the acharyas' group painting is the hero: full-bleed, drifting slowly across so every acharya is seen,
@@ -41,6 +45,7 @@ const FAN = ["srila-bhaktivinoda-thakura", "srila-bhaktisiddhanta-sarasvati-thak
 
 /** Three portraits of the most recent acharyas, fanned like cards; each links to its profile. */
 function PortraitFan() {
+  const { ACHARYAS } = useAcharyaData();
   const reduce = useReducedMotion();
   const cards = FAN.map((slug) => ACHARYAS.find((a) => a.slug === slug)).filter(Boolean) as Acharya[];
   // left, top, width (%), rotation (deg), stacking
@@ -69,6 +74,7 @@ function PortraitFan() {
 }
 
 function Hero() {
+  const { ACHARYAS, CATEGORIES, PARAMPARA } = useAcharyaData();
   const t = useT();
   const reduce = useReducedMotion();
   return (
@@ -141,7 +147,7 @@ function Hero() {
 /* ══ FOUNDER-ACHARYA ══ a deep-blue feature; the portrait stands in a gold frame with light behind it ══ */
 function Feature() {
   const t = useT();
-  const a = prabhupada;
+  const a = usePrabhupada();
   return (
     <section className="relative isolate overflow-hidden bg-[#0A1233] py-16 text-[#FBF7EE] md:py-24">
       <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(45%_60%_at_25%_40%,rgba(47,91,211,.45),transparent_70%),radial-gradient(40%_50%_at_90%_100%,rgba(201,150,43,.18),transparent_70%),linear-gradient(160deg,#0F1E4A,#0A1233)]" />
@@ -192,6 +198,7 @@ function Feature() {
    Phones: a swipeable story carousel with five gold progress segments. Desktop: an accordion of five panels; the
    one hovered or chosen opens wide, the others fold into slim portrait strips. ══ */
 function Links({ a, light = true }: { a: Acharya; light?: boolean }) {
+  const { acharyaBySlug } = useAcharyaData();
   const t = useT();
   const guru = a.lineage?.guru ? acharyaBySlug(a.lineage.guru) : undefined;
   const disciple = a.lineage?.disciple ? acharyaBySlug(a.lineage.disciple) : undefined;
@@ -208,6 +215,7 @@ function Links({ a, light = true }: { a: Acharya; light?: boolean }) {
 const SHADE = "bg-[linear-gradient(to_top,rgba(10,18,51,.9)_0%,rgba(10,18,51,.72)_25%,rgba(10,18,51,.25)_45%,transparent_58%)]";
 const TEXT_SHADOW = "[text-shadow:0_1px_12px_rgba(0,0,0,.55)]";
 function StoryPanel({ a, i, active }: { a: Acharya; i: number; active: boolean }) {
+  const { PARAMPARA } = useAcharyaData();
   const t = useT();
   const end = i === PARAMPARA.length - 1;
   return (
@@ -231,6 +239,7 @@ function StoryPanel({ a, i, active }: { a: Acharya; i: number; active: boolean }
 }
 
 function StoryCarousel() {
+  const { PARAMPARA } = useAcharyaData();
   const t = useT();
   const ref = useRef<HTMLOListElement>(null);
   const n = PARAMPARA.length;
@@ -286,6 +295,7 @@ function StoryCarousel() {
 }
 
 function Accordion() {
+  const { PARAMPARA } = useAcharyaData();
   const t = useT();
   const last = PARAMPARA.length - 1;
   const [open, setOpen] = useState(last);
@@ -377,6 +387,7 @@ function AcharyaCard({ a, i }: { a: Acharya; i: number }) {
 }
 
 function AllAcharyas() {
+  const { ACHARYAS, CATEGORIES } = useAcharyaData();
   const t = useT();
   const [cat, setCat] = useState<AcharyaCategory | "all">("all");
   const [q, setQ] = useState("");
@@ -458,6 +469,7 @@ function AllAcharyas() {
 
 /* ══ CLOSING ══ the maha-mantra, from Srila Prabhupada's teachings ══ */
 function Closing() {
+  const prabhupada = usePrabhupada();
   const t = useT();
   const [l1, l2] = MANTRA.split(" / ");
   return (
