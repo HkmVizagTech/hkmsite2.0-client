@@ -392,10 +392,9 @@ const Navbar = () => {
                 const activeF =
                   pathname === festival.href || pathname.startsWith(festival.href);
                 return (
-                  <Link key={festival.href} href={festival.href} aria-current={activeF ? "page" : undefined} className={"relative inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[#FFF4D6] to-[#FFE7A8] px-3.5 py-1.5 text-[14px] font-semibold text-[#7A5410] ring-1 ring-[#F2C94C]/70 shadow-[0_6px_16px_-8px_rgba(201,150,43,.7)] transition hover:from-[#FFE7A8] hover:to-[#F6C752] hover:text-[#4A3208]"}>
-                    <Sparkles className="h-3.5 w-3.5 text-[#C9962B]" aria-hidden />
+                  <Link key={festival.href} href={festival.href} aria-current={activeF ? "page" : undefined} className={topLinkCls(activeF)}>
                     {t(festival.label)}
-                    <span aria-hidden className="absolute -right-0.5 -top-0.5 flex h-2.5 w-2.5"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#E0A93A] opacity-60" /><span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#E0A93A]" /></span>
+                    {activeF && activeDot}
                   </Link>
                 );
               }
@@ -407,10 +406,9 @@ const Navbar = () => {
                 const activeC =
                   pathname === customLink.href || pathname.startsWith(customLink.href);
                 return (
-                  <Link key={customLink.href} href={customLink.href} aria-current={activeC ? "page" : undefined} className={"relative inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[#FFF4D6] to-[#FFE7A8] px-3.5 py-1.5 text-[14px] font-semibold text-[#7A5410] ring-1 ring-[#F2C94C]/70 shadow-[0_6px_16px_-8px_rgba(201,150,43,.7)] transition hover:from-[#FFE7A8] hover:to-[#F6C752] hover:text-[#4A3208]"}>
-                    <Sparkles className="h-3.5 w-3.5 text-[#C9962B]" aria-hidden />
+                  <Link key={customLink.href} href={customLink.href} aria-current={activeC ? "page" : undefined} className={topLinkCls(activeC)}>
                     {t(customLink.label)}
-                    <span aria-hidden className="absolute -right-0.5 -top-0.5 flex h-2.5 w-2.5"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#E0A93A] opacity-60" /><span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#E0A93A]" /></span>
+                    {activeC && activeDot}
                   </Link>
                 );
               }
