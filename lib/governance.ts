@@ -267,8 +267,8 @@ export const COUNCIL: CouncilMember[] = [
     ]
   },
   {
-    "slug": "sri-amitasana-swami",
-    "name": "Sri Amitasana Swami",
+    "slug": "sri-amitasana-krishna-swami",
+    "name": "Sri Amitasana Krishna Swami",
     "image": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/sri-amitasana-dasa.webp",
     "cutout": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/cutout-hd-sri-amitasana-dasa.webp",
     "roles": [
@@ -276,9 +276,9 @@ export const COUNCIL: CouncilMember[] = [
       "Governing Council Member, Hare Krishna Movement India"
     ],
     "honours": [],
-    "summary": "Sri Amitasana Swami is the President of the Hare Krishna Movement, Jaipur & Mumbai, and leads Akshaya Chaitanya, a mission feeding thousands of children and hospital patients across Mumbai every single day.",
+    "summary": "Sri Amitasana Krishna Swami is the President of the Hare Krishna Movement, Jaipur & Mumbai, and leads Akshaya Chaitanya, a mission feeding thousands of children and hospital patients across Mumbai every single day.",
     "years": 34,
-    "vision": "Sri Amitasana Swami completed his B.Tech in Computer Science from REC Kurukshetra and went on to work as a software engineer at Kirloskar Computer Services in Bengaluru. It was during this time that he came across the teachings of Srila Prabhupada, and in 1992 he left his corporate career to join Hare Krishna Movement as a full-time missionary.",
+    "vision": "Sri Amitasana Krishna Swami completed his B.Tech in Computer Science from REC Kurukshetra and went on to work as a software engineer at Kirloskar Computer Services in Bengaluru. It was during this time that he came across the teachings of Srila Prabhupada, and in 1992 he left his corporate career to join Hare Krishna Movement as a full-time missionary.",
     "expertise": [
       "Applied Spirituality",
       "Youth Mentorship",
@@ -323,8 +323,8 @@ export const COUNCIL: CouncilMember[] = [
       }
     ],
     "bio": [
-      "Amitasana Swami was born in 1969 in Namrup, Assam, India. He completed B. Tech. in Computer Science from REC Kurukshetra. He later worked in Kirloskar Computer Services, Bangalore and joined ISKCON Bangalore in 1992. He has organised seminars, workshops and counselling programs to benefit students and professionals from all over the country. He has guided hundreds of people, especially youth, to lead a life of happiness and fulfilment.",
-      "Amitasana Swami is the President of Hare Krishna Movement, Mumbai and Governing Council Member of Hare Krishna Movement, India. He is also the President of Akshaya Patra operations in Maharashtra. Under his Governance, the Foundation has implemented several development initiatives in the region."
+      "Amitasana Krishna Swami was born in 1969 in Namrup, Assam, India. He completed B. Tech. in Computer Science from REC Kurukshetra. He later worked in Kirloskar Computer Services, Bangalore and joined ISKCON Bangalore in 1992. He has organised seminars, workshops and counselling programs to benefit students and professionals from all over the country. He has guided hundreds of people, especially youth, to lead a life of happiness and fulfilment.",
+      "Amitasana Krishna Swami is the President of Hare Krishna Movement, Mumbai and Governing Council Member of Hare Krishna Movement, India. He is also the President of Akshaya Patra operations in Maharashtra. Under his Governance, the Foundation has implemented several development initiatives in the region."
     ]
   },
   {

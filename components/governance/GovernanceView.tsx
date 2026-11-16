@@ -6,7 +6,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { useT } from "@/components/i18n/LocaleProvider";
-import { COUNCIL, COUNCIL_BANNER, COUNCIL_BANNER_MOBILE, type CouncilMember } from "@/lib/governance";
+import { COUNCIL, COUNCIL_BANNER_MOBILE, type CouncilMember } from "@/lib/governance";
 
 /*
  * Governance, in the "ivory & ink" look (deliberately different from the Srila Prabhupada page's navy, rays and
@@ -71,7 +71,7 @@ function CouncilCard({ m, i }: { m: CouncilMember; i: number }) {
           </span>
         </div>
         <div className="flex flex-1 flex-col px-1 pt-4">
-          <h3 className="font-serif-display text-[17px] font-bold leading-snug text-[#0F1E4A] md:text-xl">{m.name}</h3>
+          <h3 className="font-heading text-[17px] font-bold leading-snug text-[#0F1E4A] md:text-xl">{m.name}</h3>
           <p className="mt-1 line-clamp-2 text-[12.5px] leading-snug text-[#0F1E4A]/65 md:text-[13px]">{t(m.roles[0])}</p>
           <span className="mt-auto inline-flex items-center gap-1 self-start pt-3 text-[12.5px] font-bold uppercase tracking-[0.12em] text-[#A87A1E]">
             {t("View profile")} <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
@@ -79,6 +79,58 @@ function CouncilCard({ m, i }: { m: CouncilMember; i: number }) {
         </div>
       </Link>
     </motion.li>
+  );
+}
+
+/** Cut-out proportions (width / height), so each figure gets a box of exactly its shape. */
+const ASPECT: Record<string, number> = {
+  "sri-madhu-pandit-dasa": 1478 / 1377, "sri-chanchalapathi-dasa": 1375 / 1384, "sri-jai-chaitanya-dasa": 1196 / 1400,
+  "sri-stoka-krishna-swami": 1141 / 1400, "sri-amitasana-krishna-swami": 1218 / 1395, "sri-vasudev-keshav-dasa": 1262 / 1400,
+  "sri-rajiv-lochan-dasa": 1148 / 1400, "sri-satya-gaura-chandra-swami": 1324 / 1400, "sri-suvyakta-narasimha-dasa": 639 / 744,
+};
+// [slug, centre x %, height %, bottom %] — front row of five with the Chairman in the middle, four standing behind
+const BACK: [string, number, number, number][] = [
+  ["sri-vasudev-keshav-dasa", 21, 50, 33], ["sri-rajiv-lochan-dasa", 40, 50, 33],
+  ["sri-satya-gaura-chandra-swami", 60, 50, 33], ["sri-suvyakta-narasimha-dasa", 79, 50, 33],
+];
+const FRONT: [string, number, number, number][] = [
+  ["sri-stoka-krishna-swami", 12, 60, 0], ["sri-chanchalapathi-dasa", 30.5, 60, 0], ["sri-madhu-pandit-dasa", 50, 65, 0],
+  ["sri-jai-chaitanya-dasa", 69.5, 60, 0], ["sri-amitasana-krishna-swami", 88, 60, 0],
+];
+
+/** The council as a group portrait: large, crisp cut-outs; each person links to their profile and shows their name on hover. */
+function CouncilGroup() {
+  const reduce = useReducedMotion();
+  const figure = ([slug, x, h, b]: [string, number, number, number], row: number, k: number) => {
+    const m = COUNCIL.find((c) => c.slug === slug);
+    if (!m) return null;
+    const ar = ASPECT[slug] ?? 0.85;
+    return (
+      <motion.div
+        key={slug}
+        initial={reduce ? false : { opacity: 0, y: 40, x: "-50%" }}
+        animate={{ opacity: 1, y: 0, x: "-50%" }}
+        transition={{ duration: 1.1, ease, delay: 0.25 + row * 0.15 + Math.abs(k - (row ? 2 : 1.5)) * 0.08 }}
+        className="group/f absolute hover:!z-40"
+        style={{ left: `${x}%`, bottom: `${b}%`, height: `${h}%`, aspectRatio: String(ar), zIndex: row ? 20 - Math.abs(k - 2) : 10 }}
+      >
+        <Link href={`/governance/${m.slug}`} aria-label={m.name} className="relative block h-full w-full">
+          <Image src={m.cutout} alt={m.name} fill quality={90} priority sizes="(min-width: 1280px) 400px, 32vw"
+            className={`object-contain object-bottom transition duration-500 group-hover/f:-translate-y-1.5 ${row ? "drop-shadow-[0_-10px_30px_rgba(0,0,0,.35)]" : "brightness-[.92] [mask-image:linear-gradient(to_bottom,#000_62%,transparent_92%)] group-hover/f:brightness-100"}`} />
+          <span className="pointer-events-none absolute left-1/2 top-[-6%] -translate-x-1/2 whitespace-nowrap rounded-full bg-[#FBF7EE] px-3 py-1 text-[12px] font-bold text-[#0F1E4A] opacity-0 shadow-lg transition duration-300 group-hover/f:-translate-y-1 group-hover/f:opacity-100">
+            {m.name}
+          </span>
+        </Link>
+      </motion.div>
+    );
+  };
+  return (
+    <div className="relative mx-auto hidden aspect-[1280/600] w-full max-w-[1400px] md:block">
+      {/* soft spotlight behind the group */}
+      <div aria-hidden className="absolute inset-x-[10%] bottom-[10%] top-[5%] rounded-[50%] bg-[radial-gradient(closest-side,rgba(110,170,190,.30),transparent)]" />
+      {BACK.map((f, k) => figure(f, 0, k))}
+      {FRONT.map((f, k) => figure(f, 1, k))}
+    </div>
   );
 }
 
@@ -103,7 +155,7 @@ export default function GovernanceView() {
             <p className="flex items-center justify-center gap-3 text-[11px] font-bold uppercase tracking-[0.3em] text-[#E9C46A]">
               <span aria-hidden className="h-px w-8 bg-[#E9C46A]/70" />{t("Hare Krishna Movement")}<span aria-hidden className="h-px w-8 bg-[#E9C46A]/70" />
             </p>
-            <h1 className="mt-4 font-serif-display text-[3rem] font-bold leading-none tracking-tight text-[#FBF7EE] [text-shadow:0_6px_30px_rgba(0,0,0,.5)] md:text-[6.2rem]">{t("Governance")}</h1>
+            <h1 className="mt-4 font-heading text-[3rem] font-bold leading-none tracking-tight text-[#FBF7EE] [text-shadow:0_6px_30px_rgba(0,0,0,.5)] md:text-[6.2rem]">{t("Governance")}</h1>
             <p className="mt-4 text-[13px] font-semibold uppercase tracking-[0.22em] text-[#FBF7EE]/60 md:text-sm">{t("The Governing Council of the Hare Krishna Movement")}</p>
           </motion.div>
 
@@ -113,14 +165,12 @@ export default function GovernanceView() {
             transition={{ duration: 1.4, ease, delay: 0.1 }}
             className="relative -mt-14 md:-mt-10 xl:-mt-16"
           >
-            {/* phones: the stacked group; larger screens: the full line-up, full width */}
+            {/* phones: their stacked group photo; larger screens: our own two-row group built from the HD cut-outs */}
             <div className="relative mx-auto aspect-[1560/1500] w-full max-w-[640px] md:hidden [mask-image:linear-gradient(to_bottom,transparent_0%,#000_22%)]">
               <Image src={COUNCIL_BANNER_MOBILE} alt={t("The Governing Council of the Hare Krishna Movement")} fill priority sizes="(max-width: 640px) 100vw, 640px" className="object-cover" />
             </div>
-            <div className="relative hidden aspect-[3058/760] w-full md:block [mask-image:linear-gradient(to_bottom,transparent_0%,#000_16%)]">
-              <Image src={COUNCIL_BANNER} alt={t("The Governing Council of the Hare Krishna Movement")} fill priority sizes="100vw" className="object-cover" />
-            </div>
-            <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-[22%] bg-gradient-to-b from-transparent to-[#FBF7EE]" />
+            <CouncilGroup />
+            <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 z-50 h-[24%] bg-gradient-to-b from-transparent to-[#FBF7EE]" />
           </motion.div>
         </section>
 
@@ -131,7 +181,7 @@ export default function GovernanceView() {
               <div aria-hidden className="mx-auto flex items-center justify-center gap-2 text-[#C9962B]">
                 <span className="h-px w-16 bg-gradient-to-r from-transparent to-[#C9962B]" />◆<span className="h-px w-16 bg-gradient-to-l from-transparent to-[#C9962B]" />
               </div>
-              <p className="mt-6 font-serif-display text-xl leading-[1.6] text-[#0F1E4A] md:text-[1.7rem] md:leading-[1.55]">
+              <p className="mt-6 font-heading text-xl leading-[1.6] text-[#0F1E4A] md:text-[1.7rem] md:leading-[1.55]">
                 {t("Every movement thrives through inspired leadership. These are the torchbearers, teachers, and guides who transform timeless wisdom into living practice, bringing Krishna consciousness to life across the world.")}
               </p>
             </motion.div>
@@ -144,7 +194,7 @@ export default function GovernanceView() {
             <div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[1.15fr_.85fr] lg:gap-16">
               <motion.div initial={reduce ? false : { opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.8, ease }} className="order-2 lg:order-1">
                 <Eyebrow>{t("Chairman")}</Eyebrow>
-                <h2 className="mt-4 font-serif-display text-4xl font-bold leading-[1.05] text-[#0F1E4A] md:text-6xl">{chair.name}</h2>
+                <h2 className="mt-4 font-heading text-4xl font-bold leading-[1.05] text-[#0F1E4A] md:text-6xl">{chair.name}</h2>
                 <p className="mt-5 text-[16px] leading-8 text-[#0F1E4A]/75 md:text-[17px]">{chair.summary}</p>
                 <ul className="mt-6 grid gap-2.5 sm:grid-cols-2">
                   {chair.roles.map((r) => (
@@ -163,7 +213,7 @@ export default function GovernanceView() {
               <motion.div initial={reduce ? false : { opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true, margin: "-60px" }} transition={{ duration: 1, ease }} className="relative order-1 mx-auto w-full max-w-[340px] md:max-w-[420px] lg:order-2">
                 <Medallion m={chair} size="420px" priority />
                 <div className="absolute -left-2 bottom-6 rounded-2xl bg-white px-4 py-3 text-center shadow-[0_20px_40px_-20px_rgba(15,30,74,.5)] ring-1 ring-[#E7DCC3] md:-left-6">
-                  <p className="font-serif-display text-3xl font-bold leading-none text-[#0F1E4A]">{chair.years}</p>
+                  <p className="font-heading text-3xl font-bold leading-none text-[#0F1E4A]">{chair.years}</p>
                   <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.16em] text-[#A87A1E]">{t("Years of devotion")}</p>
                 </div>
               </motion.div>
@@ -176,7 +226,7 @@ export default function GovernanceView() {
           <div className="vk-container">
             <div className="mx-auto mb-12 max-w-2xl text-center md:mb-16">
               <Eyebrow center>{t("Governing Council")}</Eyebrow>
-              <h2 className="mt-4 font-serif-display text-3xl font-bold leading-tight text-[#0F1E4A] md:text-5xl">{t("Guided by devotion, serving with excellence")}</h2>
+              <h2 className="mt-4 font-heading text-3xl font-bold leading-tight text-[#0F1E4A] md:text-5xl">{t("Guided by devotion, serving with excellence")}</h2>
             </div>
             <ul className="mx-auto grid max-w-6xl grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 md:grid-cols-3 lg:grid-cols-4 lg:gap-x-8 lg:gap-y-14">
               {rest.map((m, i) => <CouncilCard key={m.slug} m={m} i={i} />)}
@@ -187,8 +237,8 @@ export default function GovernanceView() {
         {/* ══ CLOSING ══ */}
         <section className="py-16 md:py-24" style={{ background: IVORY }}>
           <div className="vk-container text-center">
-            <p aria-hidden className="font-serif-display text-7xl leading-none text-[#C9962B]/60">&ldquo;</p>
-            <p className="mx-auto -mt-4 max-w-3xl font-serif-display text-2xl italic leading-snug text-[#0F1E4A] md:text-[2.2rem]">
+            <p aria-hidden className="font-heading text-7xl leading-none text-[#C9962B]/60">&ldquo;</p>
+            <p className="mx-auto -mt-4 max-w-3xl font-heading text-2xl italic leading-snug text-[#0F1E4A] md:text-[2.2rem]">
               {t("The real need is to awaken our love for Krishna.")}
             </p>
             <p className="mt-5 text-xs font-bold uppercase tracking-[0.24em] text-[#A87A1E]">— {t("Srila Prabhupada")}</p>

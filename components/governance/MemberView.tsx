@@ -41,7 +41,7 @@ function VideoDialog({ v, onClose }: { v: Video | null; onClose: () => void }) {
             <div className="aspect-video overflow-hidden rounded-2xl bg-black shadow-2xl">
               <iframe src={`https://www.youtube-nocookie.com/embed/${v.id}?autoplay=1&rel=0`} title={v.title} allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen className="h-full w-full" />
             </div>
-            <p className="mt-4 text-center font-serif-display text-lg text-white">{v.title}</p>
+            <p className="mt-4 text-center font-heading text-lg text-white">{v.title}</p>
           </motion.div>
         </motion.div>
       )}
@@ -79,13 +79,13 @@ function Videos({ m, onPlay }: { m: CouncilMember; onPlay: (v: Video) => void })
         <div className="mx-auto max-w-6xl">
           <Rise className="mb-10 md:mb-12">
             <p className="flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.28em] text-[#F6C752]"><span aria-hidden className="h-px w-8 bg-[#F6C752]" />{t("Featured Videos")}</p>
-            <h2 className="mt-4 font-serif-display text-3xl font-bold md:text-5xl">{t("Hear from")} {m.name.replace(/^Sri /, "")}</h2>
+            <h2 className="mt-4 font-heading text-3xl font-bold md:text-5xl">{t("Hear from")} {m.name.replace(/^Sri /, "")}</h2>
           </Rise>
           <div className="grid gap-8 lg:grid-cols-[1.45fr_1fr] lg:gap-10">
             <Rise>
               <button type="button" onClick={() => onPlay(lead)} className="group block w-full text-left" aria-label={`${t("Play")}: ${lead.title}`}>
                 <Thumb v={lead} big />
-                <span className="mt-5 block font-serif-display text-2xl font-bold leading-snug group-hover:text-[#FFE6A3] md:text-[1.75rem]">{lead.title}</span>
+                <span className="mt-5 block font-heading text-2xl font-bold leading-snug group-hover:text-[#FFE6A3] md:text-[1.75rem]">{lead.title}</span>
                 <span className="mt-3 block max-w-2xl text-[15px] leading-7 text-white/70">{lead.text}</span>
               </button>
             </Rise>
@@ -98,7 +98,7 @@ function Videos({ m, onPlay }: { m: CouncilMember; onPlay: (v: Video) => void })
                       <button type="button" onClick={() => onPlay(v)} className="group grid w-full grid-cols-[42%_1fr] items-start gap-4 p-4 text-left transition hover:bg-white/[.05]" aria-label={`${t("Play")}: ${v.title}`}>
                         <Thumb v={v} />
                         <span className="min-w-0">
-                          <span className="line-clamp-3 font-serif-display text-[15.5px] font-bold leading-snug group-hover:text-[#FFE6A3]">{v.title}</span>
+                          <span className="line-clamp-3 font-heading text-[15.5px] font-bold leading-snug group-hover:text-[#FFE6A3]">{v.title}</span>
                           <span className="mt-1.5 line-clamp-2 text-[12.5px] leading-5 text-white/60">{v.text}</span>
                         </span>
                       </button>
@@ -137,7 +137,7 @@ export default function MemberView({ m }: { m: CouncilMember }) {
             <div className="mt-6 grid items-center gap-10 lg:grid-cols-[1.15fr_.85fr] lg:gap-14">
               <motion.div initial={reduce ? false : { opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease }} className="order-2 lg:order-1">
                 <Eyebrow>{t(m.roles[0])}</Eyebrow>
-                <h1 className="mt-4 font-serif-display text-[2.5rem] font-bold leading-[1.05] text-[#0F1E4A] md:text-[4.2rem]">{m.name}</h1>
+                <h1 className="mt-4 font-heading text-[2.5rem] font-bold leading-[1.05] text-[#0F1E4A] md:text-[4.2rem]">{m.name}</h1>
                 <p className="mt-5 max-w-2xl text-[16px] leading-8 text-[#0F1E4A]/75 md:text-[17.5px]">{m.summary}</p>
                 <ul className="mt-6 flex flex-wrap gap-2">
                   {m.roles.map((r) => (
@@ -149,7 +149,7 @@ export default function MemberView({ m }: { m: CouncilMember }) {
               <motion.div initial={reduce ? false : { opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, ease, delay: 0.1 }} className="relative order-1 mx-auto w-full max-w-[320px] md:max-w-[400px] lg:order-2">
                 <Medallion m={m} size="400px" priority />
                 <div className="absolute -left-2 bottom-6 rounded-2xl bg-white px-4 py-3 text-center shadow-[0_20px_40px_-20px_rgba(15,30,74,.5)] ring-1 ring-[#E7DCC3] md:-left-6">
-                  <p className="font-serif-display text-3xl font-bold leading-none text-[#0F1E4A]">{m.years}</p>
+                  <p className="font-heading text-3xl font-bold leading-none text-[#0F1E4A]">{m.years}</p>
                   <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.16em] text-[#A87A1E]">{t("Years of devotion")}</p>
                 </div>
               </motion.div>
@@ -163,7 +163,7 @@ export default function MemberView({ m }: { m: CouncilMember }) {
             <div className="mx-auto grid max-w-6xl gap-10 md:grid-cols-[.7fr_1.3fr] md:gap-14">
               <Rise className="md:sticky md:top-[calc(var(--header-h)+2rem)] md:self-start">
                 <Eyebrow>{t("Biography")}</Eyebrow>
-                <h2 className="mt-4 font-serif-display text-3xl font-bold leading-tight text-[#0F1E4A] md:text-4xl">{t("His journey")}</h2>
+                <h2 className="mt-4 font-heading text-3xl font-bold leading-tight text-[#0F1E4A] md:text-4xl">{t("His journey")}</h2>
                 <div className="relative mt-6 hidden aspect-[4/5] max-w-[300px] overflow-hidden rounded-[1.4rem] bg-[#0A1640] shadow-[0_30px_60px_-36px_rgba(15,30,74,.7)] md:block">
                   <Image src={m.image} alt={m.name} fill sizes="300px" className="object-cover object-top" />
                 </div>
@@ -171,7 +171,7 @@ export default function MemberView({ m }: { m: CouncilMember }) {
               <Rise delay={0.08}>
                 <div className="space-y-5 text-[16px] leading-[1.9] text-[#0F1E4A]/80 md:text-[17px]">
                   {m.bio.map((p, k) => (
-                    <p key={k} className={k === 0 ? "first-letter:float-left first-letter:mr-3 first-letter:mt-1 first-letter:font-serif-display first-letter:text-6xl first-letter:font-bold first-letter:leading-[0.8] first-letter:text-[#A87A1E]" : ""}>{p}</p>
+                    <p key={k} className={k === 0 ? "first-letter:float-left first-letter:mr-3 first-letter:mt-1 first-letter:font-heading first-letter:text-6xl first-letter:font-bold first-letter:leading-[0.8] first-letter:text-[#A87A1E]" : ""}>{p}</p>
                   ))}
                 </div>
               </Rise>
@@ -185,7 +185,7 @@ export default function MemberView({ m }: { m: CouncilMember }) {
             <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.2fr_.8fr] lg:gap-16">
               <Rise>
                 <Eyebrow>{t("Service & Vision")}</Eyebrow>
-                <p className="mt-5 font-serif-display text-xl leading-[1.6] text-[#0F1E4A] md:text-[1.6rem] md:leading-[1.55]">{m.vision}</p>
+                <p className="mt-5 font-heading text-xl leading-[1.6] text-[#0F1E4A] md:text-[1.6rem] md:leading-[1.55]">{m.vision}</p>
               </Rise>
               <Rise delay={0.1}>
                 <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-[#0F1E4A]/50">{t("Areas of service")}</p>
@@ -208,15 +208,15 @@ export default function MemberView({ m }: { m: CouncilMember }) {
             <div className="mx-auto max-w-6xl">
               <Rise className="mb-10 md:mb-14">
                 <Eyebrow>{t("Contributions")}</Eyebrow>
-                <h2 className="mt-4 font-serif-display text-3xl font-bold text-[#0F1E4A] md:text-5xl">{t("A life given to seva")}</h2>
+                <h2 className="mt-4 font-heading text-3xl font-bold text-[#0F1E4A] md:text-5xl">{t("A life given to seva")}</h2>
               </Rise>
               <ol className="grid gap-5 md:grid-cols-2 md:gap-6">
                 {m.contributions.map((c, k) => (
                   <Rise key={c.title} delay={(k % 2) * 0.08}>
                     <li className="group relative h-full overflow-hidden rounded-[1.5rem] bg-[#FBF7EE] p-6 ring-1 ring-[#E7DCC3] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_26px_50px_-30px_rgba(15,30,74,.55)] hover:ring-[#C9962B]/60 md:p-8">
-                      <span aria-hidden className="absolute -right-2 -top-6 font-serif-display text-[7rem] font-bold leading-none text-[#C9962B]/10 transition-colors group-hover:text-[#C9962B]/20">{String(k + 1).padStart(2, "0")}</span>
-                      <p className="font-serif-display text-sm font-bold text-[#A87A1E]">{String(k + 1).padStart(2, "0")}</p>
-                      <h3 className="relative mt-2 font-serif-display text-xl font-bold leading-snug text-[#0F1E4A] md:text-2xl">{c.title}</h3>
+                      <span aria-hidden className="absolute -right-2 -top-6 font-heading text-[7rem] font-bold leading-none text-[#C9962B]/10 transition-colors group-hover:text-[#C9962B]/20">{String(k + 1).padStart(2, "0")}</span>
+                      <p className="font-heading text-sm font-bold text-[#A87A1E]">{String(k + 1).padStart(2, "0")}</p>
+                      <h3 className="relative mt-2 font-heading text-xl font-bold leading-snug text-[#0F1E4A] md:text-2xl">{c.title}</h3>
                       <p className="relative mt-3 text-[15px] leading-7 text-[#0F1E4A]/70">{c.text}</p>
                     </li>
                   </Rise>
@@ -242,7 +242,7 @@ export default function MemberView({ m }: { m: CouncilMember }) {
                     <span className={`flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-[#0F1E4A]/45 ${k ? "sm:justify-end" : ""}`}>
                       {k ? <>{t("Next")} <ArrowRight className="h-3 w-3" /></> : <><ArrowLeft className="h-3 w-3" /> {t("Previous")}</>}
                     </span>
-                    <span className="block truncate font-serif-display text-lg font-bold text-[#0F1E4A]">{x.name}</span>
+                    <span className="block truncate font-heading text-lg font-bold text-[#0F1E4A]">{x.name}</span>
                     <span className="block truncate text-[12.5px] text-[#0F1E4A]/55">{t(x.roles[0])}</span>
                   </span>
                 </Link>
