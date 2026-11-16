@@ -52,6 +52,13 @@ const TOPICS: Record<string, string> = {
   "/centers": "the Hare Krishna centres",
 };
 
+// Every seva page goes to the seva team's number, whichever layout the page uses.
+const SEVA_PATHS = ["/gau-seva", "/anna-daan-seva", "/gita-daan-seva", "/alankara-vastra-seva", "/sqft-seva-campaign", "/brick-seva-campaign", "/patron", "/subhojanam", "/ekadashi", "/donate"];
+const isSevaPage = (pathname: string) => {
+  const p = stripLocale(pathname || "/").replace(/\/+$/, "") || "/";
+  return SEVA_PATHS.some((s) => p === s || p.startsWith(s + "/"));
+};
+
 /** "Hare Krishna! I'd like to know about Gau Seva." — from the page the visitor is on (falls back to its title). */
 function pageMessage(pathname: string): string {
   const path = stripLocale(pathname || "/").replace(/\/+$/, "") || "/";
@@ -85,7 +92,8 @@ export default function WhatsAppFloatButton({
 
   if (!visible) return null;
 
-  const href = `https://wa.me/${number}?text=${encodeURIComponent(message ?? pageMessage(pathname))}`;
+  const to = isSevaPage(pathname) ? SEVA_WHATSAPP_NUMBER : number;
+  const href = `https://wa.me/${to}?text=${encodeURIComponent(message ?? pageMessage(pathname))}`;
 
   return (
     <a
