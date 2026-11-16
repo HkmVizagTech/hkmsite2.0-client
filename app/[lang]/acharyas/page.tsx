@@ -4,14 +4,16 @@ import { ACHARYAS, ACHARYAS_PAINTING, acharyaPersonJsonLd } from "@/lib/acharyas
 import { pageSeo, SITE_URL } from "@/lib/seo";
 import { localized } from "@/lib/i18n/seo";
 
-const baseMetadata = pageSeo({
-  title: "Our Acharyas: The Disciplic Succession (Guru Parampara)",
+const seo = pageSeo({
+  title: "Acharyas of the Gaudiya Vaishnava Parampara",
   description:
-    "The spiritual teachers through whom the teachings of Lord Chaitanya have come down to us, from the Six Goswamis of Vrindavan to Srila Prabhupada: their lives, teachings, books and pastimes.",
+    "Meet the 20 acharyas of the Gaudiya Vaishnava parampara, from the Six Goswamis to Srila Prabhupada: their lives, teachings, books and lineage.",
   path: "/acharyas",
   image: ACHARYAS_PAINTING,
   keywords: ["acharyas", "guru parampara", "disciplic succession", "Gaudiya Vaishnava acharyas", "Six Goswamis", "Srila Prabhupada", "Bhaktisiddhanta Sarasvati Thakura", "Bhaktivinoda Thakura", "ISKCON Vizag"],
 });
+// 58 characters: an absolute title, so the long brand suffix is not added
+const baseMetadata = { ...seo, title: { absolute: "Acharyas of the Gaudiya Vaishnava Parampara | ISKCON Vizag" } };
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -27,7 +29,7 @@ const jsonLd = {
       "@type": "ItemList",
       name: "Acharyas of the Brahma-Madhva-Gaudiya Sampradaya",
       numberOfItems: ACHARYAS.length,
-      itemListElement: ACHARYAS.map((a, i) => ({ "@type": "ListItem", position: i + 1, item: acharyaPersonJsonLd(a, SITE_URL) })),
+      itemListElement: ACHARYAS.map((a, i) => ({ "@type": "ListItem", position: i + 1, item: acharyaPersonJsonLd(a, SITE_URL, false) })),
     },
   ],
 };

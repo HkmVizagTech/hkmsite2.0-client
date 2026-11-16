@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import AcharyaView from "@/components/acharyas/AcharyaView";
 import JsonLd from "@/components/seo/JsonLd";
-import { ACHARYAS, acharyaBySlug, acharyaDescription, acharyaPersonJsonLd } from "@/lib/acharyas";
+import { ACHARYAS, acharyaBySlug, acharyaDescription, acharyaPersonJsonLd, acharyaSeoTitle } from "@/lib/acharyas";
 import { pageSeo, SITE_URL } from "@/lib/seo";
 import { localizedFn } from "@/lib/i18n/seo";
 
@@ -15,12 +15,14 @@ async function baseGenerateMetadata({ params }: Props) {
   const { slug } = await params;
   const a = acharyaBySlug(slug);
   if (!a) return {};
-  return pageSeo({
-    title: `${a.name}: ${a.title}`,
+  const seo = pageSeo({
+    title: acharyaSeoTitle(a),
     description: acharyaDescription(a),
     path: `/acharyas/${a.slug}`,
     image: a.portrait,
+    keywords: [a.name, a.shortName, `${a.shortName} biography`, `${a.shortName} teachings`, a.category, "Gaudiya Vaishnava acharya", "disciplic succession", "ISKCON Vizag"],
   });
+  return { ...seo, title: { absolute: acharyaSeoTitle(a) } };
 }
 
 export default async function AcharyaPage({ params }: Props) {

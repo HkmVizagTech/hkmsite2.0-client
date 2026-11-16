@@ -2,10 +2,11 @@
 
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
 
 /*
  * Shared pieces for /acharyas: the "temple manuscript" look. Ivory paper, Vaikuntham-blue ink, hairline gold rules,
- * and paintings set like framed icons with a soft halo behind the head (not the Srila Prabhupada page's rays/arch).
+ * and clean rounded paintings with soft shadows (not the Srila Prabhupada page's rays/arch).
  */
 export const IVORY = "#FBF7EE";
 export const INK = "#0F1E4A";
@@ -43,23 +44,50 @@ export function Divider({ className = "" }: { className?: string }) {
   );
 }
 
-/**
- * A 4:5 painting set like an icon: rounded frame, a fine inner gold line and a soft halo of light around the head
- * (the paintings all place the head in the upper third).
- */
-export function HaloPortrait({ src, alt, sizes, priority = false, className = "", zoom = false, halo = true }: { src: string; alt: string; sizes: string; priority?: boolean; className?: string; zoom?: boolean; halo?: boolean }) {
+/** A clean 4:5 portrait: rounded image only (callers add the soft shadow). */
+export function Portrait({ src, alt, sizes, priority = false, className = "", zoom = false }: { src: string; alt: string; sizes: string; priority?: boolean; className?: string; zoom?: boolean }) {
   return (
     <div className={`relative isolate aspect-[4/5] overflow-hidden bg-[#0F1E4A] ${className}`}>
-      <Image src={src} alt={alt} fill sizes={sizes} priority={priority} quality={90}
+      <Image src={src} alt={alt} fill sizes={sizes} loading={priority ? "eager" : undefined} fetchPriority={priority ? "high" : undefined} quality={90}
         className={`object-cover object-top ${zoom ? "transition-transform duration-700 ease-out group-hover:scale-[1.05]" : ""}`} />
-      {halo && <>
-      <span aria-hidden className="pointer-events-none absolute left-1/2 top-[3%] h-[46%] w-[86%] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(255,230,163,.30),rgba(246,199,82,.10)_55%,transparent)] mix-blend-screen" />
-      <svg aria-hidden viewBox="0 0 100 125" className="pointer-events-none absolute inset-0 h-full w-full mix-blend-screen">
-        <circle cx="50" cy="31" r="25" fill="none" stroke="#FFE6A3" strokeOpacity=".45" strokeWidth=".35" />
-        <circle cx="50" cy="31" r="29" fill="none" stroke="#FFE6A3" strokeOpacity=".22" strokeWidth=".3" strokeDasharray=".8 1.6" />
-      </svg>
-      </>}
-      <span aria-hidden className="pointer-events-none absolute inset-[6px] rounded-[inherit] ring-1 ring-inset ring-[#F6C752]/35" />
     </div>
+  );
+}
+
+/**
+ * The page's call-to-action pill: a label plus an arrow in a small navy circle. Styling only (a span), so it can sit
+ * inside a link or a whole clickable card; the parent link carries `group/btn` for the hover effects.
+ * - "gold": gold gradient pill, a light sweep runs across it and the arrow turns on hover.
+ * - "card": full-width outline pill for cards (always visible, 44px tall); a gold fill sweeps in on hover.
+ * - "ghost": outline pill for dark backgrounds.
+ * - "outline": outline pill for light backgrounds.
+ */
+export function CtaPill({ label, variant = "gold", className = "" }: { label: string; variant?: "gold" | "card" | "ghost" | "outline"; className?: string }) {
+  const base = "relative isolate inline-flex min-h-11 items-center overflow-hidden rounded-full font-bold transition-shadow duration-300";
+  const look = {
+    gold: "gap-3 bg-gradient-to-r from-[#F6C752] via-[#EFC155] to-[#C9962B] py-1.5 pl-5 pr-1.5 text-[14px] text-[#0F1E4A] shadow-[0_14px_30px_-12px_rgba(201,150,43,.75)] group-hover/btn:shadow-[0_18px_36px_-12px_rgba(201,150,43,.95)]",
+    card: "w-full justify-between gap-2 bg-white py-1 pl-3.5 pr-1 text-[11px] uppercase tracking-[0.12em] text-[#0F1E4A] ring-1 ring-inset ring-[#E7DCC3] sm:pl-4 sm:text-[11.5px]",
+    ghost: "gap-3 py-1.5 pl-5 pr-1.5 text-[14px] text-[#FBF7EE] ring-1 ring-inset ring-white/25 group-hover/btn:ring-white/60",
+    outline: "gap-3 bg-white py-1.5 pl-5 pr-1.5 text-[14px] text-[#0F1E4A] ring-1 ring-inset ring-[#0F1E4A]/15 group-hover/btn:ring-[#C9962B]",
+  }[variant];
+  const circle = {
+    gold: "h-8 w-8 bg-[#0F1E4A] text-[#F6C752]",
+    card: "h-8 w-8 bg-[#0F1E4A] text-[#F6C752]",
+    ghost: "h-8 w-8 bg-white/10 text-[#F6C752] group-hover/btn:bg-[#F6C752] group-hover/btn:text-[#0F1E4A]",
+    outline: "h-8 w-8 bg-[#FBF2DC] text-[#A87A1E] group-hover/btn:bg-[#0F1E4A] group-hover/btn:text-[#F6C752]",
+  }[variant];
+  return (
+    <span className={`${base} ${look} ${className}`}>
+      {variant === "card" && (
+        <span aria-hidden className="absolute inset-0 -z-10 origin-left scale-x-0 bg-gradient-to-r from-[#F6C752] to-[#E7B847] transition-transform duration-500 ease-out group-hover/btn:scale-x-100" />
+      )}
+      {variant === "gold" && (
+        <span aria-hidden className="pointer-events-none absolute inset-y-0 -left-1/2 w-1/3 -skew-x-12 bg-gradient-to-r from-transparent via-white/70 to-transparent opacity-0 transition-all duration-700 ease-out group-hover/btn:left-[115%] group-hover/btn:opacity-100" />
+      )}
+      <span className="relative min-w-0 truncate">{label}</span>
+      <span className={`relative flex shrink-0 items-center justify-center rounded-full transition duration-300 group-hover/btn:-rotate-45 ${circle}`}>
+        <ArrowRight className="h-4 w-4" />
+      </span>
+    </span>
   );
 }

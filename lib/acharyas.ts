@@ -2764,9 +2764,6 @@ export const ACHARYAS: Acharya[] = [
 /** Category filters, in the order of the list. */
 export const CATEGORIES: AcharyaCategory[] = [...new Set(ACHARYAS.map((a) => a.category))];
 
-/** Srila Prabhupada's portrait is a photograph (head off-centre), so it gets no painted halo. */
-export const isPhoto = (a: Acharya) => a.slug === "srila-prabhupada";
-
 export const acharyaBySlug = (slug: string) => ACHARYAS.find((a) => a.slug === slug);
 
 /** The recorded guru-to-disciple line, eldest first (Jagannatha Dasa Babaji ... Srila Prabhupada). */
@@ -2786,28 +2783,58 @@ export const asList = (blocks: Block[]) =>
     ? blocks[0].p.split(",").map((s) => s.trim()).filter(Boolean)
     : null;
 
-/** Meta description: the summary, cut on a whole word near 155 characters. */
+/** Search title (≤60 characters, used as an absolute title): "<Name>: Life, Teachings & Books | ISKCON Vizag". */
+export function acharyaSeoTitle(a: Acharya) {
+  const topic = `${a.shortName}: ${a.books.length ? "Life, Teachings & Books" : "Life and Teachings"}`;
+  const branded = `${topic} | ISKCON Vizag`;
+  return branded.length <= 60 ? branded : topic;
+}
+
+/** Meta description: the summary, cut on a whole word, at most 155 characters. */
 export function acharyaDescription(a: Acharya) {
-  const s = `${a.name}, ${a.title}. ${a.summary}`;
-  if (s.length <= 158) return s;
-  const cut = s.slice(0, 155);
+  const s = a.summary;
+  if (s.length <= 155) return s;
+  const cut = s.slice(0, 154);
   return `${cut.slice(0, cut.lastIndexOf(" ")).replace(/[,;:]$/, "")}…`;
 }
 
-export function acharyaPersonJsonLd(a: Acharya, siteUrl: string) {
-  const guru = a.lineage?.guru ? acharyaBySlug(a.lineage.guru) : undefined;
-  return {
-    "@type": "Person",
-    "@id": `${siteUrl}/acharyas/${a.slug}#person`,
-    name: a.name,
-    alternateName: a.shortName,
-    url: `${siteUrl}/acharyas/${a.slug}`,
-    image: a.portrait,
-    description: a.summary,
-    jobTitle: a.title,
-    ...(a.appearance?.place ? { birthPlace: a.appearance.place } : {}),
-    ...(a.disappearance?.place ? { deathPlace: a.disappearance.place } : {}),
-    ...(guru ? { knows: { "@type": "Person", name: guru.name, url: `${siteUrl}/acharyas/${guru.slug}` } } : {}),
-  };
+const MONTHS = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
+/** ISO date for an exact day ("September 1, 1896" / "6 February 1874"); undefined for years, circa or festival dates. */
+export function isoDate(d?: string) {
+  if (!d) return undefined;
+  const m = d.trim().match(/^(?:(\d{1,2}) ([A-Za-z]+)|([A-Za-z]+) (\d{1,2}),) (\d{4})$/);
+  if (!m) return undefined;
+  const month = MONTHS.indexOf((m[2] ?? m[3]).toLowerCase()) + 1;
+  const day = Number(m[1] ?? m[4]);
+  if (!month || !day) return undefined;
+  return `${m[5]}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 }
 
+/** Headings of the numbered teachings ("1. Chant Hare Kṛṣṇa" -> "Chant Hare Kṛṣṇa"), for knowsAbout. */
+const teachingTopics = (a: Acharya) =>
+  a.teachings.flatMap((b) => ("h" in b && /^\d+\./.test(b.h) ? [b.h.replace(/^\d+\.\s*/, "")] : []));
+
+export function acharyaPersonJsonLd(a: Acharya, siteUrl: string, full = true) {
+  const url = `${siteUrl}/acharyas/${a.slug}`;
+  const base = { "@type": "Person", "@id": `${url}#person`, name: a.name, alternateName: a.shortName, url, image: a.portrait };
+  if (!full) return { ...base, jobTitle: a.title };
+  const guru = a.lineage?.guru ? acharyaBySlug(a.lineage.guru) : undefined;
+  const disciple = a.lineage?.disciple ? acharyaBySlug(a.lineage.disciple) : undefined;
+  const topics = teachingTopics(a);
+  const birth = isoDate(a.appearance?.date);
+  const death = isoDate(a.disappearance?.date);
+  return {
+    ...base,
+    description: a.summary,
+    jobTitle: a.title,
+    ...(birth ? { birthDate: birth } : {}),
+    ...(death ? { deathDate: death } : {}),
+    ...(a.appearance?.place ? { birthPlace: { "@type": "Place", name: a.appearance.place } } : {}),
+    ...(a.disappearance?.place ? { deathPlace: { "@type": "Place", name: a.disappearance.place } } : {}),
+    ...(topics.length ? { knowsAbout: topics } : {}),
+    ...(guru || disciple
+      ? { knows: [guru, disciple].filter(Boolean).map((x) => ({ "@type": "Person", "@id": `${siteUrl}/acharyas/${x!.slug}#person`, name: x!.name, url: `${siteUrl}/acharyas/${x!.slug}` })) }
+      : {}),
+    ...(a.books.length ? { subjectOf: a.books.map((b) => ({ "@type": "Book", name: b.title, author: { "@id": `${url}#person` }, ...(b.text ? { description: b.text } : {}) })) } : {}),
+  };
+}

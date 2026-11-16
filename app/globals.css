@@ -861,10 +861,11 @@
   100% { left: 108%; opacity: 0; }
 }
 
-/* /acharyas hero: the wide group painting pans slowly across a phone-width frame */
-@keyframes acharya-pan {
-  0% { object-position: 0% 50%; }
-  100% { object-position: 100% 50%; }
+/* /acharyas hero: the wide group painting (wider than the screen) drifts slowly from end to end; 100cqw is the
+   hero's own width (it is a size container), 100% the painting's */
+@keyframes acharya-hero-pan {
+  0%, 6% { transform: translateX(0); }
+  94%, 100% { transform: translateX(calc(100cqw - 100%)); }
 }
 
 @keyframes seva-float {

@@ -23,6 +23,10 @@ export const acharyas: Record<string, string> = {
   "The disciplic succession, generation by generation, as the teaching has come down from guru to disciple. Each acharya's card names the teachers their line came through: the guru who initiated them, or a predecessor whose instruction they carried on.":
     "గురువు నుండి శిష్యునికి, తరం నుండి తరానికి బోధన అందిన గురు పరంపర. ప్రతి ఆచార్యుని కార్డులో వారి పరంపర ఎవరి ద్వారా వచ్చిందో ఉంటుంది: వారికి దీక్ష ఇచ్చిన గురువు, లేదా వారు ఎవరి ఉపదేశాన్ని కొనసాగించారో ఆ పూర్వాచార్యులు.",
   "Generation": "తరం",
+  "of": "/",
+  "Disciple of": "శిష్యులు:",
+  "Guru of": "గురువు:",
+  "Swipe through the generations": "తరాలను స్వైప్ చేసి చూడండి",
   "Guru": "గురువు",
   "Disciple": "శిష్యుడు",
   "All acharyas": "ఆచార్యులందరూ",
@@ -79,5 +83,12 @@ export const acharyas: Record<string, string> = {
   "More acharyas": "మరిన్ని ఆచార్యులు",
   "Show all books": "అన్ని గ్రంథాలు చూపించండి",
   "Show fewer books": "తక్కువ గ్రంథాలు చూపించండి",
+  "Meet each acharya": "ప్రతి ఆచార్యుని తెలుసుకోండి",
+  "Read the full biography": "పూర్తి జీవిత చరిత్ర చదవండి",
+  "This acharya": "ఈ ఆచార్యులు",
+  "View": "చూడండి",
+  "Scroll the shelf": "గ్రంథాలను స్క్రోల్ చేయండి",
+  "Next acharya": "తదుపరి ఆచార్యులు",
+  "Previous acharya": "మునుపటి ఆచార్యులు",
   "Continue along the disciplic succession.": "గురు పరంపరలో ముందుకు సాగండి.",
 };
