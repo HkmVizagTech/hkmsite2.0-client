@@ -1,6 +1,6 @@
 import {
   Home, Info, User, Phone,
-  Clock, Image, Calendar, Snowflake,
+  Clock, Image, Calendar, Snowflake, BrickWall, Ruler,
   Heart, Utensils, Beef, BookOpen, Shirt, Gift,
   CalendarDays, PartyPopper, HandHeart, FileText, Flower2, Building2,
   ShoppingBag, Megaphone, MapPin, Landmark, Briefcase, Globe, Music2, ScrollText,
@@ -76,8 +76,8 @@ export const navEntries: NavEntry[] = [
         { label: "Subhojanam", href: "/subhojanam", description: "Free meals for patients' families", icon: Utensils },
         { label: "Gau Seva", href: "/gau-seva", description: "Cow care & protection", icon: Beef },
         { label: "Gita Daan", href: "/gita-daan-seva", description: "Distribute Bhagavad Gita", icon: BookOpen },
-        { label: "Square Foot Seva", href: "/sqft-seva-campaign", description: "Sponsor the new temple, foot by foot", icon: Landmark },
-        { label: "Brick Seva", href: "/brick-seva-campaign", description: "Sponsor a brick for the temple", icon: Landmark },
+        { label: "Square Foot Seva", href: "/sqft-seva-campaign", description: "Sponsor the new temple, foot by foot", icon: Ruler },
+        { label: "Brick Seva", href: "/brick-seva-campaign", description: "Sponsor a brick for the temple", icon: BrickWall },
         { label: "Become a Patron", href: "/patron", description: "Inscribe your family name in the temple", icon: Landmark },
         { label: "Vastra Seva", href: "/alankara-vastra-seva", description: "Deity garments & ornaments", icon: Shirt },
         { label: "Ekadashi Seva", href: "/ekadashi", description: "Donate on the sacred Ekadashi day", icon: Calendar },
