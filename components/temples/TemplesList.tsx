@@ -1,93 +1,209 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
-import { ArrowUpRight, MapPin, Search } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { ArrowRight, ArrowUpRight, Landmark, MapPin, Navigation, Search, X } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { useT } from "@/components/i18n/LocaleProvider";
-import type { Temple, TempleRegion } from "@/lib/templesData";
-import { Eyebrow, HERO_BG, IVORY, Stars, TempleArt } from "./parts";
+import type { Temple } from "@/lib/templesData";
+import { TempleArt } from "./parts";
 
-export type TempleCardData = Pick<Temple, "slug" | "name" | "shortName" | "teluguName" | "deity" | "form" | "town" | "district" | "region" | "summary" | "fromVizag"> & {
-  photo?: string; // our /api/place-photo URL
+export type TempleCardData = Pick<Temple, "slug" | "name" | "shortName" | "teluguName" | "deity" | "form" | "town" | "state" | "district" | "region" | "summary" | "fromVizag"> & {
+  photo?: string; // our own photo on R2
   rating?: number;
   ratingCount?: number;
 };
 
-const REGIONS: TempleRegion[] = ["North Coastal Andhra", "Godavari Districts", "Krishna & Guntur", "Rayalaseema"];
 const ease = [0.22, 0.8, 0.3, 1] as const;
+const firstSentence = (s: string) => s.split(/(?<=\.)\s/)[0];
 
+/** Small-caps label with a gold diamond. */
+function Kicker({ children, light = false }: { children: React.ReactNode; light?: boolean }) {
+  return <p className={`flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.24em] ${light ? "text-[#F6C752]" : "text-[#B8862A]"}`}><span aria-hidden className="h-1.5 w-1.5 rotate-45 bg-[#F6C752]" />{children}</p>;
+}
+
+/** Temple card: photo with name over it; on hover the summary slides up. */
 function Card({ c, i }: { c: TempleCardData; i: number }) {
   const t = useT();
   const reduce = useReducedMotion();
   return (
-    <motion.li initial={reduce ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.6, ease, delay: (i % 3) * 0.06 }}>
-      <Link href={`/temples/${c.slug}`} className="group flex h-full flex-col overflow-hidden rounded-[1.4rem] bg-white shadow-[0_24px_50px_-34px_rgba(15,30,74,.6)] ring-1 ring-[#E7DCC3] transition duration-500 hover:-translate-y-1 hover:ring-[#C9962B]/70">
-        <div className="relative aspect-[16/10] overflow-hidden bg-[#0F1E4A]">
+    <motion.li layout initial={reduce ? false : { opacity: 0, y: 26 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-40px" }} transition={{ duration: 0.65, ease, delay: (i % 3) * 0.07 }}>
+      <Link href={`/temples/${c.slug}`} className="group block">
+        <div className="relative aspect-[4/5] overflow-hidden rounded-[1.6rem] bg-[#EEF2FF] shadow-[0_30px_60px_-40px_rgba(10,18,51,.7)]">
           {c.photo ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={c.photo} alt={c.name} loading="lazy" className="h-full w-full object-cover transition duration-700 group-hover:scale-105" />
-          ) : (
-            <TempleArt telugu={c.teluguName} form={c.form} />
-          )}
-          <span className="absolute left-3 top-3 rounded-full bg-[#0F1E4A]/80 px-2.5 py-1 text-[10.5px] font-bold uppercase tracking-wider text-[#F6E3B0] backdrop-blur">{t(c.region)}</span>
-        </div>
-        <div className="flex flex-1 flex-col p-5">
-          <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[#A87A1E]">{c.form}</p>
-          <h3 className="mt-1.5 font-heading text-lg font-bold leading-snug text-[#0F1E4A]">{c.shortName}</h3>
-          <p className="mt-0.5 text-[13px] font-semibold text-[#0F1E4A]/70">{c.deity}</p>
-          <p className="mt-2 flex items-center gap-1 text-[12.5px] text-[#0F1E4A]/55"><MapPin className="h-3.5 w-3.5" />{c.town}, {c.district}</p>
-          <p className="mt-3 line-clamp-2 text-[13.5px] leading-6 text-[#0F1E4A]/70">{c.summary}</p>
-          <div className="mt-auto flex items-center justify-between gap-3 border-t border-[#E7DCC3] pt-4">
-            {c.rating ? <Stars rating={c.rating} count={c.ratingCount} /> : <span className="text-[12.5px] font-semibold text-[#0F1E4A]/50">{t("Timings, history & how to reach")}</span>}
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#0F1E4A] text-[#F6C752] transition group-hover:rotate-45"><ArrowUpRight className="h-4 w-4" /></span>
+            <img src={c.photo} alt={c.name} loading="lazy" className="h-full w-full object-cover transition duration-[1400ms] ease-out group-hover:scale-[1.08]" />
+          ) : <TempleArt telugu={c.teluguName} form={c.form} />}
+          <span aria-hidden className="absolute inset-0 bg-gradient-to-t from-[#0A1233]/95 via-[#0A1233]/25 to-transparent transition duration-500 group-hover:from-[#0A1233] group-hover:via-[#0A1233]/55" />
+          <span className="absolute left-4 top-4 rounded-full bg-white/95 px-3 py-1 text-[10.5px] font-bold uppercase tracking-wider text-[#1E3A8A] backdrop-blur">{c.form}</span>
+          <span className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/15 text-white ring-1 ring-white/30 backdrop-blur transition duration-500 group-hover:rotate-45 group-hover:bg-[#F6C752] group-hover:text-[#0A1233]"><ArrowUpRight className="h-4 w-4" /></span>
+          <div className="absolute inset-x-0 bottom-0 p-5 md:p-6">
+            <p className="flex items-center gap-1.5 text-[12px] font-semibold text-white/70"><MapPin className="h-3.5 w-3.5 text-[#F6C752]" />{c.town}, {c.district}</p>
+            <h3 className="mt-1.5 font-heading text-[1.5rem] font-bold leading-tight text-white">{c.shortName}</h3>
+            <p className="mt-0.5 truncate text-[13px] text-white/70">{c.deity}</p>
+            <div className="grid grid-rows-[0fr] transition-all duration-500 group-hover:grid-rows-[1fr]">
+              <div className="overflow-hidden">
+                <p className="pt-3 text-[13px] leading-6 text-white/80">{c.summary}</p>
+                <p className="mt-3 inline-flex items-center gap-1.5 text-[12.5px] font-bold text-[#F6C752]"><Navigation className="h-3.5 w-3.5" />{firstSentence(c.fromVizag).slice(0, 70)}</p>
+              </div>
+            </div>
           </div>
         </div>
       </Link>
+      <span className="sr-only">{t("View temple")}</span>
     </motion.li>
+  );
+}
+
+/** Large featured temple (closest to Vizag). */
+function Featured({ c }: { c: TempleCardData }) {
+  const t = useT();
+  return (
+    <Link href={`/temples/${c.slug}`} className="group relative block overflow-hidden rounded-[2rem] bg-[#0A1233] shadow-[0_50px_100px_-60px_rgba(10,18,51,.9)]">
+      <div className="relative aspect-[4/5] sm:aspect-[16/10] lg:aspect-[21/9]">
+        {c.photo ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={c.photo} alt={c.name} className="h-full w-full object-cover transition duration-[1600ms] ease-out group-hover:scale-105" />
+        ) : <TempleArt telugu={c.teluguName} form={c.form} />}
+        <span aria-hidden className="absolute inset-0 bg-[linear-gradient(90deg,rgba(10,18,51,.95)_0%,rgba(10,18,51,.7)_40%,rgba(10,18,51,.1)_75%)] max-lg:bg-[linear-gradient(0deg,rgba(10,18,51,.95)_10%,rgba(10,18,51,.4)_60%,transparent)]" />
+        <div className="absolute inset-0 flex items-end p-7 md:p-12 lg:items-center">
+          <div className="max-w-xl text-white">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#F6C752] px-3.5 py-1.5 text-[10.5px] font-bold uppercase tracking-[0.18em] text-[#0A1233]"><Landmark className="h-3.5 w-3.5" />{t("Closest to Vizag")}</span>
+            <h2 className="mt-5 font-heading text-[2rem] font-extrabold leading-[1.05] tracking-tight md:text-[3rem]">{c.shortName}</h2>
+            <p className="mt-1 font-heading text-[16px] font-semibold text-[#F6E3B0]/80">{c.deity}</p>
+            <p className="mt-4 hidden text-[15.5px] leading-7 text-white/75 sm:block">{c.summary}</p>
+            <span className="mt-7 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-[14px] font-bold text-[#0A1233] transition group-hover:bg-[#F6C752]">{t("Explore the temple")}<ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" /></span>
+          </div>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+/** Full-width hero that slowly cross-fades through temple photos. */
+function HeroSlides({ photos }: { photos: { src: string; name: string }[] }) {
+  const reduce = useReducedMotion();
+  const [i, setI] = useState(0);
+  useEffect(() => {
+    if (reduce || photos.length < 2) return;
+    const id = window.setInterval(() => setI((v) => (v + 1) % photos.length), 5500);
+    return () => window.clearInterval(id);
+  }, [photos.length, reduce]);
+  if (!photos.length) return <div className="absolute inset-0 bg-[#0A1233]" />;
+  return (
+    <div className="absolute inset-0 overflow-hidden bg-[#0A1233]">
+      <AnimatePresence initial={false}>
+        <motion.img key={photos[i].src} src={photos[i].src} alt="" aria-hidden
+          initial={{ opacity: 0, scale: 1.12 }} animate={{ opacity: 1, scale: 1.02 }} exit={{ opacity: 0 }}
+          transition={{ opacity: { duration: 1.4 }, scale: { duration: 7, ease: "linear" } }}
+          className="absolute inset-0 h-full w-full object-cover" />
+      </AnimatePresence>
+      <span aria-hidden className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,18,51,.55)_0%,rgba(10,18,51,.35)_40%,rgba(10,18,51,.85)_100%)]" />
+      <div className="absolute bottom-24 right-6 hidden items-center gap-2 md:flex">
+        {photos.map((p, k) => (
+          <button key={p.src} type="button" aria-label={p.name} onClick={() => setI(k)} className={`h-1.5 rounded-full transition-all ${k === i ? "w-8 bg-[#F6C752]" : "w-1.5 bg-white/50 hover:bg-white"}`} />
+        ))}
+      </div>
+      <p className="absolute bottom-24 left-6 hidden text-[12px] font-semibold text-white/70 md:block">{photos[i].name}</p>
+    </div>
   );
 }
 
 export default function TemplesList({ temples }: { temples: TempleCardData[] }) {
   const t = useT();
-  const [region, setRegion] = useState<TempleRegion | "all">("all");
+  const reduce = useReducedMotion();
+  const [state, setState] = useState<string>("all");
+  const [district, setDistrict] = useState<string>("all");
+  const [form, setForm] = useState<string>("all");
   const [q, setQ] = useState("");
+  const [featured, ...others] = temples;
+  const states = useMemo(() => [...new Set(temples.map((c) => c.state))].sort(), [temples]);
+  const districts = useMemo(() => [...new Set(temples.filter((c) => state === "all" || c.state === state).map((c) => c.district))].sort(), [temples, state]);
+  const forms = useMemo(() => {
+    const m = new Map<string, number>();
+    temples.forEach((c) => m.set(c.form, (m.get(c.form) ?? 0) + 1));
+    return [...m.entries()].sort((a, b) => b[1] - a[1]);
+  }, [temples]);
+  const filtering = state !== "all" || district !== "all" || form !== "all" || q.trim() !== "";
   const shown = useMemo(() => {
     const s = q.trim().toLowerCase();
-    return temples.filter((c) => (region === "all" || c.region === region) && (!s || `${c.name} ${c.shortName} ${c.deity} ${c.town} ${c.district} ${c.teluguName}`.toLowerCase().includes(s)));
-  }, [temples, region, q]);
+    const pool = filtering ? temples : others;
+    return pool.filter((c) => (state === "all" || c.state === state) && (district === "all" || c.district === district) && (form === "all" || c.form === form)
+      && (!s || `${c.name} ${c.shortName} ${c.deity} ${c.town} ${c.district} ${c.state} ${c.teluguName}`.toLowerCase().includes(s)));
+  }, [temples, others, state, district, form, q, filtering]);
+  const slides = useMemo(() => temples.filter((c) => c.photo).slice(0, 6).map((c) => ({ src: c.photo!, name: c.shortName })), [temples]);
+  const reset = () => { setState("all"); setDistrict("all"); setForm("all"); setQ(""); };
 
   return (
-    <PageLayout background={IVORY}>
-      <div className="overflow-x-clip pt-[var(--header-h)]" style={{ background: IVORY }}>
-        {/* ══ HERO ══ */}
-        <section className="relative isolate overflow-hidden pb-24 pt-12 text-center md:pb-28 md:pt-16" style={{ background: HERO_BG }}>
-          <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(55%_70%_at_50%_100%,rgba(47,91,211,.5),transparent_75%),radial-gradient(35%_45%_at_50%_0%,rgba(201,150,43,.14),transparent_70%)]" />
-          <div className="vk-container">
-            <Eyebrow light center>{t("Pilgrimage guide")}</Eyebrow>
-            <h1 className="mx-auto mt-4 max-w-4xl font-heading text-[2.3rem] font-bold leading-[1.05] tracking-tight text-[#FBF7EE] md:text-[4rem]">{t("Vaishnava Temples of Andhra Pradesh")}</h1>
-            <p className="mx-auto mt-5 max-w-2xl text-[15.5px] leading-8 text-white/70 md:text-[17px]">
-              {t("The holy places of Lord Vishnu across Andhra Pradesh, from Simhachalam near Vizag to Tirumala and Ahobilam: their history, darshan timings and how to reach them.")}
-            </p>
+    <PageLayout background="#ffffff">
+      <div className="relative overflow-x-clip bg-white pt-[var(--header-h)]">
+        {/* ══ CINEMATIC HERO ══ */}
+        <section className="relative isolate flex min-h-[560px] items-center md:min-h-[640px]">
+          <HeroSlides photos={slides} />
+          <div className="vk-container relative z-10 w-full pb-28 pt-16 text-center md:pb-32">
+            <motion.div initial={reduce ? false : { opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease }}>
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.22em] text-[#F6E3B0] ring-1 ring-white/25 backdrop-blur-md"><Landmark className="h-3.5 w-3.5 text-[#F6C752]" />{t("Temple guide")}</span>
+              <h1 className="mx-auto mt-6 max-w-4xl font-heading text-[2.7rem] font-extrabold leading-[1.02] tracking-[-0.025em] text-white [text-shadow:0_10px_40px_rgba(0,0,0,.35)] md:text-[5rem]">
+                {t("Hindu Temples in")}{" "}
+                <span className="relative inline-block text-[#F6C752]">
+                  {t("India")}
+                  <svg aria-hidden viewBox="0 0 200 14" preserveAspectRatio="none" className="absolute -bottom-2 left-0 h-3 w-full text-[#F6C752]/80"><path d="M2 10 C 50 2, 150 2, 198 9" stroke="currentColor" strokeWidth="4" fill="none" strokeLinecap="round" /></svg>
+                </span>
+              </h1>
+              <p className="mx-auto mt-6 max-w-2xl text-[16px] leading-8 text-white/85 md:text-[18px]">
+                {t("Your guide to India's sacred temples: when to go for darshan and aarti, the deities who reside there, and the way to reach each holy place.")}
+              </p>
+              <div className="mx-auto mt-8 flex w-fit divide-x divide-white/20 rounded-2xl bg-white/10 ring-1 ring-white/20 backdrop-blur-md">
+                {[
+                  [String(temples.length), t("temples")],
+                  [String(states.length), states.length === 1 ? t("state") : t("states")],
+                  [String(new Set(temples.map((c) => c.district)).size), t("districts")],
+                ].map(([n, l]) => (
+                  <div key={l} className="px-5 py-3 md:px-7"><p className="font-heading text-2xl font-extrabold text-white md:text-3xl">{n}</p><p className="text-[10.5px] font-semibold uppercase tracking-[0.16em] text-white/60">{l}</p></div>
+                ))}
+              </div>
+            </motion.div>
           </div>
         </section>
 
-        {/* ══ FILTERS (overlapping the hero) ══ */}
-        <section className="relative -mt-12">
+        {/* ══ SEARCH (floats over the hero) ══ */}
+        <section className="relative z-20 -mt-16 md:-mt-20">
           <div className="vk-container">
-            <div className="mx-auto flex max-w-5xl flex-col gap-3 rounded-[1.4rem] bg-white p-3 shadow-[0_30px_60px_-36px_rgba(15,30,74,.7)] ring-1 ring-[#E7DCC3] md:flex-row md:items-center md:p-4">
-              <label className="relative flex-1">
-                <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#0F1E4A]/40" />
-                <span className="sr-only">{t("Search temples")}</span>
-                <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("Search a temple, deity or town")}
-                  className="w-full rounded-xl bg-[#FBF7EE] py-3 pl-10 pr-3 text-[14px] text-[#0F1E4A] outline-none ring-1 ring-[#E7DCC3] placeholder:text-[#0F1E4A]/40 focus:ring-[#C9962B]" />
-              </label>
-              <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 md:pb-0">
-                {(["all", ...REGIONS] as const).map((r) => (
-                  <button key={r} type="button" onClick={() => setRegion(r)}
-                    className={`shrink-0 rounded-full px-3.5 py-2 text-[12.5px] font-semibold transition ${region === r ? "bg-[#0F1E4A] text-[#F6E3B0]" : "bg-[#FBF7EE] text-[#0F1E4A]/75 ring-1 ring-[#E7DCC3] hover:ring-[#C9962B]"}`}>
-                    {r === "all" ? t("All regions") : t(r)}
+            <div className="mx-auto max-w-5xl rounded-[1.6rem] bg-white p-3 shadow-[0_40px_80px_-40px_rgba(10,18,51,.55)] ring-1 ring-[#E3E9F7] md:p-4">
+              <div className="flex flex-col gap-3 md:flex-row md:items-center">
+                <label className="relative flex-1">
+                  <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#1E3A8A]" />
+                  <span className="sr-only">{t("Search temples")}</span>
+                  <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("Search a temple, deity or town")}
+                    className="w-full rounded-2xl bg-[#F4F7FF] py-4 pl-12 pr-4 text-[15px] text-[#0F1E4A] outline-none ring-1 ring-transparent placeholder:text-[#0F1E4A]/40 focus:bg-white focus:ring-[#1E3A8A]/40" />
+                </label>
+                <select aria-label={t("State")} value={state} onChange={(e) => { setState(e.target.value); setDistrict("all"); }}
+                  className="rounded-2xl bg-white px-4 py-4 text-[14px] font-semibold text-[#0F1E4A] outline-none ring-1 ring-[#E3E9F7] focus:ring-[#1E3A8A]/50">
+                  <option value="all">{t("All states")}</option>
+                  {states.map((s) => <option key={s} value={s}>{t(s)}</option>)}
+                </select>
+                <select aria-label={t("District")} value={district} onChange={(e) => setDistrict(e.target.value)}
+                  className="rounded-2xl bg-white px-4 py-4 text-[14px] font-semibold text-[#0F1E4A] outline-none ring-1 ring-[#E3E9F7] focus:ring-[#1E3A8A]/50">
+                  <option value="all">{t("All districts")}</option>
+                  {districts.map((d) => <option key={d} value={d}>{d}</option>)}
+                </select>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ══ BROWSE BY DEITY ══ */}
+        <section className="pt-12 md:pt-16">
+          <div className="vk-container">
+            <div className="mx-auto max-w-6xl">
+              <Kicker>{t("Browse by deity")}</Kicker>
+              <div className="mt-4 flex gap-2.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                {[["all", temples.length] as [string, number], ...forms].map(([f, n]) => (
+                  <button key={f} type="button" onClick={() => setForm(f)}
+                    className={`group flex shrink-0 items-center gap-2.5 rounded-full py-2 pl-2 pr-4 text-[13.5px] font-semibold transition ${form === f ? "bg-[#0A1233] text-white shadow-[0_12px_24px_-12px_rgba(10,18,51,.8)]" : "bg-[#F4F7FF] text-[#0A1233] ring-1 ring-[#E3E9F7] hover:ring-[#1E3A8A]/40"}`}>
+                    <span className={`flex h-8 w-8 items-center justify-center rounded-full text-[12px] font-bold ${form === f ? "bg-[#F6C752] text-[#0A1233]" : "bg-white text-[#1E3A8A]"}`}>{n}</span>
+                    {f === "all" ? t("All") : f}
                   </button>
                 ))}
               </div>
@@ -95,28 +211,46 @@ export default function TemplesList({ temples }: { temples: TempleCardData[] }) 
           </div>
         </section>
 
-        {/* ══ TEMPLES ══ */}
-        <section className="py-12 md:py-16">
+        {/* ══ FEATURED + GRID ══ */}
+        <section className="pb-16 pt-10 md:pb-24 md:pt-12">
           <div className="vk-container">
-            <p className="mx-auto mb-6 max-w-6xl text-[13px] font-semibold text-[#0F1E4A]/55">{shown.length} {t("temples")}</p>
-            <ul className="mx-auto grid max-w-6xl gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
-              {shown.map((c, i) => <Card key={c.slug} c={c} i={i} />)}
-            </ul>
-            {shown.length === 0 && <p className="py-16 text-center text-[#0F1E4A]/60">{t("No temple matches your search.")}</p>}
+            <div className="mx-auto max-w-6xl">
+              {!filtering && featured && (
+                <motion.div initial={reduce ? false : { opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease }} className="mb-14">
+                  <Featured c={featured} />
+                </motion.div>
+              )}
+              <div className="mb-8 flex items-end justify-between gap-4">
+                <div>
+                  <Kicker>{filtering ? t("Results") : t("Explore")}</Kicker>
+                  <h2 className="mt-3 font-heading text-[1.7rem] font-bold tracking-tight text-[#0A1233] md:text-[2.2rem]">{filtering ? `${shown.length} ${t("temples")}` : t("All temples")}</h2>
+                </div>
+                {filtering && <button type="button" onClick={reset} className="inline-flex items-center gap-1.5 rounded-full bg-[#F4F7FF] px-4 py-2 text-[13px] font-bold text-[#1E3A8A] ring-1 ring-[#E3E9F7] hover:ring-[#1E3A8A]"><X className="h-4 w-4" />{t("Clear filters")}</button>}
+              </div>
+              <motion.ul layout className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {shown.map((c, i) => <Card key={c.slug} c={c} i={i} />)}
+              </motion.ul>
+              {shown.length === 0 && <p className="py-16 text-center text-[#0F1E4A]/60">{t("No temple matches your search.")}</p>}
+            </div>
           </div>
         </section>
 
         {/* ══ OUR TEMPLE ══ */}
-        <section className="pb-16 md:pb-24">
+        <section className="pb-20 md:pb-28">
           <div className="vk-container">
-            <div className="relative mx-auto max-w-6xl overflow-hidden rounded-[1.8rem] px-6 py-10 text-white md:px-12 md:py-14" style={{ background: HERO_BG }}>
-              <div aria-hidden className="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-[radial-gradient(closest-side,rgba(246,199,82,.25),transparent)]" />
-              <Eyebrow light>{t("In Visakhapatnam")}</Eyebrow>
-              <h2 className="mt-4 max-w-2xl font-heading text-2xl font-bold leading-tight md:text-4xl">{t("Begin your pilgrimage with darshan at ISKCON Vizag")}</h2>
-              <p className="mt-3 max-w-2xl text-[15px] leading-7 text-white/70">{t("Sri Sri Radha Madan Mohan await you at Gambheeram, with daily aartis, kirtan and prasadam.")}</p>
-              <div className="mt-7 flex flex-wrap gap-3">
-                <Link href="/iskcon-vizag-temple" className="inline-flex items-center gap-2 rounded-full bg-[#F6C752] px-6 py-3 text-sm font-bold text-[#0F1E4A] hover:bg-[#FFD777]">{t("Plan your visit")} <ArrowUpRight className="h-4 w-4" /></Link>
-                <Link href="/anna-daan-seva" className="inline-flex items-center rounded-full px-6 py-3 text-sm font-bold text-white ring-1 ring-white/30 hover:ring-white">{t("Offer Anna Daan")}</Link>
+            <div className="relative mx-auto grid max-w-6xl items-center gap-6 overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#FFF8E6] via-[#FFF3D6] to-[#FFEBC2] p-8 ring-1 ring-[#F6E3B0] md:grid-cols-[1fr_auto] md:p-12">
+              <span aria-hidden className="absolute -right-20 -top-24 h-72 w-72 rounded-full bg-[radial-gradient(closest-side,rgba(255,255,255,.8),transparent)]" />
+              <div className="relative flex gap-5">
+                <span className="hidden h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-[#0A1233] text-[#F6C752] shadow-lg sm:flex"><Landmark className="h-8 w-8" /></span>
+                <div>
+                  <Kicker>{t("In Visakhapatnam")}</Kicker>
+                  <p className="mt-2 font-heading text-2xl font-bold leading-tight text-[#0A1233] md:text-[2rem]">{t("Begin your pilgrimage with darshan at ISKCON Vizag")}</p>
+                  <p className="mt-2 max-w-2xl text-[15px] leading-7 text-[#0A1233]/65">{t("Sri Sri Radha Madan Mohan await you at Gambheeram, with daily aartis, kirtan and prasadam.")}</p>
+                </div>
+              </div>
+              <div className="relative flex flex-wrap gap-3">
+                <Link href="/iskcon-vizag-temple" className="inline-flex items-center gap-2 rounded-full bg-[#0A1233] px-6 py-3 text-[14px] font-bold text-white hover:bg-[#1E3A8A]">{t("Plan your visit")}<ArrowUpRight className="h-4 w-4" /></Link>
+                <Link href="/anna-daan-seva" className="inline-flex items-center rounded-full bg-white px-6 py-3 text-[14px] font-bold text-[#0A1233] ring-1 ring-[#E9D49B] hover:ring-[#0A1233]">{t("Offer Anna Daan")}</Link>
               </div>
             </div>
           </div>

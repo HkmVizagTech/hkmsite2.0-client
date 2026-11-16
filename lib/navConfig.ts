@@ -65,7 +65,7 @@ export const navEntries: NavEntry[] = [
         { label: "Daily Schedule", href: "/daily-schedule", description: "Aarti timings & daily programs", icon: Clock },
         { label: "Gallery", href: "/gallery", description: "Photos from the temple", icon: Image },
         { label: "Vaishnav Calendar", href: "/vaishnav-calendar", description: "2026 festivals & Ekadashis", icon: Calendar },
-        { label: "AP Vaishnava Temples", href: "/temples", description: "Pilgrimage guide to Andhra Pradesh", icon: MapPin },
+        { label: "Hindu Temples", href: "/temples", description: "Temple guide: timings, history & directions", icon: MapPin },
         { label: "Chaturmas", href: "/chaturmas", description: "Sacred four-month observance", icon: Snowflake },
       ],
     },

@@ -13,6 +13,7 @@ export type Temple = {
   deity: string;
   form: string;
   town: string;
+  state: string;             // e.g. "Andhra Pradesh" (the guide covers temples across India)
   district: string;
   region: TempleRegion;
   summary: string;
@@ -44,6 +45,7 @@ export const TEMPLES: Temple[] = [
     deity: "Sri Varaha Lakshmi Narasimha Swamy",
     form: "Narasimha",
     town: "Simhachalam, Visakhapatnam",
+    state: "Andhra Pradesh",
     district: "Visakhapatnam",
     region: "North Coastal Andhra",
     summary:
@@ -126,6 +128,7 @@ export const TEMPLES: Temple[] = [
     deity: "Sri Venkateswara Swamy (Srinivasa, Balaji)",
     form: "Venkateswara",
     town: "Tirumala",
+    state: "Andhra Pradesh",
     district: "Tirupati",
     region: "Rayalaseema",
     summary:
@@ -207,6 +210,7 @@ export const TEMPLES: Temple[] = [
     deity: "Sri Padmavathi Ammavaru (Alamelu Manga)",
     form: "Padmavathi",
     town: "Tiruchanur (Alamelu Mangapuram), Tirupati",
+    state: "Andhra Pradesh",
     district: "Tirupati",
     region: "Rayalaseema",
     summary:
@@ -281,6 +285,7 @@ export const TEMPLES: Temple[] = [
     deity: "Sri Govindaraja Swamy",
     form: "Govindaraja",
     town: "Tirupati",
+    state: "Andhra Pradesh",
     district: "Tirupati",
     region: "Rayalaseema",
     summary:
@@ -355,6 +360,7 @@ export const TEMPLES: Temple[] = [
     deity: "Sri Veera Venkata Satyanarayana Swamy",
     form: "Satyanarayana",
     town: "Annavaram",
+    state: "Andhra Pradesh",
     district: "Kakinada",
     region: "Godavari Districts",
     summary:
@@ -433,6 +439,7 @@ export const TEMPLES: Temple[] = [
     deity: "Sri Ahobila Narasimha Swamy and Sri Prahlada Varada Narasimha Swamy",
     form: "Narasimha",
     town: "Ahobilam, Allagadda mandal",
+    state: "Andhra Pradesh",
     district: "Nandyal",
     region: "Rayalaseema",
     summary:
@@ -512,6 +519,7 @@ export const TEMPLES: Temple[] = [
     deity: "Sri Panakala Lakshmi Narasimha Swamy",
     form: "Narasimha",
     town: "Mangalagiri",
+    state: "Andhra Pradesh",
     district: "Guntur",
     region: "Krishna & Guntur",
     summary:
@@ -587,6 +595,7 @@ export const TEMPLES: Temple[] = [
     deity: "Sri Venkateswara Swamy",
     form: "Venkateswara",
     town: "Dwaraka Tirumala",
+    state: "Andhra Pradesh",
     district: "Eluru",
     region: "Godavari Districts",
     summary:
@@ -659,6 +668,7 @@ export const TEMPLES: Temple[] = [
     deity: "Sri Kurmanatha Swamy",
     form: "Kurma",
     town: "Srikurmam, Gara mandal",
+    state: "Andhra Pradesh",
     district: "Srikakulam",
     region: "North Coastal Andhra",
     summary:
@@ -733,6 +743,7 @@ export const TEMPLES: Temple[] = [
     deity: "Sri Lakshmi Narasimha Swamy",
     form: "Narasimha",
     town: "Antarvedi, Sakhinetipalli mandal",
+    state: "Andhra Pradesh",
     district: "Dr. B.R. Ambedkar Konaseema",
     region: "Godavari Districts",
     summary:
@@ -804,6 +815,7 @@ export const TEMPLES: Temple[] = [
     deity: "Sri Venkateswara Swamy",
     form: "Venkateswara",
     town: "Vadapalli, Atreyapuram mandal",
+    state: "Andhra Pradesh",
     district: "Dr. B.R. Ambedkar Konaseema",
     region: "Godavari Districts",
     summary:
@@ -877,6 +889,7 @@ export const TEMPLES: Temple[] = [
     deity: "Sri Khadri Lakshmi Narasimha Swamy",
     form: "Narasimha",
     town: "Kadiri",
+    state: "Andhra Pradesh",
     district: "Sri Sathya Sai",
     region: "Rayalaseema",
     summary:
@@ -949,6 +962,7 @@ export const TEMPLES: Temple[] = [
     deity: "Sri Sita Rama Swamy (with Lakshmana)",
     form: "Rama",
     town: "Ramatheertham, Nellimarla mandal",
+    state: "Andhra Pradesh",
     district: "Vizianagaram",
     region: "North Coastal Andhra",
     summary:
@@ -1020,6 +1034,7 @@ export const TEMPLES: Temple[] = [
     deity: "Sri Kodandarama Swamy (Sita, Rama and Lakshmana)",
     form: "Rama",
     town: "Vontimitta",
+    state: "Andhra Pradesh",
     district: "YSR Kadapa",
     region: "Rayalaseema",
     summary:
@@ -1095,6 +1110,7 @@ export const TEMPLES: Temple[] = [
     deity: "Sri Jagan Mohini Kesava Swamy",
     form: "Mohini",
     town: "Ryali, Atreyapuram mandal",
+    state: "Andhra Pradesh",
     district: "Dr. B.R. Ambedkar Konaseema",
     region: "Godavari Districts",
     summary:

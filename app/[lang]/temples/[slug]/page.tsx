@@ -3,14 +3,11 @@ import TempleView from "@/components/temples/TempleView";
 import type { TempleCardData } from "@/components/temples/TemplesList";
 import JsonLd from "@/components/seo/JsonLd";
 import { TEMPLES } from "@/lib/templesData";
-import { getPlace, mapsSearchUrl, placePhotoUrl } from "@/lib/places";
+import { TEMPLE_PHOTOS } from "@/lib/templePhotos";
 import { pageSeo, SITE_URL } from "@/lib/seo";
 import { localizedFn } from "@/lib/i18n/seo";
 
 type Props = { params: Promise<{ lang: string; slug: string }> };
-
-// Google details (rating, hours, photos, reviews) refresh daily (see lib/places.ts)
-export const revalidate = 86400;
 
 export function generateStaticParams() {
   return TEMPLES.map((t) => ({ slug: t.slug }));
@@ -35,18 +32,15 @@ export default async function TemplePage({ params }: Props) {
   const { slug } = await params;
   const tm = find(slug);
   if (!tm) notFound();
-  const place = await getPlace(tm.placeQuery);
-  const directions = place?.mapsUri ?? mapsSearchUrl(tm.placeQuery);
 
   // up to 3 other temples in the same region (fallback: any), with their first Google photo
   const others = TEMPLES.filter((t) => t.slug !== tm.slug);
   const same = others.filter((t) => t.region === tm.region);
   const pick = [...same, ...others.filter((t) => t.region !== tm.region)].slice(0, 3);
-  const pickPlaces = await Promise.all(pick.map((t) => getPlace(t.placeQuery)));
-  const nearby: TempleCardData[] = pick.map((t, i) => ({
+  const nearby: TempleCardData[] = pick.map((t) => ({
     slug: t.slug, name: t.name, shortName: t.shortName, teluguName: t.teluguName, deity: t.deity, form: t.form,
-    town: t.town, district: t.district, region: t.region, summary: t.summary, fromVizag: t.fromVizag,
-    photo: pickPlaces[i]?.photos[0] ? placePhotoUrl(pickPlaces[i]!.photos[0].name, 300) : undefined,
+    town: t.town, state: t.state, district: t.district, region: t.region, summary: t.summary, fromVizag: t.fromVizag,
+    photo: TEMPLE_PHOTOS[t.slug]?.[0]?.src,
   }));
 
   const url = `${SITE_URL}/temples/${tm.slug}`;
@@ -57,7 +51,7 @@ export default async function TemplePage({ params }: Props) {
         "@type": "BreadcrumbList",
         itemListElement: [
           { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
-          { "@type": "ListItem", position: 2, name: "Vaishnava Temples of Andhra Pradesh", item: `${SITE_URL}/temples` },
+          { "@type": "ListItem", position: 2, name: "Hindu Temples in India", item: `${SITE_URL}/temples` },
           { "@type": "ListItem", position: 3, name: tm.shortName, item: url },
         ],
       },
@@ -68,10 +62,10 @@ export default async function TemplePage({ params }: Props) {
         alternateName: tm.teluguName,
         description: tm.summary,
         url,
-        address: { "@type": "PostalAddress", streetAddress: tm.address, addressLocality: tm.town, addressRegion: "Andhra Pradesh", addressCountry: "IN" },
-        ...(place?.lat && place?.lng ? { geo: { "@type": "GeoCoordinates", latitude: place.lat, longitude: place.lng } } : {}),
-        ...(place?.mapsUri ? { hasMap: place.mapsUri } : {}),
+        address: { "@type": "PostalAddress", streetAddress: tm.address, addressLocality: tm.town, addressRegion: tm.state, addressCountry: "IN" },
+        hasMap: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(tm.placeQuery)}`,
         ...(tm.website ? { sameAs: [tm.website] } : {}),
+        ...(TEMPLE_PHOTOS[tm.slug]?.length ? { image: TEMPLE_PHOTOS[tm.slug].map((p) => p.src) } : {}),
         isAccessibleForFree: true,
         publicAccess: true,
       },
@@ -85,7 +79,7 @@ export default async function TemplePage({ params }: Props) {
   return (
     <>
       <JsonLd data={jsonLd} />
-      <TempleView temple={tm} place={place} directions={directions} nearby={nearby} />
+      <TempleView temple={tm} photos={TEMPLE_PHOTOS[tm.slug] ?? []} nearby={nearby} />
     </>
   );
 }
