@@ -1557,3 +1557,6 @@ html:not([lang="en"]) .home-theme .vk-h1, html:not([lang="en"]) .home-theme .vk-
 @keyframes kc-enter { 0% { opacity: 0; filter: blur(6px); transform: scale(.94); } 100% { opacity: 1; filter: none; transform: none; } }
 @keyframes kc-xfade-out { to { opacity: 0; } }
 @keyframes kc-xfade-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* Indian scripts: wide letter-spacing (tracking-*) splits conjunct letters apart, so drop it on non-English pages. */
+html:not([lang="en"]) [class*="tracking-["], html:not([lang="en"]) .tracking-wide, html:not([lang="en"]) .tracking-wider, html:not([lang="en"]) .tracking-widest { letter-spacing: normal; }
