@@ -64,11 +64,16 @@ const TEMPLES_AP: Temple[] = [
       "Visited by Sri Chaitanya Mahaprabhu (Jiyada Nrsimha)",
       "Granite temple with inscriptions from the 11th century onwards",
       "About 16 km from Visakhapatnam",
+      "Natya Mandapam with 96 black stone pillars, where Kalyanotsavam is held",
+      "Inscriptions of Sri Krishnadevaraya from 1516 and 1519 CE",
+      "32 km Giri Pradakshina around the hill on Ashadha Purnima",
     ],
     festivals: [
       { name: "Chandanotsavam (nija rupa darshan)", when: "Vaisakha Shuddha Tadiya (Akshaya Tritiya), April–May" },
       { name: "Kalyanam", when: "March–April" },
+      { name: "Visakha Purnima", when: "May" },
       { name: "Giri Pradakshina (32 km walk around the hill)", when: "Ashadha Purnima, June–July" },
+      { name: "Uttara Dwara darshan", when: "Vaikuntha Ekadasi, December–January" },
     ],
     timings: [
       { label: "Darshan (as listed by Incredible India)", time: "7:00 AM – 4:00 PM and 6:00 PM – 9:00 PM" },
@@ -87,15 +92,71 @@ const TEMPLES_AP: Temple[] = [
     faqs: [
       {
         q: "When can I see the original form of Simhachalam Narasimha Swamy?",
-        a: "Only on Chandanotsavam day, Vaisakha Shuddha Tadiya (Akshaya Tritiya), in April or May. On all other days the Lord is covered in sandal paste.",
+        a: "Only on Chandanotsavam day, Vaisakha Shuddha Tadiya (Akshaya Tritiya), in April or May. On all other days the Lord is covered in sandal paste. In 2026 Chandanotsavam fell on April 20.",
       },
       {
         q: "When is the Simhachalam Giri Pradakshina?",
-        a: "It is held on Ashadha Purnima (June–July), when devotees walk about 32 km around Simhachalam hill.",
+        a: "It is held on Ashadha Purnima (June–July), when devotees walk about 32 km around Simhachalam hill. The walk begins at Toli Pavancha at the foot of the hill, and the next day the Lord receives a fresh offering of sandal paste.",
       },
       {
         q: "What are the darshan timings?",
         a: "Incredible India lists 7:00 AM – 4:00 PM and 6:00 PM – 9:00 PM. Timings change on festival days, so please confirm with the temple before you travel.",
+      },
+      {
+        q: "How much are the darshan tickets at Simhachalam?",
+        a: "In March 2026 The Hans India reported two paid darshan tickets, Rs. 100 and Rs. 300, which can also be bought by scanning a QR code at kiosks at the hilltop bus stand and PRO office. Chandanotsavam has its own ticket categories, announced each year.",
+      },
+      {
+        q: "Who has the first darshan on Chandanotsavam?",
+        a: "The hereditary trustee of the temple, P. Ashok Gajapathi Raju, and his family receive the first nija rupa darshan, after which the state government offers silk clothes and common devotees are admitted in the early hours.",
+      },
+      {
+        q: "Can I take my mobile phone on Chandanotsavam day?",
+        a: "For Chandanotsavam 2026 the Executive Officer asked devotees not to carry mobile phones or electronic gadgets to the temple. Private vehicles were also restricted on the hill road, and free buses carried devotees up.",
+      },
+      {
+        q: "Why does the Simhachalam temple face west?",
+        a: "Incredible India notes that, unlike most temples, Simhachalam faces west rather than east. It does not give an agreed reason, so we do not state one here.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Legend and tradition",
+        body: [
+          "According to temple tradition, the devotee Prahlada built the first temple here for Lord Narasimha. Over time the shrine was buried under earth. Tradition holds that Pururava, a king of the Lunar dynasty, was drawn to the hill, unearthed the Deity and consecrated Him again.",
+          "Devotees believe a divine voice then told the king to keep the Lord covered in sandal paste and to remove the covering only once a year, on the third day of the bright half of Vaisakha. This is the origin, in temple tradition, of Chandanotsavam and the yearly nija rupa darshan.",
+        ],
+      },
+      {
+        heading: "History in detail",
+        body: [
+          "The exact age of the temple is not known. Its many inscriptions run from the reign of the Chola king Kulottunga I, around 1098 CE, through the 13th century. One inscription from 1137–56 CE records that a queen of the Velanadu chief Gonka III covered the Deity with gold.",
+          "The Vijayanagara emperor Sri Krishnadevaraya visited Simhachalam twice. His inscriptions here, from 1516 and 1519 CE, commemorate his victories over the rulers of Odisha.",
+          "In his purport to the Chaitanya Charitamrita, Srila Prabhupada describes the temple as the finest in the area and notes that worship is conducted by priests of the Ramanuja sampradaya. A smaller processional Deity, the vijaya-murti, is taken out for festivals while the main Deity stays in the sanctum.",
+        ],
+      },
+      {
+        heading: "Architecture",
+        body: [
+          "The temple stands on the hill about 244 m above sea level according to the district portal; Incredible India gives about 300 m. Built of dark granite, it has a square sanctum with a high tower, a front porch with a smaller tower, a sixteen-pillared mandapam and an enclosed verandah. From outside, its walls and five gateways look like those of a fortress.",
+          "The carvings show floral designs and scenes from the Vaishnava Puranas. On the north side is the Natya Mandapam, with 96 black stone pillars in sixteen rows of six; the Lord's Kalyanotsavam is performed here. Two old tanks serve the temple: Swami Pushkarini near the shrine and Gangadhara at the foot of the hill.",
+        ],
+      },
+      {
+        heading: "Chandanotsavam and festivals",
+        body: [
+          "Chandanotsavam is the great day of the year. In 2025 the rituals began at 1 AM with Suprabhata Seva, the hereditary trustee had the first darshan, and general devotees were admitted from about 2:30 AM. Deccan Chronicle reported nearly 1.5 lakh pilgrims that year; in 2026 about 90,000 had taken darshan by 6 PM.",
+          "After Chandanotsavam the Lord is covered again with sandal paste, and further offerings of sandal follow on full-moon days, including Jyeshtha, Ashadha and Sravana Purnima. On the day after the Giri Pradakshina, more than 100 kg of sandal paste is offered.",
+          "Other festivals include the Kalyanam in March–April, Visakha Purnima in May, and Uttara Dwara (north gate) darshan on Vaikuntha Ekadasi, when the Lord is decorated as Vaikuntha Narayana.",
+        ],
+      },
+      {
+        heading: "Visitor guide",
+        body: [
+          "Incredible India's weather table for Visakhapatnam shows January as the coolest month and May as the hottest, so a winter visit is easier on the climb. Chandanotsavam falls in the heat of April–May, so carry water and expect long queues.",
+          "Paid Rs. 100 and Rs. 300 darshan tickets are sold at the temple and at QR-code kiosks at the hilltop bus stand. For Chandanotsavam, tickets are sold online and at designated banks for a few weeks beforehand, and only free buses go up the hill on the day.",
+          "The hilltop gives wide views of Visakhapatnam. Pilgrims coming to Simhachalam can also visit ISKCON Gambheeram, the Hare Krishna temple in Visakhapatnam.",
+        ],
       },
     ],
     sources: [
@@ -103,15 +164,26 @@ const TEMPLES_AP: Temple[] = [
       "https://www.incredibleindia.gov.in/en/andhra-pradesh/visakhapatnam/varaha-lakshmi-narasimha-temple",
       "https://www.deccanchronicle.com/southern-states/andhra-pradesh/thousands-witness-lord-simhadri-appannas-annual-darshan-1876107",
       "https://www.deccanchronicle.com/southern-states/andhra-pradesh/thousands-participate-as-simhachalam-giri-pradakshina-begins-1890513",
+      "https://www.deccanchronicle.com/southern-states/andhra-pradesh/collector-reviews-arrangements-for-simhachalam-chandanotsavam-1939580",
+      "https://www.thehansindia.com/featured/sunday-hans/lord-narasimha-to-offer-nija-rupa-740478",
+      "https://www.thehansindia.com/andhra-pradesh/thousands-of-devotees-witness-nija-rupa-darshan-at-simhachalam-1067619",
+      "https://www.thehansindia.com/news/cities/visakhapatnam/devotees-asked-not-to-carry-mobile-phones-electronic-gadgets-on-chandanotsavam-1065079",
+      "https://www.thehansindia.com/news/cities/visakhapatnam/darshan-tickets-at-simhachalam-by-scanning-a-qr-code-at-kiosks-1056388",
+      "https://www.thehansindia.com/andhra-pradesh/devotees-congregate-at-temples-for-uttara-dwara-darshan-846382",
       "https://vedabase.io/en/library/cc/madhya/8/3/",
       "https://vedabase.io/en/library/cc/madhya/8/4/",
     ],
     check: [
       "Current daily darshan timings (Incredible India lists 7 AM–4 PM / 6–9 PM; news reports show changes over time)",
-      "Official devasthanam website URL (not included)",
-      "Exact month of the Kalyanam (district portal says March–April)",
+      "Official devasthanam website URL and whether regular darshan/seva tickets can be booked online (aptemples.ap.gov.in was used for Chandanotsavam 2025; not confirmed from an official page)",
+      "Current darshan ticket prices (Rs. 100 / Rs. 300 per The Hans India, March 2026) and any seva prices (not included)",
+      "Exact month and tithi of the Kalyanam (district portal says March–April)",
+      "Prahlada and Pururava legend, as reported by The Hans India (2022); please confirm the temple's own telling",
+      "Height above sea level (district portal 244 m; Incredible India 300 m)",
+      "Exact Purnima days for the later sandal offerings (The Hans India names Jyeshtha, Ashadha and Sravana)",
+      "Whether the mobile phone appeal applies on normal days or only on Chandanotsavam",
       "Dress code and accommodation on the hill (removed, no valid source)",
-      "Prahlada legend of the combined Varaha-Narasimha form (removed, no valid source)",
+      "Mention of ISKCON Gambheeram as a nearby visit (own temple; confirm wording)",
       "PIN code (removed; 530028 unverified)",
     ],
   },
@@ -141,11 +213,15 @@ const TEMPLES_AP: Temple[] = [
       "Annamacharya wrote over 32,000 songs to the Lord",
       "Visited by Sri Chaitanya Mahaprabhu on His South India tour",
       "Administered by Tirumala Tirupati Devasthanams (TTD)",
+      "Sri Bhu Varaha Swami, by the Swami Pushkarini, receives the first offerings",
+      "Temple complex spread over 16.2 acres",
+      "Tirupati laddu protected by a Geographical Indication (GI) tag",
     ],
     festivals: [
-      { name: "Srivari Annual Brahmotsavam", when: "September–October in 2026; in an Adhika Masa year such as 2026, TTD holds a second Brahmotsavam in October" },
-      { name: "Vaikuntha Ekadasi (ten days of Vaikuntha Dwara darshan)", when: "December–January" },
+      { name: "Srivari Annual Brahmotsavam (nine days; Garuda Seva on the fifth evening)", when: "September–October; in 2026, September 15–23, with a second Brahmotsavam on October 12–20 because of Adhika Masa" },
+      { name: "Vaikuntha Ekadasi (ten days of Vaikuntha Dwara darshan)", when: "December–January; in 2026, December 20–29" },
       { name: "Ratha Saptami (Lord rides seven vahanams in one day)", when: "January–February" },
+      { name: "Dhanurmasa (Tiruppavai recited in place of Suprabhatam)", when: "Dhanurmasa, around December–January" },
     ],
     timings: [
       { label: "Darshan", time: "Through most of the day in slots; check TTD for the day's schedule" },
@@ -165,15 +241,76 @@ const TEMPLES_AP: Temple[] = [
     faqs: [
       {
         q: "Is there a dress code for Tirumala darshan?",
-        a: "Yes. TTD asks men to wear dhoti or pyjama with an upper cloth, and women to wear a saree or half-saree with blouse, or churidar with pyjama and upper cloth. Shorts and tight clothes are not permitted. Please check the current rules on tirumala.org.",
+        a: "Yes. TTD asks men to wear dhoti or pyjama with an upper cloth, and women to wear a saree or half-saree with blouse, or churidar with pyjama and upper cloth. TTD says the rule covers Arjitha Seva participants, break darshan and the Rs. 300 and Rs. 50 darshans. Please check the current rules on tirumala.org.",
       },
       {
         q: "Can I walk up to Tirumala?",
-        a: "Yes. The Alipiri footpath is about 11 km and the Srivari Mettu footpath, which starts near Chandragiri, is about 6 km.",
+        a: "Yes. The Alipiri footpath is about 11 km and the Srivari Mettu footpath, which starts near Chandragiri, is about 6 km. TTD provides rest points, drinking water, toilets and medical help along the way, and transfers footpath pilgrims' luggage free of charge.",
       },
       {
         q: "Where can pilgrims book darshan, sevas and rooms?",
-        a: "Through TTD's official booking website, ttdevasthanams.ap.gov.in.",
+        a: "Through TTD's official booking website, ttdevasthanams.ap.gov.in. TTD releases each month's quotas online about three months ahead, and asks devotees to book only through this official site.",
+      },
+      {
+        q: "What types of darshan and seva tickets does TTD offer?",
+        a: "TTD's monthly quota notices list Arjitha Sevas (such as Suprabhatam, Thomala, Archana and Kalyanotsavam, some allotted by electronic dip), Angapradakshinam tokens, Srivani Trust darshan, Rs. 300 Special Entry Darshan, and a free special darshan quota for senior citizens, differently-abled persons and people with long-term illnesses. Free Sarva Darshan is also available.",
+      },
+      {
+        q: "Why do pilgrims visit Sri Bhu Varaha Swami first?",
+        a: "TTD's temple history says that, according to legend, Lord Varaha gave land on the hill to Srinivasa on the condition that He would receive the first darshan, worship and offerings. TTD still makes all offerings to Varaha first, and advises pilgrims to bathe in Swami Pushkarini and worship Sri Bhu Varaha Swami before visiting Lord Venkateswara.",
+      },
+      {
+        q: "When is Vaikuntha Dwara darshan at Tirumala in 2026?",
+        a: "TTD has scheduled the ten-day Vaikuntha Dwara darshan from December 20 to 29, 2026. For the first three days, slotted Sarva Darshan tokens are to be allotted through an online electronic dip. Please follow TTD's announcements for the final arrangements.",
+      },
+      {
+        q: "Where can I stay in Tirumala?",
+        a: "TTD allots rooms in Tirumala and Tirupati. Rooms can be booked online in advance through TTD's website, and current-booking rooms are allotted on arrival through TTD registration counters. Pilgrims without rooms can use TTD's five Pilgrim Amenities Complexes, which offer free lockers, hot-water bathing, mats and blankets after registering with Aadhaar and a phone number.",
+      },
+      {
+        q: "What should I avoid inside the temple?",
+        a: "TTD's do's and don'ts ask pilgrims not to wear footwear in or around the temple, not to wear caps, hats or helmets inside, not to wear flowers (the flowers of the Seven Hills are for the Lord alone), not to approach touts, and not to bring non-vegetarian food, alcohol or tobacco to Tirumala.",
+      },
+    ],
+    sections: [
+      {
+        heading: "History in detail",
+        body: [
+          "TTD's temple history notes that Lord Varaha is said to have lived on the hill before Lord Venkateswara. The Sri Bhu Varaha Swami temple stands in the north-west corner of the Swami Pushkarini tank, and all offerings are still made to Varaha first.",
+          "Much of the temple's present form grew over several centuries. The Ranganayaka Mandapam is named after the Deities of Sri Ranganatha from Srirangam, which TTD records were kept here for safety between 1320 and 1369 CE. The Ghanta Mandapam was built in 1461 CE by Mallanna, a Vijayanagara minister, and the Four Pillar Mandapam in 1470 CE by Saluva Narasimha Raya.",
+          "The Tallapaka storehouse (Sankeertana Bhandaram), completed around 1525–30 under Achyutaraya, holds Annamacharya's songs engraved on copper plates. TTD notes that about 11,000 of his sankeertanas have been brought to light, largely through the work of the scholar Sadhu Subrahmanya Sastri.",
+        ],
+      },
+      {
+        heading: "Architecture",
+        body: [
+          "TTD describes the temple complex as covering 16.2 acres. Pilgrims enter through the Maha Dwaram, a gateway about fifty feet high whose height has been raised in stages since the 13th century. Inside are the Krishnadevaraya Mandapam, with copper statues of the emperor and his queens, and the Dhwajasthambha Mandapam with its golden flagstaff.",
+          "The main circumambulation path is the Sampangi Pradakshinam. Beyond the silver entrance (Vendi Vakili) lies the Vimana Pradakshinam, the inner path around the sanctum. The golden Ananda Nilayam vimana over the sanctum carries 64 deity images. Jaya and Vijaya guard the gold-plated Bangaru Vakili, the doorway to the sanctum.",
+          "Within the complex, TTD lists the Yoga Narasimha shrine (dated 1330–1360 CE), a six-foot statue of Garuda, the main temple kitchen where prasadam is prepared with ghee, and a shrine with a granite image of Sri Ramanujacharya.",
+        ],
+      },
+      {
+        heading: "Daily worship and sevas",
+        body: [
+          "The day begins with Suprabhatam, recited before dawn to wake the Lord. Thomala Seva follows, after which Koluvu Srinivasa holds court and hears the day's almanac and accounts. The day ends with Ekanta Seva, when Bhoga Srinivasa is laid to rest. During Dhanurmasa, the Tiruppavai of Andal is recited in place of Suprabhatam.",
+          "TTD also lists Kalyanotsavam, the celestial wedding of Lord Srinivasa, and Dolotsavam, the swing festival held in the Addala Mandapam (hall of mirrors). Arjitha Seva tickets for Suprabhatam, Thomala, Archana, Kalyanotsavam, Unjal Seva and Sahasra Deepalankara Seva are released online each month.",
+          "Some devotees perform Anga Pradakshina, rolling around the inner path in the early morning, for which TTD issues tokens. Others offer Tulabharam, giving coins, sugar candy or other items equal to a child's weight.",
+        ],
+      },
+      {
+        heading: "Festivals",
+        body: [
+          "Temple tradition holds that Lord Brahma conducted the first Brahmotsavam after Lord Venkateswara appeared on the Seven Hills. It is a nine-day festival in which the processional Deity, Sri Malayappa Swami, is taken out on different vahanams; the Garuda Seva on the fifth evening draws the largest crowds. In 2026 the annual Brahmotsavam runs from September 15 to 23, and because of Adhika Masa a second Brahmotsavam is held from October 12 to 20.",
+          "For Vaikuntha Ekadasi, TTD opens the Mukkoti Pradakshinam, the inner path entered through the Vaikuntha Dwaram, which it now keeps open for ten days. In 2026 this darshan is scheduled from December 20 to 29.",
+        ],
+      },
+      {
+        heading: "Visitor guide",
+        body: [
+          "Book darshan, sevas and rooms only on ttdevasthanams.ap.gov.in. TTD releases each month's quotas around three months in advance; for example, the February 2027 Rs. 300 Special Entry Darshan quota opened on November 24, 2026 at 10 AM.",
+          "Follow the dress code: dhoti or pyjama with upper cloth for men, and saree, half-saree or churidar with upper cloth for women. Leave footwear outside the temple area, and avoid caps, hats and flowers on your person. TTD advises pilgrims not to carry much jewellery or cash.",
+          "Tirumala is a vegetarian, alcohol-free and smoke-free hill. For rooms, register on arrival at TTD's counters or book online in advance; TTD's Pilgrim Amenities Complexes provide free lockers for pilgrims without rooms. Before leaving, many pilgrims visit Sri Padmavathi Ammavari Temple at Tiruchanur, which TTD also administers.",
+        ],
       },
     ],
     sources: [
@@ -181,17 +318,28 @@ const TEMPLES_AP: Temple[] = [
       "https://www.tirumala.org/TTDTempleHistory.aspx",
       "https://www.tirumala.org/Howtoreach_TirupatiandTirumala.aspx",
       "https://www.tirumala.org/DressCode.aspx",
+      "https://www.tirumala.org/Dos_Donot.aspx",
+      "https://www.tirumala.org/TemplesAtTiruchanoor.aspx",
       "https://news.tirumala.org/radha-sapthami-in-tirumala-on-feb-14/",
+      "https://news.tirumala.org/february-2027-darshan-and-accommodation-online-quota-release-schedule-_-%E0%B0%AB%E0%B0%BF%E0%B0%AC%E0%B1%8D%E0%B0%B0%E0%B0%B5%E0%B0%B0%E0%B0%BF-%E0%B0%A8%E0%B1%86%E0%B0%B2-%E0%B0%A6%E0%B0%B0%E0%B1%8D/",
+      "https://news.tirumala.org/accommodation-in-tirumala-becomes-more-pilgrim-friendly/",
+      "https://news.tirumala.org/extensive-arrangements-in-tirumala-to-cope-up-summer-vacation-rush-_-%E0%B0%B5%E0%B1%87%E0%B0%B8%E0%B0%B5%E0%B0%BF-%E0%B0%B0%E0%B0%A6%E0%B1%8D%E0%B0%A6%E0%B1%80%E0%B0%95%E0%B0%BF-%E0%B0%A4%E0%B0%BF/",
       "https://www.deccanchronicle.com/southern-states/andhra-pradesh/ttd-readies-tirumala-for-10-day-vaikunta-dwara-darshan-1927019",
+      "https://www.deccanchronicle.com/southern-states/andhra-pradesh/ttd-begins-preparations-for-vaikunta-dwara-darshanam-2002005",
+      "https://www.deccanchronicle.com/southern-states/andhra-pradesh/ttd-serves-legal-notices-on-misuse-of-tirupati-laddus-gi-tag-1883759",
       "https://www.thehansindia.com/news/cities/tirupathi/brahmotsavams-a-living-tradition-of-tirumala-1121252",
       "https://vedabase.io/en/library/cc/madhya/9/64/",
     ],
     check: [
       "Current suprabhatam and ekantha seva times (removed, no official source found)",
-      "Brahmotsavam dates for the coming year",
+      "Brahmotsavam dates for the coming year (2026: Sept 15–23 and Oct 12–20 per The Hans India)",
+      "Vaikuntha Dwara darshan 2026 dates (Dec 20–29 per TTD/Deccan Chronicle) and the e-dip token process",
       "Road distance and train time from Visakhapatnam (removed)",
       "Whether any direct Visakhapatnam–Tirupati flight currently operates",
       "Free annaprasadam and darshan-duration claims (removed, no source checked)",
+      "Current room tariffs, registration counters and Pilgrim Amenities Complex locker numbers (left out; figures vary across TTD notices)",
+      "Whether the dress code now applies to free Sarva Darshan as well (TTD page names Arjitha Sevas, break, Rs. 300 and Rs. 50 darshan)",
+      "Mobile phone and camera rules inside the temple (not found on TTD pages checked)",
       "PIN code (removed; 517504 unverified)",
     ],
   },

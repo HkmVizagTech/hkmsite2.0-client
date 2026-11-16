@@ -33,18 +33,28 @@ export const TEMPLES_MORE2: Temple[] = [
       "Spire about 43 m high with a 52-yard flag",
       "Stands where the Gomti river meets the Arabian Sea",
       "Two doors: Swarga Dwar and Moksha Dwar",
+      "Five-storey temple resting on 72 pillars",
+      "Seven-coloured flag bearing the sun and moon, changed five times a day",
+      "One of the Char Dham, with Badrinath, Puri and Rameswaram",
+      "Run by a Devasthan Samiti headed by the District Collector",
     ],
     festivals: [
-      { name: "Sri Krishna Janmashtami", when: "Bhadrapada Krishna Ashtami, August–September" },
-      { name: "Holi", when: "Phalguna Purnima, February–March" },
+      { name: "Sri Krishna Janmashtami (the temple's most important festival)", when: "Bhadrapada Krishna Ashtami, August–September" },
+      { name: "Holi and Dhuleti", when: "Phalguna Purnima and the next day, February–March" },
       { name: "Annakut", when: "Day after Diwali, October–November" },
+      { name: "Tulsi Vivah", when: "Kartika Shukla Ekadashi to Purnima, October–November" },
+      { name: "Akshaya Tritiya (Chandan darshan; flower dress begins)", when: "Vaisakha Shukla Tritiya, April–May" },
+      { name: "Rath Yatra", when: "Ashadha Shukla Dwitiya, June–July" },
+      { name: "Rama Navami (special afternoon aarti)", when: "Chaitra Shukla Navami, March–April" },
     ],
     timings: [
-      { label: "Morning darshan (Gujarat Tourism listing)", time: "about 7:00 AM – 12:30 PM" },
-      { label: "Evening darshan (Gujarat Tourism listing)", time: "about 5:00 PM – 9:00 PM" },
+      { label: "Mangla aarti", time: "6:30 AM" },
+      { label: "Morning darshan (with short closures for bhog)", time: "about 7:00 AM – 1:00 PM" },
+      { label: "Evening darshan (Uthappan to closing)", time: "5:00 PM – 9:30 PM" },
+      { label: "Sandhya aarti; Shayan aarti", time: "7:30 PM; 8:30 PM" },
     ],
     timingsNote:
-      "Government listings differ slightly (another lists 6:30 AM – 1:00 PM and 5:00 PM – 9:30 PM), and the temple revises timings in special months. " +
+      "Schedule as published on the temple's own website, dwarkadhish.org. Darshan pauses several times a day for bhog offerings, and Gujarat Tourism lists slightly shorter hours (7:00 AM – 12:30 PM and 5:00 PM – 9:00 PM). " +
       CONFIRM_NOTE,
     fromVizag:
       "Dwarka is roughly 2,100 km from Visakhapatnam. Most pilgrims fly to Jamnagar, Porbandar or Rajkot via a connecting city, or take a train towards Ahmedabad and continue to Dwarka.",
@@ -55,10 +65,11 @@ export const TEMPLES_MORE2: Temple[] = [
     },
     address: "Shri Dwarkadhish Temple, Dwarka, Devbhumi Dwarka district, Gujarat 361335",
     placeQuery: "Dwarkadhish Temple Dwarka Gujarat",
+    website: "https://www.dwarkadhish.org",
     faqs: [
       {
         q: "What are the Dwarkadhish temple timings?",
-        a: "Gujarat Tourism lists about 7:00 AM – 12:30 PM and 5:00 PM – 9:00 PM. Please confirm with the temple before you go.",
+        a: "The temple's website lists Mangla aarti at 6:30 AM, morning darshan until about 1:00 PM and evening darshan from 5:00 PM to 9:30 PM, with short closures for bhog. Please confirm before you go, as timings change on festival days.",
       },
       {
         q: "What is Sudama Setu?",
@@ -68,21 +79,97 @@ export const TEMPLES_MORE2: Temple[] = [
         q: "What is the nearest airport to Dwarka?",
         a: "Porbandar (about 95 km) and Jamnagar (about 145 km) are the nearest airports.",
       },
+      {
+        q: "Who built the Dwarkadhish temple?",
+        a: "According to temple tradition, Vajranabha, Lord Krishna's great-grandson, first established the shrine. Gujarat Tourism records that the old structure was destroyed in 1472 by Mahmud Begada and rebuilt in the 15th–16th century, with later renovations.",
+      },
+      {
+        q: "Why does the Dwarkadhish flag have 52 yards of cloth?",
+        a: "The temple's website explains that the 52 sections are said to stand for the 52 administrative divisions of the Yadavas in Lord Krishna's Dwaraka. The flag has seven colours and shows the sun and moon. Incredible India says it is changed five times a day.",
+      },
+      {
+        q: "Who manages the Dwarkadhish temple?",
+        a: "According to the temple's website, the Government of Gujarat is the sole trustee, and a Devasthan Samiti headed by the Collector of Devbhumi Dwarka district runs daily affairs and rituals.",
+      },
+      {
+        q: "What is the best time to visit Dwarka?",
+        a: "Gujarat Tourism suggests November to February. Janmashtami is the biggest festival at the temple, so expect large crowds then.",
+      },
+      {
+        q: "Which places can I visit near the Dwarkadhish temple?",
+        a: "The temple's Dwarka Darshan list includes Rukmini Mandir, Gomti Ghat, Sharada Peeth, Gita Mandir, Bhadkeshwar Mahadev and Sudama Setu in town, and Nageshwar Jyotirlinga, Gopi Talav and Beyt Dwarka nearby.",
+      },
+    ],
+    sections: [
+      {
+        heading: "History in detail",
+        body: [
+          "The temple's own history page records a long line of renovations. It says Adi Shankaracharya renovated the shrine around 800 CE and set up a shrine of Adyashakti on the fourth floor, and that Queen Minaldevi renovated it again around 1120 CE.",
+          "Gujarat Tourism notes that the original structure was destroyed by Mahmud Begada in 1472 and rebuilt in the 15th–16th century, and that the present temple shows work from the 16th and 19th centuries. The temple's history page adds that Maharaja Khanderao renovated it in 1861, and that in 1903 a Gaekwad Maharaja had a golden kalasha placed on the summit.",
+          "Today, according to the temple's website, the Government of Gujarat is the sole trustee. A Devasthan Samiti, with the Collector of Devbhumi Dwarka district as president and a Deputy Collector-level officer as administrator, handles daily affairs, rituals and development work.",
+        ],
+      },
+      {
+        heading: "Dwaraka in the Bhagavatam",
+        body: [
+          "The Srimad Bhagavatam (10.50.49–57) describes how Lord Krishna had a fort twelve yojanas around built within the sea. The architect of the demigods, Visvakarma, laid out wide avenues, parks and golden-roofed homes, each with its own household temple. Indra offered the Sudharma assembly hall and the parijata tree, and the Lord moved all the citizens there by His Yogamaya.",
+          "The First Canto (chapter 11) describes the Lord's return to Dwaraka from Hastinapura. He sounded His conchshell at the border, and the citizens ran out with gifts, calling Him their protector and father, while the city was decorated with flags, garlands and arches of mango leaves.",
+        ],
+      },
+      {
+        heading: "Architecture",
+        body: [
+          "Incredible India describes Jagat Mandir as a five-storey temple of limestone and sand, resting on 72 pillars and built in the Chalukya style. Gujarat Tourism notes that it stands on a small hill reached by more than 50 steps, with heavily carved walls around the sanctum and smaller shrines across the complex.",
+          "The flag on the spire is famous in its own right. The temple's website describes it as 52 yards long, in seven colours, showing the sun and the moon. According to the temple, the 52 sections stand for the 52 administrative divisions of the Yadavas in Lord Krishna's Dwaraka. Devotees who wish to sponsor a flag (dhwaja arohan) are directed to the office of the Shree Guggali 505 Samiti in Dwarka.",
+        ],
+      },
+      {
+        heading: "Daily worship and darshan",
+        body: [
+          "The temple's published time table begins with Mangla aarti at 6:30 AM. Through the morning the doors close briefly for abhishek, snan bhog, shringar bhog, gwal bhog and raj bhog, with Shringar aarti at about 10:30 AM. The sanctum closes for anosar at 1:00 PM.",
+          "Evening darshan opens with Uthappan at 5:00 PM. Sandhya aarti is at 7:30 PM and Shayan aarti at 8:30 PM, and the temple closes at 9:30 PM. The temple website also streams live darshan.",
+        ],
+      },
+      {
+        heading: "Festivals through the year",
+        body: [
+          "The temple's festival page calls Janmashtami its most important festival, when thousands of pilgrims come for darshan. In Kartika the year opens with special decoration on New Year's Day, followed by Annakut, when hundreds of food preparations are offered, and Tulsi Vivah.",
+          "From Akshaya Tritiya the Lord wears flower garments and gives Chandan darshan, until Bhima Ekadashi. Holi and Dhuleti, Rama Navami with a special afternoon aarti, the Rath Yatra on Ashadha Shukla Dwitiya, Vamana Jayanti, Dussehra and the Diwali days are also celebrated, and the whole month of Dhanur Masa is observed.",
+        ],
+      },
+      {
+        heading: "Visitor guide",
+        body: [
+          "Gujarat Tourism suggests visiting between November and February. Pilgrims pass through the two doors, Swarga Dwar and Moksha Dwar. Sudama Setu, at the base of the temple, crosses the Gomti creek towards the beach.",
+          "The temple's Dwarka Darshan list includes Rukmini Mandir, Gomti Ghat, Sharada Peeth, Gayatri Mandir, Gita Mandir and Bhadkeshwar Mahadev in town. Further out are Nageshwar Jyotirlinga, Gopi Talav and the island of Beyt Dwarka with its own Dwarkadhish shrine.",
+        ],
+      },
     ],
     sources: [
+      "https://www.dwarkadhish.org/",
+      "https://www.dwarkadhish.org/jagad-mandir/time-table/",
+      "https://www.dwarkadhish.org/home/little-history/",
+      "https://www.dwarkadhish.org/jagad-mandir/dwaja-arohan/",
+      "https://www.dwarkadhish.org/jagad-mandir/other-important-celebrations/",
+      "https://www.dwarkadhish.org/dwarka/dwarka-darshan/",
+      "https://www.dwarkadhish.org/uncategorized/devasthan-samiti/",
       "https://gujarattourism.com/saurashtra/devbhoomi-dwarka/dwarkadhish-temple.html",
+      "https://www.incredibleindia.gov.in/en/gujarat/dwarka/dwarkadhish-temple",
       "https://utsav.gov.in/view-darshan/dwarkadhish-temple-live-darshan-1",
       "https://vedabase.io/en/library/sb/10/50/",
+      "https://vedabase.io/en/library/sb/1/11/",
     ],
     check: [
-      "Current darshan timings (Gujarat Tourism and utsav.gov.in listings differ)",
-      "Official temple website URL (website field not set)",
+      "Current darshan timings (official time table: 6:30 AM – 1:00 PM and 5:00 – 9:30 PM; Gujarat Tourism lists 7 AM – 12:30 PM and 5 – 9 PM)",
+      "Spire height: Gujarat Tourism says 43 m, Incredible India says 78 m; confirm which to show",
+      "Number of steps (Gujarat Tourism: 50+; Incredible India: 56) and 'flag changed five times a day' (Incredible India only)",
       "Gujarat Tourism says both 'great-grandson' and 'grandson' for Vajranabha; confirm wording",
-      "Whether to add 'one of the four dhamas' (no valid source found yet)",
-      "Dating of the present structure (no valid source found; left out)",
-      "Bet Dwarka and the Okha road bridge (no valid source found; left out)",
-      "Festival months and distance from Vizag (about 2,100 km)",
-      "Railway station distance from the temple; PIN code 361335",
+      "Renovation dates from the temple's history page (c. 800 CE Shankaracharya, c. 1120 CE Minaldevi, 1861 Khanderao, 1903 golden kalasha); the page has some date inconsistencies",
+      "Whether the 1903 kalasha donor should be named 'Gaekwad' (site spells 'Gaikwad')",
+      "Dress code, mobile phone and photography rules (only non-allowed sources found; left out)",
+      "Accommodation options (no official source found; left out)",
+      "Distances to Nageshwar, Beyt Dwarka and Gopi Talav (left out)",
+      "Railway station distance from the temple; PIN code 361335; distance from Vizag (about 2,100 km)",
     ],
   },
 
@@ -785,19 +872,22 @@ export const TEMPLES_MORE2: Temple[] = [
       "The temple at Lord Rama's birthplace in Ayodhya, consecrated on 22 January 2024, where He is worshipped as Ram Lalla, a five-year-old child.",
     history: [
       "The Srimad Bhagavatam (Ninth Canto, chapter 10) describes how Lord Ramachandra appeared as the son of King Dasharatha and ruled from Ayodhya after returning from the forest.",
-      "In November 2019 the Supreme Court of India ruled that the site be handed to a trust to be formed for building a temple to Lord Rama. The Pran Pratishtha, the consecration of the main Deity, took place on 22 January 2024. The temple is built in the Nagara style of North Indian temple architecture, designed by the architect Chandrakant Sompura with his family. The Deity of Ram Lalla, about 51 inches tall and carved from black stone by the Mysuru sculptor Arun Yogiraj, shows the Lord standing as a five-year-old child. A Ram Darbar on the first floor was opened to devotees in June 2025.",
+      "In November 2019 the Supreme Court of India ruled that the site be handed to a trust to be formed for building a temple to Lord Rama. The Pran Pratishtha, the consecration of the main Deity, took place on 22 January 2024. The temple is built in the Nagara style of North Indian temple architecture, based on an original design by the temple architect Chandrakant Sompura. The Deity of Ram Lalla, about 51 inches tall and carved from black stone by the Mysuru sculptor Arun Yogiraj, shows the Lord standing as a five-year-old child. A Ram Darbar on the first floor was opened to devotees in June 2025.",
     ],
     highlights: [
       "Pran Pratishtha on 22 January 2024",
       "Lord Rama worshipped as Ram Lalla, a five-year-old child",
       "Black stone Deity carved by Arun Yogiraj of Mysuru",
-      "Nagara-style temple designed by Chandrakant Sompura",
+      "Nagara-style temple, 161 ft high, on 392 pillars with 44 doors",
+      "No iron used anywhere in the temple",
+      "Dharma Dhwaja hoisted on the shikhar on 25 November 2025",
+      "Seven shrines (Sapt Mandir) to sages and devotees of Lord Rama",
       "Free darshan passes through the Trust's official portal",
     ],
     festivals: [
-      { name: "Sri Rama Navami", when: "Chaitra Shukla Navami, March–April" },
+      { name: "Sri Rama Navami (Surya Tilak on Ram Lalla)", when: "Chaitra Shukla Navami, March–April" },
       { name: "Deepotsav (Diwali)", when: "October–November" },
-      { name: "Vivah Panchami", when: "November–December" },
+      { name: "Vivah Panchami", when: "Margashirsha Shukla Panchami, November–December" },
     ],
     timings: [
       { label: "Mangala aarti", time: "4:30 AM" },
@@ -831,22 +921,98 @@ export const TEMPLES_MORE2: Temple[] = [
         q: "Who carved the Ram Lalla Deity?",
         a: "Mysuru sculptor Arun Yogiraj carved the 51-inch black stone Deity, chosen from three carved for the temple.",
       },
+      {
+        q: "How big is the Ayodhya Ram Mandir?",
+        a: "According to the Prime Minister's Office, the temple is 380 ft long (east–west), 250 ft wide and 161 ft high, and stands on 392 pillars with 44 doors. It has five mandapas, and no iron is used anywhere in it.",
+      },
+      {
+        q: "What is in the Ram Darbar on the first floor?",
+        a: "The Ram Darbar shows Lord Rama in His royal form with Sita, Lakshmana, Bharata, Shatrughna and Hanuman. It opened to devotees in June 2025, initially with timed passes.",
+      },
+      {
+        q: "What is the Surya Tilak at Ram Mandir?",
+        a: "On Rama Navami, a precisely aligned ray of sunlight falls on the forehead of Ram Lalla as a tilak marking the Lord's appearance day, as described by Incredible India.",
+      },
+      {
+        q: "Which shrines are inside the Ram Mandir complex?",
+        a: "Besides the main temple there is a Sapt Mandir of seven shrines to Maharishi Vashishtha, Vishwamitra, Agastya and Valmiki, Devi Ahalya, Nishadraj and Mata Shabari, and a restored ancient Shiva temple on Kuber Tila with a statue of Jatayu.",
+      },
+      {
+        q: "Which temples can I visit near Ram Mandir?",
+        a: "The Ayodhya district portal lists Hanuman Garhi (about 1 km from Ayodhya railway station), Kanak Bhawan (north-east of Ram Janmabhoomi in Ramkot), Nageshwar Nath Temple and the Ram ki Paidi ghats on the Saryu.",
+      },
+    ],
+    sections: [
+      {
+        heading: "Building the temple",
+        body: [
+          "Work on the present temple began after the Bhoomi Pujan performed by Prime Minister Narendra Modi on 5 August 2020. Deccan Chronicle reported at the time that the original 1983 design by Chandrakant Sompura had been slightly modified for a three-storey, 161-ft temple on a raised platform.",
+          "The Shri Ram Janmabhoomi Teerth Kshetra Trust invited the Prime Minister for the Pran Pratishtha in October 2023. On 22 January 2024, at around noon, the Deity of Ram Lalla was consecrated in the ground-floor sanctum, with representatives of the country's major spiritual traditions present.",
+          "The Hans India reported that three sculptors each carved a Deity for the sanctum, and the Trust chose Arun Yogiraj's by vote. It is carved from Krishna shila stone from Bujjegoudanapura village in Mysuru district, and with its pedestal stands about 8 ft tall.",
+          "On 25 November 2025, Vivah Panchami, a saffron Dharma Dhwaja was hoisted on the shikhar, marking the completion of the temple's construction. The Prime Minister's Office describes it as a right-angled triangular flag, 10 ft high and 20 ft long, bearing a radiant sun, the syllable Om and the Kovidara tree.",
+        ],
+      },
+      {
+        heading: "Lord Rama in the Bhagavatam",
+        body: [
+          "The Srimad Bhagavatam (9.10.32–50) describes Lord Ramachandra's return to Ayodhya at the end of His exile with Lakshmana, Hanuman and Sugriva. Bharata came from Nandigrama carrying the Lord's wooden sandals, fell at His feet in tears, and the two brothers embraced for a long time.",
+          "The citizens greeted the Lord with flower garlands and danced in joy as He entered the city. Sage Vasishtha then bathed Him with water from the four seas, and the Lord accepted the throne of Ayodhya.",
+        ],
+      },
+      {
+        heading: "Architecture",
+        body: [
+          "According to the Prime Minister's Office, the temple is built in the traditional Nagara style. It is 380 ft long from east to west, 250 ft wide and 161 ft high, supported by 392 pillars and 44 doors. Its pillars and walls carry carved images of deities.",
+          "Pilgrims enter from the east, climbing 32 steps through the Singh Dwar. There are five mandapas: Nritya, Rang, Sabha, Prarthana and Kirtan. The foundation is a 14-metre layer of roller-compacted concrete, a 21-ft granite plinth guards against ground moisture, and no iron is used anywhere in the temple.",
+          "Around the temple runs an 800-metre parkota, or enclosure, built in the South Indian style. The outer walls of the main temple show 87 carved stone scenes from Lord Rama's life based on the Valmiki Ramayana, and 79 bronze panels line the enclosure walls.",
+        ],
+      },
+      {
+        heading: "Shrines in the complex",
+        body: [
+          "The Sapt Mandir is a group of seven shrines dedicated to Maharishi Vashishtha, Maharishi Vishwamitra, Maharishi Agastya, Maharishi Valmiki, Devi Ahalya, Nishadraj and Mata Shabari, who all appear in Lord Rama's pastimes.",
+          "In the south-west of the complex, on Kuber Tila, an ancient temple of Lord Shiva has been restored, with a statue of Jatayu beside it. Near the main temple is an old well known as Sita Koop.",
+        ],
+      },
+      {
+        heading: "Daily worship and aartis",
+        body: [
+          "Under the schedule the Trust announced from 1 November 2026, the doors open at 4:00 AM and Mangala aarti is at 4:30 AM. The Lord is then bathed, dressed and offered bhog, with Shringar aarti at 6:30 AM and general darshan from 7:00 AM.",
+          "Raj Bhog is offered late in the morning, with aarti at noon, followed by a rest period from 12:30 to 1:30 PM. Sandhya aarti is at 7:00 PM and Shayan aarti at 9:30 PM, and the doors close at 10:00 PM. Darshan pauses briefly for each bhog offering.",
+        ],
+      },
+      {
+        heading: "Festivals and nearby temples",
+        body: [
+          "On Rama Navami, the Lord's appearance day, a precisely aligned ray of sunlight falls on Ram Lalla's forehead as a Surya Tilak. At Diwali, Deepotsav lights the Ram ki Paidi ghats on the Saryu; Incredible India notes they entered the Guinness World Records for 22 lakh lamps lit there.",
+          "Near the temple, the Ayodhya district portal lists Kanak Bhawan, north-east of Ram Janmabhoomi in Ramkot, and Hanuman Garhi, about 1 km from Ayodhya railway station. Nageshwar Nath Temple stands at Ram ki Paidi.",
+        ],
+      },
     ],
     sources: [
+      "https://www.pmindia.gov.in/en/news_updates/pm-to-participate-in-the-pran-pratishtha-ceremony-of-shri-ramlalla-in-the-newly-built-shri-ram-janmbhoomi-mandir-in-ayodhya-on-22nd-january/",
+      "https://www.pmindia.gov.in/en/news_updates/pm-addresses-shri-ram-janmabhoomi-mandir-dhwajarohan-utsav-in-ayodhya/",
+      "https://www.pmindia.gov.in/en/news_updates/pm-performs-bhoomi-pujan-at-shree-ram-janmabhoomi-mandir/",
       "https://www.thehansindia.com/uttarpradesh/ayodhya-ram-temple-revises-darshan-timings-from-november-1-1135895",
-      "https://www.outlookindia.com/national/ram-lalla-idol-ram-mandir-consecration-ayodhya-gold-flowers-51-inch-idol-arun-yogiraj-news-344721",
-      "https://www.onmanorama.com/web-stories/news/2024/01/22/ram-temple-ayodhya-nagara-style-construction-architecture.html",
-      "https://www.tribuneindia.com/news/archive/nation/temple-to-come-up-at-disputed-ayodhya-site-alternative-land-for-mosque-says-sc-858566",
-      "https://www.indiatvnews.com/uttar-pradesh/ram-darbar-at-ayodhya-s-ram-mandir-opens-for-devotees-check-timings-pass-details-2025-06-14-994664",
+      "https://www.thehansindia.com/karnataka/sculptor-arun-yogirajs-statue-finalised-for-installation-at-ram-temple-848198",
+      "https://www.thehansindia.com/news/national/ram-darbar-at-ayodhya-temple-opens-for-public-darshan-979681",
+      "https://www.deccanchronicle.com/nation/current-affairs/101119/ayodhya-verdict-ram-lalla-comes-home-a-new-masjid-to-rise.html",
+      "https://www.deccanchronicle.com/nation/current-affairs/210820/construction-of-ram-temple-begins-in-ayodhya-soil-testing-underway-at.html",
+      "https://www.incredibleindia.gov.in/en/festivals-and-events/uttar-pradesh/ram-navmi-ayodhya",
+      "https://www.incredibleindia.gov.in/en/uttar-pradesh/ayodhya/ram-ki-paidi",
+      "https://ayodhya.nic.in/tourist-places/",
       "https://vedabase.io/en/library/sb/9/10/",
     ],
     check: [
       "Current timings after the November 2026 revision (confirm on the Trust's X account / website)",
       "Whether general darshan is open between Mangala aarti and 7 AM",
-      "Official website and booking portal URLs (srjbtkshetra.org, online.srjbtkshetra.org)",
+      "Official website and booking portal URLs (srjbtkshetra.org, online.srjbtkshetra.org; site blocks automated checks)",
+      "Whether Ram Darbar still needs a separate timed pass (June 2025 reports: 300 passes per slot)",
       "Wording of the Supreme Court sentence for sensitivity",
-      "Bhoomi pujan (5 August 2020) and trust formation (not yet sourced; left out)",
-      "Ram Darbar opening (June 2025, India TV report)",
+      "Designer credit: changed to 'based on an original design by Chandrakant Sompura' (Deccan Chronicle); earlier 'with his family' had no allowed source",
+      "Flag size: PMO says 10 ft x 20 ft; some news reports say 22 ft x 11 ft",
+      "Mobile phone, bag and dress rules; cloakroom and locker facilities (no allowed source found; left out)",
+      "Trust formation date (February 2020) not yet sourced; left out",
       "Distances: airport, Lucknow (about 135 km), Vizag (about 1,200–1,300 km)",
       "PIN code 224123",
     ],
