@@ -39,7 +39,7 @@ export function Medallion({ m, size, priority = false }: { m: CouncilMember; siz
       <div className="absolute inset-x-[9%] bottom-0 top-[18%] overflow-hidden rounded-full bg-[radial-gradient(80%_80%_at_50%_25%,#2A4BA8_0%,#14286A_55%,#0A1640_100%)] shadow-[0_30px_60px_-30px_rgba(15,30,74,.7)]" />
       {/* the cut-out is clipped only at the bottom, so the head can rise above the disc */}
       <div className="absolute inset-x-0 bottom-0 top-0 overflow-hidden" style={{ clipPath: "inset(0 0 0 0 round 0 0 50% 50%)" }}>
-        <Image src={m.cutout} alt={m.name} fill priority={priority} sizes={size} className="object-contain object-bottom drop-shadow-[0_12px_18px_rgba(10,22,64,.35)]" />
+        <Image src={m.cutout} alt={m.name} fill quality={90} priority={priority} sizes={size} className="object-contain object-bottom drop-shadow-[0_12px_18px_rgba(10,22,64,.35)]" />
       </div>
     </div>
   );
@@ -58,10 +58,14 @@ function CouncilCard({ m, i }: { m: CouncilMember; i: number }) {
       <Link href={`/governance/${m.slug}`} className="group flex h-full flex-col">
         {/* tile with the cut-out rising out of its top edge */}
         <div className="relative isolate aspect-[4/5] overflow-hidden rounded-[1.6rem] [transform:translateZ(0)] bg-[radial-gradient(90%_70%_at_50%_15%,#2A4BA8_0%,#14286A_60%,#0A1640_100%)] shadow-[0_26px_50px_-30px_rgba(15,30,74,.75)] ring-1 ring-[#C9962B]/0 transition-all duration-500 group-hover:ring-[#C9962B]/70">
-          <svg aria-hidden viewBox="0 0 100 125" className="absolute inset-0 h-full w-full"><circle cx="50" cy="52" r="34" fill="none" stroke="#F6C752" strokeOpacity=".22" strokeWidth=".4" /><circle cx="50" cy="52" r="40" fill="none" stroke="#F6C752" strokeOpacity=".12" strokeWidth=".3" strokeDasharray="1 2" /></svg>
-          <div className="absolute inset-x-[6%] bottom-0 top-[13%] transition-transform duration-700 ease-out group-hover:scale-[1.04]" style={{ transformOrigin: "50% 100%" }}>
-            <Image src={m.cutout} alt={m.name} fill sizes="(min-width: 1280px) 280px, (min-width: 768px) 30vw, 46vw" className="object-contain object-bottom drop-shadow-[0_14px_16px_rgba(5,10,30,.45)]" />
+          {/* soft halo behind the head */}
+          <span aria-hidden className="absolute left-1/2 top-[6%] h-[46%] w-[72%] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(246,199,82,.20),rgba(80,120,230,.12)_55%,transparent)]" />
+          <svg aria-hidden viewBox="0 0 100 125" className="absolute inset-0 h-full w-full"><circle cx="50" cy="34" r="27" fill="none" stroke="#F6C752" strokeOpacity=".25" strokeWidth=".35" /><circle cx="50" cy="34" r="33" fill="none" stroke="#F6C752" strokeOpacity=".12" strokeWidth=".3" strokeDasharray="1 2" /></svg>
+          {/* the person fills the tile: head near the top, shoulders to the edges */}
+          <div className="absolute inset-x-0 bottom-0 top-[9%] transition-transform duration-700 ease-out group-hover:scale-[1.04]" style={{ transformOrigin: "50% 100%" }}>
+            <Image src={m.cutout} alt={m.name} fill quality={90} sizes="(min-width: 1280px) 300px, (min-width: 768px) 32vw, 48vw" className="object-cover object-top drop-shadow-[0_14px_16px_rgba(5,10,30,.45)]" />
           </div>
+          <span aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-[#0A1640]/45 to-transparent" />
           <span className="absolute right-3 top-3 rounded-full bg-[#FBF7EE]/95 px-2.5 py-1 text-[10.5px] font-bold text-[#0F1E4A] shadow">
             {m.years}+ {t("yrs")}
           </span>

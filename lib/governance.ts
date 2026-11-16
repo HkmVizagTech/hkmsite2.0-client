@@ -18,7 +18,7 @@ export const COUNCIL: CouncilMember[] = [
     "slug": "sri-madhu-pandit-dasa",
     "name": "Sri Madhu Pandit Dasa",
     "image": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/sri-madhu-pandit-dasa.webp",
-    "cutout": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/cutout-sri-madhu-pandit-dasa.webp",
+    "cutout": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/cutout-hd-sri-madhu-pandit-dasa.webp",
     "roles": [
       "Chairman & Mentor, Global Hare Krishna Movement",
       "President, ISKCON Bangalore",
@@ -86,7 +86,7 @@ export const COUNCIL: CouncilMember[] = [
     "slug": "sri-chanchalapathi-dasa",
     "name": "Sri Chanchalapathi Dasa",
     "image": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/sri-chanchalapathi-dasa.webp",
-    "cutout": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/cutout-sri-chanchalapathi-dasa.webp",
+    "cutout": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/cutout-hd-sri-chanchalapathi-dasa.webp",
     "roles": [
       "Vice Chairman, Governing Body Committee",
       "Vice Chairman, The Akshaya Patra Foundation",
@@ -148,7 +148,7 @@ export const COUNCIL: CouncilMember[] = [
     "slug": "sri-jai-chaitanya-dasa",
     "name": "Sri Jai Chaitanya Dasa",
     "image": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/sri-jai-chaitanya-dasa.webp",
-    "cutout": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/cutout-sri-jai-chaitanya-dasa.webp",
+    "cutout": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/cutout-hd-sri-jai-chaitanya-dasa.webp",
     "roles": [
       "Member, Governing Body Committee",
       "Temple President, Hare Krishna Movement Chennai"
@@ -209,7 +209,7 @@ export const COUNCIL: CouncilMember[] = [
     "slug": "sri-stoka-krishna-swami",
     "name": "Sri Stoka Krishna Swami",
     "image": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/sri-stoka-krishna-swami.webp",
-    "cutout": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/cutout-sri-stoka-krishna-swami.webp",
+    "cutout": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/cutout-hd-sri-stoka-krishna-swami.webp",
     "roles": [
       "Member, Governing Body Committee",
       "Dean of Vaishnava Studies"
@@ -270,7 +270,7 @@ export const COUNCIL: CouncilMember[] = [
     "slug": "sri-amitasana-swami",
     "name": "Sri Amitasana Swami",
     "image": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/sri-amitasana-dasa.webp",
-    "cutout": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/cutout-sri-amitasana-dasa.webp",
+    "cutout": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/cutout-hd-sri-amitasana-dasa.webp",
     "roles": [
       "President, Hare Krishna Movement Mumbai",
       "Governing Council Member, Hare Krishna Movement India"
@@ -331,7 +331,7 @@ export const COUNCIL: CouncilMember[] = [
     "slug": "sri-vasudev-keshav-dasa",
     "name": "Sri Vasudev Keshav Dasa",
     "image": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/sri-vasudev-keshav-dasa.webp",
-    "cutout": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/cutout-sri-vasudev-keshav-dasa.webp",
+    "cutout": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/cutout-hd-sri-vasudev-keshav-dasa.webp",
     "roles": [
       "Treasurer & Zonal Secretary, Governing Body Committee",
       "Vice President, ISKCON Bangalore"
@@ -392,7 +392,7 @@ export const COUNCIL: CouncilMember[] = [
     "slug": "sri-rajiv-lochan-dasa",
     "name": "Sri Rajiv Lochan Dasa",
     "image": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/sri-rajiv-lochan-dasa.webp",
-    "cutout": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/cutout-sri-rajiv-lochan-dasa.webp",
+    "cutout": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/cutout-hd-sri-rajiv-lochan-dasa.webp",
     "roles": [
       "Zonal Secretary, Governing Body Committee",
       "Temple President, ISKCON Hubli"
@@ -453,7 +453,7 @@ export const COUNCIL: CouncilMember[] = [
     "slug": "sri-satya-gaura-chandra-swami",
     "name": "Sri Satya Gaura Chandra Swami",
     "image": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/sri-satya-gaura-chandra-dasa.webp",
-    "cutout": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/cutout-sri-satya-gaura-chandra-dasa.webp",
+    "cutout": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/cutout-hd-sri-satya-gaura-chandra-dasa.webp",
     "roles": [
       "Zonal Secretary, Governing Body Committee",
       "President, Hare Krishna Movement Hyderabad",
@@ -515,7 +515,7 @@ export const COUNCIL: CouncilMember[] = [
     "slug": "sri-suvyakta-narasimha-dasa",
     "name": "Sri Suvyakta Narasimha Dasa",
     "image": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/sri-suvyakta-narasimha-dasa.webp",
-    "cutout": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/cutout-sri-suvyakta-narasimha-dasa.webp",
+    "cutout": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/cutout-hd-sri-suvyakta-narasimha-dasa.webp",
     "roles": [
       "Senior Vice President, Hare Krishna Movement Chennai"
     ],

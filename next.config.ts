@@ -5,6 +5,8 @@ const nextConfig: NextConfig = {
   // automatically); Next negotiates via the Accept header per request.
   images: {
     formats: ["image/avif", "image/webp"],
+    // 90 is used for portraits (Governance) where faces must stay crisp
+    qualities: [75, 90],
     remotePatterns: [
       {
         protocol: "https",
