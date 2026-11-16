@@ -60,10 +60,10 @@ function CouncilCard({ m, i }: { m: CouncilMember; i: number }) {
         <div className="relative isolate aspect-[4/5] overflow-hidden rounded-[1.6rem] [transform:translateZ(0)] bg-[radial-gradient(90%_70%_at_50%_15%,#2A4BA8_0%,#14286A_60%,#0A1640_100%)] shadow-[0_26px_50px_-30px_rgba(15,30,74,.75)] ring-1 ring-[#C9962B]/0 transition-all duration-500 group-hover:ring-[#C9962B]/70">
           {/* soft halo behind the head */}
           <span aria-hidden className="absolute left-1/2 top-[6%] h-[46%] w-[72%] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(246,199,82,.20),rgba(80,120,230,.12)_55%,transparent)]" />
-          <svg aria-hidden viewBox="0 0 100 125" className="absolute inset-0 h-full w-full"><circle cx="50" cy="34" r="27" fill="none" stroke="#F6C752" strokeOpacity=".25" strokeWidth=".35" /><circle cx="50" cy="34" r="33" fill="none" stroke="#F6C752" strokeOpacity=".12" strokeWidth=".3" strokeDasharray="1 2" /></svg>
+          <svg aria-hidden viewBox="0 0 100 125" className="absolute inset-0 h-full w-full"><circle cx="50" cy="33" r="30" fill="none" stroke="#F6C752" strokeOpacity=".25" strokeWidth=".35" /><circle cx="50" cy="33" r="36" fill="none" stroke="#F6C752" strokeOpacity=".12" strokeWidth=".3" strokeDasharray="1 2" /></svg>
           {/* the person fills the tile: head near the top, shoulders to the edges */}
-          <div className="absolute inset-x-0 bottom-0 top-[9%] transition-transform duration-700 ease-out group-hover:scale-[1.04]" style={{ transformOrigin: "50% 100%" }}>
-            <Image src={m.cutout} alt={m.name} fill quality={90} sizes="(min-width: 1280px) 300px, (min-width: 768px) 32vw, 48vw" className="object-cover object-top drop-shadow-[0_14px_16px_rgba(5,10,30,.45)]" />
+          <div className="absolute -inset-x-[12%] -bottom-[6%] top-[4%] transition-transform duration-700 ease-out group-hover:scale-[1.04]" style={{ transformOrigin: "50% 100%" }}>
+            <Image src={m.cutout} alt={m.name} fill quality={90} sizes="(min-width: 1280px) 380px, (min-width: 768px) 40vw, 60vw" className="object-cover object-top drop-shadow-[0_14px_16px_rgba(5,10,30,.45)]" />
           </div>
           <span aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-[#0A1640]/45 to-transparent" />
           <span className="absolute right-3 top-3 rounded-full bg-[#FBF7EE]/95 px-2.5 py-1 text-[10.5px] font-bold text-[#0F1E4A] shadow">
@@ -111,13 +111,13 @@ function CouncilGroup() {
         initial={reduce ? false : { opacity: 0, y: 40, x: "-50%" }}
         animate={{ opacity: 1, y: 0, x: "-50%" }}
         transition={{ duration: 1.1, ease, delay: 0.25 + row * 0.15 + Math.abs(k - (row ? 2 : 1.5)) * 0.08 }}
-        className="group/f absolute hover:!z-40"
+        className="group/f absolute"
         style={{ left: `${x}%`, bottom: `${b}%`, height: `${h}%`, aspectRatio: String(ar), zIndex: row ? 20 - Math.abs(k - 2) : 10 }}
       >
         <Link href={`/governance/${m.slug}`} aria-label={m.name} className="relative block h-full w-full">
           <Image src={m.cutout} alt={m.name} fill quality={90} priority sizes="(min-width: 1280px) 400px, 32vw"
-            className={`object-contain object-bottom transition duration-500 group-hover/f:-translate-y-1.5 ${row ? "drop-shadow-[0_-10px_30px_rgba(0,0,0,.35)]" : "brightness-[.92] [mask-image:linear-gradient(to_bottom,#000_62%,transparent_92%)] group-hover/f:brightness-100"}`} />
-          <span className="pointer-events-none absolute left-1/2 top-[-6%] -translate-x-1/2 whitespace-nowrap rounded-full bg-[#FBF7EE] px-3 py-1 text-[12px] font-bold text-[#0F1E4A] opacity-0 shadow-lg transition duration-300 group-hover/f:-translate-y-1 group-hover/f:opacity-100">
+            className={`object-contain object-bottom transition-[filter] duration-500 group-hover/f:brightness-110 ${row ? "drop-shadow-[0_-10px_30px_rgba(0,0,0,.35)]" : "brightness-[.9] [mask-image:linear-gradient(to_bottom,#000_86%,transparent_100%)]"}`} />
+          <span className="pointer-events-none absolute left-1/2 top-[-7%] z-[60] -translate-x-1/2 whitespace-nowrap rounded-full bg-[#0F1E4A]/90 px-3.5 py-1.5 text-[12px] font-semibold text-[#FBF7EE] opacity-0 shadow-[0_8px_24px_rgba(0,0,0,.4)] ring-1 ring-[#E9C46A]/50 backdrop-blur transition duration-300 group-hover/f:opacity-100">
             {m.name}
           </span>
         </Link>
@@ -170,7 +170,7 @@ export default function GovernanceView() {
               <Image src={COUNCIL_BANNER_MOBILE} alt={t("The Governing Council of the Hare Krishna Movement")} fill priority sizes="(max-width: 640px) 100vw, 640px" className="object-cover" />
             </div>
             <CouncilGroup />
-            <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 z-50 h-[24%] bg-gradient-to-b from-transparent to-[#FBF7EE]" />
+            <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 z-50 h-[9%] bg-gradient-to-b from-transparent via-[#FBF7EE]/60 to-[#FBF7EE]" />
           </motion.div>
         </section>
 
