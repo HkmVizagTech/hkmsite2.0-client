@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ArrowRight, ArrowUpRight, Landmark, MapPin, Navigation, Search, X } from "lucide-react";
+import { ArrowRight, ArrowUpRight, ChevronDown, Landmark, MapPin, Navigation, Search, X } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { useT } from "@/components/i18n/LocaleProvider";
 import type { Temple } from "@/lib/templesData";
@@ -56,26 +56,29 @@ function Card({ c, i }: { c: TempleCardData; i: number }) {
   );
 }
 
-/** Large featured temple (closest to Vizag). */
+/** Large featured temple (closest to Vizag): text panel + clear photo side by side. */
 function Featured({ c }: { c: TempleCardData }) {
   const t = useT();
   return (
-    <Link href={`/temples/${c.slug}`} className="group relative block overflow-hidden rounded-[2rem] bg-[#0A1233] shadow-[0_50px_100px_-60px_rgba(10,18,51,.9)]">
-      <div className="relative aspect-[4/5] sm:aspect-[16/10] lg:aspect-[21/9]">
+    <Link href={`/temples/${c.slug}`} className="group grid overflow-hidden rounded-[2rem] bg-white shadow-[0_40px_90px_-55px_rgba(10,18,51,.6)] ring-1 ring-[#E6EBF7] lg:grid-cols-[.85fr_1.15fr]">
+      <div className="order-2 flex flex-col justify-center p-7 md:p-11 lg:order-1">
+        <span className="inline-flex w-fit items-center gap-2 rounded-full bg-[#FFF4D6] px-3.5 py-1.5 text-[10.5px] font-bold uppercase tracking-[0.18em] text-[#8A6414] ring-1 ring-[#F6E3B0]"><Landmark className="h-3.5 w-3.5" />{t("Closest to Vizag")}</span>
+        <h2 className="mt-5 font-heading text-[2.1rem] font-extrabold leading-[1.04] tracking-tight text-[#0A1233] md:text-[2.8rem]">{c.shortName}</h2>
+        <p className="mt-1.5 font-heading text-[16px] font-semibold text-[#1E3A8A]">{c.deity}</p>
+        <p className="mt-1 font-heading text-[14px] font-semibold text-[#0A1233]/40">{c.teluguName}</p>
+        <p className="mt-5 text-[15.5px] leading-7 text-[#0A1233]/70">{c.summary}</p>
+        <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-[13px] font-semibold text-[#0A1233]/60">
+          <span className="inline-flex items-center gap-1.5"><MapPin className="h-4 w-4 text-[#1E3A8A]" />{c.town}</span>
+          <span className="inline-flex items-center gap-1.5"><Navigation className="h-4 w-4 text-[#1E3A8A]" />{(firstSentence(c.fromVizag).match(/about [^,;.]+/i)?.[0] ?? "").replace(/^about/i, "About")}</span>
+        </div>
+        <span className="mt-8 inline-flex w-fit items-center gap-2 rounded-full bg-[#0A1233] px-6 py-3 text-[14px] font-bold text-white transition group-hover:bg-[#1E3A8A]">{t("Explore the temple")}<ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" /></span>
+      </div>
+      <div className="relative order-1 aspect-[4/3] overflow-hidden lg:order-2 lg:aspect-auto lg:min-h-[460px]">
         {c.photo ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={c.photo} alt={c.name} className="h-full w-full object-cover transition duration-[1600ms] ease-out group-hover:scale-105" />
+          <img src={c.photo} alt={c.name} className="absolute inset-0 h-full w-full object-cover transition duration-[1600ms] ease-out group-hover:scale-105" />
         ) : <TempleArt telugu={c.teluguName} form={c.form} />}
-        <span aria-hidden className="absolute inset-0 bg-[linear-gradient(90deg,rgba(10,18,51,.95)_0%,rgba(10,18,51,.7)_40%,rgba(10,18,51,.1)_75%)] max-lg:bg-[linear-gradient(0deg,rgba(10,18,51,.95)_10%,rgba(10,18,51,.4)_60%,transparent)]" />
-        <div className="absolute inset-0 flex items-end p-7 md:p-12 lg:items-center">
-          <div className="max-w-xl text-white">
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#F6C752] px-3.5 py-1.5 text-[10.5px] font-bold uppercase tracking-[0.18em] text-[#0A1233]"><Landmark className="h-3.5 w-3.5" />{t("Closest to Vizag")}</span>
-            <h2 className="mt-5 font-heading text-[2rem] font-extrabold leading-[1.05] tracking-tight md:text-[3rem]">{c.shortName}</h2>
-            <p className="mt-1 font-heading text-[16px] font-semibold text-[#F6E3B0]/80">{c.deity}</p>
-            <p className="mt-4 hidden text-[15.5px] leading-7 text-white/75 sm:block">{c.summary}</p>
-            <span className="mt-7 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-[14px] font-bold text-[#0A1233] transition group-hover:bg-[#F6C752]">{t("Explore the temple")}<ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" /></span>
-          </div>
-        </div>
+        <span className="absolute bottom-4 right-4 rounded-full bg-white/95 px-3 py-1.5 text-[11px] font-bold text-[#0A1233] shadow-sm">{c.form} · {c.district}</span>
       </div>
     </Link>
   );
@@ -99,7 +102,7 @@ function HeroSlides({ photos }: { photos: { src: string; name: string }[] }) {
           transition={{ opacity: { duration: 1.4 }, scale: { duration: 7, ease: "linear" } }}
           className="absolute inset-0 h-full w-full object-cover" />
       </AnimatePresence>
-      <span aria-hidden className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,18,51,.55)_0%,rgba(10,18,51,.35)_40%,rgba(10,18,51,.85)_100%)]" />
+      <span aria-hidden className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,18,51,.6)_0%,rgba(10,18,51,.45)_45%,rgba(10,18,51,.9)_100%)]" />
       <div className="absolute bottom-24 right-6 hidden items-center gap-2 md:flex">
         {photos.map((p, k) => (
           <button key={p.src} type="button" aria-label={p.name} onClick={() => setI(k)} className={`h-1.5 rounded-full transition-all ${k === i ? "w-8 bg-[#F6C752]" : "w-1.5 bg-white/50 hover:bg-white"}`} />
@@ -154,15 +157,13 @@ export default function TemplesList({ temples }: { temples: TempleCardData[] }) 
               <p className="mx-auto mt-6 max-w-2xl text-[16px] leading-8 text-white/85 md:text-[18px]">
                 {t("Your guide to India's sacred temples: when to go for darshan and aarti, the deities who reside there, and the way to reach each holy place.")}
               </p>
-              <div className="mx-auto mt-8 flex w-fit divide-x divide-white/20 rounded-2xl bg-white/10 ring-1 ring-white/20 backdrop-blur-md">
-                {[
-                  [String(temples.length), t("temples")],
-                  [String(states.length), states.length === 1 ? t("state") : t("states")],
-                  [String(new Set(temples.map((c) => c.district)).size), t("districts")],
-                ].map(([n, l]) => (
-                  <div key={l} className="px-5 py-3 md:px-7"><p className="font-heading text-2xl font-extrabold text-white md:text-3xl">{n}</p><p className="text-[10.5px] font-semibold uppercase tracking-[0.16em] text-white/60">{l}</p></div>
-                ))}
-              </div>
+              <p className="mx-auto mt-8 flex w-fit flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[14px] font-semibold text-white/85">
+                <span><b className="font-heading text-xl font-extrabold text-white">{temples.length}</b> {t("temples")}</span>
+                <span aria-hidden className="h-1 w-1 rotate-45 bg-[#F6C752]" />
+                <span><b className="font-heading text-xl font-extrabold text-white">{states.length}</b> {states.length === 1 ? t("state") : t("states")}</span>
+                <span aria-hidden className="h-1 w-1 rotate-45 bg-[#F6C752]" />
+                <span><b className="font-heading text-xl font-extrabold text-white">{new Set(temples.map((c) => c.district)).size}</b> {t("districts")}</span>
+              </p>
             </motion.div>
           </div>
         </section>
@@ -170,24 +171,35 @@ export default function TemplesList({ temples }: { temples: TempleCardData[] }) 
         {/* ══ SEARCH (floats over the hero) ══ */}
         <section className="relative z-20 -mt-16 md:-mt-20">
           <div className="vk-container">
-            <div className="mx-auto max-w-5xl rounded-[1.6rem] bg-white p-3 shadow-[0_40px_80px_-40px_rgba(10,18,51,.55)] ring-1 ring-[#E3E9F7] md:p-4">
-              <div className="flex flex-col gap-3 md:flex-row md:items-center">
+            <div className="mx-auto max-w-4xl rounded-[1.4rem] bg-white p-2 shadow-[0_30px_70px_-35px_rgba(10,18,51,.55)] ring-1 ring-[#E3E9F7] md:rounded-full">
+              <div className="flex flex-col md:flex-row md:items-center">
                 <label className="relative flex-1">
-                  <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#1E3A8A]" />
+                  <Search className="pointer-events-none absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 text-[#1E3A8A]" />
                   <span className="sr-only">{t("Search temples")}</span>
                   <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("Search a temple, deity or town")}
-                    className="w-full rounded-2xl bg-[#F4F7FF] py-4 pl-12 pr-4 text-[15px] text-[#0F1E4A] outline-none ring-1 ring-transparent placeholder:text-[#0F1E4A]/40 focus:bg-white focus:ring-[#1E3A8A]/40" />
+                    className="w-full rounded-full bg-transparent py-4 pl-14 pr-4 text-[15px] text-[#0F1E4A] outline-none placeholder:text-[#0F1E4A]/40" />
                 </label>
-                <select aria-label={t("State")} value={state} onChange={(e) => { setState(e.target.value); setDistrict("all"); }}
-                  className="rounded-2xl bg-white px-4 py-4 text-[14px] font-semibold text-[#0F1E4A] outline-none ring-1 ring-[#E3E9F7] focus:ring-[#1E3A8A]/50">
-                  <option value="all">{t("All states")}</option>
-                  {states.map((s) => <option key={s} value={s}>{t(s)}</option>)}
-                </select>
-                <select aria-label={t("District")} value={district} onChange={(e) => setDistrict(e.target.value)}
-                  className="rounded-2xl bg-white px-4 py-4 text-[14px] font-semibold text-[#0F1E4A] outline-none ring-1 ring-[#E3E9F7] focus:ring-[#1E3A8A]/50">
-                  <option value="all">{t("All districts")}</option>
-                  {districts.map((d) => <option key={d} value={d}>{d}</option>)}
-                </select>
+                <span aria-hidden className="mx-1 hidden h-8 w-px bg-[#E3E9F7] md:block" />
+                <label className="relative border-t border-[#E3E9F7] md:border-0">
+                  <span className="sr-only">{t("State")}</span>
+                  <select value={state} onChange={(e) => { setState(e.target.value); setDistrict("all"); }}
+                    className="w-full appearance-none truncate bg-transparent py-4 pl-5 pr-10 text-[14px] font-semibold text-[#0F1E4A] outline-none md:w-[170px]">
+                    <option value="all">{t("All states")}</option>
+                    {states.map((x) => <option key={x} value={x}>{t(x)}</option>)}
+                  </select>
+                  <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#1E3A8A]" />
+                </label>
+                <span aria-hidden className="mx-1 hidden h-8 w-px bg-[#E3E9F7] md:block" />
+                <label className="relative border-t border-[#E3E9F7] md:border-0">
+                  <span className="sr-only">{t("District")}</span>
+                  <select value={district} onChange={(e) => setDistrict(e.target.value)}
+                    className="w-full appearance-none truncate bg-transparent py-4 pl-5 pr-10 text-[14px] font-semibold text-[#0F1E4A] outline-none md:w-[170px]">
+                    <option value="all">{t("All districts")}</option>
+                    {districts.map((d) => <option key={d} value={d}>{d}</option>)}
+                  </select>
+                  <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#1E3A8A]" />
+                </label>
+                <span className="mt-2 inline-flex items-center justify-center gap-2 rounded-full bg-[#0A1233] px-6 py-3.5 text-[14px] font-bold text-white md:ml-1 md:mt-0"><Search className="h-4 w-4" />{shown.length + (filtering ? 0 : 1)} {t("temples")}</span>
               </div>
             </div>
           </div>
@@ -198,12 +210,12 @@ export default function TemplesList({ temples }: { temples: TempleCardData[] }) 
           <div className="vk-container">
             <div className="mx-auto max-w-6xl">
               <Kicker>{t("Browse by deity")}</Kicker>
-              <div className="mt-4 flex gap-2.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              <div className="-mx-4 mt-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] md:mx-0 md:flex-wrap md:overflow-visible md:px-0 [&::-webkit-scrollbar]:hidden">
                 {[["all", temples.length] as [string, number], ...forms].map(([f, n]) => (
                   <button key={f} type="button" onClick={() => setForm(f)}
-                    className={`group flex shrink-0 items-center gap-2.5 rounded-full py-2 pl-2 pr-4 text-[13.5px] font-semibold transition ${form === f ? "bg-[#0A1233] text-white shadow-[0_12px_24px_-12px_rgba(10,18,51,.8)]" : "bg-[#F4F7FF] text-[#0A1233] ring-1 ring-[#E3E9F7] hover:ring-[#1E3A8A]/40"}`}>
-                    <span className={`flex h-8 w-8 items-center justify-center rounded-full text-[12px] font-bold ${form === f ? "bg-[#F6C752] text-[#0A1233]" : "bg-white text-[#1E3A8A]"}`}>{n}</span>
+                    className={`flex shrink-0 items-center gap-2 rounded-full border px-4 py-2 text-[13.5px] font-semibold transition ${form === f ? "border-[#0A1233] bg-[#0A1233] text-white" : "border-[#E3E9F7] bg-white text-[#0A1233]/75 hover:border-[#1E3A8A]/50 hover:text-[#0A1233]"}`}>
                     {f === "all" ? t("All") : f}
+                    <span className={`rounded-full px-1.5 text-[11px] font-bold leading-5 ${form === f ? "bg-[#F6C752] text-[#0A1233]" : "bg-[#F2F5FC] text-[#1E3A8A]"}`}>{n}</span>
                   </button>
                 ))}
               </div>
