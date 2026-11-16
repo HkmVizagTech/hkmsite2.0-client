@@ -3,7 +3,7 @@ import {
   Clock, Image, Calendar, Snowflake, BrickWall, Ruler,
   Heart, Utensils, Beef, BookOpen, Shirt, Gift,
   CalendarDays, PartyPopper, HandHeart, FileText, Flower2, Building2,
-  ShoppingBag, Megaphone, MapPin, Landmark, Briefcase, Globe, Music2, ScrollText,
+  ShoppingBag, Package, Megaphone, MapPin, Landmark, Briefcase, Globe, Music2, ScrollText,
   type LucideIcon,
 } from "lucide-react";
 
@@ -48,6 +48,8 @@ export const navEntries: NavEntry[] = [
         { label: "Governance", href: "/governance", description: "The Governing Council", icon: Landmark },
         { label: "Our Centers", href: "/centers", description: "Hare Krishna Movement temples", icon: Globe },
         { label: "Contact Us", href: "/contact", description: "Visit, call, or write to us", icon: Phone },
+        { label: "Donor Login", href: "/donor/login", description: "Your donations & receipts", icon: User },
+        { label: "My Orders", href: "/shop/orders", description: "Track your Matchless Gifts orders", icon: Package },
       ],
     },
   },
