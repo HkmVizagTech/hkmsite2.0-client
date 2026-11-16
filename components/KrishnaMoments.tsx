@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import KrishnaRope from "@/components/KrishnaRope";
-import RunSprite, { BRICK_SHEET, CALF_SHEET, CycleSprite, SeqSprite, WAVE_SHEET, mascotScale, type SeqSheet, IMG, RUN_SHEET, crossSeconds } from "@/components/krishna/RunSprite";
+import RunSprite, { CALF_SHEET, CycleSprite, SeqSprite, WAVE_SHEET, mascotScale, type SeqSheet, IMG, RUN_SHEET, crossSeconds } from "@/components/krishna/RunSprite";
 import MakhanChor from "@/components/krishna/MakhanChor";
 import FluteOnCard, { fluteHasCard } from "@/components/krishna/FluteOnCard";
 import PetalShower from "@/components/krishna/PetalShower";
@@ -15,24 +15,24 @@ import Companion from "@/components/krishna/Companion";
 const PEEK: SeqSheet = { file: "peek-play", frames: 64, cols: 10, rows: 7, w: 220, h: 272, fps: 12 };
 
 /**
- * Little Krishna moments: once in a while, a cute baby Krishna runs, peeks, swings on a rope, carries a golden brick
+ * Little Krishna moments: once in a while, a cute baby Krishna runs, peeks, swings on a rope
  * or waves somewhere at the edge of the screen, for a few seconds, then leaves.
  *
  * Kept rare on purpose: at most one moment per page view, only after the visitor has spent ~5-10s on the page, and
  * then not again for 5 minutes (across all pages). Never in admin/dashboards/checkout, never while a dialog is open
  * or the visitor is typing, never for reduced motion. Tap Krishna and he hops away.
  *
- * Moments: run, calf (running with a calf), rope (physics rope), peek, brick (donation pages), wave, butter (Makhan
+ * Moments: run, calf (running with a calf), rope (physics rope), peek, wave, butter (Makhan
  * Chor: pot lowered on a rope, Krishna steals butter), flute (sits on a real card playing, notes float up) and petals
  * (thank-you pages only, played once there).
  *
  * Testing: add ?krishna=<moment> (or ?krishna=1 for a random one) to any URL to play it right away.
  */
 
-type Kind = "run" | "calf" | "rope" | "peek" | "brick" | "wave" | "butter" | "flute" | "petals";
-const KINDS: Kind[] = ["run", "calf", "rope", "peek", "brick", "wave", "butter", "flute", "petals"];
+type Kind = "run" | "calf" | "rope" | "peek" | "wave" | "butter" | "flute" | "petals";
+const KINDS: Kind[] = ["run", "calf", "rope", "peek", "wave", "butter", "flute", "petals"];
 const IMAGES: Record<Kind, string[]> = {
-  run: ["run-cycle"], calf: ["run-cycle", "calf-gallop"], rope: ["rope-swing"], peek: ["peek-play"], brick: ["brick-walk"], wave: ["wave-loop"],
+  run: ["run-cycle"], calf: ["run-cycle", "calf-gallop"], rope: ["rope-swing"], peek: ["peek-play"], wave: ["wave-loop"],
   butter: ["pot", "run-cycle", "butter-steal", "butter-eat-24"], flute: ["flute-play"], petals: ["petals"],
 };
 
@@ -44,15 +44,12 @@ const THANKS = /\/thank-you(\/|$)/;
 const GAU_PAGES = /gau-seva/i;
 
 // safety limits; the scene components end themselves earlier
-const DURATION: Record<Kind, number> = { run: 5200, calf: 6200, brick: 7600, rope: 11500, peek: 6200, wave: 5800, butter: 16500, flute: 7500, petals: 7200 };
+const DURATION: Record<Kind, number> = { run: 5200, calf: 6200, rope: 11500, peek: 6200, wave: 5800, butter: 16500, flute: 7500, petals: 7200 };
 
-// temple-construction pages: Krishna always carries a golden brick there
-const BRICK_PAGES = /(sqft|square-?f|brick)/i;
 
 function pickKind(path: string): Kind {
-  if (BRICK_PAGES.test(path)) return "brick";
   if (GAU_PAGES.test(path)) return "calf";
-  // everywhere else: no calf, no brick
+  // everywhere else: no calf
   const pool: Kind[] = ["run", "rope", "peek", "wave", "butter", "butter", "flute", "flute"];
   // the flute needs a card on screen to sit on; without one, choose something else (never a silent no-show)
   const usable = typeof window !== "undefined" && !fluteHasCard() ? pool.filter((k) => k !== "flute") : pool;
@@ -86,7 +83,7 @@ export default function KrishnaMoments() {
   const [leaving, setLeaving] = useState(false);
   const [lift, setLift] = useState(0);
   // crossing times that match his steps on this screen (set when a moment starts)
-  const [cross, setCross] = useState({ run: 5.2, calf: 6.2, brick: 7.6 });
+  const [cross, setCross] = useState({ run: 5.2, calf: 6.2 });
   const te = path === "/te" || path.startsWith("/te/");
   const timers = useRef<number[]>([]);
 
@@ -103,9 +100,9 @@ export default function KrishnaMoments() {
       if (!celebration) { try { localStorage.setItem(LAST_KEY, String(Date.now())); } catch {} }
       const vw = window.innerWidth;
       const rh = Math.round(140 * mascotScale());
-      const c = { run: crossSeconds(RUN_SHEET, rh, vw + 260), calf: crossSeconds(RUN_SHEET, rh, vw + 480), brick: crossSeconds(BRICK_SHEET, rh, vw + 260) };
+      const c = { run: crossSeconds(RUN_SHEET, rh, vw + 260), calf: crossSeconds(RUN_SHEET, rh, vw + 480) };
       setCross(c);
-      const ms = k === "run" || k === "calf" || k === "brick" ? c[k] * 1000 + 300 : DURATION[k];
+      const ms = k === "run" || k === "calf" ? c[k] * 1000 + 300 : DURATION[k];
       timers.current.push(window.setTimeout(() => setKind(null), ms));
     };
     Promise.all(imgs.map((i) => (i.complete ? Promise.resolve() : new Promise((r) => { i.onload = r; i.onerror = r; })))).then(start);
@@ -131,9 +128,9 @@ export default function KrishnaMoments() {
       return clear;
     }
 
-    // Gau Seva / Square Foot / Brick: the calf or brick moment plays when the donation cards come into view (once per
+    // Gau Seva: the calf moment plays when the donation cards come into view (once per
     // visit to the page, not limited by the 5-minute gap), a moment after any scroll to them has settled
-    if (BRICK_PAGES.test(path) || GAU_PAGES.test(path)) {
+    if (GAU_PAGES.test(path)) {
       let io: IntersectionObserver | null = null;
       let fired = false;
       const watch = () => {
@@ -244,16 +241,6 @@ export default function KrishnaMoments() {
           <motion.div key="petals" className="absolute inset-0" exit={{ opacity: 0, transition: { duration: 0.4 } }}>
             <PetalShower lift={lift} onDone={endNow} />
           </motion.div>
-        )}
-
-        {kind === "brick" && (
-          <motion.button key="brick" type="button" tabIndex={-1} onClick={shoo} className="pointer-events-auto absolute left-0" style={{ bottom }}
-            initial={{ x: "-180px" }} animate={hopAway ?? { x: "calc(100vw + 40px)" }} exit={{ opacity: 0 }} transition={{ duration: cross.brick, ease: "linear" }}>
-            <span className="relative block">
-              <GroundShadow width={runH * (169 / 280)} />
-              <CycleSprite sheet={BRICK_SHEET} height={runH} className="relative drop-shadow-[0_8px_10px_rgba(10,22,64,.22)]" />
-            </span>
-          </motion.button>
         )}
 
         {kind === "rope" && (
