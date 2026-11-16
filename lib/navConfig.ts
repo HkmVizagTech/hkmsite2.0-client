@@ -47,6 +47,7 @@ export const navEntries: NavEntry[] = [
       items: [
         { label: "About Us", href: "/about", description: "Our mission, history & values", icon: Info },
         { label: "Our Centers", href: "/centers", description: "Hare Krishna Movement temples worldwide", icon: Globe },
+        { label: "Governance", href: "/governance", description: "The Governing Council of the movement", icon: Landmark },
         { label: "Contact Us", href: "/contact", description: "Visit, call, or write to us", icon: Phone },
         { label: "Donor Login", href: "/donor/login", description: "View your donations & receipts", icon: User },
         { label: "My Orders", href: "/shop/orders", description: "Track your Matchless Gifts orders", icon: Package },

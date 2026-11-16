@@ -15,6 +15,7 @@ const exploreLinks = [
   { label: "Visit the Temple in Vizag", href: "/iskcon-vizag-temple" },
   { label: "Hare Krishna Vaikuntham", href: "/vaikuntham" },
   { label: "Srila Prabhupada", href: "/founder" },
+  { label: "Governance", href: "/governance" },
   { label: "Daily Schedule", href: "/daily-schedule" },
   { label: "Gallery", href: "/gallery" },
   { label: "Events", href: "/events" },
