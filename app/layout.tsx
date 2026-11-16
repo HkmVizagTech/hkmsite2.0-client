@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Poppins, Playfair_Display, Plus_Jakarta_Sans, Noto_Sans_Telugu } from "next/font/google";
+import { Poppins, Playfair_Display, Plus_Jakarta_Sans, Noto_Sans_Telugu, Noto_Sans_Devanagari, Noto_Sans_Tamil, Noto_Sans_Kannada, Noto_Sans_Malayalam, Noto_Sans_Oriya, Noto_Sans_Bengali, Noto_Sans_Gujarati } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
@@ -40,6 +40,16 @@ const telugu = Noto_Sans_Telugu({
   // Only fetched when Telugu text is on the page; English visitors never pay for it.
   preload: false,
 });
+
+// Other Indian scripts, same approach as Telugu: fallbacks in every font stack, fetched only when that script
+// is actually on the page (preload: false + unicode-range), so other visitors never download them.
+const devanagari = Noto_Sans_Devanagari({ subsets: ["devanagari"], weight: ["400", "500", "600", "700"], variable: "--font-deva", preload: false });
+const tamil = Noto_Sans_Tamil({ subsets: ["tamil"], weight: ["400", "500", "600", "700"], variable: "--font-tamil", preload: false });
+const kannada = Noto_Sans_Kannada({ subsets: ["kannada"], weight: ["400", "500", "600", "700"], variable: "--font-kannada", preload: false });
+const malayalam = Noto_Sans_Malayalam({ subsets: ["malayalam"], weight: ["400", "500", "600", "700"], variable: "--font-malayalam", preload: false });
+const oriya = Noto_Sans_Oriya({ subsets: ["oriya"], weight: ["400", "500", "600", "700"], variable: "--font-oriya", preload: false });
+const bengali = Noto_Sans_Bengali({ subsets: ["bengali"], weight: ["400", "500", "600", "700"], variable: "--font-bengali", preload: false });
+const gujarati = Noto_Sans_Gujarati({ subsets: ["gujarati"], weight: ["400", "500", "600", "700"], variable: "--font-gujarati", preload: false });
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -202,7 +212,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-  <html lang="en" className={`h-full antialiased overflow-x-clip ${playfair.variable} ${poppins.variable} ${jakarta.variable} ${telugu.variable}`} suppressHydrationWarning>
+  <html lang="en" className={`h-full antialiased overflow-x-clip ${playfair.variable} ${poppins.variable} ${jakarta.variable} ${telugu.variable} ${devanagari.variable} ${tamil.variable} ${kannada.variable} ${malayalam.variable} ${oriya.variable} ${bengali.variable} ${gujarati.variable}`} suppressHydrationWarning>
       <head>
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-XVDQNJK24G"

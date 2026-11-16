@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import LanguagePicker from "@/components/i18n/LanguagePicker";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Menu, X, Phone, Mail, Heart, ChevronDown, Home, User, Utensils, Info,
@@ -445,6 +446,7 @@ const Navbar = () => {
 
           {/* ── Desktop right actions (Donate) ─────── */}
           <div className="hidden items-center gap-2 lg:flex">
+            <LanguagePicker />
             <Link href="/donate" className="vk-btn-gold !rounded-xl !px-4">
               <Heart className="h-4 w-4 fill-current" />
               {t("Donate Now")}
@@ -464,6 +466,7 @@ const Navbar = () => {
 
           {/* ── Mobile: Donate Now button ─────────────────────────── */}
           <div className="flex items-center gap-1.5 lg:hidden">
+            <LanguagePicker variant="compact" />
             <Link href="/donate" aria-label={t("Donate")} className="vk-btn-gold !h-10 !min-w-10 shrink-0 !rounded-xl !px-2.5 !py-0 !text-[12px] min-[360px]:!h-9 min-[360px]:!px-3.5">
               <Heart className="h-3.5 w-3.5 fill-current" />
               <span className="hidden min-[360px]:inline">{t("Donate")}</span>
@@ -622,6 +625,7 @@ const Navbar = () => {
 
               {/* Sticky footer actions — always visible, never buried in the scroll */}
               <div className="border-t border-vk-100 bg-vk-50/70 px-4 py-3">
+                <div className="mb-3"><LanguagePicker variant="row" /></div>
                 <div className="mb-3 flex items-center justify-center gap-2">
                   {socialLinks.map((s) => (
                     <a
