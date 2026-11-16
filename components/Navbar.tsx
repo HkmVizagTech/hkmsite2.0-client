@@ -676,32 +676,32 @@ const Navbar = () => {
             animate={{ y: 0 }}
             exit={{ y: 100 }}
             transition={{ duration: 0.25, ease: "easeInOut" }}
-            className="fixed inset-x-0 bottom-0 z-50 rounded-t-[22px] border-t border-vk-100 bg-white/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-10px_30px_-12px_rgba(10,18,51,0.28)] backdrop-blur-xl lg:hidden"
+            className="fixed inset-x-0 bottom-0 z-50 rounded-t-[20px] border-t border-vk-100 bg-white/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_24px_-14px_rgba(10,18,51,0.3)] backdrop-blur-xl lg:hidden"
           >
-            <div className="relative mx-auto flex max-w-md items-end px-1">
+            <div className="relative mx-auto flex max-w-md items-stretch px-1">
               {bottomNavLeft.map((item) => renderBottomLink(item))}
 
-              {/* Raised centre button — today's darshan from the community app */}
+              {/* Darshan — a slim highlighted tab (no oversized raised circle), with a live open/closed dot */}
               <div className="flex flex-1 justify-center">
                 <Link
                   href={DARSHAN_HREF}
                   aria-label={t("Today's darshan")}
-                  className="group -mt-6 flex flex-col items-center gap-1 pb-1.5"
+                  className="group flex flex-col items-center justify-center gap-1 pb-1.5 pt-2 text-[10.5px] font-bold text-vk-800 transition-transform active:scale-95"
                 >
-                  <span className="relative flex h-[58px] w-[58px] items-center justify-center rounded-full bg-gradient-to-br from-vk-600 to-vk-800 text-white shadow-[0_10px_22px_-8px_rgba(30,58,138,0.75)] ring-4 ring-white transition-transform duration-200 group-active:scale-95">
-                    <Sparkles className="h-6 w-6" />
-                    <span className="absolute right-1 top-1 flex h-3 w-3">
+                  <span className="relative flex h-8 w-14 items-center justify-center rounded-full bg-gradient-to-br from-vk-600 to-vk-800 text-white shadow-[0_6px_14px_-6px_rgba(30,58,138,0.7)]">
+                    <Sparkles className="h-[18px] w-[18px]" />
+                    <span className="absolute -right-0.5 -top-0.5 flex h-2.5 w-2.5">
                       {darshanStatus.isOpen && (
                         <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
                       )}
                       <span
-                        className={`relative inline-flex h-3 w-3 rounded-full ring-2 ring-white ${
+                        className={`relative inline-flex h-2.5 w-2.5 rounded-full ring-2 ring-white ${
                           darshanStatus.isOpen ? "bg-emerald-500" : "bg-[hsl(var(--gold))]"
                         }`}
                       />
                     </span>
                   </span>
-                  <span className="text-[10.5px] font-bold text-vk-800">{t("Darshan")}</span>
+                  {t("Darshan")}
                 </Link>
               </div>
 
