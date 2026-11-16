@@ -1288,18 +1288,25 @@ import { TEMPLES_MORE } from "./templesDataMore";
 import { TEMPLES_MORE2 } from "./templesDataMore2";
 import { TEMPLES_MORE3 } from "./templesDataMore3";
 
-/** Guide order: Simhachalam (closest to Vizag) first, then the famous temples of India, then the rest of Andhra Pradesh. */
-const FIRST = [
-  "simhachalam-varaha-lakshmi-narasimha-temple", "tirumala-sri-venkateswara-swamy-temple", "puri-jagannath-temple",
-  "iskcon-mayapur-chandrodaya-mandir", "iskcon-vrindavan-krishna-balaram-mandir", "dwarkadhish-temple-dwarka",
-  "kashi-vishwanath-temple-varanasi", "ram-mandir-ayodhya", "kanipakam-varasiddhi-vinayaka-temple", "srirangam-ranganathaswamy-temple",
-  "sripuram-golden-temple-vellore", "madurai-meenakshi-amman-temple", "srisailam-mallikarjuna-swamy-temple", "guruvayur-sri-krishna-temple",
-  "udupi-sri-krishna-matha", "padmanabhaswamy-temple-thiruvananthapuram", "banke-bihari-temple-vrindavan", "radha-raman-temple-vrindavan",
-  "prem-mandir-vrindavan", "krishna-janmabhoomi-mathura", "shrinathji-temple-nathdwara", "badrinath-temple", "kedarnath-temple",
-  "somnath-temple-gujarat", "vaishno-devi-katra", "rameswaram-ramanathaswamy-temple", "mahakaleshwar-temple-ujjain",
-]
+/** Guide order: Andhra Pradesh first (Simhachalam, closest to Vizag, leading), then the famous temples of India. */
+const FIRST_AP = [
+  "simhachalam-varaha-lakshmi-narasimha-temple", "tirumala-sri-venkateswara-swamy-temple", "annavaram-sri-veera-venkata-satyanarayana-swamy-temple",
+  "srisailam-mallikarjuna-swamy-temple", "kanipakam-varasiddhi-vinayaka-temple", "tiruchanur-sri-padmavathi-ammavari-temple",
+  "tirupati-sri-govindaraja-swamy-temple", "ahobilam-nava-narasimha-temples", "mangalagiri-panakala-lakshmi-narasimha-temple",
+  "dwaraka-tirumala-sri-venkateswara-swamy-temple", "srikurmam-sri-kurmanatha-swamy-temple", "srikalahasti-temple",
+];
+const FIRST_INDIA = [
+  "puri-jagannath-temple", "iskcon-mayapur-chandrodaya-mandir", "iskcon-vrindavan-krishna-balaram-mandir", "dwarkadhish-temple-dwarka",
+  "kashi-vishwanath-temple-varanasi", "ram-mandir-ayodhya", "srirangam-ranganathaswamy-temple", "sripuram-golden-temple-vellore",
+  "madurai-meenakshi-amman-temple", "guruvayur-sri-krishna-temple", "udupi-sri-krishna-matha", "padmanabhaswamy-temple-thiruvananthapuram",
+  "banke-bihari-temple-vrindavan", "radha-raman-temple-vrindavan", "prem-mandir-vrindavan", "krishna-janmabhoomi-mathura",
+  "shrinathji-temple-nathdwara", "badrinath-temple", "kedarnath-temple", "somnath-temple-gujarat", "vaishno-devi-katra",
+  "rameswaram-ramanathaswamy-temple", "mahakaleshwar-temple-ujjain",
+];
 const ALL = [...TEMPLES_AP, ...TEMPLES_MORE, ...TEMPLES_MORE2, ...TEMPLES_MORE3];
+const isAP = (t: Temple) => t.state === "Andhra Pradesh";
+const rank = (list: string[], t: Temple) => { const i = list.indexOf(t.slug); return i < 0 ? 999 : i; };
 export const TEMPLES: Temple[] = [
-  ...FIRST.map((s) => ALL.find((t) => t.slug === s)).filter((t): t is Temple => !!t),
-  ...ALL.filter((t) => !FIRST.includes(t.slug)),
+  ...ALL.filter(isAP).sort((x, y) => rank(FIRST_AP, x) - rank(FIRST_AP, y)),
+  ...ALL.filter((t) => !isAP(t)).sort((x, y) => rank(FIRST_INDIA, x) - rank(FIRST_INDIA, y)),
 ];
