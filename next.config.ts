@@ -74,30 +74,33 @@ const nextConfig: NextConfig = {
   // config rewrites run at the edge next to the visitor, while a Next 16
   // proxy always runs as a server function in one region (iad1, USA) — an
   // extra trans-Pacific hop on every page view from India.
-  //   /x     -> /en/x, or /te/x when the visitor chose Telugu (hk_lang=te)
-  //   /te/x  -> served as-is (Telugu URL Google indexes)
+  //   /x       -> /en/x, or /<code>/x when the visitor chose another language (hk_lang=<code>)
+  //   /<code>/x -> served as-is (the URL Google indexes for that language)
   //   /en/x  -> 308 to /x (below, in redirects)
   // afterFiles: static files and staff pages (/admin, /donations/admin, /api)
   // match first; these apply before the [lang] dynamic route would catch /x.
   async rewrites() {
-    const TE = [{ type: "cookie" as const, key: "hk_lang", value: "te" }];
+    // Every language except English has its own /<code>/ prefix (lib/i18n/config.ts).
+    const CODES = ["te", "hi", "ta", "kn", "ml", "or", "bn", "mr", "gu"];
+    const ALL = ["en", ...CODES].join("|");
+    const chose = (code: string) => [{ type: "cookie" as const, key: "hk_lang", value: code }];
     // Keep in sync with lib/preacherRef.ts.
     const PREACHER_REF = "\\d{1,4}|[A-Za-z]{2,5}|[A-Za-z]-[A-Za-z]";
-    const SEVA_PAGE = "(?!(?:te|en|admin|api|_next|_vercel|blogs|bhajans|centers|donate|donations|donor|events|festivals|festival|shop|track|volunteer|web-stories|payment|preacher|kartik-maas|emergency-relief)(?:/|$))[a-z0-9-]+";
-    const PUBLIC = "/:path((?!(?:te|en|admin|api|_next|_vercel)(?:/|$)|donations/admin(?:/|$)).+)";
+    const SEVA_PAGE = `(?!(?:${ALL}|admin|api|_next|_vercel|blogs|bhajans|centers|donate|donations|donor|events|festivals|festival|shop|track|volunteer|web-stories|payment|preacher|kartik-maas|emergency-relief)(?:/|$))[a-z0-9-]+`;
+    const PUBLIC = `/:path((?!(?:${ALL}|admin|api|_next|_vercel)(?:/|$)|donations/admin(?:/|$)).+)`;
     return {
-      // "/" is its own route (app/page.tsx, the English home); Telugu
-      // visitors are sent to /te before that route is matched.
-      beforeFiles: [{ source: "/", has: TE, destination: "/te" }],
+      // "/" is its own route (app/page.tsx, the English home); visitors who chose
+      // another language are sent to /<code> before that route is matched.
+      beforeFiles: CODES.map((code) => ({ source: "/", has: chose(code), destination: `/${code}` })),
       afterFiles: [
         // Preacher links: a seva page followed by a devotee's code or DCC id (/anna-daan-seva/ABRD, /gau-seva/1)
         // shows the same seva page; the browser keeps the full URL and the page credits the donation to that
         // devotee (components/PreacherRefCapture.tsx). Sections that have their own sub-pages are left alone.
         { source: `/:page(kartik-maas|emergency-relief)/:ref(${PREACHER_REF})`, destination: "/:page" },
-        { source: `/te/:page(${SEVA_PAGE})/:ref(${PREACHER_REF})`, destination: "/te/:page" },
-        { source: `/:page(${SEVA_PAGE})/:ref(${PREACHER_REF})`, has: TE, destination: "/te/:page" },
+        ...CODES.map((code) => ({ source: `/${code}/:page(${SEVA_PAGE})/:ref(${PREACHER_REF})`, destination: `/${code}/:page` })),
+        ...CODES.map((code) => ({ source: `/:page(${SEVA_PAGE})/:ref(${PREACHER_REF})`, has: chose(code), destination: `/${code}/:page` })),
         { source: `/:page(${SEVA_PAGE})/:ref(${PREACHER_REF})`, destination: "/en/:page" },
-        { source: PUBLIC, has: TE, destination: "/te/:path" },
+        ...CODES.map((code) => ({ source: PUBLIC, has: chose(code), destination: `/${code}/:path` })),
         { source: PUBLIC, destination: "/en/:path" },
       ],
       fallback: [],
@@ -119,6 +122,11 @@ const nextConfig: NextConfig = {
       { source: "/terms", destination: "/terms-and-conditions", permanent: true },
       { source: "/privacy", destination: "/privacy-policy", permanent: true },
       { source: "/festivals", destination: "/festival", permanent: true },
+      // Old site addresses still in Google (they 404 now).
+      { source: "/sevas", destination: "/donate", permanent: true },
+      { source: "/sevas/:path*", destination: "/donate", permanent: true },
+      { source: "/aboutfounder", destination: "/founder", permanent: true },
+      { source: "/about-founder", destination: "/founder", permanent: true },
     ];
   },
 };

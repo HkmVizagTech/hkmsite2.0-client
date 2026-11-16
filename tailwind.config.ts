@@ -19,9 +19,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['var(--font-poppins)', 'Poppins', 'var(--font-telugu)', 'sans-serif'],
-        heading: ['var(--font-jakarta)', 'Plus Jakarta Sans', 'var(--font-poppins)', 'var(--font-telugu)', 'sans-serif'],
-        body: ['var(--font-poppins)', 'Poppins', 'var(--font-telugu)', 'sans-serif'],
+        sans: ['var(--font-poppins)', 'Poppins', 'var(--font-telugu)', 'var(--font-deva)', 'var(--font-tamil)', 'var(--font-kannada)', 'var(--font-malayalam)', 'var(--font-oriya)', 'var(--font-bengali)', 'var(--font-gujarati)', 'sans-serif'],
+        heading: ['var(--font-jakarta)', 'Plus Jakarta Sans', 'var(--font-poppins)', 'var(--font-telugu)', 'var(--font-deva)', 'var(--font-tamil)', 'var(--font-kannada)', 'var(--font-malayalam)', 'var(--font-oriya)', 'var(--font-bengali)', 'var(--font-gujarati)', 'sans-serif'],
+        body: ['var(--font-poppins)', 'Poppins', 'var(--font-telugu)', 'var(--font-deva)', 'var(--font-tamil)', 'var(--font-kannada)', 'var(--font-malayalam)', 'var(--font-oriya)', 'var(--font-bengali)', 'var(--font-gujarati)', 'sans-serif'],
       },
       colors: {
         // Vaikuntham Blue ramp (GVD-standard redesign). Use for brand

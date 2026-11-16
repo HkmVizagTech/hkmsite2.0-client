@@ -3,7 +3,7 @@ import {
   Clock, Image, Calendar, Snowflake,
   Heart, Utensils, Beef, BookOpen, Shirt, Gift,
   CalendarDays, PartyPopper, HandHeart, FileText, Flower2, Building2,
-  ShoppingBag, Package, Megaphone, MapPin, Landmark, Briefcase, Globe, Music2,
+  ShoppingBag, Package, Megaphone, MapPin, Landmark, Briefcase, Globe, Music2, ScrollText,
   type LucideIcon,
 } from "lucide-react";
 
@@ -48,6 +48,7 @@ export const navEntries: NavEntry[] = [
         { label: "About Us", href: "/about", description: "Our mission, history & values", icon: Info },
         { label: "Our Centers", href: "/centers", description: "Hare Krishna Movement temples worldwide", icon: Globe },
         { label: "Governance", href: "/governance", description: "The Governing Council of the movement", icon: Landmark },
+        { label: "Our Acharyas", href: "/acharyas", description: "The disciplic succession of teachers", icon: ScrollText },
         { label: "Contact Us", href: "/contact", description: "Visit, call, or write to us", icon: Phone },
         { label: "Donor Login", href: "/donor/login", description: "View your donations & receipts", icon: User },
         { label: "My Orders", href: "/shop/orders", description: "Track your Matchless Gifts orders", icon: Package },

@@ -16,6 +16,7 @@ const exploreLinks = [
   { label: "Hare Krishna Vaikuntham", href: "/vaikuntham" },
   { label: "Srila Prabhupada", href: "/founder" },
   { label: "Governance", href: "/governance" },
+  { label: "Our Acharyas", href: "/acharyas" },
   { label: "Hindu Temples", href: "/temples" },
   { label: "Daily Schedule", href: "/daily-schedule" },
   { label: "Gallery", href: "/gallery" },
@@ -78,7 +79,7 @@ const Footer = () => {
         <div className="vk-container relative">
           {/* ── Brand + Prabhupada quote card (GVD footer header) ── */}
           <div className="flex flex-col gap-6 pt-10 md:pt-14 lg:flex-row lg:items-center lg:gap-10">
-            <Link href="/" className="shrink-0" aria-label={t("Hare Krishna Movement Vizag — Home")}>
+            <Link href="/" className="shrink-0" aria-label={t("Home")}>
               <Image
                 src={typeof HKVTLogo === "string" ? HKVTLogo : HKVTLogo.src}
                 alt={t("Hare Krishna Vaikuntham Cultural Centre")}

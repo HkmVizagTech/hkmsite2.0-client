@@ -7,6 +7,7 @@ import {
   Home, Landmark, MapPin, Music, Navigation, PartyPopper, Phone, Sparkles, Utensils, type LucideIcon,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
+import ScrollToTop from "@/components/ScrollToTop";
 import JsonLd from "@/components/seo/JsonLd";
 import { pageSeo, siteKeywords, breadcrumbJsonLd, clampDescription, SITE_URL } from "@/lib/seo";
 import { CENTERS, getCenter, type Center } from "@/lib/centers";
@@ -99,6 +100,7 @@ export default async function CenterPage({ params }: Props) {
 
   return (
     <PageLayout>
+      <ScrollToTop k={c.slug} />
       <JsonLd data={breadcrumbJsonLd([{ name: "Our Centers", path: "/centers" }, { name: c.name, path }])} />
       <JsonLd data={templeJsonLd} />
       <main className="bg-white pt-[var(--header-h)]">

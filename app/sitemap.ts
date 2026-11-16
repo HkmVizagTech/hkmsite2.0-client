@@ -1,10 +1,12 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/seo";
 import { COUNCIL } from "@/lib/governance";
+import { ACHARYAS } from "@/lib/acharyas";
 import { OWN_TEMPLE_SLUG, TEMPLES } from "@/lib/templesData";
 import { CENTERS } from "@/lib/centers";
 import { WEB_STORIES } from "@/lib/webStories";
-import { isTeIndexable, localizedPath } from "@/lib/i18n/routing";
+import { localizedPath, OTHER_LOCALES, pageLanguages } from "@/lib/i18n/routing";
+import { LANGUAGES } from "@/lib/i18n/config";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 
@@ -18,6 +20,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/founder`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE_URL}/governance`, changeFrequency: "monthly", priority: 0.6 },
     ...COUNCIL.map((m) => ({ url: `${SITE_URL}/governance/${m.slug}`, changeFrequency: "yearly" as const, priority: 0.4 })),
+    { url: `${SITE_URL}/acharyas`, changeFrequency: "monthly", priority: 0.6 },
+    ...ACHARYAS.map((a) => ({ url: `${SITE_URL}/acharyas/${a.slug}`, changeFrequency: "yearly" as const, priority: 0.5 })),
     { url: `${SITE_URL}/temples`, changeFrequency: "monthly", priority: 0.6 },
     ...TEMPLES.filter((t) => t.slug !== OWN_TEMPLE_SLUG).map((t) => ({ url: `${SITE_URL}/temples/${t.slug}`, changeFrequency: "monthly" as const, priority: 0.5 })),
     { url: `${SITE_URL}/gallery`, changeFrequency: "weekly", priority: 0.6 },
@@ -184,18 +188,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   } catch {}
 
-  // Telugu: pages that are actually translated get their /te/ URL, and both
-  // versions point at each other (hreflang), so Telugu searches can find them.
+  // Translated pages get a URL per language, all pointing at each other (hreflang), so searches in each
+  // language can find them.
   const withLanguages: MetadataRoute.Sitemap = staticPages.flatMap((p) => {
     const path = p.url.slice(SITE_URL.length) || "/";
-    if (!isTeIndexable(path)) return [p];
-    const languages = {
-      "en-IN": `${SITE_URL}${localizedPath(path, "en")}`,
-      "te-IN": `${SITE_URL}${localizedPath(path, "te")}`,
-    };
+    const langs = pageLanguages(path);
+    if (langs.length < 2) return [p];
+    const languages = Object.fromEntries(LANGUAGES.filter((l) => langs.includes(l.code)).map((l) => [l.hreflang, `${SITE_URL}${localizedPath(path, l.code)}`]));
     return [
       { ...p, alternates: { languages } },
-      { ...p, url: languages["te-IN"], priority: Math.max(0.5, (p.priority ?? 0.5) - 0.1), alternates: { languages } },
+      ...OTHER_LOCALES.filter((code) => langs.includes(code)).map((code) => ({ ...p, url: `${SITE_URL}${localizedPath(path, code)}`, priority: Math.max(0.5, (p.priority ?? 0.5) - 0.1), alternates: { languages } })),
     ];
   });
 

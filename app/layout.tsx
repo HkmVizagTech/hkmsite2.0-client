@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Poppins, Playfair_Display, Plus_Jakarta_Sans, Noto_Sans_Telugu } from "next/font/google";
+import { Poppins, Playfair_Display, Plus_Jakarta_Sans, Noto_Sans_Telugu, Noto_Sans_Devanagari, Noto_Sans_Tamil, Noto_Sans_Kannada, Noto_Sans_Malayalam, Noto_Sans_Oriya, Noto_Sans_Bengali, Noto_Sans_Gujarati } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
@@ -41,6 +41,16 @@ const telugu = Noto_Sans_Telugu({
   preload: false,
 });
 
+// Other Indian scripts, same approach as Telugu: fallbacks in every font stack, fetched only when that script
+// is actually on the page (preload: false + unicode-range), so other visitors never download them.
+const devanagari = Noto_Sans_Devanagari({ subsets: ["devanagari"], weight: ["400", "500", "600", "700"], variable: "--font-deva", preload: false });
+const tamil = Noto_Sans_Tamil({ subsets: ["tamil"], weight: ["400", "500", "600", "700"], variable: "--font-tamil", preload: false });
+const kannada = Noto_Sans_Kannada({ subsets: ["kannada"], weight: ["400", "500", "600", "700"], variable: "--font-kannada", preload: false });
+const malayalam = Noto_Sans_Malayalam({ subsets: ["malayalam"], weight: ["400", "500", "600", "700"], variable: "--font-malayalam", preload: false });
+const oriya = Noto_Sans_Oriya({ subsets: ["oriya"], weight: ["400", "500", "600", "700"], variable: "--font-oriya", preload: false });
+const bengali = Noto_Sans_Bengali({ subsets: ["bengali"], weight: ["400", "500", "600", "700"], variable: "--font-bengali", preload: false });
+const gujarati = Noto_Sans_Gujarati({ subsets: ["gujarati"], weight: ["400", "500", "600", "700"], variable: "--font-gujarati", preload: false });
+
 const playfair = Playfair_Display({
   subsets: ["latin"],
   weight: ["500", "600", "700"],
@@ -57,7 +67,7 @@ export const metadata: Metadata = {
   // Every page title reads "Topic | ISKCON Gambheeram Visakhapatnam";
   // pages pass only their topic (see pageSeo in lib/seo.ts).
   title: {
-    default: "ISKCON Vizag | ISKCON Gambheeram Visakhapatnam, Hare Krishna Vaikuntham Temple",
+    default: "ISKCON Vizag Temple | ISKCON Gambheeram Visakhapatnam",
     template: TITLE_TEMPLATE,
   },
   description:
@@ -72,7 +82,7 @@ export const metadata: Metadata = {
   // multiple pages before this fix. Canonical is now set per-page
   // instead (see app/page.tsx for the homepage's own).
   openGraph: {
-    title: "ISKCON Vizag | ISKCON Gambheeram Visakhapatnam, Hare Krishna Vaikuntham Temple",
+    title: "ISKCON Vizag Temple | ISKCON Gambheeram Visakhapatnam",
     description: "ISKCON Gambheeram Visakhapatnam — the Hare Krishna Vaikuntham temple in Vizag. Daily darshan, prasadam, festivals and seva since 2008.",
     type: "website",
     locale: "en_IN",
@@ -82,7 +92,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "ISKCON Vizag | ISKCON Gambheeram Visakhapatnam, Hare Krishna Vaikuntham Temple",
+    title: "ISKCON Vizag Temple | ISKCON Gambheeram Visakhapatnam",
     description: "The Hare Krishna Vaikuntham temple in Visakhapatnam — darshan, kirtan, prasadam and festivals for everyone.",
     images: [DEFAULT_OG_IMAGE],
   },
@@ -202,7 +212,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-  <html lang="en" className={`h-full antialiased overflow-x-clip ${playfair.variable} ${poppins.variable} ${jakarta.variable} ${telugu.variable}`} suppressHydrationWarning>
+  <html lang="en" className={`h-full antialiased overflow-x-clip ${playfair.variable} ${poppins.variable} ${jakarta.variable} ${telugu.variable} ${devanagari.variable} ${tamil.variable} ${kannada.variable} ${malayalam.variable} ${oriya.variable} ${bengali.variable} ${gujarati.variable}`} suppressHydrationWarning>
       <head>
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-XVDQNJK24G"
