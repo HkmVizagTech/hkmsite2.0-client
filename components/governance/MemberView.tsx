@@ -8,6 +8,7 @@ import { ArrowLeft, ArrowRight, Check, Play, X } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { useT } from "@/components/i18n/LocaleProvider";
 import { COUNCIL, type CouncilMember, type Video } from "@/lib/governance";
+import { scrollToTopNow } from "@/lib/scrollTop";
 import { Eyebrow, INK, IVORY, Medallion } from "./GovernanceView";
 
 const ease = [0.22, 0.8, 0.3, 1] as const;
@@ -118,7 +119,7 @@ export default function MemberView({ m }: { m: CouncilMember }) {
   const reduce = useReducedMotion();
   const [video, setVideo] = useState<Video | null>(null);
   // moving to another member (Previous / Next) always starts at the top of their profile
-  useEffect(() => { window.scrollTo({ top: 0, left: 0, behavior: "instant" }); }, [m.slug]);
+  useEffect(() => { scrollToTopNow(); }, [m.slug]);
   const i = COUNCIL.findIndex((x) => x.slug === m.slug);
   const prev = COUNCIL[(i - 1 + COUNCIL.length) % COUNCIL.length];
   const next = COUNCIL[(i + 1) % COUNCIL.length];

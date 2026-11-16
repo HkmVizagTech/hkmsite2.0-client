@@ -30,6 +30,7 @@ export default function SmoothScroll() {
         // Let the browser handle scrolling whenever the page is locked by an open modal / sheet.
         prevent: () => document.body.style.overflow === "hidden" || document.documentElement.style.overflow === "hidden" || document.body.hasAttribute("data-scroll-locked"),
       });
+      (window as unknown as { __lenis?: unknown }).__lenis = lenis;
       const tick = (t: number) => {
         lenis?.raf(t);
         raf = requestAnimationFrame(tick);
@@ -41,6 +42,7 @@ export default function SmoothScroll() {
       cancelled = true;
       cancelAnimationFrame(raf);
       lenis?.destroy();
+      delete (window as unknown as { __lenis?: unknown }).__lenis;
     };
   }, [off]);
 
