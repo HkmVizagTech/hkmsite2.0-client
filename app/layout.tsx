@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Poppins, Playfair_Display, Plus_Jakarta_Sans, Noto_Sans_Telugu, Noto_Sans_Devanagari, Noto_Sans_Tamil, Noto_Sans_Kannada, Noto_Sans_Malayalam, Noto_Sans_Oriya, Noto_Sans_Bengali, Noto_Sans_Gujarati } from "next/font/google";
+import { Poppins, Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import Script from "next/script";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
@@ -31,25 +32,18 @@ const jakarta = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
 });
 
-// Telugu script (the Latin fonts above have no Telugu glyphs). It sits in
-// every font stack as a fallback, so Telugu text picks it up automatically.
-const telugu = Noto_Sans_Telugu({
-  subsets: ["telugu"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-telugu",
-  // Only fetched when Telugu text is on the page; English visitors never pay for it.
-  preload: false,
-});
-
-// Other Indian scripts, same approach as Telugu: fallbacks in every font stack, fetched only when that script
-// is actually on the page (preload: false + unicode-range), so other visitors never download them.
-const devanagari = Noto_Sans_Devanagari({ subsets: ["devanagari"], weight: ["400", "500", "600", "700"], variable: "--font-deva", preload: false });
-const tamil = Noto_Sans_Tamil({ subsets: ["tamil"], weight: ["400", "500", "600", "700"], variable: "--font-tamil", preload: false });
-const kannada = Noto_Sans_Kannada({ subsets: ["kannada"], weight: ["400", "500", "600", "700"], variable: "--font-kannada", preload: false });
-const malayalam = Noto_Sans_Malayalam({ subsets: ["malayalam"], weight: ["400", "500", "600", "700"], variable: "--font-malayalam", preload: false });
-const oriya = Noto_Sans_Oriya({ subsets: ["oriya"], weight: ["400", "500", "600", "700"], variable: "--font-oriya", preload: false });
-const bengali = Noto_Sans_Bengali({ subsets: ["bengali"], weight: ["400", "500", "600", "700"], variable: "--font-bengali", preload: false });
-const gujarati = Noto_Sans_Gujarati({ subsets: ["gujarati"], weight: ["400", "500", "600", "700"], variable: "--font-gujarati", preload: false });
+// Indian scripts (the Latin fonts above have no glyphs for them). Stored in the project (app/fonts, the
+// Noto Sans variable fonts from Google Fonts, script subset only) so the build never depends on downloading them.
+// Each sits in every font stack as a fallback and is fetched only when that script is on the page
+// (preload: false + unicode-range), so English visitors never pay for them.
+const telugu = localFont({ src: "./fonts/noto-sans-telugu.woff2", weight: "400 700", variable: "--font-telugu", preload: false, display: "swap", declarations: [{ prop: "unicode-range", value: "U+0951-0952, U+0964-0965, U+0B83, U+0C00-0C7F, U+1CD5-1CD6, U+1CD8, U+1CDA, U+1CF2, U+200C-200D, U+25CC" }] });
+const devanagari = localFont({ src: "./fonts/noto-sans-deva.woff2", weight: "400 700", variable: "--font-deva", preload: false, display: "swap", declarations: [{ prop: "unicode-range", value: "U+0900-097F, U+1CD0-1CF4, U+1CF7-1CF9, U+200C-200D, U+20A8, U+20B9, U+20F0, U+25CC, U+A830-A839, U+A8E0-A8FF, U+11B00-11B0A" }] });
+const tamil = localFont({ src: "./fonts/noto-sans-tamil.woff2", weight: "400 700", variable: "--font-tamil", preload: false, display: "swap", declarations: [{ prop: "unicode-range", value: "U+0964-0965, U+0B82-0BFA, U+200C-200D, U+20B9, U+25CC" }] });
+const kannada = localFont({ src: "./fonts/noto-sans-kannada.woff2", weight: "400 700", variable: "--font-kannada", preload: false, display: "swap", declarations: [{ prop: "unicode-range", value: "U+0951-0952, U+0964-0965, U+0B83, U+0C80-0CF3, U+1CD0, U+1CD2-1CD3, U+1CDA, U+1CF2, U+1CF4, U+200C-200D, U+20B9, U+25CC, U+A830-A835" }] });
+const malayalam = localFont({ src: "./fonts/noto-sans-malayalam.woff2", weight: "400 700", variable: "--font-malayalam", preload: false, display: "swap", declarations: [{ prop: "unicode-range", value: "U+0307, U+0323, U+0951-0952, U+0964-0965, U+0B83, U+0D00-0D7F, U+1CDA, U+1CF2, U+200C-200D, U+20B9, U+25CC, U+A830-A832" }] });
+const oriya = localFont({ src: "./fonts/noto-sans-oriya.woff2", weight: "400 700", variable: "--font-oriya", preload: false, display: "swap", declarations: [{ prop: "unicode-range", value: "U+0951-0952, U+0964-0965, U+0B01-0B77, U+1CDA, U+1CF2, U+200C-200D, U+20B9, U+25CC" }] });
+const bengali = localFont({ src: "./fonts/noto-sans-bengali.woff2", weight: "400 700", variable: "--font-bengali", preload: false, display: "swap", declarations: [{ prop: "unicode-range", value: "U+0951-0952, U+0964-0965, U+0980-09FE, U+1CD0, U+1CD2, U+1CD5-1CD6, U+1CD8, U+1CE1, U+1CEA, U+1CED, U+1CF2, U+1CF5-1CF7, U+200C-200D, U+20B9, U+25CC, U+A8F1, U+11DF0-11DF1" }] });
+const gujarati = localFont({ src: "./fonts/noto-sans-gujarati.woff2", weight: "400 700", variable: "--font-gujarati", preload: false, display: "swap", declarations: [{ prop: "unicode-range", value: "U+0951-0952, U+0964-0965, U+0A80-0AFF, U+200C-200D, U+20B9, U+25CC, U+A830-A839" }] });
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
