@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Download, Info, Star, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Download, Star, X } from "lucide-react";
 
 /* Shared pieces for the temple guide: white pages, brand blue + gold accents. */
 
@@ -68,12 +68,10 @@ export function TempleArt({ telugu, form }: { telugu: string; form: string }) {
 
 /**
  * Full-screen photo viewer: the photo's own colours glow softly behind it, title and "Photo n of N" on top with
- * Download / Close, arrows + keyboard + swipe, a thumbnail strip that follows along. The photographer's credit (needed
- * by the free licences) is tucked behind the ⓘ button instead of sitting on the photo.
+ * Download / Close, arrows + keyboard + swipe, a thumbnail strip that follows along. Credits live on /temples/photo-credits.
  */
 export function Lightbox({ photos, index, onClose, onIndex, title, kicker }: { photos: Photo[]; index: number | null; onClose: () => void; onIndex: (i: number) => void; title?: string; kicker?: string }) {
   const [dir, setDir] = useState(1);
-  const [info, setInfo] = useState(false);
   const [strip, setStrip] = useState<HTMLDivElement | null>(null);
   const go = useCallback((d: number) => { if (index === null) return; setDir(d); onIndex((index + d + photos.length) % photos.length); }, [index, onIndex, photos.length]);
   useEffect(() => {
@@ -83,7 +81,7 @@ export function Lightbox({ photos, index, onClose, onIndex, title, kicker }: { p
     const o = document.body.style.overflow; document.body.style.overflow = "hidden";
     return () => { window.removeEventListener("keydown", k); document.body.style.overflow = o; };
   }, [index, go, onClose]);
-  useEffect(() => { setInfo(false); strip?.querySelector<HTMLElement>(`[data-i="${index}"]`)?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" }); }, [index, strip]);
+  useEffect(() => { strip?.querySelector<HTMLElement>(`[data-i="${index}"]`)?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" }); }, [index, strip]);
   const p = index !== null ? photos[index] : null;
   const download = async () => {
     if (!p) return;
@@ -118,20 +116,9 @@ export function Lightbox({ photos, index, onClose, onIndex, title, kicker }: { p
             </div>
             <div className="flex shrink-0 gap-2">
               <button type="button" onClick={download} className={btn} aria-label="Download photo"><Download className="h-4 w-4" /><span className="hidden sm:inline">Download</span></button>
-              {p.credit && <button type="button" onClick={() => setInfo((v) => !v)} className={`${btn} px-3.5 ${info ? "bg-white/20" : ""}`} aria-label="Photo info" aria-expanded={info}><Info className="h-4 w-4" /></button>}
               <button type="button" onClick={onClose} className={`${btn} px-3.5`} aria-label="Close"><X className="h-5 w-5" /></button>
             </div>
           </div>
-          <AnimatePresence>
-            {info && p.credit && (
-              <motion.p initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}
-                className="absolute right-4 top-[4.6rem] z-20 max-w-xs rounded-2xl bg-white px-4 py-3 text-[12.5px] leading-5 text-[#0A1233] shadow-2xl md:right-8 md:top-[5.5rem]">
-                Photo: {p.source ? <a href={p.source} target="_blank" rel="noopener noreferrer nofollow" className="font-semibold text-[#1E3A8A] underline">{p.credit}</a> : p.credit}
-                {p.license ? <span className="text-[#0A1233]/55"> · {p.license}</span> : null}
-              </motion.p>
-            )}
-          </AnimatePresence>
-
           {/* photo */}
           <div className="relative z-0 flex min-h-0 flex-1 items-center justify-center px-3 py-4 md:px-24">
             <button type="button" aria-label="Previous photo" onClick={() => go(-1)} className="absolute left-3 z-10 hidden h-14 w-14 items-center justify-center rounded-full bg-white/[.08] ring-1 ring-white/20 backdrop-blur transition hover:bg-white hover:text-[#0A1233] md:left-8 md:flex"><ChevronLeft className="h-6 w-6" /></button>

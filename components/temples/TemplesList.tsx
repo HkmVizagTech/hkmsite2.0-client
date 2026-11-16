@@ -265,6 +265,7 @@ export default function TemplesList({ temples }: { temples: TempleCardData[] }) 
                 <Link href="/anna-daan-seva" className="inline-flex items-center rounded-full bg-white px-6 py-3 text-[14px] font-bold text-[#0A1233] ring-1 ring-[#E9D49B] hover:ring-[#0A1233]">{t("Offer Anna Daan")}</Link>
               </div>
             </div>
+            <p className="mx-auto mt-6 max-w-6xl text-right text-[11px] text-[#0A1233]/35"><Link href="/temples/photo-credits" className="hover:text-[#0A1233]/60">{t("Photo credits")}</Link></p>
           </div>
         </section>
       </div>

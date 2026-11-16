@@ -227,10 +227,6 @@ export default function TempleView({ temple: tm, photos, nearby }: { temple: Tem
                   <div className="mt-6">
                     <Mosaic photos={photos} name={tm.name} onOpen={setLightbox} fallback={<TempleArt telugu={tm.teluguName} form={tm.form} />} />
                   </div>
-                  <details className="mt-3 text-[11.5px] text-[#0A1233]/40">
-                    <summary className="cursor-pointer list-none hover:text-[#0A1233]/70 [&::-webkit-details-marker]:hidden">{t("Photo credits")}</summary>
-                    <p className="mt-1.5 leading-5">{photos.filter((x) => x.credit).map((x) => `${x.credit}${x.license ? ` (${x.license})` : ""}`).filter((v, i, a) => a.indexOf(v) === i).join(" · ")} · {t("via Wikimedia Commons")}</p>
-                  </details>
                 </section>
               )}
 
