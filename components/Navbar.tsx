@@ -467,9 +467,9 @@ const Navbar = () => {
           {/* ── Mobile: Donate Now button ─────────────────────────── */}
           <div className="flex items-center gap-1.5 lg:hidden">
             <LanguagePicker variant="compact" />
-            <Link href="/donate" aria-label={t("Donate")} className="vk-btn-gold !h-10 !min-w-10 shrink-0 !rounded-xl !px-2.5 !py-0 !text-[12px] min-[360px]:!h-9 min-[360px]:!px-3.5">
+            <Link href="/donate" aria-label={t("Donate")} className="vk-btn-gold !h-10 !min-w-10 shrink-0 !rounded-xl !px-2.5 !py-0 !text-[12px] min-[400px]:!h-9 min-[400px]:!px-3.5">
               <Heart className="h-3.5 w-3.5 fill-current" />
-              <span className="hidden min-[360px]:inline">{t("Donate")}</span>
+              <span className="hidden min-[400px]:inline">{t("Donate")}</span>
             </Link>
           </div>
         </div>
