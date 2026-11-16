@@ -55,21 +55,21 @@ function CouncilCard({ m, i }: { m: CouncilMember; i: number }) {
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.75, ease, delay: (i % 4) * 0.08 }}
     >
-      <Link href={`/governance/${m.slug}`} className="group block">
+      <Link href={`/governance/${m.slug}`} className="group flex h-full flex-col">
         {/* tile with the cut-out rising out of its top edge */}
-        <div className="relative aspect-[4/5] overflow-hidden rounded-[1.6rem] bg-[radial-gradient(90%_70%_at_50%_15%,#2A4BA8_0%,#14286A_60%,#0A1640_100%)] shadow-[0_26px_50px_-30px_rgba(15,30,74,.75)] ring-1 ring-[#C9962B]/0 transition-all duration-500 group-hover:ring-[#C9962B]/70">
+        <div className="relative isolate aspect-[4/5] overflow-hidden rounded-[1.6rem] [transform:translateZ(0)] bg-[radial-gradient(90%_70%_at_50%_15%,#2A4BA8_0%,#14286A_60%,#0A1640_100%)] shadow-[0_26px_50px_-30px_rgba(15,30,74,.75)] ring-1 ring-[#C9962B]/0 transition-all duration-500 group-hover:ring-[#C9962B]/70">
           <svg aria-hidden viewBox="0 0 100 125" className="absolute inset-0 h-full w-full"><circle cx="50" cy="52" r="34" fill="none" stroke="#F6C752" strokeOpacity=".22" strokeWidth=".4" /><circle cx="50" cy="52" r="40" fill="none" stroke="#F6C752" strokeOpacity=".12" strokeWidth=".3" strokeDasharray="1 2" /></svg>
-          <div className="absolute inset-x-[6%] bottom-0 top-[10%] transition-transform duration-700 ease-out group-hover:scale-[1.04]" style={{ transformOrigin: "50% 100%" }}>
+          <div className="absolute inset-x-[6%] bottom-0 top-[13%] transition-transform duration-700 ease-out group-hover:scale-[1.04]" style={{ transformOrigin: "50% 100%" }}>
             <Image src={m.cutout} alt={m.name} fill sizes="(min-width: 1280px) 280px, (min-width: 768px) 30vw, 46vw" className="object-contain object-bottom drop-shadow-[0_14px_16px_rgba(5,10,30,.45)]" />
           </div>
           <span className="absolute right-3 top-3 rounded-full bg-[#FBF7EE]/95 px-2.5 py-1 text-[10.5px] font-bold text-[#0F1E4A] shadow">
             {m.years}+ {t("yrs")}
           </span>
         </div>
-        <div className="px-1 pt-4">
+        <div className="flex flex-1 flex-col px-1 pt-4">
           <h3 className="font-serif-display text-[17px] font-bold leading-snug text-[#0F1E4A] md:text-xl">{m.name}</h3>
           <p className="mt-1 line-clamp-2 text-[12.5px] leading-snug text-[#0F1E4A]/65 md:text-[13px]">{t(m.roles[0])}</p>
-          <span className="mt-3 inline-flex items-center gap-1 text-[12.5px] font-bold uppercase tracking-[0.12em] text-[#A87A1E]">
+          <span className="mt-auto inline-flex items-center gap-1 self-start pt-3 text-[12.5px] font-bold uppercase tracking-[0.12em] text-[#A87A1E]">
             {t("View profile")} <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
           </span>
         </div>
@@ -86,32 +86,18 @@ export default function GovernanceView() {
   return (
     <PageLayout background={IVORY}>
       <div className="overflow-x-clip pt-[var(--header-h)]" style={{ background: IVORY }}>
-        {/* ══ HERO: the council photograph, with an ivory plaque over its lower edge ══ */}
-        <section className="relative pt-4 md:pt-8">
-          <div className="vk-container">
+        {/* ══ HERO: title first, then the council photograph shown in full (nothing laid over the faces) ══ */}
+        <section className="relative pt-10 md:pt-16">
+          <div aria-hidden className="absolute inset-x-0 top-0 h-[60%] bg-[radial-gradient(50%_70%_at_50%_0%,rgba(201,150,43,.12),transparent_70%)]" />
+          <div className="vk-container relative">
             <motion.div
-              initial={reduce ? false : { opacity: 0, scale: 1.02 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1.2, ease }}
-              className="relative overflow-hidden rounded-[1.75rem] shadow-[0_40px_80px_-50px_rgba(15,30,74,.8)] md:rounded-[2.25rem]"
-            >
-              <div className="relative aspect-[1000/962] md:hidden">
-                <Image src={COUNCIL_BANNER_MOBILE} alt={t("The Governing Council of the Hare Krishna Movement")} fill priority sizes="100vw" className="object-cover" />
-              </div>
-              <div className="relative hidden aspect-[2400/596] md:block">
-                <Image src={COUNCIL_BANNER} alt={t("The Governing Council of the Hare Krishna Movement")} fill priority sizes="(min-width: 1312px) 1280px, 100vw" className="object-cover" />
-              </div>
-              <div aria-hidden className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,22,64,.12)_0%,transparent_40%,transparent_80%,rgba(251,247,238,.85)_100%)]" />
-            </motion.div>
-
-            <motion.div
-              initial={reduce ? false : { opacity: 0, y: 24 }}
+              initial={reduce ? false : { opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.9, ease, delay: 0.2 }}
-              className="relative mx-auto -mt-8 max-w-3xl rounded-[1.75rem] bg-white px-6 py-8 text-center shadow-[0_30px_60px_-38px_rgba(15,30,74,.55)] ring-1 ring-[#E7DCC3] md:-mt-10 md:px-14 md:py-11"
+              transition={{ duration: 0.9, ease }}
+              className="mx-auto max-w-3xl text-center"
             >
               <Eyebrow center>{t("Hare Krishna Movement")}</Eyebrow>
-              <h1 className="mt-4 font-serif-display text-[2.6rem] font-bold leading-none text-[#0F1E4A] md:text-7xl">{t("Governance")}</h1>
+              <h1 className="mt-4 font-serif-display text-[2.8rem] font-bold leading-none text-[#0F1E4A] md:text-[5.5rem]">{t("Governance")}</h1>
               <div aria-hidden className="mx-auto mt-5 flex items-center justify-center gap-2 text-[#C9962B]">
                 <span className="h-px w-16 bg-gradient-to-r from-transparent to-[#C9962B]" />◆<span className="h-px w-16 bg-gradient-to-l from-transparent to-[#C9962B]" />
               </div>
@@ -119,6 +105,30 @@ export default function GovernanceView() {
                 {t("Every movement thrives through inspired leadership. These are the torchbearers, teachers, and guides who transform timeless wisdom into living practice, bringing Krishna consciousness to life across the world.")}
               </p>
             </motion.div>
+
+            <motion.figure
+              initial={reduce ? false : { opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1.1, ease, delay: 0.15 }}
+              className="relative mx-auto mt-10 max-w-7xl md:mt-14"
+            >
+              {/* gold hairline frame offset behind the photo */}
+              <div className="relative">
+              <span aria-hidden className="absolute -inset-2 rounded-[2rem] ring-1 ring-[#C9962B]/45 md:-inset-3 md:rounded-[2.6rem]" />
+              <div className="relative isolate overflow-hidden rounded-[1.6rem] bg-[#0A1640] shadow-[0_50px_90px_-50px_rgba(15,30,74,.9)] md:rounded-[2.2rem]">
+                <div className="relative aspect-[1000/962] md:hidden">
+                  <Image src={COUNCIL_BANNER_MOBILE} alt={t("The Governing Council of the Hare Krishna Movement")} fill priority sizes="100vw" className="object-cover" />
+                </div>
+                <div className="relative hidden aspect-[2400/596] md:block">
+                  <Image src={COUNCIL_BANNER} alt={t("The Governing Council of the Hare Krishna Movement")} fill priority sizes="(min-width: 1312px) 1280px, 100vw" className="object-cover" />
+                </div>
+                <div aria-hidden className="pointer-events-none absolute inset-0 rounded-[inherit] ring-1 ring-inset ring-white/10" />
+              </div>
+              </div>
+              <figcaption className="mt-6 text-center text-[11px] font-bold uppercase tracking-[0.26em] text-[#0F1E4A]/50 md:mt-6">
+                {t("The Governing Council of the Hare Krishna Movement")}
+              </figcaption>
+            </motion.figure>
           </div>
         </section>
 

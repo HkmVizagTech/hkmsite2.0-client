@@ -28,4 +28,6 @@ export const governance: Record<string, string> = {
   "Hear from": "వినండి:",
   "Play": "ప్లే",
   "Close": "మూసివేయండి",
+  "His journey": "వారి ప్రయాణం",
+  "More videos": "మరిన్ని వీడియోలు",
 };
