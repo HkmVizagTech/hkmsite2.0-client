@@ -67,7 +67,7 @@ export const metadata: Metadata = {
   // Every page title reads "Topic | ISKCON Gambheeram Visakhapatnam";
   // pages pass only their topic (see pageSeo in lib/seo.ts).
   title: {
-    default: "ISKCON Vizag | ISKCON Gambheeram Visakhapatnam, Hare Krishna Vaikuntham Temple",
+    default: "ISKCON Vizag Temple | ISKCON Gambheeram Visakhapatnam",
     template: TITLE_TEMPLATE,
   },
   description:
@@ -82,7 +82,7 @@ export const metadata: Metadata = {
   // multiple pages before this fix. Canonical is now set per-page
   // instead (see app/page.tsx for the homepage's own).
   openGraph: {
-    title: "ISKCON Vizag | ISKCON Gambheeram Visakhapatnam, Hare Krishna Vaikuntham Temple",
+    title: "ISKCON Vizag Temple | ISKCON Gambheeram Visakhapatnam",
     description: "ISKCON Gambheeram Visakhapatnam — the Hare Krishna Vaikuntham temple in Vizag. Daily darshan, prasadam, festivals and seva since 2008.",
     type: "website",
     locale: "en_IN",
@@ -92,7 +92,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "ISKCON Vizag | ISKCON Gambheeram Visakhapatnam, Hare Krishna Vaikuntham Temple",
+    title: "ISKCON Vizag Temple | ISKCON Gambheeram Visakhapatnam",
     description: "The Hare Krishna Vaikuntham temple in Visakhapatnam — darshan, kirtan, prasadam and festivals for everyone.",
     images: [DEFAULT_OG_IMAGE],
   },

@@ -346,10 +346,10 @@ const Navbar = () => {
           }`}
         >
           {/* ── Logo ─────────────────────────────────────────────── */}
-          <Link href="/" className="flex shrink-0 items-center gap-3" aria-label={t("Hare Krishna Movement Vizag — Home")}>
+          <Link href="/" className="flex shrink-0 items-center gap-3" aria-label={t("Home")}>
             <Image
               src={typeof ISKLogo === "string" ? ISKLogo : ISKLogo.src}
-              alt={t("ISKCON Gambheeram Visakhapatnam - Hare Krishna Movement Vizag")}
+              alt={t("ISKCON Gambheeram Visakhapatnam logo")}
               width={300}
               height={112}
               priority
@@ -360,7 +360,7 @@ const Navbar = () => {
               <span className="h-6 w-px shrink-0 bg-vk-200 md:h-8" aria-hidden />
               <Image
                 src={typeof HKVTLogo === "string" ? HKVTLogo : HKVTLogo.src}
-                alt={t("Hare Krishna Movement Vizag")}
+                alt={t("Hare Krishna Vaikuntham Cultural Centre logo")}
                 width={795}
                 height={288}
                 className="h-7 w-auto shrink-0 md:h-11 lg:h-9"

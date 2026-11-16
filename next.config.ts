@@ -122,6 +122,11 @@ const nextConfig: NextConfig = {
       { source: "/terms", destination: "/terms-and-conditions", permanent: true },
       { source: "/privacy", destination: "/privacy-policy", permanent: true },
       { source: "/festivals", destination: "/festival", permanent: true },
+      // Old site addresses still in Google (they 404 now).
+      { source: "/sevas", destination: "/donate", permanent: true },
+      { source: "/sevas/:path*", destination: "/donate", permanent: true },
+      { source: "/aboutfounder", destination: "/founder", permanent: true },
+      { source: "/about-founder", destination: "/founder", permanent: true },
     ];
   },
 };
