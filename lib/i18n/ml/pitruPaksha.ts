@@ -1,0 +1,137 @@
+// Malayalam translations — keyed by the exact English source text.
+// See lib/i18n/ml/GLOSSARY.md for the terms to use.
+export const pitruPaksha: Record<string, string> = {
+  "Pitru Paksha seva at Hare Krishna Movement Vizag": "ഹരേ കൃഷ്ണ പ്രസ്ഥാനം വൈസാഗിൽ പിതൃപക്ഷ സേവ",
+  "Choose Your Offering": "സമർപ്പണം തിരഞ്ഞെടുക്കൂ",
+  "Pitru Paksha Sevas": "പിതൃപക്ഷ സേവകൾ",
+  "Honour your ancestors with sacred seva and receive their blessings": "പവിത്ര സേവയിലൂടെ പിതൃക്കളെ ആദരിച്ച് അനുഗ്രഹം നേടൂ",
+  "Annadana Seva": "അന്നദാന സേവ",
+  "Sadhu Bhojan Seva": "സാധു ഭോജന സേവ",
+  "Gau Seva": "ഗോസേവ",
+  "Brick Seva": "ഇഷ്ടിക സേവ",
+  "Square Foot Seva": "ചതുരശ്രയടി സേവ",
+  "Feed devotees and the needy with sanctified prasadam in honour of your forefathers — the highest form of daan.":
+    "പിതൃക്കളുടെ സ്മരണയ്ക്കായി ഭക്തർക്കും ആവശ്യക്കാർക്കും പ്രസാദം നൽകൂ — ഏറ്റവും ഉന്നതമായ ദാനം.",
+  "Serve a sanctified meal to Vaishnavas and saintly persons — dinner blessed by the saints reaches the ancestors.":
+    "വൈഷ്ണവർക്കും സാധുക്കൾക്കും പ്രസാദഭോജനം നൽകൂ — സാധുക്കൾ അനുഗ്രഹിക്കുന്ന ഭോജനം പിതൃക്കളിലെത്തുന്നു.",
+  "Serve the sacred cows at our goshala — a seva that pleases the Lord and sanctifies the memory of the departed.":
+    "ഞങ്ങളുടെ ഗോശാലയിലെ പവിത്ര പശുക്കളെ സേവിക്കൂ — ഭഗവാനെ പ്രീതിപ്പെടുത്തുകയും പരേതരുടെ സ്മരണയെ പവിത്രമാക്കുകയും ചെയ്യുന്ന സേവ.",
+  "Sponsor a sacred brick of the Hare Krishna Vaikuntham Temple under construction — each brick laid in devotion becomes an eternal part of the Lord's abode.":
+    "നിർമ്മാണത്തിലുള്ള ഹരേ കൃഷ്ണ വൈകുണ്ഠം ക്ഷേത്രത്തിന് ഒരു പവിത്ര ഇഷ്ടിക സമർപ്പിക്കൂ — ഭക്തിയോടെ പാകുന്ന ഓരോ ഇഷ്ടികയും ഭഗവാന്റെ വാസസ്ഥാനത്തിന്റെ ശാശ്വത ഭാഗമാകും.",
+  "Be a part of the temple in the making — sponsor square feet of its sacred construction and leave an eternal footprint in the Lord's divine abode.":
+    "ഉയരുന്ന ക്ഷേത്രത്തിന്റെ ഭാഗമാകൂ — പവിത്ര നിർമ്മാണത്തിന്റെ ചതുരശ്രയടി സമർപ്പിച്ച് ഭഗവാന്റെ ദിവ്യ വാസസ്ഥാനത്തിൽ ശാശ്വത മുദ്ര പതിപ്പിക്കൂ.",
+  "{count} meals": "{count} ഭക്ഷണം",
+  "{count} plates": "{count} പ്ലേറ്റ്",
+  "Fodder for a day": "ഒരു ദിവസത്തെ തീറ്റ",
+  "{count} cows · a day": "{count} പശു · ഒരു ദിവസം",
+  "Medicines & care": "മരുന്നും പരിചരണവും",
+  "{count} cow · a month": "{count} പശു · ഒരു മാസം",
+  "{count} cows · a month": "{count} പശു · ഒരു മാസം",
+  "Green grass, all cows": "എല്ലാ പശുക്കൾക്കും പച്ചപ്പുല്ല്",
+  "{count} brick": "{count} ഇഷ്ടിക",
+  "{count} bricks": "{count} ഇഷ്ടിക",
+  "{count} sq ft": "{count} ച.അടി",
+  "Donate Other Amount": "മറ്റൊരു തുക നൽകൂ",
+  "Hare Krishna Movement": "ഹരേ കൃഷ്ണ പ്രസ്ഥാനം",
+  "Pitru Paksha": "പിതൃപക്ഷം",
+  "The sacred fortnight to honour our ancestors. During Pitru Paksha, we offer shraddha, tarpan and charity — feeding devotees, serving sacred cows and glorifying the Lord — so the departed souls may attain peace and our families may receive their blessings.":
+    "പിതൃക്കളെ ആദരിക്കാനുള്ള പവിത്ര പക്ഷം. പിതൃപക്ഷത്തിൽ നാം ശ്രാദ്ധം, തർപ്പണം, ദാനം എന്നിവ അർപ്പിക്കുന്നു — ഭക്തർക്ക് അന്നം നൽകിയും പവിത്ര പശുക്കളെ സേവിച്ചും ഭഗവാനെ മഹത്വപ്പെടുത്തിയും — പരേതാത്മാക്കൾക്ക് ശാന്തിയും കുടുംബത്തിന് അവരുടെ അനുഗ്രഹവും ലഭിക്കാൻ.",
+  "The scriptures declare that whatever is offered with devotion during this fortnight — food, water or charity — reaches the ancestors directly. Gratitude, given in the form of seva, is the greatest homage we can offer.":
+    "ഈ പക്ഷത്തിൽ ഭക്തിയോടെ അർപ്പിക്കുന്ന അന്നം, ജലം, ദാനം എന്നിവ പിതൃക്കളിലേക്ക് നേരിട്ട് എത്തുമെന്ന് ശാസ്ത്രങ്ങൾ പറയുന്നു. സേവയായി നൽകുന്ന കൃതജ്ഞതയാണ് നമുക്ക് അർപ്പിക്കാവുന്ന ഏറ്റവും വലിയ ആദരം.",
+  "Offer Seva This Pitru Paksha": "ഈ പിതൃപക്ഷത്തിൽ സേവ അർപ്പിക്കൂ",
+  "Your offering sustains Annadana, Sadhu Bhojan, sacred cow care and every divine ritual performed at ISKCON Gambheeram Visakhapatnam — carrying your gratitude to the ancestors you remember.":
+    "താങ്കളുടെ സമർപ്പണം ഇസ്കോൺ ഗംഭീരം വിശാഖപട്ടണത്തിലെ അന്നദാനം, സാധു ഭോജനം, ഗോസംരക്ഷണം, എല്ലാ ദിവ്യ ചടങ്ങുകൾ എന്നിവയെ നിലനിർത്തുന്നു — താങ്കൾ സ്മരിക്കുന്ന പിതൃക്കളിലേക്ക് താങ്കളുടെ കൃതജ്ഞത എത്തിക്കുന്നു.",
+  "Offer Seva": "സേവ അർപ്പിക്കൂ",
+  "80G Tax Exemption": "80G നികുതി ഇളവ്",
+  "Mahaprasadam Sent": "മഹാപ്രസാദം അയയ്ക്കും",
+  "Instant Confirmation": "ഉടൻ സ്ഥിരീകരണം",
+  "Secure Razorpay Checkout": "സുരക്ഷിത Razorpay ചെക്ക്ഔട്ട്",
+  "While making UPI/Bank payments, please send a screenshot with your name, mobile, address and PAN details to our WhatsApp {phone} or email {email}.":
+    "UPI/ബാങ്ക് വഴി അടയ്ക്കുമ്പോൾ, പേര്, മൊബൈൽ, വിലാസം, PAN വിവരങ്ങൾ സഹിതം സ്ക്രീൻഷോട്ട് ഞങ്ങളുടെ WhatsApp {phone} അല്ലെങ്കിൽ ഇമെയിൽ {email}-ലേക്ക് അയയ്ക്കൂ.",
+  "Donation Through Bank (NEFT / RTGS)": "ബാങ്ക് വഴി സംഭാവന (NEFT / RTGS)",
+  "Beneficiary Name": "ഗുണഭോക്താവിന്റെ പേര്",
+  "Bank Name": "ബാങ്കിന്റെ പേര്",
+  "A/c No": "A/c നമ്പർ",
+  "IFSC Code": "IFSC കോഡ്",
+  "Copy {label}": "{label} കോപ്പി ചെയ്യൂ",
+  "Pitru Paksha Daan": "പിതൃപക്ഷ ദാനം",
+  "Honour Your Ancestors Through Pitru Paksha Daan Online": "ഓൺലൈൻ പിതൃപക്ഷ ദാനത്തിലൂടെ പിതൃക്കളെ ആദരിക്കൂ",
+  "The daans that most deeply satisfy the departed souls — offered with devotion at the temple, they carry your gratitude directly to the ancestors you remember.":
+    "പരേതാത്മാക്കളെ ഏറ്റവും തൃപ്തിപ്പെടുത്തുന്ന ദാനങ്ങൾ — ക്ഷേത്രത്തിൽ ഭക്തിയോടെ അർപ്പിക്കുമ്പോൾ, അവ താങ്കളുടെ കൃതജ്ഞത നേരിട്ട് പിതൃക്കളിലേക്ക് എത്തിക്കുന്നു.",
+  "The highest daan": "ഏറ്റവും ഉന്നതമായ ദാനം",
+  "Dear to Krishna": "കൃഷ്ണന് പ്രിയം",
+  "Blessings of saints": "സാധുക്കളുടെ അനുഗ്രഹം",
+  "Feeding devotees and the needy with sanctified prasadam is glorified as the highest form of daan — it is said to reach the ancestors directly.":
+    "ഭക്തർക്കും ആവശ്യക്കാർക്കും പ്രസാദം നൽകുന്നത് ഏറ്റവും ഉന്നതമായ ദാനമായി വാഴ്ത്തപ്പെടുന്നു — അത് പിതൃക്കളിലേക്ക് നേരിട്ട് എത്തുമെന്ന് പറയപ്പെടുന്നു.",
+  "Serving the sacred cows with fodder and loving care is supremely dear to Lord Krishna — and utterly satisfying to the departed.":
+    "പവിത്ര പശുക്കൾക്ക് തീറ്റയും സ്നേഹപരിചരണവും നൽകുന്നത് ശ്രീകൃഷ്ണന് ഏറെ പ്രിയം — പരേതർക്ക് പൂർണ്ണ തൃപ്തിയും.",
+  "Serving a sanctified meal to sadhus and Vaishnavas draws their blessings — carrying the offering to the pitrs.":
+    "സാധുക്കൾക്കും വൈഷ്ണവർക്കും പ്രസാദഭോജനം നൽകുന്നത് അവരുടെ അനുഗ്രഹം നേടിത്തരുന്നു — സമർപ്പണം പിതൃക്കളിലെത്തിക്കുന്നു.",
+  "Offer this seva": "ഈ സേവ അർപ്പിക്കൂ",
+  "Pitru Paksha is the fortnight of the Vedic calendar set aside for remembering and honouring our ancestors — the pitrs. Falling each year in the dark fortnight of Ashwin (September–October), it is a season of profound gratitude, when families across India offer shraddha, tarpan and charity on the tithi (date) of their departed elders.":
+    "പിതൃക്കളെ സ്മരിക്കാനും ആദരിക്കാനും വൈദിക കലണ്ടറിൽ മാറ്റിവച്ച പക്ഷമാണ് പിതൃപക്ഷം. എല്ലാ വർഷവും ആശ്വിന മാസത്തിലെ കൃഷ്ണപക്ഷത്തിൽ (സെപ്റ്റംബർ–ഒക്ടോബർ) വരുന്ന ഈ കാലത്ത്, ഇന്ത്യയിലെങ്ങുമുള്ള കുടുംബങ്ങൾ പരേതരായ മുതിർന്നവരുടെ തിഥിയിൽ ശ്രാദ്ധവും തർപ്പണവും ദാനവും അർപ്പിക്കുന്നു.",
+  "The scriptures tell us that whatever is given with love during this period — food, water, clothing or service — reaches the ancestors directly and brings them peace. Among all offerings, Annadana (feeding the hungry), Sadhu Bhojan (feeding saintly Vaishnavas) and Gau Seva (serving the sacred cows) are glorified as supremely pleasing, for they serve the Lord's own dependents.":
+    "ഈ കാലത്ത് സ്നേഹത്തോടെ നൽകുന്ന അന്നം, ജലം, വസ്ത്രം, സേവ എന്നിവയെല്ലാം പിതൃക്കളിലേക്ക് നേരിട്ട് എത്തി അവർക്ക് ശാന്തി നൽകുമെന്ന് ശാസ്ത്രങ്ങൾ പറയുന്നു. എല്ലാ സമർപ്പണങ്ങളിലും അന്നദാനം (വിശക്കുന്നവർക്ക് അന്നം), സാധു ഭോജനം (വൈഷ്ണവർക്ക് ഭോജനം), ഗോസേവ (പവിത്ര പശുക്കളുടെ സേവ) എന്നിവ ഏറ്റവും പ്രീതികരമായി വാഴ്ത്തപ്പെടുന്നു, കാരണം അവ ഭഗവാന്റെ ആശ്രിതരെ സേവിക്കുന്നു.",
+  "By offering seva this Pitru Paksha, you transform grief into grace. Every offering — no matter the amount — carries your love for those who came before you and returns as blessings upon your family.":
+    "ഈ പിതൃപക്ഷത്തിൽ സേവ അർപ്പിക്കുന്നതിലൂടെ ദുഃഖം അനുഗ്രഹമാകുന്നു. തുക എത്രയായാലും ഓരോ സമർപ്പണവും മുൻതലമുറയോടുള്ള താങ്കളുടെ സ്നേഹം വഹിച്ച്, കുടുംബത്തിന് അനുഗ്രഹമായി മടങ്ങിവരുന്നു.",
+  "What is Pitru Paksha?": "എന്താണ് പിതൃപക്ഷം?",
+  "Pitru Paksha (also called Mahalaya Paksha) is the fortnight of the Hindu calendar dedicated to honouring one's ancestors (pitrs). During this period, families perform shraddha, tarpan and pinda daan, and offer charity such as Annadana and Gau Seva so that the departed souls attain peace and the family receives their blessings.":
+    "പിതൃക്കളെ ആദരിക്കാൻ സമർപ്പിച്ച ഹിന്ദു കലണ്ടറിലെ പക്ഷമാണ് പിതൃപക്ഷം (മഹാലയ പക്ഷം). ഈ കാലത്ത് കുടുംബങ്ങൾ ശ്രാദ്ധം, തർപ്പണം, പിണ്ഡദാനം എന്നിവ നടത്തുകയും അന്നദാനം, ഗോസേവ തുടങ്ങിയ ദാനങ്ങൾ ചെയ്യുകയും ചെയ്യുന്നു — പരേതാത്മാക്കൾക്ക് ശാന്തിയും കുടുംബത്തിന് അനുഗ്രഹവും ലഭിക്കാൻ.",
+  "What sevas can I offer in Pitru Paksha?": "പിതൃപക്ഷത്തിൽ ഏതെല്ലാം സേവകൾ അർപ്പിക്കാം?",
+  "You can offer Annadana Seva (feeding the hungry), Sadhu Bhojan Seva (feeding Vaishnavas and saintly persons), Gau Seva (serving the sacred cows) and also Brick Seva or Square Foot Seva of the sacred temple construction. You may also donate any custom amount.":
+    "അന്നദാന സേവ (വിശക്കുന്നവർക്ക് അന്നം), സാധു ഭോജന സേവ (വൈഷ്ണവർക്കും സാധുക്കൾക്കും ഭോജനം), ഗോസേവ (പവിത്ര പശുക്കളുടെ സേവ), കൂടാതെ ക്ഷേത്ര നിർമ്മാണത്തിനുള്ള ഇഷ്ടിക സേവ അല്ലെങ്കിൽ ചതുരശ്രയടി സേവ എന്നിവ അർപ്പിക്കാം. ഇഷ്ടമുള്ള ഏതു തുകയും സംഭാവന ചെയ്യാം.",
+  "Why is Annadana considered the highest daan for ancestors?": "പിതൃക്കൾക്കായി അന്നദാനം ഏറ്റവും ഉന്നതമായ ദാനമാകുന്നത് എന്തുകൊണ്ട്?",
+  "Feeding others is glorified as the greatest of all charities. When food is first offered to the Lord and then distributed to devotees and the needy, the offering is purified and sanctified. It is believed that such an offering, made with love and remembrance of one's ancestors, reaches them directly and brings lasting peace to their souls.":
+    "മറ്റുള്ളവർക്ക് അന്നം നൽകുന്നത് എല്ലാ ദാനങ്ങളിലും ശ്രേഷ്ഠമായി വാഴ്ത്തപ്പെടുന്നു. ഭക്ഷണം ആദ്യം ഭഗവാന് നിവേദിച്ച് പിന്നീട് ഭക്തർക്കും ആവശ്യക്കാർക്കും വിതരണം ചെയ്യുമ്പോൾ അത് ശുദ്ധവും പവിത്രവുമാകുന്നു. പിതൃക്കളെ സ്നേഹത്തോടെ സ്മരിച്ച് നൽകുന്ന ഇത്തരം സമർപ്പണം അവരിലേക്ക് നേരിട്ട് എത്തി ശാശ്വത ശാന്തി നൽകുമെന്ന് വിശ്വസിക്കപ്പെടുന്നു.",
+  "Why serve cows and sadhus during Pitru Paksha?": "പിതൃപക്ഷത്തിൽ പശുക്കളെയും സാധുക്കളെയും സേവിക്കുന്നത് എന്തിന്?",
+  "Gau Seva and Sadhu Bhojan are held to be exceptionally meritorious. Serving Gau Mata pleases Lord Krishna, who is ever-protective of cows, and serving saintly Vaishnavas brings their blessings. The scriptures declare that charity given in this sacred fortnight, especially to cows and devotees of the Lord, deeply gratifies the departed souls.":
+    "ഗോസേവയും സാധു ഭോജനവും അതീവ പുണ്യകരമായി കരുതപ്പെടുന്നു. ഗോമാതാവിനെ സേവിക്കുന്നത് പശുക്കളുടെ സംരക്ഷകനായ ശ്രീകൃഷ്ണനെ പ്രീതിപ്പെടുത്തുന്നു; വൈഷ്ണവരെ സേവിക്കുന്നത് അവരുടെ അനുഗ്രഹം നേടിത്തരുന്നു. ഈ പവിത്ര പക്ഷത്തിൽ, പ്രത്യേകിച്ച് പശുക്കൾക്കും ഭഗവദ്ഭക്തർക്കും നൽകുന്ന ദാനം പരേതാത്മാക്കളെ ആഴത്തിൽ തൃപ്തിപ്പെടുത്തുമെന്ന് ശാസ്ത്രങ്ങൾ പറയുന്നു.",
+  "How will my donation be used?": "എന്റെ സംഭാവന എങ്ങനെ ഉപയോഗിക്കും?",
+  "Your donation directly funds the Pitru Paksha celebrations — prasadam preparation and distribution, meals for sadhus and Vaishnavas, and loving care for the sacred cows of our goshala. We are fully transparent about how every rupee is spent.":
+    "താങ്കളുടെ സംഭാവന നേരിട്ട് പിതൃപക്ഷ ആഘോഷങ്ങൾക്ക് ഉപയോഗിക്കുന്നു — പ്രസാദം തയ്യാറാക്കലും വിതരണവും, സാധുക്കൾക്കും വൈഷ്ണവർക്കും ഭോജനം, ഗോശാലയിലെ പവിത്ര പശുക്കളുടെ പരിചരണം. ഓരോ രൂപയും എങ്ങനെ ചെലവഴിക്കുന്നു എന്നതിൽ ഞങ്ങൾ പൂർണ്ണ സുതാര്യത പുലർത്തുന്നു.",
+  "Is my donation eligible for 80G tax exemption?": "എന്റെ സംഭാവനയ്ക്ക് 80G നികുതി ഇളവ് ലഭിക്കുമോ?",
+  "Yes. Donations to Hare Krishna Movement qualify for tax exemption under Section 80G of the Income Tax Act. Select the '80G receipt' option during checkout and provide your PAN.":
+    "ഉവ്വ്. ഹരേ കൃഷ്ണ മൂവ്മെന്റിനുള്ള സംഭാവനകൾക്ക് ആദായനികുതി നിയമം സെക്ഷൻ 80G പ്രകാരം നികുതി ഇളവ് ലഭിക്കും. ചെക്ക്ഔട്ടിൽ '80G receipt' ഓപ്ഷൻ തിരഞ്ഞെടുത്ത് PAN നൽകൂ.",
+  "Pitru Paksha Seva": "പിതൃപക്ഷ സേവ",
+  "Close checkout": "ചെക്ക്ഔട്ട് അടയ്ക്കൂ",
+  "Seva Name": "സേവയുടെ പേര്",
+  "Seva Amount": "സേവ തുക",
+  "Enter amount below": "തുക താഴെ നൽകൂ",
+  "Enter Seva Amount *": "സേവ തുക നൽകൂ *",
+  "Enter amount": "തുക നൽകൂ",
+  "Amount must be at least Rs.100.": "തുക കുറഞ്ഞത് Rs.100 വേണം.",
+  "Donor Name *": "ദാതാവിന്റെ പേര് *",
+  "Your Name": "താങ്കളുടെ പേര്",
+  "Mobile Number *": "മൊബൈൽ നമ്പർ *",
+  "Your Mobile Number": "താങ്കളുടെ മൊബൈൽ നമ്പർ",
+  "E-Mail ID (optional)": "ഇമെയിൽ (ഐച്ഛികം)",
+  "Your Email": "താങ്കളുടെ ഇമെയിൽ",
+  "I would like to receive Maha Prasadam (Only within India)": "എനിക്ക് മഹാപ്രസാദം വേണം (ഇന്ത്യയിൽ മാത്രം)",
+  "I wish to receive 80G Tax Exemption": "എനിക്ക് 80G നികുതി ഇളവ് വേണം",
+  "PAN and address are mandatory when 80G is selected.": "80G തിരഞ്ഞെടുത്താൽ PAN-ഉം വിലാസവും നിർബന്ധം.",
+  "PAN Number *": "PAN നമ്പർ *",
+  "Eg: ABCDE1234F": "ഉദാ: ABCDE1234F",
+  "Full Address *": "പൂർണ്ണ വിലാസം *",
+  "Door No, Street, Area": "വീട്ടുനമ്പർ, തെരുവ്, പ്രദേശം",
+  "City *": "നഗരം *",
+  "State *": "സംസ്ഥാനം *",
+  "PIN Code *": "പിൻകോഡ് *",
+  "Opening Checkout...": "ചെക്ക്ഔട്ട് തുറക്കുന്നു...",
+  "Donate Rs. {amount}": "Rs. {amount} നൽകൂ",
+  "Donate Now": "സംഭാവന നൽകൂ",
+  "Please select a seva.": "ദയവായി ഒരു സേവ തിരഞ്ഞെടുക്കൂ.",
+  "Donor name is required.": "ദാതാവിന്റെ പേര് ആവശ്യമാണ്.",
+  "Please enter a valid 10 digit mobile number.": "ദയവായി ശരിയായ 10 അക്ക മൊബൈൽ നമ്പർ നൽകൂ.",
+  "Please enter a valid email address, or leave it blank.": "ശരിയായ ഇമെയിൽ നൽകൂ, അല്ലെങ്കിൽ ഒഴിച്ചിടൂ.",
+  "Please enter a valid PAN number.": "ദയവായി ശരിയായ PAN നമ്പർ നൽകൂ.",
+  "Please fill address, city, state and a valid 6-digit pincode.": "വിലാസം, നഗരം, സംസ്ഥാനം, ശരിയായ 6 അക്ക പിൻകോഡ് എന്നിവ നൽകൂ.",
+  "Unable to create payment order.": "പേയ്മെന്റ് ഓർഡർ സൃഷ്ടിക്കാനായില്ല.",
+  "Payment verification failed.": "പേയ്മെന്റ് സ്ഥിരീകരണം പരാജയപ്പെട്ടു.",
+  "If you completed the payment, your receipt will arrive shortly.": "പണമടവ് പൂർത്തിയാക്കിയെങ്കിൽ രസീത് ഉടൻ ലഭിക്കും.",
+  "Donation could not be completed. Please try again.": "സംഭാവന പൂർത്തിയായില്ല. വീണ്ടും ശ്രമിക്കൂ.",
+  "Sevak Name": "സേവകന്റെ പേര്",
+  "(optional)": "(ഐച്ഛികം)",
+  "Name for seva dedication": "സേവ സമർപ്പിക്കേണ്ട പേര്",
+  "Date of Birth": "ജനനത്തീയതി",
+  "This Donation is in the memory/honor of someone or performed on a specific occasion": "ഈ സംഭാവന ആരുടെയെങ്കിലും സ്മരണയ്ക്കോ ആദരവിനോ, അല്ലെങ്കിൽ ഒരു പ്രത്യേക അവസരത്തിനോ ആണ്",
+};

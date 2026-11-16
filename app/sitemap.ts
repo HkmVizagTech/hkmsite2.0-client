@@ -4,7 +4,8 @@ import { COUNCIL } from "@/lib/governance";
 import { ACHARYAS } from "@/lib/acharyas";
 import { CENTERS } from "@/lib/centers";
 import { WEB_STORIES } from "@/lib/webStories";
-import { isTeIndexable, localizedPath } from "@/lib/i18n/routing";
+import { isTranslatedPage, localizedPath, OTHER_LOCALES } from "@/lib/i18n/routing";
+import { LANGUAGES } from "@/lib/i18n/config";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 
@@ -184,18 +185,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   } catch {}
 
-  // Telugu: pages that are actually translated get their /te/ URL, and both
-  // versions point at each other (hreflang), so Telugu searches can find them.
+  // Translated pages get a URL per language, all pointing at each other (hreflang), so searches in each
+  // language can find them.
   const withLanguages: MetadataRoute.Sitemap = staticPages.flatMap((p) => {
     const path = p.url.slice(SITE_URL.length) || "/";
-    if (!isTeIndexable(path)) return [p];
-    const languages = {
-      "en-IN": `${SITE_URL}${localizedPath(path, "en")}`,
-      "te-IN": `${SITE_URL}${localizedPath(path, "te")}`,
-    };
+    if (!isTranslatedPage(path)) return [p];
+    const languages = Object.fromEntries(LANGUAGES.map((l) => [l.hreflang, `${SITE_URL}${localizedPath(path, l.code)}`]));
     return [
       { ...p, alternates: { languages } },
-      { ...p, url: languages["te-IN"], priority: Math.max(0.5, (p.priority ?? 0.5) - 0.1), alternates: { languages } },
+      ...OTHER_LOCALES.map((code) => ({ ...p, url: `${SITE_URL}${localizedPath(path, code)}`, priority: Math.max(0.5, (p.priority ?? 0.5) - 0.1), alternates: { languages } })),
     ];
   });
 

@@ -6,9 +6,9 @@
 //   - Telugu title/description where lib/i18n/te has them (same dictionary
 //     as the page text, keyed by the English string).
 import type { Metadata } from "next";
-import { type Locale } from "./config";
+import { DEFAULT_LOCALE, LANGUAGES, languageOf, type Locale } from "./config";
 import { localeOf } from "./server";
-import { isTeIndexable, localizedPath } from "./routing";
+import { isTranslatedPage, localizedPath } from "./routing";
 import { makeT } from "./translate";
 
 type Params = { params: Promise<{ lang: string }> };
@@ -35,25 +35,21 @@ export function localizeMetadata(meta: Metadata, lang: Locale): Metadata {
   const canonicalPath = pathOf(meta.alternates?.canonical);
   const out: Metadata = { ...meta };
   if (canonicalPath) {
-    const en = localizedPath(canonicalPath, "en");
-    if (isTeIndexable(canonicalPath)) {
-      const te = localizedPath(canonicalPath, "te");
-      out.alternates = {
-        ...meta.alternates,
-        canonical: lang === "te" ? te : en,
-        languages: { "en-IN": en, "te-IN": te, "x-default": en },
-      };
+    const en = localizedPath(canonicalPath, DEFAULT_LOCALE);
+    if (isTranslatedPage(canonicalPath)) {
+      const languages: Record<string, string> = Object.fromEntries(LANGUAGES.map((l) => [l.hreflang, localizedPath(canonicalPath, l.code)]));
+      out.alternates = { ...meta.alternates, canonical: localizedPath(canonicalPath, lang), languages: { ...languages, "x-default": en } };
       if (meta.openGraph) {
         const ogPath = pathOf(meta.openGraph.url) || canonicalPath;
-        out.openGraph = { ...meta.openGraph, url: localizedPath(ogPath, lang), locale: lang === "te" ? "te_IN" : "en_IN" };
+        out.openGraph = { ...meta.openGraph, url: localizedPath(ogPath, lang), locale: languageOf(lang).og };
       }
     } else {
-      // Not translated yet: the Telugu copy defers to the English page.
+      // Not translated yet: other-language copies defer to the English page.
       out.alternates = { ...meta.alternates, canonical: en };
     }
   }
-  if (lang === "te") {
-    const t = makeT("te");
+  if (lang !== DEFAULT_LOCALE) {
+    const t = makeT(lang);
     out.title = translateTitle(meta.title, t);
     if (typeof meta.description === "string") out.description = t(meta.description);
     if (meta.openGraph) {

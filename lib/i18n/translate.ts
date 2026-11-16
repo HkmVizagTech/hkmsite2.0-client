@@ -1,10 +1,18 @@
 import type { Locale } from "./config";
 import { te } from "./te";
+import { hi } from "./hi";
+import { ta } from "./ta";
+import { kn } from "./kn";
+import { ml } from "./ml";
+import { or } from "./or";
+import { bn } from "./bn";
+import { mr } from "./mr";
+import { gu } from "./gu";
 
 export type Dictionary = Record<string, string>;
 export type TFunction = (text: string, vars?: Record<string, string | number>) => string;
 
-const DICTS: Record<Locale, Dictionary | null> = { en: null, te };
+const DICTS: Record<Locale, Dictionary | null> = { en: null, te, hi, ta, kn, ml, or, bn, mr, gu };
 
 const fill = (s: string, vars?: Record<string, string | number>) =>
   vars ? s.replace(/\{(\w+)\}/g, (m, k) => (k in vars ? String(vars[k]) : m)) : s;

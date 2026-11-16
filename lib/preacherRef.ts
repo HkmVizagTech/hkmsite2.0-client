@@ -3,6 +3,8 @@
 // and keeps it for the visit, so any seva donation in that visit is credited to that devotee (the server checks the
 // ref against the devotee list; an unknown ref simply falls back to the temple's default receipt ID).
 
+import { isLocale } from "@/lib/i18n/config";
+
 const KEY = "hkm_preacher_ref";
 // Keep in sync with next.config.ts (PREACHER_REF / SEVA_PAGE).
 const REF = /^(\d{1,4}|[A-Za-z]{2,5}|[A-Za-z]-[A-Za-z])$/;
@@ -11,7 +13,7 @@ const NOT_SEVA = /^(admin|api|blogs|bhajans|centers|donate|donations|donor|event
 /** The ref in a path like "/anna-daan-seva/ABRD" or "/te/gau-seva/1", else null. */
 export function refFromPath(pathname: string): string | null {
   const parts = pathname.replace(/\/+$/, "").split("/").filter(Boolean);
-  if (parts[0] === "te" || parts[0] === "en") parts.shift();
+  if (isLocale(parts[0])) parts.shift();
   if (parts.length !== 2) return null;
   const [page, ref] = parts;
   if (NOT_SEVA.test(page) || !/^[a-z0-9-]+$/.test(page) || !REF.test(ref)) return null;

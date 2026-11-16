@@ -16,18 +16,18 @@ const LocaleContext = createContext<Ctx>({
 export function LocaleProvider({ locale, children }: { locale: Locale; children: React.ReactNode }) {
   const t = useMemo(() => makeT(locale), [locale]);
   // The shared root layout always renders <html lang="en">; correct it for
-  // Telugu pages once hydrated (screen readers, browser translate prompts).
+  // other-language pages once hydrated (screen readers, browser translate prompts).
   useEffect(() => {
     document.documentElement.lang = locale;
-    // Arriving on a /te/ page (e.g. from Google) means Telugu: remember it so
-    // links to plain URLs stay in Telugu (the rewrites in next.config.ts read it).
-    if (locale === "te" && !document.cookie.split("; ").includes(`${LOCALE_COOKIE}=te`)) {
-      document.cookie = `${LOCALE_COOKIE}=te; path=/; max-age=${60 * 60 * 24 * 365}; samesite=lax`;
+    // Arriving on a /<code>/ page (e.g. from Google) means that language: remember it so
+    // links to plain URLs stay in it (the rewrites in next.config.ts read the cookie).
+    if (locale !== DEFAULT_LOCALE && !document.cookie.split("; ").includes(`${LOCALE_COOKIE}=${locale}`)) {
+      document.cookie = `${LOCALE_COOKIE}=${locale}; path=/; max-age=${60 * 60 * 24 * 365}; samesite=lax`;
     }
   }, [locale]);
   const setLocale = useCallback((next: Locale) => {
     document.cookie = `${LOCALE_COOKIE}=${next}; path=/; max-age=${60 * 60 * 24 * 365}; samesite=lax`;
-    // Telugu has its own URLs (/te/…), English the plain ones; the rewrites in
+    // Each language has its own URLs (/te/…, /hi/…), English the plain ones; the rewrites in
     // next.config.ts use the cookie so links to plain URLs stay in the chosen language.
     const { pathname, search, hash } = window.location;
     window.location.assign(localizedPath(pathname, next) + search + hash);
