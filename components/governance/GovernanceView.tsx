@@ -84,17 +84,17 @@ function CouncilCard({ m, i }: { m: CouncilMember; i: number }) {
 /** Cut-out proportions (width / height), so each figure gets a box of exactly its shape. */
 const ASPECT: Record<string, number> = {
   "sri-madhu-pandit-dasa": 1478 / 1377, "sri-chanchalapathi-dasa": 1375 / 1384, "sri-jai-chaitanya-dasa": 1196 / 1400,
-  "sri-stoka-krishna-swami": 1141 / 1400, "sri-amitasana-krishna-swami": 1218 / 1395, "sri-vasudev-keshav-dasa": 1262 / 1400,
+  "sri-stoka-krishna-swami": 1141 / 1400, "sri-amitasana-krishna-swami": 1218 / 1395, "sri-vasudev-keshav-dasa": 862 / 863,
   "sri-rajiv-lochan-dasa": 1148 / 1400, "sri-satya-gaura-chandra-swami": 1324 / 1400, "sri-suvyakta-narasimha-dasa": 639 / 744,
 };
 // [slug, centre x %, height %, bottom %] — front row of five with the Chairman in the middle, four standing behind
 const BACK: [string, number, number, number][] = [
-  ["sri-vasudev-keshav-dasa", 21, 52, 28], ["sri-rajiv-lochan-dasa", 40, 52, 28],
-  ["sri-satya-gaura-chandra-swami", 60, 52, 28], ["sri-suvyakta-narasimha-dasa", 79, 52, 28],
+  ["sri-vasudev-keshav-dasa", 21, 65, 21], ["sri-rajiv-lochan-dasa", 40, 65, 21],
+  ["sri-satya-gaura-chandra-swami", 60, 65, 21], ["sri-suvyakta-narasimha-dasa", 79, 65, 21],
 ];
 const FRONT: [string, number, number, number][] = [
-  ["sri-stoka-krishna-swami", 12, 60, 0], ["sri-chanchalapathi-dasa", 30.5, 60, 0], ["sri-madhu-pandit-dasa", 50, 65, 0],
-  ["sri-jai-chaitanya-dasa", 69.5, 60, 0], ["sri-amitasana-krishna-swami", 88, 60, 0],
+  ["sri-stoka-krishna-swami", 12, 75, 0], ["sri-chanchalapathi-dasa", 30.5, 75, 0], ["sri-madhu-pandit-dasa", 50, 81, 0],
+  ["sri-jai-chaitanya-dasa", 69.5, 75, 0], ["sri-amitasana-krishna-swami", 88, 75, 0],
 ];
 
 /** The council as a group portrait: large, crisp cut-outs; each person links to their profile and shows their name on hover. */
@@ -115,7 +115,7 @@ function CouncilGroup() {
       >
         <Link href={`/governance/${m.slug}`} aria-label={m.name} className="relative block h-full w-full">
           <Image src={m.cutout} alt={m.name} fill quality={90} priority sizes="(min-width: 1280px) 400px, 32vw"
-            className={`object-contain object-bottom transition-[filter] duration-500 group-hover/f:brightness-110 ${row ? "drop-shadow-[0_-10px_30px_rgba(0,0,0,.35)]" : "brightness-[.9] [mask-image:linear-gradient(to_bottom,#000_90%,transparent)]"}`} />
+            className={`object-contain object-bottom transition-[filter] duration-500 group-hover/f:brightness-110 ${row ? "drop-shadow-[0_-10px_30px_rgba(0,0,0,.35)]" : "brightness-[.9]"}`} />
           <span className="pointer-events-none absolute left-1/2 top-[-7%] z-[60] -translate-x-1/2 whitespace-nowrap rounded-full bg-[#0F1E4A]/90 px-3.5 py-1.5 text-[12px] font-semibold text-[#FBF7EE] opacity-0 shadow-[0_8px_24px_rgba(0,0,0,.4)] ring-1 ring-[#E9C46A]/50 backdrop-blur transition duration-300 group-hover/f:opacity-100">
             {m.name}
           </span>
@@ -124,7 +124,7 @@ function CouncilGroup() {
     );
   };
   return (
-    <div className="relative mx-auto mt-6 aspect-[1280/640] w-full max-w-[1400px] md:mt-0 md:aspect-[1280/600]">
+    <div className="relative mx-auto mt-6 aspect-[1280/480] w-full max-w-[1400px] md:mt-0">
       {/* soft spotlight behind the group */}
       <div aria-hidden className="absolute inset-x-[10%] bottom-[10%] top-[5%] rounded-[50%] bg-[radial-gradient(closest-side,rgba(127,155,239,.28),transparent)]" />
       {BACK.map((f, k) => figure(f, 0, k))}
@@ -162,7 +162,7 @@ export default function GovernanceView() {
             initial={reduce ? false : { opacity: 0, scale: 1.03 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1.4, ease, delay: 0.1 }}
-            className="relative -mt-14 md:-mt-10 xl:-mt-16"
+            className="relative mt-4 md:-mt-2"
           >
             {/* our own two-row group built from the HD cut-outs (all screen sizes) */}
             <CouncilGroup />

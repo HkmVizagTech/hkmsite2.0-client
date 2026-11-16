@@ -331,7 +331,7 @@ export const COUNCIL: CouncilMember[] = [
     "slug": "sri-vasudev-keshav-dasa",
     "name": "Sri Vasudev Keshav Dasa",
     "image": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/sri-vasudev-keshav-dasa.webp",
-    "cutout": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/cutout-hd-sri-vasudev-keshav-dasa.webp",
+    "cutout": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/cutout-v2-sri-vasudev-keshav-dasa.webp",
     "roles": [
       "Treasurer & Zonal Secretary, Governing Body Committee",
       "Vice President, ISKCON Bangalore"
