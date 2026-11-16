@@ -3,7 +3,7 @@
 // Every entry carries a `check` list of facts the temple team must verify before publishing.
 // Timings in particular are taken from commonly published listings and change often.
 
-export type TempleRegion = "North Coastal Andhra" | "Godavari Districts" | "Krishna & Guntur" | "Rayalaseema";
+export type TempleRegion = "North Coastal Andhra" | "Godavari Districts" | "Krishna & Guntur" | "Rayalaseema" | (string & {});
 
 export type Temple = {
   slug: string;
@@ -35,7 +35,7 @@ export type Temple = {
 const STANDARD_NOTE =
   "Timings change on festival days, eclipses and special occasions; please confirm with the devasthanam before you travel.";
 
-export const TEMPLES: Temple[] = [
+const TEMPLES_AP: Temple[] = [
   // 1. Simhachalam
   {
     slug: "simhachalam-varaha-lakshmi-narasimha-temple",
@@ -1172,4 +1172,19 @@ export const TEMPLES: Temple[] = [
       "Full postal address with PIN code",
     ],
   },
+];
+
+import { TEMPLES_MORE } from "./templesDataMore";
+
+/** Guide order: Simhachalam (closest to Vizag) first, then the famous temples of India, then the rest of Andhra Pradesh. */
+const FIRST = [
+  "simhachalam-varaha-lakshmi-narasimha-temple", "tirumala-sri-venkateswara-swamy-temple", "puri-jagannath-temple",
+  "kanipakam-varasiddhi-vinayaka-temple", "sripuram-golden-temple-vellore", "srirangam-ranganathaswamy-temple",
+  "madurai-meenakshi-amman-temple", "srisailam-mallikarjuna-swamy-temple", "kashi-vishwanath-temple-varanasi",
+  "iskcon-vrindavan-krishna-balaram-mandir", "banke-bihari-temple-vrindavan", "somnath-temple-gujarat",
+];
+const ALL = [...TEMPLES_AP, ...TEMPLES_MORE];
+export const TEMPLES: Temple[] = [
+  ...FIRST.map((s) => ALL.find((t) => t.slug === s)).filter((t): t is Temple => !!t),
+  ...ALL.filter((t) => !FIRST.includes(t.slug)),
 ];

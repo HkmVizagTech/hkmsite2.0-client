@@ -81,7 +81,11 @@ export function Lightbox({ photos, index, onClose, onIndex, title, kicker }: { p
     const o = document.body.style.overflow; document.body.style.overflow = "hidden";
     return () => { window.removeEventListener("keydown", k); document.body.style.overflow = o; };
   }, [index, go, onClose]);
-  useEffect(() => { strip?.querySelector<HTMLElement>(`[data-i="${index}"]`)?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" }); }, [index, strip]);
+  useEffect(() => {
+    // scroll only the strip (scrollIntoView would also shift the dialog itself)
+    const el = strip?.querySelector<HTMLElement>(`[data-i="${index}"]`);
+    if (strip && el) strip.scrollTo({ left: el.offsetLeft - strip.clientWidth / 2 + el.offsetWidth / 2, behavior: "smooth" });
+  }, [index, strip]);
   const p = index !== null ? photos[index] : null;
   const download = async () => {
     if (!p) return;
@@ -98,7 +102,7 @@ export function Lightbox({ photos, index, onClose, onIndex, title, kicker }: { p
     <AnimatePresence>
       {p && (
         <motion.div role="dialog" aria-modal="true" aria-label={title} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}
-          className="fixed inset-0 z-[130] flex flex-col overflow-hidden bg-[#070C24] text-white">
+          className="fixed inset-0 z-[130] flex flex-col overflow-clip bg-[#070C24] text-white">
           {/* ambient glow from the current photo */}
           <AnimatePresence>
             { }
@@ -120,7 +124,7 @@ export function Lightbox({ photos, index, onClose, onIndex, title, kicker }: { p
             </div>
           </div>
           {/* photo */}
-          <div className="relative z-0 flex min-h-0 flex-1 items-center justify-center px-3 py-4 md:px-24">
+          <div className="relative z-0 flex min-h-0 flex-1 items-center justify-center overflow-clip px-3 py-4 md:px-24">
             <button type="button" aria-label="Previous photo" onClick={() => go(-1)} className="absolute left-3 z-10 hidden h-14 w-14 items-center justify-center rounded-full bg-white/[.08] ring-1 ring-white/20 backdrop-blur transition hover:bg-white hover:text-[#0A1233] md:left-8 md:flex"><ChevronLeft className="h-6 w-6" /></button>
             <AnimatePresence mode="popLayout" initial={false} custom={dir}>
               <motion.img key={p.src} src={p.src} alt={p.alt ?? title ?? ""} custom={dir}
