@@ -267,8 +267,8 @@ export const COUNCIL: CouncilMember[] = [
     ]
   },
   {
-    "slug": "sri-amitasana-dasa",
-    "name": "Sri Amitasana Dasa",
+    "slug": "sri-amitasana-swami",
+    "name": "Sri Amitasana Swami",
     "image": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/sri-amitasana-dasa.webp",
     "cutout": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/cutout-sri-amitasana-dasa.webp",
     "roles": [
@@ -276,9 +276,9 @@ export const COUNCIL: CouncilMember[] = [
       "Governing Council Member, Hare Krishna Movement India"
     ],
     "honours": [],
-    "summary": "Sri Amitasana Dasa is the President of the Hare Krishna Movement, Jaipur & Mumbai, and leads Akshaya Chaitanya, a mission feeding thousands of children and hospital patients across Mumbai every single day.",
+    "summary": "Sri Amitasana Swami is the President of the Hare Krishna Movement, Jaipur & Mumbai, and leads Akshaya Chaitanya, a mission feeding thousands of children and hospital patients across Mumbai every single day.",
     "years": 34,
-    "vision": "Sri Amitasana Dasa completed his B.Tech in Computer Science from REC Kurukshetra and went on to work as a software engineer at Kirloskar Computer Services in Bengaluru. It was during this time that he came across the teachings of Srila Prabhupada, and in 1992 he left his corporate career to join Hare Krishna Movement as a full-time missionary.",
+    "vision": "Sri Amitasana Swami completed his B.Tech in Computer Science from REC Kurukshetra and went on to work as a software engineer at Kirloskar Computer Services in Bengaluru. It was during this time that he came across the teachings of Srila Prabhupada, and in 1992 he left his corporate career to join Hare Krishna Movement as a full-time missionary.",
     "expertise": [
       "Applied Spirituality",
       "Youth Mentorship",
@@ -323,8 +323,8 @@ export const COUNCIL: CouncilMember[] = [
       }
     ],
     "bio": [
-      "Amitasana Dasa was born in 1969 in Namrup, Assam, India. He completed B. Tech. in Computer Science from REC Kurukshetra. He later worked in Kirloskar Computer Services, Bangalore and joined ISKCON Bangalore in 1992. He has organised seminars, workshops and counselling programs to benefit students and professionals from all over the country. He has guided hundreds of people, especially youth, to lead a life of happiness and fulfilment.",
-      "Amitasana Dasa is the President of Hare Krishna Movement, Mumbai and Governing Council Member of Hare Krishna Movement, India. He is also the President of Akshaya Patra operations in Maharashtra. Under his Governance, the Foundation has implemented several development initiatives in the region."
+      "Amitasana Swami was born in 1969 in Namrup, Assam, India. He completed B. Tech. in Computer Science from REC Kurukshetra. He later worked in Kirloskar Computer Services, Bangalore and joined ISKCON Bangalore in 1992. He has organised seminars, workshops and counselling programs to benefit students and professionals from all over the country. He has guided hundreds of people, especially youth, to lead a life of happiness and fulfilment.",
+      "Amitasana Swami is the President of Hare Krishna Movement, Mumbai and Governing Council Member of Hare Krishna Movement, India. He is also the President of Akshaya Patra operations in Maharashtra. Under his Governance, the Foundation has implemented several development initiatives in the region."
     ]
   },
   {
@@ -450,8 +450,8 @@ export const COUNCIL: CouncilMember[] = [
     ]
   },
   {
-    "slug": "sri-satya-gaura-chandra-dasa",
-    "name": "Sri Satya Gaura Chandra Dasa",
+    "slug": "sri-satya-gaura-chandra-swami",
+    "name": "Sri Satya Gaura Chandra Swami",
     "image": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/sri-satya-gaura-chandra-dasa.webp",
     "cutout": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/governance/cutout-sri-satya-gaura-chandra-dasa.webp",
     "roles": [
@@ -460,7 +460,7 @@ export const COUNCIL: CouncilMember[] = [
       "Trustee, The Akshaya Patra Foundation"
     ],
     "honours": [],
-    "summary": "Satya Gaura Chandra Dasa is the leader of Hare Krishna Movement in Hyderabad. Also, as a Charitable Trust of Akshaya Patra in Telangana and Andhra Pradesh, he served many meals.",
+    "summary": "Satya Gaura Chandra Swami is the leader of Hare Krishna Movement in Hyderabad. Also, as a Charitable Trust of Akshaya Patra in Telangana and Andhra Pradesh, he served many meals.",
     "years": 28,
     "vision": "A gold medalist engineer turned spiritual leader who combines academic excellence with compassionate service, establishing multiple kitchen facilities across South India to serve underprivileged children while training spiritual missionaries.",
     "expertise": [
@@ -507,7 +507,7 @@ export const COUNCIL: CouncilMember[] = [
       }
     ],
     "bio": [
-      "Satya Gaura Chandra Dasa was born in Rajahmundry, Andhra Pradesh. He is a Gold Medalist in B.Tech (Mechanical Engineering) at Jawaharlal Nehru Technological University, Kakinada. After completing M.Tech from IIT-Chennai, he worked in Novell, a multinational IT firm, before joining ISKCON Bangalore in 1997. He has rendered various services ranging from managing the temple administration to training and development of full-time missionaries.",
+      "Satya Gaura Chandra Swami was born in Rajahmundry, Andhra Pradesh. He is a Gold Medalist in B.Tech (Mechanical Engineering) at Jawaharlal Nehru Technological University, Kakinada. After completing M.Tech from IIT-Chennai, he worked in Novell, a multinational IT firm, before joining ISKCON Bangalore in 1997. He has rendered various services ranging from managing the temple administration to training and development of full-time missionaries.",
       "He is currently serving as the Zonal Secretary of the Governing Body Committee and the President of Hare Krishna Movement, Hyderabad. He initiated the Hare Krishna Charitable Trust, which is extensively feeding the underprivileged sections of society. He is a Trustee of Akshaya Patra and heads its operations in Telangana and Andhra Pradesh. He has set up kitchens in Kandi, Narasingi, Vishakapatnam, Vijayawada and various other locations, thus enabling the Foundation to serve hygienic and nutritious mid-day meals to lakhs of children."
     ]
   },
