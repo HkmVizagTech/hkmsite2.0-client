@@ -74,6 +74,16 @@ function Hero() {
   return (
     <section className="relative">
       <div className="relative isolate overflow-hidden" style={{ background: IVORY }}>
+        {/* the group painting as a cinematic band, vivid and untouched */}
+        <motion.figure initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.2, ease }} className="relative">
+          <div className="relative h-[clamp(200px,60vw,320px)] overflow-hidden lg:h-auto lg:aspect-[1526/375]">
+            <div className={`absolute inset-y-0 left-0 aspect-[1526/375] lg:inset-0 lg:aspect-auto ${reduce ? "" : "animate-[acharya-hero-pan_40s_ease-in-out_infinite_alternate] lg:animate-none"}`}>
+              <Image src={ACHARYAS_PAINTING} alt={t("A painting of Srila Prabhupada and the acharyas before him seated in a riverside garden")} fill loading="eager" fetchPriority="high" quality={90} sizes="(min-width: 1024px) 100vw, 1400px" className="object-cover" />
+            </div>
+            <span aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[#FBF7EE] to-transparent" />
+          </div>
+        </motion.figure>
+
         {/* soft gold light and a faint lotus-mandala line drawing behind the title */}
         <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(45%_60%_at_80%_40%,rgba(246,199,82,.22),transparent_70%),radial-gradient(40%_50%_at_0%_0%,rgba(47,91,211,.08),transparent_70%)]" />
         <svg aria-hidden viewBox="0 0 200 200" className="absolute -left-24 top-1/2 -z-10 h-[520px] w-[520px] -translate-y-1/2 text-[#C9962B]/[.09]">
@@ -103,16 +113,6 @@ function Hero() {
           <div className="order-1 lg:order-2"><PortraitFan /></div>
         </div>
 
-        {/* the group painting as a cinematic band, vivid and untouched */}
-        <motion.figure initial={reduce ? false : { opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 1.2, ease }} className="relative">
-          <div aria-hidden className="h-px bg-gradient-to-r from-transparent via-[#C9962B] to-transparent" />
-          <div className="relative h-[clamp(200px,60vw,320px)] overflow-hidden lg:h-auto lg:aspect-[1526/375]">
-            <div className={`absolute inset-y-0 left-0 aspect-[1526/375] lg:inset-0 lg:aspect-auto ${reduce ? "" : "animate-[acharya-hero-pan_40s_ease-in-out_infinite_alternate] lg:animate-none"}`}>
-              <Image src={ACHARYAS_PAINTING} alt={t("A painting of Srila Prabhupada and the acharyas before him seated in a riverside garden")} fill quality={90} sizes="(min-width: 1024px) 100vw, 1400px" className="object-cover" />
-            </div>
-            <span aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-[#FBF7EE] to-transparent" />
-          </div>
-        </motion.figure>
       </div>
 
       {/* glass strip of counts across the hero's foot, with clear space before the next section */}
