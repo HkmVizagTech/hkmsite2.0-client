@@ -117,6 +117,8 @@ export default function MemberView({ m }: { m: CouncilMember }) {
   const t = useT();
   const reduce = useReducedMotion();
   const [video, setVideo] = useState<Video | null>(null);
+  // moving to another member (Previous / Next) always starts at the top of their profile
+  useEffect(() => { window.scrollTo({ top: 0, left: 0, behavior: "instant" }); }, [m.slug]);
   const i = COUNCIL.findIndex((x) => x.slug === m.slug);
   const prev = COUNCIL[(i - 1 + COUNCIL.length) % COUNCIL.length];
   const next = COUNCIL[(i + 1) % COUNCIL.length];
