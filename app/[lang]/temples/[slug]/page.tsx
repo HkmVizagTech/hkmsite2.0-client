@@ -21,10 +21,12 @@ async function baseGenerateMetadata({ params }: Props) {
   const base = find(slug);
   if (!base) return {};
   const tm = localizeTemple(base, lang);
+  const te = lang === "te";
   return pageSeo({
-    title: `${tm.shortName} Temple Timings, History & How to Reach`,
+    title: te ? `${tm.name}: దర్శన సమయాలు, చరిత్ర, ఎలా చేరుకోవాలి` : `${tm.shortName} Temple Timings, History & How to Reach`,
     description: tm.summary,
     path: `/temples/${tm.slug}`,
+    image: TEMPLE_PHOTOS[tm.slug]?.[0]?.src,
   });
 }
 

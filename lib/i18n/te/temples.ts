@@ -128,4 +128,6 @@ export const temples: Record<string, string> = {
   "Confirm with the temple": "ఆలయంతో నిర్ధారించుకోండి",
   "The temple does not publish a fixed timetable online. Please check the latest darshan timings with the temple before you travel.": "ఆలయం స్థిరమైన సమయ పట్టికను ఆన్‌లైన్‌లో ప్రచురించదు. ప్రయాణానికి ముందు తాజా దర్శన సమయాలను ఆలయంతో నిర్ధారించుకోండి.",
   "The temple's story": "ఆలయ కథ",
+  "Hindu Temples in India: Darshan Timings, History & How to Reach": "భారతదేశంలోని హిందూ ఆలయాలు: దర్శన సమయాలు, చరిత్ర, ఎలా చేరుకోవాలి",
+  "Your guide to India's sacred temples: darshan and aarti timings, presiding deities, history and how to reach Simhachalam, Tirumala, Annavaram, Ahobilam and more.": "భారతదేశ పవిత్ర ఆలయాలకు మీ మార్గదర్శి: దర్శన, హారతి సమయాలు, మూలవిరాట్టులు, చరిత్ర, సింహాచలం, తిరుమల, అన్నవరం, అహోబిలం మరియు మరిన్ని ఆలయాలకు ఎలా చేరుకోవాలి.",
 };
