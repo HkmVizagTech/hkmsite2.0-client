@@ -128,8 +128,8 @@ export default function MemberView({ m }: { m: CouncilMember }) {
     <PageLayout background={IVORY}>
       <div className="overflow-x-clip pt-[var(--header-h)]" style={{ background: IVORY }}>
         {/* ══ HERO: dark, cinematic (matches the Governance header); the portrait stands large on the bottom edge ══ */}
-        <section className="relative isolate overflow-hidden" style={{ background: "#05090C" }}>
-          <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(55%_75%_at_75%_100%,#22465A_0%,#0F2230_45%,transparent_80%),radial-gradient(40%_50%_at_15%_0%,rgba(201,150,43,.12),transparent_70%)]" />
+        <section className="relative isolate overflow-hidden" style={{ background: "linear-gradient(160deg,#172B6E 0%,#0F1E4A 55%,#0A1233 100%)" }}>
+          <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(50%_70%_at_75%_45%,rgba(47,91,211,.55)_0%,rgba(30,58,138,.25)_45%,transparent_75%),radial-gradient(35%_45%_at_10%_0%,rgba(127,155,239,.18),transparent_70%)]" />
           <div className="vk-container relative">
             <div className="grid items-end gap-6 lg:grid-cols-[1.1fr_.9fr] lg:gap-10">
               <motion.div initial={reduce ? false : { opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease }} className="order-2 pb-12 lg:order-1 lg:self-center lg:py-20">
@@ -156,7 +156,7 @@ export default function MemberView({ m }: { m: CouncilMember }) {
               <motion.div initial={reduce ? false : { opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease, delay: 0.1 }}
                 className="relative order-1 mx-auto mt-8 aspect-[5/6] w-full max-w-[420px] md:max-w-[520px] lg:order-2 lg:mt-12 lg:max-w-none">
                 {/* halo and fine gold rings behind the head */}
-                <span aria-hidden className="absolute left-1/2 top-[2%] h-[62%] w-[86%] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(246,199,82,.28),rgba(70,130,170,.18)_55%,transparent)]" />
+                <span aria-hidden className="absolute left-1/2 top-[2%] h-[62%] w-[86%] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(246,199,82,.30),rgba(127,155,239,.18)_55%,transparent)]" />
                 <svg aria-hidden viewBox="0 0 100 120" className="absolute inset-0 h-full w-full">
                   <circle cx="50" cy="34" r="30" fill="none" stroke="#F6C752" strokeOpacity=".35" strokeWidth=".3" />
                   <circle cx="50" cy="34" r="37" fill="none" stroke="#F6C752" strokeOpacity=".18" strokeWidth=".25" strokeDasharray="1 2" />

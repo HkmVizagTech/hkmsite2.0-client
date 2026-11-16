@@ -6,7 +6,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { useT } from "@/components/i18n/LocaleProvider";
-import { COUNCIL, COUNCIL_BANNER_MOBILE, type CouncilMember } from "@/lib/governance";
+import { COUNCIL, type CouncilMember } from "@/lib/governance";
 
 /*
  * Governance, in the "ivory & ink" look (deliberately different from the Srila Prabhupada page's navy, rays and
@@ -89,8 +89,8 @@ const ASPECT: Record<string, number> = {
 };
 // [slug, centre x %, height %, bottom %] — front row of five with the Chairman in the middle, four standing behind
 const BACK: [string, number, number, number][] = [
-  ["sri-vasudev-keshav-dasa", 21, 50, 33], ["sri-rajiv-lochan-dasa", 40, 50, 33],
-  ["sri-satya-gaura-chandra-swami", 60, 50, 33], ["sri-suvyakta-narasimha-dasa", 79, 50, 33],
+  ["sri-vasudev-keshav-dasa", 21, 52, 28], ["sri-rajiv-lochan-dasa", 40, 52, 28],
+  ["sri-satya-gaura-chandra-swami", 60, 52, 28], ["sri-suvyakta-narasimha-dasa", 79, 52, 28],
 ];
 const FRONT: [string, number, number, number][] = [
   ["sri-stoka-krishna-swami", 12, 60, 0], ["sri-chanchalapathi-dasa", 30.5, 60, 0], ["sri-madhu-pandit-dasa", 50, 65, 0],
@@ -115,7 +115,7 @@ function CouncilGroup() {
       >
         <Link href={`/governance/${m.slug}`} aria-label={m.name} className="relative block h-full w-full">
           <Image src={m.cutout} alt={m.name} fill quality={90} priority sizes="(min-width: 1280px) 400px, 32vw"
-            className={`object-contain object-bottom transition-[filter] duration-500 group-hover/f:brightness-110 ${row ? "drop-shadow-[0_-10px_30px_rgba(0,0,0,.35)]" : "brightness-[.9] [mask-image:linear-gradient(to_bottom,#000_86%,transparent_100%)]"}`} />
+            className={`object-contain object-bottom transition-[filter] duration-500 group-hover/f:brightness-110 ${row ? "drop-shadow-[0_-10px_30px_rgba(0,0,0,.35)]" : "brightness-[.9] [mask-image:linear-gradient(to_bottom,#000_90%,transparent)]"}`} />
           <span className="pointer-events-none absolute left-1/2 top-[-7%] z-[60] -translate-x-1/2 whitespace-nowrap rounded-full bg-[#0F1E4A]/90 px-3.5 py-1.5 text-[12px] font-semibold text-[#FBF7EE] opacity-0 shadow-[0_8px_24px_rgba(0,0,0,.4)] ring-1 ring-[#E9C46A]/50 backdrop-blur transition duration-300 group-hover/f:opacity-100">
             {m.name}
           </span>
@@ -124,9 +124,9 @@ function CouncilGroup() {
     );
   };
   return (
-    <div className="relative mx-auto hidden aspect-[1280/600] w-full max-w-[1400px] md:block">
+    <div className="relative mx-auto mt-6 aspect-[1280/640] w-full max-w-[1400px] md:mt-0 md:aspect-[1280/600]">
       {/* soft spotlight behind the group */}
-      <div aria-hidden className="absolute inset-x-[10%] bottom-[10%] top-[5%] rounded-[50%] bg-[radial-gradient(closest-side,rgba(110,170,190,.30),transparent)]" />
+      <div aria-hidden className="absolute inset-x-[10%] bottom-[10%] top-[5%] rounded-[50%] bg-[radial-gradient(closest-side,rgba(127,155,239,.28),transparent)]" />
       {BACK.map((f, k) => figure(f, 0, k))}
       {FRONT.map((f, k) => figure(f, 1, k))}
     </div>
@@ -143,8 +143,8 @@ export default function GovernanceView() {
       <div className="overflow-x-clip pt-[var(--header-h)]" style={{ background: IVORY }}>
         {/* ══ HERO: the council photograph edge to edge, its own deep-teal sky continued upward behind the title,
               and its warm lower edge melting into the ivory page ══ */}
-        <section className="relative isolate overflow-hidden" style={{ background: "#05090C" }}>
-          <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(70%_60%_at_50%_100%,#1E3946_0%,#0E1C24_45%,transparent_80%),radial-gradient(40%_50%_at_50%_0%,rgba(201,150,43,.14),transparent_70%)]" />
+        <section className="relative isolate overflow-hidden" style={{ background: "linear-gradient(180deg,#0A1233 0%,#0F1E4A 45%,#172B6E 100%)" }}>
+          <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(60%_55%_at_50%_70%,rgba(47,91,211,.55)_0%,rgba(30,58,138,.25)_45%,transparent_78%),radial-gradient(40%_45%_at_50%_0%,rgba(201,150,43,.14),transparent_70%)]" />
           <motion.div
             initial={reduce ? false : { opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -164,10 +164,7 @@ export default function GovernanceView() {
             transition={{ duration: 1.4, ease, delay: 0.1 }}
             className="relative -mt-14 md:-mt-10 xl:-mt-16"
           >
-            {/* phones: their stacked group photo; larger screens: our own two-row group built from the HD cut-outs */}
-            <div className="relative mx-auto aspect-[1560/1500] w-full max-w-[640px] md:hidden [mask-image:linear-gradient(to_bottom,transparent_0%,#000_22%)]">
-              <Image src={COUNCIL_BANNER_MOBILE} alt={t("The Governing Council of the Hare Krishna Movement")} fill priority sizes="(max-width: 640px) 100vw, 640px" className="object-cover" />
-            </div>
+            {/* our own two-row group built from the HD cut-outs (all screen sizes) */}
             <CouncilGroup />
             <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 z-50 h-[9%] bg-gradient-to-b from-transparent via-[#FBF7EE]/60 to-[#FBF7EE]" />
           </motion.div>
