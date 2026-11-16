@@ -13,12 +13,16 @@ import { DEFAULT_LOCALE, LOCALES, type Locale } from "./config";
  * at the English page, so a mostly-English copy is never indexed as a duplicate.
  */
 export const TRANSLATED_PAGES = ["/", "/iskcon-vizag-temple", "/pitru-paksha", "/vaikuntha-ekadashi", "/diwali", "/understand-gita", "/srila-prabhupada"];
-export const isTranslatedPage = (path: string) => {
+/** The languages a page is actually translated into (others defer to the English page). */
+export function pageLanguages(path: string): Locale[] {
   const p = stripLocale(path);
   // the Acharyas pages are translated in full (lib/acharyas-i18n)
-  if (p === "/acharyas" || p.startsWith("/acharyas/")) return true;
-  return TRANSLATED_PAGES.includes(p);
-};
+  if (p === "/acharyas" || p.startsWith("/acharyas/")) return [...LOCALES];
+  // the temple guide is translated into Telugu (lib/templesTe*.ts)
+  if (p === "/temples" || p.startsWith("/temples/")) return ["en", "te"];
+  return TRANSLATED_PAGES.includes(p) ? [...LOCALES] : [DEFAULT_LOCALE];
+}
+export const isTranslatedPage = (path: string) => pageLanguages(path).length > 1;
 /** Languages other than English (each has its own /<code>/ URLs). */
 export const OTHER_LOCALES = LOCALES.filter((l) => l !== DEFAULT_LOCALE);
 

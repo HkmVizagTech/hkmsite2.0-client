@@ -13,7 +13,8 @@ import { vaikunthaEkadashi } from "./vaikunthaEkadashi";
 import { diwali } from "./diwali";
 import { understandGita } from "./understandGita";
 import { governance } from "./governance";
+import { temples } from "./temples";
 import { srilaPrabhupada } from "./srilaPrabhupada";
 import { acharyas } from "./acharyas";
 
-export const te: Record<string, string> = { ...common, ...nav, ...footer, ...home, ...pitruPaksha, ...upi, ...shared, ...visit, ...seo, ...vaikunthaEkadashi, ...diwali, ...understandGita, ...governance, ...srilaPrabhupada, ...acharyas };
+export const te: Record<string, string> = { ...common, ...nav, ...footer, ...home, ...pitruPaksha, ...upi, ...shared, ...visit, ...seo, ...vaikunthaEkadashi, ...diwali, ...understandGita, ...governance, ...temples, ...srilaPrabhupada, ...acharyas };

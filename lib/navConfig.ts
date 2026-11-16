@@ -60,6 +60,7 @@ export const navEntries: NavEntry[] = [
       icon: Clock,
       items: [
         { label: "Plan Your Visit", href: "/iskcon-vizag-temple", description: "Timings, address & map", icon: MapPin },
+        { label: "Hindu Temples", href: "/temples", description: "Temple guide: timings, history & directions", icon: Landmark },
         { label: "Daily Schedule", href: "/daily-schedule", description: "Aarti timings & daily programs", icon: Clock },
         { label: "Festivals", href: "/festival", description: "Celebrations at the temple", icon: PartyPopper },
         { label: "Vaishnav Calendar", href: "/vaishnav-calendar", description: "Festivals & Ekadashis", icon: Calendar },

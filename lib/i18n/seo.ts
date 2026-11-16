@@ -8,7 +8,7 @@
 import type { Metadata } from "next";
 import { DEFAULT_LOCALE, LANGUAGES, languageOf, type Locale } from "./config";
 import { localeOf } from "./server";
-import { isTranslatedPage, localizedPath } from "./routing";
+import { localizedPath, pageLanguages } from "./routing";
 import { makeT } from "./translate";
 
 type Params = { params: Promise<{ lang: string }> };
@@ -36,8 +36,9 @@ export function localizeMetadata(meta: Metadata, lang: Locale): Metadata {
   const out: Metadata = { ...meta };
   if (canonicalPath) {
     const en = localizedPath(canonicalPath, DEFAULT_LOCALE);
-    if (isTranslatedPage(canonicalPath)) {
-      const languages: Record<string, string> = Object.fromEntries(LANGUAGES.map((l) => [l.hreflang, localizedPath(canonicalPath, l.code)]));
+    const langs = pageLanguages(canonicalPath);
+    if (langs.length > 1 && langs.includes(lang)) {
+      const languages: Record<string, string> = Object.fromEntries(LANGUAGES.filter((l) => langs.includes(l.code)).map((l) => [l.hreflang, localizedPath(canonicalPath, l.code)]));
       out.alternates = { ...meta.alternates, canonical: localizedPath(canonicalPath, lang), languages: { ...languages, "x-default": en } };
       if (meta.openGraph) {
         const ogPath = pathOf(meta.openGraph.url) || canonicalPath;

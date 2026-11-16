@@ -16,6 +16,7 @@ const footerCols: { title: string; links: { label: string; href: string }[] }[] 
     title: "Temple",
     links: [
       { label: "Plan Your Visit", href: "/iskcon-vizag-temple" },
+      { label: "Hindu Temples", href: "/temples" },
       { label: "Daily Schedule", href: "/daily-schedule" },
       { label: "Festivals", href: "/festival" },
       { label: "Gallery", href: "/gallery" },
