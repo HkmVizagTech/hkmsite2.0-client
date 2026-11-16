@@ -1,4 +1,4 @@
-// Telugu for /acharyas (page chrome only; names, biographies, teachings and books stay in English). Please have a Telugu reader check.
+// Telugu for /acharyas page chrome (the acharyas' own text is in lib/acharyas-i18n/te.ts). Please have a Telugu reader check.
 export const acharyas: Record<string, string> = {
   // menu + footer
   "Our Acharyas": "మా ఆచార్యులు",

@@ -14,5 +14,6 @@ import { diwali } from "./diwali";
 import { understandGita } from "./understandGita";
 import { governance } from "./governance";
 import { srilaPrabhupada } from "./srilaPrabhupada";
+import { acharyas } from "./acharyas";
 
-export const mr: Record<string, string> = { ...common, ...nav, ...footer, ...home, ...pitruPaksha, ...upi, ...shared, ...visit, ...seo, ...vaikunthaEkadashi, ...diwali, ...understandGita, ...governance, ...srilaPrabhupada };
+export const mr: Record<string, string> = { ...common, ...nav, ...footer, ...home, ...pitruPaksha, ...upi, ...shared, ...visit, ...seo, ...vaikunthaEkadashi, ...diwali, ...understandGita, ...governance, ...srilaPrabhupada, ...acharyas };
