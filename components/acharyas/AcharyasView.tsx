@@ -42,37 +42,41 @@ function Hero() {
   const reduce = useReducedMotion();
   return (
     <section className="relative">
-      {/* the title on ivory, above the painting */}
-      <div className="relative isolate overflow-hidden pb-9 pt-10 md:pb-12 md:pt-14">
-        <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(55%_70%_at_50%_0%,rgba(246,199,82,.18),transparent_70%)]" />
-        <motion.div initial={reduce ? false : { opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease }} className="vk-container text-center">
-          <Eyebrow center>{t("Disciplic succession")}</Eyebrow>
-          <h1 className="mt-4 font-heading text-[2.7rem] font-bold leading-[1.02] tracking-tight text-[#0F1E4A] min-[380px]:text-[3.1rem] md:text-[5.2rem]">
+      {/* one continuous sky: deep navy at the top fading to the painting's own sky blue, so the title sits in the sky
+          above the acharyas and the painting below stays vivid and untouched */}
+      <div className="relative isolate overflow-hidden bg-[linear-gradient(180deg,#0A1233_0%,#13256B_38%,#3B6FC9_72%,#79B1F0_100%)]">
+        <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(45%_60%_at_50%_10%,rgba(246,199,82,.22),transparent_70%)]" />
+        <div aria-hidden className="absolute inset-0 -z-10 opacity-60 [background-image:radial-gradient(1px_1px_at_12%_18%,#fff,transparent),radial-gradient(1px_1px_at_28%_8%,#fff,transparent),radial-gradient(1.5px_1.5px_at_44%_22%,#FFE6A3,transparent),radial-gradient(1px_1px_at_63%_12%,#fff,transparent),radial-gradient(1px_1px_at_78%_26%,#fff,transparent),radial-gradient(1.5px_1.5px_at_90%_10%,#FFE6A3,transparent)]" />
+        <motion.div initial={reduce ? false : { opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease }}
+          className="vk-container relative pb-16 pt-12 text-center md:pb-24 md:pt-16">
+          <Eyebrow center light>{t("Disciplic succession")}</Eyebrow>
+          <h1 className="mt-4 font-heading text-[2.7rem] font-bold leading-[1.02] tracking-tight text-white [text-shadow:0_8px_30px_rgba(10,18,51,.45)] min-[380px]:text-[3.1rem] md:text-[5.2rem]">
             {t("Our")}{" "}
-            <span className="bg-gradient-to-br from-[#C9962B] via-[#E7B847] to-[#A87A1E] bg-clip-text text-transparent">{t("Acharyas")}</span>
+            <span className="bg-gradient-to-br from-[#FFE6A3] via-[#F6C752] to-[#E0A93A] bg-clip-text text-transparent">{t("Acharyas")}</span>
           </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-[15px] leading-7 text-[#0F1E4A]/70 md:text-[17px] md:leading-8">
+          <p className="mx-auto mt-4 max-w-2xl text-[15px] leading-7 text-white/85 md:text-[17px] md:leading-8">
             {t("The spiritual teachers through whom the teachings of Lord Chaitanya have come down to us: their lives, their instructions, their books and their pastimes.")}
           </p>
-          <div className="mx-auto mt-6 flex max-w-sm flex-col gap-2.5 min-[400px]:max-w-none min-[400px]:flex-row min-[400px]:justify-center">
+          <div className="mx-auto mt-7 flex max-w-sm flex-col gap-2.5 min-[400px]:max-w-none min-[400px]:flex-row min-[400px]:justify-center">
             <a href="#acharyas" className="group/btn rounded-full"><CtaPill label={t("Meet the acharyas")} className="w-full justify-between min-[400px]:w-auto" /></a>
-            <a href="#parampara" className="group/btn rounded-full"><CtaPill label={t("See the parampara")} variant="outline" className="w-full justify-between min-[400px]:w-auto" /></a>
+            <a href="#parampara" className="group/btn rounded-full"><CtaPill label={t("See the parampara")} variant="ghost" className="w-full justify-between min-[400px]:w-auto" /></a>
           </div>
+        </motion.div>
+
+        {/* the painting rises out of the sky: its top edge melts into the matching blue, everything else is untouched */}
+        <motion.div initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.2, ease, delay: 0.1 }}
+          className="relative h-[clamp(230px,66vw,340px)] overflow-hidden lg:h-auto lg:aspect-[1526/375]">
+          <div className={`absolute inset-y-0 left-0 aspect-[1526/375] lg:inset-0 lg:aspect-auto ${reduce ? "" : "animate-[acharya-hero-pan_40s_ease-in-out_infinite_alternate] lg:animate-none"}`}>
+            <Image src={ACHARYAS_PAINTING} alt={t("A painting of Srila Prabhupada and the acharyas before him seated in a riverside garden")} fill loading="eager" fetchPriority="high" quality={90} sizes="(min-width: 1024px) 100vw, 1400px"
+              className="object-cover [mask-image:linear-gradient(180deg,transparent_0%,#000_9%)]" />
+          </div>
+          <span aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-[#FBF7EE] to-transparent" />
         </motion.div>
       </div>
 
-      {/* the painting, vivid and untinted: in full on wide screens; on smaller ones it drifts slowly from end to end */}
-      <motion.div initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1.2, ease, delay: 0.1 }}
-        className="relative h-[clamp(230px,66vw,340px)] overflow-hidden [container-type:inline-size] lg:h-auto lg:aspect-[1526/375]">
-        <div className={`absolute inset-y-0 left-0 aspect-[1526/375] lg:inset-0 lg:aspect-auto ${reduce ? "" : "animate-[acharya-hero-pan_40s_ease-in-out_infinite_alternate] lg:animate-none"}`}>
-          <Image src={ACHARYAS_PAINTING} alt={t("A painting of Srila Prabhupada and the acharyas before him seated in a riverside garden")} fill loading="eager" fetchPriority="high" quality={90} sizes="(min-width: 1024px) 100vw, 1400px" className="object-cover" />
-        </div>
-        <span aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[#FBF7EE] to-transparent" />
-      </motion.div>
-
       {/* glass strip of counts across the hero's foot, with clear space before the next section */}
       <div className="vk-container relative z-10 -mt-7 pb-14 md:pb-20">
-        <Rise className="mx-auto grid max-w-3xl grid-cols-3 divide-x divide-[#E7DCC3] rounded-[1.4rem] bg-white/80 py-4 shadow-[0_24px_50px_-26px_rgba(15,30,74,.55)] ring-1 ring-white/70 backdrop-blur-xl md:py-5">
+        <Rise className="mx-auto grid max-w-3xl grid-cols-3 divide-x divide-[#E7DCC3] rounded-[1.4rem] bg-white py-4 shadow-[0_24px_50px_-26px_rgba(15,30,74,.55)] ring-1 ring-[#E7DCC3]/60 md:py-5">
           {[
             [ACHARYAS.length, t("Acharyas"), Users],
             [CATEGORIES.length, t("Categories"), Layers],
@@ -89,7 +93,6 @@ function Hero() {
           })}
         </Rise>
       </div>
-
     </section>
   );
 }
