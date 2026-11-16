@@ -574,3 +574,26 @@ export const COUNCIL: CouncilMember[] = [
 ];
 
 export const councilMember = (slug: string) => COUNCIL.find((m) => m.slug === slug);
+
+/** A search-snippet description: the member's summary, cut at a whole word (max ~158 chars). */
+export function councilDescription(m: CouncilMember): string {
+  const t = m.summary.replace(/\s+/g, " ").trim();
+  if (t.length <= 158) return t;
+  return t.slice(0, 158).replace(/\s+\S*$/, "") + "…";
+}
+
+/** schema.org Person for a council member (profile page). */
+export function councilPersonJsonLd(m: CouncilMember, siteUrl: string) {
+  return {
+    "@type": "Person",
+    "@id": `${siteUrl}/governance/${m.slug}#person`,
+    name: m.name,
+    url: `${siteUrl}/governance/${m.slug}`,
+    image: m.image,
+    jobTitle: m.roles[0],
+    description: m.summary,
+    ...(m.honours.length ? { award: m.honours } : {}),
+    knowsAbout: m.expertise,
+    memberOf: { "@type": "Organization", name: "Hare Krishna Movement" },
+  };
+}

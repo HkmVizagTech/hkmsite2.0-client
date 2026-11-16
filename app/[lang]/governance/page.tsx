@@ -1,5 +1,7 @@
 import GovernanceView from "@/components/governance/GovernanceView";
-import { pageSeo } from "@/lib/seo";
+import JsonLd from "@/components/seo/JsonLd";
+import { COUNCIL, councilPersonJsonLd } from "@/lib/governance";
+import { pageSeo, SITE_URL } from "@/lib/seo";
 import { localized } from "@/lib/i18n/seo";
 
 const baseMetadata = pageSeo({
@@ -9,8 +11,31 @@ const baseMetadata = pageSeo({
   path: "/governance",
 });
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+        { "@type": "ListItem", position: 2, name: "Governance", item: `${SITE_URL}/governance` },
+      ],
+    },
+    {
+      "@type": "ItemList",
+      name: "Governing Council of the Hare Krishna Movement",
+      itemListElement: COUNCIL.map((m, i) => ({ "@type": "ListItem", position: i + 1, item: councilPersonJsonLd(m, SITE_URL) })),
+    },
+  ],
+};
+
 export default function GovernancePage() {
-  return <GovernanceView />;
+  return (
+    <>
+      <JsonLd data={jsonLd} />
+      <GovernanceView />
+    </>
+  );
 }
 
 export const generateMetadata = localized(baseMetadata);
