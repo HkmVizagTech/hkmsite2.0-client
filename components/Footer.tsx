@@ -16,6 +16,7 @@ const exploreLinks = [
   { label: "Hare Krishna Vaikuntham", href: "/vaikuntham" },
   { label: "Srila Prabhupada", href: "/founder" },
   { label: "Governance", href: "/governance" },
+  { label: "Our Acharyas", href: "/acharyas" },
   { label: "Daily Schedule", href: "/daily-schedule" },
   { label: "Gallery", href: "/gallery" },
   { label: "Events", href: "/events" },
