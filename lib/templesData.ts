@@ -28,6 +28,8 @@ export type Temple = {
   placeQuery: string;
   website?: string;
   faqs: { q: string; a: string }[];
+  /** Optional long-form sections (detailed story pages): e.g. History in detail, Architecture, Daily worship, Visitor guide. */
+  sections?: { heading: string; body: string[] }[];
   sources: string[];
   check: string[];
 };

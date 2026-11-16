@@ -223,6 +223,19 @@ export default function TempleView({ temple: tm, photos, nearby }: { temple: Tem
                 )}
               </section>
 
+              {/* detailed sections */}
+              {tm.sections?.map((sec, k) => (
+                <section key={sec.heading} id={k === 0 ? "more" : undefined} className="scroll-mt-40">
+                  <Rise>
+                    <Kicker>{tm.shortName}</Kicker>
+                    <H2>{sec.heading}</H2>
+                    <div className="mt-6 space-y-5 text-[16px] leading-[1.95] text-[#0A1233]/80">
+                      {sec.body.map((p, j) => <p key={j}>{p}</p>)}
+                    </div>
+                  </Rise>
+                </section>
+              ))}
+
               {/* photos */}
               {photos.length > 1 && (
                 <section id="photos" className="scroll-mt-40">

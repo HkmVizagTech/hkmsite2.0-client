@@ -5,7 +5,7 @@ import { TEMPLES_TE_1 } from "./templesTe1";
 import { TEMPLES_TE_2 } from "./templesTe2";
 
 export type TempleTe = Partial<Pick<Temple,
-  "name" | "deity" | "town" | "district" | "summary" | "history" | "highlights" | "festivals" | "timings" | "timingsNote" | "fromVizag" | "howToReach" | "address" | "faqs"
+  "name" | "deity" | "town" | "district" | "summary" | "history" | "highlights" | "festivals" | "timings" | "timingsNote" | "fromVizag" | "howToReach" | "address" | "faqs" | "sections"
 >>;
 
 export const TEMPLES_TE: Record<string, TempleTe> = { ...TEMPLES_TE_1, ...TEMPLES_TE_2 };
