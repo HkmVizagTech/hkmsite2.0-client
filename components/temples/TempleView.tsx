@@ -137,7 +137,7 @@ export default function TempleView({ temple: tm, photos, nearby }: { temple: Tem
             {photos[0] ? (
               <motion.img src={photos[0].src} alt={tm.name} initial={reduce ? false : { scale: 1.1 }} animate={{ scale: 1 }} transition={{ duration: 6, ease: "easeOut" }}
                 className="absolute inset-0 h-full w-full object-cover" />
-            ) : <div className="absolute inset-0"><TempleArt telugu={tm.teluguName} form={tm.form} /></div>}
+            ) : <div aria-hidden className="absolute inset-0 bg-[radial-gradient(70%_60%_at_70%_30%,#2F5BD3_0%,#172B6E_45%,#0A1233_100%)]"><svg viewBox="0 0 200 160" preserveAspectRatio="xMidYMax meet" className="absolute bottom-0 right-0 h-[70%] w-[70%] text-white/[.06]"><path fill="currentColor" d="M70 160V70h60v90zM78 70l8-14h28l8 14zM84 56l6-12h20l6 12zM90 44l5-10h10l5 10zM96 34l4-9 4 9zM40 160v-40h30v40zM130 160v-40h30v40z" /></svg></div>}
             <span aria-hidden className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,18,51,.55)_0%,rgba(10,18,51,.1)_35%,rgba(10,18,51,.25)_60%,rgba(10,18,51,.92)_100%)]" />
             <div className="vk-container relative flex h-full flex-col">
               <nav aria-label="Breadcrumb" className="mx-auto flex w-full max-w-6xl flex-wrap items-center gap-1.5 pt-6 text-[12.5px] font-semibold text-white/70">
@@ -169,12 +169,12 @@ export default function TempleView({ temple: tm, photos, nearby }: { temple: Tem
               {[
                 { icon: Flower2, k: t("Presiding deity"), v: tm.deity },
                 { icon: MapPin, k: t("Location"), v: `${tm.town}, ${tm.district}` },
-                { icon: Clock, k: t("Darshan"), v: tm.timings[0] ? tm.timings[0].time : "—" },
-                { icon: Navigation, k: t("From Visakhapatnam"), v: (fromVizagShort.match(/about [^,;.]+/i)?.[0] ?? fromVizagShort).replace(/^about/i, "About") },
+                { icon: Clock, k: t("Darshan"), v: tm.timings[0] ? tm.timings[0].time : t("Confirm with the temple") },
+                { icon: Navigation, k: t("From Vizag"), v: (fromVizagShort.match(/about [^,;.]+/i)?.[0] ?? fromVizagShort).replace(/^about/i, "About") },
               ].map((f) => (
-                <div key={f.k} className="flex gap-3 bg-white p-4 md:p-5">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#EEF2FF] text-[#1E3A8A]"><f.icon className="h-[18px] w-[18px]" /></span>
-                  <div className="min-w-0"><dt className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#0A1233]/45">{f.k}</dt><dd className="mt-0.5 line-clamp-2 text-[13px] font-semibold leading-snug text-[#0A1233]">{f.v}</dd></div>
+                <div key={f.k} className="flex gap-3 bg-white p-3.5 min-[400px]:p-4 md:p-5">
+                  <span className="hidden h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#EEF2FF] text-[#1E3A8A] min-[400px]:flex"><f.icon className="h-[18px] w-[18px]" /></span>
+                  <div className="min-w-0"><dt className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.14em] text-[#0A1233]/45"><f.icon className="h-3.5 w-3.5 text-[#1E3A8A] min-[400px]:hidden" />{f.k}</dt><dd className="mt-1 line-clamp-3 text-[12.5px] font-semibold leading-snug text-[#0A1233] min-[400px]:text-[13px]">{f.v}</dd></div>
                 </div>
               ))}
             </motion.dl>
@@ -235,6 +235,7 @@ export default function TempleView({ temple: tm, photos, nearby }: { temple: Tem
                 <Rise>
                   <Kicker>{t("Plan your darshan")}</Kicker>
                   <H2>{t("Darshan & seva timings")}</H2>
+                  {tm.timings.length === 0 && <p className="mt-6 rounded-2xl bg-[#F7F9FE] px-5 py-4 text-[14.5px] leading-7 text-[#0A1233]/75 ring-1 ring-[#E6EBF7]">{t("The temple does not publish a fixed timetable online. Please check the latest darshan timings with the temple before you travel.")}</p>}
                   <ol className="relative mt-7 space-y-3 before:absolute before:bottom-4 before:left-[19px] before:top-4 before:w-px before:bg-[#DCE3F4]">
                     {tm.timings.map((x) => (
                       <li key={x.label} className="relative flex items-center gap-4">
@@ -246,7 +247,7 @@ export default function TempleView({ temple: tm, photos, nearby }: { temple: Tem
                       </li>
                     ))}
                   </ol>
-                  <p className="mt-5 flex gap-2.5 rounded-2xl bg-[#FFF8E6] px-5 py-4 text-[13px] leading-6 text-[#7A5A12] ring-1 ring-[#F6E3B0]"><CalendarDays className="mt-0.5 h-4 w-4 shrink-0" />{tm.timingsNote}</p>
+                  {tm.timings.length > 0 && <p className="mt-5 flex gap-2.5 rounded-2xl bg-[#FFF8E6] px-5 py-4 text-[13px] leading-6 text-[#7A5A12] ring-1 ring-[#F6E3B0]"><CalendarDays className="mt-0.5 h-4 w-4 shrink-0" />{tm.timingsNote}</p>}
                 </Rise>
                 {tm.festivals.length > 0 && (
                   <Rise className="mt-10">
