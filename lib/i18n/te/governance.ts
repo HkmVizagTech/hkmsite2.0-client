@@ -16,4 +16,16 @@ export const governance: Record<string, string> = {
   "Every movement thrives through inspired leadership. These are the torchbearers, teachers, and guides who transform timeless wisdom into living practice, bringing Krishna consciousness to life across the world.":
     "ప్రతి ఉద్యమం స్ఫూర్తిదాయకమైన నాయకత్వంతోనే వర్ధిల్లుతుంది. శాశ్వత జ్ఞానాన్ని జీవన ఆచరణగా మార్చి, ప్రపంచమంతటా కృష్ణ చైతన్యాన్ని వ్యాపింపజేసే మార్గదర్శకులు, గురువులు, దీపధారులు వీరే.",
   "The Governing Council of the movement": "ఉద్యమ పాలక మండలి",
+  "View profile": "ప్రొఫైల్ చూడండి",
+  "yrs": "సం.",
+  "Years of devotion": "భక్తి సంవత్సరాలు",
+  "The Governing Council of the Hare Krishna Movement": "హరే కృష్ణ మూవ్‌మెంట్ పాలక మండలి",
+  "Service & Vision": "సేవ & దృష్టి",
+  "Areas of service": "సేవా రంగాలు",
+  "Contributions": "సేవా కృషి",
+  "A life given to seva": "సేవకే అంకితమైన జీవితం",
+  "Featured Videos": "ప్రత్యేక వీడియోలు",
+  "Hear from": "వినండి:",
+  "Play": "ప్లే",
+  "Close": "మూసివేయండి",
 };
