@@ -104,7 +104,6 @@ export const nav: Record<string, string> = {
   "Timings, address & map": "సమయాలు, చిరునామా & మ్యాప్",
   "Vaikuntham": "వైకుంఠం",
   "The new temple being built": "నిర్మాణంలో ఉన్న కొత్త ఆలయం",
-  "Learn & Connect": "నేర్చుకోండి & పాల్గొనండి",
   "Temple Construction": "ఆలయ నిర్మాణం",
   "The disciplic succession": "గురు పరంపర",
   "Hare Krishna Movement temples": "హరే కృష్ణ మూవ్‌మెంట్ ఆలయాలు",

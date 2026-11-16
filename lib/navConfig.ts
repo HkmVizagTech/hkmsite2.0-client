@@ -84,7 +84,7 @@ export const navEntries: NavEntry[] = [
   {
     kind: "group",
     group: {
-      label: "Learn & Connect",
+      label: "Get Involved",
       icon: BookOpen,
       items: [
         { label: "Blogs", href: "/blogs", description: "Articles & spiritual insights", icon: FileText },
