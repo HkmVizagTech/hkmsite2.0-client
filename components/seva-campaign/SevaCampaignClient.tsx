@@ -458,7 +458,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                   onSubmit={handleSubmit}
                   onFocus={(e) => { if (isTextField(e.target)) setTyping(true); }}
                   onBlur={(e) => { if (!isTextField(e.relatedTarget)) setTyping(false); }}
-                  className="grid gap-1.5 sm:gap-2 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,1fr)]"
+                  className="grid gap-1.5 sm:gap-2 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,1fr)] lg:items-start"
                 >
                   {/* ═════ LEFT: choose the offering ═════ */}
                   <div className="min-w-0 rounded-[22px] bg-[#FBF8F1] p-4 sm:p-6 lg:p-8">
@@ -518,7 +518,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                       onKeyDown={onTierKeyDown}
                       className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3"
                     >
-                      {/* Phones: slim full-width rows (icon · amount · radio). Wider screens: the card grid. */}
+                      {/* Slim rows (icon · amount · tick): one column on phones, two on wider screens. */}
                       {config.tiers.map((tier, i) => {
                         const on = !useCustom && tierIndex === i;
                         const tierImpact = unitImpact(tier.amount, config, t);
@@ -535,14 +535,14 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                             whileHover={{ y: -3 }}
                             whileTap={{ scale: 0.98 }}
                             transition={{ type: "spring", stiffness: 400, damping: 28 }}
-                            className={`relative grid min-w-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3 rounded-2xl border-2 bg-white px-3 py-2.5 text-left [grid-template-areas:'icon_text_radio'] sm:min-h-[150px] sm:grid-cols-[auto_minmax(0,1fr)] sm:grid-rows-[auto_1fr] sm:items-start sm:gap-x-2 sm:rounded-3xl sm:p-4 sm:[grid-template-areas:'icon_radio'_'text_text'] transition-[border-color,box-shadow] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vk-500 focus-visible:ring-offset-2 sm:p-4 ${
+                            className={`relative grid min-w-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3 rounded-2xl border-2 bg-white px-3 py-2.5 text-left [grid-template-areas:'icon_text_radio'] sm:px-4 sm:py-3 transition-[border-color,box-shadow] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vk-500 focus-visible:ring-offset-2 sm:p-4 ${
                               on
                                 ? "border-gold shadow-[0_16px_34px_-16px_rgba(201,150,43,0.75)]"
                                 : "border-transparent shadow-[0_6px_18px_-12px_rgba(10,18,51,0.35)] ring-1 ring-vk-100 hover:ring-vk-200"
                             }`}
                           >
                               {/* Plate motif: the gold rim fills as the offering grows */}
-                              <span aria-hidden className="relative flex h-12 w-12 shrink-0 items-center justify-center [grid-area:icon] sm:h-14 sm:w-14">
+                              <span aria-hidden className="relative flex h-12 w-12 shrink-0 items-center justify-center [grid-area:icon]">
                                 <svg viewBox="0 0 56 56" className="absolute inset-0 h-full w-full -rotate-90">
                                   <circle cx="28" cy="28" r="25" fill="none" strokeWidth="4" className="stroke-vk-100" />
                                   <motion.circle
@@ -582,18 +582,18 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                                   )}
                                 </AnimatePresence>
                               </span>
-                            <span className="flex min-w-0 flex-col [grid-area:text] sm:h-full">
-                            <span className="block font-heading text-[1.25rem] font-extrabold leading-none text-vk-900 sm:mt-3 sm:text-2xl">
+                            <span className="flex min-w-0 flex-col [grid-area:text]">
+                            <span className="block font-heading text-[1.25rem] font-extrabold leading-none text-vk-900 sm:text-[1.4rem]">
                               ₹{tier.amount.toLocaleString("en-IN")}
                             </span>
-                            <span className="mt-1 block break-words text-[13.5px] font-semibold leading-snug text-ink/80 sm:mt-1.5 sm:text-[14px] sm:text-ink">
+                            <span className="mt-1 block break-words text-[13.5px] font-semibold leading-snug text-ink/80 sm:text-[14px]">
                               {t(tier.label)}
                             </span>
-                            <span className="mt-0.5 hidden break-words text-[12.5px] leading-snug text-muted-foreground sm:line-clamp-2">
+                            <span className="sr-only">
                               {t(tier.description)}
                             </span>
                             {tierImpact && (
-                              <span className={`mt-auto hidden items-start gap-1 self-start rounded-xl px-2 py-1 sm:mt-2 sm:inline-flex text-[11.5px] font-semibold leading-tight ${on ? "bg-gold/20 text-gold-deep" : "bg-vk-50 text-vk-700"}`}>
+                              <span className={`mt-auto hidden items-start gap-1 self-start rounded-xl px-2 py-1 text-[11.5px] font-semibold leading-tight ${on ? "bg-gold/20 text-gold-deep" : "bg-vk-50 text-vk-700"}`}>
                                 <Sparkles aria-hidden className="h-3 w-3 shrink-0" />
                                 {tierImpact}
                               </span>
