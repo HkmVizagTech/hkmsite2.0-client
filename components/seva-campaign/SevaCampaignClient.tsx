@@ -518,8 +518,9 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                       role="radiogroup"
                       aria-label={t("Choose Your Offering")}
                       onKeyDown={onTierKeyDown}
-                      className="mt-5 grid grid-cols-2 gap-2.5 sm:gap-3"
+                      className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3"
                     >
+                      {/* Phones: slim full-width rows (icon · amount · radio). Wider screens: the card grid. */}
                       {config.tiers.map((tier, i) => {
                         const on = !useCustom && tierIndex === i;
                         const tierImpact = unitImpact(tier.amount, config, t);
@@ -536,15 +537,14 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                             whileHover={{ y: -3 }}
                             whileTap={{ scale: 0.98 }}
                             transition={{ type: "spring", stiffness: 400, damping: 28 }}
-                            className={`relative flex min-h-[150px] min-w-0 flex-col rounded-3xl border-2 bg-white p-2.5 text-left min-[360px]:p-3 transition-[border-color,box-shadow] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vk-500 focus-visible:ring-offset-2 sm:p-4 ${
+                            className={`relative grid min-w-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3 rounded-2xl border-2 bg-white px-3 py-2.5 text-left [grid-template-areas:'icon_text_radio'] sm:min-h-[150px] sm:grid-cols-[auto_minmax(0,1fr)] sm:grid-rows-[auto_1fr] sm:items-start sm:gap-x-2 sm:rounded-3xl sm:p-4 sm:[grid-template-areas:'icon_radio'_'text_text'] transition-[border-color,box-shadow] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vk-500 focus-visible:ring-offset-2 sm:p-4 ${
                               on
                                 ? "border-gold shadow-[0_16px_34px_-16px_rgba(201,150,43,0.75)]"
                                 : "border-transparent shadow-[0_6px_18px_-12px_rgba(10,18,51,0.35)] ring-1 ring-vk-100 hover:ring-vk-200"
                             }`}
                           >
-                            <span className="flex items-start justify-between gap-2">
                               {/* Plate motif: the gold rim fills as the offering grows */}
-                              <span aria-hidden className="relative flex h-14 w-14 shrink-0 items-center justify-center">
+                              <span aria-hidden className="relative flex h-12 w-12 shrink-0 items-center justify-center [grid-area:icon] sm:h-14 sm:w-14">
                                 <svg viewBox="0 0 56 56" className="absolute inset-0 h-full w-full -rotate-90">
                                   <circle cx="28" cy="28" r="25" fill="none" strokeWidth="4" className="stroke-vk-100" />
                                   <motion.circle
@@ -566,7 +566,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                               </span>
                               <span
                                 aria-hidden
-                                className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
+                                className={`flex h-6 w-6 shrink-0 items-center justify-center justify-self-end rounded-full border-2 transition-colors [grid-area:radio] ${
                                   on ? "border-gold bg-gold text-vk-900" : "border-vk-200 bg-white"
                                 }`}
                               >
@@ -584,22 +584,23 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                                   )}
                                 </AnimatePresence>
                               </span>
-                            </span>
-                            <span className="mt-3 block font-heading text-[1.35rem] font-extrabold leading-none text-vk-900 sm:text-2xl">
+                            <span className="flex min-w-0 flex-col [grid-area:text] sm:h-full">
+                            <span className="block font-heading text-[1.25rem] font-extrabold leading-none text-vk-900 sm:mt-3 sm:text-2xl">
                               ₹{tier.amount.toLocaleString("en-IN")}
                             </span>
-                            <span className="mt-1.5 block break-words text-[14px] font-semibold leading-snug text-ink">
+                            <span className="mt-1 block break-words text-[13.5px] font-semibold leading-snug text-ink/80 sm:mt-1.5 sm:text-[14px] sm:text-ink">
                               {t(tier.label)}
                             </span>
-                            <span className="mt-0.5 line-clamp-2 hidden break-words text-[12.5px] leading-snug text-muted-foreground min-[360px]:block">
+                            <span className="mt-0.5 hidden break-words text-[12.5px] leading-snug text-muted-foreground sm:line-clamp-2">
                               {t(tier.description)}
                             </span>
                             {tierImpact && (
-                              <span className={`mt-auto inline-flex items-start gap-1 self-start rounded-xl px-2 py-1 text-[11.5px] font-semibold leading-tight ${on ? "bg-gold/20 text-gold-deep" : "bg-vk-50 text-vk-700"}`}>
+                              <span className={`mt-auto hidden items-start gap-1 self-start rounded-xl px-2 py-1 sm:mt-2 sm:inline-flex text-[11.5px] font-semibold leading-tight ${on ? "bg-gold/20 text-gold-deep" : "bg-vk-50 text-vk-700"}`}>
                                 <Sparkles aria-hidden className="h-3 w-3 shrink-0" />
                                 {tierImpact}
                               </span>
                             )}
+                            </span>
                           </motion.button>
                         );
                       })}
