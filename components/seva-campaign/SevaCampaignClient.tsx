@@ -1066,7 +1066,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
         <EdScriptures />
 
         {/* ── FAQs ── */}
-        <EdFaq faqs={config.faqs} />
+        <EdFaq faqs={config.faqs} topic={config.pageTitle} />
 
         {/* ── Founder's words ── */}
         <FounderSection />

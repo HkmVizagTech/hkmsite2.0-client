@@ -600,8 +600,10 @@ export function EdScriptures() {
 
 /* ───────────────────────── FAQ ───────────────────────── */
 
-export function EdFaq({ faqs }: { faqs: { q: string; a: string }[] }) {
+export function EdFaq({ faqs, topic }: { faqs: { q: string; a: string }[]; topic: string }) {
   const t = useT();
+  // Opens WhatsApp with a message that names this seva, so the team knows what the question is about.
+  const waHref = `https://wa.me/${SEVA_WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hare Krishna! I have a question about ${topic}.`)}`;
   const [open, setOpen] = useState<number | null>(0);
   if (!faqs.length) return null;
   // FAQPage structured data so Google can show these answers in search.
@@ -620,7 +622,7 @@ export function EdFaq({ faqs }: { faqs: { q: string; a: string }[] }) {
             <div className="-mt-4 hidden rounded-3xl bg-gradient-to-br from-vk-100 via-vk-50 to-white p-5 ring-1 ring-vk-200 lg:block">
               <p className="font-heading text-[16px] font-bold text-vk-900">{t("Still have a question?")}</p>
               <p className="mt-1 text-[13.5px] leading-relaxed text-ink/65">{t("Message our seva team on WhatsApp.")}</p>
-              <a href={`https://wa.me/${SEVA_WHATSAPP_NUMBER}`} target="_blank" rel="noopener noreferrer"
+              <a href={waHref} target="_blank" rel="noopener noreferrer"
                 className="mt-4 inline-flex h-11 items-center gap-2 rounded-xl bg-white px-4 text-[14px] font-semibold text-vk-700 ring-1 ring-vk-200 transition hover:bg-vk-50">
                 <MessageCircle className="h-4 w-4" /> {t("Chat on WhatsApp")}
               </a>
@@ -655,7 +657,7 @@ export function EdFaq({ faqs }: { faqs: { q: string; a: string }[] }) {
             })}
           </ul>
 
-          <a href={`https://wa.me/${SEVA_WHATSAPP_NUMBER}`} target="_blank" rel="noopener noreferrer"
+          <a href={waHref} target="_blank" rel="noopener noreferrer"
             className="flex items-center gap-3 rounded-2xl bg-gradient-to-br from-vk-100 via-vk-50 to-white p-4 ring-1 ring-vk-200 lg:hidden">
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-vk-600 ring-1 ring-vk-100"><MessageCircle className="h-5 w-5" /></span>
             <span className="min-w-0 flex-1">
