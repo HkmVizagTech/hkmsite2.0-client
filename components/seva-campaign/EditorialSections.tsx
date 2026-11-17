@@ -127,18 +127,31 @@ export function EdHero(props: { config: SevaCampaignConfig; onDonate: () => void
   if (!config.bannerImage) return <EdHeroPhoto {...props} />;
   const alt = `${config.pageTitle} — ${config.heroHeading1} ${config.heroHeading2}`;
   return (
-    <section className={`relative overflow-hidden ${IVORY}`}>
-      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[70%] bg-[radial-gradient(60%_60%_at_50%_0%,rgba(246,199,82,0.22),transparent_70%)]" />
-      <div className="vk-container relative pb-6 pt-4 md:pb-10 md:pt-8">
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="relative">
-          <div aria-hidden className="pointer-events-none absolute -inset-3 rounded-[34px] bg-gradient-to-br from-gold/40 via-gold/10 to-vk-200/30 blur-xl" />
-          <button type="button" onClick={onDonate} aria-label={t("Donate — go to the donation form")}
-            className="group relative block w-full overflow-hidden rounded-[22px] bg-vk-100 shadow-[0_40px_80px_-40px_rgba(47,91,211,0.45)] ring-1 ring-white/60 md:rounded-[30px]">
-            <Image src={config.bannerImageMobile || config.bannerImage} alt={alt} width={config.bannerMobileWidth ?? 941} height={config.bannerMobileHeight ?? 1672}
-              priority sizes="100vw" className="block h-auto w-full transition duration-700 group-hover:scale-[1.015] md:hidden" />
-            <Image src={config.bannerImage} alt={alt} width={config.bannerWidth ?? 1672} height={config.bannerHeight ?? 941}
-              priority sizes="(min-width: 1280px) 1248px, 100vw" className="hidden h-auto w-full transition duration-700 group-hover:scale-[1.015] md:block" />
-          </button>
+    <section className="relative isolate overflow-hidden bg-[#FFF9EC]">
+      {/* Backdrop: the banner itself, blurred into a warm glow so wide screens have no empty sides */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+        <Image src={config.bannerImage} alt="" fill sizes="40vw" quality={30} className="scale-125 object-cover opacity-60 blur-3xl saturate-150" />
+        <div className="absolute inset-0 bg-[radial-gradient(70%_60%_at_50%_45%,rgba(255,249,236,0)_0%,rgba(255,249,236,0.55)_70%,#FFF9EC_100%)]" />
+        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-b from-transparent to-white" />
+      </div>
+      {/* Fine gold sparkles in the corners */}
+      <Sparkles aria-hidden className="pointer-events-none absolute left-[6%] top-10 hidden h-6 w-6 text-gold/70 lg:block" />
+      <Sparkles aria-hidden className="pointer-events-none absolute bottom-16 right-[7%] hidden h-5 w-5 text-gold/60 lg:block" />
+
+      <div className="relative mx-auto w-full max-w-[1440px] px-3 pb-8 pt-3 sm:px-6 md:pb-12 md:pt-6 xl:px-10">
+        <motion.div initial={{ opacity: 0, y: 14, scale: 0.985 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.7, ease: [0.22, 0.8, 0.3, 1] }} className="relative">
+          {/* Gold bezel */}
+          <div className="rounded-[26px] bg-gradient-to-br from-[#F6D27A] via-[#FFF1C9] to-[#D9A43A] p-[3px] shadow-[0_40px_90px_-40px_rgba(150,105,20,0.55)] md:rounded-[34px] md:p-1">
+            <button type="button" onClick={onDonate} aria-label={t("Donate — go to the donation form")}
+              className="group relative block w-full overflow-hidden rounded-[23px] bg-[#FFF3D6] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-vk-300 md:rounded-[30px]">
+              <Image src={config.bannerImageMobile || config.bannerImage} alt={alt} width={config.bannerMobileWidth ?? 941} height={config.bannerMobileHeight ?? 1672}
+                priority sizes="100vw" className="block h-auto w-full transition duration-700 group-hover:scale-[1.012] md:hidden" />
+              <Image src={config.bannerImage} alt={alt} width={config.bannerWidth ?? 1672} height={config.bannerHeight ?? 941}
+                priority sizes="(min-width: 1440px) 1360px, 100vw" className="hidden h-auto w-full transition duration-700 group-hover:scale-[1.012] md:block" />
+              {/* Soft light sweep on hover */}
+              <span aria-hidden className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 -skew-x-12 bg-gradient-to-r from-transparent via-white/35 to-transparent opacity-0 transition-all duration-1000 group-hover:left-[110%] group-hover:opacity-100 motion-reduce:hidden" />
+            </button>
+          </div>
         </motion.div>
 
         {/* The banner carries the visuals; the heading stays for search engines and screen readers. */}
@@ -506,17 +519,26 @@ export function EdReadMore({ config }: { config: SevaCampaignConfig }) {
     <section className="bg-white py-14 md:py-24">
       <div className="vk-container">
         <SectionTitle eyebrow={t("Keep reading")} title={t(config.readMoreHeading ?? "Keep reading")} />
-        <div className="mx-auto grid max-w-6xl gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
-          {config.readMore.map((r) => (
+        {/* Phones: a swipe row so four articles don't make a long stack. Desktop: a four-column grid. */}
+        <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-3 scrollbar-hide [scroll-padding-inline:1rem] sm:mx-auto sm:grid sm:max-w-6xl sm:grid-cols-2 sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4 lg:gap-5">
+          {config.readMore.map((r, i) => (
             <Link
               key={r.href}
               href={r.href}
-              className="group flex flex-col rounded-3xl bg-white p-6 shadow-[0_18px_40px_-32px_rgba(10,18,51,0.45)] ring-1 ring-vk-100 transition-all hover:-translate-y-1 hover:ring-vk-300"
+              className="group flex w-[80%] max-w-[300px] shrink-0 snap-start flex-col overflow-hidden rounded-3xl bg-white shadow-[0_18px_40px_-32px_rgba(47,91,211,0.5)] ring-1 ring-vk-100 transition-all hover:-translate-y-1 hover:ring-vk-300 sm:w-auto sm:max-w-none"
             >
-              <h3 className="font-heading text-[17px] font-bold leading-snug text-vk-900 transition-colors group-hover:text-vk-600">{r.title}</h3>
-              <p className="mt-2 flex-1 text-[14.5px] leading-relaxed text-ink/65">{r.text}</p>
-              <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-vk-700">
-                {t("Read article")} <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+              <span className="relative flex h-20 items-center justify-between bg-gradient-to-br from-vk-100 via-vk-50 to-[#FFF7E3] px-5">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-vk-600 shadow-sm ring-1 ring-vk-100">
+                  <BookOpen className="h-5 w-5" />
+                </span>
+                <span aria-hidden className="font-heading text-[2rem] font-extrabold leading-none text-vk-200">{String(i + 1).padStart(2, "0")}</span>
+              </span>
+              <span className="flex flex-1 flex-col p-5">
+                <span className="font-heading text-[16.5px] font-bold leading-snug text-vk-900 transition-colors group-hover:text-vk-600">{r.title}</span>
+                <span className="mt-2 line-clamp-3 flex-1 text-[14px] leading-relaxed text-ink/60">{r.text}</span>
+                <span className="mt-4 inline-flex items-center gap-1.5 text-[13.5px] font-semibold text-vk-600">
+                  {t("Read article")} <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                </span>
               </span>
             </Link>
           ))}

@@ -7,7 +7,7 @@ import SearchParamsWatcher from "@/components/SearchParamsWatcher";
 import Image from "next/image";
 import { AnimatePresence, MotionConfig, motion } from "framer-motion";
 import {
-  Loader2, User, Phone, Mail, Check, Copy,
+  Loader2, User, Users, Phone, Mail, Check, Copy,
   ChevronDown, Heart, Building2,
   Repeat, Receipt, Gift, Lock, Sparkles, ArrowRight, BadgeCheck, MessageCircle,
 } from "lucide-react";
@@ -960,46 +960,70 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
 
         {/* ── Recent devotees supporting this seva ── */}
         {stats && stats.donors.length > 0 && (
-          <section className="vk-section vk-band">
+          <section className="bg-gradient-to-b from-white via-vk-50/60 to-white py-14 md:py-20">
             <div className="vk-container">
-              <div className="mx-auto max-w-2xl">
-                <div className="mb-5 text-center">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-green-500/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-green-700">
+              <div className="mx-auto grid max-w-5xl items-center gap-6 lg:grid-cols-[0.85fr_1.15fr] lg:gap-12">
+                <div className="min-w-0 text-center lg:text-left">
+                  <span className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-emerald-700 ring-1 ring-emerald-100">
                     <span className="relative flex h-2 w-2">
-                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-75" />
-                      <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-75 motion-reduce:hidden" />
+                      <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
                     </span>
-                    Live
+                    {t("Live")}
                   </span>
-                  <h2 className="vk-h3 mt-3">Recent Devotees Supporting This Seva</h2>
-                  <p className="mt-1.5 text-sm text-muted-foreground">Thank you to everyone who has offered this seva recently.</p>
+                  <h2 className="mt-4 font-heading text-[1.6rem] font-extrabold leading-tight tracking-tight text-vk-900 md:text-[2rem]">
+                    {t("Recent Devotees Supporting This Seva")}
+                  </h2>
+                  <p className="mx-auto mt-2 max-w-md text-[15px] leading-relaxed text-ink/65 lg:mx-0">
+                    {t("Thank you to everyone who has offered this seva recently.")}
+                  </p>
+                  {stats.donorCount > stats.donors.length && (
+                    <p className="mx-auto mt-5 inline-flex items-center gap-3 rounded-2xl bg-white px-4 py-3 text-left ring-1 ring-vk-100 lg:mx-0">
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-vk-100 text-vk-600"><Users className="h-5 w-5" /></span>
+                      <span className="min-w-0">
+                        <span className="block font-heading text-xl font-extrabold leading-none text-vk-700">{stats.donorCount.toLocaleString("en-IN")}</span>
+                        <span className="mt-1 block text-[12.5px] font-medium text-ink/60">{t("devotees have offered this seva")}</span>
+                      </span>
+                    </p>
+                  )}
+                  <div className="mt-6 hidden lg:block">
+                    <button type="button" onClick={scrollToDonate} className="vk-btn-gold h-12 px-8 text-[15px] font-bold">
+                      <Heart className="h-4 w-4 fill-current" /> {t("Join them")}
+                    </button>
+                  </div>
                 </div>
 
-                <motion.ul
-                  initial={{ opacity: 0, y: 12 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4 }}
-                  className="vk-card divide-y divide-vk-100 overflow-hidden !rounded-3xl"
-                >
-                  {stats.donors.slice(0, 5).map((d, i) => (
-                    <li key={`${d.name}-${i}`} className="flex items-center gap-3.5 px-4 py-3.5 sm:px-5">
-                      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-vk-100 text-sm font-bold text-vk-700 ring-1 ring-vk-200">
-                        {d.name.charAt(0).toUpperCase()}
-                      </span>
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-[15px] font-semibold text-ink">{d.name}</p>
-                        <p className="text-xs text-muted-foreground">{d.time}</p>
-                      </div>
-                      <p className="shrink-0 rounded-full bg-vk-50 px-3 py-1 text-sm font-bold text-vk-700">₹{d.amount.toLocaleString("en-IN")}</p>
-                    </li>
-                  ))}
-                </motion.ul>
-
-                <div className="mt-5 text-center">
-                  <button type="button" onClick={scrollToDonate} className="vk-btn-gold h-12 px-8 text-[15px] font-bold">
-                    <Heart className="h-4 w-4 fill-current" /> Join them
-                  </button>
+                <div className="min-w-0">
+                  <ul className="overflow-hidden rounded-3xl bg-white shadow-[0_24px_50px_-34px_rgba(47,91,211,0.45)] ring-1 ring-vk-100">
+                    {stats.donors.slice(0, 5).map((d, i) => (
+                      <motion.li
+                        key={`${d.name}-${i}`}
+                        initial={{ opacity: 0, y: 8 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.35, delay: i * 0.06 }}
+                        className="flex items-center gap-3 border-b border-vk-50 px-4 py-3.5 last:border-b-0 sm:gap-3.5 sm:px-5"
+                      >
+                        <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full font-heading text-[15px] font-bold ${
+                          ["bg-vk-100 text-vk-700", "bg-amber-50 text-amber-700", "bg-emerald-50 text-emerald-700"][i % 3]
+                        }`}>
+                          {d.name.charAt(0).toUpperCase()}
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate text-[15px] font-semibold text-vk-900">{d.name}</span>
+                          <span className="block text-[12px] text-ink/50">{d.time}</span>
+                        </span>
+                        <span className="shrink-0 rounded-full bg-vk-50 px-3 py-1 font-heading text-[14px] font-bold text-vk-700 ring-1 ring-vk-100">
+                          ₹{d.amount.toLocaleString("en-IN")}
+                        </span>
+                      </motion.li>
+                    ))}
+                  </ul>
+                  <div className="mt-5 text-center lg:hidden">
+                    <button type="button" onClick={scrollToDonate} className="vk-btn-gold h-12 w-full max-w-xs px-8 text-[15px] font-bold">
+                      <Heart className="h-4 w-4 fill-current" /> {t("Join them")}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
