@@ -13,7 +13,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import WhatsAppIcon from "@/components/WhatsAppIcon";
-import { useT } from "@/components/i18n/LocaleProvider";
+import { useLocale, useT } from "@/components/i18n/LocaleProvider";
 
 import { navEntries, isGroupActive, shouldHideBottomNav } from "@/lib/navConfig";
 import { stripLocale } from "@/lib/i18n/routing";
@@ -67,6 +67,7 @@ const getDarshanStatus = () => {
 
 const Navbar = () => {
   const t = useT();
+  const { locale } = useLocale();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [darshanStatus, setDarshanStatus] = useState(getDarshanStatus);
@@ -350,7 +351,7 @@ const Navbar = () => {
           }`}
         >
           {/* ── Logo ─────────────────────────────────────────────── */}
-          <Link href="/" className="flex shrink-0 items-center gap-3" aria-label={t("Home")}>
+          <Link href="/" className="flex shrink-0 items-center gap-2 min-[360px]:gap-3" aria-label={t("Home")}>
             <Image
               src={typeof ISKLogo === "string" ? ISKLogo : ISKLogo.src}
               alt={t("ISKCON Gambheeram Visakhapatnam logo")}
@@ -358,16 +359,16 @@ const Navbar = () => {
               height={112}
               priority
               loading="eager"
-              className="h-8 w-auto shrink-0 md:h-11 lg:h-9"
+              className="h-7 w-auto shrink-0 min-[360px]:h-8 md:h-11 lg:h-9"
             />
-            <div className="flex shrink-0 items-center gap-2 md:gap-3">
+            <div className="flex shrink-0 items-center gap-1.5 min-[360px]:gap-2 md:gap-3">
               <span className="h-6 w-px shrink-0 bg-vk-200 md:h-8" aria-hidden />
               <Image
                 src={typeof HKVTLogo === "string" ? HKVTLogo : HKVTLogo.src}
                 alt={t("Hare Krishna Vaikuntham Cultural Centre logo")}
                 width={795}
                 height={288}
-                className="h-7 w-auto shrink-0 md:h-11 lg:h-9"
+                className="h-6 w-auto shrink-0 min-[360px]:h-7 md:h-11 lg:h-9"
               />
             </div>
           </Link>
@@ -469,12 +470,17 @@ const Navbar = () => {
             </button>
           </div>
 
-          {/* ── Mobile: Donate Now button ─────────────────────────── */}
-          <div className="flex items-center gap-1.5 lg:hidden">
-            <LanguagePicker variant="compact" />
-            <Link href="/donate" aria-label={t("Donate")} className="vk-btn-gold !h-10 !min-w-10 shrink-0 !rounded-xl !px-2.5 !py-0 !text-[12px] min-[400px]:!h-9 min-[400px]:!px-3.5">
+          {/* ── Mobile: Donate Now button (language lives in the "More" sheet on phones) ── */}
+          <div className="flex items-center lg:hidden">
+            <Link href="/donate" className="vk-btn-gold !h-10 shrink-0 !gap-1.5 whitespace-nowrap !rounded-xl !px-2.5 !py-0 !text-[12.5px] font-bold min-[360px]:!px-3.5 min-[360px]:!text-[13.5px]">
               <Heart className="h-3.5 w-3.5 fill-current" />
-              <span className="hidden min-[400px]:inline">{t("Donate")}</span>
+              {/* "Donate Now" where it fits; the shorter "Donate" on the narrowest phones and in longer scripts */}
+              {locale === "en" ? (
+                <>
+                  <span className="min-[360px]:hidden">{t("Donate")}</span>
+                  <span className="hidden min-[360px]:inline">{t("Donate Now")}</span>
+                </>
+              ) : t("Donate")}
             </Link>
           </div>
         </div>
