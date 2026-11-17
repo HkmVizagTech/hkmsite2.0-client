@@ -5,7 +5,7 @@ export const TEMPLE_PHOTOS: Record<string, Photo[]> = {
   // Our own temple: the same images as its page (/iskcon-vizag-temple).
   "hare-krishna-vaikuntham-iskcon-gambheeram-visakhapatnam": [
     {
-      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793690805550-1793690804029-HareKrishnaVaikunthamTemple.png",
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793691134023-1793691133192-WhiteStoneHinduTempleinForestClearing.png",
       "alt": "Hare Krishna Vaikuntham temple, Gambheeram, Visakhapatnam"
     }
   ],
