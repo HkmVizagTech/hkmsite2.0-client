@@ -80,7 +80,7 @@ function StepLabel({ n, children }: { n: number; children: ReactNode }) {
     <div className="mb-4 flex items-center gap-3">
       <span
         aria-hidden
-        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-vk-900 font-heading text-[13px] font-bold text-gold"
+        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-vk-100 font-heading text-[13px] font-bold text-vk-700 ring-1 ring-vk-200"
       >
         {n}
       </span>
@@ -485,18 +485,18 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                               if (isMonthly) setWantsMahaPrasadam(false);
                             }}
                             className={`relative flex h-11 items-center justify-center gap-2 rounded-xl text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vk-500 ${
-                              on ? "text-white" : "text-ink/70 hover:text-vk-700"
+                              on ? "text-vk-800" : "text-ink/70 hover:text-vk-700"
                             }`}
                           >
                             {on && (
                               <motion.span
                                 layoutId="freq-pill"
                                 transition={{ type: "spring", stiffness: 500, damping: 38 }}
-                                className="absolute inset-0 rounded-xl bg-vk-900 shadow-[0_8px_18px_-10px_rgba(10,18,51,0.9)]"
+                                className="absolute inset-0 rounded-xl bg-vk-100 ring-1 ring-vk-300 shadow-[0_8px_18px_-12px_rgba(47,91,211,0.5)]"
                               />
                             )}
                             <span className="relative inline-flex items-center gap-1.5">
-                              {isMonthly ? <Repeat className={`h-4 w-4 ${on ? "text-gold" : ""}`} /> : <Heart className={`h-4 w-4 ${on ? "fill-gold text-gold" : ""}`} />}
+                              {isMonthly ? <Repeat className={`h-4 w-4 ${on ? "text-vk-600" : ""}`} /> : <Heart className={`h-4 w-4 ${on ? "fill-gold text-gold" : ""}`} />}
                               {isMonthly ? t("Monthly") : t("One-time")}
                             </span>
                           </button>
@@ -558,7 +558,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                                 </svg>
                                 <span
                                   className={`flex h-10 w-10 items-center justify-center rounded-full transition-colors ${
-                                    on ? "bg-vk-900 text-gold" : "bg-[#FBF8F1] text-vk-600"
+                                    on ? "bg-vk-100 text-vk-700" : "bg-[#FBF8F1] text-vk-600"
                                   }`}
                                 >
                                   <ImpactIcon className="h-[18px] w-[18px]" />
@@ -715,11 +715,11 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                   {/* ═════ RIGHT: live summary + details + pay ═════ */}
                   <div className="min-w-0 rounded-[22px] bg-white p-4 sm:p-6 lg:p-8">
                     {/* Live summary */}
-                    <div className="relative overflow-hidden rounded-3xl bg-vk-900 p-5 text-white sm:p-6">
+                    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-vk-100 via-vk-50 to-white p-5 text-vk-900 ring-1 ring-vk-200 sm:p-6">
                       <div aria-hidden className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full border border-gold/20" />
                       <div aria-hidden className="pointer-events-none absolute -right-4 -top-4 h-24 w-24 rounded-full border border-gold/15" />
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-gold/90">{t("Your offering")}</p>
-                      <p className="mt-1 truncate font-heading text-[15px] font-semibold text-white/90">{t(config.pageTitle)}</p>
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-gold">{t("Your offering")}</p>
+                      <p className="mt-1 truncate font-heading text-[15px] font-semibold text-vk-900">{t(config.pageTitle)}</p>
                       <div className="mt-3 flex min-h-[48px] flex-wrap items-end gap-x-1.5" aria-live="polite" aria-atomic="true">
                         <AnimatePresence mode="popLayout" initial={false}>
                           <motion.span
@@ -728,14 +728,14 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -10 }}
                             transition={{ duration: 0.2 }}
-                            className="font-heading text-[2.5rem] font-extrabold leading-none text-gold [overflow-wrap:anywhere]"
+                            className="font-heading text-[2.5rem] font-extrabold leading-none text-vk-600 [overflow-wrap:anywhere]"
                           >
                             ₹{finalAmount > 0 ? finalAmount.toLocaleString("en-IN") : "0"}
                           </motion.span>
                         </AnimatePresence>
-                        {monthly && <span className="pb-1 text-sm font-semibold text-white/70">{t("/mo")}</span>}
+                        {monthly && <span className="pb-1 text-sm font-semibold text-ink/60">{t("/mo")}</span>}
                       </div>
-                      <p className="mt-2 break-words text-[13px] font-medium text-white/80">
+                      <p className="mt-2 break-words text-[13px] font-medium text-ink/70">
                         {useCustom ? t("Custom offering") : config.tiers[tierIndex] ? t(config.tiers[tierIndex].label) : t("Select a tier")}
                       </p>
                       <div className="mt-4 min-h-[22px]">
@@ -748,7 +748,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                                 animate={{ opacity: lit ? 1 : 0.35, scale: lit ? 1 : 0.86 }}
                                 transition={{ delay: i * 0.03, type: "spring", stiffness: 500, damping: 26 }}
                                 className={`flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full transition-colors sm:h-[22px] sm:w-[22px] ${
-                                  lit ? "bg-gold text-vk-900" : "bg-white/10 text-white/40"
+                                  lit ? "bg-gold text-vk-900" : "bg-vk-200/70 text-vk-400"
                                 }`}
                               >
                                 <ImpactIcon className="h-3 w-3" />
@@ -757,7 +757,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                           })}
                         </div>
                         {impactLabel && (
-                          <p className="mt-2 text-[12.5px] font-medium text-white/85">
+                          <p className="mt-2 text-[12.5px] font-medium text-ink/70">
                             {t("Supports {impact}", { impact: impactLabel })}
                           </p>
                         )}
@@ -984,7 +984,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                 >
                   {stats.donors.slice(0, 5).map((d, i) => (
                     <li key={`${d.name}-${i}`} className="flex items-center gap-3.5 px-4 py-3.5 sm:px-5">
-                      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-vk-700 to-vk-500 text-sm font-bold text-white">
+                      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-vk-100 text-sm font-bold text-vk-700 ring-1 ring-vk-200">
                         {d.name.charAt(0).toUpperCase()}
                       </span>
                       <div className="min-w-0 flex-1">

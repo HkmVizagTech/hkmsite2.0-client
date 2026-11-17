@@ -133,7 +133,7 @@ export function EdHero(props: { config: SevaCampaignConfig; onDonate: () => void
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="relative">
           <div aria-hidden className="pointer-events-none absolute -inset-3 rounded-[34px] bg-gradient-to-br from-gold/40 via-gold/10 to-vk-200/30 blur-xl" />
           <button type="button" onClick={onDonate} aria-label={t("Donate — go to the donation form")}
-            className="group relative block w-full overflow-hidden rounded-[22px] bg-vk-900 shadow-[0_40px_80px_-40px_rgba(10,18,51,0.7)] ring-1 ring-white/60 md:rounded-[30px]">
+            className="group relative block w-full overflow-hidden rounded-[22px] bg-vk-100 shadow-[0_40px_80px_-40px_rgba(47,91,211,0.45)] ring-1 ring-white/60 md:rounded-[30px]">
             <Image src={config.bannerImageMobile || config.bannerImage} alt={alt} width={config.bannerMobileWidth ?? 941} height={config.bannerMobileHeight ?? 1672}
               priority sizes="100vw" className="block h-auto w-full transition duration-700 group-hover:scale-[1.015] md:hidden" />
             <Image src={config.bannerImage} alt={alt} width={config.bannerWidth ?? 1672} height={config.bannerHeight ?? 941}
@@ -225,7 +225,7 @@ function EdHeroPhoto({ config, onDonate, onHow }: { config: SevaCampaignConfig; 
           )}
           {lead && (
             <div className="absolute -bottom-4 left-4 flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-[0_18px_40px_-20px_rgba(10,18,51,0.5)] ring-1 ring-vk-100 sm:left-6 lg:-left-6 lg:bottom-8">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-vk-900 text-gold">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-vk-100 text-vk-700">
                 <HandHeart className="h-5 w-5" />
               </span>
               <span className="min-w-0">
@@ -348,7 +348,7 @@ export function EdImpact({ config }: { config: SevaCampaignConfig }) {
               whileHover={{ y: -4 }}
               className="relative flex gap-4 rounded-3xl bg-white p-5 shadow-[0_18px_40px_-30px_rgba(10,18,51,0.45)] ring-1 ring-vk-100 sm:block sm:p-6"
             >
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-vk-900 text-gold sm:mb-5">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-vk-100 text-vk-700 sm:mb-5">
                 <item.icon className="h-5 w-5" />
               </span>
               <span aria-hidden className="absolute right-5 top-5 font-heading text-sm font-bold text-vk-200">
@@ -386,7 +386,7 @@ export function EdFeatures({ config }: { config: SevaCampaignConfig }) {
                 key={s.title}
                 {...rise}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
-                className={`relative flex flex-col overflow-hidden rounded-3xl ring-1 ${last ? "bg-vk-900 ring-vk-900" : "bg-white ring-vk-100"} shadow-[0_18px_40px_-30px_rgba(10,18,51,0.45)]`}
+                className={`relative flex flex-col overflow-hidden rounded-3xl ring-1 ${last ? "bg-gradient-to-br from-vk-100 to-vk-50 ring-vk-200" : "bg-white ring-vk-100"} shadow-[0_18px_40px_-30px_rgba(10,18,51,0.45)]`}
               >
                 <div className="relative aspect-[16/10] overflow-hidden">
                   {!last && photo ? (
@@ -400,8 +400,8 @@ export function EdFeatures({ config }: { config: SevaCampaignConfig }) {
                   </span>
                 </div>
                 <div className="flex-1 p-5">
-                  <h3 className={`font-heading text-[17px] font-bold leading-snug ${last ? "text-white" : "text-vk-900"}`}>{t(s.title)}</h3>
-                  <p className={`mt-1.5 text-[14.5px] leading-relaxed ${last ? "text-white/70" : "text-ink/65"}`}>{t(s.text)}</p>
+                  <h3 className={`font-heading text-[17px] font-bold leading-snug text-vk-900`}>{t(s.title)}</h3>
+                  <p className={`mt-1.5 text-[14.5px] leading-relaxed text-ink/65`}>{t(s.text)}</p>
                 </div>
                 {!last && (
                   <span aria-hidden className="absolute -right-3 top-[31%] z-10 hidden h-7 w-7 items-center justify-center rounded-full bg-gold text-vk-900 shadow lg:flex">
@@ -446,23 +446,23 @@ export function EdPrivileges({ config, onDonate }: { config: SevaCampaignConfig;
   return (
     <section className="bg-white pb-14 md:pb-24">
       <div className="vk-container">
-        <div className="relative isolate mx-auto max-w-6xl overflow-hidden rounded-[28px] bg-vk-900 px-5 py-12 md:px-12 md:py-16">
-          <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 -z-10 h-72 w-72 rounded-full border border-gold/20" />
-          <div aria-hidden className="pointer-events-none absolute -bottom-32 -left-20 -z-10 h-72 w-72 rounded-full border border-white/5" />
-          <SectionTitle light eyebrow={t("Our gratitude to every donor")} title={t("Donor privileges")} />
+        <div className="relative isolate mx-auto max-w-6xl overflow-hidden rounded-[28px] bg-gradient-to-br from-vk-100 via-vk-50 to-white px-5 py-12 ring-1 ring-vk-200 md:px-12 md:py-16">
+          <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 -z-10 h-72 w-72 rounded-full border border-gold/30" />
+          <div aria-hidden className="pointer-events-none absolute -bottom-32 -left-20 -z-10 h-72 w-72 rounded-full border border-vk-200" />
+          <SectionTitle eyebrow={t("Our gratitude to every donor")} title={t("Donor privileges")} />
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 lg:gap-4">
             {config.privileges.map((p, i) => (
               <motion.div
                 key={p.title}
                 {...rise}
                 transition={{ duration: 0.5, delay: i * 0.07 }}
-                className="rounded-3xl bg-white/[0.05] p-5 ring-1 ring-white/10 md:p-6"
+                className="rounded-3xl bg-white p-5 shadow-[0_18px_40px_-32px_rgba(47,91,211,0.45)] ring-1 ring-vk-100 md:p-6"
               >
                 <span className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-gold/15 text-gold">
                   <p.icon className="h-5 w-5" />
                 </span>
-                <h3 className="font-heading text-[17px] font-bold text-white">{t(p.title)}</h3>
-                <p className="mt-1.5 text-[14.5px] leading-relaxed text-white/70">{t(p.text)}</p>
+                <h3 className="font-heading text-[17px] font-bold text-vk-900">{t(p.title)}</h3>
+                <p className="mt-1.5 text-[14.5px] leading-relaxed text-ink/65">{t(p.text)}</p>
               </motion.div>
             ))}
           </div>
@@ -507,7 +507,7 @@ export function EdTestimonials({ config }: { config: SevaCampaignConfig }) {
               <Quote aria-hidden className="h-7 w-7 text-gold" />
               <blockquote className="mb-6 mt-3 flex-1 text-[15px] leading-relaxed text-ink/80">{t(q.quote)}</blockquote>
               <figcaption className="flex items-center gap-3 border-t border-vk-100 pt-4">
-                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-vk-900 font-heading text-sm font-bold text-gold">
+                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-vk-100 font-heading text-sm font-bold text-vk-700">
                   {q.name
                     .split(" ")
                     .map((w) => w[0])
@@ -565,15 +565,15 @@ export function EdFinalCta({ config, onDonate }: { config: SevaCampaignConfig; o
       <div className="vk-container">
         <motion.div
           {...rise}
-          className="relative isolate mx-auto max-w-6xl overflow-hidden rounded-[28px] bg-vk-900 px-6 py-12 text-center md:px-12 md:py-16"
+          className="relative isolate mx-auto max-w-6xl overflow-hidden rounded-[28px] bg-vk-50 px-6 py-12 text-center ring-1 ring-vk-200 md:px-12 md:py-16"
         >
-          <Image src={config.heroImage} alt="" fill unoptimized sizes="100vw" className="-z-20 object-cover opacity-25" />
-          <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-b from-vk-900/70 to-vk-900/95" />
-          <Eyebrow light>{t(config.pageTitle)}</Eyebrow>
-          <h2 className="mx-auto mt-4 max-w-2xl font-heading text-[1.75rem] font-extrabold leading-[1.15] tracking-tight text-white md:text-[2.5rem]">
+          <Image src={config.heroImage} alt="" fill unoptimized sizes="100vw" className="-z-20 object-cover opacity-20" />
+          <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-b from-vk-50/80 to-vk-100/95" />
+          <Eyebrow>{t(config.pageTitle)}</Eyebrow>
+          <h2 className="mx-auto mt-4 max-w-2xl font-heading text-[1.75rem] font-extrabold leading-[1.15] tracking-tight text-vk-900 md:text-[2.5rem]">
             {t("Be part of this seva today")}
           </h2>
-          <p className="mx-auto mt-3 max-w-xl text-[15px] leading-relaxed text-white/75 md:text-base">
+          <p className="mx-auto mt-3 max-w-xl text-[15px] leading-relaxed text-ink/70 md:text-base">
             {t("Every offering, big or small, is offered to Lord Krishna with love.")}
           </p>
           <button type="button" onClick={onDonate} className="vk-btn-gold mt-8 h-14 rounded-2xl px-10 text-base font-bold">
