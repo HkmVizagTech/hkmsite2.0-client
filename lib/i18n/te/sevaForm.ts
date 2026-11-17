@@ -127,6 +127,8 @@ export const sevaForm: Record<string, string> = {
   "In memory": "జ్ఞాపకార్థం",
   "Other occasion": "ఇతర సందర్భం",
   "Anniversary": "వార్షికోత్సవం",
+  "Occasion": "సందర్భం",
+  "Choose an occasion": "సందర్భాన్ని ఎంచుకోండి",
   "devotees have offered this seva": "భక్తులు ఈ సేవను సమర్పించారు",
   "Live": "ప్రత్యక్షం",
   "Join them": "మీరూ చేరండి",

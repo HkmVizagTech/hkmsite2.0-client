@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
-import { User, Calendar, Cake, Heart, Flower2, Sparkles, Gift } from "lucide-react";
+import { User, Calendar, Cake, Heart, Flower2, Sparkles, Gift, ChevronDown } from "lucide-react";
 import { useT } from "@/components/i18n/LocaleProvider";
 
 interface Props {
@@ -29,9 +29,9 @@ interface Props {
 
 const OCCASIONS = [
   { value: "birthday", label: "Birthday", icon: Cake, name: "Whose birthday?", namePh: "Name of the person", date: "Date of birth" },
-  { value: "wedding_anniversary", label: "Anniversary", icon: Heart, name: "Names of the couple", namePh: "e.g. Ramesh & Lakshmi", date: "Date of wedding" },
+  { value: "wedding_anniversary", label: "Wedding anniversary", icon: Heart, name: "Names of the couple", namePh: "e.g. Ramesh & Lakshmi", date: "Date of wedding" },
   { value: "death_anniversary", label: "In memory", icon: Flower2, name: "In loving memory of", namePh: "Name of the departed soul", date: "Date of passing" },
-  { value: "other", label: "Other", icon: Sparkles, name: "Name for the dedication", namePh: "Who is this seva for?", date: "Date" },
+  { value: "other", label: "Other occasion", icon: Sparkles, name: "Name for the dedication", namePh: "Who is this seva for?", date: "Date" },
 ] as const;
 
 export default function DonorExtrasFields({
@@ -73,9 +73,8 @@ export default function DonorExtrasFields({
     : "mt-0.5 h-4 w-4 shrink-0 rounded accent-vk-700";
 
   const today = new Date().toISOString().slice(0, 10);
-  const pick = (value: string) => {
-    // Tapping the chosen occasion again takes the dedication off.
-    const next = value === occasion ? "" : value;
+  const OccasionIcon = picked?.icon ?? Gift;
+  const pick = (next: string) => {
     onOccasionChange?.(next);
     // A different occasion means a different date and name; never carry them over.
     onDobChange("");
@@ -116,26 +115,21 @@ export default function DonorExtrasFields({
 
       {expanded && (
       <div className="border-t border-vk-100 px-3.5 pb-3.5 pt-3">
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4" role="group" aria-label={t("Occasion")}>
-        {OCCASIONS.map((o) => {
-          const on = occasion === o.value;
-          return (
-            <button
-              key={o.value}
-              type="button"
-              onClick={() => pick(o.value)}
-              aria-pressed={on}
-              className={`flex h-10 min-w-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-full px-2 text-[12.5px] font-semibold leading-none min-[360px]:text-[13px] transition-colors ${
-                on
-                  ? "bg-vk-100 text-vk-800 ring-2 ring-vk-500"
-                  : "bg-white text-ink/80 ring-1 ring-vk-200 hover:bg-vk-50 hover:ring-vk-300"
-              }`}
-            >
-              <o.icon className={`hidden h-4 w-4 shrink-0 min-[360px]:block ${on ? "text-vk-600" : "text-vk-400"}`} />
-              {t(o.label)}
-            </button>
-          );
-        })}
+      <label htmlFor={`${uid}-occasion`} className={labelCls}>{t("Occasion")}</label>
+      <div className="relative">
+        <OccasionIcon aria-hidden className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-vk-500" />
+        <select
+          id={`${uid}-occasion`}
+          value={occasion}
+          onChange={(e) => pick(e.target.value)}
+          className={`vk-input cursor-pointer appearance-none !pl-10 !pr-10 ${occasion ? "text-ink" : "text-ink/50"}`}
+        >
+          <option value="" disabled>{t("Choose an occasion")}</option>
+          {OCCASIONS.map((o) => (
+            <option key={o.value} value={o.value}>{t(o.label)}</option>
+          ))}
+        </select>
+        <ChevronDown aria-hidden className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-vk-500" />
       </div>
 
       {picked && (
