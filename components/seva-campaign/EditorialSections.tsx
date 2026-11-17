@@ -518,23 +518,32 @@ export function EdReadMore({ config }: { config: SevaCampaignConfig }) {
         <SectionTitle eyebrow={t("Keep reading")} title={t(config.readMoreHeading ?? "Keep reading")} />
         {/* Phones: a swipe row so four articles don't make a long stack. Desktop: a four-column grid. */}
         <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-3 scrollbar-hide [scroll-padding-inline:1rem] sm:mx-auto sm:grid sm:max-w-6xl sm:grid-cols-2 sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4 lg:gap-5">
-          {config.readMore.map((r, i) => (
+          {config.readMore.map((r) => (
             <Link
               key={r.href}
               href={r.href}
-              className="group flex w-[80%] max-w-[300px] shrink-0 snap-start flex-col overflow-hidden rounded-3xl bg-white shadow-[0_18px_40px_-32px_rgba(47,91,211,0.5)] ring-1 ring-vk-100 transition-all hover:-translate-y-1 hover:ring-vk-300 sm:w-auto sm:max-w-none"
+              className="group flex w-[78%] max-w-[300px] shrink-0 snap-start flex-col overflow-hidden rounded-3xl bg-white shadow-[0_18px_40px_-30px_rgba(47,91,211,0.5)] ring-1 ring-vk-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_26px_50px_-30px_rgba(47,91,211,0.6)] hover:ring-vk-200 sm:w-auto sm:max-w-none"
             >
-              <span className="relative flex h-20 items-center justify-between bg-gradient-to-br from-vk-100 via-vk-50 to-[#FFF7E3] px-5">
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-vk-600 shadow-sm ring-1 ring-vk-100">
-                  <BookOpen className="h-5 w-5" />
-                </span>
-                <span aria-hidden className="font-heading text-[2rem] font-extrabold leading-none text-vk-200">{String(i + 1).padStart(2, "0")}</span>
+              <span className="relative block aspect-[16/10] overflow-hidden bg-vk-50">
+                {r.image ? (
+                  <Image src={r.image} alt="" fill unoptimized sizes="(max-width: 640px) 78vw, (max-width: 1024px) 50vw, 25vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />
+                ) : (
+                  <span className="absolute inset-0 flex items-center justify-center text-vk-300"><BookOpen className="h-10 w-10" /></span>
+                )}
+                {r.category && (
+                  <span className="absolute left-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-semibold text-vk-700 shadow-sm">{t(r.category)}</span>
+                )}
               </span>
-              <span className="flex flex-1 flex-col p-5">
-                <span className="font-heading text-[16.5px] font-bold leading-snug text-vk-900 transition-colors group-hover:text-vk-600">{r.title}</span>
-                <span className="mt-2 line-clamp-3 flex-1 text-[14px] leading-relaxed text-ink/60">{r.text}</span>
+              <span className="flex flex-1 flex-col p-4 sm:p-5">
+                {r.readTime ? (
+                  <span className="mb-1.5 inline-flex items-center gap-1.5 text-[12px] font-medium text-ink/50">
+                    <BookOpen className="h-3.5 w-3.5 text-vk-400" /> {t("{n} min read", { n: String(r.readTime) })}
+                  </span>
+                ) : null}
+                <span className="line-clamp-2 font-heading text-[16px] font-bold leading-snug text-vk-900 transition-colors group-hover:text-vk-600">{r.title}</span>
+                <span className="mt-1.5 line-clamp-2 flex-1 text-[13.5px] leading-relaxed text-ink/60">{r.text}</span>
                 <span className="mt-4 inline-flex items-center gap-1.5 text-[13.5px] font-semibold text-vk-600">
-                  {t("Read article")} <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                  {t("Read article")} <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </span>
               </span>
             </Link>

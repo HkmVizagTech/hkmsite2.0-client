@@ -41,7 +41,8 @@ export interface SevaCampaignConfig {
   /** "editorial" gives the page the warm cream / serif look (sections only; the form is unchanged). */
   theme?: "editorial";
   /** Articles linked from an editorial page, so readers and search engines can follow the topic. */
-  readMore?: { title: string; text: string; href: string }[];
+  /** Article cards; image / readTime / category mirror the blog post so the card looks like it. */
+  readMore?: { title: string; text: string; href: string; image?: string; readTime?: number; category?: string }[];
   /** Heading above the readMore links. */
   readMoreHeading?: string;
   /** Short figures shown under the heading on an editorial page. */
@@ -131,21 +132,33 @@ export const GAU_CAMPAIGN: SevaCampaignConfig = {
       title: "ISKCON Gau Seva: Meaning, Importance & Guide",
       text: "What cow protection means in Vaishnava tradition, and how to take part.",
       href: "/blogs/gau-seva",
+      image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/blogs/1786434445219-1786434444688-ChatGPTImageAug112026011405PM.png",
+      readTime: 11,
+      category: "Spiritual Knowledge",
     },
     {
       title: "Gopashtami: The Day Krishna Became a Cowherd",
       text: "The festival that honours Krishna's service to the cows of Vrindavan.",
       href: "/blogs/gopashtami-when-krishna-became-a-cowherd",
+      image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/blogs/1791108316733-gopashtami-when-krishna-became-a-cowherd.webp",
+      readTime: 6,
+      category: "Festivals",
     },
     {
       title: "Govardhan Puja: The Day Krishna Lifted a Mountain",
       text: "The pastime in which Krishna protected the cows and the people of Vraja.",
       href: "/blogs/govardhan-puja-the-day-krishna-lifted-a-mountain",
+      image: "/assets/home-gallery-annadana.webp",
+      readTime: 2,
+      category: "Festivals",
     },
     {
       title: "Significance of Govardhan Puja: Why Is Cow Dung Used?",
       text: "The meaning behind the cow's place in the worship of Govardhan.",
       href: "/blogs/govardhan-puja-date-muhurat-vidhi-significance",
+      image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/blogs/imported/1793778255505-significance-of-govardhan-puja.webp",
+      readTime: 4,
+      category: "Festivals",
     },
   ],
 
@@ -311,21 +324,33 @@ export const ANNA_DAAN_CAMPAIGN: SevaCampaignConfig = {
       title: "Anna Daan: Why Feeding Comes Before Everything Else",
       text: "Why the Vedic tradition places the gift of food above every other charity.",
       href: "/blogs/anna-daan-why-feeding-comes-before-everything-else",
+      image: "/assets/home-gallery-annadana.webp",
+      readTime: 2,
+      category: "Spiritual Charity",
     },
     {
       title: "56 Bhog List: Chappan Bhog Offered to Lord Krishna",
       text: "The fifty-six preparations offered to Krishna, and what they mean.",
       href: "/blogs/56-bhog-list",
+      image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/blogs/1786432492524-1786432491897-ChatGPTImageAug112026124328PM.png",
+      readTime: 8,
+      category: "Spiritual Knowledge",
     },
     {
       title: "Temple-Style Khichdi: A Simple Prasadam Recipe",
       text: "A humble offering you can cook and share at home.",
       href: "/blogs/temple-style-khichdi-a-simple-prasadam-recipe",
+      image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/blogs/1784445378333-1784445377795-WhatsAppImage2026-07-19at12.11.34PM.jpeg",
+      readTime: 3,
+      category: "Recipes",
     },
     {
       title: "ISKCON Khichdi Recipe",
       text: "How khichdi prasadam is prepared in ISKCON kitchens.",
       href: "/blogs/iskcon-khichdi-recipe",
+      image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/blogs/imported/1793781036501-iskcon-khichdi-recipe0BtCT7C.webp",
+      readTime: 6,
+      category: "Recipes",
     },
   ],
 
@@ -487,21 +512,33 @@ export const GITA_DAAN_CAMPAIGN: SevaCampaignConfig = {
       title: "Reading the Bhagavad-gita for the First Time",
       text: "A gentle roadmap for anyone opening the Gita for the first time.",
       href: "/blogs/reading-the-bhagavad-gita-for-the-first-time-a-gentle-roadmap",
+      image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/blogs/1791108317797-reading-the-bhagavad-gita-for-the-first-time-a-gentle-roadmap.webp",
+      readTime: 6,
+      category: "Spiritual Knowledge",
     },
     {
       title: "11 Benefits of Reading Bhagavad Gita",
       text: "What a daily reading of the Gita can change in an ordinary life.",
       href: "/blogs/benefits-of-reading-bhagavad-gita",
+      image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/blogs/imported/1793781005118-benefits-of-reading-bhagavad-gita.webp",
+      readTime: 8,
+      category: "Spiritual Knowledge",
     },
     {
       title: "Gita Jayanti: Celebrating the Wisdom of the Gita",
       text: "The day Krishna spoke the Gita, and how devotees observe it.",
       href: "/blogs/gita-jayanti",
+      image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/blogs/1784708216948-1784708216319-gitjayanthi.png",
+      readTime: 6,
+      category: "Festivals",
     },
     {
       title: "Fearless and Mentally Strong: Lessons from the Gita",
       text: "Krishna's advice to Arjuna for facing fear and doubt.",
       href: "/blogs/how-to-be-fearless-mentally-strong-bhagavad-gita",
+      image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/blogs/imported/1793781078135-waystobuildconfidence.webp",
+      readTime: 5,
+      category: "Spiritual Knowledge",
     },
   ],
   stats: [

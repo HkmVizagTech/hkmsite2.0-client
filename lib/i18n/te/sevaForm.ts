@@ -221,6 +221,11 @@ export const sevaForm: Record<string, string> = {
   "Scroll right": "కుడివైపు జరపండి",
   "Keep reading": "ఇంకా చదవండి",
   "Read article": "వ్యాసం చదవండి",
+  "{n} min read": "{n} నిమిషాల పఠనం",
+  "Spiritual Knowledge": "ఆధ్యాత్మిక జ్ఞానం",
+  "Festivals": "పండుగలు",
+  "Spiritual Charity": "ఆధ్యాత్మిక దానం",
+  "Recipes": "వంటకాలు",
   "Be part of this seva today": "ఈరోజే ఈ సేవలో భాగం అవ్వండి",
   "Every offering, big or small, is offered to Lord Krishna with love.":
     "పెద్దదైనా చిన్నదైనా, ప్రతి సమర్పణ ప్రేమతో శ్రీకృష్ణునికి సమర్పించబడుతుంది.",
