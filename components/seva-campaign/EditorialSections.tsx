@@ -128,20 +128,17 @@ export function EdHero(props: { config: SevaCampaignConfig; onDonate: () => void
   const alt = `${config.pageTitle} — ${config.heroHeading1} ${config.heroHeading2}`;
   return (
     <section className="relative isolate bg-white">
-      {/* Full-bleed banner. Past 1920px the sides show a soft blurred copy of the same banner, so it never looks boxed in. */}
-      <div className="relative overflow-hidden">
-        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 hidden min-[1921px]:block">
-          <Image src={config.bannerImage} alt="" fill sizes="30vw" quality={30} className="scale-110 object-cover blur-2xl" />
-        </div>
+      {/* Full-bleed banner, edge to edge at every screen width. */}
+      <div className="relative">
         <motion.button
           type="button" onClick={onDonate} aria-label={t("Donate — go to the donation form")}
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}
-          className="relative mx-auto block w-full max-w-[1920px] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-vk-300 min-[1921px]:shadow-[0_0_60px_rgba(0,0,0,0.18)]"
+          className="relative block w-full focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-vk-300"
         >
           <Image src={config.bannerImageMobile || config.bannerImage} alt={alt} width={config.bannerMobileWidth ?? 941} height={config.bannerMobileHeight ?? 1672}
             priority sizes="100vw" className="block h-auto w-full md:hidden" />
           <Image src={config.bannerImage} alt={alt} width={config.bannerWidth ?? 1672} height={config.bannerHeight ?? 941}
-            priority sizes="(min-width: 1920px) 1920px, 100vw" className="hidden h-auto w-full md:block" />
+            priority sizes="100vw" className="hidden h-auto w-full md:block" />
         </motion.button>
       </div>
 
