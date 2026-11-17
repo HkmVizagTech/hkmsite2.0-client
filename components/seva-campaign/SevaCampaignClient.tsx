@@ -715,7 +715,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                   {/* ═════ RIGHT: live summary + details + pay ═════ */}
                   <div className="min-w-0 rounded-[22px] bg-white p-4 sm:p-6 lg:p-8">
                     {/* Live summary */}
-                    <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-vk-100 via-vk-50 to-white p-5 text-vk-900 ring-1 ring-vk-200 sm:p-6">
+                    <div className="relative hidden overflow-hidden rounded-3xl bg-gradient-to-br from-vk-100 via-vk-50 to-white p-5 lg:block text-vk-900 ring-1 ring-vk-200 sm:p-6">
                       <div aria-hidden className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full border border-gold/20" />
                       <div aria-hidden className="pointer-events-none absolute -right-4 -top-4 h-24 w-24 rounded-full border border-gold/15" />
                       <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-gold">{t("Your offering")}</p>
@@ -764,8 +764,8 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                       </div>
                     </div>
 
-                    {/* Details */}
-                    <div className="mt-6 space-y-3.5">
+                    {/* Details — the summary card above is desktop-only; phones already see the amount on the Donate button and the sticky bar */}
+                    <div className="space-y-3.5 lg:mt-6">
                       <StepLabel n={2}>{t("Your Details")}</StepLabel>
                       <FloatInput
                         id="donor-name"

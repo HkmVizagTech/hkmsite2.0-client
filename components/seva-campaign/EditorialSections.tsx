@@ -122,14 +122,14 @@ export function SectionTitle({
 /** Hero built around the page's own designed banner: the banner large in a framed card, with a white action
  *  panel (headline, quick facts, buttons) overlapping its lower edge. Falls back to the photo hero below. */
 export function EdHero(props: { config: SevaCampaignConfig; onDonate: () => void; onHow: () => void }) {
-  const { config, onDonate, onHow } = props;
+  const { config, onDonate } = props;
   const t = useT();
   if (!config.bannerImage) return <EdHeroPhoto {...props} />;
   const alt = `${config.pageTitle} — ${config.heroHeading1} ${config.heroHeading2}`;
   return (
     <section className={`relative overflow-hidden ${IVORY}`}>
       <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[70%] bg-[radial-gradient(60%_60%_at_50%_0%,rgba(246,199,82,0.22),transparent_70%)]" />
-      <div className="vk-container relative pb-10 pt-4 md:pb-14 md:pt-8">
+      <div className="vk-container relative pb-6 pt-4 md:pb-10 md:pt-8">
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="relative">
           <div aria-hidden className="pointer-events-none absolute -inset-3 rounded-[34px] bg-gradient-to-br from-gold/40 via-gold/10 to-vk-200/30 blur-xl" />
           <button type="button" onClick={onDonate} aria-label={t("Donate — go to the donation form")}
@@ -141,40 +141,8 @@ export function EdHero(props: { config: SevaCampaignConfig; onDonate: () => void
           </button>
         </motion.div>
 
-        {/* action panel overlapping the banner's lower edge */}
-        <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.15 }}
-          className="relative z-10 mx-auto mt-5 max-w-5xl rounded-[24px] bg-white p-5 shadow-[0_30px_60px_-30px_rgba(10,18,51,0.45)] ring-1 ring-vk-100 md:mt-8 md:p-7">
-          <div className="grid items-center gap-5 lg:grid-cols-[1.1fr_1fr] lg:gap-8">
-            <div className="min-w-0">
-              <Eyebrow>{t(config.heroTagline)}</Eyebrow>
-              <h1 className="mt-3 font-heading text-[1.6rem] font-extrabold leading-tight tracking-tight text-vk-900 md:text-[2.1rem]">
-                {t(config.heroHeading1)} <span className="text-vk-600">{t(config.heroHeading2)}</span>
-              </h1>
-              <p className="mt-2 text-[14.5px] leading-relaxed text-ink/65 md:text-[15px]">{t(config.heroDesc)}</p>
-            </div>
-            <div className="min-w-0">
-              {config.stats && config.stats.length > 0 && (
-                <dl className="grid grid-cols-3 gap-2">
-                  {config.stats.map((s) => (
-                    <div key={s.label} className="min-w-0 rounded-2xl bg-vk-50/70 px-2 py-3 text-center ring-1 ring-vk-100">
-                      <dt className="sr-only">{t(s.label)}</dt>
-                      <dd className="font-heading text-lg font-extrabold leading-none text-vk-700 md:text-xl">{s.value}</dd>
-                      <dd className="mt-1 break-words text-[11px] font-medium leading-tight text-ink/60">{t(s.label)}</dd>
-                    </div>
-                  ))}
-                </dl>
-              )}
-              <div className="mt-3 grid grid-cols-1 gap-2.5 min-[380px]:grid-cols-2">
-                <button type="button" onClick={onDonate} className="vk-btn-gold h-12 w-full justify-center">
-                  <Heart className="h-4 w-4 fill-current" /> {t(config.about.ctaLabel)}
-                </button>
-                <button type="button" onClick={onHow} className="h-12 w-full rounded-xl bg-white text-[14px] font-semibold text-vk-800 ring-1 ring-vk-200 transition hover:bg-vk-50">
-                  {t("How your seva helps")}
-                </button>
-              </div>
-            </div>
-          </div>
-        </motion.div>
+        {/* The banner carries the visuals; the heading stays for search engines and screen readers. */}
+        <h1 className="sr-only">{t(config.heroHeading1)} {t(config.heroHeading2)}</h1>
       </div>
     </section>
   );
@@ -371,7 +339,9 @@ export function EdImpact({ config }: { config: SevaCampaignConfig }) {
 export function EdFeatures({ config }: { config: SevaCampaignConfig }) {
   const t = useT();
   const motif = sevaMotif(config);
-  const photos = config.gallery.photos;
+  // One distinct photo per step: gallery photos first, then the hero image, so no step repeats a picture.
+  const g = config.gallery.photos;
+  const photos = [...g.slice(1), ...g.slice(0, 1), ...(config.heroImage ? [{ src: config.heroImage, caption: config.pageTitle }] : [])];
   return (
     <section id="how-it-works" className="scroll-mt-28 bg-white py-14 md:py-24">
       <div className="vk-container">
@@ -379,17 +349,17 @@ export function EdFeatures({ config }: { config: SevaCampaignConfig }) {
 
         <ol className="mx-auto grid max-w-6xl gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5">
           {[...motif.journey, { icon: Sparkles, title: "Your name in the sankalpa", text: "Your name is included in the sankalpa and offered during aarti to Their Lordships." }].map((s, i, all) => {
-            const photo = photos.length ? photos[(i + 1) % photos.length] : null;
+            const photo = photos[i] ?? null;
             const last = i === all.length - 1;
             return (
               <motion.li
                 key={s.title}
                 {...rise}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
-                className={`relative flex flex-col overflow-hidden rounded-3xl ring-1 ${last ? "bg-gradient-to-br from-vk-100 to-vk-50 ring-vk-200" : "bg-white ring-vk-100"} shadow-[0_18px_40px_-30px_rgba(10,18,51,0.45)]`}
+                className={`relative flex flex-col overflow-hidden rounded-3xl ring-1 bg-white ring-vk-100 shadow-[0_18px_40px_-30px_rgba(10,18,51,0.45)]`}
               >
                 <div className="relative aspect-[16/10] overflow-hidden">
-                  {!last && photo ? (
+                  {photo ? (
                     <Image src={photo.src} alt={t(photo.caption)} fill unoptimized sizes="(max-width: 640px) 100vw, 25vw" className="object-cover" />
                   ) : (
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(246,199,82,0.35),transparent_60%)]" />

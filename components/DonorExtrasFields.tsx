@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
-import { User, Calendar, Cake, Heart, Flower2, Sparkles } from "lucide-react";
+import { User, Calendar, Cake, Heart, Flower2, Sparkles, Gift } from "lucide-react";
 import { useT } from "@/components/i18n/LocaleProvider";
 
 interface Props {
@@ -29,9 +29,9 @@ interface Props {
 
 const OCCASIONS = [
   { value: "birthday", label: "Birthday", icon: Cake, name: "Whose birthday?", namePh: "Name of the person", date: "Date of birth" },
-  { value: "wedding_anniversary", label: "Wedding anniversary", icon: Heart, name: "Names of the couple", namePh: "e.g. Ramesh & Lakshmi", date: "Date of wedding" },
+  { value: "wedding_anniversary", label: "Anniversary", icon: Heart, name: "Names of the couple", namePh: "e.g. Ramesh & Lakshmi", date: "Date of wedding" },
   { value: "death_anniversary", label: "In memory", icon: Flower2, name: "In loving memory of", namePh: "Name of the departed soul", date: "Date of passing" },
-  { value: "other", label: "Other occasion", icon: Sparkles, name: "Name for the dedication", namePh: "Who is this seva for?", date: "Date" },
+  { value: "other", label: "Other", icon: Sparkles, name: "Name for the dedication", namePh: "Who is this seva for?", date: "Date" },
 ] as const;
 
 export default function DonorExtrasFields({
@@ -84,8 +84,11 @@ export default function DonorExtrasFields({
   };
 
   const occasionFields = (
-    <div className="rounded-2xl border border-vk-100 bg-white">
-      <label className="flex cursor-pointer items-start gap-3 p-4">
+    <div className={`rounded-2xl border bg-white transition-colors ${expanded ? "border-vk-200" : "border-vk-100"}`}>
+      <label className="flex cursor-pointer items-center gap-3 px-3.5 py-3">
+        <span aria-hidden className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-vk-50 text-vk-600 min-[360px]:flex">
+          <Gift className="h-[18px] w-[18px]" />
+        </span>
         <input
           type="checkbox"
           checked={expanded}
@@ -100,18 +103,19 @@ export default function DonorExtrasFields({
               onOccasionNoteChange?.("");
             }
           }}
-          className="mt-0.5 h-4 w-4 shrink-0 rounded accent-vk-700"
+          role="switch"
+          aria-checked={expanded}
+          className="peer sr-only"
         />
         <span className="min-w-0 flex-1">
-          <span className="block text-[13px] font-bold text-ink">{t("Dedicate this seva to someone or a special day")}</span>
-          <span className="mt-0.5 block text-xs leading-snug text-muted-foreground">
-            {t("Birthday, wedding anniversary, in memory of a loved one, or any occasion.")}
-          </span>
+          <span className="block text-[14px] font-semibold leading-snug text-vk-900">{t("Dedicate this seva")}</span>
+          <span className="block text-[12px] leading-snug text-ink/55">{t("Birthday, anniversary or in memory of a loved one")}</span>
         </span>
+        <span aria-hidden className="relative h-6 w-11 shrink-0 rounded-full bg-vk-100 ring-1 ring-vk-200 transition-colors peer-checked:bg-vk-500 peer-checked:ring-vk-500 peer-focus-visible:ring-2 peer-focus-visible:ring-vk-500 peer-focus-visible:ring-offset-2 after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-5" />
       </label>
 
       {expanded && (
-      <div className="border-t border-vk-100 p-4 pt-3">
+      <div className="border-t border-vk-100 px-3.5 pb-3.5 pt-3">
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4" role="group" aria-label={t("Occasion")}>
         {OCCASIONS.map((o) => {
           const on = occasion === o.value;
@@ -121,13 +125,13 @@ export default function DonorExtrasFields({
               type="button"
               onClick={() => pick(o.value)}
               aria-pressed={on}
-              className={`flex flex-col items-center gap-1.5 rounded-xl border-2 px-2 py-3 text-center text-[12px] font-semibold leading-tight transition-colors ${
+              className={`flex h-10 min-w-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-full px-2 text-[12.5px] font-semibold leading-none min-[360px]:text-[13px] transition-colors ${
                 on
-                  ? "border-[hsl(var(--gold))] bg-vk-700 text-white"
-                  : "border-vk-100 bg-white text-ink hover:border-vk-300 hover:bg-vk-50"
+                  ? "bg-vk-100 text-vk-800 ring-2 ring-vk-500"
+                  : "bg-white text-ink/80 ring-1 ring-vk-200 hover:bg-vk-50 hover:ring-vk-300"
               }`}
             >
-              <o.icon className={`h-5 w-5 ${on ? "text-[hsl(var(--gold))]" : "text-vk-500"}`} />
+              <o.icon className={`hidden h-4 w-4 shrink-0 min-[360px]:block ${on ? "text-vk-600" : "text-vk-400"}`} />
               {t(o.label)}
             </button>
           );
@@ -135,7 +139,7 @@ export default function DonorExtrasFields({
       </div>
 
       {picked && (
-        <div className="mt-4 space-y-3 rounded-xl bg-vk-50/70 p-3.5">
+        <div className="mt-3 space-y-3 rounded-xl bg-vk-50/70 p-3">
           {occasion === "other" && (
             <div>
               <label htmlFor={`${uid}-occasion-note`} className={labelCls}>{t("What is the occasion?")}</label>
