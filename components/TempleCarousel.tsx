@@ -6,6 +6,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useT } from "@/components/i18n/LocaleProvider";
 import { GoldSparkles } from "@/components/home/HomeMagic";
+import { scrollToSection } from "@/lib/scrollTop";
 
 const FALLBACK_IMG = "/assets/home-banner-chaitanya-bhavan.webp";
 const FALLBACK_IMG_MOBILE = "/assets/home-banner-chaitanya-bhavan-mobile.webp";
@@ -166,6 +167,10 @@ const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true, magic = fa
       emblaApi?.scrollTo(index);
       return;
     }
+    // "#section" links scroll within the home page; the Daily darshan banner (no link set in admin) goes to
+    // today's darshan just below.
+    const anchor = slide.linkUrl.startsWith("#") ? slide.linkUrl.slice(1) : !slide.linkUrl && /darshan/i.test(slide.title) ? "todays-darshan" : "";
+    if (anchor) { scrollToSection(anchor); return; }
     if (!slide.linkUrl) return;
     if (/^https?:\/\//i.test(slide.linkUrl)) window.open(slide.linkUrl, "_blank", "noopener");
     else window.location.href = slide.linkUrl;
@@ -200,7 +205,7 @@ const TempleCarousel = ({ slides: propSlides, fetchApiBanners = true, magic = fa
                     onKeyDown={(e) => {
                       if (e.key === "Enter") openSlide(slide, i);
                     }}
-                    className={`relative aspect-[962/1635] overflow-hidden bg-vk-900 md:aspect-[1920/730] ${slide.linkUrl || !isActive ? "cursor-pointer" : ""}`}
+                    className={`relative aspect-[962/1635] overflow-hidden bg-vk-900 md:aspect-[1920/730] ${slide.linkUrl || !isActive || /darshan/i.test(slide.title) ? "cursor-pointer" : ""}`}
                   >
                     <div className="absolute inset-0">
                     <SlidePicture

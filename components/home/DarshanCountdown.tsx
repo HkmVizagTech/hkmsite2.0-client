@@ -153,7 +153,7 @@ export default function DarshanCountdown() {
     new Date(`${iso}T12:00:00+05:30`).toLocaleDateString("en-IN", { ...opts, timeZone: "Asia/Kolkata" });
 
   return (
-    <section className="relative z-10 pb-6 pt-6 md:pb-10 md:pt-10">
+    <section id="todays-darshan" className="relative z-10 pb-6 pt-6 md:pb-10 md:pt-10">
       <div className="vk-container">
         <Reveal>
           <div className="grid gap-4 overflow-hidden rounded-[2rem] border border-vk-100 bg-white p-3 shadow-[0_30px_60px_-36px_rgba(10,18,51,0.45)] md:p-4 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.4fr)] lg:gap-5">
