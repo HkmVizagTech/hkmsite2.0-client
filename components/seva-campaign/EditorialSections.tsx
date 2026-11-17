@@ -119,7 +119,68 @@ export function SectionTitle({
 
 /* ───────────────────────── Hero ───────────────────────── */
 
-export function EdHero({ config, onDonate, onHow }: { config: SevaCampaignConfig; onDonate: () => void; onHow: () => void }) {
+/** Hero built around the page's own designed banner: the banner large in a framed card, with a white action
+ *  panel (headline, quick facts, buttons) overlapping its lower edge. Falls back to the photo hero below. */
+export function EdHero(props: { config: SevaCampaignConfig; onDonate: () => void; onHow: () => void }) {
+  const { config, onDonate, onHow } = props;
+  const t = useT();
+  if (!config.bannerImage) return <EdHeroPhoto {...props} />;
+  const alt = `${config.pageTitle} — ${config.heroHeading1} ${config.heroHeading2}`;
+  return (
+    <section className={`relative overflow-hidden ${IVORY}`}>
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[70%] bg-[radial-gradient(60%_60%_at_50%_0%,rgba(246,199,82,0.22),transparent_70%)]" />
+      <div className="vk-container relative pb-10 pt-4 md:pb-14 md:pt-8">
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="relative">
+          <div aria-hidden className="pointer-events-none absolute -inset-3 rounded-[34px] bg-gradient-to-br from-gold/40 via-gold/10 to-vk-200/30 blur-xl" />
+          <button type="button" onClick={onDonate} aria-label={t("Donate — go to the donation form")}
+            className="group relative block w-full overflow-hidden rounded-[22px] bg-vk-900 shadow-[0_40px_80px_-40px_rgba(10,18,51,0.7)] ring-1 ring-white/60 md:rounded-[30px]">
+            <Image src={config.bannerImageMobile || config.bannerImage} alt={alt} width={config.bannerMobileWidth ?? 941} height={config.bannerMobileHeight ?? 1672}
+              priority sizes="100vw" className="block h-auto w-full transition duration-700 group-hover:scale-[1.015] md:hidden" />
+            <Image src={config.bannerImage} alt={alt} width={config.bannerWidth ?? 1672} height={config.bannerHeight ?? 941}
+              priority sizes="(min-width: 1280px) 1248px, 100vw" className="hidden h-auto w-full transition duration-700 group-hover:scale-[1.015] md:block" />
+          </button>
+        </motion.div>
+
+        {/* action panel overlapping the banner's lower edge */}
+        <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.15 }}
+          className="relative z-10 mx-auto mt-5 max-w-5xl rounded-[24px] bg-white p-5 shadow-[0_30px_60px_-30px_rgba(10,18,51,0.45)] ring-1 ring-vk-100 md:mt-8 md:p-7">
+          <div className="grid items-center gap-5 lg:grid-cols-[1.1fr_1fr] lg:gap-8">
+            <div className="min-w-0">
+              <Eyebrow>{t(config.heroTagline)}</Eyebrow>
+              <h1 className="mt-3 font-heading text-[1.6rem] font-extrabold leading-tight tracking-tight text-vk-900 md:text-[2.1rem]">
+                {t(config.heroHeading1)} <span className="text-vk-600">{t(config.heroHeading2)}</span>
+              </h1>
+              <p className="mt-2 text-[14.5px] leading-relaxed text-ink/65 md:text-[15px]">{t(config.heroDesc)}</p>
+            </div>
+            <div className="min-w-0">
+              {config.stats && config.stats.length > 0 && (
+                <dl className="grid grid-cols-3 gap-2">
+                  {config.stats.map((s) => (
+                    <div key={s.label} className="min-w-0 rounded-2xl bg-vk-50/70 px-2 py-3 text-center ring-1 ring-vk-100">
+                      <dt className="sr-only">{t(s.label)}</dt>
+                      <dd className="font-heading text-lg font-extrabold leading-none text-vk-700 md:text-xl">{s.value}</dd>
+                      <dd className="mt-1 break-words text-[11px] font-medium leading-tight text-ink/60">{t(s.label)}</dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
+              <div className="mt-3 grid grid-cols-1 gap-2.5 min-[380px]:grid-cols-2">
+                <button type="button" onClick={onDonate} className="vk-btn-gold h-12 w-full justify-center">
+                  <Heart className="h-4 w-4 fill-current" /> {t(config.about.ctaLabel)}
+                </button>
+                <button type="button" onClick={onHow} className="h-12 w-full rounded-xl bg-white text-[14px] font-semibold text-vk-800 ring-1 ring-vk-200 transition hover:bg-vk-50">
+                  {t("How your seva helps")}
+                </button>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+function EdHeroPhoto({ config, onDonate, onHow }: { config: SevaCampaignConfig; onDonate: () => void; onHow: () => void }) {
   const t = useT();
   const lead = config.stats?.[0];
   const side = config.gallery.photos.filter((p) => p.src !== config.heroImage).slice(0, 2);
