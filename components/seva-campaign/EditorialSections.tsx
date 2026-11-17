@@ -676,25 +676,52 @@ export function EdFaq({ faqs, topic }: { faqs: { q: string; a: string }[]; topic
 
 export function EdFinalCta({ config, onDonate }: { config: SevaCampaignConfig; onDonate: () => void }) {
   const t = useT();
+  const photo = config.gallery.photos[0]?.src ?? config.heroImage;
+  const lead = config.stats?.[0];
   return (
     <section className="bg-white pb-16 pt-4 md:pb-24">
       <div className="vk-container">
         <motion.div
           {...rise}
-          className="relative isolate mx-auto max-w-6xl overflow-hidden rounded-[28px] bg-vk-50 px-6 py-12 text-center ring-1 ring-vk-200 md:px-12 md:py-16"
+          className="mx-auto grid max-w-6xl overflow-hidden rounded-[28px] bg-gradient-to-br from-vk-50 via-white to-[#FFF7E3] shadow-[0_30px_70px_-45px_rgba(47,91,211,0.55)] ring-1 ring-vk-100 lg:grid-cols-[1.05fr_1fr]"
         >
-          <Image src={config.heroImage} alt="" fill unoptimized sizes="100vw" className="-z-20 object-cover opacity-20" />
-          <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-b from-vk-50/80 to-vk-100/95" />
-          <Eyebrow>{t(config.pageTitle)}</Eyebrow>
-          <h2 className="mx-auto mt-4 max-w-2xl font-heading text-[1.75rem] font-extrabold leading-[1.15] tracking-tight text-vk-900 md:text-[2.5rem]">
-            {t("Be part of this seva today")}
-          </h2>
-          <p className="mx-auto mt-3 max-w-xl text-[15px] leading-relaxed text-ink/70 md:text-base">
-            {t("Every offering, big or small, is offered to Lord Krishna with love.")}
-          </p>
-          <button type="button" onClick={onDonate} className="vk-btn-gold mt-8 h-14 rounded-2xl px-10 text-base font-bold">
-            <Heart className="h-4 w-4 fill-current" /> {t(config.about.ctaLabel)} <ArrowRight className="h-4 w-4" />
-          </button>
+          <div className="order-2 flex flex-col justify-center px-5 py-8 text-center sm:px-8 md:px-12 md:py-14 lg:order-1 lg:text-left">
+            <div><Eyebrow>{t(config.pageTitle)}</Eyebrow></div>
+            <h2 className="mt-4 font-heading text-[1.7rem] font-extrabold leading-[1.15] tracking-tight text-vk-900 md:text-[2.4rem]">
+              {t("Be part of this seva today")}
+            </h2>
+            <p className="mx-auto mt-3 max-w-md text-[15px] leading-relaxed text-ink/65 md:text-base lg:mx-0">
+              {t("Every offering, big or small, is offered to Lord Krishna with love.")}
+            </p>
+            <div className="mt-7">
+              <button type="button" onClick={onDonate} className="vk-btn-gold h-14 w-full max-w-xs rounded-2xl px-8 text-base font-bold sm:w-auto">
+                <Heart className="h-4 w-4 fill-current" /> {t(config.about.ctaLabel)} <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+            {config.stats && config.stats.length > 0 && (
+              <ul className="mt-6 flex flex-wrap justify-center gap-2 lg:justify-start">
+                {config.stats.map((s) => (
+                  <li key={s.label} className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-[12.5px] ring-1 ring-vk-100">
+                    <span className="font-heading font-extrabold text-vk-700">{s.value}</span>
+                    <span className="text-ink/60">{t(s.label)}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <div className="relative order-1 min-h-[220px] sm:min-h-[300px] lg:order-2 lg:min-h-[420px]">
+            {photo && <Image src={photo} alt={t(config.gallery.photos[0]?.caption ?? config.pageTitle)} fill unoptimized sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover" />}
+            {lead && (
+              <span className="absolute bottom-4 left-4 flex items-center gap-3 rounded-2xl bg-white/95 px-4 py-3 shadow-[0_14px_30px_-14px_rgba(10,18,51,0.45)] backdrop-blur">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gold/20 text-gold-deep"><HandHeart className="h-5 w-5" /></span>
+                <span>
+                  <span className="block font-heading text-lg font-extrabold leading-none text-vk-900">{lead.value}</span>
+                  <span className="mt-1 block text-[12px] font-medium text-ink/60">{t(lead.label)}</span>
+                </span>
+              </span>
+            )}
+          </div>
         </motion.div>
       </div>
     </section>
