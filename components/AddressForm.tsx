@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { MapPin, Loader2 } from "lucide-react";
+import { useT } from "@/components/i18n/LocaleProvider";
 
 export interface PrasadamAddress {
   street: string;
@@ -17,6 +18,7 @@ interface AddressFormProps {
 }
 
 export default function AddressForm({ address, setAddress }: AddressFormProps) {
+  const t = useT();
   const [pinLoading, setPinLoading] = useState(false);
   const [pinError, setPinError] = useState<string | null>(null);
   const lastPin = useRef("");
@@ -63,7 +65,7 @@ export default function AddressForm({ address, setAddress }: AddressFormProps) {
     <div className="mt-3 space-y-2.5">
       <p className="flex items-center gap-1.5 text-xs font-medium text-ink/70">
         <MapPin className="h-3.5 w-3.5 shrink-0 text-vk-500" />
-        Delivery address for your Maha Prasadam courier
+        {t("Delivery address for your Maha Prasadam courier")}
       </p>
       <input
         type="text"
@@ -71,8 +73,8 @@ export default function AddressForm({ address, setAddress }: AddressFormProps) {
         value={address.street}
         onChange={(e) => setAddress({ ...address, street: e.target.value })}
         className="vk-input"
-        placeholder="Door / flat no. & area, street *"
-        aria-label="Door / flat no. and area, street"
+        placeholder={t("Door / flat no. & area, street *")}
+        aria-label={t("Door / flat no. and area, street")}
       />
       <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
         <div className="relative sm:col-span-1">
@@ -86,8 +88,8 @@ export default function AddressForm({ address, setAddress }: AddressFormProps) {
               setAddress({ ...address, pincode: e.target.value.replace(/[^\d]/g, "").slice(0, 6) })
             }
             className="vk-input pr-9"
-            placeholder="PIN code *"
-            aria-label="PIN code"
+            placeholder={t("PIN code *")}
+            aria-label={t("PIN code")}
           />
           {pinLoading && (
             <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-vk-500" />
@@ -99,8 +101,8 @@ export default function AddressForm({ address, setAddress }: AddressFormProps) {
           value={address.city}
           onChange={(e) => setAddress({ ...address, city: e.target.value })}
           className="vk-input"
-          placeholder="City *"
-          aria-label="City"
+          placeholder={t("City *")}
+          aria-label={t("City")}
         />
         <input
           type="text"
@@ -108,15 +110,15 @@ export default function AddressForm({ address, setAddress }: AddressFormProps) {
           value={address.state}
           onChange={(e) => setAddress({ ...address, state: e.target.value })}
           className="vk-input"
-          placeholder="State *"
-          aria-label="State"
+          placeholder={t("State *")}
+          aria-label={t("State")}
         />
       </div>
       {pinError ? (
         <p className="text-xs text-red-600">{pinError}</p>
       ) : (
         <p className="text-xs text-muted-foreground">
-          Enter your PIN code and we&apos;ll fill in city &amp; state automatically.
+          {t("Enter your PIN code and we'll fill in city & state automatically.")}
         </p>
       )}
     </div>

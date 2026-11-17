@@ -1,22 +1,24 @@
 "use client";
 
 import { cleanMobile } from "@/lib/phone";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, type ReactNode } from "react";
 import { useAttribution } from "@/lib/useAttribution";
 import SearchParamsWatcher from "@/components/SearchParamsWatcher";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { AnimatePresence, MotionConfig, motion } from "framer-motion";
 import {
-  Loader2, ShieldCheck, User, Phone, Mail, Check, Copy,
-  ChevronDown, ChevronLeft, ChevronRight, Quote, Heart, Building2,
+  Loader2, User, Phone, Mail, Check, Copy,
+  ChevronDown, Heart, Building2,
+  Repeat, Receipt, Gift, Lock, Sparkles, ArrowRight, BadgeCheck, MessageCircle,
 } from "lucide-react";
-import SectionHeading from "@/components/site/SectionHeading";
+import { useT } from "@/components/i18n/LocaleProvider";
+import type { TFunction } from "@/lib/i18n/translate";
 import PageLayout from "@/components/PageLayout";
 import { SEVA_WHATSAPP_NUMBER } from "@/components/WhatsAppFloatButton";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
 import { useScrollToDonate } from "@/lib/useScrollToDonate";
 import { newEventId, getMetaBrowserData, trackPurchase } from "@/lib/metaPixel";
-import { EdHero, EdAbout, EdImpact, EdFeatures, EdPrivileges, EdTestimonials, EdReadMore } from "@/components/seva-campaign/EditorialSections";
+import { EdHero, EdAbout, EdImpact, EdFeatures, EdPrivileges, EdTestimonials, EdReadMore, EdFinalCta, SectionTitle, sevaMotif } from "@/components/seva-campaign/EditorialSections";
 import ImportanceSection from "@/components/sqft-campaign/ImportanceSection";
 import FaqSection from "@/components/sqft-campaign/FaqSection";
 import FounderSection from "@/components/sqft-campaign/FounderSection";
@@ -53,29 +55,91 @@ interface SevaStats {
 }
 
 // Vaikuntham Blue donation-card styling.
-const inputWrapClass = "relative";
-const inputIconClass = "pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-vk-400";
-const inputClass = "vk-input pl-10";
 const labelClass = "mb-1.5 block text-[13px] font-semibold text-ink/80";
-const stepLabelClass = "text-[13px] font-bold uppercase tracking-[0.08em] text-vk-700";
-const addonBoxClass = "rounded-xl border border-vk-100 bg-vk-50/60 px-3.5 py-3";
-const checkLabelClass = "flex cursor-pointer items-start gap-2.5 text-[13px] font-medium text-ink";
-const checkboxClass = "mt-0.5 h-4 w-4 shrink-0 accent-vk-700";
-const chipBase = "min-h-[64px] rounded-xl border px-3 py-3 transition-all active:scale-[0.99]";
-const chipOn = "border-vk-500 bg-vk-50 ring-2 ring-vk-500/20";
-const chipOff = "border-vk-200 bg-white hover:border-vk-400";
+const checkboxClass = "mt-0.5 h-[18px] w-[18px] shrink-0 cursor-pointer rounded accent-vk-700";
+const toggleCardClass = "rounded-2xl border transition-colors duration-200";
+const toggleCardOn = "border-vk-300 bg-vk-50/70";
+const toggleCardOff = "border-vk-100 bg-white hover:border-vk-200";
+const toggleLabelClass = "flex min-h-[56px] cursor-pointer items-start gap-3 p-4";
 
-function unitImpact(amount: number, config: SevaCampaignConfig): string | null {
+// English impact text ("20 meals") — sent to the API as sevaUnitLabel, so it
+// stays in English; `t` gives the on-screen version in the page's language.
+function unitImpact(amount: number, config: SevaCampaignConfig, t?: TFunction): string | null {
   const unit = config.unit;
   if (!unit || !Number.isFinite(amount) || amount < unit.price) return null;
   const count = Math.floor(amount / unit.price);
-  return `${count.toLocaleString("en-IN")} ${count === 1 ? unit.singular : unit.plural}`;
+  const word = count === 1 ? unit.singular : unit.plural;
+  return `${count.toLocaleString("en-IN")} ${t ? t(word) : word}`;
+}
+
+const isTextField = (el: EventTarget | null) =>
+  el instanceof HTMLElement && el.matches("input:not([type=checkbox]):not([type=radio]), textarea, select");
+
+function StepLabel({ n, children }: { n: number; children: ReactNode }) {
+  return (
+    <div className="mb-4 flex items-center gap-3">
+      <span
+        aria-hidden
+        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-vk-900 font-heading text-[13px] font-bold text-gold"
+      >
+        {n}
+      </span>
+      <h3 className="min-w-0 font-heading text-base font-bold text-vk-900">{children}</h3>
+    </div>
+  );
+}
+
+type FloatInputProps = React.InputHTMLAttributes<HTMLInputElement> & {
+  id: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
+  hint?: string;
+};
+
+/** Input with a floating label: the label sits inside the field and lifts when focused or filled. */
+function FloatInput({ id, label, icon: Icon, hint, ...props }: FloatInputProps) {
+  return (
+    <div className="relative">
+      <input
+        id={id}
+        placeholder=" "
+        title={hint}
+        {...props}
+        className="peer h-14 w-full rounded-2xl border border-vk-200 bg-white pb-1.5 pl-11 pr-4 pt-5 text-[15px] font-medium text-ink outline-none transition-[border-color,box-shadow] hover:border-vk-300 focus:border-vk-500 focus:shadow-[0_0_0_4px_rgba(47,91,211,0.14)]"
+      />
+      <Icon aria-hidden className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-vk-400 transition-colors peer-focus:text-vk-600" />
+      <label
+        htmlFor={id}
+        className="pointer-events-none absolute left-11 right-3 top-1/2 -translate-y-1/2 truncate text-[14px] text-muted-foreground transition-all duration-150 peer-focus:top-[15px] peer-focus:text-[11px] peer-focus:font-semibold peer-focus:text-vk-600 peer-[:not(:placeholder-shown)]:top-[15px] peer-[:not(:placeholder-shown)]:text-[11px] peer-[:not(:placeholder-shown)]:font-semibold"
+      >
+        {label}
+      </label>
+    </div>
+  );
+}
+
+/** Smooth height reveal for the optional sub-fields (PAN, prasadam address). */
+function Expand({ open, children }: { open: boolean; children: ReactNode }) {
+  return (
+    <AnimatePresence initial={false}>
+      {open && (
+        <motion.div
+          initial={{ height: 0, opacity: 0 }}
+          animate={{ height: "auto", opacity: 1 }}
+          exit={{ height: 0, opacity: 0 }}
+          transition={{ duration: 0.22, ease: "easeOut" }}
+          className="overflow-hidden"
+        >
+          {children}
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
 }
 
 export default function SevaCampaignClient({ slug }: { slug: string }) {
   const config: SevaCampaignConfig = getSevaCampaignConfig(slug) ?? GAU_CAMPAIGN;
-  // Pages that set theme: "editorial" get the warm cream/serif sections; the form is the same for all.
-  const ed = config.theme === "editorial";
+  const t = useT();
   const [searchParams, setSearchParams] = useState<URLSearchParams>(() => new URLSearchParams());
   const attribution = useAttribution(config.path);
   const razorpayReady = useRazorpayPreload();
@@ -94,6 +158,8 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [showSticky, setShowSticky] = useState(false);
+  const [formInView, setFormInView] = useState(false);
+  const [typing, setTyping] = useState(false);
   const [stats, setStats] = useState<SevaStats | null>(null);
 
   // Donor pre-fill: logged-in profile auto-fills name/email/mobile; a
@@ -112,17 +178,29 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
   });
 
   const formRef = useRef<HTMLElement>(null);
-  const galleryRef = useRef<HTMLDivElement>(null);
-  const testimonialsRef = useRef<HTMLDivElement>(null);
+  const summaryRef = useRef<HTMLDivElement>(null);
+  const tierRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   useEffect(() => {
     const form = formRef.current;
     if (!form) return;
     const observer = new IntersectionObserver(
-      ([entry]) => setShowSticky(!entry.isIntersecting),
+      ([entry]) => setFormInView(entry.isIntersecting),
       { threshold: 0.1 }
     );
     observer.observe(form);
+    return () => observer.disconnect();
+  }, []);
+
+  // The phone donate bar is shown whenever the summary/pay card is off-screen.
+  useEffect(() => {
+    const summary = summaryRef.current;
+    if (!summary) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setShowSticky(!entry.isIntersecting),
+      { threshold: 0.2 }
+    );
+    observer.observe(summary);
     return () => observer.disconnect();
   }, []);
 
@@ -158,7 +236,28 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
 
   const finalAmount = useCustom ? Number(customAmount) || 0 : config.tiers[tierIndex]?.amount || 0;
   const impact = unitImpact(finalAmount, config);
+  const impactLabel = unitImpact(finalAmount, config, t);
   const addonsEligible = finalAmount > 999;
+  // A row of small icons that grows (gently, log-scale) with the impact count.
+  const impactCount = config.unit && finalAmount >= config.unit.price ? Math.floor(finalAmount / config.unit.price) : 0;
+  const impactIcons = impactCount > 0 ? Math.min(10, Math.max(1, Math.round(Math.log2(impactCount + 1) * 1.4))) : 0;
+  const customTooLow = useCustom && customAmount !== "" && Number(customAmount) < config.minCustomAmount;
+  const ImpactIcon = sevaMotif(config).icon;
+  const maxTier = Math.max(...config.tiers.map((x) => x.amount));
+  const [bankNoteBefore, bankNoteAfter = ""] = t("Email your transaction reference and PAN (for 80G) to {email}.").split("{email}");
+
+  // Arrow keys move between the amount tiles (radio-group pattern).
+  const onTierKeyDown = (e: React.KeyboardEvent) => {
+    const keys = ["ArrowRight", "ArrowDown", "ArrowLeft", "ArrowUp"];
+    if (!keys.includes(e.key)) return;
+    e.preventDefault();
+    const n = config.tiers.length;
+    const from = useCustom ? 0 : tierIndex;
+    const next = (from + (e.key === "ArrowRight" || e.key === "ArrowDown" ? 1 : -1) + n) % n;
+    setUseCustom(false);
+    setTierIndex(next);
+    tierRefs.current[next]?.focus();
+  };
 
   useEffect(() => {
     if (!addonsEligible) {
@@ -169,16 +268,6 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
       }
     }
   }, [addonsEligible]);
-
-  const galleryPages = config.gallery.photos.reduce< typeof config.gallery.photos[]>(
-    (pages, photo, i) => {
-      const pageIndex = Math.floor(i / 6);
-      if (!pages[pageIndex]) pages[pageIndex] = [];
-      pages[pageIndex].push(photo);
-      return pages;
-    },
-    []
-  );
 
   const scrollToDonate = () => {
     document.getElementById("donate")?.scrollIntoView({ behavior: "smooth" });
@@ -344,158 +433,250 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
     <PageLayout whatsappNumber={SEVA_WHATSAPP_NUMBER}>
       {upiFallbackDialog}
       <SearchParamsWatcher onChange={setSearchParams} />
-      <main className={`pt-[var(--header-h)] ${ed ? "overflow-x-hidden bg-white" : "bg-white dark:bg-background"}`}>
-        {/* ── Hero Banner (plain banner image — no content overlay) ── */}
-        <section className="bg-gradient-to-b from-vk-50 to-white">
-          <div>
-            <button
-              type="button"
-              onClick={scrollToDonate}
-              aria-label="Donate — go to the donation form"
-              className="block w-full cursor-pointer overflow-hidden bg-vk-900"
-            >
-              <Image
-                src={config.bannerImageMobile || config.bannerImage || config.heroImage}
-                alt={`${config.pageTitle} — ${config.heroHeading1} ${config.heroHeading2}`}
-                width={config.bannerMobileWidth ?? 941}
-                height={config.bannerMobileHeight ?? 1672}
-                priority
-                sizes="100vw"
-                className="block h-auto w-full md:hidden"
-              />
-              <Image
-                src={config.bannerImage || config.heroImage}
-                alt={`${config.pageTitle} — ${config.heroHeading1} ${config.heroHeading2}`}
-                width={config.bannerWidth ?? 1672}
-                height={config.bannerHeight ?? 941}
-                priority
-                sizes="(min-width: 1280px) 1248px, 100vw"
-                className="hidden h-auto w-full md:block"
-              />
-            </button>
-          </div>
-        </section>
-
-        {ed ? (
-          <EdHero config={config} onDonate={scrollToDonate} />
-        ) : (
-          <>
-        {/* A real, visible H1 — the banner above is a pure image (no
-            selectable/crawlable text), so without this the page has no
-            text-based top-level heading at all, which hurts both SEO and
-            accessibility (screen readers, images-disabled browsing). */}
-        <div className="vk-container pb-1 pt-6 text-center md:pt-8">
-          <h1 className="vk-h2 mx-auto max-w-4xl">
-            {config.heroHeading1} <span className="text-vk-600">— {config.heroHeading2}</span>
-          </h1>
-        </div>
-
-          </>
-        )}
+      {/* overflow-x: clip (not hidden) where supported, so the desktop summary card can stay sticky. */}
+      <MotionConfig reducedMotion="user">
+      <main className="overflow-x-hidden bg-white pt-[var(--header-h)] supports-[overflow:clip]:overflow-x-clip [&_.font-serif-display]:font-heading [&_.font-serif-display]:not-italic">
+        <EdHero config={config} onDonate={scrollToDonate} onHow={() => document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" })} />
 
         {/* ── Donation Form ── */}
-        <section id="donate" ref={formRef} className="scroll-mt-28 py-8 md:py-12">
+        <section id="donate" ref={formRef} className="scroll-mt-28 bg-gradient-to-b from-white via-vk-50/60 to-white py-12 md:py-20">
           <div className="vk-container">
-            <div className="mx-auto max-w-5xl">
-              <SectionHeading
-                align="center"
-                eyebrow="Temple Service Campaign"
-                title={config.formHeading}
-                subtitle={config.formSubheading}
-                className="!mb-6 md:!mb-8"
+            <div className="mx-auto max-w-6xl">
+              <SectionTitle
+                eyebrow={t("Temple Service Campaign")}
+                title={t(config.formHeading)}
+                sub={t(config.formSubheading)}
               />
 
+              <MotionConfig reducedMotion="user">
               <motion.div
-                initial={{ opacity: 0, y: 16 }}
+                initial={{ opacity: 0, y: 18 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5 }}
-                className="vk-card overflow-hidden !rounded-3xl"
+                className="rounded-[28px] bg-white p-1.5 shadow-[0_30px_80px_-40px_rgba(10,18,51,0.45)] ring-1 ring-vk-100 sm:p-2"
               >
-                {/* Amount summary strip */}
-                <div className="flex items-center justify-between gap-3 bg-gradient-to-br from-vk-700 via-vk-600 to-vk-500 px-5 py-4 text-white sm:px-7">
-                  <div className="min-w-0">
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/70">
-                      You&apos;re offering
-                    </p>
-                    <p className="text-base font-bold leading-snug text-white sm:text-xl">
-                      {useCustom
-                        ? "Custom offering"
-                        : config.tiers[tierIndex]?.label || "Select a tier"}
-                    </p>
-                  </div>
-                  <p className="shrink-0 font-heading text-2xl font-extrabold text-[hsl(var(--gold))] sm:text-3xl">
-                    ₹{finalAmount > 0 ? finalAmount.toLocaleString("en-IN") : "0"}
-                    {monthly && <span className="text-base font-bold">/mo</span>}
-                  </p>
-                </div>
+                <form
+                  onSubmit={handleSubmit}
+                  onFocus={(e) => { if (isTextField(e.target)) setTyping(true); }}
+                  onBlur={(e) => { if (!isTextField(e.relatedTarget)) setTyping(false); }}
+                  className="grid gap-1.5 sm:gap-2 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,1fr)]"
+                >
+                  {/* ═════ LEFT: choose the offering ═════ */}
+                  <div className="min-w-0 rounded-[22px] bg-[#FBF8F1] p-4 sm:p-6 lg:p-8">
+                    <StepLabel n={1}>{t("Choose Your Offering")}</StepLabel>
 
-                <form onSubmit={handleSubmit} className="grid gap-6 p-4 sm:p-6 lg:grid-cols-2 lg:gap-8">
-                  {/* Left: amount selection */}
-                  <div className="min-w-0 space-y-3">
-                    <p className={stepLabelClass}>
-                      Choose Your Offering
+                    {/* One-time | Monthly */}
+                    <div
+                      role="radiogroup"
+                      aria-label={t("Donation frequency")}
+                      className="relative grid grid-cols-2 rounded-2xl bg-white p-1 shadow-sm ring-1 ring-vk-100"
+                    >
+                      {([false, true] as const).map((isMonthly) => {
+                        const on = monthly === isMonthly;
+                        return (
+                          <button
+                            key={String(isMonthly)}
+                            type="button"
+                            role="radio"
+                            aria-checked={on}
+                            onClick={() => {
+                              setMonthly(isMonthly);
+                              if (isMonthly) setWantsMahaPrasadam(false);
+                            }}
+                            className={`relative flex h-11 items-center justify-center gap-2 rounded-xl text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vk-500 ${
+                              on ? "text-white" : "text-ink/70 hover:text-vk-700"
+                            }`}
+                          >
+                            {on && (
+                              <motion.span
+                                layoutId="freq-pill"
+                                transition={{ type: "spring", stiffness: 500, damping: 38 }}
+                                className="absolute inset-0 rounded-xl bg-vk-900 shadow-[0_8px_18px_-10px_rgba(10,18,51,0.9)]"
+                              />
+                            )}
+                            <span className="relative inline-flex items-center gap-1.5">
+                              {isMonthly ? <Repeat className={`h-4 w-4 ${on ? "text-gold" : ""}`} /> : <Heart className={`h-4 w-4 ${on ? "fill-gold text-gold" : ""}`} />}
+                              {isMonthly ? t("Monthly") : t("One-time")}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <p className="mt-2 flex items-start gap-1.5 px-1 text-[12px] leading-snug text-muted-foreground" aria-live="polite">
+                      <Repeat aria-hidden className="mt-0.5 h-3 w-3 shrink-0 text-vk-400" />
+                      {monthly && finalAmount > 0
+                        ? t("Auto-pay {amount}{impact} every month. Cancel anytime.", {
+                            amount: `₹${finalAmount.toLocaleString("en-IN")}`,
+                            impact: impactLabel ? ` (${impactLabel})` : "",
+                          })
+                        : t("Give this offering automatically every month.")}
                     </p>
-                    <div className="grid grid-cols-2 gap-2.5">
-                      {config.tiers.map((tier, i) => (
-                        <button
-                          key={tier.amount}
-                          type="button"
-                          aria-pressed={!useCustom && tierIndex === i}
-                          onClick={() => { setUseCustom(false); setTierIndex(i); }}
-                          className={`${chipBase} text-left ${!useCustom && tierIndex === i ? chipOn : chipOff}`}
-                        >
-                          <span className="block text-lg font-extrabold leading-none text-vk-700">
-                            ₹{tier.amount.toLocaleString("en-IN")}
-                          </span>
-                          <span className="mt-1.5 block text-[13px] font-semibold leading-snug text-ink">{tier.label}</span>
-                          <span className="mt-0.5 line-clamp-2 block text-[11px] leading-snug text-muted-foreground">
-                            {tier.description}
-                          </span>
-                        </button>
-                      ))}
+
+                    {/* Amount tiles */}
+                    <div
+                      role="radiogroup"
+                      aria-label={t("Choose Your Offering")}
+                      onKeyDown={onTierKeyDown}
+                      className="mt-5 grid grid-cols-2 gap-2.5 sm:gap-3"
+                    >
+                      {config.tiers.map((tier, i) => {
+                        const on = !useCustom && tierIndex === i;
+                        const tierImpact = unitImpact(tier.amount, config, t);
+                        return (
+                          <motion.button
+                            key={tier.amount}
+                            ref={(el) => { tierRefs.current[i] = el; }}
+                            type="button"
+                            role="radio"
+                            aria-checked={on}
+                            tabIndex={on || (useCustom && i === 0) ? 0 : -1}
+                            onClick={() => { setUseCustom(false); setTierIndex(i); }}
+                            animate={{ y: on ? -3 : 0 }}
+                            whileHover={{ y: -3 }}
+                            whileTap={{ scale: 0.98 }}
+                            transition={{ type: "spring", stiffness: 400, damping: 28 }}
+                            className={`relative flex min-h-[150px] min-w-0 flex-col rounded-3xl border-2 bg-white p-2.5 text-left min-[360px]:p-3 transition-[border-color,box-shadow] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vk-500 focus-visible:ring-offset-2 sm:p-4 ${
+                              on
+                                ? "border-gold shadow-[0_16px_34px_-16px_rgba(201,150,43,0.75)]"
+                                : "border-transparent shadow-[0_6px_18px_-12px_rgba(10,18,51,0.35)] ring-1 ring-vk-100 hover:ring-vk-200"
+                            }`}
+                          >
+                            <span className="flex items-start justify-between gap-2">
+                              {/* Plate motif: the gold rim fills as the offering grows */}
+                              <span aria-hidden className="relative flex h-14 w-14 shrink-0 items-center justify-center">
+                                <svg viewBox="0 0 56 56" className="absolute inset-0 h-full w-full -rotate-90">
+                                  <circle cx="28" cy="28" r="25" fill="none" strokeWidth="4" className="stroke-vk-100" />
+                                  <motion.circle
+                                    cx="28" cy="28" r="25" fill="none" strokeWidth="4" strokeLinecap="round"
+                                    className={on ? "stroke-gold" : "stroke-vk-300"}
+                                    initial={{ pathLength: 0 }}
+                                    whileInView={{ pathLength: Math.max(0.12, tier.amount / maxTier) }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 0.9, delay: 0.1 * i, ease: "easeOut" }}
+                                  />
+                                </svg>
+                                <span
+                                  className={`flex h-10 w-10 items-center justify-center rounded-full transition-colors ${
+                                    on ? "bg-vk-900 text-gold" : "bg-[#FBF8F1] text-vk-600"
+                                  }`}
+                                >
+                                  <ImpactIcon className="h-[18px] w-[18px]" />
+                                </span>
+                              </span>
+                              <span
+                                aria-hidden
+                                className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
+                                  on ? "border-gold bg-gold text-vk-900" : "border-vk-200 bg-white"
+                                }`}
+                              >
+                                <AnimatePresence initial={false}>
+                                  {on && (
+                                    <motion.span
+                                      initial={{ scale: 0 }}
+                                      animate={{ scale: 1 }}
+                                      exit={{ scale: 0 }}
+                                      transition={{ type: "spring", stiffness: 500, damping: 26 }}
+                                      className="flex"
+                                    >
+                                      <Check className="h-3.5 w-3.5" strokeWidth={3} />
+                                    </motion.span>
+                                  )}
+                                </AnimatePresence>
+                              </span>
+                            </span>
+                            <span className="mt-3 block font-heading text-[1.35rem] font-extrabold leading-none text-vk-900 sm:text-2xl">
+                              ₹{tier.amount.toLocaleString("en-IN")}
+                            </span>
+                            <span className="mt-1.5 block break-words text-[14px] font-semibold leading-snug text-ink">
+                              {t(tier.label)}
+                            </span>
+                            <span className="mt-0.5 line-clamp-2 hidden break-words text-[12.5px] leading-snug text-muted-foreground min-[360px]:block">
+                              {t(tier.description)}
+                            </span>
+                            {tierImpact && (
+                              <span className={`mt-auto inline-flex items-start gap-1 self-start rounded-xl px-2 py-1 text-[11.5px] font-semibold leading-tight ${on ? "bg-gold/20 text-gold-deep" : "bg-vk-50 text-vk-700"}`}>
+                                <Sparkles aria-hidden className="h-3 w-3 shrink-0" />
+                                {tierImpact}
+                              </span>
+                            )}
+                          </motion.button>
+                        );
+                      })}
                     </div>
 
                     {/* Custom amount */}
-                    <div
-                      className={`flex h-11 items-center gap-2 rounded-xl border px-3.5 transition-all ${
-                        useCustom ? "border-vk-500 bg-vk-50 ring-2 ring-vk-500/20" : "border-dashed border-vk-200 bg-white focus-within:border-vk-500"
-                      }`}
-                    >
-                      <label htmlFor="custom-amount" className="shrink-0 text-[13px] font-medium text-ink/70">
-                        Other amount
-                      </label>
-                      <span className="text-sm font-semibold text-vk-700">₹</span>
-                      <input
-                        id="custom-amount"
-                        type="number"
-                        min={config.minCustomAmount}
-                        placeholder={`Min ₹${config.minCustomAmount}`}
-                        value={customAmount}
-                        onFocus={() => setUseCustom(true)}
-                        onChange={(e) => {
-                          setUseCustom(true);
-                          setCustomAmount(e.target.value);
-                        }}
-                        className="h-full w-full min-w-0 bg-transparent text-[15px] font-semibold text-ink outline-none placeholder:font-normal placeholder:text-muted-foreground"
-                      />
-                    </div>
-                    {impact && (
-                      <p className="rounded-xl bg-vk-50 px-3.5 py-2 text-xs font-semibold text-vk-700">
-                        🙏 {useCustom ? "Your donation " : "This offering "}supports {impact}
+                    <div className="mt-3">
+                      <div
+                        className={`flex h-14 items-center gap-2 rounded-2xl border-2 bg-white px-4 transition-[border-color,box-shadow] ${
+                          useCustom
+                            ? "border-gold shadow-[0_12px_28px_-16px_rgba(201,150,43,0.7)]"
+                            : "border-dashed border-vk-200 focus-within:border-vk-500"
+                        }`}
+                      >
+                        <label htmlFor="custom-amount" className="shrink-0 text-[13px] font-semibold text-ink/75">
+                          {t("Other amount")}
+                        </label>
+                        <span aria-hidden className="ml-auto pl-2 font-heading text-lg font-bold text-vk-700">₹</span>
+                        <input
+                          id="custom-amount"
+                          type="number"
+                          inputMode="numeric"
+                          min={config.minCustomAmount}
+                          placeholder={t("Min ₹{min}", { min: config.minCustomAmount })}
+                          aria-describedby="custom-amount-hint"
+                          aria-invalid={customTooLow || undefined}
+                          value={customAmount}
+                          onFocus={() => setUseCustom(true)}
+                          onChange={(e) => {
+                            setUseCustom(true);
+                            setCustomAmount(e.target.value);
+                          }}
+                          className="h-full w-[6.5rem] min-w-0 shrink bg-transparent text-left font-heading text-lg font-bold text-ink outline-none [appearance:textfield] placeholder:font-sans placeholder:text-sm placeholder:font-normal placeholder:text-muted-foreground [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                        />
+                      </div>
+                      <p
+                        id="custom-amount-hint"
+                        className={`mt-1.5 px-1 text-[11.5px] ${customTooLow ? "font-semibold text-red-600" : "text-muted-foreground"}`}
+                      >
+                        {t("Minimum offering is ₹{min}", { min: config.minCustomAmount })}
                       </p>
-                    )}
+                    </div>
+
+                    <AnimatePresence initial={false}>
+                      {impactLabel && (
+                        <motion.p
+                          key="impact"
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="overflow-hidden"
+                        >
+                          <span className="mt-3 flex items-center gap-2.5 rounded-2xl bg-white px-3.5 py-3 text-[13px] font-semibold text-vk-800 ring-1 ring-gold/40">
+                            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gold/15 text-gold-deep">
+                              <ImpactIcon className="h-4 w-4" />
+                            </span>
+                            <span className="min-w-0">
+                              {useCustom
+                                ? t("Your donation supports {impact}", { impact: impactLabel })
+                                : t("This offering supports {impact}", { impact: impactLabel })}
+                            </span>
+                          </span>
+                        </motion.p>
+                      )}
+                    </AnimatePresence>
 
                     {/* Bank transfer */}
-                    <details className="group rounded-xl border border-vk-100 bg-vk-50/60 px-3.5 py-3">
-                      <summary className="flex min-h-[24px] cursor-pointer list-none items-center justify-between gap-2 text-[13px] font-semibold text-ink">
-                        <span className="inline-flex items-center gap-2">
-                          <Building2 className="h-4 w-4 text-vk-500" />
-                          Prefer a direct bank transfer?
+                    <details className="group mt-3 rounded-2xl bg-white px-4 ring-1 ring-vk-100 [&_summary::-webkit-details-marker]:hidden">
+                      <summary className="flex min-h-[52px] cursor-pointer list-none items-center justify-between gap-2 rounded-2xl text-[13px] font-semibold text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vk-500">
+                        <span className="inline-flex min-w-0 items-center gap-2.5">
+                          <Building2 className="h-4 w-4 shrink-0 text-vk-500" />
+                          {t("Prefer a direct bank transfer?")}
                         </span>
                         <ChevronDown className="h-4 w-4 shrink-0 text-vk-500 transition-transform group-open:rotate-180" />
                       </summary>
-                      <div className="mt-3 space-y-1">
+                      <div className="space-y-1 pb-3">
                         {(
                           [
                             ["Beneficiary", BANK_DETAILS.beneficiaryName],
@@ -504,461 +685,278 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                             ["IFSC", BANK_DETAILS.ifsc],
                           ] as const
                         ).map(([label, value]) => (
-                          <div key={label} className="flex flex-wrap items-center justify-between gap-x-2 text-xs">
-                            <span className="text-muted-foreground">{label}</span>
+                          <div key={label} className="flex flex-wrap items-center justify-between gap-x-3 border-b border-vk-100 py-0.5 text-xs last:border-0">
+                            <span className="text-muted-foreground">{t(label)}</span>
                             <button
                               type="button"
                               onClick={() => handleCopy(label, value)}
-                              className="flex min-h-[32px] min-w-0 items-center gap-1.5 break-all text-left font-semibold text-ink hover:text-vk-700"
+                              className="flex min-h-[40px] min-w-0 items-center gap-1.5 break-all text-left font-semibold text-ink hover:text-vk-700"
                             >
                               {value}
                               {copiedField === label ? (
-                                <Check className="h-3 w-3 shrink-0 text-green-600" />
+                                <Check className="h-3.5 w-3.5 shrink-0 text-green-600" />
                               ) : (
-                                <Copy className="h-3 w-3 shrink-0 text-vk-400" />
+                                <Copy className="h-3.5 w-3.5 shrink-0 text-vk-400" />
                               )}
                             </button>
                           </div>
                         ))}
-                        <p className="pt-1 text-[11px] leading-relaxed text-muted-foreground">
-                          Email your transaction reference and PAN (for 80G) to{" "}
+                        <p className="pt-1 text-[11.5px] leading-relaxed text-muted-foreground">
+                          {bankNoteBefore}
                           <a href="mailto:social@hkmvizag.org" className="font-semibold text-vk-600 underline underline-offset-2">
                             social@hkmvizag.org
                           </a>
-                          .
+                          {bankNoteAfter}
                         </p>
                       </div>
                     </details>
                   </div>
 
-                  {/* Right: details, add-ons, submit */}
-                  <div className="flex min-w-0 flex-col space-y-3">
-                    <p className={stepLabelClass}>Your Details</p>
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      <div>
-                        <label htmlFor="donor-name" className={labelClass}>Full name</label>
-                        <div className={inputWrapClass}>
-                          <User className={inputIconClass} />
-                          <input
-                            id="donor-name"
-                            type="text"
-                            required
-                            placeholder="Your name"
-                            value={form.name}
-                            onChange={(e) => setForm({ ...form, name: e.target.value })}
-                            className={inputClass}
-                          />
+                  {/* ═════ RIGHT: live summary + details + pay ═════ */}
+                  <div className="min-w-0 rounded-[22px] bg-white p-4 sm:p-6 lg:p-8">
+                    {/* Live summary */}
+                    <div className="relative overflow-hidden rounded-3xl bg-vk-900 p-5 text-white sm:p-6">
+                      <div aria-hidden className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full border border-gold/20" />
+                      <div aria-hidden className="pointer-events-none absolute -right-4 -top-4 h-24 w-24 rounded-full border border-gold/15" />
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-gold/90">{t("Your offering")}</p>
+                      <p className="mt-1 truncate font-heading text-[15px] font-semibold text-white/90">{t(config.pageTitle)}</p>
+                      <div className="mt-3 flex min-h-[48px] flex-wrap items-end gap-x-1.5" aria-live="polite" aria-atomic="true">
+                        <AnimatePresence mode="popLayout" initial={false}>
+                          <motion.span
+                            key={finalAmount}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ duration: 0.2 }}
+                            className="font-heading text-[2.5rem] font-extrabold leading-none text-gold [overflow-wrap:anywhere]"
+                          >
+                            ₹{finalAmount > 0 ? finalAmount.toLocaleString("en-IN") : "0"}
+                          </motion.span>
+                        </AnimatePresence>
+                        {monthly && <span className="pb-1 text-sm font-semibold text-white/70">{t("/mo")}</span>}
+                      </div>
+                      <p className="mt-2 break-words text-[13px] font-medium text-white/80">
+                        {useCustom ? t("Custom offering") : config.tiers[tierIndex] ? t(config.tiers[tierIndex].label) : t("Select a tier")}
+                      </p>
+                      <div className="mt-4 min-h-[22px]">
+                        <div className="flex items-center gap-[3px] sm:gap-1" aria-hidden>
+                          {Array.from({ length: 10 }).map((_, i) => {
+                            const lit = i < impactIcons;
+                            return (
+                              <motion.span
+                                key={i}
+                                animate={{ opacity: lit ? 1 : 0.35, scale: lit ? 1 : 0.86 }}
+                                transition={{ delay: i * 0.03, type: "spring", stiffness: 500, damping: 26 }}
+                                className={`flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full transition-colors sm:h-[22px] sm:w-[22px] ${
+                                  lit ? "bg-gold text-vk-900" : "bg-white/10 text-white/40"
+                                }`}
+                              >
+                                <ImpactIcon className="h-3 w-3" />
+                              </motion.span>
+                            );
+                          })}
                         </div>
-                      </div>
-                      <div>
-                        <label htmlFor="donor-mobile" className={labelClass}>Mobile number</label>
-                        <div className={inputWrapClass}>
-                          <Phone className={inputIconClass} />
-                          <input
-                            id="donor-mobile"
-                            type="tel"
-                            required
-                            maxLength={10}
-                            inputMode="numeric"
-                            placeholder="10-digit mobile"
-                            value={form.mobile}
-                            onChange={(e) => setForm({ ...form, mobile: cleanMobile(e.target.value) })}
-                            className={inputClass}
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    {lookupHint}
-
-                    <div>
-                      <label htmlFor="donor-email" className={labelClass}>Email address (optional)</label>
-                      <div className={inputWrapClass}>
-                        <Mail className={inputIconClass} />
-                        <input
-                          id="donor-email"
-                          type="email"
-                          placeholder="you@example.com"
-                          value={form.email}
-                          onChange={(e) => setForm({ ...form, email: e.target.value })}
-                          className={inputClass}
-                        />
-                      </div>
-                    </div>
-
-                    <DonorExtrasFields
-                      sevakName={form.sevakName}
-                      dob={form.dob}
-                      onSevakNameChange={(v) => setForm((f) => ({ ...f, sevakName: v }))}
-                      onDobChange={(v) => setForm((f) => ({ ...f, dob: v }))}
-                      occasion={form.dedicationOccasion}
-                      occasionNote={form.dedicationNote}
-                      onOccasionChange={(v) => setForm((f) => ({ ...f, dedicationOccasion: v }))}
-                      onOccasionNoteChange={(v) => setForm((f) => ({ ...f, dedicationNote: v }))}
-                      collapsible
-                    />
-
-                    {/* 80G */}
-                    {addonsEligible && (
-                      <div className={addonBoxClass}>
-                        <label className={checkLabelClass}>
-                          <input
-                            type="checkbox"
-                            checked={want80G}
-                            onChange={(e) => {
-                              setWant80G(e.target.checked);
-                              handle80GToggle(e.target.checked);
-                            }}
-                            className={checkboxClass}
-                          />
-                          I need an 80G tax exemption receipt
-                        </label>
-                        {want80G && (
-                          <input
-                            id="donor-pan"
-                            type="text"
-                            placeholder="PAN number *"
-                            aria-label="PAN number"
-                            value={form.panNumber}
-                            onChange={(e) => setForm({ ...form, panNumber: e.target.value.toUpperCase() })}
-                            className="vk-input mt-2.5 uppercase"
-                          />
+                        {impactLabel && (
+                          <p className="mt-2 text-[12.5px] font-medium text-white/85">
+                            {t("Supports {impact}", { impact: impactLabel })}
+                          </p>
                         )}
                       </div>
-                    )}
+                    </div>
 
-                    {/* Maha Prasadam (one-time donations only) */}
-                    {addonsEligible && !monthly && (
-                      <div className={addonBoxClass}>
-                        <label className={checkLabelClass}>
-                          <input
-                            type="checkbox"
-                            checked={wantsMahaPrasadam}
-                            onChange={(e) => {
-                              setWantsMahaPrasadam(e.target.checked);
-                              handlePrasadamToggle(e.target.checked);
-                            }}
-                            className={checkboxClass}
-                          />
-                          🙏 I&apos;d like Maha Prasadam delivered
-                        </label>
-                        {wantsMahaPrasadam && <AddressForm address={address} setAddress={setAddress} />}
-                      </div>
-                    )}
+                    {/* Details */}
+                    <div className="mt-6 space-y-3.5">
+                      <StepLabel n={2}>{t("Your Details")}</StepLabel>
+                      <FloatInput
+                        id="donor-name"
+                        icon={User}
+                        label={t("Full name")}
+                        type="text"
+                        required
+                        autoComplete="name"
+                        value={form.name}
+                        onChange={(e) => setForm({ ...form, name: e.target.value })}
+                      />
+                      <FloatInput
+                        id="donor-mobile"
+                        icon={Phone}
+                        label={t("Mobile number")}
+                        hint={t("10-digit mobile")}
+                        type="tel"
+                        required
+                        maxLength={10}
+                        inputMode="numeric"
+                        autoComplete="tel-national"
+                        value={form.mobile}
+                        onChange={(e) => setForm({ ...form, mobile: cleanMobile(e.target.value) })}
+                      />
 
-                    {/* Monthly autopay toggle */}
-                    <button
-                      type="button"
-                      aria-pressed={monthly}
-                      onClick={() => {
-                        setMonthly((m) => {
-                          const next = !m;
-                          if (next) setWantsMahaPrasadam(false);
-                          return next;
-                        });
-                      }}
-                      className={`flex w-full items-center gap-3 rounded-xl border px-3.5 py-3 text-left transition-all ${monthly ? chipOn : chipOff}`}
-                    >
-                      <span
-                        className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border ${
-                          monthly ? "border-vk-700 bg-vk-700 text-white" : "border-vk-300 bg-white"
-                        }`}
-                      >
-                        {monthly && <Check className="h-3.5 w-3.5" />}
-                      </span>
-                      <span className="flex-1">
-                        <span className="block text-sm font-bold text-vk-800">🔁 Make it a monthly seva</span>
-                        <span className="block text-xs leading-snug text-muted-foreground">
-                          {monthly && finalAmount > 0
-                            ? `Auto-pay ₹${finalAmount.toLocaleString("en-IN")}${impact ? ` (${impact})` : ""} every month. Cancel anytime.`
-                            : "Give this offering automatically every month."}
-                        </span>
-                      </span>
-                    </button>
+                      {lookupHint}
 
-                    {status && (
-                      <p
-                        role={status.type === "error" ? "alert" : undefined}
-                        className={`rounded-xl px-3.5 py-2.5 text-[13px] font-medium ${
-                          status.type === "success" ? "bg-green-50 text-green-800" : "bg-red-50 text-red-700"
-                        }`}
-                      >
-                        {status.message}
-                      </p>
-                    )}
+                      <FloatInput
+                        id="donor-email"
+                        icon={Mail}
+                        label={`${t("Email address")} ${t("(optional)")}`}
+                        type="email"
+                        inputMode="email"
+                        autoComplete="email"
+                        value={form.email}
+                        onChange={(e) => setForm({ ...form, email: e.target.value })}
+                      />
 
-                    <div className="flex-1" />
+                      <DonorExtrasFields
+                        sevakName={form.sevakName}
+                        dob={form.dob}
+                        onSevakNameChange={(v) => setForm((f) => ({ ...f, sevakName: v }))}
+                        onDobChange={(v) => setForm((f) => ({ ...f, dob: v }))}
+                        occasion={form.dedicationOccasion}
+                        occasionNote={form.dedicationNote}
+                        onOccasionChange={(v) => setForm((f) => ({ ...f, dedicationOccasion: v }))}
+                        onOccasionNoteChange={(v) => setForm((f) => ({ ...f, dedicationNote: v }))}
+                        collapsible
+                      />
 
-                    <button
-                      type="submit"
-                      disabled={submitting}
-                      className="vk-btn-gold h-12 w-full text-[15px] font-bold"
-                    >
-                      {submitting ? (
-                        <>
-                          <Loader2 className="h-4 w-4 animate-spin" /> Processing…
-                        </>
-                      ) : monthly ? (
-                        <>🔁 Donate ₹{finalAmount > 0 ? finalAmount.toLocaleString("en-IN") : "—"} / month</>
-                      ) : (
-                        <><Heart className="h-4 w-4 fill-current" /> Donate ₹{finalAmount > 0 ? finalAmount.toLocaleString("en-IN") : "—"}</>
+                      {/* 80G */}
+                      {addonsEligible && (
+                        <div className={`${toggleCardClass} ${want80G ? toggleCardOn : toggleCardOff}`}>
+                          <label className={toggleLabelClass}>
+                            <input
+                              type="checkbox"
+                              checked={want80G}
+                              onChange={(e) => {
+                                setWant80G(e.target.checked);
+                                handle80GToggle(e.target.checked);
+                              }}
+                              className={checkboxClass}
+                            />
+                            <span className="min-w-0 flex-1">
+                              <span className="block text-[13px] font-bold text-ink">{t("I need an 80G tax exemption receipt")}</span>
+                              <span className="mt-0.5 block text-xs leading-snug text-muted-foreground">
+                                {t("Save tax under Section 80G — we'll need your PAN.")}
+                              </span>
+                            </span>
+                            <Receipt aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-vk-400" />
+                          </label>
+                          <Expand open={want80G}>
+                            <div className="border-t border-vk-100 px-4 pb-4 pt-3">
+                              <label htmlFor="donor-pan" className={labelClass}>{t("PAN number")}</label>
+                              <input
+                                id="donor-pan"
+                                type="text"
+                                autoComplete="off"
+                                placeholder="ABCDE1234F"
+                                value={form.panNumber}
+                                onChange={(e) => setForm({ ...form, panNumber: e.target.value.toUpperCase() })}
+                                className="vk-input !h-12 !rounded-2xl uppercase tracking-wider"
+                              />
+                            </div>
+                          </Expand>
+                        </div>
                       )}
-                    </button>
-                    <p className="flex items-center justify-center gap-1.5 text-center text-[11px] text-muted-foreground">
-                      <ShieldCheck className="h-3.5 w-3.5 shrink-0 text-vk-500" />
-                      Secure payment via Razorpay · UPI, cards &amp; netbanking accepted
-                    </p>
+
+                      {/* Maha Prasadam (one-time donations only) */}
+                      {addonsEligible && !monthly && (
+                        <div className={`${toggleCardClass} ${wantsMahaPrasadam ? toggleCardOn : toggleCardOff}`}>
+                          <label className={toggleLabelClass}>
+                            <input
+                              type="checkbox"
+                              checked={wantsMahaPrasadam}
+                              onChange={(e) => {
+                                setWantsMahaPrasadam(e.target.checked);
+                                handlePrasadamToggle(e.target.checked);
+                              }}
+                              className={checkboxClass}
+                            />
+                            <span className="min-w-0 flex-1">
+                              <span className="block text-[13px] font-bold text-ink">{t("I'd like Maha Prasadam delivered")}</span>
+                              <span className="mt-0.5 block text-xs leading-snug text-muted-foreground">
+                                {t("Sanctified prasadam sent to your address.")}
+                              </span>
+                            </span>
+                            <Gift aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-vk-400" />
+                          </label>
+                          <Expand open={wantsMahaPrasadam}>
+                            <div className="border-t border-vk-100 px-4 pb-4">
+                              <AddressForm address={address} setAddress={setAddress} />
+                            </div>
+                          </Expand>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Pay */}
+                    <div ref={summaryRef} className="mt-5 space-y-3">
+                      <AnimatePresence initial={false}>
+                        {status && (
+                          <motion.p
+                            key={status.message}
+                            role={status.type === "error" ? "alert" : "status"}
+                            initial={{ opacity: 0, y: -4 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0 }}
+                            className={`rounded-2xl px-4 py-3 text-[13px] font-medium ${
+                              status.type === "success" ? "bg-green-50 text-green-800" : "bg-red-50 text-red-700 ring-1 ring-red-100"
+                            }`}
+                          >
+                            {t(status.message)}
+                          </motion.p>
+                        )}
+                      </AnimatePresence>
+                      <motion.button
+                        type="submit"
+                        disabled={submitting}
+                        whileTap={{ scale: 0.985 }}
+                        className="vk-btn-gold group h-14 w-full rounded-2xl px-4 text-base font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vk-500 focus-visible:ring-offset-2 disabled:cursor-wait disabled:opacity-80"
+                      >
+                        {submitting ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin" /> {t("Processing…")}
+                          </>
+                        ) : (
+                          <>
+                            {monthly ? <Repeat className="h-4 w-4 shrink-0" /> : <Heart className="h-4 w-4 shrink-0 fill-current" />}
+                            <span className="min-w-0 truncate">
+                              {monthly
+                                ? t("Donate {amount} / month", { amount: `₹${finalAmount > 0 ? finalAmount.toLocaleString("en-IN") : "—"}` })
+                                : t("Donate {amount}", { amount: `₹${finalAmount > 0 ? finalAmount.toLocaleString("en-IN") : "—"}` })}
+                            </span>
+                            <ArrowRight aria-hidden className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-1" />
+                          </>
+                        )}
+                      </motion.button>
+                      <p className="text-center text-[11px] leading-snug text-muted-foreground">
+                        {t("Secure payment via Razorpay · UPI, cards & netbanking accepted")}
+                      </p>
+
+                      {/* Trust strip */}
+                      <ul className="grid grid-cols-3 divide-x divide-vk-100 rounded-2xl bg-vk-50/70 py-3 text-center">
+                        {(
+                          [
+                            [Lock, "Secure payment"],
+                            [BadgeCheck, "80G tax benefit"],
+                            [MessageCircle, "Receipt on WhatsApp"],
+                          ] as const
+                        ).map(([Icon, label]) => (
+                          <li key={label} className="flex min-w-0 flex-col items-center gap-1.5 px-1.5">
+                            <Icon aria-hidden className="h-4 w-4 text-vk-600" />
+                            <span className="break-words text-[10.5px] font-semibold leading-tight text-ink/75">{t(label)}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
                 </form>
               </motion.div>
+              </MotionConfig>
             </div>
           </div>
         </section>
 
-        {ed ? (
-          <EdAbout config={config} onDonate={scrollToDonate} />
-        ) : (
-          <>
-        {/* ── About ── */}
-        <section className="vk-section vk-band">
-          <div className="vk-container">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="vk-card mx-auto grid max-w-6xl items-stretch overflow-hidden !rounded-3xl md:grid-cols-2"
-            >
-              <div className="relative min-h-[240px] md:min-h-[360px]">
-                <Image
-                  src={config.about.image}
-                  alt={config.pageTitle}
-                  fill
-                  unoptimized
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-cover"
-                />
-              </div>
-              <div className="flex flex-col justify-center p-6 md:p-10">
-                <span className="vk-pill mb-4 self-start">{config.about.eyebrow}</span>
-                <h2 className="vk-h2">{config.about.heading}</h2>
-                <div className="mt-3 space-y-3">
-                  {config.about.paragraphs.map((p, i) => (
-                    <p key={i} className="vk-lead">
-                      {p}
-                    </p>
-                  ))}
-                </div>
-                <button
-                  onClick={scrollToDonate}
-                  className="vk-btn-gold mt-6 h-12 self-start px-8"
-                >
-                  <Heart className="h-4 w-4 fill-current" /> {config.about.ctaLabel}
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        </section>
-
-          </>
-        )}
-
-        {ed ? (
-          <EdImpact config={config} />
-        ) : (
-          <>
-        {/* ── Impact ── */}
-        <section className="vk-section">
-          <div className="vk-container">
-            <SectionHeading
-              align="center"
-              eyebrow="Why it matters"
-              title={`The Significance of ${config.pageTitle}`}
-            />
-            <div className="mx-auto grid max-w-6xl gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {config.impactItems.map((item, i) => (
-                <motion.div
-                  key={item.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: i * 0.08 }}
-                  className="vk-card vk-card-hover flex gap-4 p-4 sm:block sm:p-5 md:p-6"
-                >
-                  <span className="vk-icon-chip sm:mb-4">
-                    <item.icon className="h-5 w-5" />
-                  </span>
-                  <div className="min-w-0">
-                    <h3 className="mb-1 text-base font-bold text-ink">{item.title}</h3>
-                    <p className="text-sm leading-relaxed text-muted-foreground">{item.text}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-          </>
-        )}
-
-        {ed ? (
-          <EdFeatures config={config} />
-        ) : (
-          <>
-        {/* ── What your donation does ── */}
-        <section className="vk-section vk-band">
-          <div className="vk-container">
-            <SectionHeading
-              align="center"
-              eyebrow="What your offering does"
-              title="Where Your Donation Goes"
-            />
-            <div className="mx-auto grid max-w-5xl gap-3 sm:grid-cols-2 md:gap-4">
-              {config.features.map((f, i) => (
-                <motion.div
-                  key={f.title}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: i * 0.06 }}
-                  className="vk-card flex gap-4 p-4 md:p-5"
-                >
-                  <span className="vk-icon-chip">
-                    <f.icon className="h-5 w-5" />
-                  </span>
-                  <div className="min-w-0">
-                    <h3 className="mb-1 text-sm font-bold text-ink md:text-[15px]">{f.title}</h3>
-                    <p className="text-sm leading-relaxed text-muted-foreground">{f.text}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-          </>
-        )}
-
-        {ed ? (
-          <EdPrivileges config={config} onDonate={scrollToDonate} />
-        ) : (
-          <>
-        {/* ── Donor privileges ── */}
-        <section className="vk-section">
-          <div className="vk-container">
-            <div className="relative isolate mx-auto max-w-6xl overflow-hidden rounded-3xl bg-gradient-navy px-5 py-10 md:px-10 md:py-14">
-              <div aria-hidden className="absolute -right-16 -top-16 -z-10 h-56 w-56 rounded-full bg-white/5" />
-              <SectionHeading
-                align="center"
-                light
-                eyebrow="Our gratitude to every donor"
-                title="Donor Privileges"
-              />
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 lg:gap-4">
-                {config.privileges.map((p, i) => (
-                  <motion.div
-                    key={p.title}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: i * 0.08 }}
-                    className="rounded-2xl border border-white/10 bg-white/5 p-5"
-                  >
-                    <span className="vk-icon-chip mb-4 !bg-white/10 !text-[hsl(var(--gold))]">
-                      <p.icon className="h-5 w-5" />
-                    </span>
-                    <h3 className="mb-1.5 text-base font-bold text-white">{p.title}</h3>
-                    <p className="text-sm leading-relaxed text-white/70">{p.text}</p>
-                  </motion.div>
-                ))}
-              </div>
-              <div className="mt-8 text-center md:mt-10">
-                <button
-                  onClick={scrollToDonate}
-                  className="vk-btn-gold h-12 px-10"
-                >
-                  <Heart className="h-4 w-4 fill-current" /> Donate Now
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-          </>
-        )}
-
-        {ed ? (
-          <EdTestimonials config={config} />
-        ) : (
-          <>
-        {/* ── Testimonials ── */}
-        <section className="vk-section">
-          <div className="vk-container">
-            <div className="mb-8 flex items-end justify-between gap-4 md:mb-10">
-              <SectionHeading
-                eyebrow="What Our Devotees Say"
-                title="Voices of Devotion"
-                className="!mb-0"
-              />
-              <div className="hidden shrink-0 gap-2 sm:flex">
-                <button
-                  type="button"
-                  aria-label="Scroll left"
-                  onClick={() => testimonialsRef.current?.scrollBy({ left: -400, behavior: "smooth" })}
-                  className="flex h-11 w-11 items-center justify-center rounded-full border border-vk-200 bg-white text-vk-700 transition hover:border-vk-500 hover:bg-vk-50"
-                >
-                  <ChevronLeft className="h-5 w-5" />
-                </button>
-                <button
-                  type="button"
-                  aria-label="Scroll right"
-                  onClick={() => testimonialsRef.current?.scrollBy({ left: 400, behavior: "smooth" })}
-                  className="flex h-11 w-11 items-center justify-center rounded-full border border-vk-200 bg-white text-vk-700 transition hover:border-vk-500 hover:bg-vk-50"
-                >
-                  <ChevronRight className="h-5 w-5" />
-                </button>
-              </div>
-            </div>
-            <motion.div
-              ref={testimonialsRef}
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="vk-scroller -mx-4 px-4 pb-8 sm:mx-0 sm:px-0"
-            >
-              {config.testimonials.map((t) => (
-                <div
-                  key={t.name}
-                  className="vk-card flex w-[84%] max-w-[380px] shrink-0 flex-col p-5 sm:w-96 md:p-6"
-                >
-                  <Quote className="mb-3 h-7 w-7 text-vk-300" />
-                  <p className="mb-5 flex-1 text-sm leading-relaxed text-ink/85 md:text-[15px]">
-                    &ldquo;{t.quote}&rdquo;
-                  </p>
-                  <div className="flex items-center gap-3 border-t border-vk-100 pt-4">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-vk-100 text-sm font-bold text-vk-700">
-                      {t.name
-                        .split(" ")
-                        .map((w) => w[0])
-                        .join("")
-                        .slice(0, 2)}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold text-ink">{t.name}</p>
-                      <p className="text-xs text-muted-foreground">{t.role}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </motion.div>
-          </div>
-        </section>
-
-          </>
-        )}
-
-        {ed && <EdReadMore config={config} />}
+        <EdAbout config={config} onDonate={scrollToDonate} />
+        <EdImpact config={config} />
+        <EdFeatures config={config} />
+        <EdPrivileges config={config} onDonate={scrollToDonate} />
+        <EdTestimonials config={config} />
 
         {/* ── Recent devotees supporting this seva ── */}
         {stats && stats.donors.length > 0 && (
@@ -1010,90 +1008,33 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
 
         {/* ── Gallery ── */}
         {config.gallery.photos.length > 0 && (
-          <section className="vk-section">
+          <section className="bg-white py-14 md:py-24">
             <div className="vk-container">
-              <div className="mb-8 flex items-end justify-between gap-4 md:mb-10">
-                <SectionHeading
-                  eyebrow={config.gallery.eyebrow}
-                  title={config.gallery.heading}
-                  subtitle={config.gallery.subtitle}
-                  className="!mb-0"
-                />
-                {galleryPages.length > 1 && (
-                  <div className="hidden shrink-0 gap-2 sm:flex">
-                    <button
-                      type="button"
-                      aria-label="Scroll left"
-                      onClick={() => galleryRef.current?.scrollBy({ left: -galleryRef.current.offsetWidth, behavior: "smooth" })}
-                      className="flex h-11 w-11 items-center justify-center rounded-full border border-vk-200 bg-white text-vk-700 transition hover:border-vk-500 hover:bg-vk-50"
-                    >
-                      <ChevronLeft className="h-5 w-5" />
-                    </button>
-                    <button
-                      type="button"
-                      aria-label="Scroll right"
-                      onClick={() => galleryRef.current?.scrollBy({ left: galleryRef.current.offsetWidth, behavior: "smooth" })}
-                      className="flex h-11 w-11 items-center justify-center rounded-full border border-vk-200 bg-white text-vk-700 transition hover:border-vk-500 hover:bg-vk-50"
-                    >
-                      <ChevronRight className="h-5 w-5" />
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              <div
-                ref={galleryRef}
-                className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-              >
-                {galleryPages.map((page, pageIndex) => (
-                  <div key={pageIndex} className="w-full min-w-0 shrink-0 snap-start">
-                    <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
-                      {page.map((photo, i) => (
-                        <motion.div
-                          key={photo.src + i}
-                          initial={{ opacity: 0, y: 20 }}
-                          whileInView={{ opacity: 1, y: 0 }}
-                          viewport={{ once: true }}
-                          transition={{ delay: i * 0.06, duration: 0.5 }}
-                          className="vk-tile aspect-[4/3]"
-                        >
-                          <Image
-                            src={photo.src}
-                            alt={photo.caption}
-                            fill
-                            unoptimized
-                            sizes="(max-width: 768px) 50vw, 33vw"
-                            className="object-cover"
-                          />
-                          <div className="vk-tile-caption !p-3 md:!p-4">
-                            <p className="line-clamp-2 text-xs font-semibold text-white md:text-sm">{photo.caption}</p>
-                          </div>
-                        </motion.div>
-                      ))}
-                    </div>
-                  </div>
+              <SectionTitle eyebrow={t(config.gallery.eyebrow)} title={t(config.gallery.heading)} sub={t(config.gallery.subtitle)} />
+              <div className="mx-auto grid max-w-6xl auto-rows-[150px] grid-cols-2 gap-3 sm:auto-rows-[190px] md:grid-cols-4 md:gap-4">
+                {config.gallery.photos.map((photo, i) => (
+                  <motion.figure
+                    key={photo.src + i}
+                    initial={{ opacity: 0, y: 16 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.06, duration: 0.5 }}
+                    className={`group relative overflow-hidden rounded-3xl bg-vk-100 ${i === 0 ? "col-span-2 row-span-2" : ""}`}
+                  >
+                    <Image
+                      src={photo.src}
+                      alt={t(photo.caption)}
+                      fill
+                      unoptimized
+                      sizes={i === 0 ? "(max-width: 768px) 100vw, 50vw" : "(max-width: 768px) 50vw, 25vw"}
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                    <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-vk-900/85 to-transparent p-3 pt-10 md:p-4 md:pt-12">
+                      <span className="line-clamp-2 text-[13px] font-semibold text-white md:text-sm">{t(photo.caption)}</span>
+                    </figcaption>
+                  </motion.figure>
                 ))}
               </div>
-
-              {galleryPages.length > 1 && (
-                <div className="mt-4 flex justify-center gap-1.5 sm:hidden">
-                  {galleryPages.map((_, i) => (
-                    <button
-                      key={i}
-                      type="button"
-                      aria-label={`Go to page ${i + 1}`}
-                      onClick={() => {
-                        const container = galleryRef.current;
-                        if (container) {
-                          container.scrollTo({ left: i * container.offsetWidth, behavior: "smooth" });
-                        }
-                      }}
-                      className="h-1.5 rounded-full bg-vk-200 transition-all hover:bg-vk-500"
-                      style={{ width: 24 }}
-                    />
-                  ))}
-                </div>
-              )}
             </div>
           </section>
         )}
@@ -1107,27 +1048,47 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
         {/* ── Founder's words ── */}
         <FounderSection />
 
-        {/* ── Sticky mobile donate bar ── */}
-        {showSticky && (
-          <div className="fixed bottom-[calc(var(--bottom-nav-space)+4px+env(safe-area-inset-bottom))] left-3 right-[76px] z-40 lg:hidden">
-            <div className="flex items-center justify-between gap-3 rounded-2xl border border-vk-100 bg-white/95 p-2 pl-4 shadow-lift backdrop-blur">
-              <div className="min-w-0">
-                <p className="truncate text-[11px] font-medium text-muted-foreground">{config.pageTitle}</p>
-                <p className="font-heading text-base font-extrabold text-vk-800">
-                  ₹{finalAmount > 0 ? finalAmount.toLocaleString("en-IN") : "—"}
-                  {monthly && <span className="text-xs font-bold">/mo</span>}
-                </p>
+        <EdReadMore config={config} />
+        <EdFinalCta config={config} onDonate={scrollToDonate} />
+
+        {/* ── Sticky mobile donate bar ──
+            Shows on phones/tablets while the pay button is off-screen; hides
+            while the donor is typing so it never sits over an input. Inside
+            the form it jumps to the summary, elsewhere to the form. */}
+        <AnimatePresence>
+          {showSticky && !typing && (
+            <motion.div
+              key="sticky-donate"
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 24 }}
+              transition={{ duration: 0.2 }}
+              className="fixed bottom-[calc(var(--bottom-nav-space)+4px+env(safe-area-inset-bottom))] left-3 right-[76px] z-40 lg:hidden"
+            >
+              <div className="flex items-center justify-between gap-2 rounded-2xl border border-vk-100 bg-white p-2 pl-3.5 shadow-[0_14px_34px_-14px_rgba(10,18,51,0.45)]">
+                <div className="min-w-0">
+                  <p className="truncate text-[11px] font-medium text-muted-foreground">{t(config.pageTitle)}</p>
+                  <p className="truncate font-heading text-base font-extrabold text-vk-800">
+                    ₹{finalAmount > 0 ? finalAmount.toLocaleString("en-IN") : "—"}
+                    {monthly && <span className="text-xs font-bold">{t("/mo")}</span>}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (formInView) summaryRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+                    else scrollToDonate();
+                  }}
+                  className="vk-btn-gold h-11 shrink-0 whitespace-nowrap px-4 text-sm"
+                >
+                  <Heart className="h-4 w-4 fill-current" /> {t("Donate")}
+                </button>
               </div>
-              <button
-                onClick={scrollToDonate}
-                className="vk-btn-gold h-11 shrink-0 px-5"
-              >
-                <Heart className="h-4 w-4 fill-current" /> Donate Now
-              </button>
-            </div>
-          </div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </main>
+      </MotionConfig>
     </PageLayout>
   );
 }
