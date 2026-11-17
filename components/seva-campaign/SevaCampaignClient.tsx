@@ -238,9 +238,6 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
   const impact = unitImpact(finalAmount, config);
   const impactLabel = unitImpact(finalAmount, config, t);
   const addonsEligible = finalAmount > 999;
-  // A row of small icons that grows (gently, log-scale) with the impact count.
-  const impactCount = config.unit && finalAmount >= config.unit.price ? Math.floor(finalAmount / config.unit.price) : 0;
-  const impactIcons = impactCount > 0 ? Math.min(10, Math.max(1, Math.round(Math.log2(impactCount + 1) * 1.4))) : 0;
   const customTooLow = useCustom && customAmount !== "" && Number(customAmount) < config.minCustomAmount;
   const ImpactIcon = sevaMotif(config).icon;
   const maxTier = Math.max(...config.tiers.map((x) => x.amount));
@@ -714,58 +711,8 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
 
                   {/* ═════ RIGHT: live summary + details + pay ═════ */}
                   <div className="min-w-0 rounded-[22px] bg-white p-4 sm:p-6 lg:p-8">
-                    {/* Live summary */}
-                    <div className="relative hidden overflow-hidden rounded-3xl bg-gradient-to-br from-vk-100 via-vk-50 to-white p-5 lg:block text-vk-900 ring-1 ring-vk-200 sm:p-6">
-                      <div aria-hidden className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full border border-gold/20" />
-                      <div aria-hidden className="pointer-events-none absolute -right-4 -top-4 h-24 w-24 rounded-full border border-gold/15" />
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-gold">{t("Your offering")}</p>
-                      <p className="mt-1 truncate font-heading text-[15px] font-semibold text-vk-900">{t(config.pageTitle)}</p>
-                      <div className="mt-3 flex min-h-[48px] flex-wrap items-end gap-x-1.5" aria-live="polite" aria-atomic="true">
-                        <AnimatePresence mode="popLayout" initial={false}>
-                          <motion.span
-                            key={finalAmount}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                            transition={{ duration: 0.2 }}
-                            className="font-heading text-[2.5rem] font-extrabold leading-none text-vk-600 [overflow-wrap:anywhere]"
-                          >
-                            ₹{finalAmount > 0 ? finalAmount.toLocaleString("en-IN") : "0"}
-                          </motion.span>
-                        </AnimatePresence>
-                        {monthly && <span className="pb-1 text-sm font-semibold text-ink/60">{t("/mo")}</span>}
-                      </div>
-                      <p className="mt-2 break-words text-[13px] font-medium text-ink/70">
-                        {useCustom ? t("Custom offering") : config.tiers[tierIndex] ? t(config.tiers[tierIndex].label) : t("Select a tier")}
-                      </p>
-                      <div className="mt-4 min-h-[22px]">
-                        <div className="flex items-center gap-[3px] sm:gap-1" aria-hidden>
-                          {Array.from({ length: 10 }).map((_, i) => {
-                            const lit = i < impactIcons;
-                            return (
-                              <motion.span
-                                key={i}
-                                animate={{ opacity: lit ? 1 : 0.35, scale: lit ? 1 : 0.86 }}
-                                transition={{ delay: i * 0.03, type: "spring", stiffness: 500, damping: 26 }}
-                                className={`flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full transition-colors sm:h-[22px] sm:w-[22px] ${
-                                  lit ? "bg-gold text-vk-900" : "bg-vk-200/70 text-vk-400"
-                                }`}
-                              >
-                                <ImpactIcon className="h-3 w-3" />
-                              </motion.span>
-                            );
-                          })}
-                        </div>
-                        {impactLabel && (
-                          <p className="mt-2 text-[12.5px] font-medium text-ink/70">
-                            {t("Supports {impact}", { impact: impactLabel })}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Details — the summary card above is desktop-only; phones already see the amount on the Donate button and the sticky bar */}
-                    <div className="space-y-3.5 lg:mt-6">
+                    {/* Details — the chosen amount already shows in step 1 and on the Donate button */}
+                    <div className="space-y-3.5">
                       <StepLabel n={2}>{t("Your Details")}</StepLabel>
                       <FloatInput
                         id="donor-name"
