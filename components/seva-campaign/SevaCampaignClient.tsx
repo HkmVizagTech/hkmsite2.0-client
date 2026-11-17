@@ -241,7 +241,6 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
   const impactIcons = impactCount > 0 ? Math.min(10, Math.max(1, Math.round(Math.log2(impactCount + 1) * 1.4))) : 0;
   const customTooLow = useCustom && customAmount !== "" && Number(customAmount) < config.minCustomAmount;
   const ImpactIcon = sevaMotif(config).icon;
-  const maxTier = Math.max(...config.tiers.map((x) => x.amount));
   const [bankNoteBefore, bankNoteAfter = ""] = t("Email your transaction reference and PAN (for 80G) to {email}.").split("{email}");
 
   // Arrow keys move between the amount tiles (radio-group pattern).
@@ -518,7 +517,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                       onKeyDown={onTierKeyDown}
                       className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3"
                     >
-                      {/* Slim rows (icon · amount · tick): one column on phones, two on wider screens. */}
+                      {/* Compact cards (amount · people · short line · tick): one column on phones, two on wider screens. */}
                       {config.tiers.map((tier, i) => {
                         const on = !useCustom && tierIndex === i;
                         const tierImpact = unitImpact(tier.amount, config, t);
@@ -535,33 +534,12 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                             whileHover={{ y: -3 }}
                             whileTap={{ scale: 0.98 }}
                             transition={{ type: "spring", stiffness: 400, damping: 28 }}
-                            className={`relative grid min-w-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3 rounded-2xl border-2 bg-white px-3 py-2.5 text-left [grid-template-areas:'icon_text_radio'] sm:px-4 sm:py-3 transition-[border-color,box-shadow] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vk-500 focus-visible:ring-offset-2 sm:p-4 ${
+                            className={`relative grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-start gap-x-3 rounded-2xl border-2 bg-white px-3.5 py-3 text-left [grid-template-areas:'text_radio'] sm:px-4 sm:py-3 transition-[border-color,box-shadow] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vk-500 focus-visible:ring-offset-2 sm:p-4 ${
                               on
                                 ? "border-gold shadow-[0_16px_34px_-16px_rgba(201,150,43,0.75)]"
                                 : "border-transparent shadow-[0_6px_18px_-12px_rgba(10,18,51,0.35)] ring-1 ring-vk-100 hover:ring-vk-200"
                             }`}
                           >
-                              {/* Plate motif: the gold rim fills as the offering grows */}
-                              <span aria-hidden className="relative flex h-12 w-12 shrink-0 items-center justify-center [grid-area:icon]">
-                                <svg viewBox="0 0 56 56" className="absolute inset-0 h-full w-full -rotate-90">
-                                  <circle cx="28" cy="28" r="25" fill="none" strokeWidth="4" className="stroke-vk-100" />
-                                  <motion.circle
-                                    cx="28" cy="28" r="25" fill="none" strokeWidth="4" strokeLinecap="round"
-                                    className={on ? "stroke-gold" : "stroke-vk-300"}
-                                    initial={{ pathLength: 0 }}
-                                    whileInView={{ pathLength: Math.max(0.12, tier.amount / maxTier) }}
-                                    viewport={{ once: true }}
-                                    transition={{ duration: 0.9, delay: 0.1 * i, ease: "easeOut" }}
-                                  />
-                                </svg>
-                                <span
-                                  className={`flex h-10 w-10 items-center justify-center rounded-full transition-colors ${
-                                    on ? "bg-vk-100 text-vk-700" : "bg-[#FBF8F1] text-vk-600"
-                                  }`}
-                                >
-                                  <ImpactIcon className="h-[18px] w-[18px]" />
-                                </span>
-                              </span>
                               <span
                                 aria-hidden
                                 className={`flex h-6 w-6 shrink-0 items-center justify-center justify-self-end rounded-full border-2 transition-colors [grid-area:radio] ${
@@ -589,7 +567,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                             <span className="mt-1 block break-words text-[13.5px] font-semibold leading-snug text-ink/80 sm:text-[14px]">
                               {t(tier.label)}
                             </span>
-                            <span className="sr-only">
+                            <span className="mt-1 line-clamp-2 break-words text-[12.5px] leading-snug text-muted-foreground">
                               {t(tier.description)}
                             </span>
                             {tierImpact && (
