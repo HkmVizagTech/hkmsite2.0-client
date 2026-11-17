@@ -1,12 +1,12 @@
 "use client";
 
-import { useRef, useState, type ReactNode } from "react";
+import { useRef, useState, type ReactNode, type SVGProps } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowRight, ChevronLeft, ChevronRight, Heart, HandHeart, Quote, Sparkles,
-  UtensilsCrossed, Leaf, BookOpen, CookingPot, Flame, Wheat, Stethoscope, Home, Gift, Users, Plus, Minus, MessageCircle,
+  Leaf, BookOpen, CookingPot, Flame, Wheat, Stethoscope, Home, Gift, Users, Plus, Minus, MessageCircle,
   type LucideIcon,
 } from "lucide-react";
 import { useT } from "@/components/i18n/LocaleProvider";
@@ -35,15 +35,32 @@ export const IVORY = "bg-[#FBF8F1]";
  * Gita Daan = books. The journey steps restate what the campaign copy already says.
  */
 export interface SevaMotif {
-  icon: LucideIcon;
+  icon: LucideIcon | typeof PrasadamIcon;
   journeyTitle: string;
   journey: { icon: LucideIcon; title: string; text: string }[];
+}
+
+/** Anna Daan mark: a bowl of prasadam with a tulasi leaf and rising steam (drawn to match the Lucide line icons). */
+export function PrasadamIcon({ className, ...rest }: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden {...rest}>
+      {/* steam */}
+      <path d="M9.5 2.5c-.8.8.8 1.7 0 2.5" />
+      <path d="M14.5 2.5c-.8.8.8 1.7 0 2.5" />
+      {/* rice mound with a tulasi leaf on top */}
+      <path d="M6.5 13a5.5 4.5 0 0 1 11 0" />
+      <path d="M12 8.6c.6-1.3 2-1.8 3-1.4-.4 1.3-1.7 2-3 1.4Z" />
+      {/* bowl and its base */}
+      <path d="M3 13h18a9 6.5 0 0 1-18 0Z" />
+      <path d="M9 21h6" />
+    </svg>
+  );
 }
 
 export function sevaMotif(config: SevaCampaignConfig): SevaMotif {
   if (config.slug === "anna-daan-seva") {
     return {
-      icon: UtensilsCrossed,
+      icon: PrasadamIcon,
       journeyTitle: "The journey of a meal",
       journey: [
         { icon: CookingPot, title: "Cooked in the temple kitchen", text: "Fresh rice, dal and vegetables are cooked by trained cooks in a hygienic kitchen." },
