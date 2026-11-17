@@ -11,7 +11,7 @@ export const INK = "#0F1E4A";
 export const TINT = "#F4F7FF"; // very light blue panels
 export const LINE = "#E3E9F7";
 
-export type Photo = { src: string; alt?: string; credit?: string; license?: string; source?: string };
+export type Photo = { src: string; alt?: string };
 
 /** Section heading with a short gold underline, like a printed guide. */
 export function Heading({ children, sub, center = false, as: Tag = "h2" }: { children: React.ReactNode; sub?: React.ReactNode; center?: boolean; as?: "h2" | "h3" }) {

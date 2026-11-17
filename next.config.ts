@@ -130,6 +130,9 @@ const nextConfig: NextConfig = {
       { source: "/vaikuntham", destination: "/iskcon-vizag-temple", permanent: true },
       { source: "/:lang(te|hi|ta|kn|ml|or|bn|mr|gu)/vaikuntham", destination: "/:lang/iskcon-vizag-temple", permanent: true },
       { source: "/about-founder", destination: "/founder", permanent: true },
+      // Non-Hare-Krishna-Movement ISKCON temples were taken off the temples guide.
+      { source: "/temples/:slug(iskcon-mayapur-chandrodaya-mandir|iskcon-vrindavan-krishna-balaram-mandir|iskcon-juhu-radha-rasabihari-mumbai|iskcon-delhi-radha-parthasarathi)", destination: "/temples", permanent: true },
+      { source: "/:lang(te|hi|ta|kn|ml|or|bn|mr|gu)/temples/:slug(iskcon-mayapur-chandrodaya-mandir|iskcon-vrindavan-krishna-balaram-mandir|iskcon-juhu-radha-rasabihari-mumbai|iskcon-delhi-radha-parthasarathi)", destination: "/:lang/temples", permanent: true },
     ];
   },
 };
