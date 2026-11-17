@@ -2266,5 +2266,528 @@ export const TEMPLE_PHOTOS: Record<string, Photo[]> = {
       "license": "CC BY-SA 3.0",
       "source": "https://commons.wikimedia.org/wiki/File:Srikalahasti_Temple_Entrance.jpg"
     }
+  ],
+  "sri-chaitanya-math-mayapur": [
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/sri-chaitanya-math-mayapur/1.webp",
+      "alt": "Main shrine of Sri Chaitanya Math, Mayapur",
+      "credit": "Amitabha Gupta",
+      "license": "CC BY 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Premise_of_Shree_Chaitanya_Math_at_Mayapur,_Nadia_district,_West_Bengal,_India_04.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/sri-chaitanya-math-mayapur/2.webp",
+      "alt": "Samadhi temple of Srila Bhaktisiddhanta Saraswati Thakura at Sri Chaitanya Math, Mayapur",
+      "credit": "Amitabha Gupta",
+      "license": "CC BY 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Premise_of_Shree_Chaitanya_Math_at_Mayapur,_Nadia_district,_West_Bengal,_India_03.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/sri-chaitanya-math-mayapur/3.webp",
+      "alt": "Samadhi temple of Srila Gaura Kishora Dasa Babaji at Sri Chaitanya Math, Mayapur",
+      "credit": "Amitabha Gupta",
+      "license": "CC BY 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Premise_of_Shree_Chaitanya_Math_at_Mayapur,_Nadia_district,_West_Bengal,_India_10.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/sri-chaitanya-math-mayapur/4.webp",
+      "alt": "Samadhi temple of Srila Bhakti Prajnan Yati Maharaj at Sri Chaitanya Math, Mayapur",
+      "credit": "Amitabha Gupta",
+      "license": "CC BY 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Premise_of_Shree_Chaitanya_Math_at_Mayapur,_Nadia_district,_West_Bengal,_India_12.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/sri-chaitanya-math-mayapur/5.webp",
+      "alt": "Path to the samadhi temple of Srila Bhaktisiddhanta Saraswati Thakura, Sri Chaitanya Math, Mayapur",
+      "credit": "Amitabha Gupta",
+      "license": "CC BY 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Premise_of_Shree_Chaitanya_Math_at_Mayapur,_Nadia_district,_West_Bengal,_India_17.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/sri-chaitanya-math-mayapur/6.webp",
+      "alt": "Samadhi temple of Srila Gaura Kishora Dasa Babaji, Sri Chaitanya Math, Mayapur",
+      "credit": "Amitabha Gupta",
+      "license": "CC BY 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Premise_of_Shree_Chaitanya_Math_at_Mayapur,_Nadia_district,_West_Bengal,_India_16.jpg"
+    }
+  ],
+  "yogapith-mayapur": [
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/yogapith-mayapur/1.webp",
+      "alt": "Sri Yogapith temple at the birthplace of Sri Chaitanya Mahaprabhu, Mayapur",
+      "credit": "Cinosaur",
+      "license": "CC BY-SA 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Yogapith,_Mayapur.jpg"
+    }
+  ],
+  "radha-madana-mohana-temple-vrindavan": [
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/radha-madana-mohana-temple-vrindavan/1.webp",
+      "alt": "Sri Radha Madana Mohana Temple on Dvadashaditya Tila, Vrindavan",
+      "credit": "Aliva Sahoo",
+      "license": "CC BY-SA 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Radha_Madan_Mohan_Temple_(36399).jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/radha-madana-mohana-temple-vrindavan/2.webp",
+      "alt": "Madana Mohana Temple, Vrindavan",
+      "credit": "Atarax42",
+      "license": "CC BY-SA 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Madanmohan_Mandir_Vrindavan.JPG"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/radha-madana-mohana-temple-vrindavan/3.webp",
+      "alt": "Sandstone shikhara of the Madana Mohana Temple, Vrindavan",
+      "credit": "Bhakti Bharat",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Madhan_Mohan_Mandir,_Vrindavan.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/radha-madana-mohana-temple-vrindavan/4.webp",
+      "alt": "Madana Mohana Temple tower, Vrindavan (ASI monument)",
+      "credit": "Patrick J. Finn",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Madan-Mohan-Mandir-N-UP-A197.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/radha-madana-mohana-temple-vrindavan/5.webp",
+      "alt": "Madana Mohana Temple seen from below the hill, Vrindavan",
+      "credit": "Aliva Sahoo",
+      "license": "CC BY-SA 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Radha_Madan_Mohan_Temple_(29721).jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/radha-madana-mohana-temple-vrindavan/6.webp",
+      "alt": "Thomas Daniell's 18th-century engraving of the Vrindavan temples (Oriental Scenery)",
+      "credit": "Thomas Daniell",
+      "license": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Daniell_Hindu_temples.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/radha-madana-mohana-temple-vrindavan/7.webp",
+      "alt": "Carved sandstone surface of the Madana Mohana Temple tower, Vrindavan",
+      "credit": "Aliva Sahoo",
+      "license": "CC BY-SA 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Radha_Madan_Mohan_Temple_(41913).jpg"
+    }
+  ],
+  "radha-govindaji-temple-vrindavan": [
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/radha-govindaji-temple-vrindavan/1.webp",
+      "alt": "Red sandstone facade of the Sri Radha Govinda Dev Temple, Vrindavan",
+      "credit": "Aliva Sahoo",
+      "license": "CC BY-SA 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Govind_Dev_Ji_Temple.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/radha-govindaji-temple-vrindavan/2.webp",
+      "alt": "Govinda Dev Temple, Vrindavan",
+      "credit": "Jpatokal (Wikivoyage shared)",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Temple_GovindaDev.JPG"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/radha-govindaji-temple-vrindavan/3.webp",
+      "alt": "Front of the Govinda Dev Temple, Vrindavan",
+      "credit": "Aliva Sahoo",
+      "license": "CC BY-SA 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Govind_Dev_Ji_Temple_(49481).jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/radha-govindaji-temple-vrindavan/4.webp",
+      "alt": "Carved red sandstone walls of the Govinda Dev Temple, Vrindavan",
+      "credit": "Arjunfotografer",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Echoes_of_ancient_architecture.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/radha-govindaji-temple-vrindavan/5.webp",
+      "alt": "Govinda Dev Temple facade, Vrindavan",
+      "credit": "Aleksandr Zykov from Russia",
+      "license": "CC BY-SA 2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Vrindavan_(37137827292).jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/radha-govindaji-temple-vrindavan/6.webp",
+      "alt": "Carved stone ceiling inside the Govinda Dev Temple, Vrindavan",
+      "credit": "Arjunfotografer",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Symmetry_in_stone.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/radha-govindaji-temple-vrindavan/7.webp",
+      "alt": "Carved brackets on the Govinda Dev Temple, Vrindavan",
+      "credit": "Sharvarism",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Beautifully_carved_Govind_Dev_Ji_Temple.jpg"
+    }
+  ],
+  "govind-dev-ji-temple-jaipur": [
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/govind-dev-ji-temple-jaipur/1.webp",
+      "alt": "Govind Dev Ji Temple courtyard and hall, Jaipur",
+      "credit": "Jakub Hałun",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Govind_Dev_Ji_Temple,_Jaipur,_20191218_1059_9091.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/govind-dev-ji-temple-jaipur/2.webp",
+      "alt": "Govind Dev Ji Temple, Jaipur",
+      "credit": "Jakub Hałun",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Govind_Dev_Ji_Temple,_Jaipur,_20191218_1059_9092.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/govind-dev-ji-temple-jaipur/3.webp",
+      "alt": "Satsang hall of the Govind Dev Ji Temple, Jaipur",
+      "credit": "Anildiggiwal",
+      "license": "CC0",
+      "source": "https://commons.wikimedia.org/wiki/File:Govind_Dev_Ji_Temple_Satsang_Hall.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/govind-dev-ji-temple-jaipur/4.webp",
+      "alt": "Devotees in the darshan hall of the Govind Dev Ji Temple, Jaipur",
+      "credit": "Anildiggiwal",
+      "license": "CC0",
+      "source": "https://commons.wikimedia.org/wiki/File:Govind_Dev_Ji_Temple_Inner_Side_3.jpg"
+    }
+  ],
+  "tota-gopinath-temple-puri": [
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/tota-gopinath-temple-puri/1.webp",
+      "alt": "Entrance gate of the Tota Gopinath Temple, Chatak Parvat, Puri",
+      "credit": "Pinakpani",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Tota_Gopinath_Temple,_Chatak_Parbat_in_Puri_04.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/tota-gopinath-temple-puri/2.webp",
+      "alt": "Courtyard of the Tota Gopinath Temple, Puri",
+      "credit": "Pinakpani",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Tota_Gopinath_Temple,_Chatak_Parbat_in_Puri_11.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/tota-gopinath-temple-puri/3.webp",
+      "alt": "Festival chariot-shrines in the Tota Gopinath Temple courtyard, Puri",
+      "credit": "Pinakpani",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Tota_Gopinath_Temple,_Chatak_Parbat_in_Puri_07.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/tota-gopinath-temple-puri/4.webp",
+      "alt": "Tota Gopinath Temple grounds, Chatak Parvat, Puri",
+      "credit": "Pinakpani",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Tota_Gopinath_Temple,_Chatak_Parbat_in_Puri_09.jpg"
+    }
+  ],
+  "sakshi-gopal-temple-odisha": [
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/sakshi-gopal-temple-odisha/1.webp",
+      "alt": "Sakshi Gopal Temple and its pillar, Sakhigopal",
+      "credit": "Satya Narayan Baral",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Sakhigopal_temple.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/sakshi-gopal-temple-odisha/2.webp",
+      "alt": "Satyabadi Gopinath (Sakshi Gopal) Temple, Sakhigopal",
+      "credit": "Sidsahu",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Satyabadi_gopinath_temple.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/sakshi-gopal-temple-odisha/3.webp",
+      "alt": "Sakshi Gopal Temple, Sakhigopal",
+      "credit": "Subramanyam parinam",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Sakshi_gopal.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/sakshi-gopal-temple-odisha/4.webp",
+      "alt": "Sakshi Gopal Temple illuminated at night, Sakhigopal",
+      "credit": "Satya Narayan Baral",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Sakhigopal_Temple.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/sakshi-gopal-temple-odisha/5.webp",
+      "alt": "Chandan Yatra festival of Satyabadi Gopinath at Sakhigopal",
+      "credit": "Sidsahu",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Sakhigopal_chandan_yatra.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/sakshi-gopal-temple-odisha/6.webp",
+      "alt": "Main tower of the Sakshi Gopal (Gopalji) Temple, Sakhigopal",
+      "credit": "Chinmayee Mishra",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Shree_Gopalaji_Temple_(2).jpg"
+    }
+  ],
+  "alarnath-temple-brahmagiri": [
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/alarnath-temple-brahmagiri/1.webp",
+      "alt": "Sri Alarnath Temple, Brahmagiri",
+      "credit": "Mouryan",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:%E0%AC%AC%E0%AD%8D%E0%AC%B0%E0%AC%B9%E0%AD%8D%E0%AC%AE%E0%AC%97%E0%AC%BF%E0%AC%B0%E0%AC%BF%E0%AC%A0%E0%AC%BE%E0%AC%B0%E0%AD%87_%E0%AC%AD%E0%AC%97%E0%AC%AC%E0%AC%BE%E0%AC%A8_%E0%AC%AC%E0%AC%BF%E0%AC%B7%E0%AD%8D%E0%AC%A3%E0%AD%81%E0%AC%99%E0%AD%8D%E0%AC%95%E0%AC%B0_%E0%AC%85%E0%AC%B2%E0%AC%BE%E0%AC%B0%E0%AC%A8%E0%AC%BE%E0%AC%A5_%E0%AC%AE%E0%AC%A8%E0%AD%8D%E0%AC%A6%E0%AC%BF%E0%AC%B0.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/alarnath-temple-brahmagiri/2.webp",
+      "alt": "Alarnath Temple tower seen through the gateway, Brahmagiri",
+      "credit": "SamhitaB",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:A_glimpse_into_the_past,_Alarnatha_temple,_Puri.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/alarnath-temple-brahmagiri/3.webp",
+      "alt": "Entrance to the Alarnath Temple, Brahmagiri",
+      "credit": "SamhitaB",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Entrance_to_the_Alarnatha_temple,_Puri.jpg"
+    }
+  ],
+  "iskcon-bangalore-sri-radha-krishna-mandir": [
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/iskcon-bangalore-sri-radha-krishna-mandir/1.webp",
+      "alt": "ISKCON Sri Radha Krishna Temple, Hare Krishna Hill, Bengaluru",
+      "credit": "Klsateeshvarma",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Iskan_banglore_01.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/iskcon-bangalore-sri-radha-krishna-mandir/2.webp",
+      "alt": "ISKCON Bengaluru temple towers and glass canopy",
+      "credit": "Johnchacks",
+      "license": "CC BY-SA 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:IskonTemple_Bangalore2.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/iskcon-bangalore-sri-radha-krishna-mandir/3.webp",
+      "alt": "Steps up Hare Krishna Hill to the ISKCON temple, Bengaluru",
+      "credit": "Arkadyutip98",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Iskon_temple17.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/iskcon-bangalore-sri-radha-krishna-mandir/4.webp",
+      "alt": "ISKCON Bengaluru temple at dusk",
+      "credit": "hemant meena",
+      "license": "CC BY-SA 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Iskon_temple.JPG"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/iskcon-bangalore-sri-radha-krishna-mandir/5.webp",
+      "alt": "ISKCON Bengaluru temple lit up during the Brahmotsava festival",
+      "credit": "Svpdasa",
+      "license": "CC BY 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:ISKCON_Bangalore_Temple.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/iskcon-bangalore-sri-radha-krishna-mandir/6.webp",
+      "alt": "ISKCON Sri Radha Krishna Temple, Bengaluru",
+      "credit": "Dksahani18",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:ISKCON_Temple_Bangalore.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/iskcon-bangalore-sri-radha-krishna-mandir/7.webp",
+      "alt": "ISKCON temple on Hare Krishna Hill, Rajajinagar, Bengaluru",
+      "credit": "Amol.Gaitonde",
+      "license": "CC BY-SA 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Iskcon_Temple_5-11-2008_10-25-07_AM.JPG"
+    }
+  ],
+  "hare-krishna-golden-temple-hyderabad": [
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/hare-krishna-golden-temple-hyderabad/1.webp",
+      "alt": "Hare Krishna Golden Temple at night, Banjara Hills, Hyderabad",
+      "credit": "SUGUNA RADHA DEVI DASI",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Hare_Krishna_Golden_Temple_at_night,_Hyderabad_(India,_2019).jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/hare-krishna-golden-temple-hyderabad/2.webp",
+      "alt": "Hare Krishna Golden Temple in the morning, Hyderabad",
+      "credit": "SUGUNA RADHA DEVI DASI",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Hare_Krishna_Golden_Temple_in_morning,_Hyderabad_(India,_2019).jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/hare-krishna-golden-temple-hyderabad/3.webp",
+      "alt": "Hare Krishna Golden Temple from above, Hyderabad",
+      "credit": "SUGUNA RADHA DEVI DASI",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Hare_Krishna_Golden_Temple_top_view,_Hyderabad_(India,_2019).jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/hare-krishna-golden-temple-hyderabad/4.webp",
+      "alt": "Hare Krishna Golden Temple side view, Hyderabad",
+      "credit": "SUGUNA RADHA DEVI DASI",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Hare_Krishna_Golden_Temple_side-view,_Hyderabad_(India,_2019).jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/hare-krishna-golden-temple-hyderabad/5.webp",
+      "alt": "Rajagopuram and dhvaja stambha, Hare Krishna Golden Temple, Hyderabad",
+      "credit": "SUGUNA RADHA DEVI DASI",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Hare_Krishna_Golden_Temple_(India,_2018).jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/hare-krishna-golden-temple-hyderabad/6.webp",
+      "alt": "Golden vimana of the Hare Krishna Golden Temple, Hyderabad",
+      "credit": "SUGUNA RADHA DEVI DASI",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Hare_Krishna_Golden_Temple,_Hyderabad_(India,_2019).jpg"
+    }
+  ],
+  "vrindavan-chandrodaya-mandir": [
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/vrindavan-chandrodaya-mandir/1.webp",
+      "alt": "Vrindavan Chandrodaya Mandir project: first-phase building under construction",
+      "credit": "Atmarama Bhakta Dasa",
+      "license": "CC BY 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Vrindavan_Chandrodaya_Mandir_(VHT_Phase_-_1).png"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/vrindavan-chandrodaya-mandir/2.webp",
+      "alt": "Vrindavan Chandrodaya Mandir project: South Block (under construction)",
+      "credit": "VCMvrindavan",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:CU_(13).png"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/vrindavan-chandrodaya-mandir/3.webp",
+      "alt": "Vrindavan Chandrodaya Mandir project: top view of the South Block",
+      "credit": "VCMvrindavan",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Top_View_Of_South_Block.png"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/vrindavan-chandrodaya-mandir/6.webp",
+      "alt": "Vrindavan Chandrodaya Mandir project: South Wing under construction",
+      "credit": "VCMvrindavan",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:South_Wing_Front_view.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/vrindavan-chandrodaya-mandir/7.webp",
+      "alt": "Vrindavan Chandrodaya Mandir project: Kalyani Sarovar and South Block under construction",
+      "credit": "VCMvrindavan",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Swks.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/vrindavan-chandrodaya-mandir/8.webp",
+      "alt": "Vrindavan Chandrodaya Mandir project site from the air (construction)",
+      "credit": "VCMvrindavan",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:South_Block_View_From_Backside.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/vrindavan-chandrodaya-mandir/4.webp",
+      "alt": "Architectural rendering of the planned Vrindavan Chandrodaya Mandir",
+      "credit": "https://www.vcm.org.in/contact.html",
+      "license": "CC BY-SA 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Vrindavan_Chandrodaya_Temple_Render_-_Front_View_01.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/vrindavan-chandrodaya-mandir/5.webp",
+      "alt": "Architectural rendering of the planned Vrindavan Chandrodaya Mandir and gardens",
+      "credit": "http://www.vcm.org.in/contact.html",
+      "license": "CC BY-SA 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Vrindavan_Chandrodaya_Temple_Render_-_Front_View_03.jpg"
+    }
+  ],
+  "iskcon-juhu-radha-rasabihari-mumbai": [
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/iskcon-juhu-radha-rasabihari-mumbai/1.webp",
+      "alt": "Marble domes of the ISKCON Sri Sri Radha Rasabihari Temple, Juhu",
+      "credit": "Rrbdgm",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:ISKCON_Juhu.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/iskcon-juhu-radha-rasabihari-mumbai/2.webp",
+      "alt": "ISKCON Juhu temple and guesthouse tower, Mumbai",
+      "credit": "Rohini",
+      "license": "CC BY-SA 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Iskcon_temple,_Juhu,_Mumbai.JPG"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/iskcon-juhu-radha-rasabihari-mumbai/3.webp",
+      "alt": "Temple domes and gateway, ISKCON Juhu, Mumbai",
+      "credit": "Kristina D.C. Hoeppner from Wellington, New Zealand",
+      "license": "CC BY-SA 2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Hare_Rama_Hare_Krishna_Temple_(2809562816).jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/iskcon-juhu-radha-rasabihari-mumbai/4.webp",
+      "alt": "Hare Krishna Land, Juhu, Mumbai",
+      "credit": "Ilya Mauter",
+      "license": "CC BY-SA 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:ISKCON_Juhu_Mandir_Guesthouse.JPG"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/iskcon-juhu-radha-rasabihari-mumbai/5.webp",
+      "alt": "Arched marble corridors of the ISKCON Juhu temple, Mumbai",
+      "credit": "Vijay Duvvuri",
+      "license": "CC BY 2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Juhu_ISKCON.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/iskcon-juhu-radha-rasabihari-mumbai/6.webp",
+      "alt": "ISKCON Juhu temple, Mumbai",
+      "credit": "Ilya Mauter",
+      "license": "CC BY-SA 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:ISKCON_Juhu_Temple.JPG"
+    }
+  ],
+  "iskcon-delhi-radha-parthasarathi": [
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/iskcon-delhi-radha-parthasarathi/1.webp",
+      "alt": "ISKCON Sri Sri Radha Parthasarathi Mandir, East of Kailash, New Delhi",
+      "credit": "Sujit kumar",
+      "license": "CC BY-SA 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:ISKCON_temple,_Delhi.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/iskcon-delhi-radha-parthasarathi/2.webp",
+      "alt": "Towers of the ISKCON temple, New Delhi",
+      "credit": "Dhruvpatel 01",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:ISCKON_temple,Delhi.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/iskcon-delhi-radha-parthasarathi/3.webp",
+      "alt": "ISKCON Delhi temple shikharas",
+      "credit": "आशीष भटनागर at hi.wikipedia",
+      "license": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:ISKCON_pictures_delhi_0101.jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/iskcon-delhi-radha-parthasarathi/4.webp",
+      "alt": "ISKCON Delhi temple seen from the entrance",
+      "credit": "Aleksandr Zykov from Russia",
+      "license": "CC BY-SA 2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:ISKCON,_Delhi,_India_(21188234635).jpg"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/iskcon-delhi-radha-parthasarathi/5.webp",
+      "alt": "ISKCON Delhi temple on Hare Krishna Hill above Aastha Kunj park",
+      "credit": "Wiki-uk",
+      "license": "CC BY-SA 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Aartha-Kunj-park-and-ISKCON-temple-1.JPG"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/iskcon-delhi-radha-parthasarathi/6.webp",
+      "alt": "ISKCON temple on the hillside, East of Kailash, New Delhi",
+      "credit": "Aleksandr Zykov from Russia",
+      "license": "CC BY-SA 2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:ISKCON_Temple,_New_Delhi,_India_(2014)_1.jpg"
+    }
   ]
 };
