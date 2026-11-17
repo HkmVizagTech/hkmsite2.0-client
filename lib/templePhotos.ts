@@ -1550,5 +1550,15 @@ export const TEMPLE_PHOTOS: Record<string, Photo[]> = {
       "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/radha-damodara-temple-vrindavan/2.webp",
       "alt": "Deities of the Sri Radha Damodara temple, Vrindavan"
     }
+  ],
+  "shrinathji-temple-nathdwara": [
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/shrinathji-temple-nathdwara/1.webp",
+      "alt": "Traditional Nathdwara painting of Shrinathji during the Annakuta festival"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/shrinathji-temple-nathdwara/2.webp",
+      "alt": "Traditional Nathdwara painting of Shrinathji"
+    }
   ]
 };
