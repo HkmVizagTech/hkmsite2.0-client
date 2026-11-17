@@ -136,7 +136,7 @@ export default function DonorExtrasFields({
         <div className="mt-3 space-y-3 rounded-xl bg-vk-50/70 p-3">
           {occasion === "other" && (
             <div>
-              <label htmlFor={`${uid}-occasion-note`} className={labelCls}>{t("What is the occasion?")}</label>
+              <label htmlFor={`${uid}-occasion-note`} className={labelCls}>{t("What is the occasion?")} <span className="font-normal text-ink/45">{t("(optional)")}</span></label>
               <input
                 id={`${uid}-occasion-note`}
                 type="text"
@@ -163,7 +163,7 @@ export default function DonorExtrasFields({
             </div>
           </div>
           <div>
-            <label htmlFor={`${uid}-dob`} className={labelCls}>{t(picked.date)}</label>
+            <label htmlFor={`${uid}-dob`} className={labelCls}>{t(picked.date)} <span className="font-normal text-ink/45">{t("(optional)")}</span></label>
             <div className={wrapperCls}>
               <Calendar className={iconCls} />
               <input
