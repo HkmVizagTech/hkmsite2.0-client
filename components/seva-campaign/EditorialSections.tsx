@@ -1,16 +1,19 @@
 "use client";
 
-import { useRef, type ReactNode } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowRight, ChevronLeft, ChevronRight, Heart, HandHeart, Quote, Sparkles,
-  UtensilsCrossed, Leaf, BookOpen, CookingPot, Flame, Wheat, Stethoscope, Home, Gift, Users,
+  UtensilsCrossed, Leaf, BookOpen, CookingPot, Flame, Wheat, Stethoscope, Home, Gift, Users, Plus, Minus, MessageCircle,
   type LucideIcon,
 } from "lucide-react";
 import { useT } from "@/components/i18n/LocaleProvider";
 import type { SevaCampaignConfig } from "@/lib/sevaCampaignConfig";
+import { SCRIPTURES } from "@/components/sqft-campaign/ImportanceSection";
+import { SEVA_WHATSAPP_NUMBER } from "@/components/WhatsAppFloatButton";
+import useInViewVideo from "@/hooks/useInViewVideo";
 
 /**
  * Presentation for the seva campaign pages (Anna Daan, Gau Seva, Gita Daan):
@@ -548,6 +551,119 @@ export function EdReadMore({ config }: { config: SevaCampaignConfig }) {
               </span>
             </Link>
           ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ───────────────────────── The power of giving (scripture videos) ───────────────────────── */
+
+export function EdScriptures() {
+  const t = useT();
+  const ref = useRef<HTMLElement>(null);
+  useInViewVideo(ref);
+  return (
+    <section ref={ref} className={`${IVORY} py-14 md:py-24`}>
+      <div className="vk-container">
+        <SectionTitle eyebrow={t("Sacred scriptures glorify those who support spiritual causes")} title={t("The Power of Giving")} />
+        <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-3 scrollbar-hide [scroll-padding-inline:1rem] md:mx-auto md:grid md:max-w-6xl md:grid-cols-3 md:gap-5 md:overflow-visible md:px-0 md:pb-0">
+          {SCRIPTURES.map((s, i) => (
+            <motion.figure
+              key={s.citation}
+              {...rise}
+              transition={{ duration: 0.5, delay: i * 0.08 }}
+              className="group flex w-[82%] max-w-[340px] shrink-0 snap-start flex-col overflow-hidden rounded-3xl bg-white shadow-[0_22px_48px_-34px_rgba(47,91,211,0.5)] ring-1 ring-vk-100 md:w-auto md:max-w-none"
+            >
+              <div className="relative aspect-[16/10] overflow-hidden bg-vk-100">
+                {/* The clips have black side bars baked in; a slight zoom crops them out. */}
+                <video src={s.video} loop muted playsInline preload="metadata" aria-hidden className="absolute inset-0 h-full w-full scale-[1.14] object-cover transition-transform duration-700 group-hover:scale-[1.19]" />
+              </div>
+              <div className="relative flex flex-1 flex-col px-5 pb-5 pt-7 md:px-6 md:pb-6">
+                <span aria-hidden className="absolute -top-5 left-5 flex h-10 w-10 items-center justify-center rounded-full bg-gold text-vk-900 shadow-[0_8px_18px_-8px_rgba(201,150,43,0.8)] ring-4 ring-white md:left-6">
+                  <Quote className="h-4 w-4 fill-current" />
+                </span>
+                <blockquote className="flex-1 font-heading text-[15.5px] font-medium leading-relaxed text-vk-900 md:text-base">
+                  {t(s.text)}
+                </blockquote>
+                <figcaption className="mt-4 inline-flex items-center gap-1.5 self-start rounded-full bg-vk-50 px-3 py-1.5 text-[12px] font-semibold text-vk-700 ring-1 ring-vk-100">
+                  <BookOpen aria-hidden className="h-3.5 w-3.5" /> {s.citation}
+                </figcaption>
+              </div>
+            </motion.figure>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ───────────────────────── FAQ ───────────────────────── */
+
+export function EdFaq({ faqs }: { faqs: { q: string; a: string }[] }) {
+  const t = useT();
+  const [open, setOpen] = useState<number | null>(0);
+  if (!faqs.length) return null;
+  // FAQPage structured data so Google can show these answers in search.
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+  };
+  return (
+    <section className="bg-white py-14 md:py-24">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <div className="vk-container">
+        <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:gap-14">
+          <div className="lg:sticky lg:top-28 lg:self-start">
+            <SectionTitle align="left" eyebrow={t("FAQ")} title={t("Frequently Asked Questions")} sub={t("Quick answers about this seva, payments and your 80G receipt.")} />
+            <div className="-mt-4 hidden rounded-3xl bg-gradient-to-br from-vk-100 via-vk-50 to-white p-5 ring-1 ring-vk-200 lg:block">
+              <p className="font-heading text-[16px] font-bold text-vk-900">{t("Still have a question?")}</p>
+              <p className="mt-1 text-[13.5px] leading-relaxed text-ink/65">{t("Message our seva team on WhatsApp.")}</p>
+              <a href={`https://wa.me/${SEVA_WHATSAPP_NUMBER}`} target="_blank" rel="noopener noreferrer"
+                className="mt-4 inline-flex h-11 items-center gap-2 rounded-xl bg-white px-4 text-[14px] font-semibold text-vk-700 ring-1 ring-vk-200 transition hover:bg-vk-50">
+                <MessageCircle className="h-4 w-4" /> {t("Chat on WhatsApp")}
+              </a>
+            </div>
+          </div>
+
+          <ul className="space-y-3">
+            {faqs.map((f, i) => {
+              const on = open === i;
+              const id = `faq-${i}`;
+              return (
+                <li key={f.q} className={`overflow-hidden rounded-2xl bg-white ring-1 transition-shadow ${on ? "shadow-[0_18px_40px_-28px_rgba(47,91,211,0.5)] ring-vk-200" : "ring-vk-100 hover:ring-vk-200"}`}>
+                  <button type="button" onClick={() => setOpen(on ? null : i)} aria-expanded={on} aria-controls={id}
+                    className="flex w-full items-center gap-3 px-4 py-4 text-left sm:gap-4 sm:px-5">
+                    <span aria-hidden className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl font-heading text-[13px] font-bold transition-colors ${on ? "bg-vk-500 text-white" : "bg-vk-50 text-vk-600"}`}>
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className={`min-w-0 flex-1 text-[15px] font-semibold leading-snug ${on ? "text-vk-800" : "text-vk-900"}`}>{t(f.q)}</span>
+                    <span aria-hidden className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full transition-colors ${on ? "bg-vk-100 text-vk-700" : "bg-vk-50 text-vk-500"}`}>
+                      {on ? <Minus className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+                    </span>
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {on && (
+                      <motion.div id={id} initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25, ease: "easeOut" }}>
+                        <p className="px-4 pb-5 pl-[3.75rem] text-[14.5px] leading-relaxed text-ink/70 sm:px-5 sm:pl-[4.25rem]">{t(f.a)}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </li>
+              );
+            })}
+          </ul>
+
+          <a href={`https://wa.me/${SEVA_WHATSAPP_NUMBER}`} target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-3 rounded-2xl bg-gradient-to-br from-vk-100 via-vk-50 to-white p-4 ring-1 ring-vk-200 lg:hidden">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-vk-600 ring-1 ring-vk-100"><MessageCircle className="h-5 w-5" /></span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[14.5px] font-bold text-vk-900">{t("Still have a question?")}</span>
+              <span className="block text-[12.5px] text-ink/60">{t("Chat with our seva team on WhatsApp")}</span>
+            </span>
+            <ArrowRight className="h-4 w-4 shrink-0 text-vk-500" />
+          </a>
         </div>
       </div>
     </section>

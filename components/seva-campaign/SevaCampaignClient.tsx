@@ -18,9 +18,7 @@ import { SEVA_WHATSAPP_NUMBER } from "@/components/WhatsAppFloatButton";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
 import { useScrollToDonate } from "@/lib/useScrollToDonate";
 import { newEventId, getMetaBrowserData, trackPurchase } from "@/lib/metaPixel";
-import { EdHero, EdAbout, EdImpact, EdFeatures, EdPrivileges, EdTestimonials, EdReadMore, EdFinalCta, SectionTitle, sevaMotif } from "@/components/seva-campaign/EditorialSections";
-import ImportanceSection from "@/components/sqft-campaign/ImportanceSection";
-import FaqSection from "@/components/sqft-campaign/FaqSection";
+import { EdHero, EdAbout, EdImpact, EdFeatures, EdPrivileges, EdTestimonials, EdReadMore, EdFinalCta, EdScriptures, EdFaq, SectionTitle, sevaMotif } from "@/components/seva-campaign/EditorialSections";
 import FounderSection from "@/components/sqft-campaign/FounderSection";
 import AddressForm from "@/components/AddressForm";
 import type { PrasadamAddress } from "@/components/AddressForm";
@@ -1065,10 +1063,10 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
         )}
 
         {/* ── Power of Giving ── */}
-        <ImportanceSection />
+        <EdScriptures />
 
         {/* ── FAQs ── */}
-        <FaqSection faqs={config.faqs} />
+        <EdFaq faqs={config.faqs} />
 
         {/* ── Founder's words ── */}
         <FounderSection />

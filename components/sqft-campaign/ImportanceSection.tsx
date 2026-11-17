@@ -11,7 +11,7 @@ const VIDEO_BASE = "https://pub-f62a54aab54448388c9e16334109aea9.r2.dev/Temple%2
 
 // Short scriptural glorifications (no Sanskrit) shown as text over the video,
 // mirroring the "Power of Giving" section on the campaigns site.
-const SCRIPTURES = [
+export const SCRIPTURES = [
   {
     citation: "Garuda Purana",
     text: "One who contributes to building a temple attains heaven and is honored by all.",
