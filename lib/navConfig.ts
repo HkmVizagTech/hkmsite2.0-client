@@ -30,6 +30,7 @@ export type NavEntry =
 // footer and the mobile menu, not in the main menu.
 export const navEntries: NavEntry[] = [
   { kind: "link", label: "Home", href: "/", icon: Home },
+  { kind: "link", label: "Srila Prabhupada", href: "/founder", icon: User },
   // The current major festival, auto-picked from the Vaishnava calendar (or
   // overridden by an admin). Rendered by Navbar only when one is active.
   { kind: "festival", icon: Flower2 },
@@ -43,7 +44,6 @@ export const navEntries: NavEntry[] = [
       icon: Info,
       items: [
         { label: "About Us", href: "/about", description: "Our mission, history & values", icon: Info },
-        { label: "Srila Prabhupada", href: "/founder", description: "Our Founder-Acharya", icon: User },
         { label: "Our Acharyas", href: "/acharyas", description: "The disciplic succession", icon: ScrollText },
         { label: "Governance", href: "/governance", description: "The Governing Council", icon: Landmark },
         { label: "Our Centers", href: "/centers", description: "Hare Krishna Movement temples", icon: Globe },
