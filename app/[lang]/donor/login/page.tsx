@@ -39,6 +39,8 @@ export default function DonorLoginPage() {
   // the code screen; `loading` is a blocking action the donor must wait on.
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
+  // how the code went out (the server tries WhatsApp first, then SMS)
+  const [via, setVia] = useState<"WhatsApp" | "SMS">("WhatsApp");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [cooldown, setCooldown] = useState(0);
@@ -106,6 +108,7 @@ export default function DonorLoginPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Could not send OTP.");
+      setVia(data.via === "SMS" ? "SMS" : "WhatsApp");
 
       if (!opts.resend) setStep("otp");
       setOtp("");
@@ -210,7 +213,7 @@ export default function DonorLoginPage() {
                     "Enter the mobile number you've donated with."
                   ) : (
                     <>
-                      Sent by SMS to{" "}
+                      Sent on {via} to{" "}
                       <span className="font-semibold text-ink">+91 {mobile}</span>
                     </>
                   )}
@@ -312,7 +315,7 @@ export default function DonorLoginPage() {
                         </>
                       ) : sent ? (
                         <>
-                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> Code sent — check your SMS
+                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" /> Code sent — check your {via}
                         </>
                       ) : null}
                     </p>
