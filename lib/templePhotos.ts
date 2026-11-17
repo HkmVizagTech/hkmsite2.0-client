@@ -1541,4 +1541,14 @@ export const TEMPLE_PHOTOS: Record<string, Photo[]> = {
       "alt": "Architectural rendering of the planned Vrindavan Chandrodaya Mandir and gardens"
     }
   ],
+  "radha-damodara-temple-vrindavan": [
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/radha-damodara-temple-vrindavan/1.webp",
+      "alt": "Altar of the Sri Radha Damodara temple, Vrindavan"
+    },
+    {
+      "src": "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/temples/radha-damodara-temple-vrindavan/2.webp",
+      "alt": "Deities of the Sri Radha Damodara temple, Vrindavan"
+    }
+  ]
 };
