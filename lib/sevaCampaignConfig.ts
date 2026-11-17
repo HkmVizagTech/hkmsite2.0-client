@@ -314,7 +314,7 @@ export const ANNA_DAAN_CAMPAIGN: SevaCampaignConfig = {
 
   theme: "editorial",
   stats: [
-    { value: "₹25", label: "feeds one person" },
+    { value: "₹100", label: "feeds 4 people" },
     { value: "₹500", label: "feeds 20 people" },
     { value: "80G", label: "tax benefit" },
   ],
@@ -367,7 +367,7 @@ export const ANNA_DAAN_CAMPAIGN: SevaCampaignConfig = {
   bannerMobileWidth: 960,
   bannerMobileHeight: 1638,
 
-  minCustomAmount: 51,
+  minCustomAmount: 100,
   pricePerUnit: 25,
   unitName: "meal",
   unitNamePlural: "meals",
@@ -465,7 +465,7 @@ export const ANNA_DAAN_CAMPAIGN: SevaCampaignConfig = {
     },
     {
       q: "How many meals will my donation provide?",
-      a: "Each meal costs ₹25. A donation of ₹500 feeds 20 people, ₹1,000 feeds 40, ₹2,500 feeds 100 and ₹5,000 feeds 200. Any custom amount provides a proportional number of meals.",
+      a: "The minimum offering is ₹100, which feeds 4 people. ₹500 feeds 20 people, ₹1,000 feeds 40, ₹2,500 feeds 100 and ₹5,000 feeds 200. Any other amount provides a proportional number of meals.",
     },
     {
       q: "How is the prasadam prepared?",
