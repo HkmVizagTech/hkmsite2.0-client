@@ -127,36 +127,36 @@ export function EdHero(props: { config: SevaCampaignConfig; onDonate: () => void
   if (!config.bannerImage) return <EdHeroPhoto {...props} />;
   const alt = `${config.pageTitle} — ${config.heroHeading1} ${config.heroHeading2}`;
   return (
-    <section className="relative isolate overflow-hidden bg-[#FFF9EC]">
-      {/* Backdrop: the banner itself, blurred into a warm glow so wide screens have no empty sides */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-        <Image src={config.bannerImage} alt="" fill sizes="40vw" quality={30} className="scale-125 object-cover opacity-60 blur-3xl saturate-150" />
-        <div className="absolute inset-0 bg-[radial-gradient(70%_60%_at_50%_45%,rgba(255,249,236,0)_0%,rgba(255,249,236,0.55)_70%,#FFF9EC_100%)]" />
-        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-b from-transparent to-white" />
+    <section className="relative isolate bg-white">
+      {/* Full-bleed banner. Past 1920px the sides show a soft blurred copy of the same banner, so it never looks boxed in. */}
+      <div className="relative overflow-hidden">
+        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 hidden min-[1921px]:block">
+          <Image src={config.bannerImage} alt="" fill sizes="30vw" quality={30} className="scale-110 object-cover blur-2xl" />
+        </div>
+        <motion.button
+          type="button" onClick={onDonate} aria-label={t("Donate — go to the donation form")}
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}
+          className="relative mx-auto block w-full max-w-[1920px] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-inset focus-visible:ring-vk-300 min-[1921px]:shadow-[0_0_60px_rgba(0,0,0,0.18)]"
+        >
+          <Image src={config.bannerImageMobile || config.bannerImage} alt={alt} width={config.bannerMobileWidth ?? 941} height={config.bannerMobileHeight ?? 1672}
+            priority sizes="100vw" className="block h-auto w-full md:hidden" />
+          <Image src={config.bannerImage} alt={alt} width={config.bannerWidth ?? 1672} height={config.bannerHeight ?? 941}
+            priority sizes="(min-width: 1920px) 1920px, 100vw" className="hidden h-auto w-full md:block" />
+        </motion.button>
       </div>
-      {/* Fine gold sparkles in the corners */}
-      <Sparkles aria-hidden className="pointer-events-none absolute left-[6%] top-10 hidden h-6 w-6 text-gold/70 lg:block" />
-      <Sparkles aria-hidden className="pointer-events-none absolute bottom-16 right-[7%] hidden h-5 w-5 text-gold/60 lg:block" />
 
-      <div className="relative mx-auto w-full max-w-[1440px] px-3 pb-8 pt-3 sm:px-6 md:pb-12 md:pt-6 xl:px-10">
-        <motion.div initial={{ opacity: 0, y: 14, scale: 0.985 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.7, ease: [0.22, 0.8, 0.3, 1] }} className="relative">
-          {/* Gold bezel */}
-          <div className="rounded-[26px] bg-gradient-to-br from-[#F6D27A] via-[#FFF1C9] to-[#D9A43A] p-[3px] shadow-[0_40px_90px_-40px_rgba(150,105,20,0.55)] md:rounded-[34px] md:p-1">
-            <button type="button" onClick={onDonate} aria-label={t("Donate — go to the donation form")}
-              className="group relative block w-full overflow-hidden rounded-[23px] bg-[#FFF3D6] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-vk-300 md:rounded-[30px]">
-              <Image src={config.bannerImageMobile || config.bannerImage} alt={alt} width={config.bannerMobileWidth ?? 941} height={config.bannerMobileHeight ?? 1672}
-                priority sizes="100vw" className="block h-auto w-full transition duration-700 group-hover:scale-[1.012] md:hidden" />
-              <Image src={config.bannerImage} alt={alt} width={config.bannerWidth ?? 1672} height={config.bannerHeight ?? 941}
-                priority sizes="(min-width: 1440px) 1360px, 100vw" className="hidden h-auto w-full transition duration-700 group-hover:scale-[1.012] md:block" />
-              {/* Soft light sweep on hover */}
-              <span aria-hidden className="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 -skew-x-12 bg-gradient-to-r from-transparent via-white/35 to-transparent opacity-0 transition-all duration-1000 group-hover:left-[110%] group-hover:opacity-100 motion-reduce:hidden" />
-            </button>
-          </div>
-        </motion.div>
-
-        {/* The banner carries the visuals; the heading stays for search engines and screen readers. */}
-        <h1 className="sr-only">{t(config.heroHeading1)} {t(config.heroHeading2)}</h1>
+      {/* Gold ornamental divider into the page */}
+      <div aria-hidden className="flex items-center justify-center gap-3 px-6 pt-6 md:pt-8">
+        <span className="h-px w-full max-w-[220px] bg-gradient-to-r from-transparent via-gold/60 to-gold" />
+        <span className="flex items-center gap-1.5">
+          <span className="h-1.5 w-1.5 rotate-45 bg-gold/70" />
+          <span className="h-2.5 w-2.5 rotate-45 border border-gold bg-[#FFF3D6]" />
+          <span className="h-1.5 w-1.5 rotate-45 bg-gold/70" />
+        </span>
+        <span className="h-px w-full max-w-[220px] bg-gradient-to-l from-transparent via-gold/60 to-gold" />
       </div>
+      {/* The banner carries the visuals; the heading stays for search engines and screen readers. */}
+      <h1 className="sr-only">{t(config.heroHeading1)} {t(config.heroHeading2)}</h1>
     </section>
   );
 }
