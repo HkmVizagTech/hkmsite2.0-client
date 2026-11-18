@@ -18,7 +18,7 @@ import { SEVA_WHATSAPP_NUMBER } from "@/components/WhatsAppFloatButton";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
 import { useScrollToDonate } from "@/lib/useScrollToDonate";
 import { newEventId, getMetaBrowserData, trackPurchase } from "@/lib/metaPixel";
-import { EdHero, EdAbout, EdImpact, EdFeatures, EdPrivileges, EdTestimonials, EdReadMore, EdFinalCta, EdScriptures, EdFaq, SectionTitle, sevaMotif } from "@/components/seva-campaign/EditorialSections";
+import { EdHero, EdAbout, EdImpact, EdFeatures, EdPrivileges, EdTestimonials, EdReadMore, EdFinalCta, EdScriptures, EdStatsRibbon, EdVerses, EdFaq, SectionTitle, sevaMotif } from "@/components/seva-campaign/EditorialSections";
 import FounderSection from "@/components/sqft-campaign/FounderSection";
 import AddressForm from "@/components/AddressForm";
 import type { PrasadamAddress } from "@/components/AddressForm";
@@ -59,6 +59,8 @@ const toggleCardClass = "rounded-2xl border transition-colors duration-200";
 const toggleCardOn = "border-vk-300 bg-vk-50/70";
 const toggleCardOff = "border-vk-100 bg-white hover:border-vk-200";
 const toggleLabelClass = "flex min-h-[56px] cursor-pointer items-start gap-3 p-4";
+// One slim row in the compact options list (config.compactForm).
+const compactRowClass = "flex min-h-[48px] cursor-pointer items-center gap-3 px-3.5 py-2";
 
 // English impact text ("20 meals") — sent to the API as sevaUnitLabel, so it
 // stays in English; `t` gives the on-screen version in the page's language.
@@ -92,10 +94,11 @@ type FloatInputProps = React.InputHTMLAttributes<HTMLInputElement> & {
   label: string;
   icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
   hint?: string;
+  compact?: boolean;
 };
 
 /** Input with a floating label: the label sits inside the field and lifts when focused or filled. */
-function FloatInput({ id, label, icon: Icon, hint, ...props }: FloatInputProps) {
+function FloatInput({ id, label, icon: Icon, hint, compact = false, ...props }: FloatInputProps) {
   return (
     <div className="relative">
       <input
@@ -103,12 +106,12 @@ function FloatInput({ id, label, icon: Icon, hint, ...props }: FloatInputProps) 
         placeholder=" "
         title={hint}
         {...props}
-        className="peer h-14 w-full rounded-2xl border border-vk-200 bg-white pb-1.5 pl-11 pr-4 pt-5 text-[15px] font-medium text-ink outline-none transition-[border-color,box-shadow] hover:border-vk-300 focus:border-vk-500 focus:shadow-[0_0_0_4px_rgba(47,91,211,0.14)]"
+        className={`peer w-full border border-vk-200 bg-white pl-11 pr-4 text-[15px] ${compact ? "h-12 rounded-xl pb-1 pt-4" : "h-14 rounded-2xl pb-1.5 pt-5"} font-medium text-ink outline-none transition-[border-color,box-shadow] hover:border-vk-300 focus:border-vk-500 focus:shadow-[0_0_0_4px_rgba(47,91,211,0.14)]`}
       />
       <Icon aria-hidden className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-vk-400 transition-colors peer-focus:text-vk-600" />
       <label
         htmlFor={id}
-        className="pointer-events-none absolute left-11 right-3 top-1/2 -translate-y-1/2 truncate text-[14px] text-muted-foreground transition-all duration-150 peer-focus:top-[15px] peer-focus:text-[11px] peer-focus:font-semibold peer-focus:text-vk-600 peer-[:not(:placeholder-shown)]:top-[15px] peer-[:not(:placeholder-shown)]:text-[11px] peer-[:not(:placeholder-shown)]:font-semibold"
+        className={`pointer-events-none absolute left-11 right-3 top-1/2 -translate-y-1/2 truncate text-[14px] text-muted-foreground transition-all duration-150 peer-focus:text-[11px] peer-focus:font-semibold peer-focus:text-vk-600 peer-[:not(:placeholder-shown)]:text-[11px] peer-[:not(:placeholder-shown)]:font-semibold ${compact ? "peer-focus:top-[13px] peer-[:not(:placeholder-shown)]:top-[13px]" : "peer-focus:top-[15px] peer-[:not(:placeholder-shown)]:top-[15px]"}`}
       >
         {label}
       </label>
@@ -137,6 +140,7 @@ function Expand({ open, children }: { open: boolean; children: ReactNode }) {
 
 export default function SevaCampaignClient({ slug }: { slug: string }) {
   const config: SevaCampaignConfig = getSevaCampaignConfig(slug) ?? GAU_CAMPAIGN;
+  const compact = Boolean(config.compactForm);
   const t = useT();
   const [searchParams, setSearchParams] = useState<URLSearchParams>(() => new URLSearchParams());
   const attribution = useAttribution(config.path);
@@ -434,11 +438,12 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
       <MotionConfig reducedMotion="user">
       <main className="overflow-x-hidden bg-white pt-[var(--header-h)] supports-[overflow:clip]:overflow-x-clip [&_.font-serif-display]:font-heading [&_.font-serif-display]:not-italic">
         <EdHero config={config} onDonate={scrollToDonate} onHow={() => document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" })} />
+        <EdStatsRibbon config={config} onDonate={scrollToDonate} />
 
         {/* ── Donation Form ── */}
         <section id="donate" ref={formRef} className="scroll-mt-28 bg-gradient-to-b from-white via-vk-50/60 to-white py-12 md:py-20">
           <div className="vk-container">
-            <div className="mx-auto max-w-6xl">
+            <div className={`mx-auto ${compact ? "max-w-5xl" : "max-w-6xl"}`}>
               <SectionTitle
                 eyebrow={t("Temple Service Campaign")}
                 title={t(config.formHeading)}
@@ -460,7 +465,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                   className="grid gap-1.5 sm:gap-2 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,1fr)] lg:items-start"
                 >
                   {/* ═════ LEFT: choose the offering ═════ */}
-                  <div className="min-w-0 rounded-[22px] bg-[#FBF8F1] p-4 sm:p-6 lg:p-8">
+                  <div className={`min-w-0 rounded-[22px] bg-[#FBF8F1] ${compact ? "p-4 sm:p-5 lg:sticky lg:top-28" : "p-4 sm:p-6 lg:p-8"}`}>
                     <StepLabel n={1}>{t("Choose Your Offering")}</StepLabel>
 
                     {/* One-time | Monthly */}
@@ -481,7 +486,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                               setMonthly(isMonthly);
                               if (isMonthly) setWantsMahaPrasadam(false);
                             }}
-                            className={`relative flex h-11 items-center justify-center gap-2 rounded-xl text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vk-500 ${
+                            className={`relative flex ${compact ? "h-9" : "h-11"} items-center justify-center gap-2 rounded-xl text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vk-500 ${
                               on ? "text-vk-800" : "text-ink/70 hover:text-vk-700"
                             }`}
                           >
@@ -515,7 +520,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                       role="radiogroup"
                       aria-label={t("Choose Your Offering")}
                       onKeyDown={onTierKeyDown}
-                      className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3"
+                      className={compact ? "mt-4 grid grid-cols-2 gap-2" : "mt-5 grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3"}
                     >
                       {/* Compact cards (amount · people · short line · tick): one column on phones, two on wider screens. */}
                       {config.tiers.map((tier, i) => {
@@ -534,7 +539,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                             whileHover={{ y: -3 }}
                             whileTap={{ scale: 0.98 }}
                             transition={{ type: "spring", stiffness: 400, damping: 28 }}
-                            className={`relative grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-start gap-x-3 rounded-2xl border-2 bg-white px-3.5 py-3 text-left [grid-template-areas:'text_radio'] sm:px-4 sm:py-3 transition-[border-color,box-shadow] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vk-500 focus-visible:ring-offset-2 sm:p-4 ${
+                            className={`relative grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-start gap-x-3 rounded-2xl border-2 bg-white px-3.5 py-3 text-left [grid-template-areas:'text_radio'] sm:px-4 sm:py-3 transition-[border-color,box-shadow] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vk-500 focus-visible:ring-offset-2 ${compact ? "!px-3 !py-2.5" : "sm:p-4"} ${
                               on
                                 ? "border-gold shadow-[0_16px_34px_-16px_rgba(201,150,43,0.75)]"
                                 : "border-transparent shadow-[0_6px_18px_-12px_rgba(10,18,51,0.35)] ring-1 ring-vk-100 hover:ring-vk-200"
@@ -561,13 +566,13 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                                 </AnimatePresence>
                               </span>
                             <span className="flex min-w-0 flex-col [grid-area:text]">
-                            <span className="block font-heading text-[1.25rem] font-extrabold leading-none text-vk-900 sm:text-[1.4rem]">
+                            <span className={`block font-heading font-extrabold leading-none text-vk-900 ${compact ? "text-[1.15rem]" : "text-[1.25rem] sm:text-[1.4rem]"}`}>
                               ₹{tier.amount.toLocaleString("en-IN")}
                             </span>
-                            <span className="mt-1 block break-words text-[13.5px] font-semibold leading-snug text-ink/80 sm:text-[14px]">
+                            <span className={`mt-1 block break-words font-semibold leading-snug text-ink/80 ${compact ? "text-[12.5px]" : "text-[13.5px] sm:text-[14px]"}`}>
                               {t(tier.label)}
                             </span>
-                            <span className="mt-1 line-clamp-2 break-words text-[12.5px] leading-snug text-muted-foreground">
+                            <span className={compact ? "hidden" : "mt-1 line-clamp-2 break-words text-[12.5px] leading-snug text-muted-foreground"}>
                               {t(tier.description)}
                             </span>
                             {tierImpact && (
@@ -585,7 +590,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                     {/* Custom amount */}
                     <div className="mt-3">
                       <div
-                        className={`flex h-14 items-center gap-2 rounded-2xl border-2 bg-white px-4 transition-[border-color,box-shadow] ${
+                        className={`flex ${compact ? "h-12" : "h-14"} items-center gap-2 rounded-2xl border-2 bg-white px-4 transition-[border-color,box-shadow] ${
                           useCustom
                             ? "border-gold shadow-[0_12px_28px_-16px_rgba(201,150,43,0.7)]"
                             : "border-dashed border-vk-200 focus-within:border-vk-500"
@@ -630,12 +635,14 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                           transition={{ duration: 0.2 }}
                           className="overflow-hidden"
                         >
-                          <span className="mt-3 flex items-center gap-2.5 rounded-2xl bg-white px-3.5 py-3 text-[13px] font-semibold text-vk-800 ring-1 ring-gold/40">
-                            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gold/15 text-gold-deep">
-                              <ImpactIcon className="h-4 w-4" />
+                          <span className={compact ? "mt-2.5 flex items-center gap-2 px-1 text-[12.5px] font-semibold text-vk-800" : "mt-3 flex items-center gap-2.5 rounded-2xl bg-white px-3.5 py-3 text-[13px] font-semibold text-vk-800 ring-1 ring-gold/40"}>
+                            <span className={`flex shrink-0 items-center justify-center rounded-full bg-gold/15 text-gold-deep ${compact ? "h-6 w-6" : "h-8 w-8"}`}>
+                              <ImpactIcon className={compact ? "h-3.5 w-3.5" : "h-4 w-4"} />
                             </span>
-                            <span className="min-w-0">
-                              {useCustom
+                            <span className={compact ? "min-w-0 truncate" : "min-w-0"}>
+                              {compact
+                                ? t("Supports {impact}", { impact: impactLabel })
+                                : useCustom
                                 ? t("Your donation supports {impact}", { impact: impactLabel })
                                 : t("This offering supports {impact}", { impact: impactLabel })}
                             </span>
@@ -645,11 +652,11 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                     </AnimatePresence>
 
                     {/* Bank transfer */}
-                    <details className="group mt-3 rounded-2xl bg-white px-4 ring-1 ring-vk-100 [&_summary::-webkit-details-marker]:hidden">
-                      <summary className="flex min-h-[52px] cursor-pointer list-none items-center justify-between gap-2 rounded-2xl text-[13px] font-semibold text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vk-500">
+                    <details className={`group ${compact ? "mt-2.5 rounded-xl px-3" : "mt-3 rounded-2xl px-4"} bg-white ring-1 ring-vk-100 [&_summary::-webkit-details-marker]:hidden`}>
+                      <summary className={`flex ${compact ? "min-h-[42px] text-[12.5px]" : "min-h-[52px] text-[13px]"} cursor-pointer list-none items-center justify-between gap-2 rounded-2xl font-semibold text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vk-500`}>
                         <span className="inline-flex min-w-0 items-center gap-2.5">
                           <Building2 className="h-4 w-4 shrink-0 text-vk-500" />
-                          {t("Prefer a direct bank transfer?")}
+                          {compact ? t("Pay by bank transfer") : t("Prefer a direct bank transfer?")}
                         </span>
                         <ChevronDown className="h-4 w-4 shrink-0 text-vk-500 transition-transform group-open:rotate-180" />
                       </summary>
@@ -690,9 +697,9 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                   </div>
 
                   {/* ═════ RIGHT: live summary + details + pay ═════ */}
-                  <div className="min-w-0 rounded-[22px] bg-white p-4 sm:p-6 lg:p-8">
+                  <div className={`min-w-0 rounded-[22px] bg-white ${compact ? "p-4 sm:p-5" : "p-4 sm:p-6 lg:p-8"}`}>
                     {/* Live summary */}
-                    <div className="relative hidden overflow-hidden rounded-3xl bg-gradient-to-br from-vk-100 via-vk-50 to-white p-5 lg:block text-vk-900 ring-1 ring-vk-200 sm:p-6">
+                    <div className={`relative hidden overflow-hidden rounded-3xl bg-gradient-to-br from-vk-100 via-vk-50 to-white p-5 text-vk-900 ring-1 ring-vk-200 sm:p-6 ${compact ? "" : "lg:block"}`}>
                       <div aria-hidden className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full border border-gold/20" />
                       <div aria-hidden className="pointer-events-none absolute -right-4 -top-4 h-24 w-24 rounded-full border border-gold/15" />
                       <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-gold">{t("Your offering")}</p>
@@ -742,10 +749,11 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                     </div>
 
                     {/* Details — the summary card above is desktop-only; phones already see the amount on the Donate button and the sticky bar */}
-                    <div className="space-y-3.5 lg:mt-6">
+                    <div className={compact ? "space-y-3" : "space-y-3.5 lg:mt-6"}>
                       <StepLabel n={2}>{t("Your Details")}</StepLabel>
                       <FloatInput
                         id="donor-name"
+                        compact={compact}
                         icon={User}
                         label={t("Full name")}
                         type="text"
@@ -756,6 +764,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                       />
                       <FloatInput
                         id="donor-mobile"
+                        compact={compact}
                         icon={Phone}
                         label={t("Mobile number")}
                         hint={t("10-digit mobile")}
@@ -772,6 +781,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
 
                       <FloatInput
                         id="donor-email"
+                        compact={compact}
                         icon={Mail}
                         label={`${t("Email address")} ${t("(optional)")}`}
                         type="email"
@@ -781,6 +791,11 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                         onChange={(e) => setForm({ ...form, email: e.target.value })}
                       />
 
+                      {/* Compact form (config.compactForm): the three options sit in one slim list instead of three cards. */}
+                      <div className={compact ? "overflow-hidden rounded-2xl border border-vk-100 divide-y divide-vk-100" : "space-y-3.5"}>
+                      {compact && (
+                        <p className="bg-vk-50/70 px-3.5 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-vk-700">{t("Optional")}</p>
+                      )}
                       <DonorExtrasFields
                         sevakName={form.sevakName}
                         dob={form.dob}
@@ -791,12 +806,13 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                         onOccasionChange={(v) => setForm((f) => ({ ...f, dedicationOccasion: v }))}
                         onOccasionNoteChange={(v) => setForm((f) => ({ ...f, dedicationNote: v }))}
                         collapsible
+                        compact={compact}
                       />
 
                       {/* 80G */}
                       {addonsEligible && (
-                        <div className={`${toggleCardClass} ${want80G ? toggleCardOn : toggleCardOff}`}>
-                          <label className={toggleLabelClass}>
+                        <div className={compact ? (want80G ? "bg-vk-50/60" : "bg-white") : `${toggleCardClass} ${want80G ? toggleCardOn : toggleCardOff}`}>
+                          <label className={compact ? compactRowClass : toggleLabelClass}>
                             <input
                               type="checkbox"
                               checked={want80G}
@@ -804,18 +820,22 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                                 setWant80G(e.target.checked);
                                 handle80GToggle(e.target.checked);
                               }}
-                              className={checkboxClass}
+                              className={compact ? `${checkboxClass} !mt-0` : checkboxClass}
                             />
                             <span className="min-w-0 flex-1">
-                              <span className="block text-[13px] font-bold text-ink">{t("I need an 80G tax exemption receipt")}</span>
-                              <span className="mt-0.5 block text-xs leading-snug text-muted-foreground">
-                                {t("Save tax under Section 80G — we'll need your PAN.")}
+                              <span className={`block font-bold text-ink ${compact ? "text-[14px] font-semibold text-vk-900" : "text-[13px]"}`}>
+                                {compact ? t("80G tax receipt (needs PAN)") : t("I need an 80G tax exemption receipt")}
                               </span>
+                              {!compact && (
+                                <span className="mt-0.5 block text-xs leading-snug text-muted-foreground">
+                                  {t("Save tax under Section 80G — we'll need your PAN.")}
+                                </span>
+                              )}
                             </span>
-                            <Receipt aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-vk-400" />
+                            <Receipt aria-hidden className={`h-4 w-4 shrink-0 text-vk-400 ${compact ? "" : "mt-0.5"}`} />
                           </label>
                           <Expand open={want80G}>
-                            <div className="border-t border-vk-100 px-4 pb-4 pt-3">
+                            <div className={`border-t border-vk-100 pb-4 pt-3 ${compact ? "px-3.5" : "px-4"}`}>
                               <label htmlFor="donor-pan" className={labelClass}>{t("PAN number")}</label>
                               <input
                                 id="donor-pan"
@@ -833,8 +853,8 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
 
                       {/* Maha Prasadam (one-time donations only) */}
                       {addonsEligible && !monthly && (
-                        <div className={`${toggleCardClass} ${wantsMahaPrasadam ? toggleCardOn : toggleCardOff}`}>
-                          <label className={toggleLabelClass}>
+                        <div className={compact ? (wantsMahaPrasadam ? "bg-vk-50/60" : "bg-white") : `${toggleCardClass} ${wantsMahaPrasadam ? toggleCardOn : toggleCardOff}`}>
+                          <label className={compact ? compactRowClass : toggleLabelClass}>
                             <input
                               type="checkbox"
                               checked={wantsMahaPrasadam}
@@ -842,23 +862,28 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                                 setWantsMahaPrasadam(e.target.checked);
                                 handlePrasadamToggle(e.target.checked);
                               }}
-                              className={checkboxClass}
+                              className={compact ? `${checkboxClass} !mt-0` : checkboxClass}
                             />
                             <span className="min-w-0 flex-1">
-                              <span className="block text-[13px] font-bold text-ink">{t("I'd like Maha Prasadam delivered")}</span>
-                              <span className="mt-0.5 block text-xs leading-snug text-muted-foreground">
-                                {t("Sanctified prasadam sent to your address.")}
+                              <span className={`block font-bold text-ink ${compact ? "text-[14px] font-semibold text-vk-900" : "text-[13px]"}`}>
+                                {compact ? t("Maha Prasadam to my address") : t("I'd like Maha Prasadam delivered")}
                               </span>
+                              {!compact && (
+                                <span className="mt-0.5 block text-xs leading-snug text-muted-foreground">
+                                  {t("Sanctified prasadam sent to your address.")}
+                                </span>
+                              )}
                             </span>
-                            <Gift aria-hidden className="mt-0.5 h-4 w-4 shrink-0 text-vk-400" />
+                            <Gift aria-hidden className={`h-4 w-4 shrink-0 text-vk-400 ${compact ? "" : "mt-0.5"}`} />
                           </label>
                           <Expand open={wantsMahaPrasadam}>
-                            <div className="border-t border-vk-100 px-4 pb-4">
+                            <div className={`border-t border-vk-100 pb-4 ${compact ? "px-3.5" : "px-4"}`}>
                               <AddressForm address={address} setAddress={setAddress} />
                             </div>
                           </Expand>
                         </div>
                       )}
+                      </div>
                     </div>
 
                     {/* Pay */}
@@ -883,7 +908,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                         type="submit"
                         disabled={submitting}
                         whileTap={{ scale: 0.985 }}
-                        className="vk-btn-gold group h-14 w-full rounded-2xl px-4 text-base font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vk-500 focus-visible:ring-offset-2 disabled:cursor-wait disabled:opacity-80"
+                        className={`vk-btn-gold group ${compact ? "h-12" : "h-14"} w-full rounded-2xl px-4 text-base font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vk-500 focus-visible:ring-offset-2 disabled:cursor-wait disabled:opacity-80`}
                       >
                         {submitting ? (
                           <>
@@ -906,7 +931,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                       </p>
 
                       {/* Trust strip */}
-                      <ul className="grid grid-cols-3 divide-x divide-vk-100 rounded-2xl bg-vk-50/70 py-3 text-center">
+                      <ul className={`grid grid-cols-3 divide-x divide-vk-100 rounded-2xl bg-vk-50/70 text-center ${compact ? "py-2" : "py-3"}`}>
                         {(
                           [
                             [Lock, "Secure payment"],
@@ -1020,7 +1045,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.06, duration: 0.5 }}
-                    className={`group relative overflow-hidden rounded-3xl bg-vk-100 ${i === 0 ? "col-span-2 row-span-2" : ""}`}
+                    className={`group relative overflow-hidden rounded-3xl bg-vk-100 ${i === 0 ? "col-span-2 row-span-2" : ""} ${i > 0 && config.gallery.photos.length === 3 ? "md:row-span-2" : i > 0 && i === config.gallery.photos.length - 1 && (config.gallery.photos.length - 1) % 2 === 1 ? "col-span-2" : ""}`}
                   >
                     <Image
                       src={photo.src}
@@ -1041,7 +1066,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
         )}
 
         {/* ── Power of Giving ── */}
-        <EdScriptures />
+        {config.verses ? <EdVerses config={config} /> : <EdScriptures />}
 
         {/* ── FAQs ── */}
         <EdFaq faqs={config.faqs} topic={config.pageTitle} />

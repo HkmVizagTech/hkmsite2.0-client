@@ -45,6 +45,22 @@ export interface SevaCampaignConfig {
   readMore?: { title: string; text: string; href: string; image?: string; readTime?: number; category?: string }[];
   /** Heading above the readMore links. */
   readMoreHeading?: string;
+  /** Show the stats as a ribbon right under the banner (Gau Seva only so far). */
+  statsRibbon?: boolean;
+  /** Slimmer donation form: dedication, 80G and prasadam as one compact list; offering panel sticks on laptops. */
+  compactForm?: boolean;
+  /**
+   * Verses about this seva, shown instead of the general "Power of Giving" section (whose
+   * verses are about building a temple). Sanskrit line, translation and source.
+   */
+  verses?: {
+    eyebrow: string;
+    heading: string;
+    sub: string;
+    image: string;
+    imageCaption: string;
+    items: { sanskrit: string; text: string; citation: string }[];
+  };
   /** Short figures shown under the heading on an editorial page. */
   stats?: { value: string; label: string }[];
 
@@ -126,6 +142,32 @@ export const GAU_CAMPAIGN: SevaCampaignConfig = {
     { value: "₹3,500", label: "feeds a cow a month" },
     { value: "80G", label: "tax benefit" },
   ],
+  statsRibbon: true,
+  compactForm: true,
+  verses: {
+    eyebrow: "Why Krishna loves the cows",
+    heading: "Gopala, the protector of cows",
+    sub: "Lord Krishna spent His childhood tending cows in Vrindavana. The scriptures name cow protection among the most pleasing services to Him.",
+    image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783676646237-1783676645536-ChatGPTImageJul102026031357PM.png",
+    imageCaption: "Cows fed and cared for with devotion",
+    items: [
+      {
+        sanskrit: "cintāmaṇi-prakara-sadmasu kalpa-vṛkṣa-lakṣāvṛteṣu surabhīr abhipālayantam",
+        text: "I worship Govinda, the primeval Lord, who tends the surabhi cows in abodes built with spiritual gems, surrounded by millions of desire trees.",
+        citation: "Brahma-samhita 5.29",
+      },
+      {
+        sanskrit: "namo brahmaṇya-devāya go-brāhmaṇa-hitāya ca",
+        text: "Obeisances to the Lord, the well-wisher of the cows and the brahmanas, and of the whole world, Krishna, Govinda.",
+        citation: "Vishnu Purana 1.19.65",
+      },
+      {
+        sanskrit: "kṛṣi-go-rakṣya-vāṇijyaṁ vaiśya-karma svabhāva-jam",
+        text: "Farming, cow protection and trade are the natural duties of the vaishyas, which Krishna Himself names in the Gita.",
+        citation: "Bhagavad-gita 18.44",
+      },
+    ],
+  },
   readMoreHeading: "Learn more about Gau Seva and cow protection",
   readMore: [
     {
@@ -257,11 +299,11 @@ export const GAU_CAMPAIGN: SevaCampaignConfig = {
     heading: "Glimpses of Gau Seva",
     subtitle:
       "The sacred cows in our care — fed, healed and sheltered with devotion at the Hare Krishna Vaikuntham Temple.",
+    // Clean photos only: the earlier banner graphics had "GAU SEVA / DONATE" text baked in and cropped badly.
     photos: [
-      { src: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783676646237-1783676645536-ChatGPTImageJul102026031357PM.png", caption: "Our beloved Gau Mata" },
       { src: "/assets/donations-gau-seva-real.jpeg", caption: "Daily care at the goshala" },
-      { src: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1784305732825-1784305730000-ChatGPTImageJul172026095835PM.png", caption: "Gau Seva — sacred service" },
-      { src: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1784305706071-1784305696382-ChatGPTImageJul172026095421PM.png", caption: "Nourishing the gentle cows" },
+      { src: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/web-stories/1793779189357-CowDonation.webp", caption: "Gentle calves in our care" },
+      { src: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/web-stories/1793779161616-DoGauSeva.webp", caption: "A spacious, shaded shelter" },
     ],
   },
 

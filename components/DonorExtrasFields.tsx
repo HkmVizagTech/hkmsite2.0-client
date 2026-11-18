@@ -16,6 +16,8 @@ interface Props {
   // were adding friction. Defaults to false so any existing caller that
   // doesn't pass this prop keeps its exact current behavior unchanged.
   collapsible?: boolean;
+  // Opt-in: the occasion toggle as a slim borderless row (no subtitle), for a grouped list of options.
+  compact?: boolean;
   // Opt-in: replaces the fixed "Date of Birth" with an occasion picker (Birthday,
   // Wedding anniversary, Death anniversary, Other). The date field then asks for
   // the right date - date of birth, of the wedding, or of passing - and "Other"
@@ -45,6 +47,7 @@ export default function DonorExtrasFields({
   occasionNote = "",
   onOccasionChange,
   onOccasionNoteChange,
+  compact = false,
 }: Props) {
   const t = useT();
   const [expanded, setExpanded] = useState(!collapsible || Boolean(sevakName || dob || occasion));
@@ -83,9 +86,9 @@ export default function DonorExtrasFields({
   };
 
   const occasionFields = (
-    <div className={`rounded-2xl border bg-white transition-colors ${expanded ? "border-vk-200" : "border-vk-100"}`}>
-      <label className="flex cursor-pointer items-center gap-3 px-3.5 py-3">
-        <span aria-hidden className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-vk-50 text-vk-600 min-[360px]:flex">
+    <div className={compact ? "bg-white" : `rounded-2xl border bg-white transition-colors ${expanded ? "border-vk-200" : "border-vk-100"}`}>
+      <label className={`flex cursor-pointer items-center gap-3 px-3.5 ${compact ? "min-h-[48px] py-2" : "py-3"}`}>
+        <span aria-hidden className={compact ? "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-vk-50 text-vk-600" : "hidden h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-vk-50 text-vk-600 min-[360px]:flex"}>
           <Gift className="h-[18px] w-[18px]" />
         </span>
         <input
@@ -108,7 +111,7 @@ export default function DonorExtrasFields({
         />
         <span className="min-w-0 flex-1">
           <span className="block text-[14px] font-semibold leading-snug text-vk-900">{t("Dedicate this seva")}</span>
-          <span className="block text-[12px] leading-snug text-ink/55">{t("Birthday, anniversary or in memory of a loved one")}</span>
+          {!compact && <span className="block text-[12px] leading-snug text-ink/55">{t("Birthday, anniversary or in memory of a loved one")}</span>}
         </span>
         <span aria-hidden className="relative h-6 w-11 shrink-0 rounded-full bg-vk-100 ring-1 ring-vk-200 transition-colors peer-checked:bg-vk-500 peer-checked:ring-vk-500 peer-focus-visible:ring-2 peer-focus-visible:ring-vk-500 peer-focus-visible:ring-offset-2 after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:shadow after:transition-transform peer-checked:after:translate-x-5" />
       </label>

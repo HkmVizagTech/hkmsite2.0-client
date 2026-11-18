@@ -284,6 +284,89 @@ function EdHeroPhoto({ config, onDonate, onHow }: { config: SevaCampaignConfig; 
   );
 }
 
+/* ───────────────────────── Stats ribbon (under the banner, when config.statsRibbon) ───────────────────────── */
+
+export function EdStatsRibbon({ config, onDonate }: { config: SevaCampaignConfig; onDonate: () => void }) {
+  const t = useT();
+  const Icon = sevaMotif(config).icon;
+  if (!config.statsRibbon || !config.stats?.length) return null;
+  return (
+    <section className="bg-white pt-6 md:pt-8">
+      <div className="vk-container">
+        <motion.div
+          {...rise}
+          className="relative mx-auto flex max-w-5xl flex-col items-stretch overflow-hidden rounded-[26px] bg-gradient-to-br from-vk-100 via-vk-50 to-white p-2 ring-1 ring-vk-200 md:flex-row md:items-center"
+        >
+          <div aria-hidden className="pointer-events-none absolute -right-10 -top-12 h-40 w-40 rounded-full border border-gold/30" />
+          <dl className="grid flex-1 grid-cols-3 divide-x divide-vk-200/70">
+            {config.stats.map((s) => (
+              <div key={s.label} className="min-w-0 px-2 py-3 text-center md:px-5 md:py-4">
+                <dt className="sr-only">{t(s.label)}</dt>
+                <dd className="font-heading text-[1.3rem] font-extrabold leading-none text-vk-700 md:text-[1.75rem]">{s.value}</dd>
+                <dd className="mt-1.5 text-[11.5px] font-medium leading-tight text-ink/60 md:text-[13px]">{t(s.label)}</dd>
+              </div>
+            ))}
+          </dl>
+          <button type="button" onClick={onDonate} className="vk-btn-gold m-1 h-12 shrink-0 rounded-2xl px-6 text-[15px] font-bold md:m-2 md:h-14">
+            <Icon className="h-4 w-4" /> {t(config.about.ctaLabel)} <ArrowRight className="h-4 w-4" />
+          </button>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ───────────────────────── Verses about this seva (config.verses) ───────────────────────── */
+
+export function EdVerses({ config }: { config: SevaCampaignConfig }) {
+  const t = useT();
+  const v = config.verses;
+  if (!v) return null;
+  return (
+    <section className={`${IVORY} relative overflow-hidden py-14 md:py-24`}>
+      <div aria-hidden className="pointer-events-none absolute -left-24 top-16 h-72 w-72 rounded-full border border-gold/25" />
+      <div aria-hidden className="pointer-events-none absolute -right-32 bottom-10 h-80 w-80 rounded-full border border-vk-200/70" />
+      <div className="vk-container relative">
+        <div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-14">
+          <motion.figure {...rise} className="relative mx-auto w-full max-w-md lg:max-w-none">
+            <div className="relative aspect-[4/5] overflow-hidden rounded-[30px] shadow-[0_34px_70px_-38px_rgba(10,18,51,0.55)] ring-8 ring-white">
+              <Image src={v.image} alt={t(v.imageCaption)} fill unoptimized sizes="(max-width: 1024px) 100vw, 45vw" className="object-cover" />
+            </div>
+            <div aria-hidden className="absolute -bottom-4 -right-4 -z-10 h-full w-full rounded-[30px] bg-gold/20" />
+            <figcaption className="absolute -bottom-5 left-5 right-5 flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-[0_18px_40px_-20px_rgba(10,18,51,0.45)] ring-1 ring-vk-100 sm:right-auto">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gold/15 text-gold-deep"><Leaf className="h-5 w-5" /></span>
+              <span className="text-[13px] font-semibold leading-snug text-vk-900">{t(v.imageCaption)}</span>
+            </figcaption>
+          </motion.figure>
+
+          <div className="min-w-0">
+            <SectionTitle align="left" eyebrow={t(v.eyebrow)} title={t(v.heading)} sub={t(v.sub)} />
+            <ol className="-mt-2 space-y-4">
+              {v.items.map((item, i) => (
+                <motion.li
+                  key={item.citation}
+                  {...rise}
+                  transition={{ duration: 0.5, delay: i * 0.08 }}
+                  className="relative rounded-3xl bg-white p-5 pl-16 shadow-[0_18px_40px_-32px_rgba(10,18,51,0.45)] ring-1 ring-vk-100 md:p-6 md:pl-20"
+                >
+                  <span aria-hidden className="absolute left-4 top-5 flex h-9 w-9 items-center justify-center rounded-full bg-gold text-vk-900 shadow-[0_8px_18px_-8px_rgba(201,150,43,0.8)] md:left-6 md:top-6">
+                    <Quote className="h-4 w-4 fill-current" />
+                  </span>
+                  <p className="font-heading text-[14.5px] font-semibold italic leading-snug text-vk-600 md:text-[15.5px]">{item.sanskrit}</p>
+                  <blockquote className="mt-2 text-[14.5px] leading-relaxed text-ink/75 md:text-[15px]">{t(item.text)}</blockquote>
+                  <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-vk-50 px-3 py-1 text-[12px] font-semibold text-vk-700 ring-1 ring-vk-100">
+                    <BookOpen aria-hidden className="h-3.5 w-3.5" /> {item.citation}
+                  </span>
+                </motion.li>
+              ))}
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ───────────────────────── Story ───────────────────────── */
 
 export function EdAbout({ config, onDonate }: { config: SevaCampaignConfig; onDonate: () => void }) {
