@@ -226,6 +226,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
   }, [searchParams]);
 
   useEffect(() => {
+    if (config.hideRecentDonors) return;
     (async () => {
       try {
         const res = await fetch(
@@ -234,7 +235,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
         if (res.ok) setStats(await res.json());
       } catch {}
     })();
-  }, [config.pageTitle, config.category]);
+  }, [config.pageTitle, config.category, config.hideRecentDonors]);
 
   const finalAmount = useCustom ? Number(customAmount) || 0 : config.tiers[tierIndex]?.amount || 0;
   const impact = unitImpact(finalAmount, config);
@@ -961,7 +962,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
         <EdTestimonials config={config} />
 
         {/* ── Recent devotees supporting this seva ── */}
-        {stats && stats.donors.length > 0 && (
+        {!config.hideRecentDonors && stats && stats.donors.length > 0 && (
           <section className="bg-gradient-to-b from-white via-vk-50/60 to-white py-14 md:py-20">
             <div className="vk-container">
               <div className="mx-auto grid max-w-5xl items-center gap-6 lg:grid-cols-[0.85fr_1.15fr] lg:gap-12">

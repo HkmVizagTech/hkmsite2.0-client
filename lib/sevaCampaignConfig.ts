@@ -49,6 +49,8 @@ export interface SevaCampaignConfig {
   statsRibbon?: boolean;
   /** Slimmer donation form: dedication, 80G and prasadam as one compact list; offering panel sticks on laptops. */
   compactForm?: boolean;
+  /** Leave out the "Recent Devotees Supporting This Seva" list (and its API call). */
+  hideRecentDonors?: boolean;
   /**
    * Verses about this seva, shown instead of the general "Power of Giving" section (whose
    * verses are about building a temple). Sanskrit line, translation and source.
@@ -144,6 +146,7 @@ export const GAU_CAMPAIGN: SevaCampaignConfig = {
   ],
   statsRibbon: true,
   compactForm: true,
+  hideRecentDonors: true,
   verses: {
     eyebrow: "Why Krishna loves the cows",
     heading: "Gopala, the protector of cows",
