@@ -565,7 +565,7 @@ export const vaishnavaCalendar2026: VaishnavaDate[] = [
     description: "Sri Gopashtami, Sri Goshthastami, Go Puja, and Go Gras-dan. Disappearance of Sri Gadadhar Das Goswami.",
   },
   {
-    date: "2026-11-20",
+    date: "2026-11-21",
     title: "Utthan Ekadashi",
     type: "Ekadashi",
     description: "Gaura Ekadashi. Fasting from grains and beans. Disappearance of Srila Gaura Kishor Das Babaji Maharaj.",
