@@ -30,6 +30,8 @@ import { unitImpact } from "@/lib/sevaConfig";
 import type { EkadashiCampaign, EkadashiSeva } from "@/lib/ekadashiCampaign";
 import { useUpiFallback } from "@/components/UpiFallbackDialog";
 import { prefillEmail } from "@/lib/razorpayPrefill";
+import { usePreacherLink } from "@/lib/usePreacherLink";
+import PreacherNoPrasadamNote from "@/components/PreacherNoPrasadamNote";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 
@@ -131,6 +133,7 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
   const [form, setForm] = useState({ name: "", email: "", mobile: "", panNumber: "", sevakName: "", dob: "", dedicationOccasion: "", dedicationNote: "" });
   const [want80G, setWant80G] = useState(false);
   const [wantsMahaPrasadam, setWantsMahaPrasadam] = useState(false);
+  const hasPreacherLink = usePreacherLink();
   const [address, setAddress] = useState<PrasadamAddress>({ street: "", city: "", state: "", pincode: "", country: "India" });
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
@@ -633,7 +636,8 @@ export default function EkadashiCampaignClient({ campaign }: EkadashiCampaignCli
                   )}
 
                   {/* Maha Prasadam */}
-                  {finalAmount > 999 && (
+                  {finalAmount > 999 && hasPreacherLink && <PreacherNoPrasadamNote />}
+                  {finalAmount > 999 && !hasPreacherLink && (
                     <div className={addOnBoxClass}>
                       <label className={addOnLabelClass}>
                         <input

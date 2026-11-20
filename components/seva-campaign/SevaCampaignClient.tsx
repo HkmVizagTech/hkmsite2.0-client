@@ -27,6 +27,8 @@ import { getSevaCampaignConfig, GAU_CAMPAIGN, type SevaCampaignConfig } from "@/
 import { useDonorPrefill } from "@/lib/donorPrefill";
 import { useUpiFallback } from "@/components/UpiFallbackDialog";
 import { prefillEmail } from "@/lib/razorpayPrefill";
+import { usePreacherLink } from "@/lib/usePreacherLink";
+import PreacherNoPrasadamNote from "@/components/PreacherNoPrasadamNote";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 
@@ -155,6 +157,7 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
   const [want80G, setWant80G] = useState(false);
   const [monthly, setMonthly] = useState(false);
   const [wantsMahaPrasadam, setWantsMahaPrasadam] = useState(false);
+  const hasPreacherLink = usePreacherLink();
   const [address, setAddress] = useState<PrasadamAddress>({ street: "", city: "", state: "", pincode: "", country: "India" });
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
@@ -853,7 +856,8 @@ export default function SevaCampaignClient({ slug }: { slug: string }) {
                       )}
 
                       {/* Maha Prasadam (one-time donations only) */}
-                      {addonsEligible && !monthly && (
+                      {addonsEligible && !monthly && hasPreacherLink && <PreacherNoPrasadamNote />}
+                      {addonsEligible && !monthly && !hasPreacherLink && (
                         <div className={compact ? (wantsMahaPrasadam ? "bg-vk-50/60" : "bg-white") : `${toggleCardClass} ${wantsMahaPrasadam ? toggleCardOn : toggleCardOff}`}>
                           <label className={compact ? compactRowClass : toggleLabelClass}>
                             <input

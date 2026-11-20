@@ -27,6 +27,8 @@ import { newEventId, getMetaBrowserData, trackPurchase } from "@/lib/metaPixel";
 import { type CampaignConfig } from "@/lib/campaignConfig";
 import { useUpiFallback } from "@/components/UpiFallbackDialog";
 import { prefillEmail } from "@/lib/razorpayPrefill";
+import { usePreacherLink } from "@/lib/usePreacherLink";
+import PreacherNoPrasadamNote from "@/components/PreacherNoPrasadamNote";
 
 type RazorpayConstructor = new (options: Record<string, unknown>) => { open: () => void };
 
@@ -161,6 +163,7 @@ export default function AlankaraVastraClient() {
   const [want80G, setWant80G] = useState(false);
   const [monthly, setMonthly] = useState(false);
   const [wantsMahaPrasadam, setWantsMahaPrasadam] = useState(false);
+  const hasPreacherLink = usePreacherLink();
   const [address, setAddress] = useState<PrasadamAddress>({ street: "", city: "", state: "", pincode: "", country: "India" });
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
@@ -701,7 +704,8 @@ export default function AlankaraVastraClient() {
                   )}
 
                   {/* Maha Prasadam (one-time donations only) */}
-                  {finalAmount > 999 && !monthly && (
+                  {finalAmount > 999 && !monthly && hasPreacherLink && <PreacherNoPrasadamNote />}
+                  {finalAmount > 999 && !monthly && !hasPreacherLink && (
                     <div className={addonBoxClass}>
                       <label className={checkboxLabelClass}>
                         <input

@@ -10,6 +10,8 @@ import SectionHeading from "@/components/site/SectionHeading";
 import DonorExtrasFields from "@/components/DonorExtrasFields";
 import { useDonorPrefill } from "@/lib/donorPrefill";
 import type { CampaignConfig, GoldenTierConfig } from "@/lib/campaignConfig";
+import { usePreacherLink } from "@/lib/usePreacherLink";
+import PreacherNoPrasadamNote from "@/components/PreacherNoPrasadamNote";
 
 export interface DonorForm {
   name: string;
@@ -139,6 +141,7 @@ export default function DonationFormSection({
   // returning donor's phone lookup fills the same fields after they type
   // their 10-digit number. PAN/address are filled only when 80G/prasadam
   // are selected.
+  const hasPreacherLink = usePreacherLink();
   const { lookupHint, handle80GToggle, handlePrasadamToggle } = useDonorPrefill({
     form,
     setForm,
@@ -536,7 +539,8 @@ export default function DonationFormSection({
               />
 
               {/* Maha Prasadam (one-time donations only) */}
-              {mahaPrasadamEligible && !monthly && (
+              {mahaPrasadamEligible && !monthly && hasPreacherLink && <PreacherNoPrasadamNote />}
+              {mahaPrasadamEligible && !monthly && !hasPreacherLink && (
                 <div className={addonBoxClass}>
                   <label className={checkLabelClass}>
                     <input
