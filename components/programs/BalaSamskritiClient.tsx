@@ -279,14 +279,14 @@ export default function BalaSamskritiClient() {
               <Heading eyebrow="Two venues" title="Choose the venue nearest to you" sub={`${program.schedule || "Every Sunday"} at both venues. Pick one when you register.`} />
               <div className="mx-auto mt-10 grid max-w-3xl gap-5 sm:grid-cols-2">
                 {program.venues.map((v, i) => (
-                  <motion.div key={v.name} {...fade} transition={{ ...fade.transition, delay: i * 0.1 }} className="flex items-center gap-4 rounded-3xl bg-white p-5 shadow-sm ring-1 ring-vk-100">
+                  <motion.div key={v.name} {...fade} transition={{ ...fade.transition, delay: i * 0.1 }} className="flex flex-wrap items-center gap-x-4 gap-y-3 rounded-3xl bg-white p-4 shadow-sm ring-1 ring-vk-100 sm:p-5">
                     <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-rose-500 to-orange-400 text-white shadow-md"><MapPin className="h-7 w-7" /></span>
-                    <div className="min-w-0 flex-1">
+                    <div className="min-w-[7rem] flex-1">
                       <div className="text-lg font-bold text-slate-800">{v.name}</div>
                       <div className="text-sm text-slate-500">Visakhapatnam</div>
                     </div>
                     {v.mapUrl && (
-                      <a href={v.mapUrl} target="_blank" rel="noreferrer" className="shrink-0 rounded-full bg-vk-50 px-4 py-2 text-sm font-semibold text-vk-600 ring-1 ring-vk-100 transition hover:bg-vk-100">
+                      <a href={v.mapUrl} target="_blank" rel="noreferrer" className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-full bg-vk-50 px-4 py-2 text-sm font-semibold text-vk-600 ring-1 ring-vk-100 transition hover:bg-vk-100 max-[400px]:w-full">
                         Directions
                       </a>
                     )}
@@ -354,7 +354,7 @@ export default function BalaSamskritiClient() {
             </div>
           </section>
 
-          <FloatingRegister onClick={goRegister} disabled={!canRegister} />
+          <FloatingRegister onClick={goRegister} disabled={loaded === "ok" && (!program.registrationOpen || !!program.full)} />
         </main>
       </MotionConfig>
     </PageLayout>
