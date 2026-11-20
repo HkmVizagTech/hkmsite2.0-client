@@ -65,7 +65,7 @@ const getDarshanStatus = () => {
   return { isOpen: false, label: `Darshan Closed · Reopens ${reopenTime}`, time: reopenTime };
 };
 
-const Navbar = () => {
+const Navbar = ({ hideWhatsApp = false }: { hideWhatsApp?: boolean } = {}) => {
   const t = useT();
   const { locale } = useLocale();
   const [scrolled, setScrolled] = useState(false);
@@ -307,15 +307,17 @@ const Navbar = () => {
                   <s.icon className="h-4 w-4" />
                 </a>
               ))}
-              <a
-                href="https://whatsapp.com/channel/0029VaZDEG67T8bWHjibTy2u"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={t("WhatsApp channel")}
-                className="inline-flex h-7 w-7 items-center justify-center rounded-full text-ink/70 transition-colors hover:bg-white hover:text-[#25D366]"
-              >
-                <WhatsAppIcon className="h-4 w-4 fill-current" />
-              </a>
+              {!hideWhatsApp && (
+                <a
+                  href="https://whatsapp.com/channel/0029VaZDEG67T8bWHjibTy2u"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={t("WhatsApp channel")}
+                  className="inline-flex h-7 w-7 items-center justify-center rounded-full text-ink/70 transition-colors hover:bg-white hover:text-[#25D366]"
+                >
+                  <WhatsAppIcon className="h-4 w-4 fill-current" />
+                </a>
+              )}
             </div>
           </div>
         </div>

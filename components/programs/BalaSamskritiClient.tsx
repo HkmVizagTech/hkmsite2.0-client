@@ -4,11 +4,10 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import Image from "next/image";
 import { MotionConfig, motion } from "framer-motion";
 import {
-  ArrowRight, BookOpen, CalendarDays, CheckCircle2, ChevronDown, Clock, Flower2, Hourglass, Loader2, Lock, MapPin,
-  Heart, MessageCircle, Phone, ShieldCheck, Sparkles, Sun, Users,
+  ArrowRight, Baby, BookOpen, CalendarDays, CheckCircle2, ChevronDown, Clock, Flower2, Hourglass, Loader2, Lock, MapPin,
+  Heart, MessageCircle, Phone, ShieldCheck, Sparkles, Sun, UserPlus, UserRound, Users,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
-import { SEVA_WHATSAPP_NUMBER } from "@/components/WhatsAppFloatButton";
 import { useRazorpayPreload } from "@/lib/useRazorpayPreload";
 import { useAttribution } from "@/lib/useAttribution";
 import { cleanMobile } from "@/lib/phone";
@@ -57,8 +56,8 @@ const FALLBACK: Program = {
   ageMin: 6,
   ageMax: 13,
   venues: [
-    { name: "Gambhiram", mapUrl: "https://www.google.com/maps/search/?api=1&query=ISKCON+Gambheeram+Visakhapatnam" },
-    { name: "Madhavadhara", mapUrl: "https://www.google.com/maps/search/?api=1&query=Hare+Krishna+Madhavadhara+Visakhapatnam" },
+    { name: "Gambhiram", mapUrl: "https://maps.app.goo.gl/Yg2imkSEDxuY5u2K9?g_st=aw" },
+    { name: "Madhavadhara", mapUrl: "https://maps.app.goo.gl/Cbro1uXJnLCZbKkV6" },
   ],
   contactPhones: ["9985364430", "7207108219"],
   registrationOpen: true,
@@ -142,15 +141,24 @@ export default function BalaSamskritiClient() {
   const goRegister = () => scrollToSection("register");
 
   return (
-    <PageLayout whatsappNumber={SEVA_WHATSAPP_NUMBER}>
+    <PageLayout hideWhatsApp>
       <MotionConfig reducedMotion="user">
-        <main className="overflow-x-hidden bg-white pb-20 pt-[var(--header-h)] supports-[overflow:clip]:overflow-x-clip md:pb-0">
+        <main className="overflow-x-hidden bg-white pt-[var(--header-h)] supports-[overflow:clip]:overflow-x-clip">
           {/* ═════════════ HERO: full-width program banner ═════════════ */}
-          <section className="relative bg-[#0B6FB8]">
+          <section className="relative overflow-hidden bg-gradient-to-r from-[#0B6FB8] via-[#0E86C4] to-[#0B6FB8]">
             <h1 className="sr-only">Bala Samskriti: Vedic Culture &amp; Values for Kids</h1>
-            {/* Wide banner on tablet/laptop, the square poster on phones (the wide one's text is too small there). */}
-            <Image src={BANNER} alt={BANNER_ALT} width={1600} height={900} priority sizes="100vw" className="hidden h-auto w-full md:block" />
-            <Image src={POSTER} alt={BANNER_ALT} width={755} height={732} priority sizes="100vw" className="h-auto w-full md:hidden" />
+            {/* Wide banner on tablet/laptop, kept to a compact height and centred with its edges faded into the page's blue;
+                the square poster on phones (the wide one's text is too small there). */}
+            <Image
+              src={BANNER}
+              alt={BANNER_ALT}
+              width={1600}
+              height={900}
+              priority
+              sizes="100vw"
+              className="hidden h-auto w-full md:block"
+            />
+            <Image src={POSTER} alt={BANNER_ALT} width={755} height={732} priority sizes="100vw" className="mx-auto h-auto max-h-[420px] w-auto max-w-full object-contain md:hidden" />
           </section>
 
           {/* facts card, overlapping the banner's bottom edge */}
@@ -160,9 +168,9 @@ export default function BalaSamskritiClient() {
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.15 }}
-                className="flex flex-col gap-4 rounded-3xl bg-white p-4 shadow-2xl shadow-vk-900/15 ring-1 ring-slate-100 sm:p-5 md:flex-row md:items-center"
+                className="flex flex-col gap-4 overflow-hidden rounded-3xl bg-white p-4 shadow-2xl shadow-vk-900/15 ring-1 ring-slate-100 sm:p-5 lg:flex-row lg:items-center"
               >
-                <ul className="grid flex-1 grid-cols-2 gap-3 lg:grid-cols-4">
+                <ul className="grid flex-1 grid-cols-1 gap-3 min-[420px]:grid-cols-2 xl:grid-cols-4">
                   {facts.map((f) => (
                     <li key={f.label} className="flex items-center gap-2.5">
                       <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-2xl text-white shadow-md ${f.tint}`}><f.icon className="h-5 w-5" /></span>
@@ -173,7 +181,7 @@ export default function BalaSamskritiClient() {
                     </li>
                   ))}
                 </ul>
-                <div className="flex items-center gap-3 rounded-2xl bg-gradient-to-r from-amber-50 to-rose-50 p-3">
+                <div className="flex items-center gap-3 rounded-2xl bg-gradient-to-r from-amber-50 to-rose-50 p-3 sm:gap-4 sm:p-4">
                   <div className="leading-tight">
                     <div className="text-[10.5px] font-semibold uppercase tracking-wider text-slate-500">Course fee</div>
                     <div className="text-2xl font-extrabold text-rose-600">{inr(program.fee)}</div>
@@ -242,10 +250,8 @@ export default function BalaSamskritiClient() {
             <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-[0.8fr_1.2fr]">
               <motion.div {...fade} className="relative mx-auto w-full max-w-sm">
                 <div aria-hidden className="absolute inset-0 rounded-full bg-gradient-to-br from-amber-200 via-rose-100 to-teal-100 blur-2xl" />
-                <div className="relative mx-auto grid aspect-square w-full place-items-center rounded-full bg-gradient-to-br from-[#FFF4D6] to-white shadow-2xl shadow-amber-500/20 ring-8 ring-white">
-                  <div className="relative h-[78%] w-[55%]">
-                    <Image src="/assets/programs/bs-krishna.webp" alt="Little Krishna holding a plate of laddus" fill sizes="220px" className="object-contain mix-blend-multiply" />
-                  </div>
+                <div className="relative mx-auto aspect-square w-full">
+                  <Image src="/assets/programs/bs-krishna-reading.webp" alt="Little Krishna reading the Bhagavad Gita" fill sizes="384px" className="object-contain drop-shadow-xl" />
                 </div>
                 <div className="absolute -right-2 top-6 rotate-6 rounded-2xl bg-white px-4 py-2 text-sm font-bold text-rose-600 shadow-xl ring-1 ring-rose-100">Ages {program.ageMin ?? 6}–{program.ageMax ?? 13}</div>
                 <div className="absolute -left-2 bottom-8 -rotate-6 rounded-2xl bg-white px-4 py-2 text-sm font-bold text-vk-600 shadow-xl ring-1 ring-vk-100">Every Sunday</div>
@@ -348,16 +354,7 @@ export default function BalaSamskritiClient() {
             </div>
           </section>
 
-          {/* mobile sticky bar */}
-          <div className="fixed inset-x-0 bottom-0 z-40 flex items-center gap-3 border-t border-slate-200 bg-white/95 px-4 py-3 backdrop-blur md:hidden">
-            <div className="leading-tight">
-              <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Course fee</div>
-              <div className="text-lg font-extrabold text-slate-800">{inr(program.fee)}</div>
-            </div>
-            <button type="button" onClick={goRegister} className="ml-auto inline-flex h-11 items-center gap-1.5 rounded-full bg-vk-500 px-6 font-bold text-white shadow-md">
-              Register <ArrowRight className="h-4 w-4" />
-            </button>
-          </div>
+          <FloatingRegister onClick={goRegister} disabled={!canRegister} />
         </main>
       </MotionConfig>
     </PageLayout>
@@ -386,8 +383,10 @@ function RegistrationCard({ program, loaded, canRegister, phones }: { program: P
   const validate = () => {
     const e: Record<string, string> = {};
     if (!form.name.trim()) e.name = "Enter the child's name";
+    else if (form.name.trim().length < 2) e.name = "Enter the child's full name";
     if (!form.age) e.age = "Choose the age";
     if (!form.parentName.trim()) e.parentName = "Enter the parent's name";
+    else if (form.parentName.trim().length < 2) e.parentName = "Enter the parent's full name";
     if (!/^[6-9]\d{9}$/.test(cleanMobile(form.mobile))) e.mobile = "Enter a valid 10-digit WhatsApp number";
     if (form.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) e.email = "Enter a valid email, or leave it blank";
     if (program.venues.length && !form.venue) e.venue = "Choose a venue";
@@ -480,97 +479,144 @@ function RegistrationCard({ program, loaded, canRegister, phones }: { program: P
   }
 
   const inputCls = (k: string) =>
-    `h-12 w-full rounded-xl border bg-white px-4 text-[15px] text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-vk-400 focus:ring-4 focus:ring-vk-100 ${errors[k] ? "border-rose-400" : "border-slate-200"}`;
+    `h-12 w-full rounded-xl border bg-slate-50/60 px-4 text-base text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-vk-400 focus:bg-white focus:ring-4 focus:ring-vk-100 ${errors[k] ? "border-rose-400 bg-rose-50/40" : "border-slate-200"}`;
 
   return (
-    <form onSubmit={submit} noValidate className="relative rounded-[1.75rem] bg-white p-5 shadow-xl shadow-vk-900/5 ring-1 ring-slate-100 sm:p-7">
-      <div className="mb-5 flex items-center justify-between gap-3 rounded-2xl bg-gradient-to-r from-vk-50 to-amber-50 px-4 py-3">
-        <div>
-          <div className="text-sm font-bold text-slate-800">{program.name}</div>
-          <div className="text-xs text-slate-500">{program.duration ? `${program.duration} · ` : ""}from {istShort(program.startDate)}</div>
-        </div>
-        <div className="text-right">
-          <div className="text-xl font-extrabold text-slate-800">{inr(program.fee)}</div>
-          <div className="text-[11px] text-slate-500">full course</div>
-        </div>
-      </div>
-
-      <fieldset disabled={!canRegister || submitting} className="space-y-4 disabled:opacity-100">
-        <div className="text-xs font-bold uppercase tracking-wider text-slate-400">Child</div>
-        <div className="grid gap-4 sm:grid-cols-[1fr_8rem]">
-          <Field label="Child's name" error={errors.name}>
-            <input className={inputCls("name")} value={form.name} onChange={(e) => set("name", e.target.value)} autoComplete="off" placeholder="Full name" />
-          </Field>
-          <Field label="Age" error={errors.age}>
-            <select className={inputCls("age")} value={form.age} onChange={(e) => set("age", e.target.value)}>
-              <option value="">Age</option>
-              {ageOptions.map((a) => <option key={a} value={a}>{a} years</option>)}
-            </select>
-          </Field>
+    <form onSubmit={submit} noValidate className="relative overflow-hidden rounded-[1.75rem] bg-white shadow-xl shadow-vk-900/10 ring-1 ring-slate-100">
+      <div className="h-1.5 bg-gradient-to-r from-amber-400 via-rose-500 to-vk-500" />
+      <div className="p-5 sm:p-8">
+        <div className="mb-6 flex items-center justify-between gap-3 rounded-2xl bg-gradient-to-r from-vk-50 to-amber-50 px-4 py-3.5 ring-1 ring-vk-100">
+          <div className="min-w-0">
+            <div className="truncate text-sm font-bold text-slate-800">{program.name}</div>
+            <div className="text-xs text-slate-500">{program.duration ? `${program.duration} · ` : ""}from {istShort(program.startDate)}</div>
+          </div>
+          <div className="shrink-0 text-right">
+            <div className="text-xl font-extrabold text-rose-600">{inr(program.fee)}</div>
+            <div className="text-[11px] text-slate-500">full course</div>
+          </div>
         </div>
 
-        <div className="pt-1 text-xs font-bold uppercase tracking-wider text-slate-400">Parent</div>
-        <Field label="Parent's name" error={errors.parentName}>
-          <input className={inputCls("parentName")} value={form.parentName} onChange={(e) => set("parentName", e.target.value)} autoComplete="name" placeholder="Full name" />
-        </Field>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="WhatsApp number" error={errors.mobile}>
-            <div className="relative">
-              <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[15px] text-slate-400">+91</span>
-              <input className={`${inputCls("mobile")} pl-12`} value={form.mobile} onChange={(e) => set("mobile", e.target.value)} inputMode="numeric" autoComplete="tel-national" placeholder="10-digit number" maxLength={14} />
+        <fieldset disabled={!canRegister || submitting} className="min-w-0 space-y-7 disabled:opacity-100">
+          <FormStep n={1} icon={Baby} title="Child details">
+            <div className="grid gap-4 sm:grid-cols-[1fr_9rem]">
+              <Field label="Child's name" error={errors.name} required>
+                <input className={inputCls("name")} value={form.name} onChange={(e) => set("name", e.target.value)} autoComplete="off" placeholder="Full name" />
+              </Field>
+              <Field label="Age" error={errors.age} required>
+                <select className={inputCls("age")} value={form.age} onChange={(e) => set("age", e.target.value)}>
+                  <option value="">Select</option>
+                  {ageOptions.map((a) => <option key={a} value={a}>{a} years</option>)}
+                </select>
+              </Field>
             </div>
-          </Field>
-          <Field label="Email (optional)" error={errors.email}>
-            <input className={inputCls("email")} value={form.email} onChange={(e) => set("email", e.target.value)} type="email" autoComplete="email" placeholder="you@example.com" />
-          </Field>
-        </div>
+          </FormStep>
 
-        {program.venues.length > 0 && (
-          <Field label="Venue" error={errors.venue}>
-            <div className="grid gap-3 sm:grid-cols-2">
-              {program.venues.map((v) => {
-                const on = form.venue === v.name;
-                return (
-                  <button
-                    key={v.name}
-                    type="button"
-                    onClick={() => set("venue", v.name)}
-                    aria-pressed={on}
-                    className={`flex items-center gap-3 rounded-xl border-2 px-4 py-3 text-left transition ${on ? "border-vk-500 bg-vk-50" : "border-slate-200 hover:border-vk-200"}`}
-                  >
-                    <MapPin className={`h-5 w-5 ${on ? "text-vk-600" : "text-slate-400"}`} />
-                    <span className="font-semibold text-slate-800">{v.name}</span>
-                    <span className={`ml-auto grid h-5 w-5 place-items-center rounded-full border-2 ${on ? "border-vk-500 bg-vk-500" : "border-slate-300"}`}>
-                      {on && <span className="h-2 w-2 rounded-full bg-white" />}
-                    </span>
-                  </button>
-                );
-              })}
+          <FormStep n={2} icon={UserRound} title="Parent details" note="Name & mobile required">
+            <Field label="Parent's name" error={errors.parentName} required>
+              <input className={inputCls("parentName")} value={form.parentName} onChange={(e) => set("parentName", e.target.value)} autoComplete="name" placeholder="Full name" />
+            </Field>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field label="WhatsApp number" error={errors.mobile} required>
+                <div className="relative">
+                  <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 border-r border-slate-200 pr-3 text-base font-medium text-slate-500">+91</span>
+                  <input className={`${inputCls("mobile")} pl-[4.25rem]`} value={form.mobile} onChange={(e) => set("mobile", e.target.value)} inputMode="numeric" autoComplete="tel-national" placeholder="10-digit number" maxLength={14} />
+                </div>
+              </Field>
+              <Field label="Email (optional)" error={errors.email}>
+                <input className={inputCls("email")} value={form.email} onChange={(e) => set("email", e.target.value)} type="email" inputMode="email" autoComplete="email" placeholder="you@example.com" />
+              </Field>
             </div>
-          </Field>
-        )}
-      </fieldset>
+          </FormStep>
 
-      {error && <p role="alert" className="mt-4 rounded-xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</p>}
-
-      {canRegister ? (
-        <button type="submit" disabled={submitting} className="mt-6 inline-flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-vk-500 to-vk-600 text-base font-bold text-white shadow-lg shadow-vk-500/25 transition hover:from-vk-600 hover:to-vk-700 disabled:opacity-70">
-          {submitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <Lock className="h-4 w-4" />}
-          {submitting ? "Please wait…" : `Pay ${inr(program.fee)} & register`}
-        </button>
-      ) : (
-        <div className="mt-6 rounded-2xl bg-amber-50 px-4 py-4 text-center text-sm text-amber-800">
-          {loaded === "loading" ? (
-            <span className="inline-flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Loading…</span>
-          ) : program.full ? (
-            "All seats are filled for this batch."
-          ) : (
-            <>Online registration isn&apos;t open right now. Please call <a className="font-semibold underline" href={telHref(phones[0])}>{fmtPhone(phones[0])}</a> to register.</>
+          {program.venues.length > 0 && (
+            <FormStep n={3} icon={MapPin} title="Choose venue">
+              <Field label="Venue" error={errors.venue} required hideLabel>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {program.venues.map((v) => {
+                    const on = form.venue === v.name;
+                    return (
+                      <button
+                        key={v.name}
+                        type="button"
+                        onClick={() => set("venue", v.name)}
+                        aria-pressed={on}
+                        className={`flex min-h-14 items-center gap-3 rounded-xl border-2 px-4 py-3 text-left transition ${on ? "border-vk-500 bg-vk-50 shadow-sm" : "border-slate-200 bg-white hover:border-vk-200"}`}
+                      >
+                        <MapPin className={`h-5 w-5 shrink-0 ${on ? "text-vk-600" : "text-slate-400"}`} />
+                        <span className="font-semibold text-slate-800">{v.name}</span>
+                        <span className={`ml-auto grid h-5 w-5 shrink-0 place-items-center rounded-full border-2 ${on ? "border-vk-500 bg-vk-500" : "border-slate-300"}`}>
+                          {on && <span className="h-2 w-2 rounded-full bg-white" />}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </Field>
+            </FormStep>
           )}
-        </div>
-      )}
-      <p className="mt-3 flex items-center justify-center gap-1.5 text-xs text-slate-400"><ShieldCheck className="h-3.5 w-3.5" /> Secured by Razorpay</p>
+        </fieldset>
+
+        {error && <p role="alert" className="mt-5 rounded-xl bg-rose-50 px-4 py-3 text-sm text-rose-700">{error}</p>}
+
+        {canRegister ? (
+          <button type="submit" disabled={submitting} className="mt-7 inline-flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-rose-600 to-orange-500 text-base font-bold text-white shadow-lg shadow-rose-500/25 transition hover:brightness-110 disabled:opacity-70">
+            {submitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <Lock className="h-4 w-4" />}
+            {submitting ? "Please wait…" : `Pay ${inr(program.fee)} & register`}
+          </button>
+        ) : (
+          <div className="mt-7 rounded-2xl bg-amber-50 px-4 py-4 text-center text-sm text-amber-800">
+            {loaded === "loading" ? (
+              <span className="inline-flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Loading…</span>
+            ) : program.full ? (
+              "All seats are filled for this batch."
+            ) : (
+              <>Online registration isn&apos;t open right now. Please call <a className="font-semibold underline" href={telHref(phones[0])}>{fmtPhone(phones[0])}</a> to register.</>
+            )}
+          </div>
+        )}
+        <p className="mt-3 flex items-center justify-center gap-1.5 text-xs text-slate-400"><ShieldCheck className="h-3.5 w-3.5" /> Secured by Razorpay</p>
+      </div>
     </form>
+  );
+}
+
+function FormStep({ n, icon: Icon, title, note, children }: { n: number; icon: typeof MapPin; title: string; note?: string; children: ReactNode }) {
+  return (
+    <section className="space-y-4">
+      <div className="flex items-center gap-3">
+        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-vk-500 to-vk-600 text-white shadow-md shadow-vk-500/25"><Icon className="h-[18px] w-[18px]" /></span>
+        <div className="min-w-0 flex-1 leading-tight">
+          <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Step {n}</div>
+          <div className="text-base font-bold text-slate-800">{title}</div>
+        </div>
+        {note && <span className="rounded-full bg-rose-50 px-2.5 py-1 text-[11px] font-semibold text-rose-600 ring-1 ring-rose-100">{note}</span>}
+      </div>
+      {children}
+    </section>
+  );
+}
+
+/** Floating action button, placed and shaped like the WhatsApp chat button. Fades out while the form is on screen. */
+function FloatingRegister({ onClick, disabled }: { onClick: () => void; disabled?: boolean }) {
+  const [hidden, setHidden] = useState(false);
+  useEffect(() => {
+    const el = document.getElementById("register");
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(([e]) => setHidden(e.isIntersecting), { threshold: 0.15 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  if (disabled) return null;
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label="Register now"
+      className={`fixed bottom-[calc(var(--bottom-nav-space)+20px)] right-4 z-50 inline-flex h-14 items-center gap-2 rounded-full bg-gradient-to-r from-rose-600 to-orange-500 pl-3 pr-5 text-[15px] font-bold text-white shadow-[0_10px_24px_-8px_rgba(225,29,72,0.6)] ring-4 ring-white/90 transition duration-300 hover:scale-105 active:scale-95 md:bottom-6 md:right-6 ${hidden ? "pointer-events-none translate-y-6 opacity-0" : "opacity-100"}`}
+    >
+      <span className="grid h-8 w-8 place-items-center rounded-full bg-white/20"><UserPlus className="h-[18px] w-[18px]" /></span>
+      Register
+    </button>
   );
 }
 
@@ -598,12 +644,14 @@ function Faq({ faqs }: { faqs: { q: string; a: string }[] }) {
   );
 }
 
-function Field({ label, error, children }: { label: string; error?: string; children: ReactNode }) {
+function Field({ label, error, children, required, hideLabel }: { label: string; error?: string; children: ReactNode; required?: boolean; hideLabel?: boolean }) {
   return (
-    <label className="block">
-      <span className="mb-1.5 block text-sm font-semibold text-slate-700">{label}</span>
+    <label className="block min-w-0">
+      <span className={hideLabel ? "sr-only" : "mb-1.5 block text-sm font-semibold text-slate-700"}>
+        {label}{required && <span className="ml-0.5 text-rose-500" aria-hidden>*</span>}
+      </span>
       {children}
-      {error && <span className="mt-1 block text-xs font-medium text-rose-600">{error}</span>}
+      {error && <span role="alert" className="mt-1.5 block text-xs font-medium text-rose-600">{error}</span>}
     </label>
   );
 }
