@@ -26,7 +26,7 @@ import {
   ShoppingBag,
   Package,
   Settings2,
-  type LucideIcon,
+  type LucideIcon, GraduationCap
 } from "lucide-react";
 import NextImage from "next/image";
 import Link from "next/link";
@@ -84,6 +84,7 @@ const systemItems: NavItem[] = [
   { title: "Preacher Dashboard", url: "/admin/preacher", icon: BookOpen },
   { title: "Volunteers", url: "/admin/volunteers", icon: HandHeart },
   { title: "Gita Course", url: "/admin/gita-course", icon: BookOpen },
+  { title: "Programs", url: "/admin/programs", icon: GraduationCap },
   { title: "Preachers", url: "/admin/preachers", icon: UserCheck },
   { title: "Settings", url: "/admin/settings", icon: Settings },
 ];
