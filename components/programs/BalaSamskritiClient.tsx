@@ -5,7 +5,7 @@ import Image from "next/image";
 import { MotionConfig, motion } from "framer-motion";
 import {
   ArrowRight, BookOpen, CalendarDays, CheckCircle2, ChevronDown, Clock, Flower2, Hourglass, Loader2, Lock, MapPin,
-  MessageCircle, Phone, ShieldCheck, Sparkles, Sun, Users,
+  Heart, MessageCircle, Phone, ShieldCheck, Sparkles, Sun, Users,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import { SEVA_WHATSAPP_NUMBER } from "@/components/WhatsAppFloatButton";
@@ -65,10 +65,17 @@ const FALLBACK: Program = {
 };
 
 const LEARN = [
-  { icon: Sun, title: "Life skills", text: "Discipline, focus, respect and good habits: the everyday skills that help children grow into confident, kind people.", tint: "from-amber-100 to-orange-50 text-amber-700" },
-  { icon: BookOpen, title: "Gita for kids", text: "The timeless wisdom of the Bhagavad-gita, told through stories and simple lessons children can understand and live by.", tint: "from-vk-100 to-vk-50 text-vk-600" },
-  { icon: Flower2, title: "Meditation", text: "Gentle mantra meditation that helps young minds become calm, steady and joyful.", tint: "from-teal-100 to-emerald-50 text-teal-700" },
-  { icon: Sparkles, title: "And much more", text: "Vedic culture and values brought alive through activities that make every Sunday something to look forward to.", tint: "from-fuchsia-100 to-pink-50 text-fuchsia-700" },
+  { photo: "/assets/programs/bs-write.webp", icon: Sun, title: "Life skills", text: "Discipline, focus, respect and good habits: the everyday skills that help children grow into confident, kind people.", ring: "ring-amber-300", chip: "bg-amber-400", glow: "from-amber-100" },
+  { photo: "/assets/programs/bs-reading.webp", icon: BookOpen, title: "Gita for kids", text: "The timeless wisdom of the Bhagavad-gita, told through stories and simple lessons children can understand and live by.", ring: "ring-vk-300", chip: "bg-vk-500", glow: "from-vk-100" },
+  { photo: "/assets/programs/bs-meditate.webp", icon: Flower2, title: "Meditation", text: "Gentle mantra meditation that helps young minds become calm, steady and joyful.", ring: "ring-teal-300", chip: "bg-teal-500", glow: "from-teal-100" },
+  { photo: "/assets/programs/bs-pray.webp", icon: Sparkles, title: "And much more", text: "Vedic culture and values brought alive through activities that make every Sunday something to look forward to.", ring: "ring-rose-300", chip: "bg-rose-500", glow: "from-rose-100" },
+];
+
+const WHY = [
+  { icon: Heart, title: "Values for life", text: "Honesty, gratitude and respect for parents, teachers and all living beings." },
+  { icon: Flower2, title: "A calm, focused mind", text: "Meditation and simple practices that help children concentrate." },
+  { icon: BookOpen, title: "Wisdom of the Gita", text: "Ancient answers, told in a way children love to listen to." },
+  { icon: Users, title: "Good friends, good company", text: "A happy Sunday circle of children growing up with the same values." },
 ];
 
 const istLong = (d: string) =>
@@ -138,30 +145,27 @@ export default function BalaSamskritiClient() {
     <PageLayout whatsappNumber={SEVA_WHATSAPP_NUMBER}>
       <MotionConfig reducedMotion="user">
         <main className="overflow-x-hidden bg-white pb-20 pt-[var(--header-h)] supports-[overflow:clip]:overflow-x-clip md:pb-0">
-          {/* ═════════════ HERO: the program banner ═════════════ */}
-          <section className="relative isolate overflow-hidden bg-gradient-to-b from-[#0B5FA5] via-[#1279C0] to-vk-50">
-            <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_85%_20%,rgba(20,184,166,0.35),transparent_55%),radial-gradient(ellipse_at_10%_90%,rgba(246,199,82,0.25),transparent_50%)]" />
+          {/* ═════════════ HERO: full-width program banner ═════════════ */}
+          <section className="relative bg-[#0B6FB8]">
             <h1 className="sr-only">Bala Samskriti: Vedic Culture &amp; Values for Kids</h1>
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="mx-auto max-w-6xl px-3 pt-4 sm:px-6 md:pt-8"
-            >
-              {/* Wide banner on tablet/laptop, the square poster on phones (the wide one's text is too small there). */}
-              <div className="overflow-hidden rounded-2xl shadow-2xl shadow-black/25 ring-4 ring-white/70 md:rounded-[1.75rem]">
-                <Image src={BANNER} alt={BANNER_ALT} width={1600} height={900} priority sizes="(min-width: 1152px) 1104px, 100vw" className="hidden h-auto w-full md:block" />
-                <Image src={POSTER} alt={BANNER_ALT} width={755} height={732} priority sizes="100vw" className="h-auto w-full md:hidden" />
-              </div>
-            </motion.div>
+            {/* Wide banner on tablet/laptop, the square poster on phones (the wide one's text is too small there). */}
+            <Image src={BANNER} alt={BANNER_ALT} width={1600} height={900} priority sizes="100vw" className="hidden h-auto w-full md:block" />
+            <Image src={POSTER} alt={BANNER_ALT} width={755} height={732} priority sizes="100vw" className="h-auto w-full md:hidden" />
+          </section>
 
-            {/* action bar */}
-            <div className="mx-auto max-w-6xl px-3 pb-10 pt-5 sm:px-6 md:pb-14">
-              <div className="flex flex-col gap-4 rounded-3xl bg-white/95 p-4 shadow-xl ring-1 ring-white backdrop-blur sm:p-5 md:flex-row md:items-center">
-                <ul className="grid flex-1 grid-cols-2 gap-2.5 lg:grid-cols-4">
+          {/* facts card, overlapping the banner's bottom edge */}
+          <div className="relative z-10 bg-[#FFF9EC]">
+            <div className="mx-auto -mt-6 max-w-6xl px-3 sm:px-6 md:-mt-14">
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.15 }}
+                className="flex flex-col gap-4 rounded-3xl bg-white p-4 shadow-2xl shadow-vk-900/15 ring-1 ring-slate-100 sm:p-5 md:flex-row md:items-center"
+              >
+                <ul className="grid flex-1 grid-cols-2 gap-3 lg:grid-cols-4">
                   {facts.map((f) => (
                     <li key={f.label} className="flex items-center gap-2.5">
-                      <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl text-white ${f.tint}`}><f.icon className="h-5 w-5" /></span>
+                      <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-2xl text-white shadow-md ${f.tint}`}><f.icon className="h-5 w-5" /></span>
                       <span className="min-w-0 leading-tight">
                         <span className="block text-[10.5px] font-semibold uppercase tracking-wider text-slate-500">{f.label}</span>
                         <span className="block text-[13px] font-bold text-slate-800">{f.value}</span>
@@ -169,7 +173,7 @@ export default function BalaSamskritiClient() {
                     </li>
                   ))}
                 </ul>
-                <div className="flex items-center gap-3 md:border-l md:border-slate-100 md:pl-5">
+                <div className="flex items-center gap-3 rounded-2xl bg-gradient-to-r from-amber-50 to-rose-50 p-3">
                   <div className="leading-tight">
                     <div className="text-[10.5px] font-semibold uppercase tracking-wider text-slate-500">Course fee</div>
                     <div className="text-2xl font-extrabold text-rose-600">{inr(program.fee)}</div>
@@ -177,27 +181,88 @@ export default function BalaSamskritiClient() {
                   <button
                     type="button"
                     onClick={goRegister}
-                    className="group ml-auto inline-flex h-12 items-center gap-2 whitespace-nowrap rounded-full bg-gradient-to-r from-rose-600 to-orange-500 px-6 text-[15px] font-bold text-white shadow-lg shadow-rose-500/25 transition hover:brightness-110"
+                    className="group ml-auto inline-flex h-12 items-center gap-2 whitespace-nowrap rounded-full bg-gradient-to-r from-rose-600 to-orange-500 px-6 text-[15px] font-bold text-white shadow-lg shadow-rose-500/30 transition hover:brightness-110"
                   >
                     Register now <ArrowRight className="h-5 w-5 transition group-hover:translate-x-0.5" />
                   </button>
                 </div>
+              </motion.div>
+            </div>
+          </div>
+
+          {/* ═════════════ WHAT THEY LEARN ═════════════ */}
+          <section className="relative overflow-hidden bg-[#FFF9EC] pb-20 pt-16 md:pt-20">
+            <div aria-hidden className="absolute -left-20 top-24 h-64 w-64 rounded-full bg-amber-200/40 blur-3xl" />
+            <div aria-hidden className="absolute -right-20 bottom-10 h-72 w-72 rounded-full bg-teal-200/40 blur-3xl" />
+            <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
+              <Heading eyebrow="What your child will learn" title="Learn big things in small sessions" sub="Every Sunday is a happy mix of learning, reflection and fun, made for young hearts and curious minds." />
+              <div className="mt-20 grid gap-x-5 gap-y-16 sm:grid-cols-2 lg:grid-cols-4">
+                {LEARN.map((l, i) => (
+                  <motion.div
+                    key={l.title}
+                    {...fade}
+                    transition={{ ...fade.transition, delay: i * 0.08 }}
+                    className={`group relative rounded-[1.75rem] bg-gradient-to-b ${l.glow} to-white px-6 pb-7 pt-20 text-center shadow-sm ring-1 ring-slate-100 transition hover:-translate-y-1.5 hover:shadow-xl`}
+                  >
+                    <div className={`absolute -top-12 left-1/2 h-28 w-28 -translate-x-1/2 overflow-hidden rounded-full bg-white shadow-lg ring-4 ${l.ring} ring-offset-4 ring-offset-[#FFF9EC] transition group-hover:scale-105`}>
+                      <Image src={l.photo} alt="" fill sizes="112px" className="scale-[1.15] object-cover" />
+                    </div>
+                    <span className={`absolute left-1/2 top-9 grid h-9 w-9 translate-x-7 place-items-center rounded-full text-white shadow-md ring-2 ring-white ${l.chip}`}>
+                      <l.icon className="h-4 w-4" />
+                    </span>
+                    <h3 className="text-lg font-bold text-slate-800">{l.title}</h3>
+                    <p className="mt-2 text-[14.5px] leading-relaxed text-slate-600">{l.text}</p>
+                  </motion.div>
+                ))}
               </div>
             </div>
           </section>
 
-          {/* ═════════════ WHAT THEY LEARN ═════════════ */}
+          {/* ═════════════ NUMBERS BAND ═════════════ */}
+          <section className="relative overflow-hidden bg-gradient-to-r from-vk-600 via-[#1279C0] to-teal-600 py-12 text-white">
+            <PeacockFeather className="absolute -left-6 -top-16 h-72 w-auto -rotate-[25deg] opacity-20" />
+            <PeacockFeather className="absolute -bottom-20 -right-4 h-72 w-auto rotate-[30deg] opacity-20" />
+            <div className="relative mx-auto grid max-w-5xl grid-cols-2 gap-8 px-4 text-center sm:px-6 md:grid-cols-4">
+              {[
+                { big: "3 hrs", small: "of joyful learning every Sunday" },
+                { big: (program.duration || "3 months").replace(/\s*months?/i, ""), small: "months of guided classes" },
+                { big: `${program.ageMin ?? 6}–${program.ageMax ?? 13}`, small: "years: the age group" },
+                { big: String(program.venues.length), small: `venue${program.venues.length === 1 ? "" : "s"} in Visakhapatnam` },
+              ].map((n, i) => (
+                <motion.div key={n.small} {...fade} transition={{ ...fade.transition, delay: i * 0.08 }}>
+                  <div className="font-serif text-4xl font-extrabold text-amber-300 drop-shadow sm:text-5xl">{n.big}</div>
+                  <div className="mt-1 text-sm text-white/85">{n.small}</div>
+                </motion.div>
+              ))}
+            </div>
+          </section>
+
+          {/* ═════════════ WHY ═════════════ */}
           <section className="bg-white py-16 md:py-20">
-            <div className="mx-auto max-w-6xl px-4 sm:px-6">
-              <Heading eyebrow="What your child will learn" title="Roots that last a lifetime" sub="Every Sunday is a mix of learning, reflection and fun, made for young hearts and curious minds." />
-              <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-                {LEARN.map((l, i) => (
-                  <motion.div key={l.title} {...fade} transition={{ ...fade.transition, delay: i * 0.08 }} className="group rounded-3xl border border-slate-100 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
-                    <span className={`grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br ${l.tint}`}><l.icon className="h-7 w-7" /></span>
-                    <h3 className="mt-5 text-lg font-bold text-slate-800">{l.title}</h3>
-                    <p className="mt-2 text-[14.5px] leading-relaxed text-slate-600">{l.text}</p>
-                  </motion.div>
-                ))}
+            <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-[0.8fr_1.2fr]">
+              <motion.div {...fade} className="relative mx-auto w-full max-w-sm">
+                <div aria-hidden className="absolute inset-0 rounded-full bg-gradient-to-br from-amber-200 via-rose-100 to-teal-100 blur-2xl" />
+                <div className="relative mx-auto grid aspect-square w-full place-items-center rounded-full bg-gradient-to-br from-[#FFF4D6] to-white shadow-2xl shadow-amber-500/20 ring-8 ring-white">
+                  <div className="relative h-[78%] w-[55%]">
+                    <Image src="/assets/programs/bs-krishna.webp" alt="Little Krishna holding a plate of laddus" fill sizes="220px" className="object-contain mix-blend-multiply" />
+                  </div>
+                </div>
+                <div className="absolute -right-2 top-6 rotate-6 rounded-2xl bg-white px-4 py-2 text-sm font-bold text-rose-600 shadow-xl ring-1 ring-rose-100">Ages {program.ageMin ?? 6}–{program.ageMax ?? 13}</div>
+                <div className="absolute -left-2 bottom-8 -rotate-6 rounded-2xl bg-white px-4 py-2 text-sm font-bold text-vk-600 shadow-xl ring-1 ring-vk-100">Every Sunday</div>
+              </motion.div>
+              <div>
+                <Heading align="left" eyebrow="Why Bala Samskriti" title="Give your child roots that last a lifetime" sub="In a world full of screens and hurry, Bala Samskriti gives children a calm, joyful space to learn the values and culture that shape good character." />
+                <div className="mt-8 grid gap-4 sm:grid-cols-2">
+                  {WHY.map((w, i) => (
+                    <motion.div key={w.title} {...fade} transition={{ ...fade.transition, delay: i * 0.07 }} className="flex gap-3 rounded-2xl bg-slate-50/80 p-4 ring-1 ring-slate-100">
+                      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-amber-400 to-rose-500 text-white shadow"><w.icon className="h-5 w-5" /></span>
+                      <span>
+                        <span className="block font-bold text-slate-800">{w.title}</span>
+                        <span className="mt-0.5 block text-sm leading-relaxed text-slate-600">{w.text}</span>
+                      </span>
+                    </motion.div>
+                  ))}
+                </div>
               </div>
             </div>
           </section>
@@ -265,9 +330,12 @@ export default function BalaSamskritiClient() {
           <section className="px-4 pb-16 sm:px-6">
             <div className="relative mx-auto max-w-5xl overflow-hidden rounded-[2rem] bg-gradient-to-br from-vk-500 via-vk-600 to-teal-600 px-6 py-12 text-center text-white shadow-xl sm:px-12">
               <PeacockFeather className="absolute -bottom-10 -right-6 h-64 w-auto rotate-[30deg] opacity-25" />
+              <div aria-hidden className="absolute bottom-0 left-4 hidden h-44 w-32 md:block">
+                <Image src="/assets/programs/bs-krishna.webp" alt="" fill sizes="128px" className="rounded-t-full bg-white/90 object-contain object-bottom p-2" />
+              </div>
               <h2 className="relative font-serif text-3xl font-bold sm:text-4xl">Give your child the gift of Samskriti</h2>
               <p className="relative mx-auto mt-3 max-w-xl text-white/85">
-                Starts {istLong(program.startDate)}. Seats fill up quickly, so register today.
+                Starts {istLong(program.startDate)}. Register early to reserve your child's place.
               </p>
               <div className="relative mt-7 flex flex-wrap justify-center gap-3">
                 <button type="button" onClick={goRegister} className="inline-flex h-12 items-center gap-2 rounded-full bg-white px-7 font-bold text-vk-700 shadow-lg transition hover:bg-amber-50">
