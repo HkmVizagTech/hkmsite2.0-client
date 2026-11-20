@@ -20,6 +20,7 @@ export default function AdminLogin() {
       const dest =
         user?.role === "donations_admin" ? "/donations/admin" :
         user?.role === "blogs_admin" ? "/admin/blogs" :
+        user?.role === "devotee" ? "/admin/programs" :
         "/admin";
       router.push(dest);
     }

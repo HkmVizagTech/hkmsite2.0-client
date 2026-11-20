@@ -156,6 +156,8 @@ const AdminSidebar = () => {
         )}
         {user?.role === "blogs_admin" ? (
           renderGroup("Blogs", [{ title: "Blogs", url: "/admin/blogs", icon: PenSquare }])
+        ) : user?.role === "devotee" ? (
+          renderGroup("Programs", [{ title: "Programs", url: "/admin/programs", icon: GraduationCap }])
         ) : user?.role === "shop_admin" ? (
           // Same reasoning as blogs_admin above: the layout bounces this role
           // out of every other /admin route, so showing the full menu would be

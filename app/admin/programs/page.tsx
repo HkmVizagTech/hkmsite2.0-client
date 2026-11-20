@@ -15,6 +15,7 @@ import {
   Search, Trash2, Users, XCircle,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "http://localhost:8080";
 const BASE = `${API_URL}/programs`;
@@ -111,6 +112,10 @@ const EMPTY_FORM = {
 };
 
 export default function AdminPrograms() {
+  // The "devotee" role is read-only: dashboard, filters and CSV export. All edit controls are hidden for it
+  // (the server also refuses those calls).
+  const { user } = useAuth();
+  const readOnly = user?.role === "devotee";
   const [programs, setPrograms] = useState<Program[]>([]);
   const [loadingPrograms, setLoadingPrograms] = useState(true);
   const [period, setPeriod] = useState<Period>("all");
@@ -363,7 +368,7 @@ export default function AdminPrograms() {
           <h1 className="text-2xl font-bold">Programs</h1>
           <p className="text-sm text-muted-foreground">Registrations and fee payments for courses and programs. No DCC receipt — a WhatsApp thank-you is sent instead.</p>
         </div>
-        <Button onClick={openNew}><Plus className="mr-1 h-4 w-4" /> New program</Button>
+        {!readOnly && <Button onClick={openNew}><Plus className="mr-1 h-4 w-4" /> New program</Button>}
       </div>
 
       {/* program picker */}
@@ -393,8 +398,8 @@ export default function AdminPrograms() {
               <a href={`${SITE}/${selected.slug}`} target="_blank" rel="noreferrer" className="inline-flex h-10 items-center gap-1 rounded-md border px-3 text-sm hover:bg-muted">
                 <ExternalLink className="h-4 w-4" /> /{selected.slug}
               </a>
-              <Button variant="outline" onClick={() => toggleOpen(selected)}>{selected.registrationOpen ? "Close registrations" : "Open registrations"}</Button>
-              <Button variant="outline" size="icon" onClick={() => openEdit(selected)} aria-label="Edit program"><Pencil className="h-4 w-4" /></Button>
+              {!readOnly && <Button variant="outline" onClick={() => toggleOpen(selected)}>{selected.registrationOpen ? "Close registrations" : "Open registrations"}</Button>}
+              {!readOnly && <Button variant="outline" size="icon" onClick={() => openEdit(selected)} aria-label="Edit program"><Pencil className="h-4 w-4" /></Button>}
             </div>
           )}
         </CardContent>
@@ -534,7 +539,7 @@ export default function AdminPrograms() {
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex justify-end gap-1">
-                        {busyId === r._id ? <Loader2 className="h-4 w-4 animate-spin" /> : (
+                        {readOnly ? null : busyId === r._id ? <Loader2 className="h-4 w-4 animate-spin" /> : (
                           <>
                             {(r.paymentStatus === "pending" || r.paymentStatus === "failed") && r.razorpayOrderId && (
                               <Button size="sm" variant="outline" onClick={() => rowAction(r, "check-payment")} title="Ask Razorpay whether this was paid">Check payment</Button>
@@ -588,8 +593,8 @@ export default function AdminPrograms() {
                       <td className="px-4 py-2">{p.counts.failed}</td>
                       <td className="px-4 py-2">{inr(p.counts.collected)}</td>
                       <td className="px-4 py-2 text-right">
-                        <Button size="icon" variant="ghost" onClick={() => openEdit(p)} aria-label="Edit"><Pencil className="h-4 w-4" /></Button>
-                        {p.counts.total === 0 && <Button size="icon" variant="ghost" onClick={() => deleteProgram(p)} aria-label="Delete"><Trash2 className="h-4 w-4" /></Button>}
+                        {!readOnly && <Button size="icon" variant="ghost" onClick={() => openEdit(p)} aria-label="Edit"><Pencil className="h-4 w-4" /></Button>}
+                        {!readOnly && p.counts.total === 0 && <Button size="icon" variant="ghost" onClick={() => deleteProgram(p)} aria-label="Delete"><Trash2 className="h-4 w-4" /></Button>}
                       </td>
                     </tr>
                   ))}

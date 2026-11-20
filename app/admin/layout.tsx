@@ -156,7 +156,25 @@ export default function AdminRootLayout({
     );
   }
 
-  if (user?.role !== "admin" && user?.role !== "blogs_admin" && user?.role !== "shop_admin") {
+  // A devotee account is scoped to /admin/programs only (read-only: dashboard,
+  // filters and CSV export). Every other admin area is off-limits.
+  if (user?.role === "devotee" && !pathname.startsWith("/admin/programs")) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-muted px-4 text-center">
+        <p className="text-lg font-semibold text-foreground">This account only has access to the Programs page.</p>
+        <div className="flex gap-3">
+          <a href="/admin/programs" className="rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground">
+            Go to Programs
+          </a>
+          <button onClick={() => { logout(); router.push("/admin/login"); }} className="rounded-full border border-border px-5 py-2.5 text-sm font-semibold text-muted-foreground">
+            Log Out
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (user?.role !== "admin" && user?.role !== "blogs_admin" && user?.role !== "shop_admin" && user?.role !== "devotee") {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-muted px-4 text-center">
         <p className="text-lg font-semibold text-foreground">This account doesn't have admin access.</p>
