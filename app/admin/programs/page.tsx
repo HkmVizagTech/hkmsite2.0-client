@@ -357,7 +357,7 @@ export default function AdminPrograms() {
         { label: "Paid", value: stats.paid, sub: inr(stats.collected), icon: CheckCircle2, cls: "text-green-700 bg-green-50", key: "paid" },
         { label: "Pending", value: stats.pending, sub: stats.pending ? `${inr(stats.pendingAmount)} not paid` : "—", icon: Clock, cls: "text-amber-700 bg-amber-50", key: "pending" },
         { label: "Failed", value: stats.failed, sub: "payment failed", icon: XCircle, cls: "text-red-700 bg-red-50", key: "failed" },
-        { label: "Collected", value: inr(stats.collected), sub: `${stats.whatsapp.sent || 0} WhatsApp sent`, icon: IndianRupee, cls: "text-emerald-700 bg-emerald-50", key: null },
+        { label: "Collected", value: inr(stats.collected), sub: readOnly ? "" : `${stats.whatsapp.sent || 0} WhatsApp sent`, icon: IndianRupee, cls: "text-emerald-700 bg-emerald-50", key: null },
       ]
     : [];
 
@@ -464,12 +464,12 @@ export default function AdminPrograms() {
               {venueOptions.map((v) => <option key={v} value={v}>{v}</option>)}
             </select>
           )}
-          <select className={selectCls} value={wa} onChange={(e) => setWa(e.target.value)}>
+          {!readOnly && <select className={selectCls} value={wa} onChange={(e) => setWa(e.target.value)}>
             <option value="">WhatsApp: any</option>
             <option value="sent">WhatsApp sent</option>
             <option value="failed">WhatsApp failed</option>
             <option value="not_sent">Not sent</option>
-          </select>
+          </select>}
           <label className="flex flex-col gap-1 text-xs text-muted-foreground">Registered from
             <input type="date" className={selectCls} value={from} onChange={(e) => setFrom(e.target.value)} />
           </label>
@@ -487,7 +487,54 @@ export default function AdminPrograms() {
       {/* registrations */}
       <Card>
         <CardContent className="p-0">
-          <div className="overflow-x-auto">
+          {/* phones: one card per registration */}
+          <div className="divide-y md:hidden">
+            {loadingRegs && <div className="p-8 text-center text-muted-foreground"><Loader2 className="mx-auto h-5 w-5 animate-spin" /></div>}
+            {!loadingRegs && items.length === 0 && <div className="p-8 text-center text-muted-foreground">No registrations match these filters.</div>}
+            {!loadingRegs && items.map((r) => (
+              <div key={r._id} className="space-y-2 p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="truncate font-semibold">{r.name}{r.age != null && <span className="font-normal text-muted-foreground"> · {r.age} yrs</span>}</div>
+                    {!selected && r.programId?.name && <div className="text-xs text-muted-foreground">{r.programId.name}</div>}
+                  </div>
+                  <Badge className={`shrink-0 ${STATUS_STYLE[r.paymentStatus]}`}>{STATUS_LABEL[r.paymentStatus]}</Badge>
+                </div>
+                <div className="text-sm">
+                  {r.parentName && <span>{r.parentName} · </span>}
+                  <a href={readOnly ? `tel:+91${r.mobile}` : `https://wa.me/91${r.mobile}`} target={readOnly ? undefined : "_blank"} rel="noreferrer" className="font-medium text-vk-600">{r.mobile}</a>
+                </div>
+                <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                  <span>{niceTime(r.createdAt)}</span>
+                  {r.venue && <span>{r.venue}</span>}
+                  <span>{r.amount ? inr(r.amount) : "Free"}</span>
+                  {!readOnly && (r.paymentStatus === "paid" || r.paymentStatus === "free") && <span className={WA_STYLE[r.whatsapp?.status || "not_sent"]}>WhatsApp {(r.whatsapp?.status || "not_sent").replace("_", " ")}</span>}
+                </div>
+                {r.paymentStatus === "failed" && r.failureReason && <div className="text-xs text-red-600">{r.failureReason}</div>}
+                {!readOnly && (
+                  <div className="flex flex-wrap gap-2 pt-1">
+                    {busyId === r._id ? <Loader2 className="h-4 w-4 animate-spin" /> : (
+                      <>
+                        {(r.paymentStatus === "pending" || r.paymentStatus === "failed") && r.razorpayOrderId && (
+                          <Button size="sm" variant="outline" onClick={() => rowAction(r, "check-payment")}>Check payment</Button>
+                        )}
+                        {(r.paymentStatus === "pending" || r.paymentStatus === "failed") && (
+                          <Button size="sm" variant="outline" onClick={() => { setPayFor(r); setPayMode("Cash"); setPayNote(""); }}>Mark paid</Button>
+                        )}
+                        {(r.paymentStatus === "paid" || r.paymentStatus === "free") && (
+                          <Button size="sm" variant="ghost" onClick={() => rowAction(r, "whatsapp")}>
+                            <MessageCircle className="mr-1 h-4 w-4" />{r.whatsapp?.status === "sent" ? "Resend" : "Send"}
+                          </Button>
+                        )}
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+          {/* tablets and desktops: the table */}
+          <div className="hidden overflow-x-auto md:block">
             <table className="w-full text-sm">
               <thead className="border-b bg-muted/40 text-left text-xs uppercase text-muted-foreground">
                 <tr>
@@ -498,7 +545,7 @@ export default function AdminPrograms() {
                   <th className="px-4 py-3">Venue</th>
                   <th className="px-4 py-3">Fee</th>
                   <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3">WhatsApp</th>
+                  {!readOnly && <th className="px-4 py-3">WhatsApp</th>}
                   <th className="px-4 py-3 text-right">Actions</th>
                 </tr>
               </thead>
@@ -519,7 +566,7 @@ export default function AdminPrograms() {
                     </td>
                     <td className="px-4 py-3">
                       {r.parentName && <div>{r.parentName}</div>}
-                      <a href={`https://wa.me/91${r.mobile}`} target="_blank" rel="noreferrer" className="text-vk-600 hover:underline">{r.mobile}</a>
+                      <a href={readOnly ? `tel:+91${r.mobile}` : `https://wa.me/91${r.mobile}`} target={readOnly ? undefined : "_blank"} rel="noreferrer" className="text-vk-600 hover:underline">{r.mobile}</a>
                       {r.email && <div className="text-xs text-muted-foreground">{r.email}</div>}
                     </td>
                     <td className="px-4 py-3">{r.venue || "—"}</td>
@@ -534,9 +581,9 @@ export default function AdminPrograms() {
                       {r.paymentStatus === "failed" && r.failureReason && <div className="mt-1 max-w-[180px] text-xs text-red-600">{r.failureReason}</div>}
                       {r.utm?.campaign && <div className="mt-1 text-xs text-muted-foreground">via {r.utm.campaign}</div>}
                     </td>
-                    <td className={`px-4 py-3 text-xs ${WA_STYLE[r.whatsapp?.status || "not_sent"]}`} title={r.whatsapp?.error || ""}>
+                    {!readOnly && <td className={`px-4 py-3 text-xs ${WA_STYLE[r.whatsapp?.status || "not_sent"]}`} title={r.whatsapp?.error || ""}>
                       {r.paymentStatus === "paid" || r.paymentStatus === "free" ? (r.whatsapp?.status || "not_sent").replace("_", " ") : "—"}
-                    </td>
+                    </td>}
                     <td className="px-4 py-3">
                       <div className="flex justify-end gap-1">
                         {readOnly ? null : busyId === r._id ? <Loader2 className="h-4 w-4 animate-spin" /> : (
