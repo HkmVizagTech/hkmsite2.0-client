@@ -31,7 +31,7 @@ const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") || "
  */
 export const FESTIVAL_PAGE: Record<string, string> = {
   radhashtami: "/radhashtami",
-  "govardhan-puja": "/govardhan-puja",
+  // Govardhan Puja is over for the year: its card is no longer listed (the /govardhan-puja page itself stays).
   ekadashi: "/ekadashi",
 };
 

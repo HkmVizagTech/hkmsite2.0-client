@@ -51,14 +51,6 @@ export const OTHER_DONATIONS: DonationCard[] = [
       "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783672760162-1783672758959-ChatGPTImageJul92026043444PM.png",
   },
   {
-    href: "/govardhan-puja",
-    title: "Govardhan Puja",
-    tagline: "Annual festival sevas",
-    blurb: "Participate in the Annakut offering and the worship of Giri Govardhan.",
-    image:
-      "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1790154839039-1790154837479-govardhan.webp",
-  },
-  {
     href: "/ekadashi",
     title: "Ekadashi Seva",
     tagline: "Observe the sacred fast",
