@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Donate · Hare Krishna Vaikuntham</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css" />
+<style>
+body { background: var(--bg-tint); }
+
+/* Hero with temple render */
+.donate-hero {
+  position: relative;
+  background: linear-gradient(135deg, #0F1A4D 0%, #1F36A0 45%, #2A47C7 100%);
+  overflow: hidden; min-height: 560px;
+  padding: 2rem 0 4rem;
+}
+.donate-hero::before {
+  content: ''; position: absolute; inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.08) 1.2px, transparent 1.2px);
+  background-size: 28px 28px; pointer-events: none;
+}
+.donate-hero .container { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; min-height: 480px; position: relative; z-index: 2; }
+@media (max-width: 900px) { .donate-hero .container { grid-template-columns: 1fr; text-align: center; } }
+.donate-hero-temple {
+  width: 100%; max-width: 480px; height: 420px; border-radius: 24px;
+  background: linear-gradient(180deg, #1a2a6e 0%, #4a3b8a 45%, #6b5a9a 85%);
+  position: relative; overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+  margin: 0 auto;
+}
+.donate-hero-temple svg { position: absolute; bottom: 0; left: 0; right: 0; width: 100%; height: 70%; }
+.donate-hero-text { color: #fff; }
+.donate-hero-script { font-family: 'Manrope', serif; font-style: italic; color: #F6C341; font-size: clamp(1.6rem, 2.5vw, 2rem); font-weight: 500; margin-bottom: 0.5rem; }
+.donate-hero-title { font-family: var(--font-heading); font-weight: 800; font-size: clamp(2.4rem, 5vw, 3.6rem); letter-spacing: -0.02em; line-height: 1; color: #fff; margin-bottom: 1.25rem; }
+.donate-hero-sub { color: rgba(255,255,255,0.9); font-size: 1.05rem; margin-bottom: 1.5rem; max-width: 520px; }
+.donate-hero-cta-row { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
+.donate-hero-80g { color: rgba(255,255,255,0.85); font-size: 0.85rem; font-style: italic; }
+@media (max-width: 900px) { .donate-hero-cta-row { justify-content: center; } }
+
+/* Popular donations grid */
+.pop-section { padding: 5rem 0; background: var(--bg-tint); }
+.pop-head { text-align: center; max-width: 740px; margin: 0 auto 3rem; }
+.pop-head .label { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.05em; color: var(--blue-700); margin-bottom: 0.5rem; }
+.pop-head h2 { font-size: clamp(2.4rem, 4vw, 3.5rem); line-height: 1.1; }
+
+.pop-grid {
+  display: grid; gap: 14px;
+  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  grid-template-areas:
+    "sqft anna anna2"
+    "sqft gau temple cowshed";
+  grid-template-areas:
+    "sqft anna temple"
+    "sqft gau cowshed";
+  height: 540px;
+}
+@media (max-width: 900px) { .pop-grid { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(3,180px); grid-template-areas: "sqft sqft" "anna gau" "temple cowshed"; height: auto; } }
+@media (max-width: 500px) { .pop-grid { grid-template-columns: 1fr; grid-template-rows: repeat(5, 200px); grid-template-areas: "sqft" "anna" "gau" "temple" "cowshed"; } }
+
+.pop-card { position: relative; border-radius: var(--r-lg); overflow: hidden; cursor: pointer; transition: transform 0.3s; }
+.pop-card:hover { transform: translateY(-4px); }
+.pop-card .overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 30%, rgba(0,0,0,0.8) 100%);
+}
+.pop-card .label {
+  position: absolute; bottom: 16px; left: 18px; right: 18px; color: #fff;
+  font-family: var(--font-heading); font-weight: 700; font-size: 1.4rem;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.pop-card .donate-mini-pill {
+  background: var(--gold); color: var(--ink); padding: 6px 14px;
+  border-radius: var(--r-pill); font-size: 0.78rem; font-weight: 700;
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.pop-card.sqft { grid-area: sqft; background: linear-gradient(135deg, #5d4a8a, #3F5FE5); }
+.pop-card.anna { grid-area: anna; background: linear-gradient(135deg, #a08840, #d4a35a); }
+.pop-card.gau { grid-area: gau; background: linear-gradient(135deg, #5a8a6a, #7ab38a); }
+.pop-card.temple { grid-area: temple; background: linear-gradient(135deg, #1F36A0, #3F5FE5); }
+.pop-card.cowshed { grid-area: cowshed; background: linear-gradient(135deg, #7a4a3a, #a87a5a); }
+
+/* Donor Privileges */
+.privileges { padding: 5rem 0; background: var(--bg-tint); }
+.privileges-head { text-align: center; max-width: 700px; margin: 0 auto 3rem; }
+.privileges-head h2 { font-size: clamp(2rem, 3.4vw, 2.8rem); margin-bottom: 0.75rem; }
+.privileges-head p { color: var(--ink-soft); }
+.priv-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; max-width: 1140px; margin: 0 auto; }
+@media (max-width: 900px) { .priv-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 500px) { .priv-grid { grid-template-columns: 1fr; } }
+.priv-card { background: #fff; border-radius: var(--r-lg); padding: 2rem 1.25rem; text-align: center; box-shadow: var(--shadow-sm); transition: all 0.25s; }
+.priv-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.priv-icon { width: 64px; height: 64px; border-radius: 50%; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 1.75rem; }
+.priv-card h4 { font-size: 1rem; margin-bottom: 0.5rem; }
+.priv-card p { color: var(--ink-soft); font-size: 0.85rem; }
+
+/* Trust strip */
+.trust { padding: 4rem 0; background: #fff; border-top: 1px solid var(--border-soft); border-bottom: 1px solid var(--border-soft); }
+.trust-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; max-width: 1140px; margin: 0 auto; padding: 0 1.75rem; align-items: center; text-align: center; }
+@media (max-width: 700px) { .trust-grid { grid-template-columns: 1fr 1fr; gap: 2rem; } }
+.trust-item .stat { font-family: var(--font-heading); font-weight: 800; font-size: 2.4rem; color: var(--blue-700); line-height: 1; }
+.trust-item .lbl { font-size: 0.82rem; color: var(--ink-soft); margin-top: 6px; letter-spacing: 0.04em; text-transform: uppercase; font-weight: 600; }
+
+/* Stories */
+.stories { padding: 5rem 0; background: var(--bg-soft); }
+.stories-head { text-align: center; max-width: 700px; margin: 0 auto 3rem; }
+.stories-head h2 { font-size: clamp(2rem, 3.4vw, 2.8rem); margin-bottom: 0.75rem; }
+.stories-head p { color: var(--ink-soft); }
+.stories-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; max-width: 1140px; margin: 0 auto; padding: 0 1.75rem; }
+@media (max-width: 900px) { .stories-grid { grid-template-columns: 1fr; } }
+.story-card { background: #fff; border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--shadow-sm); }
+.story-img { aspect-ratio: 16/10; }
+.story-body { padding: 1.5rem; }
+.story-body .author { font-size: 0.78rem; color: var(--blue-600); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+.story-body h4 { font-size: 1.1rem; margin-bottom: 0.5rem; line-height: 1.3; }
+.story-body p { color: var(--ink-soft); font-size: 0.9rem; line-height: 1.6; }
+
+/* Bottom CTA */
+.bottom-cta { padding: 5rem 0; background: linear-gradient(135deg, #1F36A0 0%, #2A47C7 100%); color: #fff; text-align: center; }
+.bottom-cta h2 { color: #fff; font-size: clamp(2rem, 3.6vw, 3rem); margin-bottom: 1rem; line-height: 1.15; }
+.bottom-cta p { color: rgba(255,255,255,0.9); font-size: 1.05rem; margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto; }
+</style>
+</head>
+<body>
+<div id="top-bar"></div>
+<div id="main-nav"></div>
+
+<!-- HERO with dark donate theme -->
+<section class="donate-hero">
+  <div class="container">
+    <div class="donate-hero-temple">
+      <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYEnd meet">
+        <defs><linearGradient id="dt1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d4a35a"/><stop offset="0.5" stop-color="#c89060"/><stop offset="1" stop-color="#5a4080"/></linearGradient></defs>
+        <path d="M180 280 L180 100 Q200 50 220 100 L220 280 Z" fill="url(#dt1)"/>
+        <rect x="120" y="160" width="60" height="120" fill="url(#dt1)" opacity="0.85"/>
+        <rect x="220" y="160" width="60" height="120" fill="url(#dt1)" opacity="0.85"/>
+        <ellipse cx="150" cy="160" rx="30" ry="20" fill="#5a4080"/>
+        <ellipse cx="250" cy="160" rx="30" ry="20" fill="#5a4080"/>
+        <rect x="135" y="200" width="12" height="30" rx="6" fill="#7bb37b" opacity="0.8"/>
+        <rect x="155" y="200" width="12" height="30" rx="6" fill="#7bb37b" opacity="0.8"/>
+        <rect x="234" y="200" width="12" height="30" rx="6" fill="#7bb37b" opacity="0.8"/>
+        <rect x="254" y="200" width="12" height="30" rx="6" fill="#7bb37b" opacity="0.8"/>
+        <path d="M180 240 Q180 220 200 220 Q220 220 220 240 L220 280 L180 280Z" fill="#a07050"/>
+      </svg>
+    </div>
+    <div class="donate-hero-text">
+      <div class="donate-hero-script">Hare Krishna Vaikuntham</div>
+      <h1 class="donate-hero-title">MANDIR NIRMAN SEVA</h1>
+      <p class="donate-hero-sub">Donate for the construction of the Sri Radha Krishna Temple at Vizag — receive special prasadam at your home.</p>
+      <div class="donate-hero-cta-row">
+        <a href="donate-seva.html" class="btn btn-pill-gold">
+          <svg class="icon" viewBox="0 0 24 24" style="font-size:18px;color:#1F36A0"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill="currentColor" stroke="none"/></svg>
+          Donate Now
+        </a>
+        <span class="donate-hero-80g">Avail 80G Tax Benefit</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Popular donations -->
+<section class="pop-section">
+  <div class="container">
+    <div class="pop-head">
+      <div class="label">Popular Donations</div>
+      <h2>Transform lives with your contribution towards Society.</h2>
+    </div>
+
+    <div class="pop-grid">
+      <a href="donate-seva.html" class="pop-card sqft">
+        <div class="overlay"></div>
+        <div class="label">Square Feet Seva
+          <span class="donate-mini-pill">Donate <svg class="icon" viewBox="0 0 24 24" style="font-size:12px"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+        </div>
+      </a>
+      <a href="donate-seva.html" class="pop-card anna">
+        <div class="overlay"></div>
+        <div class="label">Anna Daan Seva
+          <span class="donate-mini-pill">Donate <svg class="icon" viewBox="0 0 24 24" style="font-size:12px"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+        </div>
+      </a>
+      <a href="donate-seva.html" class="pop-card temple">
+        <div class="overlay"></div>
+        <div class="label">Temple Donation
+          <span class="donate-mini-pill">Donate <svg class="icon" viewBox="0 0 24 24" style="font-size:12px"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+        </div>
+      </a>
+      <a href="donate-seva.html" class="pop-card gau">
+        <div class="overlay"></div>
+        <div class="label">Gau Seva
+          <span class="donate-mini-pill">Donate <svg class="icon" viewBox="0 0 24 24" style="font-size:12px"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+        </div>
+      </a>
+      <a href="donate-seva.html" class="pop-card cowshed">
+        <div class="overlay"></div>
+        <div class="label">Cow Shed Seva
+          <span class="donate-mini-pill">Donate <svg class="icon" viewBox="0 0 24 24" style="font-size:12px"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Donor Privileges -->
+<section class="privileges">
+  <div class="container">
+    <div class="privileges-head">
+      <h2>Donor Privileges</h2>
+      <p>Every devotee who contributes to the temple's mission receives these blessings and benefits</p>
+    </div>
+    <div class="priv-grid">
+      <div class="priv-card">
+        <div class="priv-icon" style="background:linear-gradient(135deg,#EBF1FF,#B7CCFF);color:#1F36A0">🪔</div>
+        <h4>Prasadam at Home</h4>
+        <p>Receive blessed prasadam delivered every month</p>
+      </div>
+      <div class="priv-card">
+        <div class="priv-icon" style="background:linear-gradient(135deg,#FFF1E5,#FCDDC2);color:#7B2E0F">🙏</div>
+        <h4>Sankalpam Puja</h4>
+        <p>Your name will be chanted in the temple's daily worship</p>
+      </div>
+      <div class="priv-card">
+        <div class="priv-icon" style="background:linear-gradient(135deg,#E5F5E8,#B4E0BC);color:#1F5E2A">📜</div>
+        <h4>80G Tax Benefit</h4>
+        <p>Government-recognized exemption certificate provided</p>
+      </div>
+      <div class="priv-card">
+        <div class="priv-icon" style="background:linear-gradient(135deg,#FFF7E5,#FCE9B0);color:#7B5710">🎫</div>
+        <h4>Priority Access</h4>
+        <p>VIP entry to special festivals and donor events</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Trust strip -->
+<section class="trust">
+  <div class="trust-grid">
+    <div class="trust-item"><div class="stat">12,500+</div><div class="lbl">Generous Donors</div></div>
+    <div class="trust-item"><div class="stat">3.5L</div><div class="lbl">Sq. Ft. Goal</div></div>
+    <div class="trust-item"><div class="stat">₹50L+</div><div class="lbl">Raised So Far</div></div>
+    <div class="trust-item"><div class="stat">15+</div><div class="lbl">Active Sevas</div></div>
+  </div>
+</section>
+
+<!-- Donor stories -->
+<section class="stories">
+  <div class="container">
+    <div class="stories-head">
+      <h2>Donor Stories</h2>
+      <p>Hear from devotees who have made the temple their family</p>
+    </div>
+    <div class="stories-grid">
+      <div class="story-card">
+        <div class="story-img" style="background:linear-gradient(135deg,#5d4a8a,#3F5FE5)"></div>
+        <div class="story-body">
+          <div class="author">Rameshwar Nikam · Vizag</div>
+          <h4>"This temple has been a blessing for our family"</h4>
+          <p>We've been supporting the Anna Daan seva for two years now. Every plate we sponsor brings such joy. The prasadam that comes to our home each month reminds us we're part of something divine.</p>
+        </div>
+      </div>
+      <div class="story-card">
+        <div class="story-img" style="background:linear-gradient(135deg,#a08840,#d4a35a)"></div>
+        <div class="story-body">
+          <div class="author">Swati Saini · Hyderabad</div>
+          <h4>"Sponsoring a brick — my eternal mark"</h4>
+          <p>I sponsored a square foot of the temple in memory of my mother. Knowing that her name will be part of this divine abode forever is something no amount of money can match.</p>
+        </div>
+      </div>
+      <div class="story-card">
+        <div class="story-img" style="background:linear-gradient(135deg,#5a8a6a,#7ab38a)"></div>
+        <div class="story-body">
+          <div class="author">Akash Srivastava · Bangalore</div>
+          <h4>"Gau Seva transformed how I see service"</h4>
+          <p>Visiting the gau shala changed my perspective. Now I contribute monthly for fodder, and twice a year I bring my children for a day of seva. It's the best gift I can give them.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Bottom CTA -->
+<section class="bottom-cta">
+  <div class="container">
+    <h2>Be part of building Vizag's grandest temple</h2>
+    <p>Every contribution — big or small — brings us closer to completing this divine vision for Lord Krishna.</p>
+    <a href="donate-seva.html" class="btn btn-pill-gold" style="font-size:1rem">
+      <svg class="icon" viewBox="0 0 24 24" style="font-size:18px"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill="currentColor" stroke="none"/></svg>
+      Donate Now
+    </a>
+  </div>
+</section>
+
+<div id="main-footer"></div>
+<script src="shared.js"></script>
+</body>
+</html>
