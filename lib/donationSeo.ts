@@ -342,6 +342,33 @@ export const DONATION_SEO = {
         "Damodar (Kartik) month at ISKCON Gambheeram, Visakhapatnam — daily lamp offering (Deep Daan), Damodarashtakam, Annadana and Vaishnav Bhojan.",
     },
   },
+  "kartik-purnima": {
+    path: "/kartik-purnima",
+    title: "Kartik Purnima Seva Donation",
+    description:
+      "Offer Annadana, Gau Seva and Deep Daan on Kartik Purnima, 24 November 2026, the full moon that completes Damodar month, at ISKCON Gambheeram Visakhapatnam. 80G tax benefit.",
+    keywords: ["kartik purnima 2026 Visakhapatnam", "kartik purnima seva", "kartika pournami deep daan", "karthika pournami Vizag", "108 deep daan", "rasa yatra seva", "damodar month last day", ...LOCAL],
+    ogImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793859966653-1793859966061-damodaramonthlandscape1920x730.png",
+    breadcrumb: "Kartik Purnima",
+    h1: "Kartik Purnima Seva — 24 November 2026 in Visakhapatnam",
+    intro: [
+      "Kartik Purnima, Tuesday 24 November 2026, is the full moon that completes Damodar month: the last evening of lamps for Sri Yashoda Damodara, Rasa Yatra and the end of Chaturmasya, at Hare Krishna Vaikuntham, Gambheeram.",
+      BENEFIT,
+    ],
+    sevas: [
+      { name: "Annadana Seva", amounts: [1100, 2100, 3100, 5555, 9000, 11000], note: "Eligible for 80G" },
+      { name: "Gau Seva", amounts: [1500, 2500, 3500, 5500, 9500, 11500], note: "Eligible for 80G" },
+      { name: "Kartik Purnima Deep Daan", amounts: [1100, 2100, 3100, 5555, 9000, 11000], note: "A ghee lamp on the full moon of Kartik" },
+      { name: "108 Deep Daan", amounts: [1100, 2100, 3100, 5555, 9000, 11000] },
+    ],
+    event: {
+      name: "Kartik Purnima 2026",
+      startDate: "2026-11-24",
+      endDate: "2026-11-24",
+      description:
+        "Kartik Purnima at ISKCON Gambheeram, Visakhapatnam — the full moon that completes Damodar month, with Deep Daan, Annadana and Gau Seva.",
+    },
+  },
   "vaikuntha-ekadashi": {
     path: "/vaikuntha-ekadashi",
     title: "Vaikuntha Ekadashi Seva Donation",

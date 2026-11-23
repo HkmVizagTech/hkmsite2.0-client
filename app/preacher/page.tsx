@@ -29,6 +29,7 @@ const SEVA_LINKS: { group: string; items: { label: string; path: string }[] }[] 
   {
     group: "Festival sevas",
     items: [
+      { label: "Kartik Purnima", path: "kartik-purnima" },
       { label: "Kartik Maas", path: "kartik-maas" },
       { label: "Diwali", path: "diwali" },
       { label: "Govardhan Puja", path: "govardhan-puja" },

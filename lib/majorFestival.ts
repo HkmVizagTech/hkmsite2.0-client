@@ -18,6 +18,7 @@ export type MajorFestivalKey =
   | "vijayadashami"
   | "chaturmas"
   | "kartik"
+  | "kartikPurnima"
   | "diwali"
   | "vaikuntha";
 
@@ -38,6 +39,7 @@ export const MAJOR_FESTIVALS: MajorFestival[] = [
   { key: "chaturmas", label: "Chaturmas", href: "/chaturmas" },
   // Kartik Maas runs 26 Oct - 24 Nov 2026 and has no single calendar entry that names it, so it is pinned by an admin.
   { key: "kartik", label: "Kartik Maas", href: "/kartik-maas" },
+  { key: "kartikPurnima", label: "Kartik Purnima", href: "/kartik-purnima" },
   { key: "diwali", label: "Diwali", href: "/diwali" },
   { key: "vaikuntha", label: "Vaikuntha Ekadashi", href: "/vaikuntha-ekadashi" },
 ];
@@ -49,6 +51,7 @@ const FESTIVAL_KEYWORDS: Record<MajorFestivalKey, string[]> = {
   vijayadashami: ["vijayadashami", "dussehra", "dasara", "vijaya dashami"],
   chaturmas: ["chaturmas", "chaturmasya"],
   kartik: [],
+  kartikPurnima: ["rasa yatra"],
   diwali: ["diwali", "dipavali", "dhanteras"],
   vaikuntha: ["moksada", "vaikuntha"],
 };
