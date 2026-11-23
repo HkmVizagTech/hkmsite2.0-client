@@ -348,7 +348,7 @@ export const DONATION_SEO = {
     description:
       "Offer Annadana, Gau Seva, Deep Daan, Brick and Square Foot seva on Kartik Purnima, 24 November 2026, the full moon that completes Damodar month, at ISKCON Gambheeram Visakhapatnam. 80G tax benefit.",
     keywords: ["kartik purnima 2026 Visakhapatnam", "kartik purnima seva", "kartika pournami deep daan", "karthika pournami Vizag", "108 deep daan", "rasa yatra seva", "damodar month last day", ...LOCAL],
-    ogImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793859966653-1793859966061-damodaramonthlandscape1920x730.png",
+    ogImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1795410914079-1795410911361-KartikPurnimaDesktop1600x900.png",
     breadcrumb: "Kartik Purnima",
     h1: "Kartik Purnima Seva — 24 November 2026 in Visakhapatnam",
     intro: [

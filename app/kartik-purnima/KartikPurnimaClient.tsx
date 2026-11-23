@@ -27,9 +27,8 @@ import type { CampaignConfig } from "@/lib/campaignConfig";
 const FESTIVAL_DATE_LABEL = "Tuesday, 24 November 2026";
 const DCC_FESTIVAL_SLUG = "kartik-maas";
 
-// Until a dedicated Kartik Purnima banner is uploaded, the Damodar month banners are used (Purnima is its last day).
-const DESKTOP_BANNER = "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793859966653-1793859966061-damodaramonthlandscape1920x730.png";
-const MOBILE_BANNER = "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793860285969-1793860285458-damodaramonthmobile962x1635fullbleed.png";
+const DESKTOP_BANNER = "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1795410914079-1795410911361-KartikPurnimaDesktop1600x900.png";
+const MOBILE_BANNER = "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1795410913490-1795410909298-KartikPurnimaMobile1080x1350.png";
 
 const TIERS = [
   { label: "Rs. 1,100", amount: 1100 },
@@ -360,7 +359,7 @@ export default function KartikPurnimaClient() {
             <picture>
               <source media="(max-width: 640px)" srcSet={MOBILE_BANNER} />
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={DESKTOP_BANNER} alt="Kartik Purnima seva for Sri Radha Madan Mohan at ISKCON Gambheeram Visakhapatnam" fetchPriority="high" className="block h-auto w-full" />
+              <img src={DESKTOP_BANNER} alt="Kartik Purnima, 24 November 2026, at ISKCON Gambheeram Visakhapatnam" fetchPriority="high" className="block h-auto w-full" />
             </picture>
           </a>
         </section>
