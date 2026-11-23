@@ -84,8 +84,11 @@ export const OTHER_DONATIONS: DonationCard[] = [
   },
 ];
 
-/** "Other Donations": a clean grid of the temple's other seva pages (photo on top, name below). Used on every festival and seva page. */
-export default function OtherDonationsCarousel() {
+/**
+ * "Other Donations": a clean grid of the temple's other seva pages (photo on top, name below). Used on every festival and seva page.
+ * `exclude` hides cards by their link (e.g. ["/ekadashi"]) on one page without touching the others.
+ */
+export default function OtherDonationsCarousel({ exclude = [] }: { exclude?: string[] } = {}) {
   const t = useT();
   return (
     <section className="vk-section !pb-0">
@@ -95,7 +98,7 @@ export default function OtherDonationsCarousel() {
           <h2 className="vk-h2">{t("Other Donations")}</h2>
         </Reveal>
         <div className="mx-auto grid max-w-5xl grid-cols-2 gap-3 md:gap-5 lg:grid-cols-3">
-          {OTHER_DONATIONS.map((d) => (
+          {OTHER_DONATIONS.filter((d) => !exclude.includes(d.href)).map((d) => (
             <Link
               key={d.href}
               href={d.href}

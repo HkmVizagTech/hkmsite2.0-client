@@ -532,7 +532,7 @@ export default function KartikPurnimaClient() {
 
         <DonorPrivilegesSection scrollToDonate={scrollToDonate} config={KARTIK_PURNIMA_PRIVILEGE_CONFIG} />
         <FaqSection faqs={FAQS} tone="blue" />
-        <OtherDonationsCarousel />
+        <OtherDonationsCarousel exclude={["/ekadashi"]} />
       </div>
 
       {selected && (
