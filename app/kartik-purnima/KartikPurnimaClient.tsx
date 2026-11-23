@@ -102,9 +102,17 @@ const SEVAS: Seva[] = [
     account: "default",
     icon: "🪔",
   },
+  // Brick Seva and Square Foot Seva: same cards, photos and amounts as the Kartik Maas and Diwali pages
+  // (they are the Vaikuntham temple-construction sevas, so they carry the "BRICK" / "SQFT" donation type).
+  ...DIWALI_SEVAS.filter((s) => s.slug === "brick-seva" || s.slug === "square-foot-seva"),
 ];
 
+// Every card on this page is shown as a "Special Seva" card.
+const FEATURED_SLUGS = SEVAS.map((seva) => seva.slug);
+
 const IMPACTS: Record<string, Record<number, string>> = {
+  "brick-seva": DIWALI_IMPACTS["brick-seva"],
+  "square-foot-seva": DIWALI_IMPACTS["square-foot-seva"],
   "annadana-seva": {
     1100: "44 meals",
     2100: "84 meals",
@@ -386,7 +394,7 @@ export default function KartikPurnimaClient() {
                 subtitle="Tap an amount to offer that seva on Kartik Purnima. Sankalpa is taken in your name and your receipt reaches you on WhatsApp."
               />
             </Reveal>
-            <FestivalSevaGrid featuredStyle="ivory" featuredSlugs={["annadana-seva", "gau-seva"]} sevas={SEVAS} impacts={IMPACTS} highlightedSlug={highlightedSlug} onSelect={setSelected} />
+            <FestivalSevaGrid featuredStyle="ivory" featuredSlugs={FEATURED_SLUGS} sevas={SEVAS} impacts={IMPACTS} highlightedSlug={highlightedSlug} onSelect={setSelected} />
             <p className="mt-8 text-center text-xs text-muted-foreground">
               Minimum donation Rs. 100 · 80G Tax Exemption available · Secured by Razorpay · Donations go to Hare Krishna Movement India, Visakhapatnam
             </p>

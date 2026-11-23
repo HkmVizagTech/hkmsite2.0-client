@@ -346,7 +346,7 @@ export const DONATION_SEO = {
     path: "/kartik-purnima",
     title: "Kartik Purnima Seva Donation",
     description:
-      "Offer Annadana, Gau Seva and Deep Daan on Kartik Purnima, 24 November 2026, the full moon that completes Damodar month, at ISKCON Gambheeram Visakhapatnam. 80G tax benefit.",
+      "Offer Annadana, Gau Seva, Deep Daan, Brick and Square Foot seva on Kartik Purnima, 24 November 2026, the full moon that completes Damodar month, at ISKCON Gambheeram Visakhapatnam. 80G tax benefit.",
     keywords: ["kartik purnima 2026 Visakhapatnam", "kartik purnima seva", "kartika pournami deep daan", "karthika pournami Vizag", "108 deep daan", "rasa yatra seva", "damodar month last day", ...LOCAL],
     ogImage: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1793859966653-1793859966061-damodaramonthlandscape1920x730.png",
     breadcrumb: "Kartik Purnima",
@@ -360,6 +360,8 @@ export const DONATION_SEO = {
       { name: "Gau Seva", amounts: [1500, 2500, 3500, 5500, 9500, 11500], note: "Eligible for 80G" },
       { name: "Kartik Purnima Deep Daan", amounts: [1100, 2100, 3100, 5555, 9000, 11000], note: "A ghee lamp on the full moon of Kartik" },
       { name: "108 Deep Daan", amounts: [1100, 2100, 3100, 5555, 9000, 11000] },
+      { name: "Brick Seva", amounts: [1500, 3000, 4500, 6000, 7500, 15000], note: "A brick of the Vaikuntham temple under construction" },
+      { name: "Square Foot Seva", amounts: [2100, 4200, 6300, 10500, 14700, 21000], note: "A square foot of the Vaikuntham temple under construction" },
     ],
     event: {
       name: "Kartik Purnima 2026",
