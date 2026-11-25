@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import type { LucideIcon } from "lucide-react";
 import {
-  BookOpen, Camera, Clock, DoorOpen, Flame, Flower2, Hourglass, Leaf, MapPin,
+  ArrowRight, BookOpen, Camera, Clock, DoorOpen, Flame, Flower2, Hourglass, Leaf, MapPin,
   Moon, Phone, Shirt, Sparkles, Store, Sun, Sunrise, Sunset, Utensils,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
@@ -59,6 +59,22 @@ const ROWS: Row[] = DAY_PARTS.flatMap((part) => [
 const R2 = "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/";
 const BANNER_DESKTOP = `${R2}1795608007880-1795608006993-DailyScheduleDesktopFull1920x700.png`;
 const BANNER_MOBILE = `${R2}1795608007247-1795608006498-DailyScheduleMobile1080x1350.png`;
+
+// The day track: 4 AM to 9 PM.
+const TRACK_START = 4 * 60;
+const TRACK_SPAN = 17 * 60;
+const TRACK_TICKS = [
+  { at: 4 * 60, label: "4 AM" },
+  { at: 8 * 60, label: "8 AM" },
+  { at: 12 * 60, label: "12 PM" },
+  { at: 16 * 60, label: "4 PM" },
+  { at: 20 * 60, label: "8 PM" },
+];
+const WINDOW_META: Record<string, { icon: LucideIcon; tint: string; chip: string }> = {
+  "Mangala darshan": { icon: Sunrise, tint: "from-amber-50 to-white", chip: "bg-amber-100 text-amber-700" },
+  "Morning darshan": { icon: Sun, tint: "from-sky-50 to-white", chip: "bg-sky-100 text-sky-700" },
+  "Evening darshan": { icon: Sunset, tint: "from-indigo-50 to-white", chip: "bg-indigo-100 text-indigo-700" },
+};
 
 const specialPrograms = [
   {
@@ -146,69 +162,138 @@ export default function DailySchedulePage() {
           />
         </section>
 
-        {/* ───────── Live status + darshan windows ───────── */}
+        {/* ───────── Darshan timings: live day-track + tiles ───────── */}
         <section className="bg-white py-10 md:py-14">
           <div className="vk-container">
             <Reveal>
-              <div className="flex flex-col items-stretch gap-4 md:flex-row md:items-center md:justify-between">
-                {now !== null ? (
-                  <div
-                    className={`inline-flex items-center justify-center gap-2.5 self-center rounded-full border px-4 py-2 text-sm font-semibold md:self-auto ${
-                      openWindow ? "border-green-200 bg-green-50 text-green-800" : "border-vk-200 bg-vk-50 text-vk-800"
-                    }`}
-                  >
-                    <span className="relative flex h-2.5 w-2.5">
-                      {openWindow && <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-60" />}
-                      <span className={`relative inline-flex h-2.5 w-2.5 rounded-full ${openWindow ? "bg-green-500" : "bg-vk-400"}`} />
-                    </span>
-                    {openWindow ? `Darshan is open now · until ${openWindow.display.split("–")[1].trim()}` : `Temple is resting · opens at ${nextOpening?.display.split("–")[0].trim()}`}
-                  </div>
-                ) : <span />}
-
-                {now !== null && (current || next) && (
-                  <div className="grid grid-cols-2 gap-3 md:min-w-[26rem]">
-                    {current && (
-                      <div className="rounded-2xl border border-[#E8A317] bg-gradient-to-br from-[#FFF4D6] to-white p-4">
-                        <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#B7791F]">Happening now</p>
-                        <p className="mt-1 text-[15px] font-bold leading-snug text-foreground">{current.event}</p>
-                        <p className="text-xs text-muted-foreground">Since {current.time}</p>
-                      </div>
-                    )}
-                    {next && (
-                      <div className="rounded-2xl border border-vk-100 bg-vk-50 p-4">
-                        <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-vk-700">Up next</p>
-                        <p className="mt-1 text-[15px] font-bold leading-snug text-foreground">{next.event}</p>
-                        <p className="text-xs text-muted-foreground">{next.time}</p>
+              <div className="rounded-[2rem] border border-vk-100 bg-gradient-to-b from-vk-50/80 to-white p-5 shadow-[0_30px_60px_-44px_rgba(30,58,138,0.5)] md:p-8">
+                {/* header */}
+                <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
+                  <div>
+                    <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-vk-600">Plan your darshan</p>
+                    <h2 className="mt-1.5 text-2xl font-extrabold text-foreground md:text-3xl">Darshan Timings</h2>
+                    {now !== null && (
+                      <div
+                        className={`mt-3 inline-flex items-center gap-2.5 rounded-full border px-3.5 py-1.5 text-sm font-semibold ${
+                          openWindow ? "border-green-200 bg-green-50 text-green-800" : "border-vk-200 bg-white text-vk-800"
+                        }`}
+                      >
+                        <span className="relative flex h-2.5 w-2.5">
+                          {openWindow && <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-60" />}
+                          <span className={`relative inline-flex h-2.5 w-2.5 rounded-full ${openWindow ? "bg-green-500" : "bg-vk-400"}`} />
+                        </span>
+                        {openWindow ? `Darshan is open now · until ${openWindow.display.split("–")[1].trim()}` : `Temple is resting · opens at ${nextOpening?.display.split("–")[0].trim()}`}
                       </div>
                     )}
                   </div>
-                )}
-              </div>
 
-              <div className="mt-6 grid gap-4 md:grid-cols-3">
-                {DARSHAN_HOURS.map((w) => {
-                  const open = now !== null && now >= hhmm(w.opens) && now < hhmm(w.closes);
-                  const [from, to] = w.display.split("–").map((x) => x.trim());
-                  return (
-                    <div
-                      key={w.label}
-                      className={`relative overflow-hidden rounded-2xl bg-white p-6 shadow-[0_24px_50px_-34px_rgba(30,58,138,0.55)] ${open ? "ring-2 ring-green-500" : "ring-1 ring-vk-100"}`}
-                    >
-                      <div aria-hidden className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#F6C752] to-[#E8A317]" />
-                      <div className="flex items-center justify-between gap-2">
-                        <p className="text-xs font-bold uppercase tracking-[0.16em] text-vk-700">{w.label}</p>
-                        {open && <span className="rounded-full bg-green-100 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-green-800">Open now</span>}
-                      </div>
-                      <p className="mt-3 font-serif-display text-3xl font-semibold leading-none text-foreground md:text-[2rem]">{from}</p>
-                      <p className="mt-2 text-sm font-medium text-muted-foreground">to {to}</p>
+                  {now !== null && (current || next) && (
+                    <div className="grid grid-cols-2 gap-3 md:min-w-[26rem]">
+                      {current && (
+                        <div className="rounded-2xl border border-[#E8A317] bg-gradient-to-br from-[#FFF4D6] to-white p-4">
+                          <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#B7791F]">Happening now</p>
+                          <p className="mt-1 text-[15px] font-bold leading-snug text-foreground">{current.event}</p>
+                          <p className="text-xs text-muted-foreground">Since {current.time}</p>
+                        </div>
+                      )}
+                      {next && (
+                        <div className="rounded-2xl border border-vk-100 bg-white p-4">
+                          <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-vk-700">Up next</p>
+                          <p className="mt-1 text-[15px] font-bold leading-snug text-foreground">{next.event}</p>
+                          <p className="text-xs text-muted-foreground">{next.time}</p>
+                        </div>
+                      )}
                     </div>
-                  );
-                })}
+                  )}
+                </div>
+
+                {/* the day track: when the doors are open */}
+                <div className="mt-8 md:mt-10">
+                  <div className="relative h-5 rounded-full bg-vk-100/80 ring-1 ring-vk-100">
+                    {DARSHAN_HOURS.map((w) => {
+                      const left = ((hhmm(w.opens) - TRACK_START) / TRACK_SPAN) * 100;
+                      const width = ((hhmm(w.closes) - hhmm(w.opens)) / TRACK_SPAN) * 100;
+                      const open = now !== null && now >= hhmm(w.opens) && now < hhmm(w.closes);
+                      return (
+                        <span
+                          key={w.label}
+                          title={`${w.label}: ${w.display}`}
+                          className={`absolute inset-y-0 rounded-full ${open ? "bg-gradient-to-r from-green-400 to-green-500 shadow-[0_0_16px_rgba(34,197,94,0.6)]" : "bg-gradient-to-r from-[#F6C752] to-[#E8A317]"}`}
+                          style={{ left: `${left}%`, width: `${Math.max(width, 1.6)}%` }}
+                        />
+                      );
+                    })}
+                    {now !== null && now >= TRACK_START && now <= TRACK_START + TRACK_SPAN && (
+                      <span
+                        className="absolute top-1/2 z-[1] -translate-x-1/2 -translate-y-1/2"
+                        style={{ left: `${((now - TRACK_START) / TRACK_SPAN) * 100}%` }}
+                      >
+                        <span className="relative flex h-7 w-7 items-center justify-center rounded-full bg-white shadow-[0_6px_16px_-4px_rgba(30,58,138,0.7)] ring-2 ring-vk-700">
+                          <span className="absolute inset-0 animate-ping rounded-full bg-vk-500 opacity-30" />
+                          <span className="h-2.5 w-2.5 rounded-full bg-vk-700" />
+                        </span>
+                      </span>
+                    )}
+                  </div>
+                  <div className="relative mt-2 h-4 text-[11px] font-medium text-ink/45">
+                    {TRACK_TICKS.map((t) => (
+                      <span key={t.label} className="absolute -translate-x-1/2" style={{ left: `${((t.at - TRACK_START) / TRACK_SPAN) * 100}%` }}>
+                        {t.label}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* the three windows */}
+                <div className="mt-6 grid gap-4 md:grid-cols-3">
+                  {DARSHAN_HOURS.map((w) => {
+                    const meta = WINDOW_META[w.label] ?? WINDOW_META["Morning darshan"];
+                    const Icon = meta.icon;
+                    const opens = hhmm(w.opens);
+                    const closes = hhmm(w.closes);
+                    const open = now !== null && now >= opens && now < closes;
+                    const upcoming = now !== null && now < opens;
+                    const [from, to] = w.display.split("–").map((x) => x.trim());
+                    const mins = closes - opens;
+                    const dur = mins >= 60 ? `${Math.floor(mins / 60)} h${mins % 60 ? ` ${mins % 60} min` : ""}` : `${mins} min`;
+                    return (
+                      <div
+                        key={w.label}
+                        className={`group relative overflow-hidden rounded-2xl border bg-gradient-to-br ${meta.tint} p-5 transition hover:-translate-y-0.5 hover:shadow-[0_22px_40px_-26px_rgba(30,58,138,0.55)] ${
+                          open ? "border-green-400 shadow-[0_0_0_3px_rgba(34,197,94,0.15)]" : "border-vk-100"
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <span className={`flex h-12 w-12 items-center justify-center rounded-2xl ${meta.chip}`}>
+                            <Icon className="h-6 w-6" />
+                          </span>
+                          {open ? (
+                            <span className="rounded-full bg-green-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-green-800">Open now</span>
+                          ) : upcoming ? (
+                            <span className="rounded-full bg-white/80 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-vk-700 ring-1 ring-vk-100">Upcoming</span>
+                          ) : now !== null ? (
+                            <span className="rounded-full bg-white/80 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-ink/45 ring-1 ring-vk-100">Done today</span>
+                          ) : null}
+                        </div>
+                        <p className="mt-4 text-xs font-bold uppercase tracking-[0.16em] text-ink/55">{w.label}</p>
+                        <p className="mt-2 flex flex-wrap items-center gap-x-2.5 gap-y-1 tabular-nums text-foreground">
+                          <span className="text-xl font-extrabold leading-tight tracking-tight md:text-[1.35rem]">{from}</span>
+                          <ArrowRight className="h-4 w-4 text-ink/35" />
+                          <span className="text-xl font-extrabold leading-tight tracking-tight md:text-[1.35rem]">{to}</span>
+                        </p>
+                        <p className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                          <Clock className="h-3.5 w-3.5" /> {dur} of darshan
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <p className="mt-5 flex items-center justify-center gap-2 text-center text-sm text-muted-foreground">
+                  <Hourglass className="h-4 w-4 shrink-0 text-vk-400" />
+                  The temple is closed for darshan from 5:00 to 7:15 AM and 12:20 to 4:15 PM while the Lord rests.
+                </p>
               </div>
-              <p className="mx-auto mt-4 flex max-w-2xl items-center justify-center gap-2 text-center text-sm text-muted-foreground">
-                <Hourglass className="h-4 w-4 shrink-0 text-vk-400" />
-                The temple is closed for darshan from 5:00 to 7:15 AM and 12:20 to 4:15 PM while the Lord rests.
-              </p>
             </Reveal>
           </div>
         </section>
