@@ -100,7 +100,7 @@ const DailyDarshanGallery = ({ selectedDate: externalSelectedDate, onDateChange,
   const formatted = formatDate(selectedDate);
 
   return (
-    <section id="darshan" className="scroll-mt-[calc(var(--header-h)+8px)] py-12 md:py-20">
+    <section id="darshan" className="scroll-mt-[calc(var(--header-h)+8px)] bg-white py-12 md:py-20">
       <div className="vk-container">
         <div className="mb-8 text-center md:mb-10">
           <div className="flex justify-center">
@@ -140,15 +140,15 @@ const DailyDarshanGallery = ({ selectedDate: externalSelectedDate, onDateChange,
                   whileTap={{ scale: 0.95 }}
                   className={`relative flex min-w-[64px] shrink-0 flex-col items-center rounded-2xl px-3 py-2.5 transition-all duration-300 md:min-w-[74px] md:px-4 md:py-3 ${
                     isActive
-                      ? "bg-gradient-to-b from-[#1F2A5C] to-[#141B3F] text-white shadow-[0_14px_28px_-14px_rgba(20,27,63,0.8)]"
+                      ? "bg-gradient-to-b from-[#F6C752] to-[#E8A317] text-vk-900 shadow-[0_14px_28px_-14px_rgba(232,163,23,0.85)]"
                       : `border ${LINE} bg-white/80 text-ink/60 hover:-translate-y-0.5 hover:border-vk-400 hover:text-ink`
                   }`}
                 >
-                  <span className={`text-[11px] font-medium uppercase tracking-wide ${isActive ? "text-[#BFD0FF]" : ""}`}>{d.weekday}</span>
+                  <span className={`text-[11px] font-medium uppercase tracking-wide ${isActive ? "text-vk-900/70" : ""}`}>{d.weekday}</span>
                   <span className={`${SERIF} text-2xl font-semibold leading-tight`}>{d.day}</span>
-                  <span className={`text-xs ${isActive ? "text-white/75" : ""}`}>{d.month}</span>
+                  <span className={`text-xs ${isActive ? "text-vk-900/70" : ""}`}>{d.month}</span>
                   {hasFestival && (
-                    <span className={`absolute right-1.5 top-1.5 h-2.5 w-2.5 rounded-full ring-2 ${isActive ? "bg-[#2F5BD3] ring-[#1F2A5C]" : "bg-vk-500 ring-white"}`} />
+                    <span className={`absolute right-1.5 top-1.5 h-2.5 w-2.5 rounded-full ring-2 ${isActive ? "bg-vk-700 ring-[#F6C752]" : "bg-vk-500 ring-white"}`} />
                   )}
                 </motion.button>
               );
@@ -195,7 +195,7 @@ const DailyDarshanGallery = ({ selectedDate: externalSelectedDate, onDateChange,
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: Math.min(i, 8) * 0.05 }}
-                    className={`group relative mb-3 block w-full cursor-pointer break-inside-avoid overflow-hidden rounded-2xl bg-[#EEF2FF] text-left align-top shadow-[0_18px_36px_-26px_rgba(30,58,138,0.6)] md:mb-4`}
+                    className={`group relative mb-3 block w-full cursor-pointer break-inside-avoid overflow-hidden rounded-3xl bg-[#EEF2FF] text-left align-top shadow-[0_18px_36px_-26px_rgba(30,58,138,0.6)] md:mb-4`}
                     onClick={() => setLightboxIndex(i)}
                     aria-label={`Open ${img.title || "photo"}`}
                   >

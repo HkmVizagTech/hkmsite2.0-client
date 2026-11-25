@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRight, Home, Images, LayoutGrid, X } from "lucide-react";
+import { ArrowRight, ChevronRight, Home, Images, LayoutGrid, MapPin, Maximize2, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import PageLayout from "@/components/PageLayout";
@@ -12,6 +12,7 @@ import { CREAM, Eyebrow, LINE, SERIF } from "@/components/blogs/parts";
 import DailyDarshanGallery from "@/components/DailyDarshanGallery";
 import { getGalleryImages, GALLERY_CATEGORIES } from "@/lib/galleryApi";
 import { getRecentDarshan, type DarshanPhoto } from "@/lib/darshanApi";
+import { MAPS_URL } from "@/lib/templeInfo";
 
 // Album dates are stored as midnight UTC ("2026-08-18T00:00:00.000Z"); show
 // just the calendar day, e.g. "18 Aug 2026".
@@ -130,48 +131,92 @@ export default function GalleryPage() {
   const totalPhotos = allGrouped.reduce((n, g) => n + g.images.length, 0);
   const dayCount = Object.keys(dateData).length;
 
+  // Hero collage: the latest darshan photo first, then the newest albums.
+  const latestDarshanDay = Object.keys(dateData).sort((a, b) => b.localeCompare(a))[0];
+  const heroPics: { src: string; title: string }[] = [];
+  const pushPic = (src?: string, title?: string) => {
+    if (src && !heroPics.some((p) => p.src === src)) heroPics.push({ src, title: title || "Darshan" });
+  };
+  if (latestDarshanDay) pushPic(dateData[latestDarshanDay].images[0]?.src, "Darshan of the day");
+  allGrouped
+    .slice()
+    .sort((a, b) => (b.date || "").localeCompare(a.date || ""))
+    .forEach((g) => pushPic(g.images[0], albumTitle(g)));
+  const heroPic = (i: number, shape: string) =>
+    heroPics[i] ? (
+      <div className={`relative overflow-hidden bg-vk-100 shadow-[0_28px_50px_-28px_rgba(30,58,138,0.7)] ring-4 ring-white ${shape}`}>
+        <Image src={heroPics[i].src} alt={heroPics[i].title} fill priority={i < 2} sizes="(min-width: 1024px) 22vw, 45vw" className="object-cover object-top" />
+      </div>
+    ) : (
+      <div className={`animate-pulse bg-vk-100 ring-4 ring-white ${shape}`} />
+    );
+
   return (
     <PageLayout>
       <div className={`${CREAM} pt-[var(--header-h)]`}>
-        {/* ─── Hero: calm and centred ─── */}
-        <section className="relative overflow-hidden">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-x-0 top-0 h-full bg-[radial-gradient(60%_80%_at_50%_0%,rgba(47,91,211,0.07),transparent_70%)]"
-          />
-          <div className="vk-container relative pb-6 pt-10 text-center md:pb-10 md:pt-16">
-            <nav aria-label="Breadcrumb" className="mb-6 inline-flex items-center gap-1.5 text-xs font-medium text-ink/55 md:text-[13px]">
-              <Link href="/" className="inline-flex items-center gap-1 transition-colors hover:text-vk-700">
-                <Home className="h-3.5 w-3.5" /> Home
-              </Link>
-              <ChevronRight className="h-3.5 w-3.5 opacity-60" />
-              <span className="font-semibold text-vk-700" aria-current="page">
-                Gallery
-              </span>
-            </nav>
-            <div className="flex justify-center">
-              <Eyebrow>Darshan · Festivals · Seva · Community</Eyebrow>
-            </div>
-            <h1 className={`${SERIF} mx-auto mt-4 max-w-3xl text-[2.1rem] font-semibold leading-[1.15] text-ink sm:text-5xl lg:text-[3.3rem]`}>
-              Darshan &amp; Temple Gallery
-            </h1>
-            <p className="mx-auto mt-4 max-w-2xl text-[15px] leading-relaxed text-ink/65 md:text-base">
-              Divine moments from the temple: the daily darshan of Their Lordships, festivals, seva and the life of the community.
-            </p>
-            {!loading && totalPhotos > 0 && (
-              <div className={`mx-auto mt-7 inline-flex divide-x divide-[#E4E9F7] rounded-2xl border ${LINE} bg-white/75 py-3 text-center shadow-[0_18px_40px_-30px_rgba(30,58,138,0.5)]`}>
-                {[
-                  { v: allGrouped.length, l: "albums" },
-                  { v: totalPhotos, l: "photos" },
-                  { v: dayCount, l: "darshan days" },
-                ].map((x) => (
-                  <div key={x.l} className="px-5 md:px-8">
-                    <div className={`${SERIF} text-xl font-semibold text-vk-600 md:text-2xl`}>{x.v}</div>
-                    <div className="text-[11px] font-medium uppercase tracking-[0.08em] text-ink/55">{x.l}</div>
-                  </div>
-                ))}
+        {/* ─── Hero: text + arch photo collage ─── */}
+        <section className="relative overflow-hidden bg-gradient-to-b from-[#F4F7FF] via-white to-white">
+          <div aria-hidden className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full bg-vk-100/70 blur-3xl" />
+          <div className="vk-container relative grid items-center gap-10 pb-12 pt-10 md:pb-20 md:pt-16 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
+            <div className="text-center lg:text-left">
+              <nav aria-label="Breadcrumb" className="mb-6 inline-flex items-center gap-1.5 text-xs font-medium text-ink/55 md:text-[13px]">
+                <Link href="/" className="inline-flex items-center gap-1 transition-colors hover:text-vk-700">
+                  <Home className="h-3.5 w-3.5" /> Home
+                </Link>
+                <ChevronRight className="h-3.5 w-3.5 opacity-60" />
+                <span className="font-semibold text-vk-700" aria-current="page">
+                  Gallery
+                </span>
+              </nav>
+              <div className="flex justify-center lg:justify-start">
+                <Eyebrow>Darshan · Festivals · Seva · Community</Eyebrow>
               </div>
-            )}
+              <h1 className={`${SERIF} mt-4 text-[2.4rem] font-semibold leading-[1.1] text-ink sm:text-5xl lg:text-[3.6rem]`}>
+                Darshan &amp; <span className="bg-gradient-to-r from-[#E8A317] to-[#C77700] bg-clip-text text-transparent">Temple Gallery</span>
+              </h1>
+              <p className="mx-auto mt-5 max-w-xl text-[15px] leading-relaxed text-ink/65 md:text-lg lg:mx-0">
+                Divine moments from the temple: the daily darshan of Their Lordships, festivals, seva and the life of the community.
+              </p>
+
+              <div className="mt-7 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
+                <a href="#darshan" className="vk-btn-gold px-7 py-3.5 text-base">
+                  Today&apos;s Darshan <ArrowRight className="h-4 w-4" />
+                </a>
+                <a href="#albums" className={`inline-flex items-center justify-center gap-2 rounded-xl border ${LINE} bg-white px-7 py-3.5 text-base font-semibold text-vk-800 shadow-sm transition hover:border-vk-400 hover:bg-vk-50`}>
+                  Browse Albums
+                </a>
+              </div>
+
+              {!loading && totalPhotos > 0 && (
+                <div className="mx-auto mt-8 grid max-w-md grid-cols-3 gap-3 lg:mx-0">
+                  {[
+                    { v: allGrouped.length, l: "albums" },
+                    { v: totalPhotos, l: "photos" },
+                    { v: dayCount, l: "darshan days" },
+                  ].map((x) => (
+                    <div key={x.l} className={`rounded-2xl border ${LINE} bg-white px-2 py-3 text-center shadow-[0_14px_28px_-22px_rgba(30,58,138,0.5)]`}>
+                      <div className={`${SERIF} text-2xl font-semibold text-vk-700`}>{x.v}</div>
+                      <div className="text-[11px] font-medium uppercase tracking-[0.08em] text-ink/55">{x.l}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* arch collage */}
+            <div className="relative mx-auto w-full max-w-sm md:max-w-md">
+              <div aria-hidden className="absolute -inset-4 -z-10 rounded-[3rem] bg-gradient-to-br from-[#FFF1CC] via-white to-vk-100/60" />
+              <div className="grid grid-cols-2 gap-3 md:gap-4">
+                <div className="space-y-3 pt-10 md:space-y-4 md:pt-14">
+                  {heroPic(0, "aspect-[3/4] rounded-t-[999px] rounded-b-3xl")}
+                  {heroPic(2, "aspect-square rounded-3xl")}
+                </div>
+                <div className="space-y-3 md:space-y-4">
+                  {heroPic(1, "aspect-square rounded-3xl")}
+                  {heroPic(3, "aspect-[3/4] rounded-t-[999px] rounded-b-3xl")}
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -182,7 +227,7 @@ export default function GalleryPage() {
         />
 
         {/* ─── Albums ─── */}
-        <section className="border-t border-[#E4E9F7] bg-white/60 py-12 md:py-20">
+        <section id="albums" className="scroll-mt-[calc(var(--header-h)+8px)] border-t border-[#E4E9F7] bg-gradient-to-b from-[#F4F7FF] to-white py-12 md:py-20">
           <div className="vk-container">
             <div className="mb-8 text-center md:mb-10">
               <div className="flex justify-center">
@@ -211,7 +256,7 @@ export default function GalleryPage() {
                     }}
                     className={`min-h-[40px] shrink-0 rounded-full px-5 py-2 text-sm font-semibold transition-all duration-300 ${
                       on
-                        ? "bg-gradient-to-b from-[#1F2A5C] to-[#141B3F] text-white shadow-[0_10px_22px_-10px_rgba(20,27,63,0.8)]"
+                        ? "bg-gradient-to-b from-[#F6C752] to-[#E8A317] text-vk-900 shadow-[0_10px_22px_-10px_rgba(232,163,23,0.8)]"
                         : `border ${LINE} bg-white/80 text-ink/70 hover:border-vk-400 hover:text-ink`
                     }`}
                   >
@@ -259,8 +304,9 @@ export default function GalleryPage() {
                       key={ph.src + i}
                       onClick={() => setPhotoLightbox(i)}
                       aria-label={`View ${ph.title}`}
-                      className="group relative mb-3 block w-full cursor-pointer break-inside-avoid overflow-hidden rounded-2xl bg-[#EEF2FF] text-left align-top shadow-[0_18px_36px_-26px_rgba(30,58,138,0.6)] md:mb-4"
+                      className="group relative mb-3 block w-full cursor-pointer break-inside-avoid overflow-hidden rounded-3xl bg-[#EEF2FF] text-left align-top shadow-[0_18px_36px_-26px_rgba(30,58,138,0.6)] ring-1 ring-white transition-shadow hover:shadow-[0_28px_50px_-26px_rgba(30,58,138,0.75)] md:mb-4"
                     >
+                      <span className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-vk-800 opacity-0 shadow transition-opacity duration-300 group-hover:opacity-100"><Maximize2 className="h-3.5 w-3.5" /></span>
                       <FadeImage src={ph.src} alt={ph.title} sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw" className="group-hover:scale-[1.04]" />
                       <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#0b1230]/85 to-transparent p-3 pt-10 opacity-0 transition-opacity duration-300 group-hover:opacity-100 md:p-4">
                         <span className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-[#BFD0FF]">{ph.group.category}</span>
@@ -284,9 +330,15 @@ export default function GalleryPage() {
             ) : (
               <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-5 lg:grid-cols-4">
                 {grouped.map((group, i) => (
+                  <div key={group.title + group.date + group.category} className="group relative pb-3">
+                  {group.images.length > 1 && (
+                    <>
+                      <span aria-hidden className={`absolute inset-x-3 top-0 bottom-1 -rotate-[3deg] rounded-2xl border ${LINE} bg-white shadow-sm transition-transform duration-500 group-hover:-rotate-[6deg]`} />
+                      <span aria-hidden className={`absolute inset-x-3 top-0 bottom-1 rotate-[2.5deg] rounded-2xl border ${LINE} bg-vk-50 shadow-sm transition-transform duration-500 group-hover:rotate-[5deg]`} />
+                    </>
+                  )}
                   <motion.button
                     type="button"
-                    key={group.title + group.date + group.category}
                     initial={{ opacity: 0, y: 14 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: Math.min(i, 8) * 0.05 }}
@@ -316,9 +368,36 @@ export default function GalleryPage() {
                       <span className="mt-1 block text-xs text-white/70">{formatGalleryDate(group.date)}</span>
                     </span>
                   </motion.button>
+                  </div>
                 ))}
               </div>
             )}
+          </div>
+        </section>
+
+        {/* ─── Visit the temple ─── */}
+        <section className="pb-14 pt-4 md:pb-20">
+          <div className="vk-container">
+            <div className="relative overflow-hidden rounded-3xl border border-[#F3D88A] bg-gradient-to-br from-[#FFF4D6] via-white to-[#F4F7FF] px-6 py-10 text-center shadow-[0_30px_60px_-44px_rgba(232,163,23,0.7)] md:px-12 md:py-14">
+              <div aria-hidden className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-[#F6C752]/25 blur-2xl" />
+              <div className="flex justify-center">
+                <Eyebrow>Come for darshan</Eyebrow>
+              </div>
+              <h2 className={`${SERIF} mx-auto mt-3 max-w-2xl text-[1.8rem] font-semibold leading-tight text-ink md:text-[2.4rem]`}>
+                Photos capture the moment. Darshan in person touches the heart.
+              </h2>
+              <p className="mx-auto mt-3 max-w-xl text-[15px] leading-relaxed text-ink/65">
+                See the aarti timings and plan your visit to ISKCON Gambheeram, Visakhapatnam.
+              </p>
+              <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                <Link href="/daily-schedule" className="vk-btn-gold px-7 py-3.5 text-base">
+                  Daily Schedule <ArrowRight className="h-4 w-4" />
+                </Link>
+                <a href={MAPS_URL} target="_blank" rel="noopener noreferrer" className={`inline-flex items-center justify-center gap-2 rounded-xl border ${LINE} bg-white px-7 py-3.5 text-base font-semibold text-vk-800 shadow-sm transition hover:border-vk-400 hover:bg-vk-50`}>
+                  <MapPin className="h-4 w-4" /> Get Directions
+                </a>
+              </div>
+            </div>
           </div>
         </section>
       </div>
