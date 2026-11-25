@@ -83,6 +83,7 @@ const systemItems: NavItem[] = [
   { title: "Devotees", url: "/admin/devotees", icon: Users },
   { title: "Preacher Dashboard", url: "/admin/preacher", icon: BookOpen },
   { title: "Volunteers", url: "/admin/volunteers", icon: HandHeart },
+  { title: "Volunteer Sign-ups", url: "/admin/volunteer-signups", icon: UserCheck },
   { title: "Gita Course", url: "/admin/gita-course", icon: BookOpen },
   { title: "Programs", url: "/admin/programs", icon: GraduationCap },
   { title: "Preachers", url: "/admin/preachers", icon: UserCheck },

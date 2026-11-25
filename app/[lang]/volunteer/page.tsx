@@ -1,178 +1,324 @@
 "use client";
 
+import Image from "next/image";
 import {
   Heart,
   HandHeart,
   Users,
   Sparkles,
   Smartphone,
-  UserPlus,
-  CalendarCheck,
+  ArrowRight,
+  CheckCircle2,
+  ClipboardEdit,
+  PhoneCall,
+  Flame,
 } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
-import PageHero from "@/components/PageHero";
 import SectionHeading from "@/components/site/SectionHeading";
 import Reveal from "@/components/site/Reveal";
 import WhatsAppIcon from "@/components/WhatsAppIcon";
-// Volunteer registration is handled entirely inside the Vaikuntham app (the
-// VCC volunteer system does not accept sign-ups made from this website), so
-// the store links live in one shared place — see VaikunthamAppPromo.
+import FaqSection from "@/components/sqft-campaign/FaqSection";
+import VolunteerSignupForm from "@/components/volunteer/VolunteerSignupForm";
+// Sign-ups from the form are saved on our own server (Admin → Volunteer Sign-ups).
+// The Vaikuntham app is for festival duties/reminders; store links live in VaikunthamAppPromo.
 import { AppStoreButtons } from "@/components/VaikunthamAppPromo";
 
+const WA_HELP =
+  "https://wa.me/918977761187?text=Hare%20Krishna!%20I%20would%20like%20to%20volunteer%20at%20HKM%20Vizag.";
+
+const HERO_POINTS = ["Open to everyone — no experience needed", "Choose the seva and timing that suit you", "Our team contacts you on WhatsApp"];
+
+const WAYS_TO_SERVE = [
+  {
+    image: "/assets/patron/pillar.jpg",
+    title: "Festivals & Events",
+    desc: "Janmashtami, Kartik Deepotsava, Ekadashi and more — crowd guidance, decoration, queues and stage seva.",
+  },
+  {
+    image: "/assets/home-explore-subhojanam.webp",
+    title: "Prasadam & Subhojanam",
+    desc: "Cook, serve and distribute Krishna prasadam, and help the daily Subhojanam anna-daan reach those in need.",
+  },
+  {
+    image: "/assets/patron/family.jpg",
+    title: "Temple Services",
+    desc: "Garlands, flower and altar decoration, cleaning and everyday care that keeps the Lord's home beautiful.",
+  },
+  {
+    image: "/assets/patron/blessings.jpg",
+    title: "Outreach & Programs",
+    desc: "Kirtan, book distribution and community programs — help carry Krishna consciousness to the city.",
+  },
+];
+
 const WHY_VOLUNTEER = [
-  {
-    icon: Heart,
-    title: "Serve the Lord",
-    desc: "Every act of service in the temple is an offering to Lord Krishna — the highest form of devotion.",
-  },
-  {
-    icon: Users,
-    title: "Build Community",
-    desc: "Connect with like-minded devotees and create lasting bonds through selfless service together.",
-  },
-  {
-    icon: Sparkles,
-    title: "Spiritual Growth",
-    desc: "Volunteering purifies the heart and accelerates your spiritual journey through karma yoga.",
-  },
-  {
-    icon: HandHeart,
-    title: "Make an Impact",
-    desc: "Help distribute prasadam, organize festivals, and bring smiles to thousands of visitors.",
-  },
+  { icon: Heart, title: "Serve the Lord", desc: "Every act of service in the temple is an offering to Lord Krishna — the highest form of devotion." },
+  { icon: Users, title: "Build Community", desc: "Connect with like-minded devotees and create lasting bonds through selfless service together." },
+  { icon: Sparkles, title: "Spiritual Growth", desc: "Volunteering purifies the heart and accelerates your spiritual journey through karma yoga." },
+  { icon: HandHeart, title: "Make an Impact", desc: "Help feed thousands, organize festivals and bring smiles to every visitor who walks in." },
 ];
 
-const HOW_IT_WORKS = [
-  {
-    icon: Smartphone,
-    title: "Install Vaikuntham",
-    desc: "Download the free Vaikuntham app on Android or iPhone — it is our official volunteer platform.",
-  },
-  {
-    icon: UserPlus,
-    title: "Create Your Profile",
-    desc: "Sign up with your mobile number and tell us the sevas and timings that suit you best.",
-  },
-  {
-    icon: CalendarCheck,
-    title: "Pick Your Seva",
-    desc: "Browse upcoming festivals and temple activities in the app and confirm your slot in a tap.",
-  },
+const STEPS = [
+  { icon: ClipboardEdit, title: "Register", desc: "Share your contact details, your skill and when you are available. It takes about a minute." },
+  { icon: PhoneCall, title: "We Connect", desc: "A devotee from our volunteer team reaches out on WhatsApp and matches you with a seva." },
+  { icon: Flame, title: "Start Serving", desc: "Join your first seva at the temple — we will guide you every step of the way." },
 ];
 
+const VOLUNTEER_FAQS = [
+  {
+    q: "Who can volunteer at the temple?",
+    a: "Anyone with a sincere wish to serve — students, families, working professionals and seniors are all welcome. No prior experience is needed; a devotee will guide you on the day.",
+  },
+  {
+    q: "How do I register as a volunteer?",
+    a: "Fill in the short registration form at the top of this page with your name, email, mobile number, skill, availability and preferred start date. Our volunteer team will contact you with upcoming opportunities.",
+  },
+  {
+    q: "How much time do I have to give?",
+    a: "As much or as little as you like. Pick a single festival day, a few hours on a weekend, or a regular weekly seva — you choose the slots you can commit to.",
+  },
+  {
+    q: "What is the Vaikuntham app for?",
+    a: "Vaikuntham is our official app for festival and temple activities. Use it to browse upcoming sevas, confirm your slot in a tap and receive duty reminders on your phone.",
+  },
+  {
+    q: "I am having trouble or want a different kind of seva. Who can help?",
+    a: "Message us on WhatsApp at +91 89777 61187 and a devotee will help you personally.",
+  },
+];
 
 export default function VolunteerPage() {
   return (
     <PageLayout>
       <div className="pt-[var(--header-h)]">
-        <PageHero
-          title="Volunteer"
-          subtitle="Join the seva of the Hare Krishna Movement Visakhapatnam — volunteer for temple programs, festivals and community service."
-          breadcrumb="Volunteer"
-          backgroundImage="/assets/about-community.jpg"
-        />
+        {/* ───────── Hero ───────── */}
+        <section className="relative isolate overflow-hidden bg-vk-900">
+          <Image
+            src="/assets/home-hero-desktop.webp"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="-z-20 object-cover object-[72%_center]"
+          />
+          <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-r from-vk-900/75 via-vk-900/35 to-transparent md:from-vk-900/70 md:via-vk-900/25" />
+          <div aria-hidden className="absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-t from-vk-900/50 to-transparent" />
 
-        {/* Why Volunteer */}
-        <section className="vk-section">
-          <div className="vk-container">
-            <SectionHeading align="center" eyebrow="Why Volunteer" title="The Joy of Selfless Service" />
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-5 lg:grid-cols-4">
-              {WHY_VOLUNTEER.map((item, i) => (
-                <Reveal key={item.title} delay={i * 0.06}>
-                  <div className="vk-card vk-card-hover h-full p-6">
-                    <span className="vk-icon-chip mb-4 h-12 w-12">
-                      <item.icon className="h-6 w-6" />
-                    </span>
-                    <h3 className="text-lg font-bold text-foreground">{item.title}</h3>
-                    <p className="mt-1.5 text-[15px] leading-relaxed text-muted-foreground">{item.desc}</p>
-                  </div>
-                </Reveal>
-              ))}
+          <div className="vk-container pb-36 pt-14 md:pb-44 md:pt-24">
+            <div className="max-w-2xl">
+              <Reveal>
+                <span className="inline-flex items-center gap-2 rounded-full border border-[#F6C752]/60 bg-[#F6C752]/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-[#FFE6A3] backdrop-blur">
+                  <Flame className="h-3.5 w-3.5" /> Seva · ISKCON Gambheeram Vizag
+                </span>
+              </Reveal>
+              <Reveal delay={0.06}>
+                <h1 className="mt-5 text-4xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl">
+                  Offer Your Time at the{" "}
+                  <span className="bg-gradient-to-r from-[#FFE6A3] via-[#F6C752] to-[#E8A317] bg-clip-text text-transparent">
+                    Lord&apos;s Temple
+                  </span>
+                </h1>
+              </Reveal>
+              <Reveal delay={0.12}>
+                <p className="mt-5 max-w-xl text-base leading-relaxed text-white/85 md:text-lg">
+                  Join the volunteer family of the Hare Krishna Movement Visakhapatnam — serve at festivals, feed the hungry and
+                  help the temple come alive for thousands of devotees.
+                </p>
+              </Reveal>
+              <Reveal delay={0.18}>
+                <ul className="mt-6 space-y-2.5">
+                  {HERO_POINTS.map((t) => (
+                    <li key={t} className="flex items-center gap-2.5 text-[15px] font-medium text-white">
+                      <CheckCircle2 className="h-5 w-5 shrink-0 text-[#F6C752]" />
+                      {t}
+                    </li>
+                  ))}
+                </ul>
+              </Reveal>
             </div>
           </div>
         </section>
 
-        {/* Register in the Vaikuntham app */}
-        <section id="register" className="vk-section vk-band scroll-mt-[var(--header-h)]">
+        {/* ───────── Registration card (overlaps the hero) ───────── */}
+        <section id="register" className="relative z-10 -mt-28 scroll-mt-[var(--header-h)] px-4 md:-mt-32">
+          <Reveal>
+            <div className="mx-auto max-w-5xl overflow-hidden rounded-3xl border border-white/60 bg-white shadow-[0_30px_80px_-20px_rgba(10,18,51,0.45)]">
+              <div className="h-1.5 bg-gradient-to-r from-[#F6C752] via-[#E8A317] to-[#F6C752]" />
+              <div className="p-5 md:p-8">
+                <div className="mb-5 flex flex-wrap items-end justify-between gap-2">
+                  <div>
+                    <h2 className="text-2xl font-extrabold text-foreground md:text-3xl">Become a Volunteer</h2>
+                    <p className="mt-1 text-sm text-muted-foreground md:text-[15px]">Tell us how you would like to serve. Our team will get in touch with your first seva.</p>
+                  </div>
+                </div>
+                <VolunteerSignupForm />
+              </div>
+            </div>
+          </Reveal>
+        </section>
+
+        {/* ───────── Ways to serve ───────── */}
+        <section className="vk-section">
           <div className="vk-container">
             <SectionHeading
               align="center"
-              eyebrow="How To Register"
-              title="Volunteer Through the Vaikuntham App"
-              subtitle={
-                <>
-                  All volunteer sign-ups for ISKCON Gambheeram Visakhapatnam now happen in our official{" "}
-                  <strong className="text-foreground">Vaikuntham</strong> app. Install it once to see every upcoming
-                  seva opportunity, register in a tap, and receive your duty reminders directly on your phone.
-                </>
-              }
+              eyebrow="Ways To Serve"
+              title="Find the Seva That Suits You"
+              subtitle="There is a place for every skill and every schedule. Here is where our volunteers serve."
             />
-
-            {/* Steps */}
-            <ol className="mx-auto mb-8 grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-3 md:mb-10 md:gap-5">
-              {HOW_IT_WORKS.map((step, i) => (
-                <Reveal as="li" key={step.title} delay={i * 0.08}>
-                  <div className="vk-card relative h-full p-6">
-                    <span className="absolute right-5 top-5 flex h-8 w-8 items-center justify-center rounded-full bg-vk-700 text-sm font-bold text-white">
-                      {i + 1}
-                    </span>
-                    <span className="vk-icon-chip mb-4 h-12 w-12">
-                      <step.icon className="h-6 w-6" />
-                    </span>
-                    <h3 className="text-lg font-bold text-foreground">{step.title}</h3>
-                    <p className="mt-1.5 text-[15px] leading-relaxed text-muted-foreground">{step.desc}</p>
-                  </div>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 md:gap-5">
+              {WAYS_TO_SERVE.map((w, i) => (
+                <Reveal key={w.title} delay={i * 0.07}>
+                  <article className="group relative isolate h-80 overflow-hidden rounded-3xl bg-vk-900 shadow-md md:h-96">
+                    <Image
+                      src={w.image}
+                      alt={w.title}
+                      fill
+                      sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+                      className="-z-10 object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                    <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-t from-vk-900 via-vk-900/55 to-transparent" />
+                    <div className="absolute inset-x-0 bottom-0 p-5">
+                      <span className="mb-3 block h-1 w-10 rounded-full bg-gradient-to-r from-[#F6C752] to-[#E8A317] transition-all duration-500 group-hover:w-16" />
+                      <h3 className="text-xl font-bold text-white">{w.title}</h3>
+                      <p className="mt-1.5 text-sm leading-relaxed text-white/80">{w.desc}</p>
+                    </div>
+                  </article>
                 </Reveal>
               ))}
-            </ol>
-
-            {/* Download buttons */}
+            </div>
             <Reveal>
-              <div className="relative isolate mx-auto max-w-4xl overflow-hidden rounded-3xl bg-gradient-to-br from-vk-600 via-vk-700 to-vk-900 p-6 text-center md:p-10">
-                <div aria-hidden className="pointer-events-none absolute -right-20 -top-20 -z-10 h-64 w-64 rounded-full bg-white/10" />
-                <div aria-hidden className="pointer-events-none absolute -bottom-24 -left-16 -z-10 h-56 w-56 rounded-full bg-vk-500/25" />
-                <span className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 text-white">
-                  <Smartphone className="h-6 w-6" />
-                </span>
-                <h3 className="vk-h2 !text-white">Get the Vaikuntham App</h3>
-                <p className="mx-auto mb-7 mt-3 max-w-lg text-[15px] text-white/85 md:text-base">
-                  Free to download. Registration takes less than two minutes.
-                </p>
-
-                <AppStoreButtons className="justify-center" />
-
-                <p className="mt-6 text-xs text-white/70 md:text-sm">
-                  Search for <strong className="text-white">&ldquo;Vaikuntham&rdquo;</strong> if
-                  the link does not open your store automatically.
-                </p>
+              <div className="mt-8 text-center">
+                <a href="#register" className="vk-btn-primary px-7 py-3">
+                  Register to Volunteer <ArrowRight className="h-4 w-4" />
+                </a>
               </div>
             </Reveal>
           </div>
         </section>
 
-        {/* Bottom CTA */}
+        {/* ───────── Why volunteer ───────── */}
+        <section className="vk-section vk-band">
+          <div className="vk-container">
+            <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-14">
+              <Reveal>
+                <div className="relative mx-auto max-w-xl">
+                  <div aria-hidden className="absolute -inset-3 -z-10 rotate-2 rounded-[2rem] bg-gradient-to-br from-[#F6C752]/60 to-vk-300/40" />
+                  <div className="relative aspect-[4/3] overflow-hidden rounded-[1.75rem] shadow-xl">
+                    <Image
+                      src="/assets/donations-annadana-real.jpg"
+                      alt="Volunteers and devotees serving prasadam at the Subhojanam kitchen"
+                      fill
+                      sizes="(min-width: 1024px) 560px, 100vw"
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="absolute -bottom-5 left-5 flex items-center gap-3 rounded-2xl bg-white px-4 py-3 shadow-xl">
+                    <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[#FFE6A3] to-[#F6C752] text-vk-900">
+                      <Heart className="h-5 w-5" />
+                    </span>
+                    <div>
+                      <p className="text-sm font-bold text-foreground">Seva with devotion</p>
+                      <p className="text-xs text-muted-foreground">Every hour is an offering</p>
+                    </div>
+                  </div>
+                </div>
+              </Reveal>
+
+              <div>
+                <SectionHeading eyebrow="Why Volunteer" title="The Joy of Selfless Service" />
+                <ul className="mt-2 space-y-5">
+                  {WHY_VOLUNTEER.map((item, i) => (
+                    <Reveal as="li" key={item.title} delay={i * 0.06}>
+                      <div className="flex gap-4">
+                        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-vk-600 to-vk-800 text-white shadow-md">
+                          <item.icon className="h-6 w-6" />
+                        </span>
+                        <div>
+                          <h3 className="text-lg font-bold text-foreground">{item.title}</h3>
+                          <p className="mt-1 text-[15px] leading-relaxed text-muted-foreground">{item.desc}</p>
+                        </div>
+                      </div>
+                    </Reveal>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ───────── How it works ───────── */}
         <section className="vk-section">
           <div className="vk-container">
+            <SectionHeading align="center" eyebrow="How It Works" title="Three Simple Steps" />
+            <ol className="relative mx-auto grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-3">
+              <div aria-hidden className="absolute left-[16%] right-[16%] top-9 hidden h-0.5 border-t-2 border-dashed border-vk-200 md:block" />
+              {STEPS.map((step, i) => (
+                <Reveal as="li" key={step.title} delay={i * 0.1}>
+                  <div className="relative text-center">
+                    <span className="relative mx-auto mb-5 flex h-[72px] w-[72px] items-center justify-center rounded-full bg-gradient-to-br from-[#FFE6A3] to-[#F6C752] text-vk-900 shadow-lg ring-8 ring-white">
+                      <step.icon className="h-8 w-8" />
+                      <span className="absolute -right-1 -top-1 flex h-7 w-7 items-center justify-center rounded-full bg-vk-700 text-sm font-bold text-white">
+                        {i + 1}
+                      </span>
+                    </span>
+                    <h3 className="text-xl font-bold text-foreground">{step.title}</h3>
+                    <p className="mx-auto mt-2 max-w-xs text-[15px] leading-relaxed text-muted-foreground">{step.desc}</p>
+                  </div>
+                </Reveal>
+              ))}
+            </ol>
+          </div>
+        </section>
+
+        {/* ───────── Vaikuntham app ───────── */}
+        <section id="app" className="px-4 pb-14 md:pb-20">
+          <Reveal>
+            <div className="relative isolate mx-auto flex max-w-5xl flex-col items-center gap-6 overflow-hidden rounded-3xl bg-gradient-to-br from-vk-600 via-vk-700 to-vk-900 p-7 text-center md:flex-row md:p-10 md:text-left">
+              <div aria-hidden className="pointer-events-none absolute -right-16 -top-16 -z-10 h-60 w-60 rounded-full bg-white/10" />
+              <div aria-hidden className="pointer-events-none absolute -bottom-20 left-10 -z-10 h-48 w-48 rounded-full bg-[#F6C752]/15" />
+              <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white/15 text-white">
+                <Smartphone className="h-8 w-8" />
+              </span>
+              <div className="flex-1">
+                <h2 className="text-2xl font-extrabold text-white md:text-3xl">Get Duty Reminders on the Vaikuntham App</h2>
+                <p className="mt-2 max-w-xl text-[15px] text-white/85">
+                  Browse every upcoming seva, confirm your slot in a tap and get reminders on your phone. Free on Android and iPhone.
+                </p>
+              </div>
+              <AppStoreButtons className="shrink-0 justify-center" />
+            </div>
+          </Reveal>
+        </section>
+
+        {/* ───────── FAQ ───────── */}
+        <FaqSection faqs={VOLUNTEER_FAQS} tone="mint" />
+
+        {/* ───────── Final call to action ───────── */}
+        <section className="relative isolate overflow-hidden bg-vk-900">
+          <Image src="/assets/home-subhojanam-banner.webp" alt="" fill sizes="100vw" className="-z-20 object-cover object-[50%_35%]" />
+          <div aria-hidden className="absolute inset-0 -z-10 bg-vk-900/60" />
+          <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,rgba(10,18,51,0.55)_0%,rgba(10,18,51,0)_70%)]" />
+          <div aria-hidden className="absolute inset-x-0 top-0 -z-10 h-1 bg-gradient-to-r from-[#F6C752] via-[#E8A317] to-[#F6C752]" />
+          <div className="vk-container py-16 text-center md:py-24">
             <Reveal>
-              <div className="mx-auto flex max-w-4xl flex-col items-center gap-6 rounded-3xl border border-vk-100 bg-gradient-to-br from-vk-100 via-vk-50 to-white p-6 text-center md:flex-row md:p-10 md:text-left">
-                <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#25D366] text-white shadow-lg">
-                  <WhatsAppIcon className="h-7 w-7 fill-current" />
-                </span>
-                <div className="flex-1">
-                  <h2 className="vk-h3">Need Help Getting Started?</h2>
-                  <p className="vk-lead mt-2">
-                    Having trouble with the app, or looking for a way to serve that
-                    isn&apos;t listed? Message us and a devotee will guide you personally.
-                  </p>
-                </div>
+              <h2 className="mx-auto max-w-2xl text-3xl font-extrabold leading-tight text-white md:text-4xl">
+                Your seva is waiting. <span className="text-[#F6C752]">Join us today.</span>
+              </h2>
+              <p className="mx-auto mt-3 max-w-xl text-white/80">
+                Even a few hours of service can change someone&apos;s day — and yours.
+              </p>
+              <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                <a href="#register" className="vk-btn-gold px-8 py-3.5 text-base">
+                  Register as a Volunteer <ArrowRight className="h-4 w-4" />
+                </a>
                 <a
-                  href="https://wa.me/918977761187?text=Hare%20Krishna!%20I%20would%20like%20to%20volunteer%20at%20HKM%20Vizag."
+                  href={WA_HELP}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="vk-btn-primary shrink-0 px-6 py-3"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/40 px-7 py-3.5 text-base font-semibold text-white transition hover:bg-white/10"
                 >
-                  <WhatsAppIcon className="h-5 w-5 fill-current" />
-                  Chat With Us on WhatsApp
+                  <WhatsAppIcon className="h-5 w-5 fill-current" /> Chat on WhatsApp
                 </a>
               </div>
             </Reveal>

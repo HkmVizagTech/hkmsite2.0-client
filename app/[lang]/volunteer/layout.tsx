@@ -7,7 +7,7 @@ import { localized } from "@/lib/i18n/seo";
 const baseMetadata: Metadata = pageSeo({
   title: "Volunteer at the Temple",
   description:
-    "Volunteer at ISKCON Gambheeram Visakhapatnam — help with festivals, prasadam distribution, Subhojanam and temple services. Register online.",
+    "Volunteer at ISKCON Gambheeram Visakhapatnam — help with festivals, prasadam distribution, Subhojanam and temple services. Sign up in the free Vaikuntham app.",
   path: "/volunteer",
   keywords: ["volunteer ISKCON Vizag", "temple volunteer Visakhapatnam", "seva volunteer", ...siteKeywords],
   image: "/assets/janmashtami-sk1.webp",
