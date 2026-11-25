@@ -43,7 +43,6 @@ export const DAILY_SCHEDULE = [
   { time: "7:30 AM", event: "Guru Puja", desc: "Worship of the spiritual master with kirtan, flower offerings, and devotional songs." },
   { time: "8:00 AM", event: "Srimad Bhagavatam Class", desc: "Daily discourse on Srimad Bhagavatam, the ripened fruit of the Vedic literature." },
   { time: "12:00 PM", event: "Raj Bhog Aarti", desc: "Grand noon offering with elaborate bhog preparation for the Lord." },
-  { time: "1:00 PM", event: "Prasadam Distribution", desc: "Sanctified food is distributed to all visitors and devotees present." },
   { time: "4:15 PM", event: "Temple Reopens", desc: "The temple doors reopen after the Lord's afternoon rest period." },
   { time: "6:30 PM", event: "Sandhya Aarti", desc: "Evening aarti with beautiful kirtan as the sun sets — a deeply moving ceremony." },
   { time: "7:00 PM", event: "Bhagavad Gita Class", desc: "Evening discourse on the Bhagavad Gita — the Song of God spoken by Lord Krishna." },

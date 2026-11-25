@@ -1,18 +1,64 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import { ChevronRight, Clock, Sun, Sunrise, Sunset, Moon, Music, BookOpen, Heart, Camera, Shirt, Utensils, Hourglass, Store } from "lucide-react";
 import Image from "next/image";
+import type { LucideIcon } from "lucide-react";
+import {
+  BookOpen, Camera, Clock, DoorOpen, Flame, Flower2, Hourglass, Leaf, MapPin,
+  Moon, Phone, Shirt, Sparkles, Store, Sun, Sunrise, Sunset, Utensils,
+} from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import SectionHeading from "@/components/site/SectionHeading";
 import Reveal from "@/components/site/Reveal";
-import { DAILY_SCHEDULE } from "@/lib/templeInfo";
+import { DAILY_SCHEDULE, DARSHAN_HOURS, MAPS_URL, TEMPLE } from "@/lib/templeInfo";
 
 // Times and text come from lib/templeInfo.ts (shared with the visit guide
-// and the temple JSON-LD); only the icons live here.
-const SCHEDULE_ICONS = [Moon, Heart, Sunrise, Music, BookOpen, Sun, Heart, Sunset, Sunset, BookOpen, Moon];
-const schedule = DAILY_SCHEDULE.map((s, i) => ({ ...s, icon: SCHEDULE_ICONS[i] ?? Clock }));
+// and the temple JSON-LD); only the icons and the day-parts live here.
+const EVENT_ICON: Record<string, LucideIcon> = {
+  "Mangala Aarti": Sunrise,
+  "Tulsi Puja & Japa": Leaf,
+  "Shringar Darshan": Sparkles,
+  "Guru Puja": Flower2,
+  "Srimad Bhagavatam Class": BookOpen,
+  "Raj Bhog Aarti": Flame,
+  "Temple Reopens": DoorOpen,
+  "Sandhya Aarti": Sunset,
+  "Bhagavad Gita Class": BookOpen,
+  "Shayan Aarti": Moon,
+};
+
+/** "4:30 AM" -> minutes since midnight. */
+const toMinutes = (t: string) => {
+  const m = t.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+  if (!m) return 0;
+  let h = parseInt(m[1], 10) % 12;
+  if (m[3].toUpperCase() === "PM") h += 12;
+  return h * 60 + parseInt(m[2], 10);
+};
+const hhmm = (s: string) => {
+  const [h, m] = s.split(":").map(Number);
+  return h * 60 + m;
+};
+
+const schedule = DAILY_SCHEDULE.map((s) => ({ ...s, icon: EVENT_ICON[s.event] ?? Clock, mins: toMinutes(s.time) }));
+
+const DAY_PARTS = [
+  { key: "morning", label: "Morning", sub: "Before noon", icon: Sunrise, test: (m: number) => m < 12 * 60 },
+  { key: "afternoon", label: "Afternoon", sub: "Noon to 4 PM", icon: Sun, test: (m: number) => m >= 12 * 60 && m < 16 * 60 },
+  { key: "evening", label: "Evening", sub: "From 4 PM", icon: Moon, test: (m: number) => m >= 16 * 60 },
+].map((p) => ({ ...p, items: schedule.filter((s) => p.test(s.mins)) })).filter((p) => p.items.length > 0);
+
+type Row =
+  | { kind: "label"; part: (typeof DAY_PARTS)[number]; firstIdx: number }
+  | { kind: "item"; item: (typeof schedule)[number]; idx: number };
+const ROWS: Row[] = DAY_PARTS.flatMap((part) => [
+  { kind: "label", part, firstIdx: schedule.indexOf(part.items[0]) } as Row,
+  ...part.items.map((item) => ({ kind: "item", item, idx: schedule.indexOf(item) }) as Row),
+]);
+
+const R2 = "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/";
+const BANNER_DESKTOP = `${R2}1795608007880-1795608006993-DailyScheduleDesktopFull1920x700.png`;
+const BANNER_MOBILE = `${R2}1795608007247-1795608006498-DailyScheduleMobile1080x1350.png`;
 
 const specialPrograms = [
   {
@@ -34,74 +80,17 @@ const specialPrograms = [
     day: "Every Saturday",
     time: "6:00 PM - 8:00 PM",
     desc: "Community satsang with bhajans, Q&A on spiritual topics, and light prasadam.",
-    image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1783677824913-1783677824553-Screenshot2026-07-10153331.png",
+    image: "/assets/gallery-class.jpg",
   },
 ];
 
-const visitInfo = [
-  {
-    icon: Clock,
-    title: "Temple Hours",
-    lines: ["Mangala Darshan: 4:30 AM – 5:00 AM", "Morning: 7:15 AM – 12:20 PM", "Evening: 4:15 PM – 8:15 PM"],
-  },
-  {
-    icon: Hourglass,
-    title: "Rest Period",
-    lines: ["The temple is closed for darshan between 5:00 AM and 7:15 AM, and again between 12:20 PM and 4:15 PM, while the Lord rests."],
-  },
-  {
-    icon: Shirt,
-    title: "Dress Code",
-    lines: ["Modest, traditional attire is encouraged. Please remove footwear before entering the temple hall."],
-  },
-];
-
-const guidelines = [
-  {
-    icon: Camera,
-    title: "Photography",
-    lines: ["Photography is allowed during darshan. Flash photography and video recording may be restricted during special events."],
-  },
-  {
-    icon: Utensils,
-    title: "Prasadam",
-    lines: ["Free prasadam is served after the morning Bhagavatam class and after the Sunday Love Feast program."],
-  },
-  {
-    icon: Store,
-    title: "Book Store",
-    lines: ["Sacred literature by Srila Prabhupada, devotional items, and spiritual accessories are available at the temple bookstore."],
-  },
-];
-
-// The sun's arc across the top of the schedule card: first aarti to last aarti.
-const ARC_FROM = 4 * 60 + 30;
-const ARC_TO = 21 * 60;
-/** A point on the arc (a quadratic curve) at fraction f, 0 to 1. */
-const arcPoint = (f: number) => ({
-  x: (1 - f) ** 2 * 24 + 2 * (1 - f) * f * 200 + f ** 2 * 376,
-  y: (1 - f) ** 2 * 108 + 2 * (1 - f) * f * -44 + f ** 2 * 108,
-});
-
-/** "4:30 AM" -> minutes since midnight. */
-const toMinutes = (t: string) => {
-  const m = t.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
-  if (!m) return 0;
-  let h = parseInt(m[1], 10) % 12;
-  if (m[3].toUpperCase() === "PM") h += 12;
-  return h * 60 + parseInt(m[2], 10);
-};
-
-// Darshan windows, the same hours as the "Temple Hours" card below.
-const OPEN_WINDOWS = [
-  { from: 4 * 60 + 30, to: 5 * 60, label: "5:00 AM" },
-  { from: 7 * 60 + 15, to: 12 * 60 + 20, label: "12:20 PM" },
-  { from: 16 * 60 + 15, to: 20 * 60 + 15, label: "8:15 PM" },
-];
-const OPENINGS = [
-  { at: 4 * 60 + 30, label: "4:30 AM" },
-  { at: 7 * 60 + 15, label: "7:15 AM" },
-  { at: 16 * 60 + 15, label: "4:15 PM" },
+const visitCards = [
+  { icon: Clock, title: "Temple Hours", text: "Mangala Darshan 4:30 – 5:00 AM, Morning 7:15 AM – 12:20 PM and Evening 4:15 – 8:15 PM." },
+  { icon: Hourglass, title: "Rest Period", text: "The temple is closed for darshan between 5:00 and 7:15 AM, and again between 12:20 and 4:15 PM, while the Lord rests." },
+  { icon: Shirt, title: "Dress Code", text: "Modest, traditional attire is encouraged. Please remove footwear before entering the temple hall." },
+  { icon: Camera, title: "Photography", text: "Photography is allowed during darshan. Flash photography and video recording may be restricted during special events." },
+  { icon: Utensils, title: "Prasadam", text: "Free prasadam is served after the morning Bhagavatam class and after the Sunday Love Feast program." },
+  { icon: Store, title: "Book Store", text: "Sacred literature by Srila Prabhupada, devotional items, and spiritual accessories are available at the temple bookstore." },
 ];
 
 /** Minutes since midnight in India, ticking once a minute. Null until the browser has it. */
@@ -121,205 +110,199 @@ function useIstMinutes() {
   return mins;
 }
 
-function InfoColumn({ title, items }: { title: string; items: typeof visitInfo }) {
-  return (
-    <Reveal>
-      <h2 className="vk-bar-title mb-5 text-2xl text-foreground md:text-[1.75rem]">{title}</h2>
-      <div className="space-y-3">
-        {items.map((item) => (
-          <div key={item.title} className="vk-card flex gap-4 p-5">
-            <span className="vk-icon-chip">
-              <item.icon className="h-5 w-5" />
-            </span>
-            <div>
-              <h3 className="mb-1 text-[15px] font-bold text-foreground md:text-base">{item.title}</h3>
-              {item.lines.map((line) => (
-                <p key={line} className="text-sm leading-relaxed text-muted-foreground md:text-[15px]">
-                  {line}
-                </p>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </Reveal>
-  );
-}
-
 export default function DailySchedulePage() {
   const now = useIstMinutes();
-  const times = schedule.map((x) => toMinutes(x.time));
+
   // The programme that is on now (the latest one that has started) and the one after it.
   let currentIdx = -1;
-  if (now !== null) times.forEach((t, i) => { if (t <= now) currentIdx = i; });
+  if (now !== null) schedule.forEach((s, i) => { if (s.mins <= now) currentIdx = i; });
   const nextIdx = now === null ? -1 : currentIdx + 1 < schedule.length ? currentIdx + 1 : 0;
+  const current = currentIdx >= 0 ? schedule[currentIdx] : null;
+  const next = nextIdx >= 0 ? schedule[nextIdx] : null;
 
-  const todayLabel =
-    now === null
-      ? ""
-      : new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", weekday: "long", day: "numeric", month: "long" }).format(new Date());
-
-  const openWindow = now === null ? null : OPEN_WINDOWS.find((w) => now >= w.from && now < w.to) ?? null;
-  const nextOpening = now === null ? null : OPENINGS.find((o) => o.at > now) ?? OPENINGS[0];
-
+  const openWindow = now === null ? null : DARSHAN_HOURS.find((w) => now >= hhmm(w.opens) && now < hhmm(w.closes)) ?? null;
+  const nextOpening = now === null ? null : DARSHAN_HOURS.find((w) => hhmm(w.opens) > now) ?? DARSHAN_HOURS[0];
   return (
     <PageLayout>
       <div className="pt-[var(--header-h)]">
-        <section className="relative overflow-hidden bg-gradient-to-b from-vk-50 to-white">
-          <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-vk-200/40 blur-3xl" />
-          <div className="vk-container relative grid items-center gap-10 py-10 md:py-16 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
-            <div className="text-center lg:text-left">
-              <nav aria-label="Breadcrumb" className="mb-5 inline-flex items-center gap-1.5 text-xs font-medium text-ink/55 md:text-[13px]">
-                <Link href="/" className="transition-colors hover:text-vk-700">Home</Link>
-                <ChevronRight className="h-3.5 w-3.5 opacity-60" />
-                <span className="font-semibold text-vk-700" aria-current="page">Daily Schedule</span>
-              </nav>
-              <div>
-                <span className="vk-pill">Temple Timings</span>
-              </div>
-              <h1 className="vk-h1 mt-4 !text-[2.1rem] md:!text-[3rem]">Daily Darshan &amp; Aarti Schedule</h1>
-              <p className="mx-auto mt-4 max-w-xl text-[15px] leading-relaxed text-ink/65 md:text-lg lg:mx-0">
-                Temple timings, the aarti schedule and spiritual programs at ISKCON Gambheeram, Visakhapatnam.
-              </p>
-
-              {now !== null && (
-                <div
-                  className={`mt-6 inline-flex items-center gap-2.5 rounded-full border px-4 py-2 text-sm font-semibold ${
-                    openWindow ? "border-green-200 bg-green-50 text-green-800" : "border-vk-200 bg-white text-vk-800"
-                  }`}
-                >
-                  <span className="relative flex h-2.5 w-2.5">
-                    {openWindow && <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-60" />}
-                    <span className={`relative inline-flex h-2.5 w-2.5 rounded-full ${openWindow ? "bg-green-500" : "bg-vk-400"}`} />
-                  </span>
-                  {openWindow ? `Darshan is open now · until ${openWindow.label}` : `Temple is resting · opens at ${nextOpening?.label}`}
-                </div>
-              )}
-
-              <div className="mx-auto mt-6 grid max-w-md grid-cols-3 gap-3 lg:mx-0">
-                {[
-                  { v: schedule.length, l: "daily programs" },
-                  { v: schedule[0].time, l: "first aarti" },
-                  { v: schedule[schedule.length - 1].time, l: "last aarti" },
-                ].map((x) => (
-                  <div key={x.l} className="rounded-2xl border border-vk-100 bg-white px-2 py-3 text-center shadow-[0_14px_28px_-22px_rgba(30,58,138,0.5)]">
-                    <div className="font-heading text-lg font-extrabold text-vk-700 md:text-xl">{x.v}</div>
-                    <div className="text-[11px] font-medium text-ink/60">{x.l}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="relative mx-auto w-full max-w-sm lg:max-w-md">
-              <div aria-hidden className="absolute -inset-3 translate-x-3 translate-y-3 rounded-[2rem] border border-vk-200" />
-              <div className="relative aspect-square overflow-hidden rounded-[1.75rem] bg-vk-100 shadow-[0_34px_70px_-38px_rgba(30,58,138,0.7)]">
-                <Image src="/assets/gallery-aarti.jpg" alt="Aarti at Hare Krishna Vaikuntham, Visakhapatnam" fill priority sizes="(min-width: 1024px) 420px, 90vw" className="object-cover" />
-              </div>
-            </div>
-          </div>
+        {/* ───────── Banner ───────── */}
+        <section className="bg-white">
+          <h1 className="sr-only">Daily Darshan &amp; Aarti Schedule at ISKCON Gambheeram, Visakhapatnam</h1>
+          <Image
+            src={BANNER_DESKTOP}
+            alt="Daily Schedule: a day of devotion at Sri Sri Radha Madan Mohan Temple, Hare Krishna Vaikuntham"
+            width={1920}
+            height={700}
+            sizes="100vw"
+            className="hidden h-auto w-full md:block"
+          />
+          <Image
+            src={BANNER_MOBILE}
+            alt="Daily Schedule: a day of devotion at Sri Sri Radha Madan Mohan Temple, Hare Krishna Vaikuntham"
+            width={1080}
+            height={1350}
+            sizes="100vw"
+            className="block h-auto w-full md:hidden"
+          />
         </section>
 
-        {/* ── DAILY PROGRAM SCHEDULE: a clean day sheet ──────────── */}
-        <section className="vk-section">
+        {/* ───────── Live status + darshan windows ───────── */}
+        <section className="bg-white py-10 md:py-14">
           <div className="vk-container">
-            <SectionHeading
-              align="center"
-              eyebrow="Temple Timings"
-              title="Daily Program Schedule"
-              subtitle="The temple follows a sacred daily routine established by Srila Prabhupada for all ISKCON temples worldwide, from the first aarti before dawn to the last aarti at night."
-            />
-
             <Reveal>
-              <div className="mx-auto max-w-3xl overflow-hidden rounded-[1.75rem] border border-vk-100 bg-white shadow-[0_30px_60px_-44px_rgba(30,58,138,0.55)]">
-                {/* The sun's path across the temple day */}
-                <div className="relative overflow-hidden bg-gradient-to-b from-vk-100 via-vk-50 to-white px-6 pt-5 md:px-8">
-                  <div className="relative z-[1] flex items-start justify-between gap-3">
-                    <h3 className="font-serif-display text-lg font-semibold text-foreground md:text-xl">Today&apos;s schedule</h3>
-                    {todayLabel && <span className="rounded-full bg-white/80 px-3 py-1 text-xs font-medium text-ink/60 shadow-sm">{todayLabel}</span>}
+              <div className="flex flex-col items-stretch gap-4 md:flex-row md:items-center md:justify-between">
+                {now !== null ? (
+                  <div
+                    className={`inline-flex items-center justify-center gap-2.5 self-center rounded-full border px-4 py-2 text-sm font-semibold md:self-auto ${
+                      openWindow ? "border-green-200 bg-green-50 text-green-800" : "border-vk-200 bg-vk-50 text-vk-800"
+                    }`}
+                  >
+                    <span className="relative flex h-2.5 w-2.5">
+                      {openWindow && <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-60" />}
+                      <span className={`relative inline-flex h-2.5 w-2.5 rounded-full ${openWindow ? "bg-green-500" : "bg-vk-400"}`} />
+                    </span>
+                    {openWindow ? `Darshan is open now · until ${openWindow.display.split("–")[1].trim()}` : `Temple is resting · opens at ${nextOpening?.display.split("–")[0].trim()}`}
                   </div>
-                  <svg viewBox="0 0 400 120" className="mt-1 w-full" role="img" aria-label="The day from first aarti to last aarti">
-                    <path d="M 24 108 Q 200 -44 376 108" fill="none" stroke="#C9D5F7" strokeWidth="2.5" strokeDasharray="2 7" strokeLinecap="round" />
-                    {schedule.map((it, i) => {
-                      const f = Math.min(1, Math.max(0, (times[i] - ARC_FROM) / (ARC_TO - ARC_FROM)));
-                      const pt = arcPoint(f);
-                      return <circle key={it.time} cx={pt.x} cy={pt.y} r={i === currentIdx ? 5 : 3.2} fill={i <= currentIdx && now !== null ? "#1E3A8A" : "#93A9EE"} />;
-                    })}
-                    {now !== null && (() => {
-                      const f = Math.min(1, Math.max(0, (now - ARC_FROM) / (ARC_TO - ARC_FROM)));
-                      const pt = arcPoint(f);
-                      return (
-                        <g>
-                          <circle cx={pt.x} cy={pt.y} r="17" fill="#fff" opacity="0.75" />
-                          <circle cx={pt.x} cy={pt.y} r="10" fill="#1E3A8A" />
-                          <circle cx={pt.x} cy={pt.y} r="3.4" fill="#fff" />
-                        </g>
-                      );
-                    })()}
-                    <text x="24" y="119" textAnchor="middle" fontSize="9" fill="#6B7A99">4:30 AM</text>
-                    <text x="376" y="119" textAnchor="middle" fontSize="9" fill="#6B7A99">9:00 PM</text>
-                  </svg>
-                </div>
+                ) : <span />}
 
-                <ol className="relative">
-                  {/* the spine, filled in up to the program that is on now */}
-                  <span aria-hidden className="absolute bottom-8 left-[2.375rem] top-8 w-0.5 bg-vk-100 md:left-[2.875rem]" />
-                  <span
-                    aria-hidden
-                    className="absolute left-[2.375rem] top-8 w-0.5 bg-vk-700 md:left-[2.875rem]"
-                    style={{ height: now !== null && currentIdx >= 0 ? `calc(${(currentIdx / (schedule.length - 1)) * 100}% - 2rem)` : 0 }}
-                  />
-                  {schedule.map((item, i) => {
-                    const isNow = i === currentIdx;
-                    const isNext = i === nextIdx && now !== null;
-                    const done = now !== null && currentIdx >= 0 && i < currentIdx;
-                    const rest = item.time === "7:15 AM" ? "Darshan closed, the Lord rests (5:00 to 7:15 AM)" : item.time === "4:15 PM" ? "Darshan closed, the Lord rests (12:20 to 4:15 PM)" : null;
-                    return (
-                      <li key={item.time}>
-                        {rest && (
-                          <div className="relative z-[1] flex items-center gap-2.5 bg-vk-50 py-2 pl-[4.4rem] pr-6 text-xs font-medium text-ink/55 md:pl-[5.3rem] md:pr-8">
-                            <Hourglass className="h-3.5 w-3.5 text-vk-400" />
-                            {rest}
-                          </div>
-                        )}
-                        <div className={`relative flex items-start gap-4 px-5 py-5 md:gap-5 md:px-7 ${isNow ? "bg-vk-50/70" : ""}`}>
-                          {/* rail marker */}
-                          <span
-                            className={`relative z-[1] mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full ring-4 ring-white ${
-                              isNow
-                                ? "bg-vk-700 text-white shadow-[0_10px_22px_-8px_rgba(30,58,138,0.85)]"
-                                : done
-                                  ? "bg-vk-700 text-white"
-                                  : "border-2 border-vk-200 bg-white text-vk-500"
-                            }`}
-                          >
-                            {isNow && <span aria-hidden className="absolute inset-0 animate-ping rounded-full bg-vk-500 opacity-30" />}
-                            <item.icon className="relative h-4 w-4" />
-                          </span>
-                          <div className="w-[4.6rem] shrink-0 md:w-24">
-                            <span className={`block font-serif-display text-[1.5rem] font-semibold leading-none md:text-[1.8rem] ${isNow ? "text-vk-700" : done ? "text-ink/45" : "text-foreground"}`}>
-                              {item.time.split(" ")[0]}
-                            </span>
-                            <span className="mt-1 block text-[11px] font-bold uppercase tracking-[0.2em] text-ink/40">{item.time.split(" ")[1]}</span>
-                          </div>
-                          <div className={`min-w-0 flex-1 ${done ? "opacity-60" : ""}`}>
-                            <div className="flex flex-wrap items-center gap-2">
-                              <h4 className="text-base font-bold text-foreground md:text-[1.05rem]">{item.event}</h4>
-                              {isNow && <span className="rounded-full bg-vk-700 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">Now</span>}
-                              {isNext && !isNow && <span className="rounded-full bg-vk-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-vk-700">Up next</span>}
-                            </div>
-                            <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{item.desc}</p>
-                          </div>
-                        </div>
-                      </li>
-                    );
-                  })}
-                </ol>
+                {now !== null && (current || next) && (
+                  <div className="grid grid-cols-2 gap-3 md:min-w-[26rem]">
+                    {current && (
+                      <div className="rounded-2xl border border-[#E8A317] bg-gradient-to-br from-[#FFF4D6] to-white p-4">
+                        <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#B7791F]">Happening now</p>
+                        <p className="mt-1 text-[15px] font-bold leading-snug text-foreground">{current.event}</p>
+                        <p className="text-xs text-muted-foreground">Since {current.time}</p>
+                      </div>
+                    )}
+                    {next && (
+                      <div className="rounded-2xl border border-vk-100 bg-vk-50 p-4">
+                        <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-vk-700">Up next</p>
+                        <p className="mt-1 text-[15px] font-bold leading-snug text-foreground">{next.event}</p>
+                        <p className="text-xs text-muted-foreground">{next.time}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
+
+              <div className="mt-6 grid gap-4 md:grid-cols-3">
+                {DARSHAN_HOURS.map((w) => {
+                  const open = now !== null && now >= hhmm(w.opens) && now < hhmm(w.closes);
+                  const [from, to] = w.display.split("–").map((x) => x.trim());
+                  return (
+                    <div
+                      key={w.label}
+                      className={`relative overflow-hidden rounded-2xl bg-white p-6 shadow-[0_24px_50px_-34px_rgba(30,58,138,0.55)] ${open ? "ring-2 ring-green-500" : "ring-1 ring-vk-100"}`}
+                    >
+                      <div aria-hidden className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#F6C752] to-[#E8A317]" />
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-xs font-bold uppercase tracking-[0.16em] text-vk-700">{w.label}</p>
+                        {open && <span className="rounded-full bg-green-100 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-green-800">Open now</span>}
+                      </div>
+                      <p className="mt-3 font-serif-display text-3xl font-semibold leading-none text-foreground md:text-[2rem]">{from}</p>
+                      <p className="mt-2 text-sm font-medium text-muted-foreground">to {to}</p>
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="mx-auto mt-4 flex max-w-2xl items-center justify-center gap-2 text-center text-sm text-muted-foreground">
+                <Hourglass className="h-4 w-4 shrink-0 text-vk-400" />
+                The temple is closed for darshan from 5:00 to 7:15 AM and 12:20 to 4:15 PM while the Lord rests.
+              </p>
             </Reveal>
           </div>
         </section>
 
-        {/* ── SPECIAL PROGRAMS ──────────────────────────────────── */}
+        {/* ───────── Daily program schedule: a journey through the day ───────── */}
+        <section className="relative isolate overflow-hidden bg-white py-16 md:py-24">
+          <div className="vk-container">
+            <Reveal>
+              <div className="mx-auto max-w-2xl text-center">
+                <span className="inline-flex items-center gap-2 rounded-full border border-vk-200 bg-white px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-vk-700">
+                  Temple Timings
+                </span>
+                <h2 className="mt-4 text-3xl font-extrabold text-foreground md:text-5xl">Daily Program Schedule</h2>
+                <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground md:text-base">
+                  The temple follows a sacred daily routine established by Srila Prabhupada for all ISKCON temples worldwide, from the first aarti before dawn to the last aarti at night.
+                </p>
+              </div>
+            </Reveal>
+
+            <ol className="relative mx-auto mt-14 max-w-5xl">
+              {ROWS.map((row, ri) => {
+                if (row.kind === "label") {
+                  const passed = now !== null && currentIdx >= row.firstIdx;
+                  return (
+                    <li key={`l-${row.part.key}`} className="relative grid grid-cols-[2.5rem_1fr] gap-x-4 pb-6 pt-2 md:grid-cols-[1fr_3rem_1fr] md:gap-x-8">
+                      <span aria-hidden className={`absolute bottom-0 left-5 top-0 w-0.5 -translate-x-1/2 md:left-1/2 ${passed ? "bg-[#F6C752]" : "bg-vk-100"}`} />
+                      <span className="relative z-[1] col-start-1 row-start-1 flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#F6C752] to-[#E8A317] text-vk-900 shadow-[0_0_0_6px_rgba(246,199,82,0.18)] md:col-start-2">
+                        <row.part.icon className="h-5 w-5" />
+                      </span>
+                      <div className="col-start-2 row-start-1 self-center md:col-start-3">
+                        <p className="font-serif-display text-2xl font-semibold leading-none text-foreground">{row.part.label}</p>
+                        <p className="mt-1 text-[11px] font-medium uppercase tracking-[0.16em] text-ink/50">{row.part.sub}</p>
+                      </div>
+                    </li>
+                  );
+                }
+                const { item, idx } = row;
+                const isNow = idx === currentIdx;
+                const isNext = idx === nextIdx && now !== null;
+                const done = now !== null && currentIdx >= 0 && idx < currentIdx;
+                const lit = now !== null && currentIdx >= idx;
+                const left = ri % 2 === 0;
+                const [clock, ampm] = item.time.split(" ");
+                return (
+                  <li key={item.time} className="relative grid grid-cols-[2.5rem_1fr] gap-x-4 pb-6 md:grid-cols-[1fr_3rem_1fr] md:gap-x-8">
+                    <span aria-hidden className={`absolute bottom-0 left-5 top-0 w-0.5 -translate-x-1/2 md:left-1/2 ${lit ? "bg-[#F6C752]" : "bg-vk-100"}`} />
+                    <span
+                      className={`relative z-[1] col-start-1 row-start-1 mt-4 flex h-10 w-10 items-center justify-center rounded-full ring-4 ring-white md:col-start-2 ${
+                        isNow ? "bg-[#F6C752] text-vk-900 shadow-[0_0_28px_rgba(246,199,82,0.7)]" : lit ? "bg-[#E8A317] text-vk-900" : "border-2 border-vk-200 bg-white text-vk-500"
+                      }`}
+                    >
+                      {isNow && <span aria-hidden className="absolute inset-0 animate-ping rounded-full bg-[#F6C752] opacity-40" />}
+                      <item.icon className="relative h-4 w-4" />
+                    </span>
+
+                    {/* the time, on the opposite side of the spine (desktop) */}
+                    <div className={`hidden items-center md:row-start-1 md:flex ${left ? "md:col-start-3 md:justify-start" : "md:col-start-1 md:justify-end"}`}>
+                      <div className={left ? "text-left" : "text-right"}>
+                        <span className={`font-serif-display text-5xl font-semibold leading-none ${isNow ? "text-vk-700" : done ? "text-ink/30" : "text-foreground"}`}>{clock}</span>
+                        <span className="ml-2 text-xs font-bold uppercase tracking-[0.2em] text-ink/45">{ampm}</span>
+                      </div>
+                    </div>
+
+                    {/* the programme card */}
+                    <div
+                      className={`col-start-2 row-start-1 rounded-2xl border p-5 transition ${left ? "md:col-start-1" : "md:col-start-3"} ${
+                        isNow
+                          ? "border-[#E8A317] bg-gradient-to-br from-[#FFF4D6] to-white shadow-[0_24px_50px_-24px_rgba(232,163,23,0.6)]"
+                          : "border-vk-100 bg-white shadow-[0_14px_30px_-26px_rgba(30,58,138,0.5)] hover:-translate-y-0.5 hover:shadow-[0_22px_40px_-26px_rgba(30,58,138,0.6)]"
+                      } ${done ? "opacity-60" : ""}`}
+                    >
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="rounded-md bg-vk-50 px-2 py-0.5 text-xs font-bold tracking-wide text-vk-700 md:hidden">{item.time}</span>
+                        <h3 className="text-base font-bold text-foreground md:text-lg">{item.event}</h3>
+                        {isNow && <span className="rounded-full bg-[#F6C752] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-vk-900">Now</span>}
+                        {isNext && !isNow && <span className="rounded-full bg-vk-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-vk-700">Up next</span>}
+                      </div>
+                      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.desc}</p>
+                    </div>
+                  </li>
+                );
+              })}
+              {/* end of the day */}
+              <li className="relative grid grid-cols-[2.5rem_1fr] gap-x-4 md:grid-cols-[1fr_3rem_1fr] md:gap-x-8">
+                <span className="relative z-[1] col-start-1 flex h-10 w-10 items-center justify-center rounded-full border-2 border-vk-200 bg-white text-vk-500 md:col-start-2">
+                  <Moon className="h-4 w-4" />
+                </span>
+                <p className="col-start-2 self-center text-sm font-medium text-ink/55 md:col-start-3">Jaya! The Lord rests until Mangala Aarti.</p>
+              </li>
+            </ol>
+          </div>
+        </section>
+
+        {/* ───────── Special programs ───────── */}
         <section className="vk-section vk-band">
           <div className="vk-container">
             <SectionHeading align="center" eyebrow="Weekly Programs" title="Special Programs" />
@@ -335,14 +318,16 @@ export default function DailySchedulePage() {
                         sizes="(min-width: 768px) 33vw, 100vw"
                         className="object-cover transition-transform duration-500 group-hover:scale-105"
                       />
+                      <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-vk-900/50 to-transparent" />
+                      <span className="absolute bottom-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-white/95 px-3 py-1 text-xs font-semibold text-vk-800 shadow">
+                        <Clock className="h-3.5 w-3.5" />
+                        {prog.day}
+                      </span>
                     </div>
                     <div className="flex flex-1 flex-col p-5 md:p-6">
-                      <span className="vk-pill-soft mb-3 self-start !normal-case !tracking-normal">
-                        <Clock className="h-3.5 w-3.5" />
-                        {prog.day} · {prog.time}
-                      </span>
                       <h3 className="text-xl font-bold text-foreground">{prog.title}</h3>
-                      <p className="mt-1.5 text-[15px] leading-relaxed text-muted-foreground">{prog.desc}</p>
+                      <p className="mt-1 text-sm font-semibold text-vk-700">{prog.time}</p>
+                      <p className="mt-2 text-[15px] leading-relaxed text-muted-foreground">{prog.desc}</p>
                     </div>
                   </article>
                 </Reveal>
@@ -351,15 +336,27 @@ export default function DailySchedulePage() {
           </div>
         </section>
 
-        {/* ── VISIT INFO + GUIDELINES ───────────────────────────── */}
+        {/* ───────── Plan your visit ───────── */}
         <section className="vk-section">
-          <div className="vk-container grid gap-10 md:grid-cols-2 lg:gap-14">
-            <InfoColumn title="Visit Us" items={visitInfo} />
-            <InfoColumn title="Guidelines" items={guidelines} />
+          <div className="vk-container">
+            <SectionHeading align="center" eyebrow="Visit Us" title="Plan Your Visit" subtitle="A few things that make your darshan smooth and peaceful." />
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {visitCards.map((c, i) => (
+                <Reveal key={c.title} delay={(i % 3) * 0.06}>
+                  <div className="h-full rounded-2xl border border-vk-100 bg-white p-6 shadow-[0_14px_30px_-26px_rgba(30,58,138,0.5)] transition hover:-translate-y-0.5 hover:shadow-[0_22px_40px_-26px_rgba(30,58,138,0.6)]">
+                    <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-vk-50 text-vk-700">
+                      <c.icon className="h-5 w-5" />
+                    </span>
+                    <h3 className="mt-4 text-base font-bold text-foreground">{c.title}</h3>
+                    <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{c.text}</p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
           </div>
         </section>
 
-        {/* ── MAHA MANTRA ───────────────────────────────────────── */}
+        {/* ───────── Maha mantra + directions ───────── */}
         <section className="pb-10 md:pb-16">
           <div className="vk-container">
             <Reveal>
@@ -377,6 +374,14 @@ export default function DailySchedulePage() {
                   &quot;Simply by chanting the Holy Name of the Lord, one can attain the highest perfection of life.&quot;
                 </p>
                 <p className="mt-3 text-xs font-semibold uppercase tracking-[0.14em] text-white/65">— Srila Prabhupada</p>
+                <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                  <a href={MAPS_URL} target="_blank" rel="noopener noreferrer" className="vk-btn-gold px-7 py-3.5 text-base">
+                    <MapPin className="h-4 w-4" /> Get Directions
+                  </a>
+                  <a href={TEMPLE.phoneHref} className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/40 px-7 py-3.5 text-base font-semibold text-white transition hover:bg-white/10">
+                    <Phone className="h-4 w-4" /> {TEMPLE.phone}
+                  </a>
+                </div>
               </div>
             </Reveal>
           </div>

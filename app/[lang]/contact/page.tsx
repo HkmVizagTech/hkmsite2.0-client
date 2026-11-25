@@ -9,16 +9,18 @@ import { useState } from "react";
 import { MapPin, Phone, Mail, Clock, Send, Facebook, Instagram, Youtube, Building, ChevronDown, BadgeCheck } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
+import { DARSHAN_HOURS } from "@/lib/templeInfo";
 
 const contactInfo = [
   { icon: MapPin, title: "Address", lines: ["Hare Krishna Vaikuntham Cultural Centre", "Door No: 8-22, IIM Rd, near Akshaya Patra Foundation Kitchen, Gambhiram", "Visakhapatnam, Andhra Pradesh 531163"] },
   { icon: Phone, title: "Phone", lines: ["+91 89777 61187"] },
   { icon: Mail, title: "Email", lines: ["social@hkmvizag.org"] },
-  { icon: Clock, title: "Visiting Hours", lines: ["Morning: 4:30 AM - 1:00 PM", "Evening: 4:00 PM - 8:30 PM"] },
+  // Same darshan hours as the schedule page and Google's structured data.
+  { icon: Clock, title: "Visiting Hours", lines: DARSHAN_HOURS.map((h) => `${h.label}: ${h.display}`) },
 ];
 
 const faqs = [
-  { q: "What are the temple timings?", a: "The temple is open daily from 4:30 AM to 1:00 PM and 4:00 PM to 8:30 PM. Mangala Aarti begins at 4:30 AM." },
+  { q: "What are the temple timings?", a: `Darshan is open daily: ${DARSHAN_HOURS.map((h) => `${h.label} ${h.display}`).join(", ")}. Mangala Aarti begins at 4:30 AM.` },
   { q: "How can I volunteer?", a: "We welcome volunteers! Please visit us during temple hours or send us a message through the contact form. We have opportunities in cooking, distribution, education, and event management." },
   { q: "Are donations tax-deductible?", a: "Yes, all donations to Hare Krishna Movement India are eligible for 80G income tax benefits under the Finance Act. PAN details are required for the certificate." },
   { q: "Can I sponsor a special occasion?", a: "Absolutely! You can sponsor festivals, birthdays, anniversaries, and other occasions. Contact us for special event sponsorship packages." },

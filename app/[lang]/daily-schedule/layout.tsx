@@ -10,7 +10,7 @@ const baseMetadata: Metadata = pageSeo({
     "Daily darshan and aarti timings at ISKCON Gambheeram Visakhapatnam — Mangala Aarti 4:30 AM, darshan 7:15 AM–12:20 PM and 4:15 PM–8:15 PM.",
   path: "/daily-schedule",
   keywords: ["ISKCON Vizag darshan timings", "ISKCON Gambheeram temple timings", "aarti timings Visakhapatnam", "temple schedule Vizag", ...siteKeywords],
-  image: "/assets/home-gallery-aarti.webp",
+  image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1795608007880-1795608006993-DailyScheduleDesktopFull1920x700.png",
 });
 
 export default function DailyScheduleLayout({ children }: { children: ReactNode }) {
