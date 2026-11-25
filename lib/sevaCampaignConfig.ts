@@ -197,14 +197,6 @@ export const GAU_CAMPAIGN: SevaCampaignConfig = {
       readTime: 2,
       category: "Festivals",
     },
-    {
-      title: "Significance of Govardhan Puja: Why Is Cow Dung Used?",
-      text: "The meaning behind the cow's place in the worship of Govardhan.",
-      href: "/blogs/govardhan-puja-date-muhurat-vidhi-significance",
-      image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/blogs/imported/1793778255505-significance-of-govardhan-puja.webp",
-      readTime: 4,
-      category: "Festivals",
-    },
   ],
 
   heroTagline: "A seva initiative of Hare Krishna Movement Visakhapatnam",
@@ -389,14 +381,6 @@ export const ANNA_DAAN_CAMPAIGN: SevaCampaignConfig = {
       readTime: 3,
       category: "Recipes",
     },
-    {
-      title: "ISKCON Khichdi Recipe",
-      text: "How khichdi prasadam is prepared in ISKCON kitchens.",
-      href: "/blogs/iskcon-khichdi-recipe",
-      image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/blogs/imported/1793781036501-iskcon-khichdi-recipe0BtCT7C.webp",
-      readTime: 6,
-      category: "Recipes",
-    },
   ],
 
   heroTagline: "A seva initiative of Hare Krishna Movement Visakhapatnam",
@@ -562,28 +546,12 @@ export const GITA_DAAN_CAMPAIGN: SevaCampaignConfig = {
       category: "Spiritual Knowledge",
     },
     {
-      title: "11 Benefits of Reading Bhagavad Gita",
-      text: "What a daily reading of the Gita can change in an ordinary life.",
-      href: "/blogs/benefits-of-reading-bhagavad-gita",
-      image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/blogs/imported/1793781005118-benefits-of-reading-bhagavad-gita.webp",
-      readTime: 8,
-      category: "Spiritual Knowledge",
-    },
-    {
       title: "Gita Jayanti: Celebrating the Wisdom of the Gita",
       text: "The day Krishna spoke the Gita, and how devotees observe it.",
       href: "/blogs/gita-jayanti",
       image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/blogs/1784708216948-1784708216319-gitjayanthi.png",
       readTime: 6,
       category: "Festivals",
-    },
-    {
-      title: "Fearless and Mentally Strong: Lessons from the Gita",
-      text: "Krishna's advice to Arjuna for facing fear and doubt.",
-      href: "/blogs/how-to-be-fearless-mentally-strong-bhagavad-gita",
-      image: "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/blogs/imported/1793781078135-waystobuildconfidence.webp",
-      readTime: 5,
-      category: "Spiritual Knowledge",
     },
   ],
   stats: [
