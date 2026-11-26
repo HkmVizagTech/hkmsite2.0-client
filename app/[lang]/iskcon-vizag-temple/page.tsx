@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Clock, MapPin, Phone, Mail, Navigation, ChevronRight, Home, Utensils, Music, BookOpen, PartyPopper, HeartHandshake, Shirt, Camera, Store, ArrowRight } from "lucide-react";
 import PageLayout from "@/components/PageLayout";
 import JsonLd from "@/components/seo/JsonLd";
+import TempleTour from "@/components/temple/TempleTour";
 import { pageSeo, siteKeywords, breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import { getT } from "@/lib/i18n/server";
 import { TEMPLE, FULL_ADDRESS, MAPS_URL, MAPS_EMBED_URL, DARSHAN_HOURS, DAILY_SCHEDULE, WEEKLY_PROGRAMS } from "@/lib/templeInfo";
@@ -177,6 +178,9 @@ export default async function IskconVizagTemplePage({ params }: { params: Promis
             </div>
           </div>
         </section>
+
+        {/* Scroll-through tour of the campus */}
+        <TempleTour />
 
         {/* About */}
         <section className="vk-section !pt-0">
