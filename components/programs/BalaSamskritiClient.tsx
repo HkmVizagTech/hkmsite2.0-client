@@ -26,7 +26,7 @@ import { scrollToSection } from "@/lib/scrollTop";
 const SLUG = "bala-samskriti";
 const apiBase = () => (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(/\/+$/, "");
 const POSTER = "/assets/programs/bala-samskriti-poster.webp";
-const BANNER = "/assets/programs/bala-samskriti-banner.webp";
+const BANNER = "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1795682981694-bala-samskriti-banner-desktop.webp";
 const BANNER_ALT = "Bala Samskriti: Vedic culture and values for kids. Life skills, Gita for kids, meditation and more. Course starts 6 December 2026, a 3-month course for ages 6 to 13, every Sunday 10:30 AM to 1:30 PM. Course fee ₹2,500. Contact 9985364430 / 7207108219.";
 
 interface Venue { name: string; mapUrl?: string }
@@ -152,8 +152,8 @@ export default function BalaSamskritiClient() {
             <Image
               src={BANNER}
               alt={BANNER_ALT}
-              width={1600}
-              height={900}
+              width={1920}
+              height={700}
               priority
               sizes="100vw"
               className="hidden h-auto w-full md:block"
