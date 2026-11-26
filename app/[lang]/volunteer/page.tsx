@@ -8,7 +8,6 @@ import {
   Sparkles,
   Smartphone,
   ArrowRight,
-  CheckCircle2,
   ClipboardEdit,
   PhoneCall,
   Flame,
@@ -26,7 +25,8 @@ import { AppStoreButtons } from "@/components/VaikunthamAppPromo";
 const WA_HELP =
   "https://wa.me/918977761187?text=Hare%20Krishna!%20I%20would%20like%20to%20volunteer%20at%20HKM%20Vizag.";
 
-const HERO_POINTS = ["Open to everyone — no experience needed", "Choose the seva and timing that suit you", "Our team contacts you on WhatsApp"];
+const HERO_DESKTOP = "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1795688484987-1795688482809-VolunteerDesktop1920x700.png";
+const HERO_MOBILE = "https://pub-32ade8e1209149f980ffe2aa4ddc6c99.r2.dev/media-library/1795688484476-1795688479563-VolunteerMobile1080x1350.png";
 
 const WAYS_TO_SERVE = [
   {
@@ -92,55 +92,30 @@ export default function VolunteerPage() {
     <PageLayout>
       <div className="pt-[var(--header-h)]">
         {/* ───────── Hero ───────── */}
-        <section className="relative isolate overflow-hidden bg-vk-900">
+        <section className="bg-[#FDF5E1]">
+          <h1 className="sr-only">Volunteer at ISKCON Gambheeram Vizag: Serve with Love, Volunteer with Us</h1>
           <Image
-            src="/assets/home-hero-desktop.webp"
-            alt=""
-            fill
+            src={HERO_DESKTOP}
+            alt="Serve with love, volunteer with us. Offer your time and talents in the service of Sri Sri Radha Madan Mohan. Be part of our temple volunteer community."
+            width={1920}
+            height={700}
             priority
             sizes="100vw"
-            className="-z-20 object-cover object-[72%_center]"
+            className="mx-auto hidden h-auto w-full max-w-[1920px] md:block"
           />
-          <div aria-hidden className="absolute inset-0 -z-10 bg-gradient-to-r from-vk-900/75 via-vk-900/35 to-transparent md:from-vk-900/70 md:via-vk-900/25" />
-          <div aria-hidden className="absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-t from-vk-900/50 to-transparent" />
-
-          <div className="vk-container pb-36 pt-14 md:pb-44 md:pt-24">
-            <div className="max-w-2xl">
-              <Reveal>
-                <span className="inline-flex items-center gap-2 rounded-full border border-[#F6C752]/60 bg-[#F6C752]/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-[#FFE6A3] backdrop-blur">
-                  <Flame className="h-3.5 w-3.5" /> Seva · ISKCON Gambheeram Vizag
-                </span>
-              </Reveal>
-              <Reveal delay={0.06}>
-                <h1 className="mt-5 text-4xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl">
-                  Offer Your Time at the{" "}
-                  <span className="bg-gradient-to-r from-[#FFE6A3] via-[#F6C752] to-[#E8A317] bg-clip-text text-transparent">
-                    Lord&apos;s Temple
-                  </span>
-                </h1>
-              </Reveal>
-              <Reveal delay={0.12}>
-                <p className="mt-5 max-w-xl text-base leading-relaxed text-white/85 md:text-lg">
-                  Join the volunteer family of the Hare Krishna Movement Visakhapatnam — serve at festivals, feed the hungry and
-                  help the temple come alive for thousands of devotees.
-                </p>
-              </Reveal>
-              <Reveal delay={0.18}>
-                <ul className="mt-6 space-y-2.5">
-                  {HERO_POINTS.map((t) => (
-                    <li key={t} className="flex items-center gap-2.5 text-[15px] font-medium text-white">
-                      <CheckCircle2 className="h-5 w-5 shrink-0 text-[#F6C752]" />
-                      {t}
-                    </li>
-                  ))}
-                </ul>
-              </Reveal>
-            </div>
-          </div>
+          <Image
+            src={HERO_MOBILE}
+            alt="Serve with love, volunteer with us. Offer your time and talents in the service of Sri Sri Radha Madan Mohan."
+            width={1080}
+            height={1350}
+            priority
+            sizes="100vw"
+            className="mx-auto h-auto w-full max-w-[560px] md:hidden"
+          />
         </section>
 
         {/* ───────── Registration card (overlaps the hero) ───────── */}
-        <section id="register" className="relative z-10 -mt-28 scroll-mt-[var(--header-h)] px-4 md:-mt-32">
+        <section id="register" className="relative z-10 mt-8 scroll-mt-[var(--header-h)] px-4 md:mt-10">
           <Reveal>
             <div className="mx-auto max-w-5xl overflow-hidden rounded-3xl border border-white/60 bg-white shadow-[0_30px_80px_-20px_rgba(10,18,51,0.45)]">
               <div className="h-1.5 bg-gradient-to-r from-[#F6C752] via-[#E8A317] to-[#F6C752]" />
